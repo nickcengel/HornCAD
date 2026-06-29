@@ -1,4 +1,4 @@
-# HornCAD test project.
+# HornCAD rectangular test project.
 #
 # This file is not a frozen public API. It is a concrete configuration sketch for
 # validating the major concepts before implementation.
@@ -18,9 +18,9 @@ mouth:
   width: 380.0
   height: 235.0
   shape:
-    type: rounded_rectangle   # ellipse | rounded_rectangle | rectangle
-    shape_power: 6.0          # Superellipse approximation.
-    corner_radius: null       # Numeric value enables exact rounded-rectangle corners.
+    type: rectangle           # ellipse | rounded_rectangle | rectangle
+    shape_power: 6.0          # Ignored by exact rectangle when corner_radius is numeric.
+    corner_radius: 4.0        # Exact 4 mm corner radius.
   curvature:
     type: cylinder            # flat | cylinder | sphere
     sag: 30.0                 # Authored curvature depth. Not local curvature setback everywhere.

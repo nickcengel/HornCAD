@@ -1,5 +1,8 @@
 # Agent Prompt: OS-SE Curved Rectangular Waveguide Generator
 
+Terminology note: `docs/GLOSSARY.md` is the current source of truth for naming.
+Older notes in this context file may use less precise early wording.
+
 You are helping build a Python geometry generator for compression-driver waveguides / horns.
 
 The project is inspired by ATH and the OS-SE waveguide method, but the goal is not to clone ATH. The goal is to generate curve and surface geometry suitable for Fusion 360.
@@ -136,13 +139,18 @@ length. The OS-SE section starts after this conic extension.
 
 Required:
 
-- `Mouth.Width`
-- `Mouth.Height`
+- `Mouth.Width` or `Mouth.Height`
 
 Derived:
 
 - `a_mouth = Mouth.Width / 2`
 - `b_mouth = Mouth.Height / 2`
+
+If exactly one mouth dimension is omitted, derive it from the specified
+principal dimension and the H/V profile settings. Solve `S` using the specified
+axis' coverage, `K`, `Q`, `N`, length, and setback, then apply that same `S` to
+the other principal profile with its own coverage and `K`. This is a
+principal-axis setup convenience, not an area-expansion solve.
 
 ---
 
@@ -198,17 +206,31 @@ Advanced / optional:
 
 Treat `K` as the primary acoustic character parameter.
 
-Treat `S` as the primary dimensional fitting variable.
+Treat `S(p)` as the dimensional boundary-fitting variable.
 
 Treat `Q` and `N` as advanced shape / termination controls.
 
-Recommended first version:
+M1/M2 behavior:
 
 - user specifies `K_H`, `K_V`
 - user specifies or accepts defaults for `Q` and `N`
 - solver solves `S(p)` for each radial direction
 
-Avoid freely solving `S`, `Q`, and `N` simultaneously unless there are enough constraints and good bounds.
+M3 behavior:
+
+- mouth boundary fit is a hard constraint
+- `K` stays fixed
+- `S(p)` is recomputed for every candidate
+- area expansion is the primary optimization objective
+- the target area curve is the candidate's equivalent round OS-SE reference
+- smoothness is checked with a log-area derivative-change diagnostic
+- H/V profile smoothness is checked with an adjacent profile-slope diagnostic
+- candidate ranges are scaled by mouth aspect ratio, H/V coverage delta, and
+  initial area error, then clipped to global hard bounds
+- `S(p)` span and adjacent changes over `p` are penalized and reported
+- candidate search may move `morph.rate`, `N`, and `Q` when explicitly enabled
+
+Avoid moving `K`, `S`, `Q`, and `N` without enough constraints and good bounds.
 
 ---
 
@@ -221,7 +243,7 @@ bounds where applicable.
 Throat.Angle: 0 to 90 degrees
 Throat.ConicExtensionExitAngle: 0 to 90 degrees
 K: 0 to 10
-S: 0 to 2
+S: 0 to 4
 Q: 0.99 to 1.00
 N: 2 to 10
 ```
@@ -282,20 +304,18 @@ Use either an explicit rounded-rectangle curve or a superellipse approximation.
 Required or defaulted:
 
 - `Morph.Start`
-- `Morph.End`
 - `Morph.Rate`
 
 Meaning:
 
-- `Morph.Start`: normalized depth where circular-to-rectangular morph begins
-- `Morph.End`: normalized depth where final mouth shape is reached
+- `Morph.Start`: physical axial distance where circular-to-rectangular morph begins
 - `Morph.Rate`: easing exponent / transition speed
+- Morph end is always the mouth and is not a user parameter.
 
 Default proposal:
 
 ```text
 Morph.Start = 0.0
-Morph.End   = 1.0
 Morph.Rate  = 2.0
 ```
 
@@ -659,7 +679,11 @@ We need an enhanced morph system.
 
 ## Rectangular / Rounded-Rectangular Mouth Boundary
 
-Recommended first implementation: superellipse.
+Supported implementations:
+
+- exact rectangle
+- exact rounded rectangle when `corner_radius` is numeric
+- superellipse approximation when `rounded_rectangle.corner_radius` is `null`
 
 ```text
 abs(x/a)^m + abs(y/b)^m = 1
@@ -681,7 +705,7 @@ m -> large  -> near rectangle
 
 Use this because it is smooth and easy to sample.
 
-Later, optionally support exact rounded rectangles with explicit corner radius.
+Exact rounded rectangles use flat side segments and circular corner arcs.
 
 ---
 
@@ -737,9 +761,19 @@ It changes cross-sectional area.
 
 Therefore it affects acoustic expansion.
 
-Recommended target:
+Default target:
 
-Use a traditional rotationally symmetric OS-SE horn as the acoustic area reference.
+Use a circular OS-SE horn as the acoustic area reference. The reference horn
+uses the mean horizontal/vertical acoustic values:
+
+```text
+coverage_ref = mean(coverage_h, coverage_v)
+k_ref        = mean(k_h, k_v)
+q_ref        = q
+n_ref        = n
+```
+
+Solve the circular reference against an equivalent-area mouth.
 
 ```text
 A_target(z) = pi * R_ref_OSSE(z)^2
@@ -767,9 +801,7 @@ The goal is:
 
 # Choosing the Reference Round OS-SE Profile
 
-Use one of these options.
-
-## Option A: Equivalent-Area Mouth Reference
+Use the mean H/V circular reference.
 
 Choose reference round mouth radius:
 
@@ -779,19 +811,10 @@ R_ref_mouth = sqrt(A_mouth / pi)
 
 Then solve or select reference OS-SE parameters so the round horn reaches this area at `L_max`.
 
-## Option B: Horizontal-Dominant Reference
+Manual overrides may be added for:
 
-Use the horizontal OS-SE profile as the area reference.
-
-## Option C: Mean H/V Reference
-
-Compute a blended reference from H and V parameters.
-
-Recommended first version:
-
-```text
-Use equivalent-area mouth reference.
-```
+- morph rate
+- morph start as a physical `z` position
 
 ---
 
@@ -946,10 +969,10 @@ Forward OS-SE evaluation is closed-form.
 
 But inverse fitting is generally numerical.
 
-Use numerical root solving for:
+Use numerical solving or candidate search for:
 
 - `S(p)`
-- optional `Q(p)` or `N(p)` if advanced solving is enabled
+- optional `Q` or `N` if area-aware refinement enables them
 - morph exponent / shape power if matching target area
 - common-length reconciliation
 
@@ -1051,10 +1074,7 @@ Recommended artifacts:
 
 ```text
 design_review/
-  {project_stem}_h_profile.png
-  {project_stem}_v_profile.png
   {project_stem}_hv_profiles.png
-  {project_stem}_profile_data.csv
   {project_stem}_report.md
   {project_stem}_resolved.yaml
 ```
@@ -1069,8 +1089,6 @@ derives filenames.
 
 Plot requirements:
 
-- `{project_stem}_h_profile.png`: horizontal inside acoustic profile, radius vs axial distance.
-- `{project_stem}_v_profile.png`: vertical inside acoustic profile, radius vs axial distance.
 - `{project_stem}_hv_profiles.png`: horizontal and vertical profiles overlaid for comparison.
 - Plot the conic throat extension separately from the OS-SE section when `L_conic > 0`.
 - Mark throat radius, conic exit radius, mouth target radius, and local profile length.
@@ -1102,27 +1120,24 @@ Generate:
 
 Solve `S_H` and `S_V`.
 
-## Phase 3: Radial Family
+## Phase 3: First Full Inside Surface
 
-Generate radial curves for many `p` values.
+Generate radial curves and cross-section slices together for many `p` values.
 
 Interpolate `K` and `Coverage`.
 
 Solve `S(p)`.
 
-## Phase 4: Cross-Section Morph
+Compare actual section area to the mean H/V circular reference target.
 
-Generate full cross-section rings at many `z` values.
+## Phase 4: Area-Aware Refinement
 
-Start with superellipse morph.
+Search allowed solve variables or morph controls to reduce area error. For every
+candidate, recompute `S(p)` so mouth boundary fit remains a hard constraint.
+Compare each candidate against its equivalent round OS-SE reference. Manual
+overrides may specify morph rate and morph start `z`.
 
-## Phase 5: Area Matching
-
-Compare actual area to target OS-SE area.
-
-Adjust morph exponent or scaling to reduce area error.
-
-## Phase 6: CAD Export
+## Phase 5: CAD Export
 
 Export one or more formats:
 
@@ -1152,23 +1167,19 @@ solid mesh made from:
 The program should be able to output:
 
 1. design-review plots and project report
-2. principal horizontal and vertical profile data
-3. radial curves
-4. cross-section curves
-5. mouth boundary curve
-6. throat boundary curve
-7. surface mesh preview
-8. CAD-importable curve data
-9. roadmap: STL-ready closed mesh after outside-surface generation is implemented
+2. radial curves
+3. cross-section curves
+4. mouth boundary curve
+5. throat boundary curve
+6. surface mesh preview
+7. CAD-importable curve data
+8. roadmap: STL-ready closed mesh after outside-surface generation is implemented
 
 Recommended initial output:
 
 ```text
 design_review/
-  {project_stem}_h_profile.png
-  {project_stem}_v_profile.png
   {project_stem}_hv_profiles.png
-  {project_stem}_profile_data.csv
   {project_stem}_report.md
   {project_stem}_resolved.yaml
 ```
@@ -1177,8 +1188,8 @@ Later geometry output:
 
 ```text
 cad/
-  profiles.csv
-  slices.csv
+  profile curves
+  slice curves
   waveguide.stl
 ```
 
@@ -1189,7 +1200,7 @@ format flags, not by choosing output paths.
 
 # Validation / Debug Outputs
 
-Generate plots or CSV diagnostics for:
+Generate plots and report diagnostics for:
 
 - horizontal principal profile
 - vertical principal profile
@@ -1209,7 +1220,7 @@ Generate a project report containing:
 - all calculated parameters used by the solve
 - validation bounds and pass/fail results
 - warnings and infeasible-condition messages
-- artifact paths for plots and CSV outputs
+- artifact paths for generated outputs
 
 This will make it much easier to debug geometry and acoustic continuity.
 
@@ -1220,10 +1231,9 @@ This will make it much easier to debug geometry and acoustic continuity.
 Use these as initial defaults only:
 
 ```text
-Q = 0.99
+Q = 0.995
 N = 2.0 to 4.0
 Morph.Start = 0.0
-Morph.End = 1.0
 Morph.Rate = 2.0
 Mouth.ShapePower = 6.0
 Resolution.AngularSegments = 96
@@ -1246,11 +1256,11 @@ Do not treat these as final acoustic recommendations.
 
 5. The circular-to-rectangular morph changes area and must be treated as acoustically meaningful.
 
-6. Prefer solving `S(p)` first.
+6. Treat `S(p)` as a dependent boundary-fit solve, not the whole area strategy.
 
 7. Keep `K` as a user-controlled acoustic parameter.
 
-8. Keep `Q` and `N` fixed in the first version unless advanced solve mode is explicitly enabled.
+8. Keep `Q` and `N` fixed unless area-aware refinement explicitly enables them.
 
 9. Use closed-form equations for forward geometry.
 
@@ -1356,13 +1366,12 @@ vertical:
   k: 1.0
 
 osse:
-  q: 0.99
+  q: 0.995
   n: 3.0
   solve: s
 
 morph:
   start: 0.0
-  end: 1.0
   rate: 2.0
 
 resolution:
@@ -1372,12 +1381,9 @@ resolution:
 outputs:
   design_review:
     plots:
-      h_profile: true
-      v_profile: true
       hv_profiles: true
     report: true
     resolved_config: true
-    profile_data: true
   cad:
     wall_thickness: 0.0
     formats:
