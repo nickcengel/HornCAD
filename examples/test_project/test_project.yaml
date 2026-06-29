@@ -1,0 +1,83 @@
+# HornCAD test project.
+#
+# This file is not a frozen public API. It is a concrete configuration sketch for
+# validating the major concepts before implementation.
+
+units:
+  length: mm
+  angle: degrees
+
+throat:
+  diameter: 25.4
+  angle: 10.0                 # Full included angle. Valid range: 0..90.
+  conic_extension:
+    length: 12.0              # Starts at throat radius r0.
+    exit_angle: 14.0          # Full included angle. Defaults to throat.angle.
+
+mouth:
+  width: 380.0
+  height: 235.0
+  shape:
+    type: rounded_rectangle   # ellipse | rounded_rectangle | rectangle
+    shape_power: 6.0          # Superellipse approximation.
+    corner_radius: null       # Future exact rounded-rectangle option.
+  curvature:
+    type: cylinder            # flat | cylinder | sphere
+    sag: 30.0                 # Prefer one of sag or radius.
+    radius: null
+
+length:
+  max: 150.0                  # Centerline depth before mouth setback.
+
+profiles:
+  horizontal:
+    coverage: 50.0            # Full included coverage angle.
+    k: 1.0                    # Valid range: 0..10.
+    s_initial: null           # Usually solved per radial direction.
+  vertical:
+    coverage: 31.0
+    k: 1.0
+    s_initial: null
+
+osse:
+  solve: s                    # First implementation solves S(p).
+  s_bounds: [0.0, 2.0]
+  q: 0.99                     # Valid range: 0.99..1.00.
+  n: 3.0                      # Valid range: 2..10.
+
+morph:
+  start: 0.0                  # Normalized depth.
+  end: 1.0
+  rate: 2.0
+  area_target: equivalent_round_mouth
+
+resolution:
+  angular_segments: 96        # Adaptive around p; denser where boundary curvature changes.
+  length_segments: 100        # Adaptive along z; denser where profile curvature changes.
+
+validation:
+  reject_if:
+    - conic_extension_length_gte_local_profile_length
+    - solved_s_outside_bounds
+    - mouth_curvature_radius_too_small
+  warn_if:
+    - outside_surface_self_intersects
+    - area_error_exceeds_tolerance
+
+outputs:
+  design_review:
+    plots:
+      h_profile: true
+      v_profile: true
+      hv_profiles: true
+    report: true
+    resolved_config: true
+    profile_data: true
+  cad:
+    wall_thickness: 0.0       # 0.0 outputs faces only, not a closed 3D asset.
+    formats:
+      2d:
+        profiles: true
+        slices: true
+      3d:
+        stl: false
