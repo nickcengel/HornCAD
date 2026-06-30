@@ -7,11 +7,11 @@ fit diagnostic, not an area-expansion validation.
 
 For each principal axis:
 
-1. Keep authored `K`, `Q`, and `N` fixed.
+1. Keep authored coverage fixed and use the current `K`, `Q`, and `N` seeds.
 2. Compute the target boundary distance from the configured mouth boundary.
 3. Compute local profile length after mouth curvature setback and conic extension.
 4. Use boundary fit as the objective: solve `S` directly from the OS-SE profile equation so the curve reaches that boundary distance.
-5. Check the solved `S` against `osse.s_bounds`.
+5. Check the solved internal `S` against `refinement.s_bounds`.
 
 M1 does not automatically iterate `N` or `Q`. Those are advanced shape controls.
 If `S` cannot fit the target within bounds, the design is reported as infeasible

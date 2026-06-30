@@ -7,26 +7,48 @@ import yaml
 from horncad.design_review import DesignFeasibilityError, generate_design_review, main
 from horncad.config import load_project
 from horncad.profile import derive_config, feasibility_issues, solve_principal_profiles
+from tests.helpers import (
+    CONIC_EXTENSION_LENGTH,
+    LENGTH_MAX,
+    MOUTH_SAG,
+    THROAT_DIAMETER,
+    sample_project_config,
+)
 
 
 PROJECT = Path(__file__).resolve().parents[1] / "examples/test_project/test_project.yaml"
 
 
-def test_principal_profile_solver_fits_test_project_boundaries():
-    config = load_project(PROJECT)
+def test_principal_profile_solver_fits_fixture_boundaries():
+    config = sample_project_config()
 
     derived, profiles = solve_principal_profiles(config)
 
-    assert derived.r0 == 12.7
+    assert derived.r0 == THROAT_DIAMETER / 2.0
     assert len(profiles) == 2
     assert profiles[0].axis == "horizontal"
     assert profiles[1].axis == "vertical"
-    assert profiles[0].profile_length == 108.0
-    assert profiles[1].profile_length == 138.0
-    assert 0.0 <= profiles[0].solved_s <= 2.0
-    assert 0.0 <= profiles[1].solved_s <= 2.0
+    assert profiles[0].profile_length == LENGTH_MAX - MOUTH_SAG - CONIC_EXTENSION_LENGTH
+    assert profiles[1].profile_length == LENGTH_MAX - CONIC_EXTENSION_LENGTH
+    lower_s, upper_s = config["refinement"]["s_bounds"]
+    assert lower_s <= profiles[0].solved_s <= upper_s
+    assert lower_s <= profiles[1].solved_s <= upper_s
     assert abs(profiles[0].boundary_fit_error) < 1e-6
     assert abs(profiles[1].boundary_fit_error) < 1e-6
+
+
+def test_principal_profile_sampling_is_adaptive():
+    config = sample_project_config()
+
+    _, profiles = solve_principal_profiles(config)
+
+    for profile in profiles:
+        osse_points = [point for point in profile.points if point.segment == "osse"]
+        intervals = [
+            osse_points[index + 1].z - osse_points[index].z
+            for index in range(len(osse_points) - 1)
+        ]
+        assert min(intervals) < max(intervals)
 
 
 def test_generate_design_review_artifacts(tmp_path):
@@ -62,8 +84,8 @@ def test_generate_design_review_artifacts(tmp_path):
 
 
 def test_generate_design_review_rejects_solved_s_outside_bounds(tmp_path):
-    config = load_project(PROJECT)
-    config["mouth"]["width"] = 900.0
+    config = sample_project_config()
+    config["mouth"]["width"] = 1600.0
     project = tmp_path / "too_wide.yaml"
     project.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
 
@@ -75,8 +97,8 @@ def test_generate_design_review_rejects_solved_s_outside_bounds(tmp_path):
 
 
 def test_cli_reports_likely_culprit_for_infeasible_design(tmp_path, capsys):
-    config = load_project(PROJECT)
-    config["mouth"]["width"] = 900.0
+    config = sample_project_config()
+    config["mouth"]["width"] = 1600.0
     project = tmp_path / "too_wide.yaml"
     project.write_text(yaml.safe_dump(config, sort_keys=False), encoding="utf-8")
 
@@ -90,7 +112,7 @@ def test_cli_reports_likely_culprit_for_infeasible_design(tmp_path, capsys):
 
 
 def test_curvature_radius_too_small_is_structured_issue():
-    config = load_project(PROJECT)
+    config = sample_project_config()
     config = copy.deepcopy(config)
     config["mouth"]["curvature"] = {"type": "cylinder", "sag": None, "radius": 100.0}
 

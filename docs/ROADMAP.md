@@ -87,9 +87,10 @@ and area expansion all govern the same surface.
 Default area-expansion target:
 
 - Use a circular OS-SE reference horn.
-- The reference horn uses mean horizontal/vertical acoustic values:
-  - `coverage_ref = mean(coverage_h, coverage_v)`
-  - `k_ref = mean(k_h, k_v)`
+- The reference horn uses polar-area-weighted horizontal/vertical acoustic values:
+  - sample `coverage(p)` and `K(p)` around the mouth
+  - weight each sample by `R_boundary(p)^2`
+  - compute `coverage_ref` and `k_ref` from the weighted samples
   - `q_ref = q`
   - `n_ref = n`
 - The reference circular horn is solved against an equivalent-area mouth.
@@ -114,7 +115,10 @@ Required behavior:
 - Compute actual section area and area-expansion error against the mean circular reference.
 - For curved mouths, compute area diagnostics only over closed constant-`z` sections where all radial curves still exist.
 - Validate and report top-level `outputs.scope: quarter | half | full`; use the full symmetric surface internally for area diagnostics.
-- Use `resolution.angular_segments` and `resolution.length_segments` as adaptive segment budgets, not equal-spacing requirements.
+- Use `resolution.angular_segments` and `resolution.length_segments` as segment
+  budgets, not equal-spacing requirements. Current `z` sampling is adaptive by
+  curve/reference-radius change; angular radial-curve sampling is adaptive by
+  mouth-boundary change, with explicit rounded-rectangle corner anchors.
 
 Acceptance criteria:
 
@@ -134,31 +138,40 @@ and solver objectives. M3 is a candidate search, not a fallback chain that tries
 Solver model:
 
 - Mouth boundary fit is a hard constraint.
-- `K` remains fixed at the authored value.
+- Coverage remains fixed author intent.
+- `K` is axis-specific and may move only when its horizontal or vertical bounds
+  have span. K drift away from authored seeds is penalized and reported in the
+  objective breakdown.
 - `S(p)` is a dependent solve variable, recomputed for every candidate so each
   radial curve reaches the configured mouth boundary.
 - The target area curve is the candidate's equivalent round OS-SE reference. If
   a candidate moves `Q` or `N`, its round reference target moves with it.
 - Area expansion is the primary optimization objective.
 - Area smoothness is checked with a log-area derivative-change diagnostic.
-- Candidate variables may include `morph.rate`, `N`, and `Q`, but only when
-  explicitly listed in `refinement.solve`.
+- Candidate variables are derived from bounds. `morph.rate`, `N`, `Q`, and
+  horizontal/vertical `K` are searched only when their bounds have span.
 - Global parameter bounds are hard safety rails. M3 derives effective search
   ranges from the actual design using mouth aspect ratio, H/V coverage delta,
   and initial area error.
 - Candidates are rejected when configured hard constraints fail, such as solved
-  `S(p)` outside `osse.s_bounds`.
+  `S(p)` outside `refinement.s_bounds`.
 - `S(p)` is allowed to vary, but its expected span is scaled by mouth aspect
   ratio and H/V coverage delta. Excess `S` span and abrupt adjacent changes over
   throat-radial angle `p` are penalized and reported.
+- Late morph timing is penalized and reported. The default search bound caps
+  `morph.rate` at 4, and the objective discourages candidates whose 50% morph
+  point lands after 85% of the horn length.
 - Principal H/V profile slope changes are penalized and reported so a candidate
   cannot win by producing a sharp terminal kink.
+- Principal H/V roundover contribution is reported as a core profile-shape
+  diagnostic and compared to authored roundover targets/tolerances.
 
 Required behavior:
 
 - Preserve boundary fit and the inside acoustic surface as the authoritative geometry.
 - Use area-expansion error from M2 to search allowed solve variables or morph controls.
-- Keep additional solve variables explicit; do not silently move `K`, `N`, or `Q`.
+- Keep additional solve variables explicit through seed/bounds; equal bounds
+  mean fixed, bounds with span mean searchable.
 - Support manual override of morph rate.
 - Support manual override of morph start as a physical `z` position.
 - Treat morph end as the mouth; do not expose it as a user parameter.
@@ -169,10 +182,16 @@ Required behavior:
   good average fit score.
 - Report effective search ranges, `S(p)` behavior diagnostics, and H/V profile
   smoothness diagnostics.
+- Report morph timing diagnostics: `z50`, `z90`, `z50` limit, excess `z50`, and
+  timing objective weight.
+- Report roundover contribution for the H/V master profiles.
+- Support multiprocessing for candidate evaluation with `--workers`.
 - Generate standard artifacts under `refine_review/` beside the project file:
   - `{project_stem}_refined_area_fit.png`
   - `{project_stem}_refined_hv_profiles.png`
   - `{project_stem}_refined_radial_profiles.png`
+  - `{project_stem}_refined_radial_plan.png`
+  - `{project_stem}_refined_principal_views.png`
   - `{project_stem}_refinement_report.md`
   - `{project_stem}_refined.yaml`
 
@@ -181,6 +200,16 @@ Acceptance criteria:
 - Area-expansion error is reduced or clearly reported as infeasible.
 - Boundary fit remains within tolerance after refinement.
 - Any moved or overridden values are visible in the report.
+
+## Design Flow: Length, S, And Roundover
+
+HornCAD treats `length.max` as a fundamental design value, not as a hidden
+variable that normal refinement silently moves. The user-facing tutorial flow
+lives in `docs/design_flow.md`; roadmap work should preserve that separation.
+
+Future length analysis should estimate the `length.max` required to meet a target
+roundover contribution percent. It should initially be report-only rather than
+mutating the project.
 
 ## M4 CAD 2D Output
 

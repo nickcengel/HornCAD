@@ -1,0 +1,636 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OS-SE Fixed Endpoint Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f7f7f3;
+      --panel: #ffffff;
+      --ink: #222426;
+      --muted: #666b70;
+      --line: #d4d7d9;
+      --accent: #0f766e;
+      --accent-2: #b45309;
+      --danger: #b91c1c;
+      --ok: #15803d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.35;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(360px, 420px) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .lede {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      padding: 14px 18px 18px;
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+      overflow-y: auto;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      padding: 0;
+      border-bottom: 0;
+      background: var(--panel);
+    }
+
+    .intro {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    fieldset {
+      margin: 0;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    legend {
+      padding: 0 5px;
+      color: #34383c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    label {
+      display: grid;
+      grid-template-columns: 1fr 72px;
+      gap: 8px;
+      align-items: center;
+      margin: 9px 0;
+      color: #34383c;
+      font-size: 13px;
+    }
+
+    input[type="range"] {
+      grid-column: 1 / -1;
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    input[type="number"] {
+      width: 72px;
+      padding: 5px 6px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      font: inherit;
+      text-align: right;
+    }
+
+    .plot-wrap {
+      display: grid;
+      grid-template-rows: minmax(390px, 1fr) minmax(150px, 0.34fr) auto;
+      gap: 12px;
+      padding: 18px;
+      min-width: 0;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      min-height: 150px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    #plot {
+      min-height: 390px;
+    }
+
+    #derivative {
+      min-height: 150px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 18px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .status {
+      padding: 9px 10px;
+      border-radius: 8px;
+      background: #eef6f4;
+      color: #115e59;
+      font-size: 13px;
+    }
+
+    .status.invalid {
+      background: #fef2f2;
+      color: var(--danger);
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="controls">
+    <div class="intro">
+      <div>
+        <h1>OS-SE Fixed Endpoint Explorer</h1>
+        <p class="lede">Endpoint stays fixed. <code>S</code> is solved internally. <code>Q</code> is fixed at <code>0.995</code>.</p>
+      </div>
+      <div id="status" class="status"></div>
+    </div>
+
+    <section class="topbar">
+      <label>
+        Coverage half-angle deg
+        <input data-control="alpha" type="number" min="0" max="89" step="0.1" value="50">
+        <input data-control="alpha" type="range" min="0" max="89" step="0.1" value="50">
+      </label>
+      <label>
+        N
+        <input data-control="n" type="number" min="1.01" max="100" step="0.01" value="3">
+        <input data-control="n" type="range" min="1.01" max="100" step="0.01" value="3">
+      </label>
+      <label>
+        K
+        <input data-control="k" type="number" min="0" max="10" step="0.01" value="1">
+        <input data-control="k" type="range" min="0" max="10" step="0.01" value="1">
+      </label>
+    </section>
+
+    <fieldset>
+      <legend>Fixed Points</legend>
+      <label>
+        OS-SE length L mm
+        <input data-control="length" type="number" min="20" max="500" step="1" value="120">
+        <input data-control="length" type="range" min="20" max="500" step="1" value="120">
+      </label>
+      <label>
+        Start radius mm
+        <input data-control="r0" type="number" min="0.5" max="80" step="0.1" value="12.7">
+        <input data-control="r0" type="range" min="0.5" max="80" step="0.1" value="12.7">
+      </label>
+      <label>
+        End radius mm
+        <input data-control="rEnd" type="number" min="1" max="350" step="0.5" value="190">
+        <input data-control="rEnd" type="range" min="1" max="350" step="0.5" value="190">
+      </label>
+      <label>
+        Throat half-angle deg
+        <input data-control="alpha0" type="number" min="0" max="45" step="0.1" value="5">
+        <input data-control="alpha0" type="range" min="0" max="45" step="0.1" value="5">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Conic Throat Extension</legend>
+      <label>
+        Extension length mm
+        <input data-control="conicLength" type="number" min="0" max="150" step="1" value="0">
+        <input data-control="conicLength" type="range" min="0" max="150" step="1" value="0">
+      </label>
+      <label>
+        Exit half-angle deg
+        <input data-control="exitAngle" type="number" min="0" max="45" step="0.1" value="5">
+        <input data-control="exitAngle" type="range" min="0" max="45" step="0.1" value="5">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>S Bounds</legend>
+      <label>
+        S min
+        <input data-control="sMin" type="number" min="-10" max="10" step="0.1" value="0">
+        <input data-control="sMin" type="range" min="-10" max="10" step="0.1" value="0">
+      </label>
+      <label>
+        S max
+        <input data-control="sMax" type="number" min="-10" max="10" step="0.1" value="4">
+        <input data-control="sMax" type="range" min="-10" max="10" step="0.1" value="4">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Legend</legend>
+      <p class="small">Solid teal is solved OS-SE. Dashed orange is <code>S = 0</code>. Gray is the endpoint chord. Purple below is profile slope <code>dr/dz</code>.</p>
+    </fieldset>
+  </section>
+
+  <section class="plot-wrap">
+    <canvas id="plot" width="1200" height="760"></canvas>
+    <canvas id="derivative" width="1200" height="240"></canvas>
+    <div class="metrics">
+      <div class="metric"><span>S solved</span><strong id="metric-s">-</strong></div>
+      <div class="metric"><span>Roundover contribution</span><strong id="metric-roundover">-</strong></div>
+      <div class="metric"><span>Mouth tangent</span><strong id="metric-tangent">-</strong></div>
+      <div class="metric"><span>Max curvature</span><strong id="metric-curvature">-</strong></div>
+      <div class="metric"><span>Curvature center</span><strong id="metric-centroid">-</strong></div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const controls = new Map();
+  const canvas = document.getElementById("plot");
+  const ctx = canvas.getContext("2d");
+  const derivativeCanvas = document.getElementById("derivative");
+  const derivativeCtx = derivativeCanvas.getContext("2d");
+  const statusEl = document.getElementById("status");
+  const metrics = {
+    s: document.getElementById("metric-s"),
+    roundover: document.getElementById("metric-roundover"),
+    tangent: document.getElementById("metric-tangent"),
+    curvature: document.getElementById("metric-curvature"),
+    centroid: document.getElementById("metric-centroid"),
+  };
+
+  for (const input of document.querySelectorAll("[data-control]")) {
+    const name = input.dataset.control;
+    if (!controls.has(name)) {
+      controls.set(name, []);
+    }
+    controls.get(name).push(input);
+    input.addEventListener("input", () => {
+      for (const peer of controls.get(name)) {
+        if (peer !== input) {
+          peer.value = input.value;
+        }
+      }
+      render();
+    });
+  }
+
+  function value(name) {
+    return Number(controls.get(name)[0].value);
+  }
+
+  function rad(deg) {
+    return deg * Math.PI / 180;
+  }
+
+  function terminationRadius(z, length, s, q, n) {
+    if (s === 0 || length <= 0) {
+      return 0;
+    }
+    const termInner = Math.max(1 - Math.pow(q * z / length, n), 0);
+    return (s * length / q) * (1 - Math.pow(termInner, 1 / n));
+  }
+
+  function conicExitRadius(params) {
+    return params.r0 + params.conicLength * Math.tan(rad(params.exitAngle));
+  }
+
+  function osseStartAngle(params) {
+    return params.conicLength > 0 ? params.exitAngle : params.alpha0;
+  }
+
+  function osseRadius(z, length, r0, alpha0, alpha, k, s, q, n) {
+    const t0 = Math.tan(rad(alpha0));
+    const ta = Math.tan(rad(alpha));
+    const gos = Math.sqrt(k * k * r0 * r0 + 2 * k * r0 * z * t0 + z * z * ta * ta) + r0 * (1 - k);
+    return gos + terminationRadius(z, length, s, q, n);
+  }
+
+  function solvedS(params) {
+    const base = osseRadius(params.length, params.length, conicExitRadius(params), osseStartAngle(params), params.alpha, params.k, 0, params.q, params.n);
+    const unit = terminationRadius(params.length, params.length, 1, params.q, params.n);
+    if (!Number.isFinite(unit) || Math.abs(unit) < 1e-12) {
+      return NaN;
+    }
+    return (params.rEnd - base) / unit;
+  }
+
+  function sample(params, s, count = 320) {
+    const points = [];
+    for (let i = 0; i < count; i += 1) {
+      const z = params.length * i / (count - 1);
+      const r = osseRadius(z, params.length, conicExitRadius(params), osseStartAngle(params), params.alpha, params.k, s, params.q, params.n);
+      points.push({ z, r });
+    }
+    return points;
+  }
+
+  function conicSample(params, count = 48) {
+    const points = [];
+    if (params.conicLength <= 0) {
+      return points;
+    }
+    for (let i = 0; i < count; i += 1) {
+      const t = i / (count - 1);
+      const z = -params.conicLength + params.conicLength * t;
+      const local = params.conicLength * t;
+      points.push({
+        z,
+        r: params.r0 + local * Math.tan(rad(params.exitAngle)),
+      });
+    }
+    return points;
+  }
+
+  function derivative(points, i) {
+    const prev = points[Math.max(0, i - 1)];
+    const next = points[Math.min(points.length - 1, i + 1)];
+    const dz = next.z - prev.z;
+    if (Math.abs(dz) < 1e-12) {
+      return 0;
+    }
+    return (next.r - prev.r) / dz;
+  }
+
+  function curvatureStats(points) {
+    let maxK = 0;
+    let weightedZ = 0;
+    let totalK = 0;
+    for (let i = 1; i < points.length - 1; i += 1) {
+      const p0 = points[i - 1];
+      const p1 = points[i];
+      const p2 = points[i + 1];
+      const dz1 = p1.z - p0.z;
+      const dz2 = p2.z - p1.z;
+      if (dz1 <= 0 || dz2 <= 0) {
+        continue;
+      }
+      const dr1 = (p1.r - p0.r) / dz1;
+      const dr2 = (p2.r - p1.r) / dz2;
+      const d2 = 2 * (dr2 - dr1) / (dz1 + dz2);
+      const slope = derivative(points, i);
+      const kappa = Math.abs(d2) / Math.pow(1 + slope * slope, 1.5);
+      if (Number.isFinite(kappa)) {
+        maxK = Math.max(maxK, kappa);
+        weightedZ += points[i].z * kappa;
+        totalK += kappa;
+      }
+    }
+    return {
+      max: maxK,
+      centroid: totalK > 0 ? weightedZ / totalK : 0,
+    };
+  }
+
+  function format(value, digits = 4) {
+    if (!Number.isFinite(value)) {
+      return "-";
+    }
+    return Number(value).toPrecision(digits);
+  }
+
+  function drawLine(targetCtx, points, xOf, yOf, color, width, dashed = false) {
+    if (points.length === 0) {
+      return;
+    }
+    targetCtx.save();
+    targetCtx.strokeStyle = color;
+    targetCtx.lineWidth = width;
+    targetCtx.setLineDash(dashed ? [9, 7] : []);
+    targetCtx.beginPath();
+    for (let i = 0; i < points.length; i += 1) {
+      const x = xOf(points[i].z);
+      const y = yOf(points[i].r);
+      if (i === 0) {
+        targetCtx.moveTo(x, y);
+      } else {
+        targetCtx.lineTo(x, y);
+      }
+    }
+    targetCtx.stroke();
+    targetCtx.restore();
+  }
+
+  function drawAxes(xOf, yOf, params, rMax, zMin, zMax) {
+    ctx.save();
+    ctx.strokeStyle = "#d4d7d9";
+    ctx.lineWidth = 1;
+    ctx.fillStyle = "#62676b";
+    ctx.font = "13px system-ui, sans-serif";
+
+    const zTicks = 6;
+    for (let i = 0; i <= zTicks; i += 1) {
+      const z = zMin + (zMax - zMin) * i / zTicks;
+      const x = xOf(z);
+      ctx.beginPath();
+      ctx.moveTo(x, yOf(0));
+      ctx.lineTo(x, yOf(rMax));
+      ctx.stroke();
+      ctx.fillText(`${Math.round(z)}`, x - 10, yOf(0) + 22);
+    }
+
+    const rTicks = 5;
+    for (let i = 0; i <= rTicks; i += 1) {
+      const r = rMax * i / rTicks;
+      const y = yOf(r);
+      ctx.beginPath();
+      ctx.moveTo(xOf(0), y);
+      ctx.lineTo(xOf(params.length), y);
+      ctx.stroke();
+      ctx.fillText(`${Math.round(r)}`, xOf(0) - 42, y + 4);
+    }
+
+    ctx.fillText("z mm", xOf(zMax) - 20, yOf(0) + 46);
+    ctx.fillText("radius mm", xOf(0) - 48, yOf(rMax) - 10);
+    ctx.restore();
+  }
+
+  function drawDerivativePlot(points, params) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = derivativeCanvas.getBoundingClientRect();
+    derivativeCanvas.width = Math.max(600, Math.floor(rect.width * dpr));
+    derivativeCanvas.height = Math.max(150, Math.floor(rect.height * dpr));
+    derivativeCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const width = rect.width;
+    const height = rect.height;
+    derivativeCtx.clearRect(0, 0, width, height);
+
+    const pad = { left: 64, right: 28, top: 18, bottom: 34 };
+    const plotW = width - pad.left - pad.right;
+    const plotH = height - pad.top - pad.bottom;
+    const slopes = points.map((point, index) => ({ z: point.z, r: derivative(points, index) }));
+    const maxAbs = Math.max(0.1, ...slopes.map(point => Math.abs(point.r))) * 1.1;
+    const xOf = z => pad.left + (z / params.length) * plotW;
+    const yOf = slope => pad.top + (0.5 - slope / (2 * maxAbs)) * plotH;
+
+    derivativeCtx.save();
+    derivativeCtx.strokeStyle = "#d4d7d9";
+    derivativeCtx.lineWidth = 1;
+    derivativeCtx.beginPath();
+    derivativeCtx.moveTo(pad.left, yOf(0));
+    derivativeCtx.lineTo(pad.left + plotW, yOf(0));
+    derivativeCtx.stroke();
+
+    derivativeCtx.fillStyle = "#62676b";
+    derivativeCtx.font = "13px system-ui, sans-serif";
+    derivativeCtx.fillText("slope dr/dz", pad.left, 15);
+    derivativeCtx.fillText(`+${format(maxAbs, 3)}`, 12, yOf(maxAbs) + 4);
+    derivativeCtx.fillText("0", 36, yOf(0) + 4);
+    derivativeCtx.fillText(`-${format(maxAbs, 3)}`, 12, yOf(-maxAbs) + 4);
+    derivativeCtx.restore();
+
+    drawLine(derivativeCtx, slopes, xOf, yOf, "#7c3aed", 2, false);
+  }
+
+  function render() {
+    const params = {
+      length: value("length"),
+      r0: value("r0"),
+      rEnd: value("rEnd"),
+      alpha0: value("alpha0"),
+      alpha: value("alpha"),
+      conicLength: value("conicLength"),
+      exitAngle: value("exitAngle"),
+      k: value("k"),
+      q: 0.995,
+      n: value("n"),
+      sMin: value("sMin"),
+      sMax: value("sMax"),
+    };
+    const osseStartRadius = conicExitRadius(params);
+    const unit = terminationRadius(params.length, params.length, 1, params.q, params.n);
+    const growth = Math.max(params.rEnd - osseStartRadius, 1e-12);
+    const endpointSolvedS = solvedS(params);
+    const s = endpointSolvedS;
+    const plotS = Number.isFinite(s) ? s : 0;
+    const solved = sample(params, plotS);
+    const zeroS = sample(params, 0);
+    const conic = conicSample(params);
+    const chord = [{ z: 0, r: osseStartRadius }, { z: params.length, r: params.rEnd }];
+    const allR = [params.rEnd, params.r0, osseStartRadius, ...solved.map(p => p.r), ...zeroS.map(p => p.r), ...conic.map(p => p.r)];
+    const rMax = Math.max(...allR) * 1.08;
+    const zMin = -params.conicLength;
+    const zMax = params.length;
+    const roundoverPercent = 100 * (s * unit) / growth;
+    const invalid = !Number.isFinite(s) || solved.some(p => !Number.isFinite(p.r)) || s < params.sMin || s > params.sMax;
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(600, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(360, Math.floor(rect.height * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const width = rect.width;
+    const height = rect.height;
+    ctx.clearRect(0, 0, width, height);
+
+    const pad = { left: 64, right: 28, top: 26, bottom: 58 };
+    const plotW = width - pad.left - pad.right;
+    const plotH = height - pad.top - pad.bottom;
+    const xOf = z => pad.left + ((z - zMin) / (zMax - zMin)) * plotW;
+    const yOf = r => pad.top + (1 - r / rMax) * plotH;
+
+    drawAxes(xOf, yOf, params, rMax, zMin, zMax);
+    drawLine(ctx, chord, xOf, yOf, "#8a8f94", 1.3, true);
+    drawLine(ctx, conic, xOf, yOf, "#334155", 2.6, false);
+    drawLine(ctx, zeroS, xOf, yOf, "#b45309", 2, true);
+    drawLine(ctx, solved, xOf, yOf, invalid ? "#b91c1c" : "#0f766e", 3, false);
+
+    ctx.save();
+    ctx.fillStyle = "#222426";
+    ctx.font = "14px system-ui, sans-serif";
+    ctx.fillText("fixed endpoint OS-SE family member", pad.left, 20);
+    ctx.restore();
+
+    const mouthSlope = derivative(solved, solved.length - 2);
+    const tangent = Math.atan(mouthSlope) * 180 / Math.PI;
+    const curvature = curvatureStats(solved);
+    const centroidPct = 100 * curvature.centroid / params.length;
+
+    metrics.s.textContent = format(s, 5);
+    metrics.roundover.textContent = `${format(roundoverPercent, 4)}%`;
+    metrics.tangent.textContent = `${format(tangent, 4)} deg`;
+    metrics.curvature.textContent = format(curvature.max, 4);
+    metrics.centroid.textContent = `${format(centroidPct, 4)}% L`;
+    drawDerivativePlot(solved, params);
+
+    statusEl.classList.toggle("invalid", invalid);
+    if (!Number.isFinite(s)) {
+      statusEl.textContent = "Invalid: could not solve S for these parameters.";
+    } else if (s < params.sMin || s > params.sMax) {
+      statusEl.textContent = `Invalid under current S bounds: solved S ${format(s, 5)} is outside ${params.sMin}..${params.sMax}.`;
+    } else if (solved.some(p => p.r < 0)) {
+      statusEl.textContent = "Warning: solved curve has negative radius in part of the profile.";
+    } else {
+      statusEl.textContent = "Valid under current S bounds. Endpoint is fixed by solving S.";
+    }
+  }
+
+  render();
+</script>
+</body>
+</html>

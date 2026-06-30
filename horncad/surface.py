@@ -16,7 +16,17 @@ _CACHE_DIR.mkdir(parents=True, exist_ok=True)
 os.environ.setdefault("MPLCONFIGDIR", str(_CACHE_DIR))
 os.environ.setdefault("XDG_CACHE_HOME", str(_CACHE_DIR))
 
-from horncad.config import ConfigError, dump_config, load_project
+from horncad.config import (
+    ConfigError,
+    dump_config,
+    load_project,
+    morph_rate,
+    profile_coverage,
+    profile_k,
+    profile_n,
+    profile_q,
+    refinement_s_bounds,
+)
 from horncad.profile import (
     DerivedConfig,
     FeasibilityIssue,
@@ -26,6 +36,7 @@ from horncad.profile import (
     setback_from_radius,
     termination_radius,
 )
+from horncad.sampling import adaptive_closed_angles, adaptive_stations
 
 
 @dataclass(frozen=True)
@@ -73,6 +84,12 @@ class SurfaceResult:
     area_fit: AreaFit
     issues: List[FeasibilityIssue]
     shared_section_length: float
+
+
+@dataclass(frozen=True)
+class ReferenceAcousticValues:
+    coverage_deg: float
+    k: float
 
 
 def generate_surface_review(project_path: Path, output_dir: Path | None = None) -> Dict[str, Path]:
@@ -131,39 +148,82 @@ def generate_inside_surface(config: Mapping[str, Any], target_config: Mapping[st
 
 
 def solve_radial_curves(config: Mapping[str, Any], derived: DerivedConfig) -> List[RadialCurve]:
-    count = int(config["resolution"]["angular_segments"])
     curves: List[RadialCurve] = []
-    for index in range(count):
-        p = 2.0 * math.pi * index / count
-        boundary_distance = superellipse_boundary_distance(config, derived, p)
-        boundary_x = boundary_distance * math.cos(p)
-        boundary_y = boundary_distance * math.sin(p)
-        curvature_setback = mouth_curvature_setback(config, derived, boundary_x, boundary_y)
-        local_length = float(config["length"]["max"]) - curvature_setback
-        coverage = interpolate_principal_value(
-            float(config["profiles"]["horizontal"]["coverage"]),
-            float(config["profiles"]["vertical"]["coverage"]),
-            p,
-        )
-        k = interpolate_principal_value(
-            float(config["profiles"]["horizontal"]["k"]),
-            float(config["profiles"]["vertical"]["k"]),
-            p,
-        )
-        curve = solve_radial_curve(
-            config=config,
-            derived=derived,
-            p_deg=math.degrees(p),
-            boundary_x=boundary_x,
-            boundary_y=boundary_y,
-            boundary_distance=boundary_distance,
-            curvature_setback=curvature_setback,
-            local_length=local_length,
-            coverage_deg=coverage,
-            k=k,
-        )
-        curves.append(curve)
+    for p in radial_sample_angles(config, derived):
+        curves.append(radial_curve_at_angle(config, derived, p))
     return curves
+
+
+def radial_curve_at_angle(config: Mapping[str, Any], derived: DerivedConfig, p: float) -> RadialCurve:
+    boundary_distance = superellipse_boundary_distance(config, derived, p)
+    boundary_x = boundary_distance * math.cos(p)
+    boundary_y = boundary_distance * math.sin(p)
+    curvature_setback = mouth_curvature_setback(config, derived, boundary_x, boundary_y)
+    local_length = float(config["length"]["max"]) - curvature_setback
+    coverage = interpolate_principal_value(
+        profile_coverage(config, "horizontal"),
+        profile_coverage(config, "vertical"),
+        p,
+    )
+    k = interpolate_principal_value(
+        profile_k(config, "horizontal"),
+        profile_k(config, "vertical"),
+        p,
+    )
+    return solve_radial_curve(
+        config=config,
+        derived=derived,
+        p_deg=math.degrees(p),
+        boundary_x=boundary_x,
+        boundary_y=boundary_y,
+        boundary_distance=boundary_distance,
+        curvature_setback=curvature_setback,
+        local_length=local_length,
+        coverage_deg=coverage,
+        k=k,
+    )
+
+
+def radial_sample_angles(config: Mapping[str, Any], derived: DerivedConfig) -> List[float]:
+    count = int(config["resolution"]["angular_segments"])
+    return snap_cardinal_angles(adaptive_closed_angles(
+        count,
+        lambda p: boundary_point_at_angle(config, derived, p),
+        forced_quadrant_angles=corner_anchor_angles(config, derived),
+    ))
+
+
+def snap_cardinal_angles(angles: Sequence[float]) -> List[float]:
+    snapped = []
+    cardinals = (0.0, math.pi / 2.0, math.pi, 3.0 * math.pi / 2.0)
+    for angle in angles:
+        snapped.append(min(cardinals, key=lambda cardinal: abs(angle - cardinal)) if any(abs(angle - cardinal) < 1e-9 for cardinal in cardinals) else angle)
+    return sorted(set(snapped))
+
+
+def boundary_point_at_angle(config: Mapping[str, Any], derived: DerivedConfig, p: float) -> tuple[float, float]:
+    boundary_distance = superellipse_boundary_distance(config, derived, p)
+    return boundary_distance * math.cos(p), boundary_distance * math.sin(p)
+
+
+def corner_anchor_angles(config: Mapping[str, Any], derived: DerivedConfig) -> List[float]:
+    shape_type = config["mouth"]["shape"]["type"]
+    corner_radius = config["mouth"]["shape"].get("corner_radius")
+    if shape_type not in {"rectangle", "rounded_rectangle"} or corner_radius is None:
+        return []
+    r = float(corner_radius)
+    a = derived.mouth_half_width
+    b = derived.mouth_half_height
+    if r <= 0.0 or r >= min(a, b):
+        return []
+
+    corner_center_x = a - r
+    corner_center_y = b - r
+    arc_angles = [math.radians(value) for value in (0.0, 22.5, 45.0, 67.5, 90.0)]
+    return [
+        math.atan2(corner_center_y + r * math.sin(angle), corner_center_x + r * math.cos(angle))
+        for angle in arc_angles
+    ]
 
 
 def solve_radial_curve(
@@ -178,9 +238,9 @@ def solve_radial_curve(
     coverage_deg: float,
     k: float,
 ) -> RadialCurve:
-    q = float(config["osse"]["q"])
-    n = float(config["osse"]["n"])
-    lower_s, upper_s = [float(value) for value in config["osse"]["s_bounds"]]
+    q = profile_q(config)
+    n = profile_n(config)
+    lower_s, upper_s = refinement_s_bounds(config)
     profile_length = local_length - derived.l_conic
     issues: List[FeasibilityIssue] = []
 
@@ -203,7 +263,7 @@ def solve_radial_curve(
             profile_length,
             derived.r_conic_exit,
             derived.alpha_exit_deg,
-            coverage_deg / 2.0,
+            coverage_deg,
             k,
             0.0,
             q,
@@ -216,7 +276,7 @@ def solve_radial_curve(
             profile_length,
             derived.r_conic_exit,
             derived.alpha_exit_deg,
-            coverage_deg / 2.0,
+            coverage_deg,
             k,
             min(max(solved_s, lower_s), upper_s),
             q,
@@ -262,10 +322,14 @@ def generate_sections(
     section_length = shared_section_length(curves)
     target_config = target_config if target_config is not None else config
     target_derived = target_derived if target_derived is not None else derived
+    z_values = adaptive_stations(
+        section_length,
+        count,
+        lambda z: reference_radius_at_z(target_config, target_derived, z),
+    )
     sections: List[SectionSample] = []
-    for index in range(count + 1):
+    for index, z_ref in enumerate(z_values):
         station = index / count
-        z_ref = station * section_length
         morph_weight = morph_weight_at_z(config, z_ref, length_max)
         round_radius = reference_radius_at_z(target_config, target_derived, z_ref)
         points = []
@@ -314,11 +378,11 @@ def radial_curve_distance_at_z(
         curve.profile_length,
         derived.r_conic_exit,
         derived.alpha_exit_deg,
-        curve.coverage_deg / 2.0,
+        curve.coverage_deg,
         curve.k,
         curve.solved_s,
-        float(config["osse"]["q"]),
-        float(config["osse"]["n"]),
+        profile_q(config),
+        profile_n(config),
     )
 
 
@@ -329,25 +393,18 @@ def reference_radius_at_z(config: Mapping[str, Any], derived: DerivedConfig, z_g
         return derived.r0 + z_global * math.tan(math.radians(derived.alpha_exit_deg))
 
     z_profile = z_global - derived.l_conic
-    coverage_ref = (
-        float(config["profiles"]["horizontal"]["coverage"])
-        + float(config["profiles"]["vertical"]["coverage"])
-    ) / 2.0
-    k_ref = (
-        float(config["profiles"]["horizontal"]["k"])
-        + float(config["profiles"]["vertical"]["k"])
-    ) / 2.0
+    reference = equivalent_round_reference_values(config, derived)
     target_area = mouth_area(config, derived)
     target_radius = math.sqrt(target_area / math.pi)
-    q = float(config["osse"]["q"])
-    n = float(config["osse"]["n"])
+    q = profile_q(config)
+    n = profile_n(config)
     base_distance = osse_radius(
         profile_length,
         profile_length,
         derived.r_conic_exit,
         derived.alpha_exit_deg,
-        coverage_ref / 2.0,
-        k_ref,
+        reference.coverage_deg,
+        reference.k,
         0.0,
         q,
         n,
@@ -359,12 +416,33 @@ def reference_radius_at_z(config: Mapping[str, Any], derived: DerivedConfig, z_g
         profile_length,
         derived.r_conic_exit,
         derived.alpha_exit_deg,
-        coverage_ref / 2.0,
-        k_ref,
+        reference.coverage_deg,
+        reference.k,
         s_ref,
         q,
         n,
     )
+
+
+def equivalent_round_reference_values(config: Mapping[str, Any], derived: DerivedConfig) -> ReferenceAcousticValues:
+    count = int(config["resolution"]["angular_segments"])
+    coverage_h = profile_coverage(config, "horizontal")
+    coverage_v = profile_coverage(config, "vertical")
+    k_h = profile_k(config, "horizontal")
+    k_v = profile_k(config, "vertical")
+    weighted_coverage = 0.0
+    weighted_k = 0.0
+    total_weight = 0.0
+    for index in range(count):
+        p = 2.0 * math.pi * index / count
+        boundary_distance = superellipse_boundary_distance(config, derived, p)
+        weight = boundary_distance * boundary_distance
+        weighted_coverage += interpolate_principal_value(coverage_h, coverage_v, p) * weight
+        weighted_k += interpolate_principal_value(k_h, k_v, p) * weight
+        total_weight += weight
+    if total_weight == 0.0:
+        return ReferenceAcousticValues((coverage_h + coverage_v) / 2.0, (k_h + k_v) / 2.0)
+    return ReferenceAcousticValues(weighted_coverage / total_weight, weighted_k / total_weight)
 
 
 def plotted_target_area_normalizer(sections: Sequence[SectionSample]) -> float:
@@ -376,7 +454,7 @@ def plotted_target_area_normalizer(sections: Sequence[SectionSample]) -> float:
 
 def morph_weight_at_z(config: Mapping[str, Any], z: float, length_max: float) -> float:
     start = float(config["morph"]["start"])
-    rate = float(config["morph"]["rate"])
+    rate = morph_rate(config)
     if z <= start:
         return 0.0
     if length_max <= start:
@@ -583,7 +661,7 @@ def _write_surface_report(
         "",
         "## Area Expansion",
         "",
-        "- Target: mean H/V circular OS-SE reference",
+        "- Target: polar-area-weighted circular OS-SE reference",
         "- Section basis: closed constant-z sections over the shared radial-curve length",
         f"- Shared section length: {result.shared_section_length:.6g} mm",
         f"- Area fit score: {fit.score:.6g}",
@@ -599,7 +677,7 @@ def _write_surface_report(
         f"- Section samples: {len(result.sections)}",
         f"- Output scope: {config['outputs']['scope']}",
         f"- Morph start: {float(config['morph']['start']):.6g} mm",
-        f"- Morph rate: {float(config['morph']['rate']):.6g}",
+        f"- Morph rate: {morph_rate(config):.6g}",
         "",
         "## Warnings And Infeasible Conditions",
         "",

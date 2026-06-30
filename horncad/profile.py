@@ -6,6 +6,15 @@ from dataclasses import dataclass
 import math
 from typing import Any, Dict, List, Mapping, Tuple
 
+from horncad.config import (
+    profile_coverage,
+    profile_k,
+    profile_n,
+    profile_q,
+    refinement_s_bounds,
+)
+from horncad.sampling import adaptive_stations
+
 
 @dataclass(frozen=True)
 class DerivedConfig:
@@ -40,6 +49,8 @@ class ProfileResult:
     axis: str
     coverage_deg: float
     k: float
+    q: float
+    n: float
     target_boundary_distance: float
     local_length: float
     profile_length: float
@@ -54,15 +65,46 @@ class ProfileResult:
         return [issue.message for issue in self.issues]
 
 
+@dataclass(frozen=True)
+class RoundoverMetrics:
+    roundover_contribution_percent: float
+
+
+def roundover_metrics(profile: ProfileResult) -> RoundoverMetrics:
+    start_radius = profile.points[0].radius if profile.points else 0.0
+    end_radius = profile.target_boundary_distance
+    return RoundoverMetrics(
+        roundover_contribution_percent=_roundover_contribution_percent(profile, start_radius, end_radius),
+    )
+
+
+def _roundover_contribution_percent(
+    profile: ProfileResult,
+    start_radius: float,
+    end_radius: float,
+) -> float:
+    total_growth = end_radius - start_radius
+    if total_growth <= 0.0 or profile.profile_length <= 0.0:
+        return 0.0
+    contribution = profile.solved_s * termination_radius(
+        profile.profile_length,
+        profile.profile_length,
+        1.0,
+        profile.q,
+        profile.n,
+    )
+    return max(0.0, min(100.0, 100.0 * contribution / total_growth))
+
+
 def derive_config(config: Mapping[str, Any]) -> DerivedConfig:
     throat = config["throat"]
     mouth = config["mouth"]
     curvature = mouth["curvature"]
 
     r0 = float(throat["diameter"]) / 2.0
-    alpha0_deg = float(throat["angle"]) / 2.0
+    alpha0_deg = float(throat["angle"])
     l_conic = float(throat["conic_extension"]["length"])
-    alpha_exit_deg = float(throat["conic_extension"]["exit_angle"]) / 2.0
+    alpha_exit_deg = alpha0_deg if l_conic == 0.0 else float(throat["conic_extension"]["exit_angle"])
     r_conic_exit = r0 + l_conic * math.tan(math.radians(alpha_exit_deg))
     mouth_half_width = float(mouth["width"]) / 2.0
     mouth_half_height = float(mouth["height"]) / 2.0
@@ -116,13 +158,11 @@ def solve_profile(
     target_boundary_distance: float,
     local_length: float,
 ) -> ProfileResult:
-    profile = config["profiles"][axis]
-    coverage_deg = float(profile["coverage"])
-    k = float(profile["k"])
-    q = float(config["osse"]["q"])
-    n = float(config["osse"]["n"])
-    s_bounds = config["osse"]["s_bounds"]
-    lower_s, upper_s = float(s_bounds[0]), float(s_bounds[1])
+    coverage_deg = profile_coverage(config, axis)
+    k = profile_k(config, axis)
+    q = profile_q(config)
+    n = profile_n(config)
+    lower_s, upper_s = refinement_s_bounds(config)
     length_segments = int(config["resolution"]["length_segments"])
     profile_length = local_length - derived.l_conic
     issues: List[FeasibilityIssue] = []
@@ -146,6 +186,8 @@ def solve_profile(
             axis=axis,
             coverage_deg=coverage_deg,
             k=k,
+            q=q,
+            n=n,
             target_boundary_distance=target_boundary_distance,
             local_length=local_length,
             profile_length=profile_length,
@@ -161,7 +203,7 @@ def solve_profile(
         profile_length,
         derived.r_conic_exit,
         derived.alpha_exit_deg,
-        coverage_deg / 2.0,
+        coverage_deg,
         k,
         0.0,
         q,
@@ -203,6 +245,8 @@ def solve_profile(
         axis=axis,
         coverage_deg=coverage_deg,
         k=k,
+        q=q,
+        n=n,
         target_boundary_distance=target_boundary_distance,
         local_length=local_length,
         profile_length=profile_length,
@@ -225,8 +269,8 @@ def sample_profile(
     s: float,
 ) -> List[ProfilePoint]:
     length_segments = int(config["resolution"]["length_segments"])
-    q = float(config["osse"]["q"])
-    n = float(config["osse"]["n"])
+    q = profile_q(config)
+    n = profile_n(config)
     points: List[ProfilePoint] = []
 
     conic_count = max(2, int(round(length_segments * derived.l_conic / max(local_length, 1.0))) + 1)
@@ -239,17 +283,31 @@ def sample_profile(
         points.append(ProfilePoint(axis=axis, z=0.0, radius=derived.r0, segment="osse"))
 
     osse_count = max(2, length_segments - len(points) + 2)
-    for index in range(osse_count):
+    stations = adaptive_stations(
+        profile_length,
+        osse_count - 1,
+        lambda z: osse_radius(
+            z,
+            profile_length,
+            derived.r_conic_exit,
+            derived.alpha_exit_deg,
+            coverage_deg,
+            k,
+            s,
+            q,
+            n,
+        ),
+    )
+    for index, z_local in enumerate(stations):
         if index == 0 and derived.l_conic > 0.0:
             continue
-        z_local = profile_length * index / (osse_count - 1)
         z_global = derived.l_conic + z_local
         radius = osse_radius(
             z_local,
             profile_length,
             derived.r_conic_exit,
             derived.alpha_exit_deg,
-            coverage_deg / 2.0,
+            coverage_deg,
             k,
             s,
             q,

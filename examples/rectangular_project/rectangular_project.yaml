@@ -9,10 +9,10 @@ units:
 
 throat:
   diameter: 25.4
-  angle: 10.0                 # Full included angle. Valid range: 0..90.
+  angle: 5.0                  # Half-angle. Valid range: 0..90.
   conic_extension:
     length: 12.0              # Starts at throat radius r0.
-    exit_angle: 14.0          # Full included angle. Defaults to throat.angle.
+    exit_angle: 7.0           # Half-angle. Defaults to throat.angle.
 
 mouth:
   width: 380.0
@@ -30,34 +30,44 @@ length:
   max: 150.0                  # Centerline depth before mouth curvature setback.
 
 profiles:
-  horizontal:
-    coverage: 50.0            # Full included coverage angle.
-    k: 1.0                    # Valid range: 0..10.
-    s_initial: null           # Usually solved per radial direction.
-  vertical:
-    coverage: 31.0
-    k: 1.0
-    s_initial: null
-
-osse:
-  solve: s                    # M1 solves S for boundary fit; M2 solves S(p).
-  s_bounds: [0.0, 4.0]
-  q: 0.995                    # Valid range: 0.99..1.00.
-  n: 3.0                      # Valid range: 2..10.
+  coverage:
+    horizontal: 50.0          # OS-SE coverage half-angle; fixed author intent.
+    vertical: 31.0
+  roundover:
+    horizontal:
+      target_percent: 30.0
+      tolerance_percent: 5.0
+    vertical:
+      target_percent: 30.0
+      tolerance_percent: 5.0
+  k:
+    horizontal:
+      seed: 1.0
+      bounds: [0.8, 1.6]
+    vertical:
+      seed: 1.0
+      bounds: [0.8, 1.6]
+  q:
+    seed: 0.995
+    bounds: [0.99, 1.0]
+  n:
+    seed: 3.0
+    bounds: [2.0, 10.0]
 
 morph:
   start: 0.0                  # Physical z distance where morph begins.
-  rate: 2.0                   # Morph rate / transition aggressiveness.
-  area_target: equivalent_round_mouth # Used for downstream area-expansion checks.
+  rate:
+    seed: 2.0                 # Morph rate / transition aggressiveness.
+    bounds: [0.25, 4.0]
 
 refinement:
-  solve: [morph_rate, n, q]    # M3 searches these while keeping K fixed.
-  morph_rate_bounds: [0.25, 8.0]
-  n_bounds: [2.0, 10.0]
-  q_bounds: [0.99, 1.0]
+  s_bounds: [0.0, 4.0]        # Internal solved-S validity rail.
   area_rms_log_tolerance: 0.05
   smoothness_weight: 2.0      # Penalizes abrupt area-curve derivative changes.
   max_log_area_slope_change: 0.01
+  morph_timing_weight: 0.05   # Penalizes delaying most morphing until the mouth.
+  morph_50_percent_max_z: 0.85
+  k_drift_weight: 0.1         # Penalizes K movement away from authored seeds.
   s_span_weight: 0.2          # Penalizes S spread beyond design-scaled expectation.
   s_smoothness_weight: 0.2    # Penalizes abrupt S changes over p.
   max_profile_slope_change: 2.0

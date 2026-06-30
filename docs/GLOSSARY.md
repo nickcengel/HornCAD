@@ -115,10 +115,26 @@ One of the two M1 diagnostic OS-SE curves:
 M1 uses these to inspect boundary fitting and profile shape before generating
 the full radial curve family.
 
+### Roundover Contribution %
+
+Percentage of total radial growth contributed by the OS-SE terminal shaping
+term `S`. HornCAD compares the solved profile to the same OS-SE equation with
+`S = 0`.
+
+`0%` means the profile reaches the mouth through the base OS-SE/conic-like term
+without terminal shaping. Larger values mean more of the final mouth radius is
+provided by `S`.
+
 ### Radial Curve
 
 An OS-SE-derived curve for one throat-radial angle `p`. M2 generates the full
 family of radial curves.
+
+Radial-curve `p` samples are adaptive: `resolution.angular_segments` is a
+segment budget, and samples are denser where the mouth boundary changes faster.
+Rounded-rectangle mouths force profiles at the start of the corner radius,
+through the radius, and at the end of the corner radius, so the H/V transition
+is not left to incidental adaptive placement.
 
 ### Section
 
@@ -130,6 +146,9 @@ For a curved mouth, constant-`z` sections are only closed while all radial curve
 still exist at that `z`. M2 area diagnostics use this shared closed-section
 interval and do not invent closed sections after some radial directions have
 already reached the mouth.
+
+Section `z` samples are adaptive: `resolution.length_segments` is a segment
+budget, and samples are denser where the reference radius changes faster.
 
 ### Output Scope
 
@@ -155,7 +174,7 @@ Examples:
 
 - mouth boundary distance at a given throat-radial angle
 - target area curve for area-expansion checks
-- configured bounds such as `osse.s_bounds`
+- profile roundover contribution target
 
 A target is not necessarily an optimization objective by itself.
 
@@ -165,7 +184,7 @@ A rule that a valid project or solved value must satisfy.
 
 Examples:
 
-- `S` must stay within `osse.s_bounds`
+- solved internal `S` must stay within `refinement.s_bounds`
 - mouth curvature radius must be large enough for the configured mouth size
 - conic extension must leave positive OS-SE profile length
 
@@ -179,13 +198,14 @@ Current M1 solve variable:
 
 Current M3 candidate variables:
 
-- `morph.rate`
+- `morph.rate.seed`
 - `N`
 - `Q`
+- `K`, if horizontal or vertical `K` bounds have span
 
-Current fixed OS-SE parameter:
+Current fixed profile parameter:
 
-- `K`
+- coverage, which is authored intent and does not mutate
 
 Future milestones may allow additional solve variables, but only when the
 objective supplies enough constraints to make the solution meaningful.
@@ -210,14 +230,33 @@ If two solve variables are free, one scalar objective such as boundary fit is
 not enough. For example, solving both `S` and `K` against only boundary distance
 is underconstrained because many pairs can hit the same boundary distance.
 
-M3 treats mouth boundary fit as a hard constraint and area expansion as the
-optimization objective. For every candidate `morph.rate`, `N`, and `Q`, it
-recomputes `S(p)` so the candidate still reaches the mouth boundary.
+M3 treats mouth boundary fit as a hard constraint and area expansion as an
+optimization objective. Candidate variables are derived from seeded parameter
+bounds: a parameter is searched when its lower and upper bounds differ. For
+every candidate, HornCAD recomputes internal `S(p)` so the candidate still
+reaches the mouth boundary.
 
 M3 uses the candidate's equivalent round OS-SE reference as the target area
 curve. If a candidate moves `Q` or `N`, its target round reference moves with
 it. The objective is still meaningful because the candidate rectangular surface
 is compared to the equivalent round surface, not to itself.
+
+M3 also penalizes delayed morph timing. The current timing diagnostic is `z50`,
+the fraction of horn length where `morph.weight` reaches 50%. The default
+objective discourages candidates whose `z50` lands after 85% of the length.
+
+### Morph Timing
+
+How quickly the closed sections transition from the equivalent round reference
+shape toward the target mouth shape.
+
+`morph.rate.seed` is an exponent. Higher values delay most of the transition
+toward the mouth. HornCAD reports:
+
+- `z50`: where morph weight reaches 50%
+- `z90`: where morph weight reaches 90%
+- `z50 limit`: latest preferred 50% morph point
+- excess `z50`: objective penalty input
 
 ### Effective Search Range
 
@@ -277,9 +316,9 @@ The desired cross-sectional area as a function of axial distance.
 Default from M2 onward:
 
 - compute a circular OS-SE reference horn
-- use mean horizontal/vertical acoustic values for the reference:
-  - mean coverage
-  - mean `K`
+- use polar-area-weighted horizontal/vertical acoustic values for the reference:
+  - sample coverage and `K` over throat-radial angle `p`
+  - weight each sample by `R_boundary(p)^2`
   - shared `Q`
   - shared `N`
 - solve the circular reference against an equivalent-area mouth
@@ -312,23 +351,24 @@ The mouth. It is not a user parameter.
 
 ### `K`
 
-Generalized OS profile parameter. Treat as authored acoustic character unless an
-explicit future solve mode allows it to move.
+Generalized OS profile parameter. HornCAD supports separate horizontal and
+vertical K seeds/bounds under `profiles.k.horizontal` and
+`profiles.k.vertical`.
 
 ### `S`
 
-Termination flare amount. M1 solves `S` for boundary fit while holding `K`,
-`Q`, and `N` fixed.
+Internal termination flare amount. HornCAD solves `S` for boundary fit while
+holding candidate `K`, `Q`, and `N` values fixed.
 
-In M3, `S(p)` is recomputed for every candidate. It is not treated as the sole
-area-expansion control.
+In M3, `S(p)` is recomputed for every radial curve in every candidate. It is
+not authored directly. `refinement.s_bounds` is the internal validity guardrail.
 
 ### `Q`
 
-Termination truncation coefficient. M3 may search this when `q` is listed in
-`refinement.solve`.
+Termination truncation coefficient. M3 searches this when `profiles.q.bounds`
+has span.
 
 ### `N`
 
-Superellipse termination exponent. M3 may search this when `n` is listed in
-`refinement.solve`.
+Superellipse termination exponent. M3 searches this when `profiles.n.bounds`
+has span.

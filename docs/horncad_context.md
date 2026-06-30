@@ -114,12 +114,13 @@ Optional:
 Derived:
 
 - `r0 = Throat.Diameter / 2`
-- `alpha0 = Throat.Angle / 2`
+- `alpha0 = Throat.Angle`
 - `L_conic = Throat.ConicExtensionLength`, or `0` if omitted
-- `alpha_exit = Throat.ConicExtensionExitAngle / 2`, or `alpha0` if no separate exit angle is specified
+- `alpha_exit = Throat.ConicExtensionExitAngle`, or `alpha0` if no separate exit angle is specified
 - `r_conic_exit = r0 + L_conic * tan(alpha_exit)`
 
-Use consistent angle conventions internally. The OS-SE equations use half-angles.
+All authored angle inputs are half-angles. The OS-SE equations use those
+half-angles directly.
 
 If no conic extension is requested, use:
 
@@ -219,7 +220,8 @@ M1/M2 behavior:
 M3 behavior:
 
 - mouth boundary fit is a hard constraint
-- `K` stays fixed
+- coverage stays fixed as author intent
+- `K` may move only when horizontal or vertical `K` bounds have span
 - `S(p)` is recomputed for every candidate
 - area expansion is the primary optimization objective
 - the target area curve is the candidate's equivalent round OS-SE reference
@@ -228,7 +230,8 @@ M3 behavior:
 - candidate ranges are scaled by mouth aspect ratio, H/V coverage delta, and
   initial area error, then clipped to global hard bounds
 - `S(p)` span and adjacent changes over `p` are penalized and reported
-- candidate search may move `morph.rate`, `N`, and `Q` when explicitly enabled
+- candidate search may move `morph.rate`, `N`, `Q`, and `K` when the
+  corresponding bounds have span
 
 Avoid moving `K`, `S`, `Q`, and `N` without enough constraints and good bounds.
 
@@ -250,7 +253,7 @@ N: 2 to 10
 
 Notes:
 
-- `Throat.Angle` and `Throat.ConicExtensionExitAngle` are full included angles in the UI.
+- `Throat.Angle` and `Throat.ConicExtensionExitAngle` are authored half-angles.
 - Internal OS-SE equations use half-angles.
 - Apply the same `K` bounds to `K_H`, `K_V`, and interpolated `K(p)`.
 - Apply the same `S`, `Q`, and `N` bounds to solved per-angle values and any advanced user overrides.
@@ -367,11 +370,14 @@ Meaning:
 - Smooth primitive regions, such as cylindrical mouth curvature, should not consume many points just because they are large.
 - Curved or high-acceleration profile regions should receive more points because they need more resolution to describe accurately.
 
-Implementation guidance:
+Current implementation:
 
-- Start with uniform sampling if needed for a first pass.
-- Keep the config names as segment budgets so an adaptive sampler can replace uniform sampling later without changing the project shape.
-- For adaptive sampling, distribute points according to local curve change, curvature, or chord-error tolerance.
+- Profile and section `z` samples are adaptive by curve/reference-radius change.
+- Angular radial-curve samples are adaptive by mouth-boundary change.
+- Rounded-rectangle mouths force radial profiles at the start of the corner
+  radius, through the radius, and at the end of the corner radius.
+- Keep the config names as segment budgets so sampling can change without
+  changing project shape.
 
 Default proposal:
 
@@ -490,7 +496,7 @@ transition immediately after the throat.
 User inputs:
 
 - `L_conic` = conic extension length
-- `Throat.ConicExtensionExitAngle` = conic extension exit full angle, converted internally to half-angle `alpha_exit`
+- `Throat.ConicExtensionExitAngle` = conic extension exit half-angle `alpha_exit`
 
 The conic extension starts at the throat:
 
@@ -764,11 +770,11 @@ Therefore it affects acoustic expansion.
 Default target:
 
 Use a circular OS-SE horn as the acoustic area reference. The reference horn
-uses the mean horizontal/vertical acoustic values:
+uses polar-area-weighted horizontal/vertical acoustic values:
 
 ```text
-coverage_ref = mean(coverage_h, coverage_v)
-k_ref        = mean(k_h, k_v)
+coverage_ref = sum(coverage(p) * R_boundary(p)^2) / sum(R_boundary(p)^2)
+k_ref        = sum(K(p) * R_boundary(p)^2) / sum(R_boundary(p)^2)
 q_ref        = q
 n_ref        = n
 ```
@@ -801,7 +807,7 @@ The goal is:
 
 # Choosing the Reference Round OS-SE Profile
 
-Use the mean H/V circular reference.
+Use the polar-area-weighted circular reference.
 
 Choose reference round mouth radius:
 
@@ -1128,7 +1134,7 @@ Interpolate `K` and `Coverage`.
 
 Solve `S(p)`.
 
-Compare actual section area to the mean H/V circular reference target.
+Compare actual section area to the polar-area-weighted circular reference target.
 
 ## Phase 4: Area-Aware Refinement
 
@@ -1337,14 +1343,15 @@ Example input configuration:
 
 See also:
 
+- `docs/design_flow.md` for the recommended normal design workflow and output-reading order.
 - `examples/test_project/test_project.yaml` for a fuller project-shape sketch with validation and output sections.
 
 ```yaml
 throat:
   diameter: 25.4
-  angle: 10.0
+  angle: 5.0
   conic_extension_length: 0.0
-  conic_extension_exit_angle: 10.0
+  conic_extension_exit_angle: 5.0
 
 mouth:
   width: 380.0
@@ -1357,22 +1364,39 @@ mouth:
 length:
   max: 150.0
 
-horizontal:
-  coverage: 50.0
-  k: 1.0
-
-vertical:
-  coverage: 31.0
-  k: 1.0
-
-osse:
-  q: 0.995
-  n: 3.0
-  solve: s
+profiles:
+  coverage:
+    horizontal: 50.0
+    vertical: 31.0
+  roundover:
+    horizontal:
+      target_percent: 30.0
+      tolerance_percent: 5.0
+    vertical:
+      target_percent: 30.0
+      tolerance_percent: 5.0
+  k:
+    horizontal:
+      seed: 1.0
+      bounds: [1.0, 1.0]
+    vertical:
+      seed: 1.0
+      bounds: [1.0, 1.0]
+  q:
+    seed: 0.995
+    bounds: [0.99, 1.0]
+  n:
+    seed: 3.0
+    bounds: [2.0, 10.0]
 
 morph:
   start: 0.0
-  rate: 2.0
+  rate:
+    seed: 2.0
+    bounds: [0.25, 4.0]
+
+refinement:
+  s_bounds: [0.0, 4.0]
 
 resolution:
   angular_segments: 96
