@@ -1,7 +1,6 @@
 # HornCAD Design Flow
 
-This flow is for normal design work. Comparison review is only for comparing
-finished candidates.
+This flow is for normal design work.
 
 ## 1. Author The Fixed Intent
 
@@ -11,26 +10,54 @@ Start with physical design intent:
 - optional conic extension length and exit angle
 - mouth width, height, shape, corner radius, and curvature sag/radius
 - horizontal and vertical OS-SE coverage half-angles
-- roundover contribution targets/tolerances
-- profile `K`, `Q`, and `N` seeds/bounds
-- morph rate seed/bounds and morph start
+- roundover contribution targets if used for reporting
+- profile `K` and `N` values
+- morph rate and morph start
+- `surface.mode`, normally `slice`
 - an initial `length.max`
 
-`length.max` is a real design value. Normal refinement should not move it
-silently.
+`length.max` is a real design value. The solver should not move it silently.
 
-When `K` bounds have span, K may participate in candidate search. K movement is
-penalized against the authored seeds so it is a useful lever, not a free one.
+In normal `slice` mode, HornCAD uses authored seed values directly and ignores
+search bounds. `Q` is fixed at `0.995`. `S` is solved internally and is not
+authored. If the H/V basis profiles or generated radial diagnostics require
+negative `S`, output generation fails instead of silently reversing the terminal
+roundover.
 
-## 2. Inspect Principal Profiles
+`profile` mode preserves the older radial-profile search path. In that mode,
+bounds can move `morph.rate`, H/V `N`, H/V `K`, and mouth sag when sag bounds
+have span.
+
+## 2. Generate Output
+
+Use:
+
+```bash
+python -m horncad.refine <project.yaml> --workers auto
+```
+
+HornCAD writes one project output directory beside the project file:
+
+- `output/{project_stem}_area_fit.png`
+- `output/{project_stem}_hv_profiles.png`
+- `output/{project_stem}_inside_surface.stl`
+- `output/{project_stem}_radial_plan.png`
+- `output/{project_stem}_radial_profiles.png`
+- `output/{project_stem}_report.md`
+
+The inside-surface STL is generated from the superellipse slice surface with
+terminal shape power 20 when `surface.mode: slice`. In `profile` mode, the STL
+is generated from the radial profile surface.
+
+## 3. Inspect Principal Profiles
 
 The first question is whether the horizontal and vertical master profiles are
 credible.
 
 Use:
 
-- `*_refined_principal_views.png`
-- `*_refinement_report.md`
+- `*_hv_profiles.png`
+- `*_report.md`
 
 Look at:
 
@@ -51,34 +78,33 @@ Interpretation:
 - roundover length guidance estimates the `length.max` needed for the current
   profile settings to hit the authored roundover target exactly.
 
-## 3. Inspect Area Behavior
+## 4. Inspect Area Behavior
 
 After principal profiles look plausible, inspect expansion behavior.
 
 Use:
 
-- `*_refined_area_fit.png`
-- area and smoothness tables in `*_refinement_report.md`
+- `*_area_fit.png`
+- area and smoothness tables in `*_report.md`
 
-This answers whether the candidate surface preserves the intended area
-expansion.
+This answers whether the output surface preserves the intended area expansion.
 
-## 4. Inspect Radial Distribution Only When Needed
+## 5. Inspect Radial Distribution Only When Needed
 
 Use these when debugging sampling or mouth-boundary behavior:
 
-- `*_refined_radial_plan.png`
-- `*_refined_radial_profiles.png`
+- `*_radial_plan.png`
+- `*_radial_profiles.png`
 
 These are secondary diagnostics. They are not the first place to judge the
 design.
 
-## 5. Iterate Explicitly
+## 6. Iterate Explicitly
 
 Typical loop:
 
 1. Author geometry and initial `length.max`.
-2. Run refinement.
+2. Generate output.
 3. Inspect H/V roundover contribution and internal solved `S`.
 4. Check roundover length guidance.
 5. Revise `length.max`, roundover targets, or profile seeds/bounds explicitly.
@@ -89,7 +115,24 @@ Typical loop:
 Future length analysis should estimate the `length.max` required for a target
 roundover contribution, but it should initially be report-only.
 
-## 6. Run Commands
+## Future Surface-Normal Diagnostics
+
+Area and radial-profile plots can miss surface artifacts. A design can have
+reasonable section area while the surface normals twist, bunch, or change exit
+tangent abruptly. Future diagnostics should treat the horn as a parametric surface
+`S(u, v)` and inspect normal-vector behavior:
+
+- adjacent normal angle change along `z`
+- adjacent normal angle change around each section
+- second differences of normals to catch local lumps
+- exit-normal deviation from the intended mouth tangent field
+- corner-localized curvature and normal concentration
+
+These diagnostics should be considered before using acoustic simulation results
+as optimizer feedback, because they describe whether the generated surface is
+geometrically coherent enough to be worth simulating.
+
+## 7. Run Commands
 
 Use `<project.yaml>` as the project file path placeholder.
 
@@ -99,29 +142,17 @@ Validate and print the resolved configuration:
 python -m horncad.config <project.yaml>
 ```
 
-Generate the M1 design review:
-
-```bash
-python -m horncad.design_review <project.yaml>
-```
-
-Generate the M3 refinement review with all available CPU workers:
+Generate project output with all available CPU workers:
 
 ```bash
 python -m horncad.refine <project.yaml> --workers auto
 ```
 
-Run refinement in a single process for debugging:
+Run project output in a single process for debugging:
 
 ```bash
 python -m horncad.refine <project.yaml> --workers 1
 ```
 
-Run benchmark scorecards for one or more projects:
-
-```bash
-python -m horncad.benchmark <project.yaml> --workers auto -o scorecard.csv
-```
-
-Refinement candidate evaluation supports multiprocessing. Use `--workers auto`
+Candidate evaluation supports multiprocessing. Use `--workers auto`
 for full runs and `--workers 1` for deterministic single-process debugging.

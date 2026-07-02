@@ -184,7 +184,7 @@ A rule that a valid project or solved value must satisfy.
 
 Examples:
 
-- solved internal `S` must stay within `refinement.s_bounds`
+- mouth boundary fit must close at the configured mouth
 - mouth curvature radius must be large enough for the configured mouth size
 - conic extension must leave positive OS-SE profile length
 
@@ -192,20 +192,28 @@ Examples:
 
 A parameter the program is allowed to change to satisfy an objective.
 
-Current M1 solve variable:
+Current direct solve variable:
 
 - `S`
 
-Current M3 candidate variables:
+Current `slice` mode behavior:
+
+- authored H/V coverage, `K`, and `N` seed values are used directly
+- bounds are ignored
+- `S` is solved internally
+- the inside surface is generated from superellipse slices
+
+Current `profile` mode search variables:
 
 - `morph.rate.seed`
-- `N`
-- `Q`
+- horizontal and vertical `N`
 - `K`, if horizontal or vertical `K` bounds have span
+- mouth sag, only when `mouth.curvature.sag_bounds` has span
 
 Current fixed profile parameter:
 
 - coverage, which is authored intent and does not mutate
+- `Q`, fixed at `0.995`
 
 Future milestones may allow additional solve variables, but only when the
 objective supplies enough constraints to make the solution meaningful.
@@ -230,20 +238,21 @@ If two solve variables are free, one scalar objective such as boundary fit is
 not enough. For example, solving both `S` and `K` against only boundary distance
 is underconstrained because many pairs can hit the same boundary distance.
 
-M3 treats mouth boundary fit as a hard constraint and area expansion as an
-optimization objective. Candidate variables are derived from seeded parameter
-bounds: a parameter is searched when its lower and upper bounds differ. For
-every candidate, HornCAD recomputes internal `S(p)` so the candidate still
-reaches the mouth boundary.
+HornCAD treats mouth boundary fit as a hard constraint and area expansion as a
+reported diagnostic. In normal `slice` mode, HornCAD does not search bounds; it
+uses authored seed values directly. In `profile` mode, search variables are
+derived from seeded parameter bounds: a parameter is searched when its lower and
+upper bounds differ. For every searched design, HornCAD recomputes internal
+`S(p)` so the design still reaches the mouth boundary.
 
-M3 uses the candidate's equivalent round OS-SE reference as the target area
-curve. If a candidate moves `Q` or `N`, its target round reference moves with
-it. The objective is still meaningful because the candidate rectangular surface
-is compared to the equivalent round surface, not to itself.
+HornCAD uses each searched design's equivalent round OS-SE reference as the
+area comparison curve. The rectangular surface is compared to the equivalent
+round surface; the area curve is not itself the final authority for directivity.
 
-M3 also penalizes delayed morph timing. The current timing diagnostic is `z50`,
-the fraction of horn length where `morph.weight` reaches 50%. The default
-objective discourages candidates whose `z50` lands after 85% of the length.
+HornCAD also penalizes delayed morph timing. The current timing diagnostic is
+`z50`, the fraction of horn length where `morph.weight` reaches 50%. The
+default objective discourages designs whose `z50` lands after 85% of the
+length.
 
 ### Morph Timing
 
@@ -260,7 +269,7 @@ toward the mouth. HornCAD reports:
 
 ### Effective Search Range
 
-Project-specific range used by M3 for candidate search. It is centered on the
+Project-specific range used for design search. It is centered on the
 authored/default value, widened by the design difficulty, and clipped to global
 hard bounds.
 
@@ -272,7 +281,7 @@ Design difficulty currently uses:
 
 ### `S(p)` Smoothness
 
-How smoothly solved `S` changes around throat-radial angle `p`. M3 reports
+How smoothly solved `S` changes around throat-radial angle `p`. HornCAD reports
 overall `S` span, expected `S` span, excess span, RMS deviation, and max
 adjacent `S` change. Expected `S` span scales with mouth aspect ratio and H/V
 coverage delta.
@@ -299,13 +308,13 @@ M2 uses closed constant-`z` sections over the shared radial-curve length.
 
 ### Area Smoothness
 
-Derivative continuity of the area curve. M3 reports max log-area slope change
+Derivative continuity of the area curve. HornCAD reports max log-area slope change
 between adjacent section intervals so abrupt kinks are visible even when RMS
 area error is low.
 
 ### Profile Smoothness
 
-Derivative continuity of the principal H/V profiles. M3 reports max adjacent
+Derivative continuity of the principal H/V profiles. HornCAD reports max adjacent
 profile slope change and penalizes excess change so endpoint kinks cannot hide
 behind a good area score.
 
@@ -358,17 +367,18 @@ vertical K seeds/bounds under `profiles.k.horizontal` and
 ### `S`
 
 Internal termination flare amount. HornCAD solves `S` for boundary fit while
-holding candidate `K`, `Q`, and `N` values fixed.
+holding candidate `K` and `N` values fixed with `Q = 0.995`.
 
-In M3, `S(p)` is recomputed for every radial curve in every candidate. It is
-not authored directly. `refinement.s_bounds` is the internal validity guardrail.
+In output search, `S(p)` is recomputed for every radial curve in every searched design. It is
+not authored directly and is not bounded in the project spec.
 
 ### `Q`
 
-Termination truncation coefficient. M3 searches this when `profiles.q.bounds`
-has span.
+Termination truncation coefficient. HornCAD fixes this at `0.995`.
 
 ### `N`
 
-Superellipse termination exponent. M3 searches this when `profiles.n.bounds`
-has span.
+Superellipse termination exponent. HornCAD supports separate horizontal and
+vertical N seeds/bounds under `profiles.n.horizontal` and
+`profiles.n.vertical`. HornCAD searches each axis when its bounds have span. The
+supported authored range is `2..100`.

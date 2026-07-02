@@ -11,7 +11,6 @@ from horncad.config import (
     profile_k,
     profile_n,
     profile_q,
-    refinement_s_bounds,
 )
 from horncad.sampling import adaptive_stations
 
@@ -161,8 +160,7 @@ def solve_profile(
     coverage_deg = profile_coverage(config, axis)
     k = profile_k(config, axis)
     q = profile_q(config)
-    n = profile_n(config)
-    lower_s, upper_s = refinement_s_bounds(config)
+    n = profile_n(config, axis)
     length_segments = int(config["resolution"]["length_segments"])
     profile_length = local_length - derived.l_conic
     issues: List[FeasibilityIssue] = []
@@ -179,7 +177,7 @@ def solve_profile(
                 ),
             )
         )
-        solved_s = lower_s
+        solved_s = 0.0
         points = _conic_points(axis, derived, max(local_length, 0.0), length_segments)
         final_radius = points[-1].radius if points else derived.r0
         return ProfileResult(
@@ -211,35 +209,20 @@ def solve_profile(
     )
     termination_unit = termination_radius(profile_length, profile_length, 1.0, q, n)
     solved_s = (target_boundary_distance - base_boundary_distance) / termination_unit
-
-    if solved_s < lower_s or solved_s > upper_s:
+    if solved_s < 0.0:
         issues.append(
             FeasibilityIssue(
-                code="solved_s_outside_bounds",
-                message=f"{axis}: solved S {solved_s:.6g} is outside configured bounds {lower_s:g}..{upper_s:g}",
-                likely_culprit=_s_bounds_culprit(
-                    axis,
-                    solved_s,
-                    lower_s,
-                    upper_s,
-                    target_boundary_distance,
-                    base_boundary_distance,
-                    local_length,
+                code="negative_s_termination",
+                message=f"{axis}: solved S is negative, reversing the terminal roundover direction",
+                likely_culprit=(
+                    "The OS-SE base curve overshoots the target boundary before the terminal term is added. "
+                    "Reduce the base expansion in this direction, increase the boundary distance, or increase "
+                    "the available profile length."
                 ),
             )
         )
 
-    sample_s = min(max(solved_s, lower_s), upper_s)
-    if sample_s != solved_s:
-        issues.append(
-            FeasibilityIssue(
-                code="plotted_s_clamped",
-                message=f"{axis}: plotted profile uses clamped S {sample_s:.6g}",
-                likely_culprit="The solved profile is outside the configured S bounds, so the plot is diagnostic only.",
-            )
-        )
-
-    points = sample_profile(config, derived, axis, local_length, profile_length, coverage_deg, k, sample_s)
+    points = sample_profile(config, derived, axis, local_length, profile_length, coverage_deg, k, solved_s)
     final_radius = points[-1].radius
     return ProfileResult(
         axis=axis,
@@ -270,7 +253,7 @@ def sample_profile(
 ) -> List[ProfilePoint]:
     length_segments = int(config["resolution"]["length_segments"])
     q = profile_q(config)
-    n = profile_n(config)
+    n = profile_n(config, axis)
     points: List[ProfilePoint] = []
 
     conic_count = max(2, int(round(length_segments * derived.l_conic / max(local_length, 1.0))) + 1)
@@ -414,32 +397,6 @@ def _principal_setback(curvature: Mapping[str, Any], derived: DerivedConfig, axi
         setback = setback_from_radius(distance, float(curvature["radius"]))
         return math.inf if math.isnan(setback) else setback
     raise ValueError(f"unsupported curvature type: {curvature_type}")
-
-
-def _s_bounds_culprit(
-    axis: str,
-    solved_s: float,
-    lower_s: float,
-    upper_s: float,
-    target_boundary_distance: float,
-    base_boundary_distance: float,
-    local_length: float,
-) -> str:
-    if solved_s < lower_s:
-        return (
-            f"The {axis} base OS profile reaches {base_boundary_distance:.6g} mm before termination flare, "
-            f"which already overshoots the {target_boundary_distance:.6g} mm target. Likely fixes: reduce coverage, "
-            "reduce throat/conic exit angle, reduce K if appropriate, or increase the mouth boundary dimension "
-            "in that direction."
-        )
-    if solved_s > upper_s:
-        return (
-            f"The {axis} target boundary distance {target_boundary_distance:.6g} mm is too large for the current "
-            f"{local_length:.6g} mm local length, coverage, K, Q, N, and S upper bound. Likely fixes: "
-            "increase length.max, reduce mouth curvature sag, increase coverage, increase the S upper bound, or reduce "
-            "the mouth boundary dimension in that direction."
-        )
-    return "The solved S value is outside the configured bounds."
 
 
 def _conic_points(

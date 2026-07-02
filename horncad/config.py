@@ -41,6 +41,7 @@ DEFAULT_CONFIG: ConfigDict = {
         },
         "curvature": {
             "sag": None,
+            "sag_bounds": None,
             "radius": None,
         },
     },
@@ -49,16 +50,7 @@ DEFAULT_CONFIG: ConfigDict = {
             "horizontal": None,
             "vertical": None,
         },
-        "roundover": {
-            "horizontal": {
-                "target_percent": 30.0,
-                "tolerance_percent": 5.0,
-            },
-            "vertical": {
-                "target_percent": 30.0,
-                "tolerance_percent": 5.0,
-            },
-        },
+        "roundover": {},
         "k": {
             "horizontal": {
                 "seed": 1.0,
@@ -69,13 +61,15 @@ DEFAULT_CONFIG: ConfigDict = {
                 "bounds": [1.0, 1.0],
             },
         },
-        "q": {
-            "seed": 0.995,
-            "bounds": [0.99, 1.0],
-        },
         "n": {
-            "seed": 3.0,
-            "bounds": [2.0, 10.0],
+            "horizontal": {
+                "seed": 3.0,
+                "bounds": [2.0, 100.0],
+            },
+            "vertical": {
+                "seed": 3.0,
+                "bounds": [2.0, 100.0],
+            },
         },
     },
     "morph": {
@@ -85,16 +79,22 @@ DEFAULT_CONFIG: ConfigDict = {
             "bounds": [0.25, 4.0],
         },
     },
+    "surface": {
+        "mode": "slice",
+    },
     "refinement": {
-        "s_bounds": [0.0, 4.0],
         "area_rms_log_tolerance": 0.05,
         "smoothness_weight": 2.0,
         "max_log_area_slope_change": 0.01,
         "morph_timing_weight": 0.05,
         "morph_50_percent_max_z": 0.85,
+        "morph_rate_drift_weight": 0.2,
         "k_drift_weight": 0.1,
+        "sag_drift_weight": 0.1,
         "s_span_weight": 0.2,
         "s_smoothness_weight": 0.2,
+        "radial_basis_weight": 1.0,
+        "radial_exit_slope_weight": 0.5,
         "max_profile_slope_change": 2.0,
         "profile_smoothness_weight": 0.5,
     },
@@ -108,20 +108,9 @@ DEFAULT_CONFIG: ConfigDict = {
     },
     "outputs": {
         "scope": "full",
-        "design_review": {
-            "plots": {
-                "hv_profiles": True,
-            },
-            "report": True,
-            "resolved_config": True,
-        },
         "cad": {
             "wall_thickness": 0.0,
             "formats": {
-                "2d": {
-                    "profiles": False,
-                    "slices": False,
-                },
                 "3d": {
                     "stl": False,
                 },
@@ -137,6 +126,7 @@ ALLOWED_UNITS = {
 ALLOWED_MOUTH_SHAPES = {"ellipse", "rounded_rectangle", "rectangle"}
 ALLOWED_CURVATURE_TYPES = {"flat", "cylinder", "sphere"}
 ALLOWED_OUTPUT_SCOPES = {"quarter", "half", "full"}
+ALLOWED_SURFACE_MODES = {"slice", "profile"}
 
 
 def load_project(path: Path) -> ConfigDict:
@@ -166,6 +156,8 @@ def resolve_config(config: Mapping[str, Any]) -> ConfigDict:
     if conic.get("exit_angle") is None and _has_path(resolved, ["throat", "angle"]):
         conic["exit_angle"] = resolved["throat"]["angle"]
 
+    _normalize_roundover_specs(resolved)
+    _normalize_axis_n_specs(resolved)
     _resolve_missing_mouth_dimension(resolved)
 
     return resolved
@@ -201,6 +193,7 @@ def validate_config(config: Mapping[str, Any]) -> None:
     _validate_corner_radius(config, errors)
     _require_enum(config, ["mouth", "curvature", "type"], ALLOWED_CURVATURE_TYPES, errors)
     _optional_number(config, ["mouth", "curvature", "sag"], errors, minimum=0.0)
+    _optional_number_bounds(config, ["mouth", "curvature", "sag_bounds"], errors, minimum=0.0)
     _optional_number(config, ["mouth", "curvature", "radius"], errors, minimum=0.0, exclusive_minimum=True)
     _validate_curvature(config, errors)
 
@@ -208,8 +201,7 @@ def validate_config(config: Mapping[str, Any]) -> None:
 
     for axis in ("horizontal", "vertical"):
         _require_number(config, ["profiles", "coverage", axis], errors, minimum=0.0, maximum=180.0)
-        _require_number(config, ["profiles", "roundover", axis, "target_percent"], errors, minimum=0.0, maximum=100.0)
-        _require_number(config, ["profiles", "roundover", axis, "tolerance_percent"], errors, minimum=0.0, maximum=100.0)
+        _validate_roundover_spec(config, axis, errors)
         _validate_seeded_bounds(
             config,
             ["profiles", "k", axis],
@@ -217,8 +209,8 @@ def validate_config(config: Mapping[str, Any]) -> None:
             minimum=0.0,
             maximum=10.0,
         )
-    _validate_seeded_bounds(config, ["profiles", "q"], errors, minimum=0.99, maximum=1.0)
-    _validate_seeded_bounds(config, ["profiles", "n"], errors, minimum=2.0, maximum=10.0)
+    for axis in ("horizontal", "vertical"):
+        _validate_seeded_bounds(config, ["profiles", "n", axis], errors, minimum=2.0, maximum=100.0)
 
     _require_number(config, ["morph", "start"], errors, minimum=0.0)
     _validate_seeded_bounds(
@@ -229,15 +221,19 @@ def validate_config(config: Mapping[str, Any]) -> None:
         maximum=4.0,
         exclusive_minimum=True,
     )
-    _validate_s_bounds(config, errors)
+    _require_enum(config, ["surface", "mode"], ALLOWED_SURFACE_MODES, errors)
     _require_number(config, ["refinement", "area_rms_log_tolerance"], errors, minimum=0.0)
     _require_number(config, ["refinement", "smoothness_weight"], errors, minimum=0.0)
     _require_number(config, ["refinement", "max_log_area_slope_change"], errors, minimum=0.0)
     _require_number(config, ["refinement", "morph_timing_weight"], errors, minimum=0.0)
     _require_number(config, ["refinement", "morph_50_percent_max_z"], errors, minimum=0.0, maximum=1.0)
+    _require_number(config, ["refinement", "morph_rate_drift_weight"], errors, minimum=0.0)
     _require_number(config, ["refinement", "k_drift_weight"], errors, minimum=0.0)
+    _require_number(config, ["refinement", "sag_drift_weight"], errors, minimum=0.0)
     _require_number(config, ["refinement", "s_span_weight"], errors, minimum=0.0)
     _require_number(config, ["refinement", "s_smoothness_weight"], errors, minimum=0.0)
+    _require_number(config, ["refinement", "radial_basis_weight"], errors, minimum=0.0)
+    _require_number(config, ["refinement", "radial_exit_slope_weight"], errors, minimum=0.0)
     _require_number(config, ["refinement", "max_profile_slope_change"], errors, minimum=0.0)
     _require_number(config, ["refinement", "profile_smoothness_weight"], errors, minimum=0.0)
 
@@ -247,12 +243,7 @@ def validate_config(config: Mapping[str, Any]) -> None:
     _require_list(config, ["validation", "reject_if"], errors)
     _require_list(config, ["validation", "warn_if"], errors)
     _require_enum(config, ["outputs", "scope"], ALLOWED_OUTPUT_SCOPES, errors)
-    _require_bool(config, ["outputs", "design_review", "plots", "hv_profiles"], errors)
-    _require_bool(config, ["outputs", "design_review", "report"], errors)
-    _require_bool(config, ["outputs", "design_review", "resolved_config"], errors)
     _require_number(config, ["outputs", "cad", "wall_thickness"], errors, minimum=0.0)
-    _require_bool(config, ["outputs", "cad", "formats", "2d", "profiles"], errors)
-    _require_bool(config, ["outputs", "cad", "formats", "2d", "slices"], errors)
     _require_bool(config, ["outputs", "cad", "formats", "3d", "stl"], errors)
 
     if errors:
@@ -274,28 +265,49 @@ def profile_k(config: Mapping[str, Any], axis: str) -> float:
 
 
 def profile_q(config: Mapping[str, Any]) -> float:
-    return float(config["profiles"]["q"]["seed"])
+    return 0.995
 
 
-def profile_n(config: Mapping[str, Any]) -> float:
-    return float(config["profiles"]["n"]["seed"])
+def profile_n(config: Mapping[str, Any], axis: str | None = None) -> float:
+    n_config = config["profiles"]["n"]
+    if axis is None:
+        return (profile_n(config, "horizontal") + profile_n(config, "vertical")) / 2.0
+    if "seed" in n_config:
+        return float(n_config["seed"])
+    return float(n_config[axis]["seed"])
 
 
-def profile_roundover_target_percent(config: Mapping[str, Any], axis: str) -> float:
-    return float(config["profiles"]["roundover"][axis]["target_percent"])
+def profile_roundover_target_percent(config: Mapping[str, Any], axis: str) -> float | None:
+    spec = config.get("profiles", {}).get("roundover", {}).get(axis)
+    if not isinstance(spec, Mapping):
+        return None
+    if "target_percent" in spec:
+        return float(spec["target_percent"])
+    return float(spec["seed"])
 
 
-def profile_roundover_tolerance_percent(config: Mapping[str, Any], axis: str) -> float:
-    return float(config["profiles"]["roundover"][axis]["tolerance_percent"])
+def profile_roundover_tolerance_percent(config: Mapping[str, Any], axis: str) -> float | None:
+    spec = config.get("profiles", {}).get("roundover", {}).get(axis)
+    if not isinstance(spec, Mapping):
+        return None
+    if "tolerance_percent" in spec:
+        return float(spec["tolerance_percent"])
+    seed = float(spec["seed"])
+    lower, upper = spec["bounds"]
+    return max(seed - float(lower), float(upper) - seed)
 
 
 def morph_rate(config: Mapping[str, Any]) -> float:
     return float(config["morph"]["rate"]["seed"])
 
 
-def refinement_s_bounds(config: Mapping[str, Any]) -> tuple[float, float]:
-    lower, upper = config["refinement"]["s_bounds"]
-    return float(lower), float(upper)
+def surface_mode(config: Mapping[str, Any]) -> str:
+    return str(config.get("surface", {}).get("mode", "slice"))
+
+
+def mouth_curvature_sag(config: Mapping[str, Any]) -> float | None:
+    sag = config["mouth"]["curvature"].get("sag")
+    return float(sag) if sag is not None else None
 
 
 def seeded_bounds(config: Mapping[str, Any], path: Sequence[str]) -> tuple[float, float]:
@@ -340,6 +352,40 @@ def _deep_merge(target: ConfigDict, source: Mapping[str, Any]) -> None:
             _deep_merge(target[key], value)
         else:
             target[key] = value
+
+
+def _normalize_roundover_specs(config: ConfigDict) -> None:
+    roundover = config.get("profiles", {}).get("roundover", {})
+    if not isinstance(roundover, dict):
+        return
+    for axis in ("horizontal", "vertical"):
+        spec = roundover.get(axis)
+        if not isinstance(spec, dict):
+            continue
+        if "target_percent" not in spec and "tolerance_percent" not in spec:
+            continue
+        target = spec.pop("target_percent", None)
+        tolerance = spec.pop("tolerance_percent", None)
+        if _is_number(target):
+            spec["seed"] = float(target)
+            if _is_number(tolerance):
+                tol = float(tolerance)
+                spec["bounds"] = [max(0.0, float(target) - tol), min(100.0, float(target) + tol)]
+
+
+def _normalize_axis_n_specs(config: ConfigDict) -> None:
+    profiles = config.get("profiles", {})
+    if not isinstance(profiles, dict):
+        return
+    n_config = profiles.get("n")
+    if not isinstance(n_config, dict) or "seed" not in n_config:
+        return
+    seed = n_config.get("seed")
+    bounds = n_config.get("bounds")
+    profiles["n"] = {
+        "horizontal": {"seed": seed, "bounds": copy.deepcopy(bounds)},
+        "vertical": {"seed": seed, "bounds": copy.deepcopy(bounds)},
+    }
 
 
 def _has_path(config: Mapping[str, Any], path: Sequence[str]) -> bool:
@@ -453,6 +499,7 @@ def _require_list(config: Mapping[str, Any], path: Sequence[str], errors: List[s
 def _validate_curvature(config: Mapping[str, Any], errors: List[str]) -> None:
     curvature_type = _get(config, ["mouth", "curvature", "type"])
     sag = _get(config, ["mouth", "curvature", "sag"])
+    sag_bounds = _get(config, ["mouth", "curvature", "sag_bounds"])
     radius = _get(config, ["mouth", "curvature", "radius"])
     supplied = [value is not None for value in (sag, radius)].count(True)
 
@@ -460,6 +507,37 @@ def _validate_curvature(config: Mapping[str, Any], errors: List[str]) -> None:
         errors.append("mouth.curvature.sag and mouth.curvature.radius must be null when type is flat")
     elif curvature_type in {"cylinder", "sphere"} and supplied != 1:
         errors.append("mouth.curvature must specify exactly one of sag or radius for cylinder/sphere")
+    if sag_bounds is not None and sag is None:
+        errors.append("mouth.curvature.sag_bounds requires mouth.curvature.sag")
+    if (
+        isinstance(sag_bounds, list)
+        and len(sag_bounds) == 2
+        and all(_is_number(item) for item in sag_bounds)
+        and _is_number(sag)
+    ):
+        lower, upper = float(sag_bounds[0]), float(sag_bounds[1])
+        if not lower <= float(sag) <= upper:
+            errors.append("mouth.curvature.sag must be within mouth.curvature.sag_bounds")
+
+
+def _validate_roundover_spec(config: Mapping[str, Any], axis: str, errors: List[str]) -> None:
+    path = ["profiles", "roundover", axis]
+    roundover = config.get("profiles", {}).get("roundover", {})
+    if axis not in roundover:
+        return
+    value = _get(config, path)
+    if not isinstance(value, Mapping):
+        errors.append(f"{_path(path)} must be a mapping")
+        return
+    has_seeded_bounds = "seed" in value or "bounds" in value
+    has_legacy_target = "target_percent" in value or "tolerance_percent" in value
+    if has_legacy_target:
+        _require_number(config, path + ["target_percent"], errors, minimum=0.0, maximum=100.0)
+        _require_number(config, path + ["tolerance_percent"], errors, minimum=0.0, maximum=100.0)
+    if has_seeded_bounds:
+        _validate_seeded_bounds(config, path, errors, minimum=0.0, maximum=100.0)
+    if not has_seeded_bounds and not has_legacy_target:
+        errors.append(f"{_path(path)} must define seed/bounds or target_percent/tolerance_percent")
 
 
 def _validate_mouth_dimensions(config: Mapping[str, Any], errors: List[str]) -> None:
@@ -533,8 +611,8 @@ def _can_derive_mouth_dimension(config: Mapping[str, Any]) -> bool:
         ["profiles", "coverage", "vertical"],
         ["profiles", "k", "horizontal", "seed"],
         ["profiles", "k", "vertical", "seed"],
-        ["profiles", "q", "seed"],
-        ["profiles", "n", "seed"],
+        ["profiles", "n", "horizontal", "seed"],
+        ["profiles", "n", "vertical", "seed"],
     ]
     return all(_is_number(_get(config, path)) for path in required_paths)
 
@@ -542,13 +620,13 @@ def _can_derive_mouth_dimension(config: Mapping[str, Any]) -> bool:
 def _solve_s_for_axis(config: Mapping[str, Any], axis: str, target_boundary_distance: float) -> float:
     profile_length = _axis_profile_length(config, axis, target_boundary_distance)
     if profile_length <= 0.0:
-        return refinement_s_bounds(config)[0]
+        return 0.0
     q = profile_q(config)
-    n = profile_n(config)
+    n = profile_n(config, axis)
     base = _osse_radius_for_config(config, axis, profile_length, 0.0)
     unit = _termination_radius(profile_length, profile_length, 1.0, q, n)
     if unit == 0.0:
-        return refinement_s_bounds(config)[0]
+        return 0.0
     return (target_boundary_distance - base) / unit
 
 
@@ -592,7 +670,7 @@ def _osse_radius_for_config(config: Mapping[str, Any], axis: str, z: float, s: f
         profile_k(config, axis),
         s,
         profile_q(config),
-        profile_n(config),
+        profile_n(config, axis),
     )
 
 
@@ -631,18 +709,6 @@ def _setback_from_radius(distance: float, radius: float) -> float:
         return math.nan
     return radius - math.sqrt(radius * radius - distance * distance)
 
-
-
-def _validate_s_bounds(config: Mapping[str, Any], errors: List[str]) -> None:
-    value = _get(config, ["refinement", "s_bounds"])
-    if not isinstance(value, list) or len(value) != 2 or not all(_is_number(item) for item in value):
-        errors.append("refinement.s_bounds must be a two-number list")
-        return
-    lower, upper = float(value[0]), float(value[1])
-    if lower < 0.0 or upper > 4.0:
-        errors.append("refinement.s_bounds values must be within 0..4")
-    if lower > upper:
-        errors.append("refinement.s_bounds lower value must be less than or equal to upper value")
 
 
 def _validate_seeded_bounds(
@@ -686,6 +752,19 @@ def _validate_number_bounds(
     _check_number_bounds(upper, path, errors, minimum, maximum, exclusive_minimum)
     if lower > upper:
         errors.append(f"{name} lower value must be less than or equal to upper value")
+
+
+def _optional_number_bounds(
+    config: Mapping[str, Any],
+    path: Sequence[str],
+    errors: List[str],
+    minimum: Optional[float],
+    maximum: Optional[float] = None,
+    exclusive_minimum: bool = False,
+) -> None:
+    if _get(config, path) is None:
+        return
+    _validate_number_bounds(config, path, errors, minimum, maximum, exclusive_minimum)
 
 
 def _is_number(value: Any) -> bool:

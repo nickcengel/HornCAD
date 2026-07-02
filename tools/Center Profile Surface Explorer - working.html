@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Center Profile Surface Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f6f2;
+      --panel: #ffffff;
+      --ink: #202326;
+      --muted: #666b70;
+      --line: #d6d8da;
+      --accent: #0f766e;
+      --accent-2: #8b5cf6;
+      --warn: #b45309;
+      --bad: #b91c1c;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.35;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(350px, 430px) minmax(0, 1fr);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .controls {
+      padding: 14px 18px 18px;
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+      overflow-y: auto;
+      height: 100vh;
+    }
+
+    .intro {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .lede {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    fieldset {
+      margin: 0 0 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    legend {
+      padding: 0 5px;
+      color: #34383c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    label {
+      display: grid;
+      grid-template-columns: 1fr 76px;
+      gap: 8px;
+      align-items: center;
+      margin: 9px 0;
+      color: #34383c;
+      font-size: 13px;
+    }
+
+    input[type="range"] {
+      grid-column: 1 / -1;
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    input[type="number"],
+    select {
+      width: 76px;
+      padding: 5px 6px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      font: inherit;
+      text-align: right;
+      background: #fff;
+    }
+
+    select {
+      width: 118px;
+      text-align: left;
+    }
+
+    .viewbar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    button {
+      min-width: 58px;
+      padding: 7px 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button.active {
+      border-color: var(--accent);
+      background: #e7f3f1;
+      color: #115e59;
+      font-weight: 700;
+    }
+
+    .plot-wrap {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 10px;
+      padding: 8px 18px 14px;
+      min-width: 0;
+      height: 100vh;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 17px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .small {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.94em;
+    }
+
+    @media (max-width: 940px) {
+      main {
+        grid-template-columns: 1fr;
+        height: auto;
+        overflow: visible;
+      }
+
+      .controls {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+        height: auto;
+      }
+
+      .plot-wrap {
+        height: 78vh;
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="controls">
+    <div class="intro">
+      <div>
+        <h1>Center Profile Surface Explorer</h1>
+        <p class="lede">H/V center profiles drive a slice surface. Width and height are measured outputs.</p>
+      </div>
+    </div>
+
+    <fieldset>
+      <legend>View</legend>
+      <div class="viewbar">
+        <button type="button" data-view="iso" class="">Iso</button>
+        <button type="button" data-view="top" class="active">Top</button>
+        <button type="button" data-view="side" class="">Side</button>
+        <button type="button" data-view="front" class="">Front</button>
+      </div>
+      <label>
+        Wire density
+        <input data-control="density" type="number" min="8" max="160" step="2" value="64">
+        <input data-control="density" type="range" min="8" max="160" step="2" value="64">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Global</legend>
+      <label>
+        Length mm
+        <input data-control="length" type="number" min="40" max="600" step="1" value="321">
+        <input data-control="length" type="range" min="40" max="600" step="1" value="321">
+      </label>
+      <label>
+        Throat radius mm
+        <input data-control="r0" type="number" min="1" max="80" step="0.1" value="12.7">
+        <input data-control="r0" type="range" min="1" max="80" step="0.1" value="12.7">
+      </label>
+      <label>
+        Mouth width mm
+        <input data-control="mouthWidth" type="number" min="20" max="1200" step="1" value="583">
+        <input data-control="mouthWidth" type="range" min="20" max="1200" step="1" value="583">
+      </label>
+      <label>
+        Mouth height mm
+        <input data-control="mouthHeight" type="number" min="20" max="800" step="1" value="280">
+        <input data-control="mouthHeight" type="range" min="20" max="800" step="1" value="280">
+      </label>
+      <label>
+        Cylindrical mouth sag mm
+        <input data-control="mouthSag" type="number" min="0" max="160" step="1" value="63">
+        <input data-control="mouthSag" type="range" min="0" max="160" step="1" value="63">
+      </label>
+      <label>
+        Termination
+        <select data-select="termination">
+          <option value="osse" selected="selected">OS-SE</option>
+          <option value="spline">Spline</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Horizontal Basis Profile</legend>
+      <label>
+        Coverage deg
+        <input data-control="hCoverage" type="number" min="1" max="85" step="0.1" value="32.4">
+        <input data-control="hCoverage" type="range" min="1" max="85" step="0.1" value="32.4">
+      </label>
+      <label>
+        K
+        <input data-control="hK" type="number" min="0" max="10" step="0.05" value="1">
+        <input data-control="hK" type="range" min="0" max="10" step="0.05" value="1">
+      </label>
+      <label>
+        N
+        <input data-control="hN" type="number" min="2" max="100" step="0.5" value="2">
+        <input data-control="hN" type="range" min="2" max="100" step="0.5" value="2">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Vertical Basis Profile</legend>
+      <label>
+        Coverage deg
+        <input data-control="vCoverage" type="number" min="1" max="85" step="0.1" value="14.6">
+        <input data-control="vCoverage" type="range" min="1" max="85" step="0.1" value="14.6">
+      </label>
+      <label>
+        K
+        <input data-control="vK" type="number" min="0" max="10" step="0.05" value="3">
+        <input data-control="vK" type="range" min="0" max="10" step="0.05" value="3">
+      </label>
+      <label>
+        N
+        <input data-control="vN" type="number" min="2" max="100" step="0.5" value="5.5">
+        <input data-control="vN" type="range" min="2" max="100" step="0.5" value="5.5">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Spline Termination</legend>
+      <label>
+        Start z %
+        <input data-control="splineStart" type="number" min="5" max="98" step="0.5" value="72">
+        <input data-control="splineStart" type="range" min="5" max="98" step="0.5" value="72">
+      </label>
+      <label>
+        Exit tangent deg
+        <input data-control="exitAngle" type="number" min="-35" max="65" step="0.1" value="0">
+        <input data-control="exitAngle" type="range" min="-35" max="65" step="0.1" value="0">
+      </label>
+      <label>
+        Tension
+        <input data-control="tension" type="number" min="0.1" max="3" step="0.01" value="1">
+        <input data-control="tension" type="range" min="0.1" max="3" step="0.01" value="1">
+      </label>
+      <p class="small">Spline mode follows OS-SE with <code>S=0</code> until start z, then lands at the OS-SE mouth endpoint.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Section Modifier Curve</legend>
+      <label>
+        Mouth round-to-square
+        <input data-control="sectionShape1" type="number" min="0" max="1" step="0.01" value="0.72">
+        <input data-control="sectionShape1" type="range" min="0" max="1" step="0.01" value="0.72">
+      </label>
+      <label>
+        Side span bow mm
+        <input data-control="sideBow" type="number" min="-60" max="60" step="0.5" value="0">
+        <input data-control="sideBow" type="range" min="-60" max="60" step="0.5" value="0">
+      </label>
+      <label>
+        Top/bottom span bow mm
+        <input data-control="topBottomBow" type="number" min="-60" max="60" step="0.5" value="0">
+        <input data-control="topBottomBow" type="range" min="-60" max="60" step="0.5" value="0">
+      </label>
+      <p class="small">The modifier changes the slice shape between the H/V basis profile points. Zero squareness is round; one is nearly rectangular.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Section Modifier Evolution</legend>
+      <label>
+        Round-to-square reaches mouth %
+        <input data-control="shapeEnd" type="number" min="5" max="100" step="1" value="65">
+        <input data-control="shapeEnd" type="range" min="5" max="100" step="1" value="65">
+      </label>
+      <label>
+        Bow reaches mouth %
+        <input data-control="bowEnd" type="number" min="5" max="100" step="1" value="53">
+        <input data-control="bowEnd" type="range" min="5" max="100" step="1" value="53">
+      </label>
+      <p class="small">Evolution controls how the section modifier curve changes along z.</p>
+    </fieldset>
+  </section>
+
+  <section class="plot-wrap">
+    <canvas id="surface" width="2112" height="1974"></canvas>
+    <div class="metrics">
+      <div class="metric"><span>Measured width</span><strong id="metric-width">583.00 mm</strong></div>
+      <div class="metric"><span>Measured height</span><strong id="metric-height">280.00 mm</strong></div>
+      <div class="metric"><span>H endpoint</span><strong id="metric-h-end">291.50 mm</strong></div>
+      <div class="metric"><span>V endpoint</span><strong id="metric-v-end">140.00 mm</strong></div>
+      <div class="metric"><span>Mouth squareness</span><strong id="metric-section-n">0.7200</strong></div>
+      <div class="metric"><span>Mouth bow</span><strong id="metric-cap">-6.500 / -35.50 mm</strong></div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const controls = new Map();
+  const selects = new Map();
+  const canvas = document.getElementById("surface");
+  const ctx = canvas.getContext("2d");
+  let currentView = "iso";
+
+  const metrics = {
+    width: document.getElementById("metric-width"),
+    height: document.getElementById("metric-height"),
+    hEnd: document.getElementById("metric-h-end"),
+    vEnd: document.getElementById("metric-v-end"),
+    sectionShape: document.getElementById("metric-section-n"),
+    bow: document.getElementById("metric-cap"),
+  };
+
+  for (const input of document.querySelectorAll("[data-control]")) {
+    const name = input.dataset.control;
+    if (!controls.has(name)) {
+      controls.set(name, []);
+    }
+    controls.get(name).push(input);
+    input.addEventListener("input", () => {
+      for (const peer of controls.get(name)) {
+        if (peer !== input) {
+          peer.value = input.value;
+        }
+      }
+      render();
+    });
+  }
+
+  for (const select of document.querySelectorAll("[data-select]")) {
+    selects.set(select.dataset.select, select);
+    select.addEventListener("change", render);
+  }
+
+  for (const button of document.querySelectorAll("[data-view]")) {
+    button.addEventListener("click", () => {
+      currentView = button.dataset.view;
+      for (const peer of document.querySelectorAll("[data-view]")) {
+        peer.classList.toggle("active", peer === button);
+      }
+      render();
+    });
+  }
+
+  function value(name) {
+    return Number(controls.get(name)[0].value);
+  }
+
+  function selected(name) {
+    return selects.get(name).value;
+  }
+
+  function rad(deg) {
+    return deg * Math.PI / 180;
+  }
+
+  function smoothstep(t) {
+    const x = Math.max(0, Math.min(1, t));
+    return x * x * (3 - 2 * x);
+  }
+
+  function format(value, digits = 4) {
+    if (!Number.isFinite(value)) {
+      return "-";
+    }
+    return Number(value).toPrecision(digits);
+  }
+
+  function params() {
+    return {
+      length: value("length"),
+      r0: value("r0"),
+      mouthWidth: value("mouthWidth"),
+      mouthHeight: value("mouthHeight"),
+      termination: selected("termination"),
+      hCoverage: value("hCoverage"),
+      hK: value("hK"),
+      hN: value("hN"),
+      vCoverage: value("vCoverage"),
+      vK: value("vK"),
+      vN: value("vN"),
+      splineStart: value("splineStart") / 100,
+      exitAngle: value("exitAngle"),
+      tension: value("tension"),
+      mouthSag: value("mouthSag"),
+      sectionShape1: value("sectionShape1"),
+      shapeEnd: value("shapeEnd") / 100,
+      sideBow: value("sideBow"),
+      topBottomBow: value("topBottomBow"),
+      bowEnd: value("bowEnd") / 100,
+      density: Math.max(8, Math.round(value("density"))),
+    };
+  }
+
+  function osseBaseRadius(z, length, r0, coverage, k) {
+    const alpha = Math.tan(rad(coverage));
+    return Math.sqrt(k * k * r0 * r0 + z * z * alpha * alpha) + r0 * (1 - k);
+  }
+
+  function terminationUnit(z, length, q, n) {
+    const termInner = Math.max(1 - Math.pow(q * z / length, n), 0);
+    return (length / q) * (1 - Math.pow(termInner, 1 / n));
+  }
+
+  function osseRadius(z, length, r0, coverage, k, n, s) {
+    return osseBaseRadius(z, length, r0, coverage, k) + s * terminationUnit(z, length, 0.995, n);
+  }
+
+  function solvedS(length, r0, coverage, k, n, endRadius) {
+    const base = osseBaseRadius(length, length, r0, coverage, k);
+    const unit = terminationUnit(length, length, 0.995, n);
+    return Math.abs(unit) < 1e-9 ? 0 : (endRadius - base) / unit;
+  }
+
+  function hermite(p0, m0, p1, m1, t) {
+    const t2 = t * t;
+    const t3 = t2 * t;
+    return (2 * t3 - 3 * t2 + 1) * p0
+      + (t3 - 2 * t2 + t) * m0
+      + (-2 * t3 + 3 * t2) * p1
+      + (t3 - t2) * m1;
+  }
+
+  function makeProfile(p, axis) {
+    const coverage = axis === "h" ? p.hCoverage : p.vCoverage;
+    const k = axis === "h" ? p.hK : p.vK;
+    const n = axis === "h" ? p.hN : p.vN;
+    const endRadius = axis === "h" ? p.mouthWidth / 2 : p.mouthHeight / 2;
+    const s = solvedS(p.length, p.r0, coverage, k, n, endRadius);
+    if (p.termination === "osse") {
+      return (z) => osseRadius(z, p.length, p.r0, coverage, k, n, s);
+    }
+
+    const startZ = p.length * p.splineStart;
+    const startR = osseRadius(startZ, p.length, p.r0, coverage, k, n, 0);
+    const startSlope = derivative((z) => osseRadius(z, p.length, p.r0, coverage, k, n, 0), startZ, p.length);
+    const endSlope = Math.tan(rad(p.exitAngle));
+    const span = Math.max(p.length - startZ, 1e-9);
+    const handle = p.tension * span / 3;
+    return (z) => {
+      if (z <= startZ) {
+        return osseRadius(z, p.length, p.r0, coverage, k, n, 0);
+      }
+      const t = (z - startZ) / span;
+      return hermite(startR, startSlope * handle, endRadius, endSlope * handle, t);
+    };
+  }
+
+  function derivative(fn, z, length) {
+    const dz = Math.max(length / 1000, 0.01);
+    const z0 = Math.max(0, z - dz);
+    const z1 = Math.min(length, z + dz);
+    return (fn(z1) - fn(z0)) / Math.max(z1 - z0, 1e-9);
+  }
+
+  function sectionShape(p, z) {
+    return smoothstep(z / Math.max(p.length * p.shapeEnd, 1e-9)) * p.sectionShape1;
+  }
+
+  function superellipseNFromShape(shape) {
+    return 2 + 298 * Math.pow(Math.max(0, Math.min(1, shape)), 1.7);
+  }
+
+  function bowProgress(p, z) {
+    return smoothstep(z / Math.max(p.length * p.bowEnd, 1e-9));
+  }
+
+  function radiusFromSag(halfSpan, sag) {
+    if (sag <= 0) {
+      return Infinity;
+    }
+    return (halfSpan * halfSpan + sag * sag) / (2 * sag);
+  }
+
+  function setbackFromRadius(distance, radius) {
+    if (!Number.isFinite(radius) || radius <= 0) {
+      return 0;
+    }
+    return radius - Math.sqrt(Math.max(radius * radius - distance * distance, 0));
+  }
+
+  function cylindricalMouthSetback(p, x, maxX) {
+    const sag = Math.max(0, p.mouthSag);
+    if (sag <= 0 || maxX <= 0) {
+      return 0;
+    }
+    return setbackFromRadius(Math.abs(x), radiusFromSag(maxX, sag));
+  }
+
+  function superellipsePoint(a, b, n, theta) {
+    const exponent = 2 / Math.max(n, 1e-9);
+    const c = Math.cos(theta);
+    const s = Math.sin(theta);
+    return {
+      x: a * Math.sign(c) * Math.pow(Math.abs(c), exponent),
+      y: b * Math.sign(s) * Math.pow(Math.abs(s), exponent),
+    };
+  }
+
+  function thetaFromX(a, n, xFraction) {
+    const exponent = Math.max(n, 1e-9) / 2;
+    const c = Math.pow(Math.max(0, Math.min(1, xFraction)), exponent);
+    return Math.acos(c);
+  }
+
+  function thetaFromY(b, n, yFraction) {
+    const exponent = Math.max(n, 1e-9) / 2;
+    const s = Math.pow(Math.max(0, Math.min(1, yFraction)), exponent);
+    return Math.asin(s);
+  }
+
+  function quadrantAngles(n, samples) {
+    const angles = new Set([0, Math.PI / 2]);
+    const count = Math.max(18, samples);
+    for (let i = 1; i < count; i += 1) {
+      const f = i / count;
+      angles.add((Math.PI / 2) * f);
+      angles.add(thetaFromX(1, n, f));
+      angles.add(thetaFromY(1, n, f));
+    }
+    return Array.from(angles).sort((a, b) => a - b);
+  }
+
+  function projectedMouthError(a, b, mid) {
+    const ax = a.z;
+    const ay = a.x;
+    const bx = b.z;
+    const by = b.x;
+    const mx = mid.z;
+    const my = mid.x;
+    const dx = bx - ax;
+    const dy = by - ay;
+    const length = Math.hypot(dx, dy);
+    if (length < 1e-9) {
+      return Math.hypot(mx - ax, my - ay);
+    }
+    return Math.abs(dy * mx - dx * my + bx * ay - by * ax) / length;
+  }
+
+  function refineMouthAngles(p, angles, hRadius, vRadius, mouthHRadius, shapeN) {
+    let refined = angles.slice().sort((a, b) => a - b);
+    const errorLimit = 0.08;
+    const chordLimit = Math.max(1.2, mouthHRadius / 96);
+    const maxAngles = 1400;
+
+    for (let pass = 0; pass < 8 && refined.length < maxAngles; pass += 1) {
+      const next = [refined[0]];
+      let changed = false;
+
+      for (let i = 0; i < refined.length - 1; i += 1) {
+        const a = refined[i];
+        const b = refined[i + 1];
+        const mid = (a + b) / 2;
+        const pa = sectionPoint(p, hRadius, vRadius, p.length, a, mouthHRadius, shapeN);
+        const pb = sectionPoint(p, hRadius, vRadius, p.length, b, mouthHRadius, shapeN);
+        const pm = sectionPoint(p, hRadius, vRadius, p.length, mid, mouthHRadius, shapeN);
+        const chord = Math.hypot(pb.z - pa.z, pb.x - pa.x);
+        const error = projectedMouthError(pa, pb, pm);
+
+        if ((error > errorLimit || chord > chordLimit) && next.length < maxAngles) {
+          next.push(mid);
+          changed = true;
+        }
+        next.push(b);
+      }
+
+      refined = next;
+      if (!changed) {
+        break;
+      }
+    }
+
+    return refined;
+  }
+
+  function sectionPoint(p, hRadius, vRadius, z, theta, mouthHRadius, shapeN = null) {
+    const n = shapeN ?? superellipseNFromShape(sectionShape(p, z));
+    const point = superellipsePoint(hRadius, vRadius, n, theta);
+    const u = Math.min(1, Math.abs(point.x) / Math.max(hRadius, 1e-9));
+    const v = Math.min(1, Math.abs(point.y) / Math.max(vRadius, 1e-9));
+    const progress = bowProgress(p, z);
+    const sideWindow = u * u * (1 - v * v);
+    const topBottomWindow = v * v * (1 - u * u);
+    const mouthFade = 1 - Math.pow(Math.max(0, Math.min(1, z / Math.max(p.length, 1e-9))), 4);
+    point.x += Math.sign(point.x || Math.cos(theta)) * p.sideBow * progress * sideWindow * mouthFade;
+    point.y += Math.sign(point.y || Math.sin(theta)) * p.topBottomBow * progress * topBottomWindow * mouthFade;
+    const mouthProgress = Math.pow(Math.max(0, Math.min(1, z / Math.max(p.length, 1e-9))), 2.4);
+    const setback = cylindricalMouthSetback(p, point.x, mouthHRadius) * mouthProgress;
+    return { x: point.x, y: point.y, z: z - setback };
+  }
+
+  function mirroredSectionRing(p, hRadius, vRadius, z, angles, mouthHRadius) {
+    const shapeN = superellipseNFromShape(sectionShape(p, z));
+    const base = [];
+    for (const theta of angles) {
+      const point = sectionPoint(p, hRadius, vRadius, z, theta, mouthHRadius, shapeN);
+      base.push({ x: Math.abs(point.x), y: Math.abs(point.y), z: point.z });
+    }
+
+    const ring = [];
+    const last = base.length - 1;
+    for (let i = 0; i <= last; i += 1) {
+      ring.push({ x: base[i].x, y: base[i].y, z: base[i].z });
+    }
+    for (let i = last - 1; i >= 0; i -= 1) {
+      ring.push({ x: -base[i].x, y: base[i].y, z: base[i].z });
+    }
+    for (let i = 1; i <= last; i += 1) {
+      ring.push({ x: -base[i].x, y: -base[i].y, z: base[i].z });
+    }
+    for (let i = last - 1; i > 0; i -= 1) {
+      ring.push({ x: base[i].x, y: -base[i].y, z: base[i].z });
+    }
+    return ring;
+  }
+
+  function buildSurface(p) {
+    const hProfile = makeProfile(p, "h");
+    const vProfile = makeProfile(p, "v");
+    const zCount = p.density;
+    const perQuadrant = Math.max(72, Math.round(p.density * 4));
+    const mouthHRadius = hProfile(p.length);
+    const mouthVRadius = vProfile(p.length);
+    const mouthShapeN = superellipseNFromShape(sectionShape(p, p.length));
+    const angles = refineMouthAngles(
+      p,
+      quadrantAngles(superellipseNFromShape(p.sectionShape1), perQuadrant),
+      mouthHRadius,
+      mouthVRadius,
+      mouthHRadius,
+      mouthShapeN
+    );
+    const rings = [];
+    let maxX = 0;
+    let maxY = 0;
+
+    for (let i = 0; i < zCount; i += 1) {
+      const z = p.length * i / (zCount - 1);
+      const h = hProfile(z);
+      const v = vProfile(z);
+      const ring = mirroredSectionRing(p, h, v, z, angles, mouthHRadius);
+      for (const point of ring) {
+        maxX = Math.max(maxX, Math.abs(point.x));
+        maxY = Math.max(maxY, Math.abs(point.y));
+      }
+      rings.push(ring);
+    }
+
+    return {
+      rings,
+      maxX,
+      maxY,
+      hEnd: hProfile(p.length),
+      vEnd: vProfile(p.length),
+      thetaCount: rings[0].length,
+      zCount,
+    };
+  }
+
+  function resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(720, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(500, Math.floor(rect.height * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { width: rect.width, height: rect.height };
+  }
+
+  function project(point, bounds, rect) {
+    let x;
+    let y;
+    if (currentView === "top") {
+      x = point.z - bounds.length / 2;
+      y = point.x;
+    } else if (currentView === "side") {
+      x = point.z - bounds.length / 2;
+      y = point.y;
+    } else if (currentView === "front") {
+      x = point.x;
+      y = point.y;
+    } else {
+      const iso = Math.PI / 6;
+      const centeredZ = point.z - bounds.length / 2;
+      x = (point.x - centeredZ) * Math.cos(iso);
+      y = point.y - (point.x + centeredZ) * Math.sin(iso);
+    }
+    const scale = 0.44 * Math.min(rect.width, rect.height) / Math.max(bounds.maxX, bounds.maxY, bounds.length / 2, 1);
+    return {
+      x: rect.width / 2 + x * scale,
+      y: rect.height * 0.43 - y * scale,
+    };
+  }
+
+  function drawSurface(p, surface) {
+    const rect = resizeCanvas();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    const bounds = {
+      maxX: surface.maxX,
+      maxY: surface.maxY,
+      length: p.length,
+    };
+
+    ctx.save();
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = "rgba(15, 118, 110, 0.34)";
+
+    for (let i = 0; i < surface.zCount; i += 1) {
+      const isMouth = i === surface.zCount - 1;
+      if (isMouth && currentView === "top") {
+        continue;
+      }
+      drawPolyline(surface.rings[i], bounds, rect, isMouth ? "#0f766e" : "rgba(15, 118, 110, 0.34)", isMouth ? 2.4 : 1, true);
+    }
+
+    if (currentView === "top") {
+      drawTopMouthArc(p, surface, bounds, rect);
+    }
+
+    const thetaStep = Math.max(1, Math.round(surface.thetaCount / 96));
+    for (let j = 0; j < surface.thetaCount; j += thetaStep) {
+      const line = [];
+      for (let i = 0; i < surface.zCount; i += 1) {
+        line.push(surface.rings[i][j]);
+      }
+      drawPolyline(line, bounds, rect, j % (thetaStep * 3) === 0 ? "rgba(32, 35, 38, 0.55)" : "rgba(32, 35, 38, 0.25)", 1);
+    }
+
+    ctx.restore();
+    drawLabel(rect);
+  }
+
+  function drawTopMouthArc(p, surface, bounds, rect) {
+    const radius = surface.hEnd;
+    const points = [];
+    const count = Math.max(320, surface.thetaCount);
+    for (let i = 0; i <= count; i += 1) {
+      const t = i / count;
+      const x = -radius + 2 * radius * t;
+      points.push({
+        x,
+        y: 0,
+        z: p.length - cylindricalMouthSetback(p, x, radius),
+      });
+    }
+    drawPolyline(points, bounds, rect, "#0f766e", 2.4);
+  }
+
+  function drawPolyline(points, bounds, rect, color, width, close = false) {
+    if (!points.length) {
+      return;
+    }
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.beginPath();
+    points.forEach((point, index) => {
+      const projected = project(point, bounds, rect);
+      if (index === 0) {
+        ctx.moveTo(projected.x, projected.y);
+      } else {
+        ctx.lineTo(projected.x, projected.y);
+      }
+    });
+    if (close) {
+      ctx.closePath();
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawLabel(rect) {
+    ctx.save();
+    ctx.fillStyle = "#34383c";
+    ctx.font = "13px system-ui, sans-serif";
+    ctx.fillText(`View: ${currentView}`, 16, 24);
+    ctx.restore();
+  }
+
+  function updateMetrics(p, surface) {
+    metrics.width.textContent = `${format(surface.maxX * 2, 5)} mm`;
+    metrics.height.textContent = `${format(surface.maxY * 2, 5)} mm`;
+    metrics.hEnd.textContent = `${format(surface.hEnd, 5)} mm`;
+    metrics.vEnd.textContent = `${format(surface.vEnd, 5)} mm`;
+    metrics.sectionShape.textContent = format(sectionShape(p, p.length), 4);
+    metrics.bow.textContent = `${format(p.sideBow, 4)} / ${format(p.topBottomBow, 4)} mm`;
+  }
+
+  function render() {
+    const p = params();
+    const surface = buildSurface(p);
+    drawSurface(p, surface);
+    updateMetrics(p, surface);
+  }
+
+  window.addEventListener("resize", render);
+  render();
+</script>
+
+
+</body></html>

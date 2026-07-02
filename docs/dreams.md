@@ -157,7 +157,7 @@ Possible command names:
 ```bash
 python -m horncad.explore <project.yaml>
 python -m horncad.atlas <project.yaml>
-python -m horncad.acoustics <refined_project.yaml>
+python -m horncad.acoustics <project.yaml>
 ```
 
 Possible output folders:

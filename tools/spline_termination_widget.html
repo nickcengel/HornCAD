@@ -1,0 +1,669 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spline Termination Explorer</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f6f2;
+      --panel: #ffffff;
+      --ink: #202326;
+      --muted: #666b70;
+      --line: #d6d8da;
+      --accent: #0f766e;
+      --accent-2: #8b5cf6;
+      --warn: #b45309;
+      --bad: #b91c1c;
+      --good: #15803d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.35;
+    }
+
+    main {
+      display: grid;
+      grid-template-columns: minmax(340px, 410px) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .controls {
+      padding: 14px 18px 18px;
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+      overflow-y: auto;
+    }
+
+    .intro {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 4px;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 0;
+    }
+
+    .lede {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    fieldset {
+      margin: 0 0 12px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    legend {
+      padding: 0 5px;
+      color: #34383c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    label {
+      display: grid;
+      grid-template-columns: 1fr 76px;
+      gap: 8px;
+      align-items: center;
+      margin: 9px 0;
+      color: #34383c;
+      font-size: 13px;
+    }
+
+    input[type="range"] {
+      grid-column: 1 / -1;
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    input[type="number"] {
+      width: 76px;
+      padding: 5px 6px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--ink);
+      font: inherit;
+      text-align: right;
+    }
+
+    .status {
+      flex: 0 0 auto;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #eef6f4;
+      color: #115e59;
+      font-size: 13px;
+    }
+
+    .status.warn {
+      background: #fff7ed;
+      color: var(--warn);
+    }
+
+    .status.bad {
+      background: #fef2f2;
+      color: var(--bad);
+    }
+
+    .plot-wrap {
+      display: grid;
+      grid-template-rows: minmax(390px, 1fr) minmax(160px, 0.36fr) auto;
+      gap: 12px;
+      padding: 18px;
+      min-width: 0;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      min-height: 160px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    #profile {
+      min-height: 390px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(120px, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      min-width: 0;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .metric strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 17px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .small {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.94em;
+    }
+
+    @media (max-width: 900px) {
+      main {
+        grid-template-columns: 1fr;
+      }
+
+      .controls {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="controls">
+    <div class="intro">
+      <div>
+        <h1>Spline Termination Explorer</h1>
+        <p class="lede">Base expansion hands off to a cubic Hermite terminal spline.</p>
+      </div>
+      <div id="status" class="status">valid</div>
+    </div>
+
+    <fieldset>
+      <legend>Profile</legend>
+      <label>
+        Length mm
+        <input data-control="length" type="number" min="20" max="500" step="1" value="220">
+        <input data-control="length" type="range" min="20" max="500" step="1" value="220">
+      </label>
+      <label>
+        Throat radius mm
+        <input data-control="r0" type="number" min="1" max="80" step="0.1" value="12.7">
+        <input data-control="r0" type="range" min="1" max="80" step="0.1" value="12.7">
+      </label>
+      <label>
+        Mouth radius mm
+        <input data-control="rEnd" type="number" min="2" max="350" step="0.5" value="190">
+        <input data-control="rEnd" type="range" min="2" max="350" step="0.5" value="190">
+      </label>
+      <label>
+        Base half-angle deg
+        <input data-control="baseAngle" type="number" min="0" max="60" step="0.1" value="8">
+        <input data-control="baseAngle" type="range" min="0" max="60" step="0.1" value="8">
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Spline Termination</legend>
+      <label>
+        Start z %
+        <input data-control="startFraction" type="number" min="5" max="98" step="0.5" value="68">
+        <input data-control="startFraction" type="range" min="5" max="98" step="0.5" value="68">
+      </label>
+      <label>
+        Exit tangent deg
+        <input data-control="exitAngle" type="number" min="-45" max="80" step="0.1" value="0">
+        <input data-control="exitAngle" type="range" min="-45" max="80" step="0.1" value="0">
+      </label>
+      <label>
+        Tension
+        <input data-control="tension" type="number" min="0.1" max="3" step="0.01" value="1">
+        <input data-control="tension" type="range" min="0.1" max="3" step="0.01" value="1">
+      </label>
+      <p class="small"><code>start_z</code> sets where terminal shaping begins. <code>exit tangent</code> sets the mouth tangent. <code>tension</code> scales both Hermite handles.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>Display</legend>
+      <label>
+        Samples
+        <input data-control="samples" type="number" min="40" max="800" step="10" value="320">
+        <input data-control="samples" type="range" min="40" max="800" step="10" value="320">
+      </label>
+      <p class="small">Teal is the active profile. Dashed gray is the base conic continuation. Purple handles show endpoint tangent direction and handle scale.</p>
+    </fieldset>
+  </section>
+
+  <section class="plot-wrap">
+    <canvas id="profile" width="1200" height="760"></canvas>
+    <canvas id="curvature" width="1200" height="260"></canvas>
+    <div class="metrics">
+      <div class="metric"><span>Start z</span><strong id="metric-start">-</strong></div>
+      <div class="metric"><span>Start tangent</span><strong id="metric-start-angle">-</strong></div>
+      <div class="metric"><span>Exit tangent</span><strong id="metric-exit-angle">-</strong></div>
+      <div class="metric"><span>Min radius</span><strong id="metric-min-radius">-</strong></div>
+      <div class="metric"><span>Max curvature</span><strong id="metric-max-curvature">-</strong></div>
+      <div class="metric"><span>Curvature signs</span><strong id="metric-signs">-</strong></div>
+    </div>
+  </section>
+</main>
+
+<script>
+  const controls = new Map();
+  const profileCanvas = document.getElementById("profile");
+  const profileCtx = profileCanvas.getContext("2d");
+  const curvatureCanvas = document.getElementById("curvature");
+  const curvatureCtx = curvatureCanvas.getContext("2d");
+  const statusEl = document.getElementById("status");
+  const metrics = {
+    start: document.getElementById("metric-start"),
+    startAngle: document.getElementById("metric-start-angle"),
+    exitAngle: document.getElementById("metric-exit-angle"),
+    minRadius: document.getElementById("metric-min-radius"),
+    maxCurvature: document.getElementById("metric-max-curvature"),
+    signs: document.getElementById("metric-signs"),
+  };
+
+  for (const input of document.querySelectorAll("[data-control]")) {
+    const name = input.dataset.control;
+    if (!controls.has(name)) {
+      controls.set(name, []);
+    }
+    controls.get(name).push(input);
+    input.addEventListener("input", () => {
+      for (const peer of controls.get(name)) {
+        if (peer !== input) {
+          peer.value = input.value;
+        }
+      }
+      render();
+    });
+  }
+
+  function value(name) {
+    return Number(controls.get(name)[0].value);
+  }
+
+  function rad(deg) {
+    return deg * Math.PI / 180;
+  }
+
+  function deg(radValue) {
+    return radValue * 180 / Math.PI;
+  }
+
+  function format(value, digits = 4) {
+    if (!Number.isFinite(value)) {
+      return "-";
+    }
+    return Number(value).toPrecision(digits);
+  }
+
+  function params() {
+    return {
+      length: value("length"),
+      r0: value("r0"),
+      rEnd: value("rEnd"),
+      baseAngle: value("baseAngle"),
+      startFraction: value("startFraction") / 100,
+      exitAngle: value("exitAngle"),
+      tension: value("tension"),
+      samples: Math.max(40, Math.round(value("samples"))),
+    };
+  }
+
+  function baseRadius(p, z) {
+    return p.r0 + z * Math.tan(rad(p.baseAngle));
+  }
+
+  function baseSlope(p) {
+    return Math.tan(rad(p.baseAngle));
+  }
+
+  function hermite(p0, m0, p1, m1, t) {
+    const t2 = t * t;
+    const t3 = t2 * t;
+    const h00 = 2 * t3 - 3 * t2 + 1;
+    const h10 = t3 - 2 * t2 + t;
+    const h01 = -2 * t3 + 3 * t2;
+    const h11 = t3 - t2;
+    return h00 * p0 + h10 * m0 + h01 * p1 + h11 * m1;
+  }
+
+  function hermiteDerivative(p0, m0, p1, m1, t) {
+    const t2 = t * t;
+    const dh00 = 6 * t2 - 6 * t;
+    const dh10 = 3 * t2 - 4 * t + 1;
+    const dh01 = -6 * t2 + 6 * t;
+    const dh11 = 3 * t2 - 2 * t;
+    return dh00 * p0 + dh10 * m0 + dh01 * p1 + dh11 * m1;
+  }
+
+  function hermiteSecondDerivative(p0, m0, p1, m1, t) {
+    const ddh00 = 12 * t - 6;
+    const ddh10 = 6 * t - 4;
+    const ddh01 = -12 * t + 6;
+    const ddh11 = 6 * t - 2;
+    return ddh00 * p0 + ddh10 * m0 + ddh01 * p1 + ddh11 * m1;
+  }
+
+  function buildProfile(p) {
+    const startZ = p.length * p.startFraction;
+    const startR = baseRadius(p, startZ);
+    const endZ = p.length;
+    const endR = p.rEnd;
+    const spanZ = Math.max(endZ - startZ, 1e-9);
+    const startTheta = rad(p.baseAngle);
+    const endTheta = rad(p.exitAngle);
+    const chord = Math.hypot(endZ - startZ, endR - startR);
+    const handleScale = p.tension * chord / 3;
+    const m0z = Math.cos(startTheta) * handleScale;
+    const m0r = Math.sin(startTheta) * handleScale;
+    const m1z = Math.cos(endTheta) * handleScale;
+    const m1r = Math.sin(endTheta) * handleScale;
+    const points = [];
+    const curvature = [];
+
+    for (let i = 0; i < p.samples; i += 1) {
+      const u = i / (p.samples - 1);
+      const zLinear = p.length * u;
+      let z;
+      let r;
+      let slope;
+      let kappa;
+      if (zLinear <= startZ) {
+        z = zLinear;
+        r = baseRadius(p, z);
+        slope = baseSlope(p);
+        kappa = 0;
+      } else {
+        const t = (zLinear - startZ) / spanZ;
+        z = hermite(startZ, m0z, endZ, m1z, t);
+        r = hermite(startR, m0r, endR, m1r, t);
+        const dzdt = hermiteDerivative(startZ, m0z, endZ, m1z, t);
+        const drdt = hermiteDerivative(startR, m0r, endR, m1r, t);
+        const d2zdt2 = hermiteSecondDerivative(startZ, m0z, endZ, m1z, t);
+        const d2rdt2 = hermiteSecondDerivative(startR, m0r, endR, m1r, t);
+        slope = Math.abs(dzdt) < 1e-12 ? Math.sign(drdt) * Infinity : drdt / dzdt;
+        const denom = Math.pow(dzdt * dzdt + drdt * drdt, 1.5);
+        kappa = denom <= 1e-12 ? 0 : (dzdt * d2rdt2 - drdt * d2zdt2) / denom;
+      }
+      points.push({ z, r, slope, kappa });
+      curvature.push({ z, r: kappa });
+    }
+
+    return {
+      points,
+      curvature,
+      start: { z: startZ, r: startR },
+      end: { z: endZ, r: endR },
+      handleScale,
+      m0z,
+      m0r,
+      m1z,
+      m1r,
+      startSlope: baseSlope(p),
+      endSlope: Math.tan(rad(p.exitAngle)),
+    };
+  }
+
+  function profileStats(model) {
+    let maxAbs = 0;
+    let minRadius = Infinity;
+    let positive = false;
+    let negative = false;
+    for (const point of model.points) {
+      const absK = Math.abs(point.kappa);
+      maxAbs = Math.max(maxAbs, absK);
+      if (absK > 1e-9) {
+        minRadius = Math.min(minRadius, 1 / absK);
+      }
+      if (point.kappa > 1e-8) {
+        positive = true;
+      }
+      if (point.kappa < -1e-8) {
+        negative = true;
+      }
+    }
+    return {
+      maxCurvature: maxAbs,
+      minRadius: Number.isFinite(minRadius) ? minRadius : Infinity,
+      signs: [positive ? "+" : "", negative ? "-" : ""].filter(Boolean).join("/") || "0",
+      hasInflection: positive && negative,
+      monotonic: model.points.every((point, index, array) => index === 0 || point.r >= array[index - 1].r - 1e-9),
+      zMonotonic: model.points.every((point, index, array) => index === 0 || point.z >= array[index - 1].z - 1e-9),
+    };
+  }
+
+  function resizeCanvas(canvas, ctx, minWidth, minHeight) {
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.max(minWidth, Math.floor(rect.width * dpr));
+    canvas.height = Math.max(minHeight, Math.floor(rect.height * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { width: rect.width, height: rect.height };
+  }
+
+  function boundsFor(p, model) {
+    const baseEnd = baseRadius(p, p.length);
+    const rMax = Math.max(p.rEnd, baseEnd, ...model.points.map((point) => point.r)) * 1.08;
+    return {
+      zMin: 0,
+      zMax: p.length,
+      rMin: Math.min(0, ...model.points.map((point) => point.r)) * 1.08,
+      rMax: Math.max(1, rMax),
+    };
+  }
+
+  function makeScale(bounds, rect, pad) {
+    const x = (z) => pad.left + (z - bounds.zMin) / (bounds.zMax - bounds.zMin) * (rect.width - pad.left - pad.right);
+    const y = (r) => rect.height - pad.bottom - (r - bounds.rMin) / (bounds.rMax - bounds.rMin) * (rect.height - pad.top - pad.bottom);
+    return { x, y };
+  }
+
+  function drawGrid(ctx, rect, bounds, scale) {
+    ctx.save();
+    ctx.strokeStyle = "#d6d8da";
+    ctx.lineWidth = 1;
+    ctx.fillStyle = "#62676b";
+    ctx.font = "13px system-ui, sans-serif";
+
+    for (let i = 0; i <= 6; i += 1) {
+      const z = bounds.zMin + (bounds.zMax - bounds.zMin) * i / 6;
+      const x = scale.x(z);
+      ctx.beginPath();
+      ctx.moveTo(x, scale.y(bounds.rMin));
+      ctx.lineTo(x, scale.y(bounds.rMax));
+      ctx.stroke();
+      ctx.fillText(`${Math.round(z)}`, x - 10, rect.height - 18);
+    }
+
+    for (let i = 0; i <= 5; i += 1) {
+      const r = bounds.rMin + (bounds.rMax - bounds.rMin) * i / 5;
+      const y = scale.y(r);
+      ctx.beginPath();
+      ctx.moveTo(scale.x(bounds.zMin), y);
+      ctx.lineTo(scale.x(bounds.zMax), y);
+      ctx.stroke();
+      ctx.fillText(`${Math.round(r)}`, 10, y + 4);
+    }
+    ctx.restore();
+  }
+
+  function drawPolyline(ctx, points, scale, color, width, dashed = false) {
+    if (points.length === 0) {
+      return;
+    }
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.setLineDash(dashed ? [9, 7] : []);
+    ctx.beginPath();
+    points.forEach((point, index) => {
+      const x = scale.x(point.z);
+      const y = scale.y(point.r);
+      if (index === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+    });
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function drawPoint(ctx, scale, point, color, radius = 5) {
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    ctx.arc(scale.x(point.z), scale.y(point.r), radius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawHandle(ctx, scale, origin, dz, dr, color) {
+    const end = { z: origin.z + dz, r: origin.r + dr };
+    ctx.save();
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(scale.x(origin.z), scale.y(origin.r));
+    ctx.lineTo(scale.x(end.z), scale.y(end.r));
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(scale.x(end.z), scale.y(end.r), 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawProfile(p, model) {
+    const rect = resizeCanvas(profileCanvas, profileCtx, 700, 420);
+    const bounds = boundsFor(p, model);
+    const pad = { left: 58, right: 24, top: 22, bottom: 48 };
+    const scale = makeScale(bounds, rect, pad);
+    profileCtx.clearRect(0, 0, rect.width, rect.height);
+    drawGrid(profileCtx, rect, bounds, scale);
+
+    const base = [];
+    for (let i = 0; i < 180; i += 1) {
+      const z = p.length * i / 179;
+      base.push({ z, r: baseRadius(p, z) });
+    }
+    drawPolyline(profileCtx, base, scale, "#9ca3af", 1.8, true);
+    drawPolyline(profileCtx, model.points, scale, "#0f766e", 3);
+
+    drawPoint(profileCtx, scale, model.start, "#8b5cf6", 6);
+    drawPoint(profileCtx, scale, model.end, "#b45309", 6);
+    drawHandle(profileCtx, scale, model.start, model.m0z, model.m0r, "#8b5cf6");
+    drawHandle(profileCtx, scale, model.end, -model.m1z, -model.m1r, "#8b5cf6");
+
+    profileCtx.save();
+    profileCtx.fillStyle = "#34383c";
+    profileCtx.font = "13px system-ui, sans-serif";
+    profileCtx.fillText("z mm", rect.width - 56, rect.height - 16);
+    profileCtx.fillText("radius mm", 12, 18);
+    profileCtx.restore();
+  }
+
+  function drawCurvature(model) {
+    const rect = resizeCanvas(curvatureCanvas, curvatureCtx, 700, 180);
+    curvatureCtx.clearRect(0, 0, rect.width, rect.height);
+
+    const maxAbs = Math.max(1e-6, ...model.curvature.map((point) => Math.abs(point.r)));
+    const bounds = {
+      zMin: 0,
+      zMax: model.end.z,
+      rMin: -maxAbs * 1.15,
+      rMax: maxAbs * 1.15,
+    };
+    const pad = { left: 58, right: 24, top: 18, bottom: 34 };
+    const scale = makeScale(bounds, rect, pad);
+    drawGrid(curvatureCtx, rect, bounds, scale);
+    drawPolyline(curvatureCtx, model.curvature, scale, "#8b5cf6", 2);
+
+    curvatureCtx.save();
+    curvatureCtx.strokeStyle = "#777";
+    curvatureCtx.lineWidth = 1;
+    curvatureCtx.beginPath();
+    curvatureCtx.moveTo(scale.x(bounds.zMin), scale.y(0));
+    curvatureCtx.lineTo(scale.x(bounds.zMax), scale.y(0));
+    curvatureCtx.stroke();
+    curvatureCtx.fillStyle = "#34383c";
+    curvatureCtx.font = "13px system-ui, sans-serif";
+    curvatureCtx.fillText("signed curvature", 12, 16);
+    curvatureCtx.restore();
+  }
+
+  function updateStatus(stats, p, model) {
+    statusEl.className = "status";
+    let text = "valid";
+    if (!stats.zMonotonic || !stats.monotonic || model.start.r > p.rEnd) {
+      statusEl.classList.add("bad");
+      text = stats.zMonotonic ? "invalid shape" : "z loop";
+    } else if (stats.hasInflection) {
+      statusEl.classList.add("warn");
+      text = "inflection";
+    } else if (Number.isFinite(stats.minRadius) && stats.minRadius < 5) {
+      statusEl.classList.add("warn");
+      text = "tight radius";
+    }
+    statusEl.textContent = text;
+  }
+
+  function updateMetrics(p, model, stats) {
+    metrics.start.textContent = `${format(model.start.z, 4)} mm`;
+    metrics.startAngle.textContent = `${format(deg(Math.atan(model.startSlope)), 4)} deg`;
+    metrics.exitAngle.textContent = `${format(p.exitAngle, 4)} deg`;
+    metrics.minRadius.textContent = Number.isFinite(stats.minRadius) ? `${format(stats.minRadius, 4)} mm` : "flat";
+    metrics.maxCurvature.textContent = format(stats.maxCurvature, 4);
+    metrics.signs.textContent = stats.signs;
+  }
+
+  function render() {
+    const p = params();
+    const model = buildProfile(p);
+    const stats = profileStats(model);
+    drawProfile(p, model);
+    drawCurvature(model);
+    updateStatus(stats, p, model);
+    updateMetrics(p, model, stats);
+  }
+
+  window.addEventListener("resize", render);
+  render();
+</script>
+</body>
+</html>

@@ -5,9 +5,9 @@ testable before moving into broader geometry or CAD export.
 
 Terminology is defined in `docs/GLOSSARY.md`.
 
-## M0 Project Shape
+## Project Shape
 
-- Treat `examples/test_project/test_project.yaml` as the canonical example project file.
+- Treat `examples/811b/811b.yaml` as the canonical example project file.
 - Load and validate the project file.
 - Apply defaults and emit a resolved configuration.
 - Allow exactly one mouth dimension to be omitted. The missing `mouth.width` or
@@ -20,17 +20,15 @@ Terminology is defined in `docs/GLOSSARY.md`.
   - `s`: `0..4`
   - `q`: `0.99..1.00`
   - `n`: `2..10`
-- Preserve fixed output subdirectories:
-  - `design_review/`
-  - `cad/`
+- Preserve one fixed project output subdirectory: `output/`.
 
 Acceptance criteria:
 
-- The test project YAML parses.
+- The example project YAML parses.
 - The resolved configuration can be generated without mutating the source project file.
 - Invalid values produce clear validation errors.
 
-## M1 Design Review
+## Principal Profile Diagnostics
 
 First real output target.
 
@@ -47,16 +45,15 @@ Required behavior:
 - Run:
 
   ```text
-  python -m horncad.design_review examples/test_project/test_project.yaml
+  python -m horncad.refine examples/811b/811b.yaml --workers auto
   ```
 
-- Generate standard artifacts under `design_review/` beside the project file.
+- Generate standard artifacts under `output/` beside the project file.
 - Derive artifact filenames from the project file stem.
-- For `examples/test_project/test_project.yaml`, generated files use the `test_project` prefix.
-- Generate:
+- For `examples/811b/811b.yaml`, generated files use the `811b` prefix.
+- Principal profile diagnostics appear in:
   - `{project_stem}_hv_profiles.png`
   - `{project_stem}_report.md`
-  - `{project_stem}_resolved.yaml`
 
 Report contents:
 
@@ -78,7 +75,7 @@ Acceptance criteria:
 - The conic extension is visible as a distinct segment when configured.
 - The report is sufficient to understand what was authored, what was derived, and what was solved.
 
-## M2 First Full Inside Surface
+## Full Inside Surface
 
 Generate the first complete inside acoustic surface. Radial curves and section
 slices are coupled and must be generated together because mouth shape, morph,
@@ -100,13 +97,16 @@ Required behavior:
 - Run:
 
   ```text
-  python -m horncad.surface examples/test_project/test_project.yaml
+  python -m horncad.refine examples/811b/811b.yaml --workers auto
   ```
 
-- Generate standard artifacts under `surface_review/` beside the project file:
+- Generate standard artifacts under `output/` beside the project file:
   - `{project_stem}_area_fit.png`
-  - `{project_stem}_surface_report.md`
-  - `{project_stem}_resolved.yaml`
+  - `{project_stem}_hv_profiles.png`
+  - `{project_stem}_inside_surface.stl`
+  - `{project_stem}_radial_plan.png`
+  - `{project_stem}_radial_profiles.png`
+  - `{project_stem}_report.md`
 - Compute the mouth boundary point, boundary distance, and mouth curvature setback for each radial direction.
 - Interpolate horizontal and vertical coverage and `k` values over throat-radial angle `p`.
 - Solve `S(p)` within configured bounds for boundary fit.
@@ -129,11 +129,17 @@ Acceptance criteria:
 - Area-expansion diagnostics are available.
 - Section transitions are smooth enough for CAD lofting.
 
-## M3 Area-Aware Refinement
+## Surface Modes
 
-Improve the first full inside surface using explicit area-expansion controls
-and solver objectives. M3 is a candidate search, not a fallback chain that tries
-`S` once and gives up.
+HornCAD has two surface-generation modes.
+
+`slice` mode is the normal workflow. It uses the authored H/V basis profile
+values directly, solves internal `S`, and generates the inside surface as a
+family of superellipse slices. Search bounds are ignored in this mode.
+
+`profile` mode preserves the older radial-profile search path. It can still be
+used as an advanced diagnostic/research mode when exploring the radial OS-SE
+profile family.
 
 Solver model:
 
@@ -142,26 +148,25 @@ Solver model:
 - `K` is axis-specific and may move only when its horizontal or vertical bounds
   have span. K drift away from authored seeds is penalized and reported in the
   objective breakdown.
-- `S(p)` is a dependent solve variable, recomputed for every candidate so each
+- In `slice` mode, H/V basis profiles solve `S` from authored values, and the
+  surface is lofted through superellipse sections.
+- In `profile` mode, `S(p)` is recomputed for every searched design so each
   radial curve reaches the configured mouth boundary.
-- The target area curve is the candidate's equivalent round OS-SE reference. If
-  a candidate moves `Q` or `N`, its round reference target moves with it.
-- Area expansion is the primary optimization objective.
+- The target area curve is the design's equivalent round OS-SE reference. `Q`
+  is fixed at `0.995`.
+- Area expansion is reported as a diagnostic, not a hard output constraint.
 - Area smoothness is checked with a log-area derivative-change diagnostic.
-- Candidate variables are derived from bounds. `morph.rate`, `N`, `Q`, and
-  horizontal/vertical `K` are searched only when their bounds have span.
-- Global parameter bounds are hard safety rails. M3 derives effective search
-  ranges from the actual design using mouth aspect ratio, H/V coverage delta,
-  and initial area error.
-- Candidates are rejected when configured hard constraints fail, such as solved
-  `S(p)` outside `refinement.s_bounds`.
+- In `profile` mode, search variables are derived from bounds. `morph.rate`,
+  `N`, and horizontal/vertical `K` are searched only when their bounds have span.
+- Designs are rejected when configured hard constraints fail, such as impossible
+  boundary fit or invalid mouth curvature.
 - `S(p)` is allowed to vary, but its expected span is scaled by mouth aspect
   ratio and H/V coverage delta. Excess `S` span and abrupt adjacent changes over
   throat-radial angle `p` are penalized and reported.
 - Late morph timing is penalized and reported. The default search bound caps
   `morph.rate` at 4, and the objective discourages candidates whose 50% morph
   point lands after 85% of the horn length.
-- Principal H/V profile slope changes are penalized and reported so a candidate
+- Principal H/V profile slope changes are penalized and reported so a design
   cannot win by producing a sharp terminal kink.
 - Principal H/V roundover contribution is reported as a core profile-shape
   diagnostic and compared to authored roundover targets/tolerances.
@@ -176,8 +181,8 @@ Required behavior:
 - Support manual override of morph start as a physical `z` position.
 - Treat morph end as the mouth; do not expose it as a user parameter.
 - Report which values were authored, defaulted, solved, or overridden.
-- Report how many candidates were evaluated, how many were rejected, and whether
-  the best candidate landed on search bounds.
+- Report how many designs were evaluated, how many were rejected, and whether
+  the selected design landed on search bounds.
 - Report smoothness diagnostics so visible area-curve kinks are not hidden by a
   good average fit score.
 - Report effective search ranges, `S(p)` behavior diagnostics, and H/V profile
@@ -186,48 +191,31 @@ Required behavior:
   timing objective weight.
 - Report roundover contribution for the H/V master profiles.
 - Support multiprocessing for candidate evaluation with `--workers`.
-- Generate standard artifacts under `refine_review/` beside the project file:
-  - `{project_stem}_refined_area_fit.png`
-  - `{project_stem}_refined_hv_profiles.png`
-  - `{project_stem}_refined_radial_profiles.png`
-  - `{project_stem}_refined_radial_plan.png`
-  - `{project_stem}_refined_principal_views.png`
-  - `{project_stem}_refinement_report.md`
-  - `{project_stem}_refined.yaml`
+- Generate standard artifacts under `output/` beside the project file:
+  - `{project_stem}_area_fit.png`
+  - `{project_stem}_hv_profiles.png`
+  - `{project_stem}_inside_surface.stl`
+  - `{project_stem}_radial_plan.png`
+  - `{project_stem}_radial_profiles.png`
+  - `{project_stem}_report.md`
 
 Acceptance criteria:
 
 - Area-expansion error is reduced or clearly reported as infeasible.
-- Boundary fit remains within tolerance after refinement.
+- Boundary fit remains within tolerance after output generation.
 - Any moved or overridden values are visible in the report.
 
 ## Design Flow: Length, S, And Roundover
 
 HornCAD treats `length.max` as a fundamental design value, not as a hidden
-variable that normal refinement silently moves. The user-facing tutorial flow
+variable that normal output generation silently moves. The user-facing tutorial flow
 lives in `docs/design_flow.md`; roadmap work should preserve that separation.
 
 Future length analysis should estimate the `length.max` required to meet a target
 roundover contribution percent. It should initially be report-only rather than
 mutating the project.
 
-## M4 CAD 2D Output
-
-Generate CAD-oriented 2D outputs under the fixed `cad/` directory.
-
-Required behavior:
-
-- `outputs.cad.formats.2d.profiles: true` enables profile curve output.
-- `outputs.cad.formats.2d.slices: true` enables slice curve output.
-- Do not require users to specify output filenames.
-
-Acceptance criteria:
-
-- Profile and slice outputs are generated only when their format flags are true.
-- Output filenames are derived from the project file stem.
-- Outputs are suitable for Fusion 360 / AutoCAD import or loft workflows.
-
-## M5 CAD 3D / STL Output
+## CAD / STL Output
 
 Roadmap target for closed 3D assets.
 

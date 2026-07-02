@@ -1,4 +1,4 @@
-"""M3 area-aware refinement search."""
+"""HornCAD candidate search and output generation."""
 
 from __future__ import annotations
 
@@ -14,8 +14,8 @@ import yaml
 
 from horncad.config import (
     ConfigError,
-    dump_config,
     load_project,
+    mouth_curvature_sag,
     morph_rate,
     profile_coverage,
     profile_k,
@@ -23,8 +23,8 @@ from horncad.config import (
     profile_q,
     profile_roundover_target_percent,
     profile_roundover_tolerance_percent,
-    refinement_s_bounds,
     seeded_bounds,
+    surface_mode,
 )
 from horncad.profile import FeasibilityIssue, roundover_metrics, sample_profile, solve_principal_profiles
 from horncad.surface import (
@@ -32,11 +32,16 @@ from horncad.surface import (
     SectionSample,
     SurfaceResult,
     generate_inside_surface,
+    interpolate_principal_value,
     plotted_target_area_normalizer,
     radial_curve_at_angle,
     radial_curve_distance_at_z,
     rejected_issues,
+    write_inside_surface_stl,
+    write_superellipse_surface_stl,
 )
+
+INSIDE_SURFACE_SHAPE_POWER = 20.0
 
 
 @dataclass(frozen=True)
@@ -62,6 +67,14 @@ class RefinementResult:
     candidates_rejected: int
     stage_summaries: List[str]
     workers: int
+
+
+class OutputFeasibilityError(ValueError):
+    """Raised when direct output generation hits configured hard constraints."""
+
+    def __init__(self, issues: Sequence[FeasibilityIssue]):
+        self.issues = list(issues)
+        super().__init__("\n".join(issue.message for issue in self.issues))
 
 
 @dataclass(frozen=True)
@@ -93,6 +106,13 @@ class ProfileSmoothness:
 
 
 @dataclass(frozen=True)
+class RadialBasisDeviation:
+    rms_radius_deviation: float
+    max_radius_deviation: float
+    rms_exit_slope_deviation: float
+
+
+@dataclass(frozen=True)
 class MorphTiming:
     z50_fraction: float
     z90_fraction: float
@@ -101,18 +121,26 @@ class MorphTiming:
 
 
 @dataclass(frozen=True)
+class AreaZoneMetrics:
+    weighted_rms_log_error: float
+    throat_rms_log_error: float
+    middle_rms_log_error: float
+    mouth_rms_log_error: float
+
+
+@dataclass(frozen=True)
 class RoundoverTargetRow:
     axis: str
-    target_percent: float
+    target_percent: float | None
     actual_percent: float
-    tolerance_percent: float
-    excess_miss_percent: float
+    tolerance_percent: float | None
+    excess_miss_percent: float | None
 
 
 @dataclass(frozen=True)
 class RoundoverLengthRecommendation:
     axis: str
-    target_percent: float
+    target_percent: float | None
     current_percent: float
     required_length: float | None
     required_length_change: float | None
@@ -130,38 +158,51 @@ class ObjectiveTerm:
     contribution: float
 
 
-def generate_refinement_review(
+def generate_output(
     project_path: Path,
     output_dir: Path | None = None,
     workers: int | str | None = None,
 ) -> Dict[str, Path]:
     project_path = Path(project_path)
     if output_dir is None:
-        output_dir = project_path.parent / "refine_review"
+        output_dir = project_path.parent / "output"
     else:
         output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
     config = load_project(project_path)
-    result = refine_project(config, workers=workers)
+    mode = surface_mode(config)
+    result = refine_project(config, workers=workers) if mode == "profile" else solve_project(config)
 
     stem = project_path.stem
     for obsolete in (
         output_dir / f"{stem}_refined_horizontal_view.png",
         output_dir / f"{stem}_refined_vertical_view.png",
+        output_dir / f"{stem}_refined_area_fit.png",
+        output_dir / f"{stem}_refined_hv_profiles.png",
+        output_dir / f"{stem}_refined_radial_profiles.png",
+        output_dir / f"{stem}_refined_radial_plan.png",
+        output_dir / f"{stem}_refined_principal_views.png",
+        output_dir / f"{stem}_refinement_report.md",
+        output_dir / f"{stem}_refined.yaml",
+        output_dir / f"{stem}_refined_inside_surface.stl",
     ):
         obsolete.unlink(missing_ok=True)
-    artifacts = {
-        "area_fit": output_dir / f"{stem}_refined_area_fit.png",
-        "hv_profiles": output_dir / f"{stem}_refined_hv_profiles.png",
-        "radial_profiles": output_dir / f"{stem}_refined_radial_profiles.png",
-        "radial_plan": output_dir / f"{stem}_refined_radial_plan.png",
-        "principal_views": output_dir / f"{stem}_refined_principal_views.png",
-        "report": output_dir / f"{stem}_refinement_report.md",
-        "resolved": output_dir / f"{stem}_refined.yaml",
+    artifacts: Dict[str, Path] = {
+        "area_fit": output_dir / f"{stem}_area_fit.png",
+        "hv_profiles": output_dir / f"{stem}_hv_profiles.png",
     }
+    if result.best.config["outputs"]["cad"]["formats"]["3d"]["stl"]:
+        artifacts["inside_surface"] = output_dir / f"{stem}_inside_surface.stl"
+    artifacts.update(
+        {
+            "radial_plan": output_dir / f"{stem}_radial_plan.png",
+            "radial_profiles": output_dir / f"{stem}_radial_profiles.png",
+            "report": output_dir / f"{stem}_report.md",
+        }
+    )
 
-    _plot_refinement_area_fit(
+    _plot_area_fit(
         result.initial.sections,
         result.best.surface.sections,
         artifacts["area_fit"],
@@ -169,23 +210,83 @@ def generate_refinement_review(
     _plot_hv_profiles(result.best.config, artifacts["hv_profiles"])
     _plot_radial_profiles(result.best.config, result.best.surface, artifacts["radial_profiles"])
     _plot_radial_plan(result.best.surface, artifacts["radial_plan"])
-    _plot_principal_sampling_views(result.best.config, result.best.surface, artifacts["principal_views"])
-    artifacts["resolved"].write_text(dump_config(result.best.config), encoding="utf-8")
-    _write_refinement_report(project_path, result, artifacts)
+    if "inside_surface" in artifacts and mode == "profile":
+        write_inside_surface_stl(result.best.config, result.best.surface, artifacts["inside_surface"])
+    elif "inside_surface" in artifacts:
+        write_superellipse_surface_stl(_inside_surface_output_config(result.best.config), artifacts["inside_surface"])
+    _write_output_report(project_path, result, artifacts)
     return artifacts
+
+
+def _inside_surface_output_config(config: Mapping[str, Any]) -> Dict[str, Any]:
+    output_config = copy.deepcopy(dict(config))
+    output_config["mouth"] = copy.deepcopy(dict(config["mouth"]))
+    output_config["mouth"]["shape"] = copy.deepcopy(dict(config["mouth"]["shape"]))
+    output_config["mouth"]["shape"]["shape_power"] = INSIDE_SURFACE_SHAPE_POWER
+    return output_config
+
+
+def solve_project(config: Mapping[str, Any]) -> RefinementResult:
+    authored_config = copy.deepcopy(dict(config))
+    surface = generate_inside_surface(authored_config)
+    rejected = _slice_rejected_issues(authored_config, surface)
+    if rejected:
+        raise OutputFeasibilityError(rejected)
+    initial_area_zones = area_zone_metrics(surface.sections)
+    return RefinementResult(
+        authored_config=authored_config,
+        initial=surface,
+        best=CandidateResult(
+            stage="direct",
+            config=authored_config,
+            surface=surface,
+            rejected=[],
+            objective=objective_score(authored_config, surface, authored_config, initial_area_zones.weighted_rms_log_error),
+        ),
+        search_space=build_search_space(authored_config, surface),
+        candidates_evaluated=1,
+        candidates_rejected=0,
+        stage_summaries=[],
+        workers=0,
+    )
+
+
+def _slice_rejected_issues(config: Mapping[str, Any], surface: SurfaceResult) -> List[FeasibilityIssue]:
+    governing_issues: List[FeasibilityIssue] = []
+    for curve in surface.radial_curves:
+        if _is_cardinal_profile_angle(curve.p_deg):
+            governing_issues.extend(curve.issues)
+    global_or_unparsed = [
+        issue
+        for issue in surface.issues
+        if not issue.message.startswith("p=")
+    ]
+    return rejected_issues(config, [*global_or_unparsed, *governing_issues])
+
+
+def _is_cardinal_profile_angle(p_deg: float) -> bool:
+    normalized = p_deg % 360.0
+    return any(abs(normalized - cardinal) < 1e-6 for cardinal in (0.0, 90.0, 180.0, 270.0))
 
 
 def refine_project(config: Mapping[str, Any], workers: int | str | None = None) -> RefinementResult:
     authored_config = copy.deepcopy(dict(config))
     worker_count = _resolve_workers(workers)
     initial = generate_inside_surface(authored_config)
+    initial_area_zones = area_zone_metrics(initial.sections)
     search_space = build_search_space(authored_config, initial)
     candidates: List[CandidateResult] = []
     stage_summaries: List[str] = []
 
     for stage_name, variable_names in _search_stages(authored_config):
         candidate_configs = list(_candidate_configs(authored_config, variable_names, search_space))
-        stage_candidates = _evaluate_candidate_configs(stage_name, authored_config, candidate_configs, worker_count)
+        stage_candidates = _evaluate_candidate_configs(
+            stage_name,
+            authored_config,
+            initial_area_zones.weighted_rms_log_error,
+            candidate_configs,
+            worker_count,
+        )
         candidates.extend(stage_candidates)
         best_stage = min(stage_candidates, key=lambda item: item.objective)
         stage_summaries.append(_stage_summary(stage_name, stage_candidates, best_stage))
@@ -198,10 +299,16 @@ def refine_project(config: Mapping[str, Any], workers: int | str | None = None) 
                 config=authored_config,
                 surface=surface,
                 rejected=rejected_issues(authored_config, surface.issues),
-                objective=_objective(authored_config, surface, rejected_issues(authored_config, surface.issues)),
+                objective=_objective(
+                    authored_config,
+                    authored_config,
+                    surface,
+                    rejected_issues(authored_config, surface.issues),
+                    initial_area_zones.weighted_rms_log_error,
+                ),
             )
         )
-        stage_summaries.append("authored: evaluated 1 candidate")
+        stage_summaries.append("authored: evaluated 1 design")
 
     best_valid = [candidate for candidate in candidates if candidate.is_valid]
     best = min(best_valid or candidates, key=lambda item: item.objective)
@@ -232,18 +339,27 @@ def _resolve_workers(workers: int | str | None) -> int:
 def _evaluate_candidate_configs(
     stage_name: str,
     authored_config: Mapping[str, Any],
+    authored_weighted_area_error: float,
     candidate_configs: Sequence[Mapping[str, Any]],
     worker_count: int,
 ) -> List[CandidateResult]:
-    args = [(stage_name, copy.deepcopy(dict(authored_config)), copy.deepcopy(dict(config))) for config in candidate_configs]
+    args = [
+        (
+            stage_name,
+            copy.deepcopy(dict(authored_config)),
+            authored_weighted_area_error,
+            copy.deepcopy(dict(config)),
+        )
+        for config in candidate_configs
+    ]
     if worker_count <= 1 or len(args) <= 1:
         return [_evaluate_candidate_config(arg) for arg in args]
     with ProcessPoolExecutor(max_workers=worker_count) as executor:
         return list(executor.map(_evaluate_candidate_config, args))
 
 
-def _evaluate_candidate_config(arg: tuple[str, Dict[str, Any], Dict[str, Any]]) -> CandidateResult:
-    stage_name, authored_config, candidate_config = arg
+def _evaluate_candidate_config(arg: tuple[str, Dict[str, Any], float, Dict[str, Any]]) -> CandidateResult:
+    stage_name, authored_config, authored_weighted_area_error, candidate_config = arg
     surface = generate_inside_surface(candidate_config)
     rejected = rejected_issues(candidate_config, surface.issues)
     return CandidateResult(
@@ -251,7 +367,7 @@ def _evaluate_candidate_config(arg: tuple[str, Dict[str, Any], Dict[str, Any]]) 
         config=candidate_config,
         surface=surface,
         rejected=rejected,
-        objective=_objective(authored_config, candidate_config, surface, rejected),
+        objective=_objective(authored_config, candidate_config, surface, rejected, authored_weighted_area_error),
     )
 
 
@@ -265,7 +381,7 @@ def _search_stages(config: Mapping[str, Any]) -> List[tuple[str, List[str]]]:
 
 def _searchable_variables(config: Mapping[str, Any]) -> List[str]:
     variables = []
-    for name in ("morph_rate", "n", "q", "k_horizontal", "k_vertical"):
+    for name in ("morph_rate", "n_horizontal", "n_vertical", "mouth_sag", "k_horizontal", "k_vertical"):
         lower, upper = _bounds_for(config, name)
         if not math.isclose(lower, upper, rel_tol=0.0, abs_tol=1e-12):
             variables.append(name)
@@ -286,13 +402,13 @@ def build_search_space(config: Mapping[str, Any], initial: SurfaceResult) -> Sea
 
     ranges = {
         "morph_rate": _effective_range(_bounds_for(config, "morph_rate"), _current_value(config, "morph_rate"), 1.0 + 14.0 * difficulty),
-        "n": _effective_range(_bounds_for(config, "n"), _current_value(config, "n"), 0.75 + 5.0 * difficulty),
-        "q": _effective_range(_bounds_for(config, "q"), _current_value(config, "q"), 0.001 + 0.012 * difficulty),
-        "k_horizontal": _effective_range(_bounds_for(config, "k_horizontal"), _current_value(config, "k_horizontal"), 0.1 + 0.8 * difficulty),
-        "k_vertical": _effective_range(_bounds_for(config, "k_vertical"), _current_value(config, "k_vertical"), 0.1 + 0.8 * difficulty),
+        "n_horizontal": _bounds_for(config, "n_horizontal"),
+        "n_vertical": _bounds_for(config, "n_vertical"),
+        "mouth_sag": _bounds_for(config, "mouth_sag"),
+        "k_horizontal": _bounds_for(config, "k_horizontal"),
+        "k_vertical": _bounds_for(config, "k_vertical"),
     }
-    lower_s, upper_s = refinement_s_bounds(config)
-    expected_s_span = min(upper_s - lower_s, 0.1 + 0.7 * aspect_delta + 0.5 * coverage_delta)
+    expected_s_span = 0.1 + 0.7 * aspect_delta + 0.5 * coverage_delta
     return SearchSpace(
         aspect_delta=aspect_delta,
         coverage_delta=coverage_delta,
@@ -314,22 +430,25 @@ def _candidate_configs(
     search_space: SearchSpace,
 ) -> Iterable[Dict[str, Any]]:
     rates = _values_for(config, "morph_rate", variable_names, search_space)
-    ns = _values_for(config, "n", variable_names, search_space)
-    qs = _values_for(config, "q", variable_names, search_space)
+    n_hs = _values_for(config, "n_horizontal", variable_names, search_space)
+    n_vs = _values_for(config, "n_vertical", variable_names, search_space)
+    sags = _values_for(config, "mouth_sag", variable_names, search_space)
     k_hs = _values_for(config, "k_horizontal", variable_names, search_space)
     k_vs = _values_for(config, "k_vertical", variable_names, search_space)
     for rate in rates:
-        for n in ns:
-            for q in qs:
-                for k_h in k_hs:
-                    for k_v in k_vs:
-                        candidate = copy.deepcopy(dict(config))
-                        _set_current_value(candidate, "morph_rate", rate)
-                        _set_current_value(candidate, "n", n)
-                        _set_current_value(candidate, "q", q)
-                        _set_current_value(candidate, "k_horizontal", k_h)
-                        _set_current_value(candidate, "k_vertical", k_v)
-                        yield candidate
+        for n_h in n_hs:
+            for n_v in n_vs:
+                for sag in sags:
+                    for k_h in k_hs:
+                        for k_v in k_vs:
+                            candidate = copy.deepcopy(dict(config))
+                            _set_current_value(candidate, "morph_rate", rate)
+                            _set_current_value(candidate, "n_horizontal", n_h)
+                            _set_current_value(candidate, "n_vertical", n_v)
+                            _set_current_value(candidate, "mouth_sag", sag)
+                            _set_current_value(candidate, "k_horizontal", k_h)
+                            _set_current_value(candidate, "k_vertical", k_v)
+                            yield candidate
 
 
 def _values_for(
@@ -341,23 +460,26 @@ def _values_for(
     if name not in variable_names:
         return [_current_value(config, name)]
     if name == "morph_rate":
-        return _grid(search_space.effective_ranges[name], _current_value(config, name), 13)
-    if name == "n":
-        return _grid(search_space.effective_ranges[name], _current_value(config, name), 7)
-    if name == "q":
-        return _grid(search_space.effective_ranges[name], _current_value(config, name), 5)
+        return _grid(search_space.effective_ranges[name], _current_value(config, name), 6)
+    if name in {"n_horizontal", "n_vertical"}:
+        return _log_grid(search_space.effective_ranges[name], _current_value(config, name), 6)
+    if name == "mouth_sag":
+        return _grid(search_space.effective_ranges[name], _current_value(config, name), 6)
     if name in {"k_horizontal", "k_vertical"}:
-        return _grid(search_space.effective_ranges[name], _current_value(config, name), 5)
+        return _grid(search_space.effective_ranges[name], _current_value(config, name), 6)
     raise ValueError(f"unknown refinement variable: {name}")
 
 
 def _current_value(config: Mapping[str, Any], name: str) -> float:
     if name == "morph_rate":
         return morph_rate(config)
-    if name == "n":
-        return profile_n(config)
-    if name == "q":
-        return profile_q(config)
+    if name == "n_horizontal":
+        return profile_n(config, "horizontal")
+    if name == "n_vertical":
+        return profile_n(config, "vertical")
+    if name == "mouth_sag":
+        sag = mouth_curvature_sag(config)
+        return 0.0 if sag is None else sag
     if name == "k_horizontal":
         return profile_k(config, "horizontal")
     if name == "k_vertical":
@@ -368,10 +490,19 @@ def _current_value(config: Mapping[str, Any], name: str) -> float:
 def _bounds_for(config: Mapping[str, Any], name: str) -> tuple[float, float]:
     if name == "morph_rate":
         return seeded_bounds(config, ["morph", "rate"])
-    if name == "n":
-        return seeded_bounds(config, ["profiles", "n"])
-    if name == "q":
-        return seeded_bounds(config, ["profiles", "q"])
+    if name == "n_horizontal":
+        return seeded_bounds(config, ["profiles", "n", "horizontal"])
+    if name == "n_vertical":
+        return seeded_bounds(config, ["profiles", "n", "vertical"])
+    if name == "mouth_sag":
+        curvature = config["mouth"]["curvature"]
+        sag = mouth_curvature_sag(config)
+        bounds = curvature.get("sag_bounds")
+        if sag is None:
+            return 0.0, 0.0
+        if bounds is None:
+            return sag, sag
+        return float(bounds[0]), float(bounds[1])
     if name == "k_horizontal":
         return seeded_bounds(config, ["profiles", "k", "horizontal"])
     if name == "k_vertical":
@@ -382,10 +513,13 @@ def _bounds_for(config: Mapping[str, Any], name: str) -> tuple[float, float]:
 def _set_current_value(config: Dict[str, Any], name: str, value: float) -> None:
     if name == "morph_rate":
         config["morph"]["rate"]["seed"] = value
-    elif name == "n":
-        config["profiles"]["n"]["seed"] = value
-    elif name == "q":
-        config["profiles"]["q"]["seed"] = value
+    elif name == "n_horizontal":
+        config["profiles"]["n"]["horizontal"]["seed"] = value
+    elif name == "n_vertical":
+        config["profiles"]["n"]["vertical"]["seed"] = value
+    elif name == "mouth_sag":
+        if config["mouth"]["curvature"].get("sag") is not None:
+            config["mouth"]["curvature"]["sag"] = value
     elif name == "k_horizontal":
         config["profiles"]["k"]["horizontal"]["seed"] = value
     elif name == "k_vertical":
@@ -398,8 +532,35 @@ def _grid(bounds: Sequence[float], current: float, count: int) -> List[float]:
     lower, upper = float(bounds[0]), float(bounds[1])
     if count <= 1 or lower == upper:
         return [lower]
-    values = [lower + (upper - lower) * index / (count - 1) for index in range(count)]
-    values.extend([current, lower, upper])
+    if count == 2:
+        values = [lower, upper]
+    else:
+        interior_count = max(count - 3, 0)
+        values = [lower, current, upper]
+        values.extend(
+            lower + (upper - lower) * (index + 1) / (interior_count + 1)
+            for index in range(interior_count)
+        )
+    return sorted({round(value, 10) for value in values if lower <= value <= upper})
+
+
+def _log_grid(bounds: Sequence[float], current: float, count: int) -> List[float]:
+    lower, upper = float(bounds[0]), float(bounds[1])
+    if count <= 1 or lower == upper:
+        return [lower]
+    if lower <= 0.0 or upper <= 0.0:
+        return _grid(bounds, current, count)
+    log_lower = math.log(lower)
+    log_upper = math.log(upper)
+    if count == 2:
+        values = [lower, upper]
+    else:
+        interior_count = max(count - 3, 0)
+        values = [lower, current, upper]
+        values.extend(
+            math.exp(log_lower + (log_upper - log_lower) * (index + 1) / (interior_count + 1))
+            for index in range(interior_count)
+        )
     return sorted({round(value, 10) for value in values if lower <= value <= upper})
 
 
@@ -408,48 +569,53 @@ def _objective(
     config: Mapping[str, Any],
     surface: SurfaceResult,
     rejected: Sequence[FeasibilityIssue],
+    authored_weighted_area_error: float | None = None,
 ) -> float:
     if rejected:
         return 1000.0 + len(rejected) + surface.area_fit.rms_log_error
-    return objective_score(config, surface, authored_config)
+    return objective_score(config, surface, authored_config, authored_weighted_area_error)
 
 
 def objective_score(
     config: Mapping[str, Any],
     surface: SurfaceResult,
     authored_config: Mapping[str, Any] | None = None,
+    authored_weighted_area_error: float | None = None,
 ) -> float:
-    return sum(term.contribution for term in objective_terms(config, surface, authored_config))
+    return sum(term.contribution for term in objective_terms(config, surface, authored_config, authored_weighted_area_error))
 
 
 def objective_terms(
     config: Mapping[str, Any],
     surface: SurfaceResult,
     authored_config: Mapping[str, Any] | None = None,
+    authored_weighted_area_error: float | None = None,
 ) -> List[ObjectiveTerm]:
     authored_config = authored_config if authored_config is not None else config
-    tolerance = max(float(config["refinement"]["area_rms_log_tolerance"]), 1e-9)
-    smoothness_weight = float(config["refinement"]["smoothness_weight"])
-    smoothness = log_area_slope_change(surface.sections)
-    smoothness_limit = max(float(config["refinement"]["max_log_area_slope_change"]), 1e-9)
     s_quality = s_quality_metrics(config, surface)
     profile_smoothness = profile_smoothness_metrics(config)
-    morph_timing = morph_timing_metrics(config)
-    roundover_penalty = roundover_target_penalty(config)
-    s_bound_pressure = _s_bound_pressure(config, surface)
+    radial_basis = radial_basis_deviation_metrics(config, surface)
+    morph_timing = morph_timing_metrics(config, surface)
     morph_timing_scale = max(1.0 - morph_timing.z50_limit, 1e-9)
     s_span_scale = max(s_quality.expected_span, 1e-9)
     profile_smoothness_scale = max(profile_smoothness.limit, 1e-9)
+    morph_rate_drift = morph_rate_drift_metric(authored_config, config)
     k_drift = k_drift_metric(authored_config, config)
+    sag_drift = sag_drift_metric(authored_config, config)
     return [
-        _objective_term("area rms log", surface.area_fit.rms_log_error, surface.area_fit.rms_log_error / tolerance, 1.0),
-        _objective_term("roundover target", roundover_penalty, roundover_penalty, 1.0),
-        _objective_term("S bound pressure", s_bound_pressure, s_bound_pressure, 1.0),
-        _objective_term("area smoothness", smoothness, max(0.0, smoothness - smoothness_limit) / smoothness_limit, smoothness_weight),
         _objective_term("morph timing", morph_timing.excess_z50, morph_timing.excess_z50 / morph_timing_scale, float(config["refinement"]["morph_timing_weight"])),
+        _objective_term("morph rate drift", morph_rate_drift, morph_rate_drift, float(config["refinement"]["morph_rate_drift_weight"])),
         _objective_term("S span", s_quality.excess_span, s_quality.excess_span / s_span_scale, float(config["refinement"]["s_span_weight"])),
         _objective_term("S smoothness", s_quality.max_adjacent_delta, s_quality.max_adjacent_delta / s_span_scale, float(config["refinement"]["s_smoothness_weight"])),
+        _objective_term("radial basis deviation", radial_basis.rms_radius_deviation, radial_basis.rms_radius_deviation, float(config["refinement"]["radial_basis_weight"])),
+        _objective_term(
+            "radial exit slope deviation",
+            radial_basis.rms_exit_slope_deviation,
+            radial_basis.rms_exit_slope_deviation,
+            float(config["refinement"]["radial_exit_slope_weight"]),
+        ),
         _objective_term("K drift", k_drift, k_drift, float(config["refinement"]["k_drift_weight"])),
+        _objective_term("sag drift", sag_drift, sag_drift, float(config["refinement"]["sag_drift_weight"])),
         _objective_term("profile smoothness", profile_smoothness.excess, profile_smoothness.excess / profile_smoothness_scale, float(config["refinement"]["profile_smoothness_weight"])),
     ]
 
@@ -465,27 +631,17 @@ def _objective_term(name: str, raw_value: float, normalized_value: float, weight
     )
 
 
-def _s_bound_pressure(config: Mapping[str, Any], surface: SurfaceResult) -> float:
-    lower, upper = refinement_s_bounds(config)
-    span = max(upper - lower, 1e-9)
-    pressures = []
-    for curve in surface.radial_curves:
-        distance_to_bound = min(curve.solved_s - lower, upper - curve.solved_s) / span
-        pressures.append(max(0.0, 0.2 - distance_to_bound))
-    return 0.01 * sum(pressures) / max(len(pressures), 1)
-
-
 def _stage_summary(stage_name: str, candidates: Sequence[CandidateResult], best: CandidateResult) -> str:
     valid_count = sum(1 for candidate in candidates if candidate.is_valid)
     return (
-        f"{stage_name}: evaluated {len(candidates)} candidates, {valid_count} valid, "
+        f"{stage_name}: evaluated {len(candidates)} designs, {valid_count} valid, "
         f"best RMS log area error {best.surface.area_fit.rms_log_error:.6g}"
     )
 
 
-def _plot_refinement_area_fit(
+def _plot_area_fit(
     initial_sections: Sequence[SectionSample],
-    refined_sections: Sequence[SectionSample],
+    output_sections: Sequence[SectionSample],
     path: Path,
 ) -> None:
     import matplotlib
@@ -494,23 +650,23 @@ def _plot_refinement_area_fit(
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots(figsize=(7.0, 4.2), dpi=140)
-    scale = plotted_target_area_normalizer(refined_sections)
+    scale = plotted_target_area_normalizer(output_sections)
     ax.plot(
         [section.z_ref for section in initial_sections],
         [section.actual_area / scale for section in initial_sections],
-        label="initial area",
+        label="authored area",
     )
     ax.plot(
-        [section.z_ref for section in refined_sections],
-        [section.actual_area / scale for section in refined_sections],
-        label="refined area",
+        [section.z_ref for section in output_sections],
+        [section.actual_area / scale for section in output_sections],
+        label="output area",
     )
     ax.plot(
-        [section.z_ref for section in refined_sections],
-        [section.target_area / scale for section in refined_sections],
+        [section.z_ref for section in output_sections],
+        [section.target_area / scale for section in output_sections],
         label="target area",
     )
-    ax.set_title("M3 Area Refinement")
+    ax.set_title("Area Fit")
     ax.set_xlabel("reference z (mm)")
     ax.set_ylabel("area / target area at plotted end")
     ax.grid(True, linewidth=0.4, alpha=0.35)
@@ -609,6 +765,7 @@ def _plot_radial_profiles(config: Mapping[str, Any], surface: SurfaceResult, pat
                 radii,
                 color="black",
                 linewidth=2.8,
+                linestyle="--" if key_label == "transition" else "-",
                 label=f"{key_label} p={curve.p_deg:.0f} deg",
             )
         else:
@@ -661,49 +818,6 @@ def _plot_radial_plan(surface: SurfaceResult, path: Path) -> None:
     plt.close(fig)
 
 
-def _plot_principal_sampling_views(
-    config: Mapping[str, Any],
-    surface: SurfaceResult,
-    path: Path,
-) -> None:
-    import matplotlib
-
-    matplotlib.use("Agg")
-    import matplotlib.pyplot as plt
-
-    _, profiles = solve_principal_profiles(config)
-
-    fig, ax = plt.subplots(figsize=(7.2, 4.8), dpi=140)
-    max_z = 0.0
-    max_radius = 0.0
-    colors = {"horizontal": "black", "vertical": "#4c78a8"}
-    for section in surface.sections:
-        ax.axvline(section.z_ref, color="#b7b7b7", linewidth=0.35, alpha=0.35, zorder=0)
-    ax.axhline(0.0, color="#777777", linewidth=0.6, alpha=0.7, zorder=1)
-    for profile in profiles:
-        z_values = [point.z for point in profile.points]
-        radii = [point.radius for point in profile.points]
-        max_z = max(max_z, max(z_values))
-        max_radius = max(max_radius, max(radii))
-        color = colors.get(profile.axis, "black")
-        ax.plot(z_values, radii, color=color, linewidth=1.8, label=f"{profile.axis} profile", zorder=3)
-        ax.plot(z_values, [-radius for radius in radii], color=color, linewidth=1.8, zorder=3)
-        ax.scatter(z_values, radii, s=8, color="#f58518", zorder=4)
-        ax.scatter(z_values, [-radius for radius in radii], s=8, color="#f58518", zorder=4)
-    limit = max_radius * 1.08 if max_radius > 0.0 else 1.0
-    ax.set_title("Principal Sampling Views")
-    ax.set_xlabel("z (mm)")
-    ax.set_ylabel("radius (mm)")
-    ax.set_xlim(left=0.0, right=max_z)
-    ax.set_ylim(-limit, limit)
-    ax.set_aspect("equal", adjustable="box")
-    ax.grid(True, linewidth=0.4, alpha=0.25)
-    ax.legend(loc="best", fontsize=8)
-    fig.tight_layout()
-    fig.savefig(path)
-    plt.close(fig)
-
-
 def _diagnostic_first_quadrant_curves(
     config: Mapping[str, Any],
     surface: SurfaceResult,
@@ -724,60 +838,90 @@ def _nearest_curve(curves: Sequence[RadialCurve], p_deg: float) -> RadialCurve:
     return min(curves, key=lambda curve: abs(curve.p_deg - p_deg))
 
 
-def _write_refinement_report(
+def _write_output_report(
     project_path: Path,
     result: RefinementResult,
     artifacts: Mapping[str, Path],
 ) -> None:
     initial_fit = result.initial.area_fit
     best_fit = result.best.surface.area_fit
+    initial_area_zones = area_zone_metrics(result.initial.sections)
+    best_area_zones = area_zone_metrics(result.best.surface.sections)
     best_config = result.best.config
     tolerance = float(best_config["refinement"]["area_rms_log_tolerance"])
     smoothness = log_area_slope_change(result.best.surface.sections)
     smoothness_limit = float(best_config["refinement"]["max_log_area_slope_change"])
     s_quality = s_quality_metrics(best_config, result.best.surface)
     profile_smoothness = profile_smoothness_metrics(best_config)
-    morph_timing = morph_timing_metrics(best_config)
+    radial_basis = radial_basis_deviation_metrics(best_config, result.best.surface)
+    morph_timing = morph_timing_metrics(best_config, result.best.surface)
     roundover_rows = roundover_target_rows(best_config)
     length_recommendations = roundover_length_recommendations(best_config)
-    terms = objective_terms(best_config, result.best.surface, result.authored_config)
+    terms = objective_terms(
+        best_config,
+        result.best.surface,
+        result.authored_config,
+        initial_area_zones.weighted_rms_log_error,
+    )
     _, master_profiles = solve_principal_profiles(best_config)
     searched_variables = _searchable_variables(best_config)
+    mode = surface_mode(best_config)
+    direct_mode = mode == "slice"
     lines = [
-        f"# HornCAD M3 Refinement Review: {project_path.stem}",
+        f"# HornCAD Output: {project_path.stem}",
         "",
         "## Solver Model",
         "",
+        f"- Surface mode: {mode}",
         "- Hard constraint: mouth boundary fit",
         "- Fixed authored value: coverage",
-        "- Internal dependent solve: S(p), recomputed for every candidate",
-        "- Candidate target: polar-area-weighted circular OS-SE reference using that candidate's Q and N",
-        "- Optimization objective: area fit, roundover target fit, smoothness, S behavior, and morph timing",
-        "- Candidate variables from bounds: " + (", ".join(searched_variables) if searched_variables else "none"),
-        "",
-        "## Effective Search Space",
-        "",
-        _markdown_table(
-            ["Metric", "Value"],
-            [
-                ["Mouth aspect delta", f"{result.search_space.aspect_delta:.6g}"],
-                ["Coverage delta", f"{result.search_space.coverage_delta:.6g}"],
-                ["Initial RMS log area error used for scaling", f"{result.search_space.initial_rms_log_area_error:.6g}"],
-                ["Search difficulty", f"{result.search_space.difficulty:.6g}"],
-                ["Morph rate range", _format_range(result.search_space.effective_ranges["morph_rate"])],
-                ["N range", _format_range(result.search_space.effective_ranges["n"])],
-                ["Q range", _format_range(result.search_space.effective_ranges["q"])],
-                ["Horizontal K range", _format_range(result.search_space.effective_ranges["k_horizontal"])],
-                ["Vertical K range", _format_range(result.search_space.effective_ranges["k_vertical"])],
-            ],
+        "- Internal dependent solve: S(p), solved from authored profile values",
+        "- Fixed Q: 0.995",
+        "- Area reference: polar-area-weighted circular OS-SE reference using each design's H/V N values",
+        (
+            "- Output surface: H/V basis profiles lofted through superellipse slices"
+            if direct_mode
+            else "- Output surface: radial profile family generated by candidate search"
         ),
+        (
+            "- Search variables from bounds: none; bounds are ignored in slice mode"
+            if direct_mode
+            else "- Search variables from bounds: " + (", ".join(searched_variables) if searched_variables else "none")
+        ),
+    ]
+    if not direct_mode:
+        lines.extend(
+            [
+                "",
+                "## Effective Search Space",
+                "",
+                _markdown_table(
+                    ["Metric", "Value"],
+                    [
+                        ["Mouth aspect delta", f"{result.search_space.aspect_delta:.6g}"],
+                        ["Coverage delta", f"{result.search_space.coverage_delta:.6g}"],
+                        ["Authored RMS log area error used for scaling", f"{result.search_space.initial_rms_log_area_error:.6g}"],
+                        ["Search difficulty", f"{result.search_space.difficulty:.6g}"],
+                        ["Morph rate range", _format_range(result.search_space.effective_ranges["morph_rate"])],
+                        ["Horizontal N range", _format_range(result.search_space.effective_ranges["n_horizontal"])],
+                        ["Vertical N range", _format_range(result.search_space.effective_ranges["n_vertical"])],
+                        ["Mouth sag range", _format_range(result.search_space.effective_ranges["mouth_sag"])],
+                        ["Horizontal K range", _format_range(result.search_space.effective_ranges["k_horizontal"])],
+                        ["Vertical K range", _format_range(result.search_space.effective_ranges["k_vertical"])],
+                    ],
+                ),
+            ]
+        )
+    lines.extend(
+        [
         "",
         "## Sampling",
         "",
         _markdown_table(
             ["Item", "Behavior"],
             [
-                ["Angular radial curves", "adaptive by mouth-boundary change"],
+                ["Surface sections", "superellipse slices from H/V basis profiles" if direct_mode else "radial profile sections"],
+                ["Angular radial curves", "diagnostic only in slice mode" if direct_mode else "adaptive by mouth-boundary change"],
                 ["Profile z samples", "adaptive by radial curve change"],
                 ["Section z samples", "adaptive by target reference-radius change"],
                 ["Configured length segments", str(best_config["resolution"]["length_segments"])],
@@ -785,43 +929,52 @@ def _write_refinement_report(
             ],
         ),
         "",
-        "## Best Candidate",
+        "## Selected Design",
         "",
         _markdown_table(
             ["Field", "Value"],
             [
-                ["Stage", result.best.stage],
                 ["Valid under reject_if", "yes" if result.best.is_valid else "no"],
-                ["Workers", str(result.workers)],
+                ["Workers", "not used" if direct_mode else str(result.workers)],
                 ["Morph rate", f"{morph_rate(best_config):.6g}"],
-                ["N", f"{profile_n(best_config):.6g}"],
-                ["Q", f"{profile_q(best_config):.6g}"],
+                ["Horizontal N", f"{profile_n(best_config, 'horizontal'):.6g}"],
+                ["Vertical N", f"{profile_n(best_config, 'vertical'):.6g}"],
+                ["Fixed Q", f"{profile_q(best_config):.6g}"],
+                ["Mouth sag", _format_optional_number(mouth_curvature_sag(best_config))],
                 ["Horizontal K", f"{profile_k(best_config, 'horizontal'):.6g}"],
                 ["Vertical K", f"{profile_k(best_config, 'vertical'):.6g}"],
-                ["S range", _s_range(result.best.surface)],
+                ["H/V S range" if direct_mode else "S range", _governing_s_range(master_profiles) if direct_mode else _s_range(result.best.surface)],
                 ["Shared section length", f"{result.best.surface.shared_section_length:.6g} mm"],
                 ["Area RMS log tolerance", f"{tolerance:.6g}"],
                 ["Area tolerance met", "yes" if best_fit.rms_log_error <= tolerance else "no"],
-                ["Objective score", f"{sum(term.contribution for term in terms):.6g}"],
+                ["Objective score", "not used" if direct_mode else f"{sum(term.contribution for term in terms):.6g}"],
+                ["Inside surface shape power", f"{INSIDE_SURFACE_SHAPE_POWER:.6g}"],
             ],
         ),
         "",
-        "## Objective Breakdown",
-        "",
-        _markdown_table(
-            ["Term", "Raw", "Normalized", "Weight", "Contribution"],
+    ])
+    if not direct_mode:
+        lines.extend(
             [
-                [
-                    term.name,
-                    f"{term.raw_value:.6g}",
-                    f"{term.normalized_value:.6g}",
-                    f"{term.weight:.6g}",
-                    f"{term.contribution:.6g}",
-                ]
-                for term in terms
-            ],
-        ),
-        "",
+                "## Objective Breakdown",
+                "",
+                _markdown_table(
+                    ["Term", "Raw", "Normalized", "Weight", "Contribution"],
+                    [
+                        [
+                            term.name,
+                            f"{term.raw_value:.6g}",
+                            f"{term.normalized_value:.6g}",
+                            f"{term.weight:.6g}",
+                            f"{term.contribution:.6g}",
+                        ]
+                        for term in terms
+                    ],
+                ),
+                "",
+            ]
+        )
+    lines.extend([
         "## H/V Master Profiles",
         "",
         _markdown_table(
@@ -852,57 +1005,47 @@ def _write_refinement_report(
         "",
         "## Roundover Diagnostics",
         "",
-        _markdown_table(
+        _roundover_diagnostics_table(roundover_rows),
+        *(
             [
-                "Axis",
-                "Roundover contribution %",
-                "Target %",
-                "Tolerance %",
-                "Excess miss %",
-            ],
-            [
-                [
-                    row.axis,
-                    f"{row.actual_percent:.6g}",
-                    f"{row.target_percent:.6g}",
-                    f"{row.tolerance_percent:.6g}",
-                    f"{row.excess_miss_percent:.6g}",
-                ]
-                for row in roundover_rows
-            ],
-        ),
-        "",
-        "## Roundover Length Guidance",
-        "",
-        _markdown_table(
-            [
-                "Axis",
-                "Target %",
-                "Current %",
-                "Required change in length.max mm",
-                "Required S",
-                "S valid",
-                "Note",
-            ],
-            [
-                [
-                    item.axis,
-                    f"{item.target_percent:.6g}",
-                    _format_optional_number(item.current_percent),
-                    _format_optional_signed_number(item.required_length_change),
-                    _format_optional_number(item.required_s),
-                    _format_optional_bool(item.valid_s),
-                    item.note,
-                ]
-                for item in length_recommendations
-            ],
+                "",
+                "## Roundover Length Guidance",
+                "",
+                _markdown_table(
+                    [
+                        "Axis",
+                        "Target %",
+                        "Current %",
+                        "Required change in length.max mm",
+                        "Required S",
+                        "Note",
+                    ],
+                    [
+                        [
+                            item.axis,
+                            _format_optional_number(item.target_percent),
+                            _format_optional_number(item.current_percent),
+                            _format_optional_signed_number(item.required_length_change),
+                            _format_optional_number(item.required_s),
+                            item.note,
+                        ]
+                        for item in length_recommendations
+                    ],
+                ),
+            ]
+            if length_recommendations
+            else []
         ),
         "",
         "## Area Fit",
         "",
         _markdown_table(
-            ["Metric", "Initial", "Refined"],
+            ["Metric", "Authored", "Output"],
             [
+                ["Weighted RMS log area error", f"{initial_area_zones.weighted_rms_log_error:.6g}", f"{best_area_zones.weighted_rms_log_error:.6g}"],
+                ["Throat third RMS log area error", f"{initial_area_zones.throat_rms_log_error:.6g}", f"{best_area_zones.throat_rms_log_error:.6g}"],
+                ["Middle third RMS log area error", f"{initial_area_zones.middle_rms_log_error:.6g}", f"{best_area_zones.middle_rms_log_error:.6g}"],
+                ["Mouth third RMS log area error", f"{initial_area_zones.mouth_rms_log_error:.6g}", f"{best_area_zones.mouth_rms_log_error:.6g}"],
                 ["Area fit score", f"{initial_fit.score:.6g}", f"{best_fit.score:.6g}"],
                 ["RMS log area error", f"{initial_fit.rms_log_error:.6g}", f"{best_fit.rms_log_error:.6g}"],
                 ["RMS area error", f"{initial_fit.rms_percent_error * 100.0:.6g}%", f"{best_fit.rms_percent_error * 100.0:.6g}%"],
@@ -919,11 +1062,11 @@ def _write_refinement_report(
                 ["Max log-area slope change", f"{smoothness:.6g}"],
                 ["Max log-area slope change limit", f"{smoothness_limit:.6g}"],
                 ["Smoothness check", "passed" if smoothness <= smoothness_limit else "warning"],
-                ["Smoothness objective weight", f"{float(best_config['refinement']['smoothness_weight']):.6g}"],
+                *([] if direct_mode else [["Smoothness objective weight", f"{float(best_config['refinement']['smoothness_weight']):.6g}"]]),
             ],
         ),
         "",
-        "## S Behavior",
+        "## Radial Diagnostic S Behavior" if direct_mode else "## S Behavior",
         "",
         _markdown_table(
             ["Metric", "Value"],
@@ -935,8 +1078,33 @@ def _write_refinement_report(
                 ["Excess S span", f"{s_quality.excess_span:.6g}"],
                 ["RMS S deviation", f"{s_quality.rms_deviation:.6g}"],
                 ["Max adjacent S change over p", f"{s_quality.max_adjacent_delta:.6g}"],
-                ["S span objective weight", f"{float(best_config['refinement']['s_span_weight']):.6g}"],
-                ["S smoothness objective weight", f"{float(best_config['refinement']['s_smoothness_weight']):.6g}"],
+                *(
+                    []
+                    if direct_mode
+                    else [
+                        ["S span objective weight", f"{float(best_config['refinement']['s_span_weight']):.6g}"],
+                        ["S smoothness objective weight", f"{float(best_config['refinement']['s_smoothness_weight']):.6g}"],
+                    ]
+                ),
+            ],
+        ),
+        "",
+        "## Radial Basis Coherence",
+        "",
+        _markdown_table(
+            ["Metric", "Value"],
+            [
+                ["RMS radial basis deviation", f"{radial_basis.rms_radius_deviation:.6g}"],
+                ["Max radial basis deviation", f"{radial_basis.max_radius_deviation:.6g}"],
+                ["RMS exit slope deviation", f"{radial_basis.rms_exit_slope_deviation:.6g}"],
+                *(
+                    []
+                    if direct_mode
+                    else [
+                        ["Radial basis objective weight", f"{float(best_config['refinement']['radial_basis_weight']):.6g}"],
+                        ["Radial exit slope objective weight", f"{float(best_config['refinement']['radial_exit_slope_weight']):.6g}"],
+                    ]
+                ),
             ],
         ),
         "",
@@ -949,7 +1117,14 @@ def _write_refinement_report(
                 ["z90", f"{morph_timing.z90_fraction * 100.0:.6g}% of length"],
                 ["z50 limit", f"{morph_timing.z50_limit * 100.0:.6g}% of length"],
                 ["Excess z50", f"{morph_timing.excess_z50 * 100.0:.6g}% of length"],
-                ["Morph timing objective weight", f"{float(best_config['refinement']['morph_timing_weight']):.6g}"],
+                *(
+                    []
+                    if direct_mode
+                    else [
+                        ["Morph timing objective weight", f"{float(best_config['refinement']['morph_timing_weight']):.6g}"],
+                        ["Morph rate drift objective weight", f"{float(best_config['refinement']['morph_rate_drift_weight']):.6g}"],
+                    ]
+                ),
             ],
         ),
         "",
@@ -962,28 +1137,30 @@ def _write_refinement_report(
                 ["Max H/V profile slope change limit", f"{profile_smoothness.limit:.6g}"],
                 ["Excess H/V profile slope change", f"{profile_smoothness.excess:.6g}"],
                 ["Profile smoothness check", "passed" if profile_smoothness.excess <= 0.0 else "warning"],
-                ["Profile smoothness objective weight", f"{float(best_config['refinement']['profile_smoothness_weight']):.6g}"],
+                *([] if direct_mode else [["Profile smoothness objective weight", f"{float(best_config['refinement']['profile_smoothness_weight']):.6g}"]]),
             ],
         ),
         "",
         "## Bound Notes",
         "",
-    ]
-    bound_notes = _bound_notes(best_config)
-    if bound_notes:
+    ])
+    bound_notes = [] if direct_mode else _bound_notes(best_config)
+    if direct_mode:
+        lines.append("- Bounds are ignored in slice mode; authored seed values are used directly.")
+    elif bound_notes:
         lines.extend(f"- {note}" for note in bound_notes)
     else:
-        lines.append("- Best candidate did not land on a searched parameter bound.")
-    lines.extend(
-        [
-            "",
-            "## Search Summary",
-            "",
-            f"- Candidates evaluated: {result.candidates_evaluated}",
-            f"- Candidates rejected by configured hard constraints: {result.candidates_rejected}",
-        ]
-    )
-    lines.extend(f"- {summary}" for summary in result.stage_summaries)
+        lines.append("- Selected design did not land on a searched parameter bound.")
+    if not direct_mode:
+        lines.extend(
+            [
+                "",
+                "## Search Summary",
+                "",
+                f"- Designs evaluated: {result.candidates_evaluated}",
+                f"- Designs rejected by configured hard constraints: {result.candidates_rejected}",
+            ]
+        )
     lines.extend(["", "## Warnings And Infeasible Conditions", ""])
     if result.best.surface.issues:
         for issue in result.best.surface.issues:
@@ -992,13 +1169,31 @@ def _write_refinement_report(
     else:
         lines.append("- None")
     lines.extend(["", "## Generated Artifacts", ""])
-    lines.extend(f"- `{name}`: `{path}`" for name, path in artifacts.items())
+    artifact_labels = {
+        "area_fit": "Area fit",
+        "hv_profiles": "H/V profiles",
+        "inside_surface": "Inside surface",
+        "radial_plan": "Radial plan",
+        "radial_profiles": "Radial profiles",
+        "report": "Report",
+    }
+    for name in ("area_fit", "hv_profiles", "inside_surface", "radial_plan", "radial_profiles", "report"):
+        path = artifacts.get(name)
+        if path is not None:
+            lines.append(f"- {artifact_labels[name]}: `{path}`")
     lines.append("")
     artifacts["report"].write_text("\n".join(lines), encoding="utf-8")
 
 
 def _s_range(surface: SurfaceResult) -> str:
     values = [curve.solved_s for curve in surface.radial_curves if math.isfinite(curve.solved_s)]
+    if not values:
+        return "none"
+    return f"{min(values):.6g}..{max(values):.6g}"
+
+
+def _governing_s_range(profiles: Sequence[Any]) -> str:
+    values = [profile.solved_s for profile in profiles if math.isfinite(profile.solved_s)]
     if not values:
         return "none"
     return f"{min(values):.6g}..{max(values):.6g}"
@@ -1026,6 +1221,34 @@ def _format_optional_bool(value: bool | None) -> str:
     return "yes" if value else "no"
 
 
+def _roundover_diagnostics_table(rows: Sequence[RoundoverTargetRow]) -> str:
+    has_targets = any(row.target_percent is not None for row in rows)
+    if not has_targets:
+        return _markdown_table(
+            ["Axis", "Roundover contribution %"],
+            [[row.axis, f"{row.actual_percent:.6g}"] for row in rows],
+        )
+    return _markdown_table(
+        [
+            "Axis",
+            "Roundover contribution %",
+            "Target %",
+            "Tolerance %",
+            "Excess miss %",
+        ],
+        [
+            [
+                row.axis,
+                f"{row.actual_percent:.6g}",
+                _format_optional_number(row.target_percent),
+                _format_optional_number(row.tolerance_percent),
+                _format_optional_number(row.excess_miss_percent),
+            ]
+            for row in rows
+        ],
+    )
+
+
 def _markdown_table(headers: Sequence[str], rows: Sequence[Sequence[str]]) -> str:
     lines = [
         "| " + " | ".join(headers) + " |",
@@ -1034,6 +1257,38 @@ def _markdown_table(headers: Sequence[str], rows: Sequence[Sequence[str]]) -> st
     for row in rows:
         lines.append("| " + " | ".join(str(value) for value in row) + " |")
     return "\n".join(lines)
+
+
+def area_zone_metrics(sections: Sequence[SectionSample]) -> AreaZoneMetrics:
+    if not sections:
+        return AreaZoneMetrics(0.0, 0.0, 0.0, 0.0)
+    return AreaZoneMetrics(
+        weighted_rms_log_error=_weighted_area_rms_log_error(sections),
+        throat_rms_log_error=_zone_rms_log_error(sections, 0.0, 1.0 / 3.0),
+        middle_rms_log_error=_zone_rms_log_error(sections, 1.0 / 3.0, 2.0 / 3.0),
+        mouth_rms_log_error=_zone_rms_log_error(sections, 2.0 / 3.0, 1.0),
+    )
+
+
+def _weighted_area_rms_log_error(sections: Sequence[SectionSample]) -> float:
+    total_weight = 0.0
+    weighted_error = 0.0
+    for section in sections:
+        station = min(max(section.station, 0.0), 1.0)
+        weight = 0.15 + 0.85 * (1.0 - station) ** 2
+        total_weight += weight
+        weighted_error += weight * section.log_area_error**2
+    return math.sqrt(weighted_error / max(total_weight, 1e-12))
+
+
+def _zone_rms_log_error(sections: Sequence[SectionSample], lower: float, upper: float) -> float:
+    if upper >= 1.0:
+        selected = [section for section in sections if lower <= section.station <= upper]
+    else:
+        selected = [section for section in sections if lower <= section.station < upper]
+    if not selected:
+        return 0.0
+    return math.sqrt(sum(section.log_area_error**2 for section in selected) / len(selected))
 
 
 def s_quality_metrics(config: Mapping[str, Any], surface: SurfaceResult) -> SQuality:
@@ -1055,8 +1310,7 @@ def s_quality_metrics(config: Mapping[str, Any], surface: SurfaceResult) -> SQua
     coverage_h = profile_coverage(config, "horizontal")
     coverage_v = profile_coverage(config, "vertical")
     coverage_delta = abs(coverage_h - coverage_v) / max(coverage_h, coverage_v, 1e-9)
-    lower_s, upper_s = refinement_s_bounds(config)
-    expected = min(upper_s - lower_s, 0.1 + 0.7 * aspect_delta + 0.5 * coverage_delta)
+    expected = 0.1 + 0.7 * aspect_delta + 0.5 * coverage_delta
     return SQuality(
         minimum=minimum,
         maximum=maximum,
@@ -1105,6 +1359,80 @@ def profile_smoothness_metrics(config: Mapping[str, Any]) -> ProfileSmoothness:
     )
 
 
+def radial_basis_deviation_metrics(config: Mapping[str, Any], surface: SurfaceResult) -> RadialBasisDeviation:
+    curves = surface.radial_curves
+    if len(curves) < 3:
+        return RadialBasisDeviation(0.0, 0.0, 0.0)
+
+    horizontal = _nearest_curve(curves, 0.0)
+    vertical = _nearest_curve(curves, 90.0)
+    radius_errors = []
+    slope_errors = []
+    fractions = [index / 16.0 for index in range(17)]
+    for curve in curves:
+        p = math.radians(curve.p_deg)
+        for fraction in fractions:
+            actual = radial_curve_distance_at_z(config, surface.derived, curve, curve.local_length * fraction)
+            expected = _basis_radius_at_fraction(config, surface, horizontal, vertical, p, fraction)
+            scale = max(expected, curve.boundary_distance, 1.0)
+            radius_errors.append((actual - expected) / scale)
+        actual_slope = _curve_slope_at_fraction(config, surface, curve, 0.98, 1.0)
+        expected_slope = interpolate_principal_value(
+            _curve_slope_at_fraction(config, surface, horizontal, 0.98, 1.0),
+            _curve_slope_at_fraction(config, surface, vertical, 0.98, 1.0),
+            p,
+        )
+        slope_errors.append(actual_slope - expected_slope)
+
+    rms_radius = math.sqrt(sum(error * error for error in radius_errors) / len(radius_errors)) if radius_errors else 0.0
+    max_radius = max((abs(error) for error in radius_errors), default=0.0)
+    rms_slope = math.sqrt(sum(error * error for error in slope_errors) / len(slope_errors)) if slope_errors else 0.0
+    return RadialBasisDeviation(
+        rms_radius_deviation=rms_radius,
+        max_radius_deviation=max_radius,
+        rms_exit_slope_deviation=rms_slope,
+    )
+
+
+def _basis_radius_at_fraction(
+    config: Mapping[str, Any],
+    surface: SurfaceResult,
+    horizontal: RadialCurve,
+    vertical: RadialCurve,
+    p: float,
+    fraction: float,
+) -> float:
+    horizontal_radius = radial_curve_distance_at_z(config, surface.derived, horizontal, horizontal.local_length * fraction)
+    vertical_radius = radial_curve_distance_at_z(config, surface.derived, vertical, vertical.local_length * fraction)
+    return interpolate_principal_value(horizontal_radius, vertical_radius, p)
+
+
+def _curve_slope_at_fraction(
+    config: Mapping[str, Any],
+    surface: SurfaceResult,
+    curve: RadialCurve,
+    lower_fraction: float,
+    upper_fraction: float,
+) -> float:
+    lower_z = curve.local_length * lower_fraction
+    upper_z = curve.local_length * upper_fraction
+    if upper_z <= lower_z:
+        return 0.0
+    lower_radius = radial_curve_distance_at_z(config, surface.derived, curve, lower_z)
+    upper_radius = radial_curve_distance_at_z(config, surface.derived, curve, upper_z)
+    return (upper_radius - lower_radius) / (upper_z - lower_z)
+
+
+def morph_rate_drift_metric(authored_config: Mapping[str, Any], config: Mapping[str, Any]) -> float:
+    authored = morph_rate(authored_config)
+    current = morph_rate(config)
+    if current <= authored:
+        return 0.0
+    lower, upper = _bounds_for(authored_config, "morph_rate")
+    span = max(upper - authored, authored - lower, 1e-9)
+    return (current - authored) / span
+
+
 def k_drift_metric(authored_config: Mapping[str, Any], config: Mapping[str, Any]) -> float:
     values = []
     for axis, name in (("horizontal", "k_horizontal"), ("vertical", "k_vertical")):
@@ -1114,6 +1442,16 @@ def k_drift_metric(authored_config: Mapping[str, Any], config: Mapping[str, Any]
     return math.sqrt(sum(value * value for value in values) / len(values))
 
 
+def sag_drift_metric(authored_config: Mapping[str, Any], config: Mapping[str, Any]) -> float:
+    authored = mouth_curvature_sag(authored_config)
+    current = mouth_curvature_sag(config)
+    if authored is None or current is None:
+        return 0.0
+    lower, upper = _bounds_for(authored_config, "mouth_sag")
+    span = max(upper - lower, 1e-9)
+    return abs(current - authored) / span
+
+
 def roundover_target_rows(config: Mapping[str, Any]) -> List[RoundoverTargetRow]:
     _, profiles = solve_principal_profiles(config)
     rows = []
@@ -1121,38 +1459,45 @@ def roundover_target_rows(config: Mapping[str, Any]) -> List[RoundoverTargetRow]
         actual = roundover_metrics(profile).roundover_contribution_percent
         target = profile_roundover_target_percent(config, profile.axis)
         tolerance = profile_roundover_tolerance_percent(config, profile.axis)
+        excess = None if target is None or tolerance is None else max(0.0, abs(actual - target) - tolerance)
         rows.append(
             RoundoverTargetRow(
                 axis=profile.axis,
                 target_percent=target,
                 actual_percent=actual,
                 tolerance_percent=tolerance,
-                excess_miss_percent=max(0.0, abs(actual - target) - tolerance),
+                excess_miss_percent=excess,
             )
         )
     return rows
 
 
 def roundover_target_penalty(config: Mapping[str, Any]) -> float:
-    rows = roundover_target_rows(config)
+    rows = [row for row in roundover_target_rows(config) if row.excess_miss_percent is not None]
     if not rows:
         return 0.0
-    rms_excess_percent = math.sqrt(sum(row.excess_miss_percent**2 for row in rows) / len(rows))
+    rms_excess_percent = math.sqrt(sum(float(row.excess_miss_percent) ** 2 for row in rows) / len(rows))
     return rms_excess_percent / 100.0
 
 
 def roundover_length_recommendations(config: Mapping[str, Any]) -> List[RoundoverLengthRecommendation]:
     return [
-        _roundover_length_recommendation_for_axis(config, "horizontal"),
-        _roundover_length_recommendation_for_axis(config, "vertical"),
+        recommendation
+        for recommendation in (
+            _roundover_length_recommendation_for_axis(config, "horizontal"),
+            _roundover_length_recommendation_for_axis(config, "vertical"),
+        )
+        if recommendation is not None
     ]
 
 
 def _roundover_length_recommendation_for_axis(
     config: Mapping[str, Any],
     axis: str,
-) -> RoundoverLengthRecommendation:
+) -> RoundoverLengthRecommendation | None:
     target = profile_roundover_target_percent(config, axis)
+    if target is None:
+        return None
     current_length = float(config["length"]["max"])
     current_percent, _, _ = _axis_roundover_at_length(config, axis, current_length)
     if not math.isfinite(current_percent):
@@ -1190,7 +1535,7 @@ def _roundover_length_recommendation_for_axis(
         else:
             right = middle
     required_length = (left + right) / 2.0
-    _, required_s, valid_s = _axis_roundover_at_length(config, axis, required_length)
+    _, required_s, _ = _axis_roundover_at_length(config, axis, required_length)
     return RoundoverLengthRecommendation(
         axis=axis,
         target_percent=target,
@@ -1198,7 +1543,7 @@ def _roundover_length_recommendation_for_axis(
         required_length=required_length,
         required_length_change=required_length - current_length,
         required_s=required_s,
-        valid_s=valid_s,
+        valid_s=None,
         note="exact target length estimate",
     )
 
@@ -1219,19 +1564,22 @@ def _axis_roundover_at_length(config: Mapping[str, Any], axis: str, length_max: 
     profile = next(item for item in profiles if item.axis == axis)
     if profile.profile_length <= 0.0:
         return math.nan, None, None
-    lower_s, upper_s = refinement_s_bounds(candidate)
     return (
         roundover_metrics(profile).roundover_contribution_percent,
         profile.solved_s,
-        lower_s <= profile.solved_s <= upper_s,
+        None,
     )
 
 
-def morph_timing_metrics(config: Mapping[str, Any]) -> MorphTiming:
-    rate = morph_rate(config)
+def morph_timing_metrics(config: Mapping[str, Any], surface: SurfaceResult | None = None) -> MorphTiming:
     z50_limit = float(config["refinement"]["morph_50_percent_max_z"])
-    z50 = _morph_fraction_at_weight(rate, 0.5)
-    z90 = _morph_fraction_at_weight(rate, 0.9)
+    if surface is None:
+        rate = morph_rate(config)
+        z50 = _morph_progress_at_weight(rate, 0.5)
+        z90 = _morph_progress_at_weight(rate, 0.9)
+    else:
+        z50 = _morph_section_fraction_at_weight(surface, 0.5)
+        z90 = _morph_section_fraction_at_weight(surface, 0.9)
     return MorphTiming(
         z50_fraction=z50,
         z90_fraction=z90,
@@ -1240,22 +1588,41 @@ def morph_timing_metrics(config: Mapping[str, Any]) -> MorphTiming:
     )
 
 
-def _morph_fraction_at_weight(rate: float, weight: float) -> float:
+def _morph_progress_at_weight(rate: float, weight: float) -> float:
     if rate <= 0.0:
-        return 1.0
-    return min(max(weight ** (1.0 / rate), 0.0), 1.0)
+        return 0.0
+    return min(max(weight * rate, 0.0), 1.0)
+
+
+def _morph_section_fraction_at_weight(surface: SurfaceResult, weight: float) -> float:
+    if not surface.sections or surface.shared_section_length <= 0.0:
+        return 0.0
+    previous = surface.sections[0]
+    if previous.morph_weight >= weight:
+        return previous.z_ref / surface.shared_section_length
+    for current in surface.sections[1:]:
+        if current.morph_weight >= weight:
+            span = current.morph_weight - previous.morph_weight
+            fraction = 0.0 if span <= 1e-12 else (weight - previous.morph_weight) / span
+            z = previous.z_ref + (current.z_ref - previous.z_ref) * fraction
+            return min(max(z / surface.shared_section_length, 0.0), 1.0)
+        previous = current
+    return 1.0
 
 
 def _bound_notes(config: Mapping[str, Any]) -> List[str]:
     notes = []
     checks = [
         ("Morph rate", morph_rate(config), _bounds_for(config, "morph_rate")),
-        ("N", profile_n(config), _bounds_for(config, "n")),
-        ("Q", profile_q(config), _bounds_for(config, "q")),
+        ("Horizontal N", profile_n(config, "horizontal"), _bounds_for(config, "n_horizontal")),
+        ("Vertical N", profile_n(config, "vertical"), _bounds_for(config, "n_vertical")),
+        ("Mouth sag", mouth_curvature_sag(config), _bounds_for(config, "mouth_sag")),
         ("Horizontal K", profile_k(config, "horizontal"), _bounds_for(config, "k_horizontal")),
         ("Vertical K", profile_k(config, "vertical"), _bounds_for(config, "k_vertical")),
     ]
     for label, value, bounds in checks:
+        if value is None:
+            continue
         lower, upper = float(bounds[0]), float(bounds[1])
         if math.isclose(lower, upper, rel_tol=0.0, abs_tol=1e-12):
             continue
@@ -1270,14 +1637,14 @@ def main(argv: Sequence[str] | None = None) -> int:
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser(description="Generate HornCAD M3 area-refinement artifacts.")
+    parser = argparse.ArgumentParser(description="Generate HornCAD output artifacts.")
     parser.add_argument("project", type=Path, help="Path to a HornCAD project YAML file.")
     parser.add_argument(
         "-o",
         "--output-dir",
         type=Path,
         default=None,
-        help="Directory for generated refinement artifacts. Defaults to refine_review/ beside the project file.",
+        help="Directory for generated output artifacts. Defaults to output/ beside the project file.",
     )
     parser.add_argument(
         "--workers",
@@ -1287,9 +1654,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     try:
-        artifacts = generate_refinement_review(args.project, args.output_dir, workers=args.workers)
+        artifacts = generate_output(args.project, args.output_dir, workers=args.workers)
     except (OSError, yaml.YAMLError, ConfigError, ValueError) as exc:
-        sys.stderr.write(f"{exc}\n")
+        if isinstance(exc, OutputFeasibilityError):
+            sys.stderr.write("Output feasibility check failed:\n")
+            for issue in exc.issues:
+                sys.stderr.write(f"  - [{issue.code}] {issue.message}\n")
+                sys.stderr.write(f"    likely culprit: {issue.likely_culprit}\n")
+        else:
+            sys.stderr.write(f"{exc}\n")
         return 1
 
     for path in artifacts.values():

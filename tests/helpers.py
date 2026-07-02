@@ -39,38 +39,46 @@ def sample_project_config():
                 "coverage": {"horizontal": HORIZONTAL_COVERAGE, "vertical": VERTICAL_COVERAGE},
                 "roundover": {
                     "horizontal": {
-                        "target_percent": ROUNDOVER_TARGET_PERCENT,
-                        "tolerance_percent": ROUNDOVER_TOLERANCE_PERCENT,
+                        "seed": ROUNDOVER_TARGET_PERCENT,
+                        "bounds": [
+                            ROUNDOVER_TARGET_PERCENT - ROUNDOVER_TOLERANCE_PERCENT,
+                            ROUNDOVER_TARGET_PERCENT + ROUNDOVER_TOLERANCE_PERCENT,
+                        ],
                     },
                     "vertical": {
-                        "target_percent": ROUNDOVER_TARGET_PERCENT,
-                        "tolerance_percent": ROUNDOVER_TOLERANCE_PERCENT,
+                        "seed": ROUNDOVER_TARGET_PERCENT,
+                        "bounds": [
+                            ROUNDOVER_TARGET_PERCENT - ROUNDOVER_TOLERANCE_PERCENT,
+                            ROUNDOVER_TARGET_PERCENT + ROUNDOVER_TOLERANCE_PERCENT,
+                        ],
                     },
                 },
                 "k": {
                     "horizontal": {"seed": 1.0, "bounds": [1.0, 1.0]},
                     "vertical": {"seed": 1.0, "bounds": [1.0, 1.0]},
                 },
-                "q": {"seed": 0.995, "bounds": [0.99, 1.0]},
-                "n": {"seed": 2.0, "bounds": [2.0, 10.0]},
+                "n": {
+                    "horizontal": {"seed": 2.0, "bounds": [2.0, 100.0]},
+                    "vertical": {"seed": 2.0, "bounds": [2.0, 100.0]},
+                },
             },
             "morph": {"start": 0.0, "rate": {"seed": 2.0, "bounds": [0.25, 4.0]}},
             "resolution": {"angular_segments": ANGULAR_SEGMENTS, "length_segments": LENGTH_SEGMENTS},
             "validation": {
                 "reject_if": [
                     "conic_extension_length_gte_local_profile_length",
-                    "solved_s_outside_bounds",
                     "mouth_curvature_radius_too_small",
                 ],
                 "warn_if": ["outside_surface_self_intersects", "area_error_exceeds_tolerance"],
             },
             "refinement": {
-                "s_bounds": [0.0, 4.0],
                 "area_rms_log_tolerance": 0.02,
                 "max_log_area_slope_change": 0.2,
                 "morph_timing_weight": 0.05,
                 "morph_50_percent_max_z": 0.85,
+                "morph_rate_drift_weight": 0.2,
                 "k_drift_weight": 0.1,
+                "sag_drift_weight": 0.1,
                 "max_profile_slope_change": 2.0,
                 "smoothness_weight": 2.0,
                 "s_span_weight": 0.2,

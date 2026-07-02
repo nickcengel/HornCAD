@@ -6,3 +6,4 @@ __pycache__/
 design_review/
 surface_review/
 refine_review/
+.aider*

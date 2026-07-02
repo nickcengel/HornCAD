@@ -35,11 +35,11 @@ profiles:
     vertical: 31.0
   roundover:
     horizontal:
-      target_percent: 30.0
-      tolerance_percent: 5.0
+      seed: 30.0
+      bounds: [25.0, 35.0]
     vertical:
-      target_percent: 30.0
-      tolerance_percent: 5.0
+      seed: 30.0
+      bounds: [25.0, 35.0]
   k:
     horizontal:
       seed: 1.0
@@ -47,27 +47,32 @@ profiles:
     vertical:
       seed: 1.0
       bounds: [0.8, 1.6]
-  q:
-    seed: 0.995
-    bounds: [0.99, 1.0]
   n:
-    seed: 3.0
-    bounds: [2.0, 10.0]
+    horizontal:
+      seed: 10.0
+      bounds: [2.0, 100.0]
+    vertical:
+      seed: 10.0
+      bounds: [2.0, 100.0]
 
 morph:
   start: 0.0                  # Physical z distance where morph begins.
   rate:
-    seed: 2.0                 # Morph rate / transition aggressiveness.
-    bounds: [0.25, 4.0]
+    seed: 1.0                 # Morph rate / transition aggressiveness.
+    bounds: [0.25, 2.0]
+
+surface:
+  mode: slice                  # slice = H/V basis profiles + superellipse slices; profile = radial search path.
 
 refinement:
-  s_bounds: [0.0, 4.0]        # Internal solved-S validity rail.
   area_rms_log_tolerance: 0.05
   smoothness_weight: 2.0      # Penalizes abrupt area-curve derivative changes.
   max_log_area_slope_change: 0.01
   morph_timing_weight: 0.05   # Penalizes delaying most morphing until the mouth.
   morph_50_percent_max_z: 0.85
+  morph_rate_drift_weight: 0.2 # Penalizes morph rates above the authored seed.
   k_drift_weight: 0.1         # Penalizes K movement away from authored seeds.
+  sag_drift_weight: 0.1       # Penalizes mouth sag movement when sag_bounds are configured.
   s_span_weight: 0.2          # Penalizes S spread beyond design-scaled expectation.
   s_smoothness_weight: 0.2    # Penalizes abrupt S changes over p.
   max_profile_slope_change: 2.0
@@ -80,7 +85,6 @@ resolution:
 validation:
   reject_if:
     - conic_extension_length_gte_local_profile_length
-    - solved_s_outside_bounds
     - mouth_curvature_radius_too_small
   warn_if:
     - outside_surface_self_intersects
@@ -88,16 +92,8 @@ validation:
 
 outputs:
   scope: full                  # quarter | half | full output scope.
-  design_review:
-    plots:
-      hv_profiles: true
-    report: true
-    resolved_config: true
   cad:
     wall_thickness: 0.0       # 0.0 outputs faces only, not a closed 3D asset.
     formats:
-      2d:
-        profiles: true
-        slices: true
       3d:
         stl: false

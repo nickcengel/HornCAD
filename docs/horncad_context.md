@@ -209,7 +209,8 @@ Treat `K` as the primary acoustic character parameter.
 
 Treat `S(p)` as the dimensional boundary-fitting variable.
 
-Treat `Q` and `N` as advanced shape / termination controls.
+Treat `Q` as fixed at `0.995`. Treat horizontal and vertical `N` as advanced
+shape controls that may be searched when their bounds have span.
 
 M1/M2 behavior:
 
@@ -217,23 +218,22 @@ M1/M2 behavior:
 - user specifies or accepts defaults for `Q` and `N`
 - solver solves `S(p)` for each radial direction
 
-M3 behavior:
+Current output behavior:
 
 - mouth boundary fit is a hard constraint
 - coverage stays fixed as author intent
-- `K` may move only when horizontal or vertical `K` bounds have span
-- `S(p)` is recomputed for every candidate
-- area expansion is the primary optimization objective
-- the target area curve is the candidate's equivalent round OS-SE reference
+- `surface.mode: slice` is the normal workflow
+- slice mode uses authored H/V coverage, `K`, `N`, and morph seed values directly
+- slice mode solves internal `S` and generates superellipse sections from H/V basis profiles
+- `surface.mode: profile` preserves the older radial-profile search path
+- profile mode may move `morph.rate`, H/V `N`, and `K` when the corresponding bounds have span
+- area expansion is a reported diagnostic, not a hard output constraint
+- the target area curve is the design's equivalent round OS-SE reference
 - smoothness is checked with a log-area derivative-change diagnostic
 - H/V profile smoothness is checked with an adjacent profile-slope diagnostic
-- candidate ranges are scaled by mouth aspect ratio, H/V coverage delta, and
-  initial area error, then clipped to global hard bounds
 - `S(p)` span and adjacent changes over `p` are penalized and reported
-- candidate search may move `morph.rate`, `N`, `Q`, and `K` when the
-  corresponding bounds have span
 
-Avoid moving `K`, `S`, `Q`, and `N` without enough constraints and good bounds.
+Avoid moving `K`, `S`, and `N` without enough constraints and good bounds.
 
 ---
 
@@ -975,10 +975,10 @@ Forward OS-SE evaluation is closed-form.
 
 But inverse fitting is generally numerical.
 
-Use numerical solving or candidate search for:
+Use numerical solving or design search for:
 
 - `S(p)`
-- optional `Q` or `N` if area-aware refinement enables them
+- horizontal and vertical `N` when bounds have span
 - morph exponent / shape power if matching target area
 - common-length reconciliation
 
@@ -1054,24 +1054,20 @@ Implement in this order.
 - superellipse boundary
 - superellipse area
 
-## Phase 1 Output Target: Design Review Bundle
+## Output Target
 
-Before CAD export, the first useful output should be a direct Python-generated
-design review bundle.
-
-The bundle should validate the project shape, solve the principal horizontal and
-vertical profiles, and write both graphics and a text/markdown report.
+HornCAD writes one project output bundle beside the project file.
 
 Recommended command shape:
 
 ```text
-python -m horncad.design_review examples/test_project/test_project.yaml
+python -m horncad.refine examples/811b/811b.yaml --workers auto
 ```
 
 Output directory:
 
 ```text
-design_review
+output
 ```
 
 This directory name is fixed. The user should not need to configure it.
@@ -1079,15 +1075,18 @@ This directory name is fixed. The user should not need to configure it.
 Recommended artifacts:
 
 ```text
-design_review/
+output/
+  {project_stem}_area_fit.png
   {project_stem}_hv_profiles.png
+  {project_stem}_inside_surface.stl
+  {project_stem}_radial_plan.png
+  {project_stem}_radial_profiles.png
   {project_stem}_report.md
-  {project_stem}_resolved.yaml
 ```
 
 Where `project_stem` is derived from the input project file name without its
-extension. For example, `examples/test_project/test_project.yaml` should
-produce filenames prefixed with `test_project`.
+extension. For example, `examples/811b/811b.yaml` produces filenames prefixed
+with `811b`.
 
 The user should not need to specify output filenames for standard artifacts.
 The project file controls what artifact types are enabled; the implementation
@@ -1095,7 +1094,7 @@ derives filenames.
 
 Plot requirements:
 
-- `{project_stem}_hv_profiles.png`: horizontal and vertical profiles overlaid for comparison.
+- `{project_stem}_hv_profiles.png`: horizontal and vertical profiles overlaid for inspection.
 - Plot the conic throat extension separately from the OS-SE section when `L_conic > 0`.
 - Mark throat radius, conic exit radius, mouth target radius, and local profile length.
 - Keep the plots direct and inspectable; this is a validation artifact, not a presentation rendering.
@@ -1136,23 +1135,17 @@ Solve `S(p)`.
 
 Compare actual section area to the polar-area-weighted circular reference target.
 
-## Phase 4: Area-Aware Refinement
+## Surface Modes
 
-Search allowed solve variables or morph controls to reduce area error. For every
-candidate, recompute `S(p)` so mouth boundary fit remains a hard constraint.
-Compare each candidate against its equivalent round OS-SE reference. Manual
-overrides may specify morph rate and morph start `z`.
+In `slice` mode, use authored basis profile values directly and loft the inside
+surface through superellipse slices. In `profile` mode, search allowed solve
+variables or morph controls while keeping mouth boundary fit as a hard
+constraint.
 
-## Phase 5: CAD Export
+## Output Bundle
 
-Export one or more formats:
-
-- `formats.2d.profiles`: principal and radial profile curves
-- `formats.2d.slices`: cross-section slice curves
-- `formats.3d.stl`: closed STL mesh when wall thickness is nonzero
-
-There is no top-level `outputs.cad.enabled` flag. CAD output is enabled by
-setting individual format flags to `true` or disabled by setting them to `false`.
+The user-facing output bundle contains area fit, H/V profiles, inside surface
+STL, radial plan, radial profiles, and report.
 
 Roadmap export:
 
@@ -1170,37 +1163,26 @@ solid mesh made from:
 
 # Geometry Outputs
 
-The program should be able to output:
+The program should output:
 
-1. design-review plots and project report
-2. radial curves
-3. cross-section curves
-4. mouth boundary curve
-5. throat boundary curve
-6. surface mesh preview
-7. CAD-importable curve data
-8. roadmap: STL-ready closed mesh after outside-surface generation is implemented
+1. area-fit plot
+2. H/V profile plot
+3. inside-surface STL
+4. radial plan plot
+5. radial profile plot
+6. report
 
-Recommended initial output:
+Recommended output:
 
 ```text
-design_review/
+output/
+  {project_stem}_area_fit.png
   {project_stem}_hv_profiles.png
+  {project_stem}_inside_surface.stl
+  {project_stem}_radial_plan.png
+  {project_stem}_radial_profiles.png
   {project_stem}_report.md
-  {project_stem}_resolved.yaml
 ```
-
-Later geometry output:
-
-```text
-cad/
-  profile curves
-  slice curves
-  waveguide.stl
-```
-
-The `cad/` directory name is fixed. The user enables CAD artifacts through
-format flags, not by choosing output paths.
 
 ---
 
@@ -1266,7 +1248,7 @@ Do not treat these as final acoustic recommendations.
 
 7. Keep `K` as a user-controlled acoustic parameter.
 
-8. Keep `Q` and `N` fixed unless area-aware refinement explicitly enables them.
+8. Keep `Q` fixed at `0.995`; search H/V `N` only when bounds have span.
 
 9. Use closed-form equations for forward geometry.
 
@@ -1344,7 +1326,7 @@ Example input configuration:
 See also:
 
 - `docs/design_flow.md` for the recommended normal design workflow and output-reading order.
-- `examples/test_project/test_project.yaml` for a fuller project-shape sketch with validation and output sections.
+- `examples/811b/811b.yaml` for the current example project.
 
 ```yaml
 throat:
@@ -1395,25 +1377,18 @@ morph:
     seed: 2.0
     bounds: [0.25, 4.0]
 
-refinement:
-  s_bounds: [0.0, 4.0]
+surface:
+  mode: slice
 
 resolution:
   angular_segments: 96
   length_segments: 100
 
 outputs:
-  design_review:
-    plots:
-      hv_profiles: true
-    report: true
-    resolved_config: true
+  scope: full
   cad:
     wall_thickness: 0.0
     formats:
-      2d:
-        profiles: true
-        slices: true
       3d:
         stl: false
 ```
@@ -1430,4 +1405,5 @@ The program succeeds when it can:
 4. Generate smooth radial OS-SE-derived curves.
 5. Solve dependent variables without overconstraining the user.
 6. Preserve a smooth area expansion close to a round OS-SE reference.
-7. Export design-review plots/reports first, then CAD profile/slice outputs, with STL closed-mesh export identified as a roadmap feature requiring nonzero `outputs.cad.wall_thickness` and outside-surface generation.
+7. Export the standard output bundle: area fit, H/V profiles, inside surface,
+   radial plan, radial profiles, and report.

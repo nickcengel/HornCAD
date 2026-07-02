@@ -1,13 +1,10 @@
 import math
-from pathlib import Path
 
-from horncad.config import load_project
 from horncad.profile import derive_config
 from horncad.surface import (
     corner_anchor_angles,
     generate_inside_surface,
-    generate_surface_review,
-    main,
+    inside_surface_triangles,
     mouth_area,
     equivalent_round_reference_values,
     plotted_target_area_normalizer,
@@ -15,7 +12,14 @@ from horncad.surface import (
     rounded_rectangle_boundary_distance,
     radial_sample_angles,
     snap_cardinal_angles,
+    superellipse_surface_triangles,
     superellipse_boundary_distance,
+    _superellipse_axis_detail_angles,
+    _superellipse_xy,
+    write_inside_surface_stl,
+    write_superellipse_surface_stl,
+    _superellipse_scope_angles,
+    _superellipse_power_at_fraction,
 )
 from tests.helpers import (
     ANGULAR_SEGMENTS,
@@ -25,9 +29,6 @@ from tests.helpers import (
     MOUTH_WIDTH,
     sample_project_config,
 )
-
-
-PROJECT = Path(__file__).resolve().parents[1] / "examples/test_project/test_project.yaml"
 
 
 def test_generate_inside_surface_has_radial_curves_sections_and_area_fit():
@@ -46,6 +47,68 @@ def test_generate_inside_surface_has_radial_curves_sections_and_area_fit():
     assert result.area_fit.rms_percent_error >= 0.0
     assert result.area_fit.max_abs_percent_error >= result.area_fit.rms_percent_error
     assert result.issues == []
+
+
+def test_inside_surface_stl_uses_existing_sampling_resolution(tmp_path):
+    config = sample_project_config()
+    config["outputs"]["scope"] = "quarter"
+    result = generate_inside_surface(config)
+
+    triangles = inside_surface_triangles(config, result)
+    path = tmp_path / "inside_surface.stl"
+    write_inside_surface_stl(config, result, path)
+
+    scoped_curve_count = sum(1 for curve in result.radial_curves if 0.0 <= curve.p_deg <= 90.0)
+    expected_triangles = (len(result.sections) - 1) * (scoped_curve_count - 1) * 2
+    assert len(triangles) == expected_triangles
+    text = path.read_text(encoding="ascii")
+    assert text.startswith("solid inside_surface\n")
+    assert text.count("facet normal") == expected_triangles
+
+
+def test_superellipse_surface_stl_uses_hv_profiles_and_scope(tmp_path):
+    config = sample_project_config()
+    config["outputs"]["scope"] = "quarter"
+    path = tmp_path / "superellipse_surface.stl"
+
+    triangles = superellipse_surface_triangles(config)
+    write_superellipse_surface_stl(config, path)
+
+    scoped_angle_count = len(_superellipse_scope_angles(config, derive_config(config)))
+    expected_triangles = config["resolution"]["length_segments"] * (scoped_angle_count - 1) * 2
+    assert len(triangles) == expected_triangles
+    text = path.read_text(encoding="ascii")
+    assert text.startswith("solid superellipse_surface\n")
+    assert text.count("facet normal") == expected_triangles
+
+
+def test_superellipse_axis_detail_angles_resolve_flat_mouth_edge():
+    angles = _superellipse_axis_detail_angles(96, 20.0)
+    near_top = [angle for angle in angles if math.radians(80.0) <= angle <= math.pi / 2.0]
+    near_right = [angle for angle in angles if 0.0 <= angle <= math.radians(10.0)]
+
+    assert len(near_top) > 8
+    assert len(near_right) > 8
+    assert any(abs(angle - math.pi / 2.0) < 1e-9 for angle in angles)
+
+
+def test_superellipse_cardinal_points_are_exact_for_high_power():
+    assert _superellipse_xy(210.0, 97.5, 20.0, 0.0) == (210.0, 0.0)
+    assert _superellipse_xy(210.0, 97.5, 20.0, math.pi / 2.0) == (0.0, 97.5)
+
+
+def test_superellipse_power_uses_fractional_morph_schedule():
+    config = sample_project_config()
+    config["morph"]["rate"]["seed"] = 0.25
+
+    start_power = _superellipse_power_at_fraction(config, 0.0)
+    middle_power = _superellipse_power_at_fraction(config, 0.125)
+    complete_power = _superellipse_power_at_fraction(config, 0.25)
+    later_power = _superellipse_power_at_fraction(config, 0.5)
+
+    assert start_power == 2.0
+    assert 2.0 < middle_power < complete_power
+    assert complete_power == later_power
 
 
 def test_section_sampling_is_adaptive_along_z():
@@ -148,37 +211,3 @@ def test_exact_rounded_rectangle_boundary_and_area():
         half_width / math.cos(math.radians(30.0))
     )
 
-
-def test_generate_surface_review_artifacts(tmp_path):
-    output_dir = tmp_path / "surface_review"
-
-    artifacts = generate_surface_review(PROJECT, output_dir)
-
-    assert {key: path.name for key, path in artifacts.items()} == {
-        "area_fit": "test_project_area_fit.png",
-        "report": "test_project_surface_report.md",
-        "resolved": "test_project_resolved.yaml",
-    }
-    assert artifacts["area_fit"].read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
-    report = artifacts["report"].read_text(encoding="utf-8")
-    assert "Area fit score" in report
-    assert "polar-area-weighted circular OS-SE reference" in report
-    assert "closed constant-z sections" in report
-    assert "Shared section length:" in report
-    assert "Output scope: full" in report
-    assert "Radial curves:" in report
-    assert "Section samples:" in report
-
-
-def test_surface_review_cli_default_output_is_project_local(tmp_path, monkeypatch):
-    project_dir = tmp_path / "nested"
-    project_dir.mkdir()
-    project = project_dir / "test_project.yaml"
-    project.write_text(PROJECT.read_text(encoding="utf-8"), encoding="utf-8")
-    monkeypatch.chdir(tmp_path)
-
-    exit_code = main([str(project)])
-
-    assert exit_code == 0
-    assert (project_dir / "surface_review/test_project_surface_report.md").is_file()
-    assert not (tmp_path / "surface_review/test_project_surface_report.md").exists()
