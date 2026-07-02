@@ -13,14 +13,23 @@ Use this folder for the current widget-to-STL workflow.
 
 1. Open `center_profile_surface_explorer.html` in a browser.
 2. Set the widget controls.
-3. Copy the same values into `PARAMS` at the top of `export_center_profile_surface_working.py`.
-4. Generate the preferred STL:
+3. Set `STL z stations` and `STL half samples` in the View panel.
+4. Click `Export STL`.
+
+The browser export writes a binary STL directly from the widget geometry. It uses the same x-sampled upper/lower section topology as the preferred Python exporter.
+
+## Python Fallback
+
+Use this path when you want a script-generated comparison file or need to inspect exporter code directly.
+
+1. Copy the same values into `PARAMS` at the top of `export_center_profile_surface_zoned.py`.
+2. Generate the STL:
 
    ```bash
    python tools/widget-2-stl/export_center_profile_surface_zoned.py
    ```
 
-5. Open:
+3. Open:
 
    ```text
    tools/widget-2-stl/output/center_profile_surface_zoned.stl
