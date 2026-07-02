@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Export a zoned preview mesh for the center-profile surface.
+"""Export an x-sampled preview mesh for the center-profile surface.
 
 Unlike the widget/export_center_profile_surface_working.py path, this does not
-sample section rings by angle. It samples the top/bottom spans by x and the
-side spans by y, so the cylindrical mouth setback is represented directly along
-the long horizontal mouth spans.
+sample section rings by angle. It samples the upper and lower section halves by
+x, so the cylindrical mouth setback is represented directly along the long
+horizontal mouth spans without overlapping side zones.
 """
 
 from __future__ import annotations
@@ -13,12 +13,12 @@ import math
 from pathlib import Path
 
 import export_center_profile_surface_working as base
+import trimesh
 
 
-OUTPUT = Path("tools/output/center_profile_surface_zoned.stl")
+OUTPUT = Path(__file__).resolve().parent / "output" / "center_profile_surface_zoned.stl"
 Z_STATIONS = 44
-SPAN_SAMPLES = 96
-SIDE_SAMPLES = 48
+HALF_SAMPLES = 192
 
 
 def superellipse_y(a: float, b: float, power: float, x: float, sign: float) -> float:
@@ -44,28 +44,16 @@ def ring_at(z: float, h_radius: float, v_radius: float, mouth_h_radius: float) -
     power = base.superellipse_n(base.section_shape(z))
     ring: list[tuple[float, float, float]] = []
 
-    for i in range(SPAN_SAMPLES):
-        t = i / SPAN_SAMPLES
+    for i in range(HALF_SAMPLES):
+        t = i / HALF_SAMPLES
         x = -h_radius + 2.0 * h_radius * t
         y = superellipse_y(h_radius, v_radius, power, x, 1.0)
         ring.append((x, y, surface_z(x, z, mouth_h_radius)))
 
-    for i in range(SIDE_SAMPLES):
-        t = i / SIDE_SAMPLES
-        y = v_radius - 2.0 * v_radius * t
-        x = superellipse_x(h_radius, v_radius, power, y, 1.0)
-        ring.append((x, y, surface_z(x, z, mouth_h_radius)))
-
-    for i in range(SPAN_SAMPLES):
-        t = i / SPAN_SAMPLES
+    for i in range(HALF_SAMPLES):
+        t = i / HALF_SAMPLES
         x = h_radius - 2.0 * h_radius * t
         y = superellipse_y(h_radius, v_radius, power, x, -1.0)
-        ring.append((x, y, surface_z(x, z, mouth_h_radius)))
-
-    for i in range(SIDE_SAMPLES):
-        t = i / SIDE_SAMPLES
-        y = -v_radius + 2.0 * v_radius * t
-        x = superellipse_x(h_radius, v_radius, power, y, -1.0)
         ring.append((x, y, surface_z(x, z, mouth_h_radius)))
 
     return ring
@@ -82,20 +70,24 @@ def main() -> None:
         z = length * i / (Z_STATIONS - 1)
         rings.append(ring_at(z, h_profile(z), v_profile(z), mouth_h))
 
-    triangles = []
+    vertices = [point for ring in rings for point in ring]
+    faces = []
+    ring_size = len(rings[0])
     for i in range(len(rings) - 1):
-        current = rings[i]
-        following = rings[i + 1]
-        count = len(current)
-        for j in range(count):
-            k = (j + 1) % count
-            triangles.append((current[j], following[j], following[k]))
-            triangles.append((current[j], following[k], current[k]))
+        row = i * ring_size
+        next_row = (i + 1) * ring_size
+        for j in range(ring_size):
+            k = (j + 1) % ring_size
+            faces.append((row + j, next_row + k, next_row + j))
+            faces.append((row + j, row + k, next_row + k))
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
-    base.write_stl(OUTPUT, triangles)
+    mesh = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+    trimesh.repair.fix_normals(mesh, multibody=True)
+    mesh.export(OUTPUT)
     print(OUTPUT)
-    print(f"rings={len(rings)} vertices_per_ring={len(rings[0])} triangles={len(triangles)}")
+    print(f"rings={len(rings)} vertices_per_ring={ring_size} triangles={len(mesh.faces)}")
+    print(f"watertight={mesh.is_watertight} winding_consistent={mesh.is_winding_consistent} components={len(mesh.split(only_watertight=False))}")
 
 
 if __name__ == "__main__":

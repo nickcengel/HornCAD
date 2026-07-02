@@ -260,7 +260,8 @@ def main() -> None:
             triangles.append((a[j], b[j], b[j_next]))
             triangles.append((a[j], b[j_next], a[j_next]))
 
-    output = Path("tools/output/center_profile_surface_working.stl")
+    output = Path(__file__).resolve().parent / "output" / "center_profile_surface_working.stl"
+    output.parent.mkdir(parents=True, exist_ok=True)
     write_stl(output, triangles)
     print(output)
     print(f"rings={len(rings)} vertices_per_ring={len(rings[0])} triangles={len(triangles)}")
