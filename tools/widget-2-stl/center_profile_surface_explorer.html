@@ -154,6 +154,13 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       background: #fff;
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+
+    canvas.dragging {
+      cursor: grabbing;
     }
 
     .metrics {
@@ -235,6 +242,7 @@
         <button type="button" data-view="top" class="active">Top</button>
         <button type="button" data-view="side" class="">Side</button>
         <button type="button" data-view="front" class="">Front</button>
+        <button type="button" data-view="orbit" class="">Orbit</button>
       </div>
       <label>
         Wire density
@@ -391,7 +399,15 @@
   const selects = new Map();
   const canvas = document.getElementById("surface");
   const ctx = canvas.getContext("2d");
-  let currentView = "iso";
+  let currentView = "top";
+  const orbit = {
+    yaw: -Math.PI / 4,
+    pitch: 0.38,
+    zoom: 1,
+    dragging: false,
+    lastX: 0,
+    lastY: 0,
+  };
 
   const metrics = {
     width: document.getElementById("metric-width"),
@@ -426,11 +442,77 @@
   for (const button of document.querySelectorAll("[data-view]")) {
     button.addEventListener("click", () => {
       currentView = button.dataset.view;
+      applyViewPreset(currentView);
       for (const peer of document.querySelectorAll("[data-view]")) {
         peer.classList.toggle("active", peer === button);
       }
       render();
     });
+  }
+
+  canvas.addEventListener("pointerdown", (event) => {
+    canvas.setPointerCapture(event.pointerId);
+    orbit.dragging = true;
+    orbit.lastX = event.clientX;
+    orbit.lastY = event.clientY;
+    canvas.classList.add("dragging");
+    setCurrentView("orbit");
+  });
+
+  canvas.addEventListener("pointermove", (event) => {
+    if (!orbit.dragging) {
+      return;
+    }
+    const dx = event.clientX - orbit.lastX;
+    const dy = event.clientY - orbit.lastY;
+    orbit.lastX = event.clientX;
+    orbit.lastY = event.clientY;
+    orbit.yaw += dx * 0.008;
+    orbit.pitch = Math.max(-1.35, Math.min(1.35, orbit.pitch + dy * 0.008));
+    render();
+  });
+
+  canvas.addEventListener("pointerup", (event) => {
+    orbit.dragging = false;
+    canvas.classList.remove("dragging");
+    canvas.releasePointerCapture(event.pointerId);
+  });
+
+  canvas.addEventListener("pointercancel", () => {
+    orbit.dragging = false;
+    canvas.classList.remove("dragging");
+  });
+
+  canvas.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    setCurrentView("orbit");
+    const factor = Math.exp(-event.deltaY * 0.001);
+    orbit.zoom = Math.max(0.25, Math.min(5, orbit.zoom * factor));
+    render();
+  }, { passive: false });
+
+  function setCurrentView(view) {
+    currentView = view;
+    for (const button of document.querySelectorAll("[data-view]")) {
+      button.classList.toggle("active", button.dataset.view === view);
+    }
+  }
+
+  function applyViewPreset(view) {
+    orbit.zoom = 1;
+    if (view === "iso") {
+      orbit.yaw = -Math.PI / 4;
+      orbit.pitch = 0.38;
+    } else if (view === "front") {
+      orbit.yaw = 0;
+      orbit.pitch = 0;
+    } else if (view === "top") {
+      orbit.yaw = 0;
+      orbit.pitch = Math.PI / 2;
+    } else if (view === "side") {
+      orbit.yaw = -Math.PI / 2;
+      orbit.pitch = 0;
+    }
   }
 
   function value(name) {
@@ -588,6 +670,14 @@
     };
   }
 
+  function superellipseY(a, b, n, x, sign) {
+    if (a <= 0 || b <= 0) {
+      return 0;
+    }
+    const u = Math.min(1, Math.abs(x) / a);
+    return sign * b * Math.pow(Math.max(0, 1 - Math.pow(u, n)), 1 / n);
+  }
+
   function thetaFromX(a, n, xFraction) {
     const exponent = Math.max(n, 1e-9) / 2;
     const c = Math.pow(Math.max(0, Math.min(1, xFraction)), exponent);
@@ -667,6 +757,11 @@
   function sectionPoint(p, hRadius, vRadius, z, theta, mouthHRadius, shapeN = null) {
     const n = shapeN ?? superellipseNFromShape(sectionShape(p, z));
     const point = superellipsePoint(hRadius, vRadius, n, theta);
+    return sectionPointFromXY(p, hRadius, vRadius, z, point.x, point.y, theta, mouthHRadius);
+  }
+
+  function sectionPointFromXY(p, hRadius, vRadius, z, x, y, theta, mouthHRadius) {
+    const point = { x, y };
     const u = Math.min(1, Math.abs(point.x) / Math.max(hRadius, 1e-9));
     const v = Math.min(1, Math.abs(point.y) / Math.max(vRadius, 1e-9));
     const progress = bowProgress(p, z);
@@ -678,6 +773,27 @@
     const mouthProgress = Math.pow(Math.max(0, Math.min(1, z / Math.max(p.length, 1e-9))), 2.4);
     const setback = cylindricalMouthSetback(p, point.x, mouthHRadius) * mouthProgress;
     return { x: point.x, y: point.y, z: z - setback };
+  }
+
+  function xSampledSectionRing(p, hRadius, vRadius, z, halfSamples, mouthHRadius) {
+    const shapeN = superellipseNFromShape(sectionShape(p, z));
+    const ring = [];
+
+    for (let i = 0; i < halfSamples; i += 1) {
+      const t = i / halfSamples;
+      const x = -hRadius + 2 * hRadius * t;
+      const y = superellipseY(hRadius, vRadius, shapeN, x, 1);
+      ring.push(sectionPointFromXY(p, hRadius, vRadius, z, x, y, Math.atan2(y, x), mouthHRadius));
+    }
+
+    for (let i = 0; i < halfSamples; i += 1) {
+      const t = i / halfSamples;
+      const x = hRadius - 2 * hRadius * t;
+      const y = superellipseY(hRadius, vRadius, shapeN, x, -1);
+      ring.push(sectionPointFromXY(p, hRadius, vRadius, z, x, y, Math.atan2(y, x), mouthHRadius));
+    }
+
+    return ring;
   }
 
   function mirroredSectionRing(p, hRadius, vRadius, z, angles, mouthHRadius) {
@@ -709,18 +825,8 @@
     const hProfile = makeProfile(p, "h");
     const vProfile = makeProfile(p, "v");
     const zCount = p.density;
-    const perQuadrant = Math.max(72, Math.round(p.density * 4));
     const mouthHRadius = hProfile(p.length);
-    const mouthVRadius = vProfile(p.length);
-    const mouthShapeN = superellipseNFromShape(sectionShape(p, p.length));
-    const angles = refineMouthAngles(
-      p,
-      quadrantAngles(superellipseNFromShape(p.sectionShape1), perQuadrant),
-      mouthHRadius,
-      mouthVRadius,
-      mouthHRadius,
-      mouthShapeN
-    );
+    const halfSamples = Math.max(96, Math.round(p.density * 3));
     const rings = [];
     let maxX = 0;
     let maxY = 0;
@@ -729,7 +835,7 @@
       const z = p.length * i / (zCount - 1);
       const h = hProfile(z);
       const v = vProfile(z);
-      const ring = mirroredSectionRing(p, h, v, z, angles, mouthHRadius);
+      const ring = xSampledSectionRing(p, h, v, z, halfSamples, mouthHRadius);
       for (const point of ring) {
         maxX = Math.max(maxX, Math.abs(point.x));
         maxY = Math.max(maxY, Math.abs(point.y));
@@ -757,28 +863,83 @@
     return { width: rect.width, height: rect.height };
   }
 
-  function project(point, bounds, rect) {
-    let x;
-    let y;
+  function projectRaw(point, bounds) {
     if (currentView === "top") {
-      x = point.z - bounds.length / 2;
-      y = point.x;
+      return {
+        x: point.z - bounds.length / 2,
+        y: point.x,
+      };
     } else if (currentView === "side") {
-      x = point.z - bounds.length / 2;
-      y = point.y;
+      return {
+        x: point.z - bounds.length / 2,
+        y: point.y,
+      };
     } else if (currentView === "front") {
-      x = point.x;
-      y = point.y;
+      return {
+        x: point.x,
+        y: point.y,
+      };
+    } else if (currentView === "orbit") {
+      const centeredZ = point.z - bounds.length / 2;
+      const cy = Math.cos(orbit.yaw);
+      const sy = Math.sin(orbit.yaw);
+      const cp = Math.cos(orbit.pitch);
+      const sp = Math.sin(orbit.pitch);
+      const rotatedX = point.x * cy + centeredZ * sy;
+      const rotatedZ = -point.x * sy + centeredZ * cy;
+      return {
+        x: rotatedX,
+        y: point.y * cp - rotatedZ * sp,
+      };
     } else {
       const iso = Math.PI / 6;
       const centeredZ = point.z - bounds.length / 2;
-      x = (point.x - centeredZ) * Math.cos(iso);
-      y = point.y - (point.x + centeredZ) * Math.sin(iso);
+      return {
+        x: (point.x - centeredZ) * Math.cos(iso),
+        y: point.y - (point.x + centeredZ) * Math.sin(iso),
+      };
     }
-    const scale = 0.44 * Math.min(rect.width, rect.height) / Math.max(bounds.maxX, bounds.maxY, bounds.length / 2, 1);
+  }
+
+  function buildViewTransform(surface, bounds, rect) {
+    let minX = Infinity;
+    let maxX = -Infinity;
+    let minY = Infinity;
+    let maxY = -Infinity;
+
+    for (const ring of surface.rings) {
+      for (const point of ring) {
+        const projected = projectRaw(point, bounds);
+        minX = Math.min(minX, projected.x);
+        maxX = Math.max(maxX, projected.x);
+        minY = Math.min(minY, projected.y);
+        maxY = Math.max(maxY, projected.y);
+      }
+    }
+
+    const rangeX = Math.max(maxX - minX, 1);
+    const rangeY = Math.max(maxY - minY, 1);
+    const margin = 34;
+    const scale = Math.min(
+      (rect.width - 2 * margin) / rangeX,
+      (rect.height - 2 * margin) / rangeY
+    );
+
     return {
-      x: rect.width / 2 + x * scale,
-      y: rect.height * 0.43 - y * scale,
+      scale: currentView === "orbit" ? scale * orbit.zoom : scale,
+      centerX: (minX + maxX) / 2,
+      centerY: (minY + maxY) / 2,
+      offsetX: rect.width / 2,
+      offsetY: rect.height / 2,
+    };
+  }
+
+  function project(point, bounds, rect) {
+    const raw = projectRaw(point, bounds);
+    const transform = bounds.transform;
+    return {
+      x: transform.offsetX + (raw.x - transform.centerX) * transform.scale,
+      y: transform.offsetY - (raw.y - transform.centerY) * transform.scale,
     };
   }
 
@@ -790,6 +951,7 @@
       maxY: surface.maxY,
       length: p.length,
     };
+    bounds.transform = buildViewTransform(surface, bounds, rect);
 
     ctx.save();
     ctx.lineWidth = 1;
