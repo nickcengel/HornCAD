@@ -39,5 +39,6 @@ Use this path when you want a script-generated comparison file or need to inspec
 
 - Use `export_center_profile_surface_zoned.py` first. It samples the top and bottom spans by `x`, which currently gives the best mouth behavior.
 - Use `export_center_profile_surface_working.py` only for comparison with the widget's original angular-ring sampling.
+- `Side guide K` defines an OS-SE guide profile with the same throat, horizontal coverage, horizontal N, and mouth endpoint as the horizontal basis. `Side guide amount %` applies a signed percentage of `guide - basis` to the side span.
 - Generated STL files are ignored by git.
 - Agent/developer context for this workflow is in `../../docs/AGENT_HANDOFF.md`.

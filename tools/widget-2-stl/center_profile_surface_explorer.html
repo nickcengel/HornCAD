@@ -381,16 +381,21 @@
         <input data-control="sectionShape1" type="range" min="0" max="1" step="0.01" value="0.72">
       </label>
       <label>
-        Side span bow mm
-        <input data-control="sideBow" type="number" min="-60" max="60" step="0.5" value="0">
-        <input data-control="sideBow" type="range" min="-60" max="60" step="0.5" value="0">
+        Side guide K
+        <input data-control="sideGuideK" type="number" min="0.05" max="10" step="0.05" value="1">
+        <input data-control="sideGuideK" type="range" min="0.05" max="10" step="0.05" value="1">
+      </label>
+      <label>
+        Side guide amount %
+        <input data-control="sideGuideAmount" type="number" min="-200" max="200" step="1" value="0">
+        <input data-control="sideGuideAmount" type="range" min="-200" max="200" step="1" value="0">
       </label>
       <label>
         Top/bottom span bow mm
         <input data-control="topBottomBow" type="number" min="-60" max="60" step="0.5" value="0">
         <input data-control="topBottomBow" type="range" min="-60" max="60" step="0.5" value="0">
       </label>
-      <p class="small">The modifier changes the slice shape between the H/V basis profile points. Zero squareness is round; one is nearly rectangular.</p>
+      <p class="small">The side guide is an OS-SE profile. Its difference from the horizontal basis is applied to the side span.</p>
     </fieldset>
 
     <fieldset>
@@ -401,11 +406,11 @@
         <input data-control="shapeEnd" type="range" min="5" max="100" step="1" value="65">
       </label>
       <label>
-        Bow reaches mouth %
+        Top/bottom bow reaches mouth %
         <input data-control="bowEnd" type="number" min="5" max="100" step="1" value="53">
         <input data-control="bowEnd" type="range" min="5" max="100" step="1" value="53">
       </label>
-      <p class="small">Evolution controls how the section modifier curve changes along z.</p>
+      <p class="small">Side guide evolution comes from the guide profile delta. Top/bottom bow still uses this simple z fade.</p>
     </fieldset>
   </section>
 
@@ -417,7 +422,7 @@
       <div class="metric"><span>H endpoint</span><strong id="metric-h-end">291.50 mm</strong></div>
       <div class="metric"><span>V endpoint</span><strong id="metric-v-end">140.00 mm</strong></div>
       <div class="metric"><span>Mouth squareness</span><strong id="metric-section-n">0.7200</strong></div>
-      <div class="metric"><span>Mouth bow</span><strong id="metric-cap">-6.500 / -35.50 mm</strong></div>
+      <div class="metric"><span>Side guide / T-B bow</span><strong id="metric-cap">0.000 / 0.000 mm</strong></div>
     </div>
   </section>
 </main>
@@ -588,7 +593,8 @@
       mouthSag: value("mouthSag"),
       sectionShape1: value("sectionShape1"),
       shapeEnd: value("shapeEnd") / 100,
-      sideBow: value("sideBow"),
+      sideGuideK: value("sideGuideK"),
+      sideGuideAmount: value("sideGuideAmount") / 100,
       topBottomBow: value("topBottomBow"),
       bowEnd: value("bowEnd") / 100,
       density: Math.max(8, Math.round(value("density"))),
@@ -649,6 +655,17 @@
       const t = (z - startZ) / span;
       return hermite(startR, startSlope * handle, endRadius, endSlope * handle, t);
     };
+  }
+
+  function sideGuideRadius(p, z) {
+    const endRadius = p.mouthWidth / 2;
+    const n = p.hN;
+    const s = solvedS(p.length, p.r0, p.hCoverage, p.sideGuideK, n, endRadius);
+    return osseRadius(z, p.length, p.r0, p.hCoverage, p.sideGuideK, n, s);
+  }
+
+  function sideGuideDelta(p, z, hRadius) {
+    return (sideGuideRadius(p, z) - hRadius) * p.sideGuideAmount;
   }
 
   function derivative(fn, z, length) {
@@ -800,7 +817,7 @@
     const sideWindow = u * u * (1 - v * v);
     const topBottomWindow = v * v * (1 - u * u);
     const mouthFade = 1 - Math.pow(Math.max(0, Math.min(1, z / Math.max(p.length, 1e-9))), 4);
-    point.x += Math.sign(point.x || Math.cos(theta)) * p.sideBow * progress * sideWindow * mouthFade;
+    point.x += Math.sign(point.x || Math.cos(theta)) * sideGuideDelta(p, z, hRadius) * sideWindow;
     point.y += Math.sign(point.y || Math.sin(theta)) * p.topBottomBow * progress * topBottomWindow * mouthFade;
     const mouthProgress = Math.pow(Math.max(0, Math.min(1, z / Math.max(p.length, 1e-9))), 2.4);
     const setback = cylindricalMouthSetback(p, point.x, mouthHRadius) * mouthProgress;
@@ -1165,12 +1182,21 @@
   }
 
   function updateMetrics(p, surface) {
+    const hProfile = makeProfile(p, "h");
+    let peakSideGuide = 0;
+    for (let i = 0; i < surface.zCount; i += 1) {
+      const z = p.length * i / Math.max(surface.zCount - 1, 1);
+      const delta = sideGuideDelta(p, z, hProfile(z));
+      if (Math.abs(delta) > Math.abs(peakSideGuide)) {
+        peakSideGuide = delta;
+      }
+    }
     metrics.width.textContent = `${format(surface.maxX * 2, 5)} mm`;
     metrics.height.textContent = `${format(surface.maxY * 2, 5)} mm`;
     metrics.hEnd.textContent = `${format(surface.hEnd, 5)} mm`;
     metrics.vEnd.textContent = `${format(surface.vEnd, 5)} mm`;
     metrics.sectionShape.textContent = format(sectionShape(p, p.length), 4);
-    metrics.bow.textContent = `${format(p.sideBow, 4)} / ${format(p.topBottomBow, 4)} mm`;
+    metrics.bow.textContent = `${format(peakSideGuide, 4)} / ${format(p.topBottomBow, 4)} mm`;
   }
 
   function render() {
