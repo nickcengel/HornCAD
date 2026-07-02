@@ -630,9 +630,9 @@
 
   function refineMouthAngles(p, angles, hRadius, vRadius, mouthHRadius, shapeN) {
     let refined = angles.slice().sort((a, b) => a - b);
-    const errorLimit = 0.08;
-    const chordLimit = Math.max(1.2, mouthHRadius / 96);
-    const maxAngles = 1400;
+    const errorLimit = 0.02;
+    const chordLimit = Math.max(0.35, mouthHRadius / 360);
+    const maxAngles = 4096;
 
     for (let pass = 0; pass < 8 && refined.length < maxAngles; pass += 1) {
       const next = [refined[0]];
