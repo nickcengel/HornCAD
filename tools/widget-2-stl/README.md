@@ -14,9 +14,12 @@ Use this folder for the current widget-to-STL workflow.
 1. Open `center_profile_surface_explorer.html` in a browser.
 2. Set the widget controls.
 3. Set `STL z stations` and `STL half samples` in the View panel.
-4. Click `Export STL`.
+4. Click `Export YAML` to save the current widget design state.
+5. Click `Export STL` to save the current surface mesh.
 
 The browser export writes a binary STL directly from the widget geometry. It uses the same x-sampled upper/lower section topology as the preferred Python exporter.
+
+The YAML export is a widget-native config. It records the visible controls and derived solved `S` values needed to inspect or recreate the design intent.
 
 ## Python Fallback
 

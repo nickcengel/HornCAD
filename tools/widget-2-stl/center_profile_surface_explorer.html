@@ -276,6 +276,7 @@
       </label>
       <div class="action-row">
         <button type="button" class="primary-action" data-export-stl>Export STL</button>
+        <button type="button" data-export-yaml>Export YAML</button>
       </div>
     </fieldset>
 
@@ -473,6 +474,7 @@
   }
 
   document.querySelector("[data-export-stl]").addEventListener("click", exportStl);
+  document.querySelector("[data-export-yaml]").addEventListener("click", exportYaml);
 
   for (const button of document.querySelectorAll("[data-view]")) {
     button.addEventListener("click", () => {
@@ -989,13 +991,14 @@
     return `center_profile_surface_${width}x${height}x${length}.stl`;
   }
 
-  function exportStl() {
-    const p = params();
-    const surface = buildExportSurface(p);
-    const triangles = buildTriangles(surface);
-    const filename = stlFilename(p);
-    const buffer = writeBinaryStl(triangles, filename.replace(/\.stl$/i, ""));
-    const blob = new Blob([buffer], { type: "application/vnd.ms-pki.stl" });
+  function configBasename(p) {
+    const length = Math.round(p.length);
+    const width = Math.round(p.mouthWidth);
+    const height = Math.round(p.mouthHeight);
+    return `center_profile_surface_${width}x${height}x${length}`;
+  }
+
+  function downloadBlob(blob, filename) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -1004,6 +1007,83 @@
     link.click();
     link.remove();
     URL.revokeObjectURL(url);
+  }
+
+  function exportStl() {
+    const p = params();
+    const surface = buildExportSurface(p);
+    const triangles = buildTriangles(surface);
+    const filename = stlFilename(p);
+    const buffer = writeBinaryStl(triangles, filename.replace(/\.stl$/i, ""));
+    const blob = new Blob([buffer], { type: "application/vnd.ms-pki.stl" });
+    downloadBlob(blob, filename);
+  }
+
+  function yamlNumber(value) {
+    if (!Number.isFinite(value)) {
+      return "null";
+    }
+    return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(6)));
+  }
+
+  function yamlString(value) {
+    return JSON.stringify(String(value));
+  }
+
+  function widgetYaml(p) {
+    const hS = solvedS(p.length, p.r0, p.hCoverage, p.hK, p.hN, p.mouthWidth / 2);
+    const vS = solvedS(p.length, p.r0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2);
+    const sideGuideS = solvedS(p.length, p.r0, p.hCoverage, p.sideGuideK, p.hN, p.mouthWidth / 2);
+    return [
+      "widget_config:",
+      "  type: center_profile_surface_explorer",
+      "  version: 1",
+      "  units: mm",
+      "  global:",
+      `    length: ${yamlNumber(p.length)}`,
+      `    throat_radius: ${yamlNumber(p.r0)}`,
+      `    mouth_width: ${yamlNumber(p.mouthWidth)}`,
+      `    mouth_height: ${yamlNumber(p.mouthHeight)}`,
+      `    cylindrical_mouth_sag: ${yamlNumber(p.mouthSag)}`,
+      `    termination: ${yamlString(p.termination)}`,
+      "  horizontal_basis:",
+      `    coverage_deg: ${yamlNumber(p.hCoverage)}`,
+      `    k: ${yamlNumber(p.hK)}`,
+      `    n: ${yamlNumber(p.hN)}`,
+      `    solved_s: ${yamlNumber(hS)}`,
+      "  vertical_basis:",
+      `    coverage_deg: ${yamlNumber(p.vCoverage)}`,
+      `    k: ${yamlNumber(p.vK)}`,
+      `    n: ${yamlNumber(p.vN)}`,
+      `    solved_s: ${yamlNumber(vS)}`,
+      "  spline_termination:",
+      `    start_z_percent: ${yamlNumber(p.splineStart * 100)}`,
+      `    exit_tangent_deg: ${yamlNumber(p.exitAngle)}`,
+      `    tension: ${yamlNumber(p.tension)}`,
+      "  section_modifier:",
+      `    mouth_round_to_square: ${yamlNumber(p.sectionShape1)}`,
+      "    side_guide:",
+      `      k: ${yamlNumber(p.sideGuideK)}`,
+      `      amount_percent: ${yamlNumber(p.sideGuideAmount * 100)}`,
+      `      solved_s: ${yamlNumber(sideGuideS)}`,
+      `    top_bottom_bow: ${yamlNumber(p.topBottomBow)}`,
+      "  section_modifier_evolution:",
+      `    round_to_square_reaches_mouth_percent: ${yamlNumber(p.shapeEnd * 100)}`,
+      `    top_bottom_bow_reaches_mouth_percent: ${yamlNumber(p.bowEnd * 100)}`,
+      "  view:",
+      `    wire_density: ${yamlNumber(p.density)}`,
+      "  export:",
+      `    stl_z_stations: ${yamlNumber(p.stlStations)}`,
+      `    stl_half_samples: ${yamlNumber(p.stlHalfSamples)}`,
+      "",
+    ].join("\n");
+  }
+
+  function exportYaml() {
+    const p = params();
+    const filename = `${configBasename(p)}.yaml`;
+    const blob = new Blob([widgetYaml(p)], { type: "text/yaml" });
+    downloadBlob(blob, filename);
   }
 
   function resizeCanvas() {
