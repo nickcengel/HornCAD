@@ -31,3 +31,4 @@ Use this folder for the current widget-to-STL workflow.
 - Use `export_center_profile_surface_zoned.py` first. It samples the top and bottom spans by `x`, which currently gives the best mouth behavior.
 - Use `export_center_profile_surface_working.py` only for comparison with the widget's original angular-ring sampling.
 - Generated STL files are ignored by git.
+- Agent/developer context for this workflow is in `../../docs/AGENT_HANDOFF.md`.
