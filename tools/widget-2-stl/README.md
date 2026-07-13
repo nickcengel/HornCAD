@@ -40,7 +40,7 @@ Use this path when you want a script-generated STL file or need to inspect expor
 ## Notes
 
 - `export_center_profile_surface_zoned.py` is the only supported Python exporter for this widget workflow.
-- In `body` mode, the supported STL path creates a watertight body from the inner horn surface, mouth return, radial outer offset, and driver mount flange.
+- In `body` mode, the supported STL path creates a watertight body from the inner horn surface, mouth return, acoustic-normal offset shell, and driver mount flange.
 - In `acoustic_surface` mode, the STL path exports the oriented inner acoustic surface only.
 - `Side guide K` defines an OS-SE guide profile with the same throat, horizontal coverage, horizontal N, and mouth endpoint as the horizontal basis. `Side guide amount %` applies a signed percentage of `guide - basis` to the side span.
 - Generated STL files are ignored by git.

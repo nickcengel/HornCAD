@@ -2033,159 +2033,8 @@
     return triangles;
   }
 
-  function radialOffsetPoint(point, thickness) {
-    const radius = Math.hypot(point.x, point.y);
-    if (radius <= 1e-9) {
-      return { x: point.x + thickness, y: point.y, z: point.z };
-    }
-    return {
-      x: point.x + point.x / radius * thickness,
-      y: point.y + point.y / radius * thickness,
-      z: point.z,
-    };
-  }
-
   function radialDistance(point) {
     return Math.hypot(point.x, point.y);
-  }
-
-  function projectPointToMouthRadius(p, surface, point, targetRadius) {
-    if (!Number.isFinite(surface.mouthSurfaceCenterZ)) {
-      return { x: point.x, y: point.y, z: p.length - Math.max(0, p.mouthRearOffset) };
-    }
-    const vector = {
-      x: surface.mouthSagHEnabled ? point.x : 0,
-      y: surface.mouthSagVEnabled ? point.y : 0,
-      z: point.z - surface.mouthSurfaceCenterZ,
-    };
-    const length = Math.hypot(vector.x, vector.y, vector.z);
-    if (length <= 1e-9) {
-      return { x: point.x, y: point.y, z: point.z };
-    }
-    const scale = Math.max(1e-6, targetRadius) / length;
-    return {
-      x: surface.mouthSagHEnabled ? vector.x * scale : point.x,
-      y: surface.mouthSagVEnabled ? vector.y * scale : point.y,
-      z: surface.mouthSurfaceCenterZ + vector.z * scale,
-    };
-  }
-
-  function mouthOuterReturnTargetRadius(p, surface) {
-    const mouthRadius = p.length - surface.mouthSurfaceCenterZ;
-    if (!Number.isFinite(mouthRadius)) {
-      return Infinity;
-    }
-    return Math.max(
-      1e-6,
-      mouthRadius - Math.max(0, p.mouthRearOffset) - 2 * Math.max(0, p.minimumWall)
-    );
-  }
-
-  function mouthReturnProjectedRing(p, surface, ring) {
-    return ring.map((point) => projectPointToMouthRadius(p, surface, point, mouthOuterReturnTargetRadius(p, surface)));
-  }
-
-  function mouthSurfaceVector(surface, point) {
-    return {
-      x: surface.mouthSagHEnabled ? point.x : 0,
-      y: surface.mouthSagVEnabled ? point.y : 0,
-      z: point.z - surface.mouthSurfaceCenterZ,
-    };
-  }
-
-  function mouthSurfaceDistance(surface, point) {
-    const vector = mouthSurfaceVector(surface, point);
-    return Math.hypot(vector.x, vector.y, vector.z);
-  }
-
-  function interpolatePoint(a, b, t) {
-    return {
-      x: a.x + (b.x - a.x) * t,
-      y: a.y + (b.y - a.y) * t,
-      z: a.z + (b.z - a.z) * t,
-    };
-  }
-
-  function mouthIntersectionPath(p, surface, outerRings, column) {
-    const targetRadius = mouthOuterReturnTargetRadius(p, surface);
-    const path = [outerRings[0][column]];
-    if (!Number.isFinite(targetRadius)) {
-      for (let i = 1; i < outerRings.length; i += 1) {
-        path.push(outerRings[i][column]);
-      }
-      return path;
-    }
-
-    for (let i = 0; i < outerRings.length - 1; i += 1) {
-      const a = outerRings[i][column];
-      const b = outerRings[i + 1][column];
-      const da = mouthSurfaceDistance(surface, a);
-      const db = mouthSurfaceDistance(surface, b);
-      if (da < targetRadius) {
-        path[path.length - 1] = a;
-      }
-      if ((da - targetRadius) * (db - targetRadius) <= 0 && Math.abs(db - da) > 1e-9) {
-        const t = Math.max(0, Math.min(1, (targetRadius - da) / (db - da)));
-        path.push(interpolatePoint(a, b, t));
-        return path;
-      }
-      if (db < targetRadius) {
-        path.push(b);
-      }
-    }
-    path.push(projectPointToMouthRadius(p, surface, outerRings[outerRings.length - 1][column], targetRadius));
-    return path;
-  }
-
-  function pathLengths(path) {
-    const lengths = [0];
-    for (let i = 1; i < path.length; i += 1) {
-      lengths.push(lengths[i - 1] + Math.hypot(
-        path[i].x - path[i - 1].x,
-        path[i].y - path[i - 1].y,
-        path[i].z - path[i - 1].z
-      ));
-    }
-    return lengths;
-  }
-
-  function pointOnPath(path, lengths, distance) {
-    if (distance <= 0 || path.length === 1) {
-      return path[0];
-    }
-    const total = lengths[lengths.length - 1];
-    if (distance >= total) {
-      return path[path.length - 1];
-    }
-    for (let i = 0; i < lengths.length - 1; i += 1) {
-      if (distance <= lengths[i + 1]) {
-        const span = Math.max(1e-9, lengths[i + 1] - lengths[i]);
-        return interpolatePoint(path[i], path[i + 1], (distance - lengths[i]) / span);
-      }
-    }
-    return path[path.length - 1];
-  }
-
-  function trimmedOuterRings(p, surface, outerBaseRings) {
-    const ringCount = outerBaseRings.length;
-    const columnCount = outerBaseRings[0].length;
-    const columns = [];
-    for (let j = 0; j < columnCount; j += 1) {
-      const path = mouthIntersectionPath(p, surface, outerBaseRings, j);
-      columns.push({ path, lengths: pathLengths(path) });
-    }
-    const rings = [];
-    for (let i = 0; i < ringCount; i += 1) {
-      const t = i / Math.max(1, ringCount - 1);
-      rings.push(columns.map(({ path, lengths }) => pointOnPath(path, lengths, lengths[lengths.length - 1] * t)));
-    }
-    return rings;
-  }
-
-  function sphericalCapRings(p, surface, innerRing, outerRing) {
-    void p;
-    void surface;
-    return [innerRing, outerRing];
   }
 
   function wallThicknessAtRing(p, surface, index) {
@@ -2194,6 +2043,53 @@
     const start = Math.max(0, p.throatStartWall);
     const minimum = Math.max(0, p.minimumWall);
     return Math.max(minimum, start + (minimum - start) * t);
+  }
+
+  function addVectors(a, b) {
+    return { x: a.x + b.x, y: a.y + b.y, z: a.z + b.z };
+  }
+
+  function scaleVector(v, scale) {
+    return { x: v.x * scale, y: v.y * scale, z: v.z * scale };
+  }
+
+  function acousticVertexNormals(surface) {
+    const ringCount = surface.rings.length;
+    const ringSize = surface.rings[0].length;
+    const accumulated = Array.from({ length: ringCount }, () => (
+      Array.from({ length: ringSize }, () => ({ x: 0, y: 0, z: 0 }))
+    ));
+
+    for (let i = 0; i < ringCount - 1; i += 1) {
+      const row = surface.rings[i];
+      const next = surface.rings[i + 1];
+      for (let j = 0; j < ringSize; j += 1) {
+        const k = (j + 1) % ringSize;
+        const center = {
+          x: (row[j].x + row[k].x + next[j].x + next[k].x) / 4,
+          y: (row[j].y + row[k].y + next[j].y + next[k].y) / 4,
+          z: (row[j].z + row[k].z + next[j].z + next[k].z) / 4,
+        };
+        let faceNormal = normalizeVector(cross(vectorBetween(row[j], next[j]), vectorBetween(row[j], row[k])));
+        const expected = expectedOutwardNormal(surface, i, center);
+        if (faceNormal.x * expected.x + faceNormal.y * expected.y + faceNormal.z * expected.z < 0) {
+          faceNormal = scaleVector(faceNormal, -1);
+        }
+        for (const [ringIndex, columnIndex] of [[i, j], [i, k], [i + 1, j], [i + 1, k]]) {
+          accumulated[ringIndex][columnIndex] = addVectors(accumulated[ringIndex][columnIndex], faceNormal);
+        }
+      }
+    }
+
+    return accumulated.map((ring) => ring.map(normalizeVector));
+  }
+
+  function offsetSurfaceRings(p, surface) {
+    const normals = acousticVertexNormals(surface);
+    return surface.rings.map((ring, index) => {
+      const thickness = wallThicknessAtRing(p, surface, Math.min(index, surface.mouthIndex));
+      return ring.map((point, column) => addVectors(point, scaleVector(normals[index][column], thickness)));
+    });
   }
 
   function circleRingFromReference(referenceRing, radius, z) {
@@ -2343,13 +2239,7 @@
 
   function buildBodyTriangles(p, surface) {
     const innerRings = surface.rings;
-    const mouthIndex = surface.mouthIndex;
-    const hasReturn = mouthIndex < innerRings.length - 1;
-    const outerBaseRings = innerRings.slice(0, mouthIndex + 1).map((ring, index) => {
-      const thickness = wallThicknessAtRing(p, surface, index);
-      return ring.map((point) => radialOffsetPoint(point, thickness));
-    });
-    const outerRings = hasReturn ? trimmedOuterRings(p, surface, outerBaseRings) : outerBaseRings;
+    const outerRings = offsetSurfaceRings(p, surface);
     const throatInner = innerRings[0];
     const throatOuter = outerRings[0];
     const throatZ = throatInner.reduce((sum, point) => sum + point.z, 0) / throatInner.length;
@@ -2368,19 +2258,8 @@
       appendRingBridge(triangles, innerRings[i], innerRings[i + 1]);
     }
     appendRingBridge(triangles, throatInnerBack, throatInner);
-    if (hasReturn) {
-      const rearInner = innerRings[innerRings.length - 1];
-      const capRings = sphericalCapRings(p, surface, rearInner, outerRings[mouthIndex]);
-      let previousCapRing = rearInner;
-      for (let i = 1; i < capRings.length - 1; i += 1) {
-        appendRingBridge(triangles, previousCapRing, capRings[i]);
-        previousCapRing = capRings[i];
-      }
-      appendRingBridge(triangles, previousCapRing, outerRings[mouthIndex]);
-    } else {
-      appendRingBridge(triangles, innerRings[mouthIndex], outerRings[mouthIndex]);
-    }
-    for (let i = mouthIndex; i > 0; i -= 1) {
+    appendRingBridge(triangles, innerRings[innerRings.length - 1], outerRings[outerRings.length - 1]);
+    for (let i = outerRings.length - 1; i > 0; i -= 1) {
       appendRingBridge(triangles, outerRings[i], outerRings[i - 1], true);
     }
     appendRingBridge(triangles, throatOuter, mountOuterFront, true);
