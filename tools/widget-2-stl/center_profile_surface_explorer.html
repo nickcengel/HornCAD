@@ -2070,12 +2070,19 @@
     };
   }
 
-  function mouthReturnProjectedRing(p, surface, ring) {
+  function mouthOuterReturnTargetRadius(p, surface) {
     const mouthRadius = p.length - surface.mouthSurfaceCenterZ;
-    const targetRadius = Number.isFinite(mouthRadius)
-      ? mouthRadius - Math.max(0, p.mouthRearOffset)
-      : Infinity;
-    return ring.map((point) => projectPointToMouthRadius(p, surface, point, targetRadius));
+    if (!Number.isFinite(mouthRadius)) {
+      return Infinity;
+    }
+    return Math.max(
+      1e-6,
+      mouthRadius - Math.max(0, p.mouthRearOffset) - Math.max(0, p.minimumWall)
+    );
+  }
+
+  function mouthReturnProjectedRing(p, surface, ring) {
+    return ring.map((point) => projectPointToMouthRadius(p, surface, point, mouthOuterReturnTargetRadius(p, surface)));
   }
 
   function mouthSurfaceVector(surface, point) {
@@ -2100,10 +2107,7 @@
   }
 
   function mouthIntersectionPath(p, surface, outerRings, column) {
-    const mouthRadius = p.length - surface.mouthSurfaceCenterZ;
-    const targetRadius = Number.isFinite(mouthRadius)
-      ? mouthRadius - Math.max(0, p.mouthRearOffset)
-      : Infinity;
+    const targetRadius = mouthOuterReturnTargetRadius(p, surface);
     const path = [outerRings[0][column]];
     if (!Number.isFinite(targetRadius)) {
       for (let i = 1; i < outerRings.length; i += 1) {
@@ -2179,42 +2183,9 @@
   }
 
   function sphericalCapRings(p, surface, innerRing, outerRing) {
-    const mouthRadius = p.length - surface.mouthSurfaceCenterZ;
-    const targetRadius = Number.isFinite(mouthRadius)
-      ? mouthRadius - Math.max(0, p.mouthRearOffset)
-      : Infinity;
-    if (!Number.isFinite(targetRadius)) {
-      return [innerRing, outerRing];
-    }
-    const layerCount = 5;
-    const capSetback = Math.min(0.75, Math.max(0.05, Math.max(0, p.mouthRearOffset) * 0.04));
-    const rings = [];
-    for (let layer = 0; layer <= layerCount; layer += 1) {
-      if (layer === 0) {
-        rings.push(innerRing);
-        continue;
-      }
-      if (layer === layerCount) {
-        rings.push(outerRing);
-        continue;
-      }
-      const t = layer / layerCount;
-      rings.push(innerRing.map((inner, index) => {
-        const outer = outerRing[index];
-        const x = inner.x + (outer.x - inner.x) * t;
-        const y = inner.y + (outer.y - inner.y) * t;
-        const dx = surface.mouthSagHEnabled ? x : 0;
-        const dy = surface.mouthSagVEnabled ? y : 0;
-        const zOffset = Math.sqrt(Math.max(targetRadius * targetRadius - dx * dx - dy * dy, 0));
-        const setback = capSetback * Math.sin(Math.PI * t);
-        return {
-          x,
-          y,
-          z: surface.mouthSurfaceCenterZ + zOffset - setback,
-        };
-      }));
-    }
-    return rings;
+    void p;
+    void surface;
+    return [innerRing, outerRing];
   }
 
   function wallThicknessAtRing(p, surface, index) {

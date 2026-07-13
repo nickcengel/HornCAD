@@ -387,9 +387,20 @@ def mouth_return_projected_ring(
     mouth_h_radius: float,
     mouth_v_radius: float,
 ) -> list[tuple[float, float, float]]:
+    return [
+        project_point_to_mouth_radius(point, mouth_h_radius, mouth_v_radius, mouth_outer_return_target_radius(mouth_h_radius, mouth_v_radius))
+        for point in ring
+    ]
+
+
+def mouth_outer_return_target_radius(mouth_h_radius: float, mouth_v_radius: float) -> float:
     radius = mouth_radius(mouth_h_radius, mouth_v_radius)
-    target_radius = radius - max(0.0, PARAMS["mouth_rear_offset"]) if math.isfinite(radius) else math.inf
-    return [project_point_to_mouth_radius(point, mouth_h_radius, mouth_v_radius, target_radius) for point in ring]
+    if not math.isfinite(radius):
+        return math.inf
+    return max(
+        1e-6,
+        radius - max(0.0, PARAMS["mouth_rear_offset"]) - max(0.0, PARAMS["minimum_wall"]),
+    )
 
 
 def mouth_surface_vector(point: tuple[float, float, float], mouth_h_radius: float, mouth_v_radius: float) -> tuple[float, float, float]:
@@ -425,8 +436,7 @@ def mouth_intersection_path(
     mouth_h_radius: float,
     mouth_v_radius: float,
 ) -> list[tuple[float, float, float]]:
-    radius = mouth_radius(mouth_h_radius, mouth_v_radius)
-    target_radius = radius - max(0.0, PARAMS["mouth_rear_offset"]) if math.isfinite(radius) else math.inf
+    target_radius = mouth_outer_return_target_radius(mouth_h_radius, mouth_v_radius)
     path = [outer_rings[0][column]]
     if not math.isfinite(target_radius):
         return [ring[column] for ring in outer_rings]
@@ -499,37 +509,7 @@ def spherical_cap_rings(
     mouth_h_radius: float,
     mouth_v_radius: float,
 ) -> list[list[tuple[float, float, float]]]:
-    radius = mouth_radius(mouth_h_radius, mouth_v_radius)
-    if not math.isfinite(radius):
-        return [inner_ring, outer_ring]
-    target_radius = radius - max(0.0, PARAMS["mouth_rear_offset"])
-    center_z = PARAMS["length"] - radius
-    layer_count = 5
-    cap_setback = min(0.75, max(0.05, max(0.0, PARAMS["mouth_rear_offset"]) * 0.04))
-    rings = []
-    for layer in range(layer_count + 1):
-        if layer == 0:
-            rings.append(inner_ring)
-            continue
-        if layer == layer_count:
-            rings.append(outer_ring)
-            continue
-        t = layer / layer_count
-        ring = []
-        for inner, outer in zip(inner_ring, outer_ring):
-            x = inner[0] + (outer[0] - inner[0]) * t
-            y = inner[1] + (outer[1] - inner[1]) * t
-            dx = x if PARAMS.get("mouth_sag_h_enabled", True) else 0.0
-            dy = y if PARAMS.get("mouth_sag_v_enabled", True) else 0.0
-            z_offset = math.sqrt(max(target_radius * target_radius - dx * dx - dy * dy, 0.0))
-            setback = cap_setback * math.sin(math.pi * t)
-            ring.append((
-                x,
-                y,
-                center_z + z_offset - setback,
-            ))
-        rings.append(ring)
-    return rings
+    return [inner_ring, outer_ring]
 
 
 def wall_thickness_at_ring(index: int, ring_count: int) -> float:
