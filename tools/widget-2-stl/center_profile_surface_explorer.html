@@ -2382,6 +2382,31 @@
     return orientedFaces.map((face) => face.map((index) => vertices[index]));
   }
 
+  function averageRingZ(ring) {
+    return ring.reduce((sum, point) => sum + point.z, 0) / ring.length;
+  }
+
+  function outerWallRingsAfterMount(outerRings, mountEndZ) {
+    if (outerRings.length === 0) {
+      return [];
+    }
+    if (mountEndZ <= averageRingZ(outerRings[0])) {
+      return outerRings;
+    }
+    for (let index = 0; index < outerRings.length - 1; index += 1) {
+      const z0 = averageRingZ(outerRings[index]);
+      const z1 = averageRingZ(outerRings[index + 1]);
+      if (z0 <= mountEndZ && mountEndZ <= z1 && Math.abs(z1 - z0) > 1e-9) {
+        const t = Math.max(0, Math.min(1, (mountEndZ - z0) / (z1 - z0)));
+        const startRing = outerRings[index].map((point, column) => (
+          interpolatePoint(point, outerRings[index + 1][column], t)
+        ));
+        return [startRing, ...outerRings.slice(index + 1)];
+      }
+    }
+    return [outerRings[outerRings.length - 1]];
+  }
+
   function buildBodyTriangles(p, surface) {
     const innerRings = surface.rings;
     const mouthIndex = surface.mouthIndex;
@@ -2392,12 +2417,13 @@
     });
     const outerRings = hasReturn ? trimmedOuterRings(p, surface, outerBaseRings) : outerBaseRings;
     const throatInner = innerRings[0];
-    const throatOuter = outerRings[0];
     const throatZ = throatInner.reduce((sum, point) => sum + point.z, 0) / throatInner.length;
     const mountStartZ = throatZ;
     const mountEndZ = throatZ + Math.max(0, p.mountFlangeThickness);
+    const outerWallRings = outerWallRingsAfterMount(outerRings, mountEndZ);
+    const outerWallStart = outerWallRings[0];
     const requiredMountRadius = Math.max(
-      Math.max(...throatOuter.map(radialDistance)),
+      Math.max(...outerWallStart.map(radialDistance)),
       Math.max(...throatInner.map(radialDistance)) + Math.max(0, p.minimumWall)
     );
     const mountRadius = Math.max(Math.max(0, p.mountDiameter) / 2, requiredMountRadius);
@@ -2416,14 +2442,14 @@
         appendRingBridge(triangles, previousCapRing, capRings[i]);
         previousCapRing = capRings[i];
       }
-      appendRingBridge(triangles, previousCapRing, outerRings[mouthIndex]);
+      appendRingBridge(triangles, previousCapRing, outerWallRings[outerWallRings.length - 1]);
     } else {
-      appendRingBridge(triangles, innerRings[mouthIndex], outerRings[mouthIndex]);
+      appendRingBridge(triangles, innerRings[mouthIndex], outerWallRings[outerWallRings.length - 1]);
     }
-    for (let i = mouthIndex; i > 0; i -= 1) {
-      appendRingBridge(triangles, outerRings[i], outerRings[i - 1], true);
+    for (let i = outerWallRings.length - 1; i > 0; i -= 1) {
+      appendRingBridge(triangles, outerWallRings[i], outerWallRings[i - 1], true);
     }
-    appendRingBridge(triangles, throatOuter, mountOuterEnd, true);
+    appendRingBridge(triangles, outerWallRings[0], mountOuterEnd, true);
     appendRingBridge(triangles, mountOuterEnd, mountOuterStart, true);
     appendRingBridge(triangles, mountOuterStart, throatInner);
 

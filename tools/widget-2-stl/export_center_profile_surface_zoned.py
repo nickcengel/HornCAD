@@ -662,6 +662,31 @@ def add_ring(vertices: list[tuple[float, float, float]], ring: list[tuple[float,
     return start
 
 
+def average_z(ring: list[tuple[float, float, float]]) -> float:
+    return sum(point[2] for point in ring) / len(ring)
+
+
+def outer_wall_rings_after_mount(
+    outer_rings: list[list[tuple[float, float, float]]],
+    mount_end_z: float,
+) -> list[list[tuple[float, float, float]]]:
+    if not outer_rings:
+        return []
+    if mount_end_z <= average_z(outer_rings[0]):
+        return outer_rings
+    for index in range(len(outer_rings) - 1):
+        z0 = average_z(outer_rings[index])
+        z1 = average_z(outer_rings[index + 1])
+        if z0 <= mount_end_z <= z1 and abs(z1 - z0) > 1e-12:
+            t = max(0.0, min(1.0, (mount_end_z - z0) / (z1 - z0)))
+            start_ring = [
+                interpolate_point(outer_rings[index][column], outer_rings[index + 1][column], t)
+                for column in range(len(outer_rings[index]))
+            ]
+            return [start_ring, *outer_rings[index + 1 :]]
+    return [outer_rings[-1]]
+
+
 def build_body_mesh(
     rings: list[list[tuple[float, float, float]]],
     mouth_index: int,
@@ -677,12 +702,13 @@ def build_body_mesh(
     ]
     outer_rings = trimmed_outer_rings(outer_base_rings, mouth_h, mouth_v) if has_return else outer_base_rings
     throat_inner = rings[0]
-    throat_outer = outer_rings[0]
     throat_z = sum(point[2] for point in throat_inner) / ring_size
     mount_start_z = throat_z
     mount_end_z = throat_z + max(0.0, PARAMS["mount_flange_thickness"])
+    outer_wall_rings = outer_wall_rings_after_mount(outer_rings, mount_end_z)
+    outer_wall_start = outer_wall_rings[0]
     required_mount_radius = max(
-        max(radial_distance(point) for point in throat_outer),
+        max(radial_distance(point) for point in outer_wall_start),
         max(radial_distance(point) for point in throat_inner) + max(0.0, PARAMS["minimum_wall"]),
     )
     mount_radius = max(max(0.0, PARAMS["mount_diameter"]) / 2.0, required_mount_radius)
@@ -692,7 +718,7 @@ def build_body_mesh(
     vertices: list[tuple[float, float, float]] = []
     faces: list[tuple[int, int, int]] = []
     inner_starts = [add_ring(vertices, ring) for ring in rings]
-    outer_starts = [add_ring(vertices, ring) for ring in outer_rings]
+    outer_wall_starts = [add_ring(vertices, ring) for ring in outer_wall_rings]
     mount_outer_start_start = add_ring(vertices, mount_outer_start)
     mount_outer_end_start = add_ring(vertices, mount_outer_end)
 
@@ -705,12 +731,12 @@ def build_body_mesh(
             next_start = add_ring(vertices, ring)
             append_ring_bridge(faces, previous_start, next_start, ring_size)
             previous_start = next_start
-        append_ring_bridge(faces, previous_start, outer_starts[mouth_index], ring_size)
+        append_ring_bridge(faces, previous_start, outer_wall_starts[-1], ring_size)
     else:
-        append_ring_bridge(faces, inner_starts[mouth_index], outer_starts[mouth_index], ring_size)
-    for i in range(mouth_index, 0, -1):
-        append_ring_bridge(faces, outer_starts[i], outer_starts[i - 1], ring_size, True)
-    append_ring_bridge(faces, outer_starts[0], mount_outer_end_start, ring_size, True)
+        append_ring_bridge(faces, inner_starts[mouth_index], outer_wall_starts[-1], ring_size)
+    for i in range(len(outer_wall_starts) - 1, 0, -1):
+        append_ring_bridge(faces, outer_wall_starts[i], outer_wall_starts[i - 1], ring_size, True)
+    append_ring_bridge(faces, outer_wall_starts[0], mount_outer_end_start, ring_size, True)
     append_ring_bridge(faces, mount_outer_end_start, mount_outer_start_start, ring_size, True)
     append_ring_bridge(faces, mount_outer_start_start, inner_starts[0], ring_size)
 

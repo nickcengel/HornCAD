@@ -54,6 +54,9 @@ The supported exporter uses a square-boundary section topology:
 - the driver mount flange starts at the first horn ring. With a conic extension,
   that first ring is the beginning of the conic section; do not extend mount
   geometry behind the horn start in negative `z`,
+- the outer horn wall starts at `horn_start_z + mount_flange_thickness`, not at
+  the acoustic throat. If adaptive stations do not land exactly on that plane,
+  interpolate the outer wall start ring there,
 - the inner rear mouth ring sits at `mouth_sag_radius - mouth_rear_offset`;
   the outer horn wall is trimmed to
   `mouth_sag_radius - mouth_rear_offset - minimum_wall` so the return cannot
