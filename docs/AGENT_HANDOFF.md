@@ -67,9 +67,11 @@ The supported exporter uses a square-boundary section topology:
   stable radial directions. The outside field is station-preserving: it starts
   from that offset field, blends toward the authored yellow mouth-offset
   boundary as stations approach the mouth, and uses one blend value for each
-  whole station/ring. Do not use per-sample wall clamps near the mouth; they
-  preserve a distance number by creating corner pops and sliver artifacts. The
-  yellow ring,
+  whole station/ring. The station blend must start early enough to turn the
+  outside wall smoothly into the mouth boundary; delaying it with a high-power
+  ramp makes the last segment snap backward into a pointed lip. Do not use
+  per-sample wall clamps near the mouth; they preserve a distance number by
+  creating corner pops and sliver artifacts. The yellow ring,
   `mouth_sag_radius - mouth_rear_offset`, is the outside surface's mouth
   boundary. Do not append projected or radial-offset rear return rings to the
   outside field,

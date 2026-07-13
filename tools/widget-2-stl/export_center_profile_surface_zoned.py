@@ -544,7 +544,7 @@ def mouth_constrained_outer_rings(
             constrained.append(mouth_boundary_ring)
             continue
         station_t = i / max(1, ring_count - 1)
-        station_weight = smoothstep(station_t**4)
+        station_weight = smoothstep(station_t)
         envelope_weight = max(
             mouth_envelope_blend_weight(base, mouth_boundary, mouth_h_radius, mouth_v_radius)
             for base, mouth_boundary in zip(ring, mouth_boundary_ring)

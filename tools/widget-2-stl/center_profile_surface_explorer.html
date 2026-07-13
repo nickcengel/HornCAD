@@ -2218,7 +2218,7 @@
         continue;
       }
       const stationT = i / Math.max(1, ringCount - 1);
-      const stationWeight = smoothstep(stationT ** 4);
+      const stationWeight = smoothstep(stationT);
       const envelopeWeight = outerBaseRings[i].reduce((required, base, j) => Math.max(
         required,
         mouthEnvelopeBlendWeight(base, mouthBoundaryRing[j], surface.mouthH, surface.mouthV)
