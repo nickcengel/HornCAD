@@ -2159,9 +2159,11 @@
       ));
     }
 
-    return hornRings.map((ring, i) => (
+    const outerHornRings = hornRings.map((ring, i) => (
       ring.map((point, j) => radialOffsetPoint(point, scalarRings[i][j]))
-    )).concat(
+    ));
+    const trimmedHornRings = trimmedOuterRings(p, surface, outerHornRings);
+    return trimmedHornRings.concat(
       surface.rings.slice(surface.mouthIndex + 1).map((ring) => (
         mouthReturnProjectedRing(p, surface, ring)
       ))
