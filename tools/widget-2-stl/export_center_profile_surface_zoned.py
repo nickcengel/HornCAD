@@ -483,15 +483,13 @@ def station_scalar_offset_outer_rings(
             for i in range(ring_count)
         ]
 
-    outer_horn_rings = [
+    return [
         [
             radial_offset_point(point, scalars[j])
             for j, point in enumerate(ring)
         ]
         for ring, scalars in zip(horn_rings, scalar_rings)
-    ]
-    trimmed_horn_rings = trimmed_outer_rings(outer_horn_rings, mouth_h, mouth_v)
-    return trimmed_horn_rings + [
+    ] + [
         mouth_return_projected_ring(ring, mouth_h, mouth_v)
         for ring in rings[mouth_index + 1 :]
     ]
