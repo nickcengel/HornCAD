@@ -9,22 +9,27 @@ import struct
 
 
 PARAMS = {
-    "length": 321.0,
+    "length": 200.0,
     "r0": 12.7,
-    "mouth_width": 583.0,
-    "mouth_height": 280.0,
-    "h_coverage": 32.4,
-    "h_k": 1.0,
-    "h_n": 2.0,
-    "v_coverage": 14.6,
-    "v_k": 3.0,
-    "v_n": 5.5,
-    "mouth_sag": 63.0,
+    "throat_angle": 0.0,
+    "throat_extension": 0.0,
+    "mouth_width": 380.0,
+    "mouth_height": 250.0,
+    "h_coverage": 45.0,
+    "h_k": 4.0,
+    "h_n": 10.0,
+    "v_coverage": 30.0,
+    "v_k": 4.0,
+    "v_n": 10.0,
+    "mouth_sag": 60.0,
     "section_shape_1": 0.72,
-    "shape_end": 0.65,
+    "squareness_morph_curve": [
+        (0.0, 0.0),
+        (0.35, 0.28175),
+        (0.65, 0.71825),
+        (1.0, 1.0),
+    ],
     "side_bow": 0.0,
-    "top_bottom_bow": 0.0,
-    "bow_end": 0.53,
     "density": 40,
 }
 
@@ -34,9 +39,9 @@ def smoothstep(t: float) -> float:
     return x * x * (3.0 - 2.0 * x)
 
 
-def osse_base_radius(z: float, length: float, r0: float, coverage: float, k: float) -> float:
+def osse_base_radius(z: float, length: float, r0: float, coverage: float, k: float, throat_angle: float = 0.0) -> float:
     alpha = math.tan(math.radians(coverage))
-    return math.sqrt(k * k * r0 * r0 + z * z * alpha * alpha) + r0 * (1.0 - k)
+    return r0 + z * math.tan(math.radians(throat_angle)) + math.sqrt(k * k * r0 * r0 + z * z * alpha * alpha) - k * r0
 
 
 def termination_unit(z: float, length: float, q: float, n: float) -> float:
@@ -44,14 +49,22 @@ def termination_unit(z: float, length: float, q: float, n: float) -> float:
     return (length / q) * (1.0 - inner ** (1.0 / n))
 
 
-def solved_s(length: float, r0: float, coverage: float, k: float, n: float, end_radius: float) -> float:
-    base = osse_base_radius(length, length, r0, coverage, k)
+def solved_s(length: float, r0: float, coverage: float, k: float, n: float, end_radius: float, throat_angle: float = 0.0) -> float:
+    base = osse_base_radius(length, length, r0, coverage, k, throat_angle)
     unit = termination_unit(length, length, 0.995, n)
     return 0.0 if abs(unit) < 1e-9 else (end_radius - base) / unit
 
 
-def osse_radius(z: float, length: float, r0: float, coverage: float, k: float, n: float, s: float) -> float:
-    return osse_base_radius(z, length, r0, coverage, k) + s * termination_unit(z, length, 0.995, n)
+def osse_radius(z: float, length: float, r0: float, coverage: float, k: float, n: float, s: float, throat_angle: float = 0.0) -> float:
+    return osse_base_radius(z, length, r0, coverage, k, throat_angle) + s * termination_unit(z, length, 0.995, n)
+
+
+def effective_throat_radius(p: dict[str, float]) -> float:
+    return p["r0"] + max(0.0, p["throat_extension"]) * math.tan(math.radians(p["throat_angle"]))
+
+
+def measured_length() -> float:
+    return PARAMS["length"] + max(0.0, PARAMS["throat_extension"])
 
 
 def profile(axis: str):
@@ -60,12 +73,25 @@ def profile(axis: str):
     k = p[f"{axis}_k"]
     n = p[f"{axis}_n"]
     end_radius = p["mouth_width"] / 2.0 if axis == "h" else p["mouth_height"] / 2.0
-    s = solved_s(p["length"], p["r0"], coverage, k, n, end_radius)
-    return lambda z: osse_radius(z, p["length"], p["r0"], coverage, k, n, s)
+    r0 = effective_throat_radius(p)
+    s = solved_s(p["length"], r0, coverage, k, n, end_radius, p["throat_angle"])
+    return lambda z: osse_radius(z, p["length"], r0, coverage, k, n, s, p["throat_angle"])
 
 
 def section_shape(z: float) -> float:
-    return smoothstep(z / max(PARAMS["length"] * PARAMS["shape_end"], 1e-9)) * PARAMS["section_shape_1"]
+    return morph_curve_value(z / max(measured_length(), 1e-9)) * PARAMS["section_shape_1"]
+
+
+def morph_curve_value(u: float) -> float:
+    x = max(0.0, min(1.0, u))
+    points = PARAMS["squareness_morph_curve"]
+    for index, (x0, y0) in enumerate(points[:-1]):
+        x1, y1 = points[index + 1]
+        if x <= x1 or index == len(points) - 2:
+            span = max(x1 - x0, 1e-9)
+            t = smoothstep((x - x0) / span)
+            return y0 + (y1 - y0) * t
+    return 1.0
 
 
 def superellipse_n(shape: float) -> float:
@@ -174,30 +200,42 @@ def cylindrical_mouth_setback(x: float, max_x: float) -> float:
     return setback_from_radius(abs(x), radius_from_sag(max_x, sag))
 
 
-def bow_progress(z: float) -> float:
-    return smoothstep(z / max(PARAMS["length"] * PARAMS["bow_end"], 1e-9))
-
-
 def section_point(h_radius: float, v_radius: float, z: float, theta: float, mouth_h_radius: float, shape_n: float) -> tuple[float, float, float]:
     x, y = superellipse_point(h_radius, v_radius, shape_n, theta)
     u = min(1.0, abs(x) / max(h_radius, 1e-9))
     v = min(1.0, abs(y) / max(v_radius, 1e-9))
-    progress = bow_progress(z)
     side_window = u * u * (1.0 - v * v)
-    top_bottom_window = v * v * (1.0 - u * u)
     mouth_fade = 1.0 - max(0.0, min(1.0, z / max(PARAMS["length"], 1e-9))) ** 4.0
-    x += (1.0 if (x or math.cos(theta)) >= 0.0 else -1.0) * PARAMS["side_bow"] * progress * side_window * mouth_fade
-    y += (1.0 if (y or math.sin(theta)) >= 0.0 else -1.0) * PARAMS["top_bottom_bow"] * progress * top_bottom_window * mouth_fade
+    x += (1.0 if (x or math.cos(theta)) >= 0.0 else -1.0) * PARAMS["side_bow"] * side_window * mouth_fade
     mouth_progress = max(0.0, min(1.0, z / max(PARAMS["length"], 1e-9))) ** 2.4
     return x, y, z - cylindrical_mouth_setback(x, mouth_h_radius) * mouth_progress
 
 
 def mirrored_ring(h_radius: float, v_radius: float, z: float, angles: list[float], mouth_h_radius: float) -> list[tuple[float, float, float]]:
-    shape_n = superellipse_n(section_shape(z))
+    shape_n = superellipse_n(section_shape(max(0.0, PARAMS["throat_extension"]) + z))
     base = []
     for theta in angles:
         x, y, z_out = section_point(h_radius, v_radius, z, theta, mouth_h_radius, shape_n)
         base.append((abs(x), abs(y), z_out))
+
+    ring = []
+    last = len(base) - 1
+    ring.extend(base)
+    ring.extend((-base[i][0], base[i][1], base[i][2]) for i in range(last - 1, -1, -1))
+    ring.extend((-base[i][0], -base[i][1], base[i][2]) for i in range(1, last + 1))
+    ring.extend((base[i][0], -base[i][1], base[i][2]) for i in range(last - 1, 0, -1))
+    return ring
+
+
+def conical_extension_ring(tau: float, angles: list[float]) -> list[tuple[float, float, float]]:
+    extension = max(0.0, PARAMS["throat_extension"])
+    radius = PARAMS["r0"] + extension * tau * math.tan(math.radians(PARAMS["throat_angle"]))
+    z = -extension + extension * tau
+    shape_n = superellipse_n(section_shape(extension * tau))
+    base = []
+    for theta in angles:
+        x, y = superellipse_point(radius, radius, shape_n, theta)
+        base.append((abs(x), abs(y), z))
 
     ring = []
     last = len(base) - 1
@@ -236,7 +274,8 @@ def main() -> None:
     v_profile = profile("v")
     mouth_h = h_profile(PARAMS["length"])
     mouth_v = v_profile(PARAMS["length"])
-    mouth_n = superellipse_n(section_shape(PARAMS["length"]))
+    extension = max(0.0, PARAMS["throat_extension"])
+    mouth_n = superellipse_n(section_shape(extension + PARAMS["length"]))
     angles = refine_angles_for_mouth(
         quadrant_angles(superellipse_n(PARAMS["section_shape_1"]), PARAMS["density"] * 4),
         mouth_h,
@@ -246,7 +285,13 @@ def main() -> None:
     )
 
     rings = []
-    for i in range(PARAMS["density"]):
+    if extension > 0.0:
+        extension_stations = max(2, round(PARAMS["density"] * extension / max(PARAMS["length"], 1e-9)) + 1)
+        for i in range(extension_stations):
+            rings.append(conical_extension_ring(i / (extension_stations - 1), angles))
+
+    horn_start_index = 1 if extension > 0.0 else 0
+    for i in range(horn_start_index, PARAMS["density"]):
         z = PARAMS["length"] * i / (PARAMS["density"] - 1)
         rings.append(mirrored_ring(h_profile(z), v_profile(z), z, angles, mouth_h))
 

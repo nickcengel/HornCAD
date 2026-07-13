@@ -212,6 +212,29 @@
       font-size: 12px;
     }
 
+    .curve-tools {
+      display: flex;
+      gap: 8px;
+      margin: 10px 0 8px;
+    }
+
+    .curve-tools button {
+      min-width: 0;
+      padding: 5px 8px;
+      font-size: 12px;
+    }
+
+    .curve-editor {
+      display: block;
+      width: 100%;
+      height: 150px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
     code {
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: 0.94em;
@@ -284,8 +307,8 @@
       <legend>Global</legend>
       <label>
         Length mm
-        <input data-control="length" type="number" min="40" max="600" step="1" value="321">
-        <input data-control="length" type="range" min="40" max="600" step="1" value="321">
+        <input data-control="length" type="number" min="40" max="600" step="1" value="200">
+        <input data-control="length" type="range" min="40" max="600" step="1" value="200">
       </label>
       <label>
         Throat radius mm
@@ -293,26 +316,29 @@
         <input data-control="r0" type="range" min="1" max="80" step="0.1" value="12.7">
       </label>
       <label>
+        Throat angle deg
+        <input data-control="throatAngle" type="number" min="0" max="85" step="0.1" value="0">
+        <input data-control="throatAngle" type="range" min="0" max="85" step="0.1" value="0">
+      </label>
+      <label>
+        Conical extension mm
+        <input data-control="throatExtension" type="number" min="0" max="300" step="1" value="0">
+        <input data-control="throatExtension" type="range" min="0" max="300" step="1" value="0">
+      </label>
+      <label>
         Mouth width mm
-        <input data-control="mouthWidth" type="number" min="20" max="1200" step="1" value="583">
-        <input data-control="mouthWidth" type="range" min="20" max="1200" step="1" value="583">
+        <input data-control="mouthWidth" type="number" min="20" max="1200" step="1" value="380">
+        <input data-control="mouthWidth" type="range" min="20" max="1200" step="1" value="380">
       </label>
       <label>
         Mouth height mm
-        <input data-control="mouthHeight" type="number" min="20" max="800" step="1" value="280">
-        <input data-control="mouthHeight" type="range" min="20" max="800" step="1" value="280">
+        <input data-control="mouthHeight" type="number" min="20" max="800" step="1" value="250">
+        <input data-control="mouthHeight" type="range" min="20" max="800" step="1" value="250">
       </label>
       <label>
         Cylindrical mouth sag mm
-        <input data-control="mouthSag" type="number" min="0" max="160" step="1" value="63">
-        <input data-control="mouthSag" type="range" min="0" max="160" step="1" value="63">
-      </label>
-      <label>
-        Termination
-        <select data-select="termination">
-          <option value="osse" selected="selected">OS-SE</option>
-          <option value="spline">Spline</option>
-        </select>
+        <input data-control="mouthSag" type="number" min="0" max="160" step="1" value="60">
+        <input data-control="mouthSag" type="range" min="0" max="160" step="1" value="60">
       </label>
     </fieldset>
 
@@ -320,18 +346,28 @@
       <legend>Horizontal Basis Profile</legend>
       <label>
         Coverage deg
-        <input data-control="hCoverage" type="number" min="1" max="85" step="0.1" value="32.4">
-        <input data-control="hCoverage" type="range" min="1" max="85" step="0.1" value="32.4">
+        <input data-control="hCoverage" type="number" min="1" max="85" step="0.1" value="45">
+        <input data-control="hCoverage" type="range" min="1" max="85" step="0.1" value="45">
       </label>
       <label>
         K
-        <input data-control="hK" type="number" min="0" max="10" step="0.05" value="1">
-        <input data-control="hK" type="range" min="0" max="10" step="0.05" value="1">
+        <input data-control="hK" type="number" min="0" max="10" step="0.05" value="4">
+        <input data-control="hK" type="range" min="0" max="10" step="0.05" value="4">
       </label>
       <label>
         N
-        <input data-control="hN" type="number" min="2" max="100" step="0.5" value="2">
-        <input data-control="hN" type="range" min="2" max="100" step="0.5" value="2">
+        <input data-control="hN" type="number" min="2" max="100" step="0.5" value="10">
+        <input data-control="hN" type="range" min="2" max="100" step="0.5" value="10">
+      </label>
+      <label>
+        Modifier K
+        <input data-control="sideGuideK" type="number" min="0.05" max="10" step="0.05" value="1">
+        <input data-control="sideGuideK" type="range" min="0.05" max="10" step="0.05" value="1">
+      </label>
+      <label>
+        Modifier amount
+        <input data-control="sideGuideAmount" type="number" min="-200" max="200" step="1" value="0">
+        <input data-control="sideGuideAmount" type="range" min="-200" max="200" step="1" value="0">
       </label>
     </fieldset>
 
@@ -339,79 +375,34 @@
       <legend>Vertical Basis Profile</legend>
       <label>
         Coverage deg
-        <input data-control="vCoverage" type="number" min="1" max="85" step="0.1" value="14.6">
-        <input data-control="vCoverage" type="range" min="1" max="85" step="0.1" value="14.6">
+        <input data-control="vCoverage" type="number" min="1" max="85" step="0.1" value="30">
+        <input data-control="vCoverage" type="range" min="1" max="85" step="0.1" value="30">
       </label>
       <label>
         K
-        <input data-control="vK" type="number" min="0" max="10" step="0.05" value="3">
-        <input data-control="vK" type="range" min="0" max="10" step="0.05" value="3">
+        <input data-control="vK" type="number" min="0" max="10" step="0.05" value="4">
+        <input data-control="vK" type="range" min="0" max="10" step="0.05" value="4">
       </label>
       <label>
         N
-        <input data-control="vN" type="number" min="2" max="100" step="0.5" value="5.5">
-        <input data-control="vN" type="range" min="2" max="100" step="0.5" value="5.5">
+        <input data-control="vN" type="number" min="2" max="100" step="0.5" value="10">
+        <input data-control="vN" type="range" min="2" max="100" step="0.5" value="10">
       </label>
-    </fieldset>
-
-    <fieldset>
-      <legend>Spline Termination</legend>
-      <label>
-        Start z %
-        <input data-control="splineStart" type="number" min="5" max="98" step="0.5" value="72">
-        <input data-control="splineStart" type="range" min="5" max="98" step="0.5" value="72">
-      </label>
-      <label>
-        Exit tangent deg
-        <input data-control="exitAngle" type="number" min="-35" max="65" step="0.1" value="0">
-        <input data-control="exitAngle" type="range" min="-35" max="65" step="0.1" value="0">
-      </label>
-      <label>
-        Tension
-        <input data-control="tension" type="number" min="0.1" max="3" step="0.01" value="1">
-        <input data-control="tension" type="range" min="0.1" max="3" step="0.01" value="1">
-      </label>
-      <p class="small">Spline mode follows OS-SE with <code>S=0</code> until start z, then lands at the OS-SE mouth endpoint.</p>
     </fieldset>
 
     <fieldset>
       <legend>Section Modifier Curve</legend>
       <label>
-        Mouth round-to-square
+        Mouth Squareness
         <input data-control="sectionShape1" type="number" min="0" max="1" step="0.01" value="0.72">
         <input data-control="sectionShape1" type="range" min="0" max="1" step="0.01" value="0.72">
       </label>
-      <label>
-        Side guide K
-        <input data-control="sideGuideK" type="number" min="0.05" max="10" step="0.05" value="1">
-        <input data-control="sideGuideK" type="range" min="0.05" max="10" step="0.05" value="1">
-      </label>
-      <label>
-        Side guide amount %
-        <input data-control="sideGuideAmount" type="number" min="-200" max="200" step="1" value="0">
-        <input data-control="sideGuideAmount" type="range" min="-200" max="200" step="1" value="0">
-      </label>
-      <label>
-        Top/bottom span bow mm
-        <input data-control="topBottomBow" type="number" min="-60" max="60" step="0.5" value="0">
-        <input data-control="topBottomBow" type="range" min="-60" max="60" step="0.5" value="0">
-      </label>
-      <p class="small">The side guide is an OS-SE profile. Its difference from the horizontal basis is applied to the side span.</p>
-    </fieldset>
-
-    <fieldset>
-      <legend>Section Modifier Evolution</legend>
-      <label>
-        Round-to-square reaches mouth %
-        <input data-control="shapeEnd" type="number" min="5" max="100" step="1" value="65">
-        <input data-control="shapeEnd" type="range" min="5" max="100" step="1" value="65">
-      </label>
-      <label>
-        Top/bottom bow reaches mouth %
-        <input data-control="bowEnd" type="number" min="5" max="100" step="1" value="53">
-        <input data-control="bowEnd" type="range" min="5" max="100" step="1" value="53">
-      </label>
-      <p class="small">Side guide evolution comes from the guide profile delta. Top/bottom bow still uses this simple z fade.</p>
+      <div class="curve-tools">
+        <button type="button" data-curve-add>Add point</button>
+        <button type="button" data-curve-remove>Remove point</button>
+        <button type="button" data-curve-reset>Reset</button>
+      </div>
+      <canvas id="morph-curve" class="curve-editor" width="720" height="300"></canvas>
     </fieldset>
   </section>
 
@@ -420,19 +411,30 @@
     <div class="metrics">
       <div class="metric"><span>Measured width</span><strong id="metric-width">583.00 mm</strong></div>
       <div class="metric"><span>Measured height</span><strong id="metric-height">280.00 mm</strong></div>
+      <div class="metric"><span>Measured total length</span><strong id="metric-total-length">200.00 mm</strong></div>
       <div class="metric"><span>H endpoint</span><strong id="metric-h-end">291.50 mm</strong></div>
       <div class="metric"><span>V endpoint</span><strong id="metric-v-end">140.00 mm</strong></div>
+      <div class="metric"><span>Derived S (H/V)</span><strong id="metric-derived-s">0.0000 / 0.0000</strong></div>
       <div class="metric"><span>Mouth squareness</span><strong id="metric-section-n">0.7200</strong></div>
-      <div class="metric"><span>Side guide / T-B bow</span><strong id="metric-cap">0.000 / 0.000 mm</strong></div>
+      <div class="metric"><span>Modifier peak</span><strong id="metric-cap">0.000 mm</strong></div>
     </div>
   </section>
 </main>
 
 <script>
   const controls = new Map();
-  const selects = new Map();
   const canvas = document.getElementById("surface");
   const ctx = canvas.getContext("2d");
+  const morphCurveCanvas = document.getElementById("morph-curve");
+  const morphCurveCtx = morphCurveCanvas.getContext("2d");
+  const defaultMorphCurvePoints = [
+    { x: 0, y: 0 },
+    { x: 0.35, y: smoothstep(0.35) },
+    { x: 0.65, y: smoothstep(0.65) },
+    { x: 1, y: 1 },
+  ];
+  let morphCurvePoints = defaultMorphCurvePoints.map((point) => ({ ...point }));
+  let activeMorphPoint = null;
   let currentView = "top";
   const orbit = {
     yaw: -Math.PI / 4,
@@ -446,8 +448,10 @@
   const metrics = {
     width: document.getElementById("metric-width"),
     height: document.getElementById("metric-height"),
+    totalLength: document.getElementById("metric-total-length"),
     hEnd: document.getElementById("metric-h-end"),
     vEnd: document.getElementById("metric-v-end"),
+    derivedS: document.getElementById("metric-derived-s"),
     sectionShape: document.getElementById("metric-section-n"),
     bow: document.getElementById("metric-cap"),
   };
@@ -468,13 +472,11 @@
     });
   }
 
-  for (const select of document.querySelectorAll("[data-select]")) {
-    selects.set(select.dataset.select, select);
-    select.addEventListener("change", render);
-  }
-
   document.querySelector("[data-export-stl]").addEventListener("click", exportStl);
   document.querySelector("[data-export-yaml]").addEventListener("click", exportYaml);
+  document.querySelector("[data-curve-add]").addEventListener("click", addMorphPoint);
+  document.querySelector("[data-curve-remove]").addEventListener("click", removeMorphPoint);
+  document.querySelector("[data-curve-reset]").addEventListener("click", resetMorphCurve);
 
   for (const button of document.querySelectorAll("[data-view]")) {
     button.addEventListener("click", () => {
@@ -528,6 +530,31 @@
     render();
   }, { passive: false });
 
+  morphCurveCanvas.addEventListener("pointerdown", (event) => {
+    const point = morphCurveEventPoint(event);
+    activeMorphPoint = nearestMorphPoint(point);
+    if (activeMorphPoint !== null) {
+      morphCurveCanvas.setPointerCapture(event.pointerId);
+      moveMorphPoint(activeMorphPoint, point);
+    }
+  });
+
+  morphCurveCanvas.addEventListener("pointermove", (event) => {
+    if (activeMorphPoint === null) {
+      return;
+    }
+    moveMorphPoint(activeMorphPoint, morphCurveEventPoint(event));
+  });
+
+  morphCurveCanvas.addEventListener("pointerup", (event) => {
+    activeMorphPoint = null;
+    morphCurveCanvas.releasePointerCapture(event.pointerId);
+  });
+
+  morphCurveCanvas.addEventListener("pointercancel", () => {
+    activeMorphPoint = null;
+  });
+
   function setCurrentView(view) {
     currentView = view;
     for (const button of document.querySelectorAll("[data-view]")) {
@@ -556,10 +583,6 @@
     return Number(controls.get(name)[0].value);
   }
 
-  function selected(name) {
-    return selects.get(name).value;
-  }
-
   function rad(deg) {
     return deg * Math.PI / 180;
   }
@@ -567,6 +590,10 @@
   function smoothstep(t) {
     const x = Math.max(0, Math.min(1, t));
     return x * x * (3 - 2 * x);
+  }
+
+  function clamp01(value) {
+    return Math.max(0, Math.min(1, value));
   }
 
   function format(value, digits = 4) {
@@ -580,34 +607,33 @@
     return {
       length: value("length"),
       r0: value("r0"),
+      throatAngle: value("throatAngle"),
+      throatExtension: value("throatExtension"),
       mouthWidth: value("mouthWidth"),
       mouthHeight: value("mouthHeight"),
-      termination: selected("termination"),
       hCoverage: value("hCoverage"),
       hK: value("hK"),
       hN: value("hN"),
       vCoverage: value("vCoverage"),
       vK: value("vK"),
       vN: value("vN"),
-      splineStart: value("splineStart") / 100,
-      exitAngle: value("exitAngle"),
-      tension: value("tension"),
       mouthSag: value("mouthSag"),
       sectionShape1: value("sectionShape1"),
-      shapeEnd: value("shapeEnd") / 100,
       sideGuideK: value("sideGuideK"),
       sideGuideAmount: value("sideGuideAmount") / 100,
-      topBottomBow: value("topBottomBow"),
-      bowEnd: value("bowEnd") / 100,
       density: Math.max(8, Math.round(value("density"))),
       stlStations: Math.max(8, Math.round(value("stlStations"))),
       stlHalfSamples: Math.max(32, Math.round(value("stlHalfSamples"))),
     };
   }
 
-  function osseBaseRadius(z, length, r0, coverage, k) {
+  function effectiveThroatRadius(p) {
+    return p.r0 + Math.max(0, p.throatExtension) * Math.tan(rad(p.throatAngle));
+  }
+
+  function osseBaseRadius(z, length, r0, coverage, k, throatAngle = 0) {
     const alpha = Math.tan(rad(coverage));
-    return Math.sqrt(k * k * r0 * r0 + z * z * alpha * alpha) + r0 * (1 - k);
+    return r0 + z * Math.tan(rad(throatAngle)) + Math.sqrt(k * k * r0 * r0 + z * z * alpha * alpha) - k * r0;
   }
 
   function terminationUnit(z, length, q, n) {
@@ -615,23 +641,14 @@
     return (length / q) * (1 - Math.pow(termInner, 1 / n));
   }
 
-  function osseRadius(z, length, r0, coverage, k, n, s) {
-    return osseBaseRadius(z, length, r0, coverage, k) + s * terminationUnit(z, length, 0.995, n);
+  function osseRadius(z, length, r0, coverage, k, n, s, throatAngle = 0) {
+    return osseBaseRadius(z, length, r0, coverage, k, throatAngle) + s * terminationUnit(z, length, 0.995, n);
   }
 
-  function solvedS(length, r0, coverage, k, n, endRadius) {
-    const base = osseBaseRadius(length, length, r0, coverage, k);
+  function solvedS(length, r0, coverage, k, n, endRadius, throatAngle = 0) {
+    const base = osseBaseRadius(length, length, r0, coverage, k, throatAngle);
     const unit = terminationUnit(length, length, 0.995, n);
     return Math.abs(unit) < 1e-9 ? 0 : (endRadius - base) / unit;
-  }
-
-  function hermite(p0, m0, p1, m1, t) {
-    const t2 = t * t;
-    const t3 = t2 * t;
-    return (2 * t3 - 3 * t2 + 1) * p0
-      + (t3 - 2 * t2 + t) * m0
-      + (-2 * t3 + 3 * t2) * p1
-      + (t3 - t2) * m1;
   }
 
   function makeProfile(p, axis) {
@@ -639,54 +656,186 @@
     const k = axis === "h" ? p.hK : p.vK;
     const n = axis === "h" ? p.hN : p.vN;
     const endRadius = axis === "h" ? p.mouthWidth / 2 : p.mouthHeight / 2;
-    const s = solvedS(p.length, p.r0, coverage, k, n, endRadius);
-    if (p.termination === "osse") {
-      return (z) => osseRadius(z, p.length, p.r0, coverage, k, n, s);
-    }
-
-    const startZ = p.length * p.splineStart;
-    const startR = osseRadius(startZ, p.length, p.r0, coverage, k, n, 0);
-    const startSlope = derivative((z) => osseRadius(z, p.length, p.r0, coverage, k, n, 0), startZ, p.length);
-    const endSlope = Math.tan(rad(p.exitAngle));
-    const span = Math.max(p.length - startZ, 1e-9);
-    const handle = p.tension * span / 3;
-    return (z) => {
-      if (z <= startZ) {
-        return osseRadius(z, p.length, p.r0, coverage, k, n, 0);
-      }
-      const t = (z - startZ) / span;
-      return hermite(startR, startSlope * handle, endRadius, endSlope * handle, t);
-    };
+    const r0 = effectiveThroatRadius(p);
+    const s = solvedS(p.length, r0, coverage, k, n, endRadius, p.throatAngle);
+    return (z) => osseRadius(z, p.length, r0, coverage, k, n, s, p.throatAngle);
   }
 
   function sideGuideRadius(p, z) {
     const endRadius = p.mouthWidth / 2;
     const n = p.hN;
-    const s = solvedS(p.length, p.r0, p.hCoverage, p.sideGuideK, n, endRadius);
-    return osseRadius(z, p.length, p.r0, p.hCoverage, p.sideGuideK, n, s);
+    const r0 = effectiveThroatRadius(p);
+    const s = solvedS(p.length, r0, p.hCoverage, p.sideGuideK, n, endRadius, p.throatAngle);
+    return osseRadius(z, p.length, r0, p.hCoverage, p.sideGuideK, n, s, p.throatAngle);
   }
 
   function sideGuideDelta(p, z, hRadius) {
     return (sideGuideRadius(p, z) - hRadius) * p.sideGuideAmount;
   }
 
-  function derivative(fn, z, length) {
-    const dz = Math.max(length / 1000, 0.01);
-    const z0 = Math.max(0, z - dz);
-    const z1 = Math.min(length, z + dz);
-    return (fn(z1) - fn(z0)) / Math.max(z1 - z0, 1e-9);
+  function measuredLength(p) {
+    return p.length + Math.max(0, p.throatExtension);
   }
 
-  function sectionShape(p, z) {
-    return smoothstep(z / Math.max(p.length * p.shapeEnd, 1e-9)) * p.sectionShape1;
+  function sectionShape(p, distanceFromThroatStart) {
+    return morphCurveValue(distanceFromThroatStart / Math.max(measuredLength(p), 1e-9)) * p.sectionShape1;
+  }
+
+  function morphCurveValue(u) {
+    const x = clamp01(u);
+    const points = morphCurvePoints;
+    for (let i = 0; i < points.length - 1; i += 1) {
+      const a = points[i];
+      const b = points[i + 1];
+      if (x <= b.x || i === points.length - 2) {
+        const span = Math.max(b.x - a.x, 1e-9);
+        const t = smoothstep((x - a.x) / span);
+        return a.y + (b.y - a.y) * t;
+      }
+    }
+    return 1;
+  }
+
+  function morphCurvePlotRect() {
+    return { x: 32, y: 16, width: morphCurveCanvas.width - 48, height: morphCurveCanvas.height - 42 };
+  }
+
+  function morphCurveToCanvas(point) {
+    const rect = morphCurvePlotRect();
+    return {
+      x: rect.x + point.x * rect.width,
+      y: rect.y + (1 - point.y) * rect.height,
+    };
+  }
+
+  function canvasToMorphCurve(point) {
+    const rect = morphCurvePlotRect();
+    return {
+      x: clamp01((point.x - rect.x) / rect.width),
+      y: clamp01(1 - (point.y - rect.y) / rect.height),
+    };
+  }
+
+  function morphCurveEventPoint(event) {
+    const rect = morphCurveCanvas.getBoundingClientRect();
+    const scaleX = morphCurveCanvas.width / rect.width;
+    const scaleY = morphCurveCanvas.height / rect.height;
+    return canvasToMorphCurve({
+      x: (event.clientX - rect.left) * scaleX,
+      y: (event.clientY - rect.top) * scaleY,
+    });
+  }
+
+  function nearestMorphPoint(point) {
+    let best = null;
+    let bestDistance = Infinity;
+    const rect = morphCurveCanvas.getBoundingClientRect();
+    const hitRadius = 14 * (morphCurveCanvas.width / Math.max(rect.width, 1));
+    const target = morphCurveToCanvas(point);
+    for (let i = 0; i < morphCurvePoints.length; i += 1) {
+      const candidate = morphCurveToCanvas(morphCurvePoints[i]);
+      const distance = Math.hypot(candidate.x - target.x, candidate.y - target.y);
+      if (distance < bestDistance && distance <= hitRadius) {
+        best = i;
+        bestDistance = distance;
+      }
+    }
+    return best;
+  }
+
+  function moveMorphPoint(index, point) {
+    if (index === 0 || index === morphCurvePoints.length - 1) {
+      return;
+    }
+    const previous = morphCurvePoints[index - 1];
+    const next = morphCurvePoints[index + 1];
+    morphCurvePoints[index] = {
+      x: Math.max(previous.x + 0.01, Math.min(next.x - 0.01, point.x)),
+      y: Math.max(previous.y, Math.min(next.y, point.y)),
+    };
+    drawMorphCurveEditor();
+    render();
+  }
+
+  function addMorphPoint() {
+    let largestGap = 0;
+    let insertIndex = 1;
+    for (let i = 0; i < morphCurvePoints.length - 1; i += 1) {
+      const gap = morphCurvePoints[i + 1].x - morphCurvePoints[i].x;
+      if (gap > largestGap) {
+        largestGap = gap;
+        insertIndex = i + 1;
+      }
+    }
+    const x = (morphCurvePoints[insertIndex - 1].x + morphCurvePoints[insertIndex].x) / 2;
+    morphCurvePoints.splice(insertIndex, 0, { x, y: morphCurveValue(x) });
+    drawMorphCurveEditor();
+    render();
+  }
+
+  function removeMorphPoint() {
+    if (morphCurvePoints.length <= 2) {
+      return;
+    }
+    morphCurvePoints.splice(morphCurvePoints.length - 2, 1);
+    drawMorphCurveEditor();
+    render();
+  }
+
+  function resetMorphCurve() {
+    morphCurvePoints = defaultMorphCurvePoints.map((point) => ({ ...point }));
+    drawMorphCurveEditor();
+    render();
+  }
+
+  function drawMorphCurveEditor() {
+    const rect = morphCurvePlotRect();
+    morphCurveCtx.clearRect(0, 0, morphCurveCanvas.width, morphCurveCanvas.height);
+    morphCurveCtx.save();
+    morphCurveCtx.strokeStyle = "#d6d8da";
+    morphCurveCtx.lineWidth = 1;
+    morphCurveCtx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+    for (let i = 1; i < 4; i += 1) {
+      const x = rect.x + rect.width * i / 4;
+      const y = rect.y + rect.height * i / 4;
+      morphCurveCtx.beginPath();
+      morphCurveCtx.moveTo(x, rect.y);
+      morphCurveCtx.lineTo(x, rect.y + rect.height);
+      morphCurveCtx.moveTo(rect.x, y);
+      morphCurveCtx.lineTo(rect.x + rect.width, y);
+      morphCurveCtx.stroke();
+    }
+
+    morphCurveCtx.strokeStyle = "#0f766e";
+    morphCurveCtx.lineWidth = 4;
+    morphCurveCtx.beginPath();
+    for (let i = 0; i <= 160; i += 1) {
+      const x = i / 160;
+      const point = morphCurveToCanvas({ x, y: morphCurveValue(x) });
+      if (i === 0) {
+        morphCurveCtx.moveTo(point.x, point.y);
+      } else {
+        morphCurveCtx.lineTo(point.x, point.y);
+      }
+    }
+    morphCurveCtx.stroke();
+
+    for (let i = 0; i < morphCurvePoints.length; i += 1) {
+      const point = morphCurveToCanvas(morphCurvePoints[i]);
+      morphCurveCtx.beginPath();
+      morphCurveCtx.fillStyle = i === 0 || i === morphCurvePoints.length - 1 ? "#34383c" : "#0f766e";
+      morphCurveCtx.arc(point.x, point.y, 9, 0, Math.PI * 2);
+      morphCurveCtx.fill();
+      morphCurveCtx.strokeStyle = "#ffffff";
+      morphCurveCtx.lineWidth = 2;
+      morphCurveCtx.stroke();
+    }
+    morphCurveCtx.restore();
   }
 
   function superellipseNFromShape(shape) {
     return 2 + 298 * Math.pow(Math.max(0, Math.min(1, shape)), 1.7);
-  }
-
-  function bowProgress(p, z) {
-    return smoothstep(z / Math.max(p.length * p.bowEnd, 1e-9));
   }
 
   function radiusFromSag(halfSpan, sag) {
@@ -806,7 +955,7 @@
   }
 
   function sectionPoint(p, hRadius, vRadius, z, theta, mouthHRadius, shapeN = null) {
-    const n = shapeN ?? superellipseNFromShape(sectionShape(p, z));
+    const n = shapeN ?? superellipseNFromShape(sectionShape(p, Math.max(0, p.throatExtension) + z));
     const point = superellipsePoint(hRadius, vRadius, n, theta);
     return sectionPointFromXY(p, hRadius, vRadius, z, point.x, point.y, theta, mouthHRadius);
   }
@@ -815,19 +964,26 @@
     const point = { x, y };
     const u = Math.min(1, Math.abs(point.x) / Math.max(hRadius, 1e-9));
     const v = Math.min(1, Math.abs(point.y) / Math.max(vRadius, 1e-9));
-    const progress = bowProgress(p, z);
     const sideWindow = u * u * (1 - v * v);
-    const topBottomWindow = v * v * (1 - u * u);
     const mouthFade = 1 - Math.pow(Math.max(0, Math.min(1, z / Math.max(p.length, 1e-9))), 4);
     point.x += Math.sign(point.x || Math.cos(theta)) * sideGuideDelta(p, z, hRadius) * sideWindow;
-    point.y += Math.sign(point.y || Math.sin(theta)) * p.topBottomBow * progress * topBottomWindow * mouthFade;
     const mouthProgress = Math.pow(Math.max(0, Math.min(1, z / Math.max(p.length, 1e-9))), 2.4);
     const setback = cylindricalMouthSetback(p, point.x, mouthHRadius) * mouthProgress;
     return { x: point.x, y: point.y, z: z - setback };
   }
 
+  function sectionPointFromXYAtZ(p, hRadius, vRadius, profileZ, outputZ, x, y, theta) {
+    const point = { x, y };
+    const u = Math.min(1, Math.abs(point.x) / Math.max(hRadius, 1e-9));
+    const v = Math.min(1, Math.abs(point.y) / Math.max(vRadius, 1e-9));
+    const sideWindow = u * u * (1 - v * v);
+    const mouthFade = 1 - Math.pow(Math.max(0, Math.min(1, profileZ / Math.max(p.length, 1e-9))), 4);
+    point.x += Math.sign(point.x || Math.cos(theta)) * sideGuideDelta(p, profileZ, hRadius) * sideWindow;
+    return { x: point.x, y: point.y, z: outputZ };
+  }
+
   function xSampledSectionRing(p, hRadius, vRadius, z, halfSamples, mouthHRadius) {
-    const shapeN = superellipseNFromShape(sectionShape(p, z));
+    const shapeN = superellipseNFromShape(sectionShape(p, Math.max(0, p.throatExtension) + z));
     const ring = [];
 
     for (let i = 0; i < halfSamples; i += 1) {
@@ -847,8 +1003,60 @@
     return ring;
   }
 
+  function scaledLengthSectionRing(p, hRadius, vRadius, profileZ, tau, halfSamples, mouthHRadius) {
+    const shapeN = superellipseNFromShape(sectionShape(p, Math.max(0, p.throatExtension) + profileZ));
+    const ring = [];
+
+    for (let i = 0; i < halfSamples; i += 1) {
+      const t = i / halfSamples;
+      const mouthX = -mouthHRadius + 2 * mouthHRadius * t;
+      const localLength = Math.max(1e-9, p.length - cylindricalMouthSetback(p, mouthX, mouthHRadius));
+      const outputZ = tau * localLength;
+      const x = -hRadius + 2 * hRadius * t;
+      const y = superellipseY(hRadius, vRadius, shapeN, x, 1);
+      ring.push(sectionPointFromXYAtZ(p, hRadius, vRadius, profileZ, outputZ, x, y, Math.atan2(y, x)));
+    }
+
+    for (let i = 0; i < halfSamples; i += 1) {
+      const t = i / halfSamples;
+      const mouthT = 1 - t;
+      const mouthX = -mouthHRadius + 2 * mouthHRadius * mouthT;
+      const localLength = Math.max(1e-9, p.length - cylindricalMouthSetback(p, mouthX, mouthHRadius));
+      const outputZ = tau * localLength;
+      const x = hRadius - 2 * hRadius * t;
+      const y = superellipseY(hRadius, vRadius, shapeN, x, -1);
+      ring.push(sectionPointFromXYAtZ(p, hRadius, vRadius, profileZ, outputZ, x, y, Math.atan2(y, x)));
+    }
+
+    return ring;
+  }
+
+  function conicalExtensionRing(p, tau, halfSamples) {
+    const extension = Math.max(0, p.throatExtension);
+    const radius = p.r0 + extension * tau * Math.tan(rad(p.throatAngle));
+    const z = -extension + extension * tau;
+    const shapeN = superellipseNFromShape(sectionShape(p, extension * tau));
+    const ring = [];
+
+    for (let i = 0; i < halfSamples; i += 1) {
+      const t = i / halfSamples;
+      const x = -radius + 2 * radius * t;
+      const y = superellipseY(radius, radius, shapeN, x, 1);
+      ring.push({ x, y, z });
+    }
+
+    for (let i = 0; i < halfSamples; i += 1) {
+      const t = i / halfSamples;
+      const x = radius - 2 * radius * t;
+      const y = superellipseY(radius, radius, shapeN, x, -1);
+      ring.push({ x, y, z });
+    }
+
+    return ring;
+  }
+
   function mirroredSectionRing(p, hRadius, vRadius, z, angles, mouthHRadius) {
-    const shapeN = superellipseNFromShape(sectionShape(p, z));
+    const shapeN = superellipseNFromShape(sectionShape(p, Math.max(0, p.throatExtension) + z));
     const base = [];
     for (const theta of angles) {
       const point = sectionPoint(p, hRadius, vRadius, z, theta, mouthHRadius, shapeN);
@@ -881,12 +1089,27 @@
     const rings = [];
     let maxX = 0;
     let maxY = 0;
+    const extension = Math.max(0, p.throatExtension);
 
-    for (let i = 0; i < zCount; i += 1) {
-      const z = p.length * i / (zCount - 1);
-      const h = hProfile(z);
-      const v = vProfile(z);
-      const ring = xSampledSectionRing(p, h, v, z, halfSamples, mouthHRadius);
+    if (extension > 0) {
+      const extensionStations = Math.max(2, Math.round(zCount * extension / Math.max(p.length, 1e-9)) + 1);
+      for (let i = 0; i < extensionStations; i += 1) {
+        const ring = conicalExtensionRing(p, i / (extensionStations - 1), halfSamples);
+        for (const point of ring) {
+          maxX = Math.max(maxX, Math.abs(point.x));
+          maxY = Math.max(maxY, Math.abs(point.y));
+        }
+        rings.push(ring);
+      }
+    }
+
+    const hornStartIndex = extension > 0 ? 1 : 0;
+    for (let i = hornStartIndex; i < zCount; i += 1) {
+      const tau = i / (zCount - 1);
+      const profileZ = p.length * tau;
+      const h = hProfile(profileZ);
+      const v = vProfile(profileZ);
+      const ring = scaledLengthSectionRing(p, h, v, profileZ, tau, halfSamples, mouthHRadius);
       for (const point of ring) {
         maxX = Math.max(maxX, Math.abs(point.x));
         maxY = Math.max(maxY, Math.abs(point.y));
@@ -901,7 +1124,7 @@
       hEnd: hProfile(p.length),
       vEnd: vProfile(p.length),
       thetaCount: rings[0].length,
-      zCount,
+      zCount: rings.length,
     };
   }
 
@@ -912,16 +1135,26 @@
     const halfSamples = p.stlHalfSamples;
     const mouthHRadius = hProfile(p.length);
     const rings = [];
+    const extension = Math.max(0, p.throatExtension);
 
-    for (let i = 0; i < zCount; i += 1) {
-      const z = p.length * i / (zCount - 1);
-      rings.push(xSampledSectionRing(p, hProfile(z), vProfile(z), z, halfSamples, mouthHRadius));
+    if (extension > 0) {
+      const extensionStations = Math.max(2, Math.round(zCount * extension / Math.max(p.length, 1e-9)) + 1);
+      for (let i = 0; i < extensionStations; i += 1) {
+        rings.push(conicalExtensionRing(p, i / (extensionStations - 1), halfSamples));
+      }
+    }
+
+    const hornStartIndex = extension > 0 ? 1 : 0;
+    for (let i = hornStartIndex; i < zCount; i += 1) {
+      const tau = i / (zCount - 1);
+      const profileZ = p.length * tau;
+      rings.push(scaledLengthSectionRing(p, hProfile(profileZ), vProfile(profileZ), profileZ, tau, halfSamples, mouthHRadius));
     }
 
     return {
       rings,
       thetaCount: rings[0].length,
-      zCount,
+      zCount: rings.length,
     };
   }
 
@@ -1026,14 +1259,11 @@
     return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(6)));
   }
 
-  function yamlString(value) {
-    return JSON.stringify(String(value));
-  }
-
   function widgetYaml(p) {
-    const hS = solvedS(p.length, p.r0, p.hCoverage, p.hK, p.hN, p.mouthWidth / 2);
-    const vS = solvedS(p.length, p.r0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2);
-    const sideGuideS = solvedS(p.length, p.r0, p.hCoverage, p.sideGuideK, p.hN, p.mouthWidth / 2);
+    const effectiveR0 = effectiveThroatRadius(p);
+    const hS = solvedS(p.length, effectiveR0, p.hCoverage, p.hK, p.hN, p.mouthWidth / 2, p.throatAngle);
+    const vS = solvedS(p.length, effectiveR0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2, p.throatAngle);
+    const sideGuideS = solvedS(p.length, effectiveR0, p.hCoverage, p.sideGuideK, p.hN, p.mouthWidth / 2, p.throatAngle);
     return [
       "widget_config:",
       "  type: center_profile_surface_explorer",
@@ -1042,10 +1272,13 @@
       "  global:",
       `    length: ${yamlNumber(p.length)}`,
       `    throat_radius: ${yamlNumber(p.r0)}`,
+      `    throat_angle_deg: ${yamlNumber(p.throatAngle)}`,
+      `    conical_extension_length: ${yamlNumber(p.throatExtension)}`,
+      `    effective_throat_radius: ${yamlNumber(effectiveR0)}`,
+      `    measured_total_length: ${yamlNumber(measuredLength(p))}`,
       `    mouth_width: ${yamlNumber(p.mouthWidth)}`,
       `    mouth_height: ${yamlNumber(p.mouthHeight)}`,
       `    cylindrical_mouth_sag: ${yamlNumber(p.mouthSag)}`,
-      `    termination: ${yamlString(p.termination)}`,
       "  horizontal_basis:",
       `    coverage_deg: ${yamlNumber(p.hCoverage)}`,
       `    k: ${yamlNumber(p.hK)}`,
@@ -1056,20 +1289,14 @@
       `    k: ${yamlNumber(p.vK)}`,
       `    n: ${yamlNumber(p.vN)}`,
       `    solved_s: ${yamlNumber(vS)}`,
-      "  spline_termination:",
-      `    start_z_percent: ${yamlNumber(p.splineStart * 100)}`,
-      `    exit_tangent_deg: ${yamlNumber(p.exitAngle)}`,
-      `    tension: ${yamlNumber(p.tension)}`,
       "  section_modifier:",
-      `    mouth_round_to_square: ${yamlNumber(p.sectionShape1)}`,
-      "    side_guide:",
+      `    mouth_squareness: ${yamlNumber(p.sectionShape1)}`,
+      "    squareness_morph_curve:",
+      ...morphCurvePoints.map((point) => `      - [${yamlNumber(point.x)}, ${yamlNumber(point.y)}]`),
+      "    horizontal_modifier:",
       `      k: ${yamlNumber(p.sideGuideK)}`,
       `      amount_percent: ${yamlNumber(p.sideGuideAmount * 100)}`,
       `      solved_s: ${yamlNumber(sideGuideS)}`,
-      `    top_bottom_bow: ${yamlNumber(p.topBottomBow)}`,
-      "  section_modifier_evolution:",
-      `    round_to_square_reaches_mouth_percent: ${yamlNumber(p.shapeEnd * 100)}`,
-      `    top_bottom_bow_reaches_mouth_percent: ${yamlNumber(p.bowEnd * 100)}`,
       "  view:",
       `    wire_density: ${yamlNumber(p.density)}`,
       "  export:",
@@ -1098,12 +1325,12 @@
   function projectRaw(point, bounds) {
     if (currentView === "top") {
       return {
-        x: point.z - bounds.length / 2,
+        x: point.z - bounds.centerZ,
         y: point.x,
       };
     } else if (currentView === "side") {
       return {
-        x: point.z - bounds.length / 2,
+        x: point.z - bounds.centerZ,
         y: point.y,
       };
     } else if (currentView === "front") {
@@ -1112,7 +1339,7 @@
         y: point.y,
       };
     } else if (currentView === "orbit") {
-      const centeredZ = point.z - bounds.length / 2;
+      const centeredZ = point.z - bounds.centerZ;
       const cy = Math.cos(orbit.yaw);
       const sy = Math.sin(orbit.yaw);
       const cp = Math.cos(orbit.pitch);
@@ -1125,7 +1352,7 @@
       };
     } else {
       const iso = Math.PI / 6;
-      const centeredZ = point.z - bounds.length / 2;
+      const centeredZ = point.z - bounds.centerZ;
       return {
         x: (point.x - centeredZ) * Math.cos(iso),
         y: point.y - (point.x + centeredZ) * Math.sin(iso),
@@ -1181,7 +1408,8 @@
     const bounds = {
       maxX: surface.maxX,
       maxY: surface.maxY,
-      length: p.length,
+      length: measuredLength(p),
+      centerZ: (p.length - Math.max(0, p.throatExtension)) / 2,
     };
     bounds.transform = buildViewTransform(surface, bounds, rect);
 
@@ -1264,8 +1492,8 @@
   function updateMetrics(p, surface) {
     const hProfile = makeProfile(p, "h");
     let peakSideGuide = 0;
-    for (let i = 0; i < surface.zCount; i += 1) {
-      const z = p.length * i / Math.max(surface.zCount - 1, 1);
+    for (let i = 0; i < p.density; i += 1) {
+      const z = p.length * i / Math.max(p.density - 1, 1);
       const delta = sideGuideDelta(p, z, hProfile(z));
       if (Math.abs(delta) > Math.abs(peakSideGuide)) {
         peakSideGuide = delta;
@@ -1273,16 +1501,22 @@
     }
     metrics.width.textContent = `${format(surface.maxX * 2, 5)} mm`;
     metrics.height.textContent = `${format(surface.maxY * 2, 5)} mm`;
+    metrics.totalLength.textContent = `${format(measuredLength(p), 5)} mm`;
     metrics.hEnd.textContent = `${format(surface.hEnd, 5)} mm`;
     metrics.vEnd.textContent = `${format(surface.vEnd, 5)} mm`;
-    metrics.sectionShape.textContent = format(sectionShape(p, p.length), 4);
-    metrics.bow.textContent = `${format(peakSideGuide, 4)} / ${format(p.topBottomBow, 4)} mm`;
+    const effectiveR0 = effectiveThroatRadius(p);
+    const hS = solvedS(p.length, effectiveR0, p.hCoverage, p.hK, p.hN, p.mouthWidth / 2, p.throatAngle);
+    const vS = solvedS(p.length, effectiveR0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2, p.throatAngle);
+    metrics.derivedS.textContent = `${format(hS, 5)} / ${format(vS, 5)}`;
+    metrics.sectionShape.textContent = format(sectionShape(p, measuredLength(p)), 4);
+    metrics.bow.textContent = `${format(peakSideGuide, 4)} mm`;
   }
 
   function render() {
     const p = params();
     const surface = buildSurface(p);
     drawSurface(p, surface);
+    drawMorphCurveEditor();
     updateMetrics(p, surface);
   }
 
