@@ -2103,6 +2103,56 @@
     return Math.hypot(point.x, point.y);
   }
 
+  function smoothCyclicValues(values, passes = 2) {
+    let smoothed = values.slice();
+    const count = smoothed.length;
+    for (let pass = 0; pass < passes; pass += 1) {
+      smoothed = smoothed.map((value, index) => (
+        0.25 * smoothed[(index - 1 + count) % count]
+        + 0.5 * value
+        + 0.25 * smoothed[(index + 1) % count]
+      ));
+    }
+    return smoothed;
+  }
+
+  function stationScalarOffsetOuterRings(p, surface) {
+    const hornRings = surface.rings.slice(0, surface.mouthIndex + 1);
+    const ringCount = hornRings.length;
+    const ringSize = hornRings[0].length;
+    const outerRings = [];
+
+    for (let i = 0; i < ringCount; i += 1) {
+      const ring = hornRings[i];
+      const scalars = [];
+      for (let j = 0; j < ringSize; j += 1) {
+        let longitudinal;
+        if (i === 0) {
+          longitudinal = ringCount > 1 ? vectorBetween(ring[j], hornRings[1][j]) : { x: 0, y: 0, z: 1 };
+        } else if (i === ringCount - 1) {
+          longitudinal = vectorBetween(hornRings[i - 1][j], ring[j]);
+        } else {
+          longitudinal = vectorBetween(hornRings[i - 1][j], hornRings[i + 1][j]);
+        }
+        const circumferential = vectorBetween(ring[(j - 1 + ringSize) % ringSize], ring[(j + 1) % ringSize]);
+        let candidate = normalizeVector(cross(circumferential, longitudinal));
+        const expected = expectedOutwardNormal(surface, i, ring[j]);
+        if (candidate.x * expected.x + candidate.y * expected.y + candidate.z * expected.z < 0) {
+          candidate = { x: -candidate.x, y: -candidate.y, z: -candidate.z };
+        }
+        const xy = Math.hypot(candidate.x, candidate.y);
+        const thickness = wallThicknessAtRing(p, surface, i);
+        const slopeFactor = 1 / Math.max(xy, 1e-6);
+        scalars.push(Math.max(thickness, Math.min(thickness * 1.5, thickness * slopeFactor)));
+      }
+
+      const smoothedScalars = smoothCyclicValues(scalars, 3);
+      outerRings.push(ring.map((point, index) => radialOffsetPoint(point, smoothedScalars[index])));
+    }
+
+    return outerRings;
+  }
+
   function projectPointToMouthRadius(p, surface, point, targetRadius) {
     if (!Number.isFinite(surface.mouthSurfaceCenterZ)) {
       return { x: point.x, y: point.y, z: p.length - Math.max(0, p.mouthRearOffset) };
@@ -2420,10 +2470,7 @@
     const innerRings = surface.rings;
     const mouthIndex = surface.mouthIndex;
     const hasReturn = mouthIndex < innerRings.length - 1;
-    const outerBaseRings = innerRings.slice(0, mouthIndex + 1).map((ring, index) => {
-      const thickness = wallThicknessAtRing(p, surface, index);
-      return ring.map((point) => radialOffsetPoint(point, thickness));
-    });
+    const outerBaseRings = stationScalarOffsetOuterRings(p, surface);
     const outerRings = hasReturn ? trimmedOuterRings(p, surface, outerBaseRings) : outerBaseRings;
     const throatInner = innerRings[0];
     const throatZ = throatInner.reduce((sum, point) => sum + point.z, 0) / throatInner.length;

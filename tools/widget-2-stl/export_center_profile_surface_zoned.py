@@ -403,6 +403,82 @@ def radial_offset_point(point: tuple[float, float, float], thickness: float) -> 
     )
 
 
+def vector_subtract(
+    a: tuple[float, float, float],
+    b: tuple[float, float, float],
+) -> tuple[float, float, float]:
+    return a[0] - b[0], a[1] - b[1], a[2] - b[2]
+
+
+def vector_cross(
+    a: tuple[float, float, float],
+    b: tuple[float, float, float],
+) -> tuple[float, float, float]:
+    return (
+        a[1] * b[2] - a[2] * b[1],
+        a[2] * b[0] - a[0] * b[2],
+        a[0] * b[1] - a[1] * b[0],
+    )
+
+
+def smooth_cyclic_values(values: list[float], passes: int = 2) -> list[float]:
+    smoothed = values[:]
+    count = len(smoothed)
+    for _ in range(passes):
+        smoothed = [
+            0.25 * smoothed[(index - 1) % count]
+            + 0.5 * smoothed[index]
+            + 0.25 * smoothed[(index + 1) % count]
+            for index in range(count)
+        ]
+    return smoothed
+
+
+def station_scalar_offset_outer_rings(
+    rings: list[list[tuple[float, float, float]]],
+    mouth_index: int,
+    mouth_h: float,
+    mouth_v: float,
+) -> list[list[tuple[float, float, float]]]:
+    horn_rings = rings[: mouth_index + 1]
+    ring_count = len(horn_rings)
+    ring_size = len(horn_rings[0])
+    radius = mouth_radius(mouth_h, mouth_v)
+    mouth_center_z = PARAMS["length"] - radius if math.isfinite(radius) else PARAMS["length"]
+    outer_rings = []
+
+    for i, ring in enumerate(horn_rings):
+        if i == 0:
+            longitudinal = [
+                vector_subtract(horn_rings[1][j], ring[j]) if ring_count > 1 else (0.0, 0.0, 1.0)
+                for j in range(ring_size)
+            ]
+        elif i == ring_count - 1:
+            longitudinal = [vector_subtract(ring[j], horn_rings[i - 1][j]) for j in range(ring_size)]
+        else:
+            longitudinal = [vector_subtract(horn_rings[i + 1][j], horn_rings[i - 1][j]) for j in range(ring_size)]
+
+        thickness = wall_thickness_at_ring(i, len(rings))
+        scalars = []
+        for j, point in enumerate(ring):
+            circumferential = vector_subtract(ring[(j + 1) % ring_size], ring[(j - 1) % ring_size])
+            candidate = normalize_vector(vector_cross(circumferential, longitudinal[j]))
+            expected = expected_outward_normal(i, point, mouth_index, mouth_center_z)
+            if dot(candidate, expected) < 0.0:
+                candidate = (-candidate[0], -candidate[1], -candidate[2])
+            xy = math.hypot(candidate[0], candidate[1])
+            slope_factor = 1.0 / max(xy, 1e-6)
+            scalars.append(max(thickness, min(thickness * 1.5, thickness * slope_factor)))
+
+        scalars = smooth_cyclic_values(scalars, 3)
+        outer_rings.append([
+            radial_offset_point(point, scalars[j])
+            for j, point in enumerate(ring)
+        ])
+
+    return outer_rings
+
+
 def project_point_to_mouth_radius(
     point: tuple[float, float, float],
     mouth_h_radius: float,
@@ -706,10 +782,7 @@ def build_body_mesh(
     ring_count = len(rings)
     ring_size = len(rings[0])
     has_return = mouth_index < ring_count - 1
-    outer_base_rings = [
-        [radial_offset_point(point, wall_thickness_at_ring(index, ring_count)) for point in ring]
-        for index, ring in enumerate(rings[: mouth_index + 1])
-    ]
+    outer_base_rings = station_scalar_offset_outer_rings(rings, mouth_index, mouth_h, mouth_v)
     outer_rings = trimmed_outer_rings(outer_base_rings, mouth_h, mouth_v) if has_return else outer_base_rings
     throat_inner = rings[0]
     throat_z = sum(point[2] for point in throat_inner) / ring_size

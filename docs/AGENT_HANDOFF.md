@@ -59,6 +59,11 @@ The supported exporter uses a square-boundary section topology:
 - the outer horn wall starts at `horn_start_z + mount_flange_thickness`, not at
   the acoustic throat. If adaptive stations do not land exactly on that plane,
   interpolate the outer wall start ring there,
+- on the `new-outside-surface` branch, station-local surface normals derive a
+  smoothed scalar expansion for each slice point; that scalar is applied along
+  stable radial directions. Directly projecting normal offsets into slice planes
+  produced unstable mouth/corner geometry. The rear mouth return is still an
+  authored closure; do not normal-offset the rear return surface itself,
 - the inner rear mouth ring sits at `mouth_sag_radius - mouth_rear_offset`;
   the outer horn wall is trimmed to
   `mouth_sag_radius - mouth_rear_offset - minimum_wall` so the return cannot
