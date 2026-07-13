@@ -543,16 +543,20 @@ def mouth_constrained_outer_rings(
         if i == ring_count - 1:
             constrained.append(mouth_boundary_ring)
             continue
+        mouth_guide_ring = [
+            concentric_rear_mouth_point(inner, mouth_h_radius, mouth_v_radius)
+            for inner in inner_horn_rings[i]
+        ]
         station_t = i / max(1, ring_count - 1)
         station_weight = smoothstep(station_t**4)
         envelope_weight = max(
-            mouth_envelope_blend_weight(base, mouth_boundary, mouth_h_radius, mouth_v_radius)
-            for base, mouth_boundary in zip(ring, mouth_boundary_ring)
+            mouth_envelope_blend_weight(base, guide, mouth_h_radius, mouth_v_radius)
+            for base, guide in zip(ring, mouth_guide_ring)
         )
         weight = max(station_weight, envelope_weight)
         constrained_ring = [
-            interpolate_point(base, mouth_boundary, weight)
-            for base, mouth_boundary in zip(ring, mouth_boundary_ring)
+            interpolate_point(base, guide, weight)
+            for base, guide in zip(ring, mouth_guide_ring)
         ]
         if any(math.dist(inner, point) < minimum_wall for inner, point in zip(inner_horn_rings[i], constrained_ring)):
             low = 0.0
@@ -560,8 +564,8 @@ def mouth_constrained_outer_rings(
             for _ in range(40):
                 mid = (low + high) / 2.0
                 candidate_ring = [
-                    interpolate_point(base, mouth_boundary, mid)
-                    for base, mouth_boundary in zip(ring, mouth_boundary_ring)
+                    interpolate_point(base, guide, mid)
+                    for base, guide in zip(ring, mouth_guide_ring)
                 ]
                 if all(math.dist(inner, point) >= minimum_wall for inner, point in zip(inner_horn_rings[i], candidate_ring)):
                     low = mid
@@ -569,8 +573,8 @@ def mouth_constrained_outer_rings(
                     high = mid
             if low >= envelope_weight:
                 constrained_ring = [
-                    interpolate_point(base, mouth_boundary, low)
-                    for base, mouth_boundary in zip(ring, mouth_boundary_ring)
+                    interpolate_point(base, guide, low)
+                    for base, guide in zip(ring, mouth_guide_ring)
                 ]
         constrained.append(constrained_ring)
     return constrained

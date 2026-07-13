@@ -2217,20 +2217,23 @@
         constrained.push(mouthBoundaryRing);
         continue;
       }
+      const mouthGuideRing = innerHornRings[i].map((inner) => (
+        concentricRearMouthPoint(p, inner, surface.mouthH, surface.mouthV)
+      ));
       const stationT = i / Math.max(1, ringCount - 1);
       const stationWeight = smoothstep(stationT ** 4);
       const envelopeWeight = outerBaseRings[i].reduce((required, base, j) => Math.max(
         required,
-        mouthEnvelopeBlendWeight(base, mouthBoundaryRing[j], surface.mouthH, surface.mouthV)
+        mouthEnvelopeBlendWeight(base, mouthGuideRing[j], surface.mouthH, surface.mouthV)
       ), 0);
       let weight = Math.max(stationWeight, envelopeWeight);
-      let ring = outerBaseRings[i].map((base, j) => interpolatePoint(base, mouthBoundaryRing[j], weight));
+      let ring = outerBaseRings[i].map((base, j) => interpolatePoint(base, mouthGuideRing[j], weight));
       if (ring.some((point, j) => pointDistance(innerHornRings[i][j], point) < minimumWall)) {
         let low = 0;
         let high = weight;
         for (let step = 0; step < 40; step += 1) {
           const mid = (low + high) / 2;
-          const candidateRing = outerBaseRings[i].map((base, j) => interpolatePoint(base, mouthBoundaryRing[j], mid));
+          const candidateRing = outerBaseRings[i].map((base, j) => interpolatePoint(base, mouthGuideRing[j], mid));
           if (candidateRing.every((point, j) => pointDistance(innerHornRings[i][j], point) >= minimumWall)) {
             low = mid;
           } else {
@@ -2238,7 +2241,7 @@
           }
         }
         if (low >= envelopeWeight) {
-          ring = outerBaseRings[i].map((base, j) => interpolatePoint(base, mouthBoundaryRing[j], low));
+          ring = outerBaseRings[i].map((base, j) => interpolatePoint(base, mouthGuideRing[j], low));
         }
       }
       constrained.push(ring);
