@@ -713,6 +713,23 @@ def outer_wall_rings_after_mount(
     return [outer_rings[-1]]
 
 
+def compact_mouth_outer_rings(
+    outer_rings: list[list[tuple[float, float, float]]],
+) -> list[list[tuple[float, float, float]]]:
+    if len(outer_rings) <= 2:
+        return outer_rings
+    min_spacing = max(1.0, max(0.0, PARAMS["minimum_wall"]) * 0.25)
+    kept_reversed = [outer_rings[-1]]
+    for ring in reversed(outer_rings[:-1]):
+        distances = [math.dist(a, b) for a, b in zip(ring, kept_reversed[-1])]
+        if (
+            sum(distances) / max(1, len(distances)) >= min_spacing
+            and min(distances) >= min_spacing
+        ):
+            kept_reversed.append(ring)
+    return list(reversed(kept_reversed))
+
+
 def build_body_mesh(
     rings: list[list[tuple[float, float, float]]],
     mouth_index: int,
@@ -733,7 +750,7 @@ def build_body_mesh(
     throat_z = sum(point[2] for point in throat_inner) / ring_size
     mount_start_z = throat_z
     mount_end_z = throat_z + max(0.0, PARAMS["mount_flange_thickness"])
-    outer_wall_rings = outer_wall_rings_after_mount(outer_rings, mount_end_z)
+    outer_wall_rings = compact_mouth_outer_rings(outer_wall_rings_after_mount(outer_rings, mount_end_z))
     outer_wall_start = outer_wall_rings[0]
     required_mount_radius = max(
         max(radial_distance(point) for point in outer_wall_start),
