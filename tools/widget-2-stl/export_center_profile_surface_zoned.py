@@ -29,11 +29,11 @@ PARAMS = {
     "mouth_sag": 60.0,
     "mouth_sag_h_enabled": True,
     "mouth_sag_v_enabled": True,
-    "mouth_rear_offset": 12.0,
+    "mouth_rear_offset": 6.0,
     "mount_diameter": 120.0,
     "mount_flange_thickness": 12.0,
-    "throat_start_wall": 8.0,
-    "minimum_wall": 5.0,
+    "throat_start_wall": 6.0,
+    "minimum_wall": 6.0,
     "stl_export_mode": "body",
     "h_modifier_enabled": False,
     "v_modifier_enabled": False,
@@ -399,7 +399,7 @@ def mouth_outer_return_target_radius(mouth_h_radius: float, mouth_v_radius: floa
         return math.inf
     return max(
         1e-6,
-        radius - max(0.0, PARAMS["mouth_rear_offset"]) - max(0.0, PARAMS["minimum_wall"]),
+        radius - max(0.0, PARAMS["mouth_rear_offset"]) - 2.0 * max(0.0, PARAMS["minimum_wall"]),
     )
 
 

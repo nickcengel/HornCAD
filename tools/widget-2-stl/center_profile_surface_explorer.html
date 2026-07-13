@@ -416,8 +416,8 @@
       </label>
       <label>
         Mouth rear offset mm
-        <input data-control="mouthRearOffset" type="number" min="0" max="120" step="1" value="12">
-        <input data-control="mouthRearOffset" type="range" min="0" max="120" step="1" value="12">
+        <input data-control="mouthRearOffset" type="number" min="0" max="120" step="1" value="6">
+        <input data-control="mouthRearOffset" type="range" min="0" max="120" step="1" value="6">
       </label>
       <label>
         Mount diameter mm
@@ -431,13 +431,13 @@
       </label>
       <label>
         Throat start wall mm
-        <input data-control="throatStartWall" type="number" min="0.5" max="80" step="0.5" value="8">
-        <input data-control="throatStartWall" type="range" min="0.5" max="80" step="0.5" value="8">
+        <input data-control="throatStartWall" type="number" min="0.5" max="80" step="0.5" value="6">
+        <input data-control="throatStartWall" type="range" min="0.5" max="80" step="0.5" value="6">
       </label>
       <label>
         Minimum wall mm
-        <input data-control="minimumWall" type="number" min="0.5" max="80" step="0.5" value="5">
-        <input data-control="minimumWall" type="range" min="0.5" max="80" step="0.5" value="5">
+        <input data-control="minimumWall" type="number" min="0.5" max="80" step="0.5" value="6">
+        <input data-control="minimumWall" type="range" min="0.5" max="80" step="0.5" value="6">
       </label>
     </fieldset>
 
@@ -2077,7 +2077,7 @@
     }
     return Math.max(
       1e-6,
-      mouthRadius - Math.max(0, p.mouthRearOffset) - Math.max(0, p.minimumWall)
+      mouthRadius - Math.max(0, p.mouthRearOffset) - 2 * Math.max(0, p.minimumWall)
     );
   }
 

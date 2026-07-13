@@ -63,10 +63,10 @@ The supported exporter uses a square-boundary section topology:
   outer horn intersection. Duplicating those boundary vertices creates coincident
   open edges and visible corner slivers even when a post-processed mesh appears
   repaired.
-- The mouth cap should bridge directly between the exact mouth-offset boundary
-  ring and the exact horn-wall intersection ring. Do not add intermediate cap
-  rings unless the corner topology is reworked; intermediate rings repeatedly
-  caused small visible corner poke-throughs.
+- The mouth cap may use intermediate rings only if their mouth-surface radius
+  steps monotonically from the inner rear mouth radius down to the outer trim
+  radius. Do not add intermediate rings that remain on the same return radius as
+  the inner rear mouth; those caused visible corner poke-throughs.
 
 Do not reintroduce the removed angular comparison exporter or a separate H/V
 mesh topology.
