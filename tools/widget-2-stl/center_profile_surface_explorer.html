@@ -2704,21 +2704,35 @@
     }
   }
 
-  function buildViewTransform(surface, bounds, rect) {
+  function forEachDisplayPoint(surface, triangles, callback) {
+    if (triangles) {
+      for (const triangle of triangles) {
+        for (const point of triangle) {
+          callback(point);
+        }
+      }
+      return;
+    }
+    for (const ring of surface.rings) {
+      for (const point of ring) {
+        callback(point);
+      }
+    }
+  }
+
+  function buildViewTransform(surface, bounds, rect, triangles = null) {
     let minX = Infinity;
     let maxX = -Infinity;
     let minY = Infinity;
     let maxY = -Infinity;
 
-    for (const ring of surface.rings) {
-      for (const point of ring) {
-        const projected = projectRaw(point, bounds);
-        minX = Math.min(minX, projected.x);
-        maxX = Math.max(maxX, projected.x);
-        minY = Math.min(minY, projected.y);
-        maxY = Math.max(maxY, projected.y);
-      }
-    }
+    forEachDisplayPoint(surface, triangles, (point) => {
+      const projected = projectRaw(point, bounds);
+      minX = Math.min(minX, projected.x);
+      maxX = Math.max(maxX, projected.x);
+      minY = Math.min(minY, projected.y);
+      maxY = Math.max(maxY, projected.y);
+    });
 
     const rangeX = Math.max(maxX - minX, 1);
     const rangeY = Math.max(maxY - minY, 1);
@@ -2804,13 +2818,79 @@
     return normalizeVector({ x: point.x, y: point.y, z: 0 });
   }
 
-  function surfaceBounds(p, surface) {
+  function displayZBounds(surface, triangles) {
+    let minZ = Infinity;
+    let maxZ = -Infinity;
+    forEachDisplayPoint(surface, triangles, (point) => {
+      minZ = Math.min(minZ, point.z);
+      maxZ = Math.max(maxZ, point.z);
+    });
+    if (!Number.isFinite(minZ) || !Number.isFinite(maxZ)) {
+      return { minZ: 0, maxZ: 1 };
+    }
+    return { minZ, maxZ };
+  }
+
+  function surfaceBounds(p, surface, triangles = null) {
+    const zBounds = displayZBounds(surface, triangles);
     return {
       maxX: surface.maxX,
       maxY: surface.maxY,
-      length: measuredLength(p),
-      centerZ: (p.length - Math.max(0, p.throatExtension)) / 2,
+      length: zBounds.maxZ - zBounds.minZ,
+      centerZ: (zBounds.minZ + zBounds.maxZ) / 2,
     };
+  }
+
+  function drawTrianglePath(points, bounds, rect) {
+    const projectedPoints = points.map((point) => project(point, bounds, rect));
+    ctx.beginPath();
+    projectedPoints.forEach((projected, index) => {
+      if (index === 0) {
+        ctx.moveTo(projected.x, projected.y);
+      } else {
+        ctx.lineTo(projected.x, projected.y);
+      }
+    });
+    ctx.closePath();
+  }
+
+  function drawShadedTriangles(triangles, bounds, rect, opacity) {
+    const maxTriangles = orbit.dragging ? 5500 : 18000;
+    const triangleStep = Math.max(1, Math.ceil(triangles.length / maxTriangles));
+    const displayTriangles = [];
+
+    for (let i = 0; i < triangles.length; i += triangleStep) {
+      const triangle = triangles[i];
+      const normal = triangleNormal(triangle[0], triangle[1], triangle[2]);
+      displayTriangles.push({
+        triangle,
+        color: shadedColor(normal, opacity),
+        depth: triangle.reduce((sum, point) => sum + viewDepth(point, bounds), 0) / 3,
+      });
+    }
+
+    displayTriangles.sort((a, b) => a.depth - b.depth);
+    ctx.save();
+    ctx.lineWidth = 0;
+    for (const item of displayTriangles) {
+      ctx.fillStyle = item.color;
+      drawTrianglePath(item.triangle, bounds, rect);
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawTriangleWireframe(triangles, bounds, rect) {
+    const maxTriangles = orbit.dragging ? 1400 : 4200;
+    const triangleStep = Math.max(1, Math.ceil(triangles.length / maxTriangles));
+    ctx.save();
+    ctx.lineWidth = 0.8;
+    ctx.strokeStyle = "rgba(148, 163, 173, 0.26)";
+    for (let i = 0; i < triangles.length; i += triangleStep) {
+      drawTrianglePath(triangles[i], bounds, rect);
+      ctx.stroke();
+    }
+    ctx.restore();
   }
 
   function drawShadedSurface(surface, bounds, rect, opacity) {
@@ -2911,50 +2991,59 @@
   function drawSurface(p, surface) {
     const rect = resizeCanvas();
     ctx.clearRect(0, 0, rect.width, rect.height);
-    const bounds = surfaceBounds(p, surface);
-    bounds.transform = buildViewTransform(surface, bounds, rect);
+    const bodyTriangles = p.stlExportMode === "body" ? buildBodyTriangles(p, surface) : null;
+    const bounds = surfaceBounds(p, surface, bodyTriangles);
+    bounds.transform = buildViewTransform(surface, bounds, rect, bodyTriangles);
 
     if (solidSurfaceInput.checked) {
-      drawShadedSurface(surface, bounds, rect, p.solidOpacity);
+      if (bodyTriangles) {
+        drawShadedTriangles(bodyTriangles, bounds, rect, p.solidOpacity);
+      } else {
+        drawShadedSurface(surface, bounds, rect, p.solidOpacity);
+      }
     }
 
     if (wireframeVisibleInput.checked) {
-      ctx.save();
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = "rgba(77, 182, 168, 0.38)";
+      if (bodyTriangles) {
+        drawTriangleWireframe(bodyTriangles, bounds, rect);
+      } else {
+        ctx.save();
+        ctx.lineWidth = 1;
+        ctx.strokeStyle = "rgba(77, 182, 168, 0.38)";
 
-      for (let i = 0; i < surface.zCount; i += 1) {
-        const isMouth = i === surface.mouthIndex;
-        const isRearMouth = i === surface.zCount - 1 && surface.mouthIndex !== i;
-        if (isMouth && currentView === "top") {
-          continue;
-        }
-        drawPolyline(
-          surface.rings[i],
-          bounds,
-          rect,
-          isMouth || isRearMouth ? theme.accentStrong : "rgba(77, 182, 168, 0.38)",
-          isMouth || isRearMouth ? 2.4 : 1,
-          true
-        );
-      }
-
-      if (currentView === "top") {
-        drawTopMouthArc(p, surface, bounds, rect);
-      }
-
-      const thetaStep = Math.max(1, Math.round(surface.thetaCount / 96));
-      for (let j = 0; j < surface.thetaCount; j += thetaStep) {
-        const line = [];
         for (let i = 0; i < surface.zCount; i += 1) {
-          line.push(surface.rings[i][j]);
+          const isMouth = i === surface.mouthIndex;
+          const isRearMouth = i === surface.zCount - 1 && surface.mouthIndex !== i;
+          if (isMouth && currentView === "top") {
+            continue;
+          }
+          drawPolyline(
+            surface.rings[i],
+            bounds,
+            rect,
+            isMouth || isRearMouth ? theme.accentStrong : "rgba(77, 182, 168, 0.38)",
+            isMouth || isRearMouth ? 2.4 : 1,
+            true
+          );
         }
-        drawPolyline(line, bounds, rect, j % (thetaStep * 3) === 0 ? "rgba(148, 163, 173, 0.46)" : "rgba(148, 163, 173, 0.22)", 1);
-      }
 
-      ctx.restore();
+        if (currentView === "top") {
+          drawTopMouthArc(p, surface, bounds, rect);
+        }
+
+        const thetaStep = Math.max(1, Math.round(surface.thetaCount / 96));
+        for (let j = 0; j < surface.thetaCount; j += thetaStep) {
+          const line = [];
+          for (let i = 0; i < surface.zCount; i += 1) {
+            line.push(surface.rings[i][j]);
+          }
+          drawPolyline(line, bounds, rect, j % (thetaStep * 3) === 0 ? "rgba(148, 163, 173, 0.46)" : "rgba(148, 163, 173, 0.22)", 1);
+        }
+
+        ctx.restore();
+      }
     }
-    if (normalsVisibleInput.checked) {
+    if (normalsVisibleInput.checked && !bodyTriangles) {
       drawSurfaceNormals(surface, bounds, rect);
     }
     drawLabel(rect);

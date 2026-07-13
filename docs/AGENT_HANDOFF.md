@@ -107,6 +107,9 @@ mesh topology.
 The widget currently:
 
 - uses the same x-sampled upper/lower section topology as the zoned STL exporter,
+- renders a decimated preview of the same body STL triangles when STL export mode
+  is `body`; switching to `acoustic_surface` hides the thickened body and shows
+  only the acoustic surface preview,
 - has Top, Side, Front, Iso, and Orbit views,
 - supports drag-to-orbit and wheel zoom,
 - fits views to projected bounds to avoid truncation,
