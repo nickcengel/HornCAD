@@ -11,7 +11,7 @@ import trimesh
 
 OUTPUT = Path(__file__).resolve().parent / "output" / "center_profile_surface_zoned.stl"
 Z_STATIONS = 44
-SIDE_SAMPLES = 96
+SIDE_SAMPLES = 160
 
 PARAMS = {
     "length": 200.0,
@@ -199,18 +199,23 @@ def superellipse_n(shape: float) -> float:
 
 
 def square_boundary_samples() -> list[tuple[float, float]]:
+    def side_t(index: int) -> float:
+        u = index / SIDE_SAMPLES
+        cosine = 0.5 - 0.5 * math.cos(math.pi * u)
+        return 0.35 * u + 0.65 * cosine
+
     samples: list[tuple[float, float]] = []
     for i in range(SIDE_SAMPLES):
-        t = i / SIDE_SAMPLES
+        t = side_t(i)
         samples.append((-1.0 + 2.0 * t, 1.0))
     for i in range(SIDE_SAMPLES):
-        t = i / SIDE_SAMPLES
+        t = side_t(i)
         samples.append((1.0, 1.0 - 2.0 * t))
     for i in range(SIDE_SAMPLES):
-        t = i / SIDE_SAMPLES
+        t = side_t(i)
         samples.append((1.0 - 2.0 * t, -1.0))
     for i in range(SIDE_SAMPLES):
-        t = i / SIDE_SAMPLES
+        t = side_t(i)
         samples.append((-1.0, -1.0 + 2.0 * t))
     return samples
 

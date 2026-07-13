@@ -336,8 +336,8 @@
       </label>
       <label>
         STL side samples
-        <input data-control="stlSideSamples" type="number" min="16" max="256" step="4" value="96">
-        <input data-control="stlSideSamples" type="range" min="16" max="256" step="4" value="96">
+        <input data-control="stlSideSamples" type="number" min="96" max="384" step="4" value="160">
+        <input data-control="stlSideSamples" type="range" min="96" max="384" step="4" value="160">
       </label>
       <label class="toggle-control">
         Solid
@@ -918,7 +918,7 @@
       sectionShape1: value("sectionShape1"),
       density: Math.max(8, Math.round(value("density"))),
       stlStations: Math.max(8, Math.round(value("stlStations"))),
-      stlSideSamples: Math.max(16, Math.round(value("stlSideSamples"))),
+      stlSideSamples: Math.max(96, Math.round(value("stlSideSamples"))),
     };
   }
 
@@ -1709,21 +1709,26 @@
   }
 
   function squareBoundarySamples(sideSamples) {
+    const sideT = (index) => {
+      const u = index / sideSamples;
+      const cosine = 0.5 - 0.5 * Math.cos(Math.PI * u);
+      return 0.35 * u + 0.65 * cosine;
+    };
     const samples = [];
     for (let i = 0; i < sideSamples; i += 1) {
-      const t = i / sideSamples;
+      const t = sideT(i);
       samples.push({ sx: -1 + 2 * t, sy: 1 });
     }
     for (let i = 0; i < sideSamples; i += 1) {
-      const t = i / sideSamples;
+      const t = sideT(i);
       samples.push({ sx: 1, sy: 1 - 2 * t });
     }
     for (let i = 0; i < sideSamples; i += 1) {
-      const t = i / sideSamples;
+      const t = sideT(i);
       samples.push({ sx: 1 - 2 * t, sy: -1 });
     }
     for (let i = 0; i < sideSamples; i += 1) {
-      const t = i / sideSamples;
+      const t = sideT(i);
       samples.push({ sx: -1, sy: -1 + 2 * t });
     }
     return samples;
@@ -1945,7 +1950,7 @@
     const zCount = p.density;
     const mouthHRadius = hProfile(p.length);
     const mouthVRadius = vProfile(p.length);
-    const sideSamples = Math.max(48, Math.round(p.density * 2));
+    const sideSamples = Math.max(96, Math.round(p.density * 2));
     const rings = [];
     let maxX = 0;
     let maxY = 0;

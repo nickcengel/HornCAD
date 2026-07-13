@@ -44,6 +44,9 @@ The removed angular-ring mesh path caused repeated failures near the mouth:
 The supported exporter uses a square-boundary section topology:
 
 - all four sides sampled with the same method so H and V are peers,
+- square-boundary side samples are corner-biased, not uniform. Keep a high
+  minimum side sample count because the mouth lip/outside-surface junction and
+  high-squareness corners are sensitive to under-sampling,
 - horn stations are adaptive in `z`: station spacing follows accumulated
   `max(abs(delta H radius), abs(delta V radius))`, not uniform distance along
   the horn. This keeps each slice closer to a constant amount of profile change
