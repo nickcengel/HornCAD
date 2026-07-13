@@ -2163,7 +2163,7 @@
       ring.map((point, j) => radialOffsetPoint(point, scalarRings[i][j]))
     )).concat(
       surface.rings.slice(surface.mouthIndex + 1).map((ring) => (
-        mouthReturnProjectedRing(p, surface, ring)
+        ring.map((point, j) => radialOffsetPoint(point, scalarRings[scalarRings.length - 1][j]))
       ))
     );
   }
