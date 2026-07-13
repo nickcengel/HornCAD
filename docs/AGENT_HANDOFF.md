@@ -66,13 +66,10 @@ The supported exporter uses a square-boundary section topology:
   smoothed scalar expansion for each slice point; that scalar is applied along
   stable radial directions. The outside field is station-preserving: it starts
   from that offset field, blends toward the authored yellow mouth-offset
-  guide as stations approach the mouth, and uses one blend value for each whole
-  station/ring. The guide for each non-terminal station is the rear-offset
-  version of that same acoustic station, not a direct chord to the terminal mouth
-  ring; otherwise the outside wall forms a pointed lip near the mouth instead of
-  following the acoustic curve. Do not use per-sample wall clamps near the mouth;
-  they preserve a distance number by creating corner pops and sliver artifacts.
-  The yellow ring,
+  boundary as stations approach the mouth, and uses one blend value for each
+  whole station/ring. Do not use per-sample wall clamps near the mouth; they
+  preserve a distance number by creating corner pops and sliver artifacts. The
+  yellow ring,
   `mouth_sag_radius - mouth_rear_offset`, is the outside surface's mouth
   boundary. Do not append projected or radial-offset rear return rings to the
   outside field,
