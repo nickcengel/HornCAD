@@ -2053,16 +2053,16 @@
     return { x: v.x * scale, y: v.y * scale, z: v.z * scale };
   }
 
-  function hornVertexNormals(surface, rings) {
-    const ringCount = rings.length;
-    const ringSize = rings[0].length;
+  function acousticVertexNormals(surface) {
+    const ringCount = surface.rings.length;
+    const ringSize = surface.rings[0].length;
     const accumulated = Array.from({ length: ringCount }, () => (
       Array.from({ length: ringSize }, () => ({ x: 0, y: 0, z: 0 }))
     ));
 
     for (let i = 0; i < ringCount - 1; i += 1) {
-      const row = rings[i];
-      const next = rings[i + 1];
+      const row = surface.rings[i];
+      const next = surface.rings[i + 1];
       for (let j = 0; j < ringSize; j += 1) {
         const k = (j + 1) % ringSize;
         const center = {
@@ -2084,10 +2084,10 @@
     return accumulated.map((ring) => ring.map(normalizeVector));
   }
 
-  function offsetHornRings(p, surface, rings) {
-    const normals = hornVertexNormals(surface, rings);
-    return rings.map((ring, index) => {
-      const thickness = wallThicknessAtRing(p, { zCount: rings.length }, index);
+  function offsetSurfaceRings(p, surface) {
+    const normals = acousticVertexNormals(surface);
+    return surface.rings.map((ring, index) => {
+      const thickness = wallThicknessAtRing(p, surface, Math.min(index, surface.mouthIndex));
       return ring.map((point, column) => addVectors(point, scaleVector(normals[index][column], thickness)));
     });
   }
@@ -2239,8 +2239,7 @@
 
   function buildBodyTriangles(p, surface) {
     const innerRings = surface.rings;
-    const mouthIndex = surface.mouthIndex;
-    const outerRings = offsetHornRings(p, surface, innerRings.slice(0, mouthIndex + 1));
+    const outerRings = offsetSurfaceRings(p, surface);
     const throatInner = innerRings[0];
     const throatOuter = outerRings[0];
     const throatZ = throatInner.reduce((sum, point) => sum + point.z, 0) / throatInner.length;
@@ -2259,8 +2258,8 @@
       appendRingBridge(triangles, innerRings[i], innerRings[i + 1]);
     }
     appendRingBridge(triangles, throatInnerBack, throatInner);
-    appendRingBridge(triangles, innerRings[innerRings.length - 1], outerRings[mouthIndex]);
-    for (let i = mouthIndex; i > 0; i -= 1) {
+    appendRingBridge(triangles, innerRings[innerRings.length - 1], outerRings[outerRings.length - 1]);
+    for (let i = outerRings.length - 1; i > 0; i -= 1) {
       appendRingBridge(triangles, outerRings[i], outerRings[i - 1], true);
     }
     appendRingBridge(triangles, throatOuter, mountOuterFront, true);

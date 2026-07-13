@@ -366,8 +366,9 @@ def wall_thickness_at_ring(index: int, ring_count: int) -> float:
     return max(minimum, start + (minimum - start) * t)
 
 
-def horn_vertex_normals(
+def acoustic_vertex_normals(
     rings: list[list[tuple[float, float, float]]],
+    mouth_index: int,
     mouth_h: float,
     mouth_v: float,
 ) -> list[list[tuple[float, float, float]]]:
@@ -390,7 +391,7 @@ def horn_vertex_normals(
                 (a0[2] + a1[2] + b0[2] + b1[2]) / 4.0,
             )
             face_normal = normal(a0, b0, a1)
-            if dot(face_normal, expected_outward_normal(i, center, ring_count - 1, mouth_center_z)) < 0.0:
+            if dot(face_normal, expected_outward_normal(i, center, mouth_index, mouth_center_z)) < 0.0:
                 face_normal = scale_vector(face_normal, -1.0)
             for row, column in ((i, j), (i, k), (i + 1, j), (i + 1, k)):
                 accumulated[row][column] = add_vector(accumulated[row][column], face_normal)
@@ -398,16 +399,17 @@ def horn_vertex_normals(
     return [[normalize_vector(vector) for vector in ring] for ring in accumulated]
 
 
-def offset_horn_rings(
+def offset_surface_rings(
     rings: list[list[tuple[float, float, float]]],
+    mouth_index: int,
     mouth_h: float,
     mouth_v: float,
 ) -> list[list[tuple[float, float, float]]]:
-    normals = horn_vertex_normals(rings, mouth_h, mouth_v)
+    normals = acoustic_vertex_normals(rings, mouth_index, mouth_h, mouth_v)
     ring_count = len(rings)
     offset_rings = []
     for i, ring in enumerate(rings):
-        thickness = wall_thickness_at_ring(i, ring_count)
+        thickness = wall_thickness_at_ring(min(i, mouth_index), ring_count)
         offset_rings.append([
             add_vector(point, scale_vector(normals[i][j], thickness))
             for j, point in enumerate(ring)
@@ -422,7 +424,7 @@ def clearance_diagnostics(
     best_distance = math.inf
     best_ring = 0
     best_column = 0
-    for i, ring in enumerate(rings[: len(outer_rings)]):
+    for i, ring in enumerate(rings):
         for j, point in enumerate(ring):
             distance = math.dist(point, outer_rings[i][j])
             if distance < best_distance:
@@ -548,7 +550,7 @@ def build_body_mesh(
 ) -> tuple[list[tuple[float, float, float]], list[tuple[int, int, int]]]:
     ring_count = len(rings)
     ring_size = len(rings[0])
-    outer_rings = offset_horn_rings(rings[: mouth_index + 1], mouth_h, mouth_v)
+    outer_rings = offset_surface_rings(rings, mouth_index, mouth_h, mouth_v)
     throat_inner = rings[0]
     throat_outer = outer_rings[0]
     throat_z = sum(point[2] for point in throat_inner) / ring_size
@@ -573,8 +575,8 @@ def build_body_mesh(
     for i in range(ring_count - 1):
         append_ring_bridge(faces, inner_starts[i], inner_starts[i + 1], ring_size)
     append_ring_bridge(faces, throat_inner_back_start, inner_starts[0], ring_size)
-    append_ring_bridge(faces, inner_starts[-1], outer_starts[mouth_index], ring_size)
-    for i in range(mouth_index, 0, -1):
+    append_ring_bridge(faces, inner_starts[-1], outer_starts[-1], ring_size)
+    for i in range(ring_count - 1, 0, -1):
         append_ring_bridge(faces, outer_starts[i], outer_starts[i - 1], ring_size, True)
     append_ring_bridge(faces, outer_starts[0], mount_outer_front_start, ring_size, True)
     append_ring_bridge(faces, mount_outer_front_start, mount_outer_back_start, ring_size, True)
@@ -649,7 +651,7 @@ def main() -> None:
         clearance = None
     else:
         export_mode = "body"
-        outer_rings = offset_horn_rings(rings[: mouth_index + 1], mouth_h, mouth_v)
+        outer_rings = offset_surface_rings(rings, mouth_index, mouth_h, mouth_v)
         clearance = clearance_diagnostics(rings, outer_rings)
         vertices, faces = build_body_mesh(rings, mouth_index, mouth_h, mouth_v)
 
