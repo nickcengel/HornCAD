@@ -1994,6 +1994,8 @@
       maxY,
       hEnd: hProfile(p.length),
       vEnd: vProfile(p.length),
+      mouthH: mouthHRadius,
+      mouthV: mouthVRadius,
       thetaCount: rings[0].length,
       zCount: rings.length,
       mouthIndex,
@@ -2040,6 +2042,8 @@
       thetaCount: rings[0].length,
       zCount: rings.length,
       mouthIndex,
+      mouthH: mouthHRadius,
+      mouthV: mouthVRadius,
       mouthSagHEnabled: p.mouthSagHEnabled,
       mouthSagVEnabled: p.mouthSagVEnabled,
       mouthSurfaceCenterZ: Number.isFinite(mouthSurfaceRadius(p, mouthHRadius, mouthVRadius))
@@ -2202,6 +2206,9 @@
   }
 
   function mouthConstrainedOuterRings(p, surface, innerHornRings, outerBaseRings, mouthBoundaryRing) {
+    if (!Number.isFinite(surface.mouthH) || !Number.isFinite(surface.mouthV)) {
+      throw new Error("mouthConstrainedOuterRings requires finite mouthH and mouthV");
+    }
     const ringCount = outerBaseRings.length;
     const minimumWall = Math.max(0, p.minimumWall);
     const constrained = [];
