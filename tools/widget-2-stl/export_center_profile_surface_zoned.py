@@ -403,109 +403,6 @@ def radial_offset_point(point: tuple[float, float, float], thickness: float) -> 
     )
 
 
-def add_vector(
-    a: tuple[float, float, float],
-    b: tuple[float, float, float],
-) -> tuple[float, float, float]:
-    return a[0] + b[0], a[1] + b[1], a[2] + b[2]
-
-
-def subtract_vector(
-    a: tuple[float, float, float],
-    b: tuple[float, float, float],
-) -> tuple[float, float, float]:
-    return a[0] - b[0], a[1] - b[1], a[2] - b[2]
-
-
-def scale_vector(
-    vector: tuple[float, float, float],
-    scale: float,
-) -> tuple[float, float, float]:
-    return vector[0] * scale, vector[1] * scale, vector[2] * scale
-
-
-def cross_vector(
-    a: tuple[float, float, float],
-    b: tuple[float, float, float],
-) -> tuple[float, float, float]:
-    return (
-        a[1] * b[2] - a[2] * b[1],
-        a[2] * b[0] - a[0] * b[2],
-        a[0] * b[1] - a[1] * b[0],
-    )
-
-
-def station_normal_offset_outer_rings(
-    rings: list[list[tuple[float, float, float]]],
-    mouth_index: int,
-    mouth_h: float,
-    mouth_v: float,
-) -> list[list[tuple[float, float, float]]]:
-    horn_rings = rings[: mouth_index + 1]
-    ring_count = len(horn_rings)
-    ring_size = len(horn_rings[0])
-    radius = mouth_radius(mouth_h, mouth_v)
-    mouth_center_z = PARAMS["length"] - radius if math.isfinite(radius) else PARAMS["length"]
-    outer_rings: list[list[tuple[float, float, float]]] = []
-
-    for i, ring in enumerate(horn_rings):
-        if i == 0:
-            longitudinal = [
-                subtract_vector(horn_rings[1][j], ring[j]) if ring_count > 1 else (0.0, 0.0, 1.0)
-                for j in range(ring_size)
-            ]
-        elif i == ring_count - 1:
-            longitudinal = [
-                subtract_vector(ring[j], horn_rings[i - 1][j])
-                for j in range(ring_size)
-            ]
-        else:
-            longitudinal = [
-                subtract_vector(horn_rings[i + 1][j], horn_rings[i - 1][j])
-                for j in range(ring_size)
-            ]
-
-        station_z = average_z(ring)
-        thickness = wall_thickness_at_ring(i, len(rings))
-        outer_ring = []
-        for j, point in enumerate(ring):
-            previous_point = ring[(j - 1) % ring_size]
-            next_point = ring[(j + 1) % ring_size]
-            circumferential = subtract_vector(next_point, previous_point)
-            candidate = normalize_vector(cross_vector(circumferential, longitudinal[j]))
-            expected = expected_outward_normal(i, point, mouth_index, mouth_center_z)
-            if dot(candidate, expected) < 0.0:
-                candidate = scale_vector(candidate, -1.0)
-            normal_xy_sq = candidate[0] * candidate[0] + candidate[1] * candidate[1]
-            if normal_xy_sq <= 1e-9:
-                radius = max(radial_distance(point), 1e-9)
-                direction = (point[0] / radius, point[1] / radius)
-                displacement = thickness
-            else:
-                direction = (candidate[0], candidate[1])
-                max_displacement = 2.5 * thickness
-                displacement = min(
-                    thickness / normal_xy_sq,
-                    max_displacement / max(math.sqrt(normal_xy_sq), 1e-9),
-                )
-            outer_point = (
-                point[0] + direction[0] * displacement,
-                point[1] + direction[1] * displacement,
-                station_z,
-            )
-            if radial_distance(outer_point) < radial_distance(point):
-                radius = max(radial_distance(point), 1e-9)
-                outer_point = (
-                    point[0] + point[0] / radius * thickness,
-                    point[1] + point[1] / radius * thickness,
-                    station_z,
-                )
-            outer_ring.append(outer_point)
-        outer_rings.append(outer_ring)
-
-    return outer_rings
-
-
 def project_point_to_mouth_radius(
     point: tuple[float, float, float],
     mouth_h_radius: float,
@@ -809,7 +706,11 @@ def build_body_mesh(
     ring_count = len(rings)
     ring_size = len(rings[0])
     has_return = mouth_index < ring_count - 1
-    outer_rings = station_normal_offset_outer_rings(rings, mouth_index, mouth_h, mouth_v)
+    outer_base_rings = [
+        [radial_offset_point(point, wall_thickness_at_ring(index, ring_count)) for point in ring]
+        for index, ring in enumerate(rings[: mouth_index + 1])
+    ]
+    outer_rings = trimmed_outer_rings(outer_base_rings, mouth_h, mouth_v) if has_return else outer_base_rings
     throat_inner = rings[0]
     throat_z = sum(point[2] for point in throat_inner) / ring_size
     mount_start_z = throat_z

@@ -2103,70 +2103,6 @@
     return Math.hypot(point.x, point.y);
   }
 
-  function stationNormalOffsetOuterRings(p, surface) {
-    const hornRings = surface.rings.slice(0, surface.mouthIndex + 1);
-    const ringCount = hornRings.length;
-    const ringSize = hornRings[0].length;
-    const outerRings = [];
-
-    for (let i = 0; i < ringCount; i += 1) {
-      const ring = hornRings[i];
-      const stationZ = averageRingZ(ring);
-      const thickness = wallThicknessAtRing(p, surface, i);
-      const outerRing = [];
-      for (let j = 0; j < ringSize; j += 1) {
-        let longitudinal;
-        if (i === 0) {
-          longitudinal = ringCount > 1 ? vectorBetween(ring[j], hornRings[1][j]) : { x: 0, y: 0, z: 1 };
-        } else if (i === ringCount - 1) {
-          longitudinal = vectorBetween(hornRings[i - 1][j], ring[j]);
-        } else {
-          longitudinal = vectorBetween(hornRings[i - 1][j], hornRings[i + 1][j]);
-        }
-        const circumferential = vectorBetween(ring[(j - 1 + ringSize) % ringSize], ring[(j + 1) % ringSize]);
-        let candidate = normalizeVector(cross(circumferential, longitudinal));
-        const expected = expectedOutwardNormal(surface, i, ring[j]);
-        if (candidate.x * expected.x + candidate.y * expected.y + candidate.z * expected.z < 0) {
-          candidate = { x: -candidate.x, y: -candidate.y, z: -candidate.z };
-        }
-
-        const normalXYSq = candidate.x * candidate.x + candidate.y * candidate.y;
-        let direction;
-        let displacement;
-        if (normalXYSq <= 1e-9) {
-          const radius = Math.max(radialDistance(ring[j]), 1e-9);
-          direction = { x: ring[j].x / radius, y: ring[j].y / radius };
-          displacement = thickness;
-        } else {
-          direction = { x: candidate.x, y: candidate.y };
-          const maxDisplacement = 2.5 * thickness;
-          displacement = Math.min(
-            thickness / normalXYSq,
-            maxDisplacement / Math.max(Math.sqrt(normalXYSq), 1e-9)
-          );
-        }
-
-        let outerPoint = {
-          x: ring[j].x + direction.x * displacement,
-          y: ring[j].y + direction.y * displacement,
-          z: stationZ,
-        };
-        if (radialDistance(outerPoint) < radialDistance(ring[j])) {
-          const radius = Math.max(radialDistance(ring[j]), 1e-9);
-          outerPoint = {
-            x: ring[j].x + ring[j].x / radius * thickness,
-            y: ring[j].y + ring[j].y / radius * thickness,
-            z: stationZ,
-          };
-        }
-        outerRing.push(outerPoint);
-      }
-      outerRings.push(outerRing);
-    }
-
-    return outerRings;
-  }
-
   function projectPointToMouthRadius(p, surface, point, targetRadius) {
     if (!Number.isFinite(surface.mouthSurfaceCenterZ)) {
       return { x: point.x, y: point.y, z: p.length - Math.max(0, p.mouthRearOffset) };
@@ -2484,7 +2420,11 @@
     const innerRings = surface.rings;
     const mouthIndex = surface.mouthIndex;
     const hasReturn = mouthIndex < innerRings.length - 1;
-    const outerRings = stationNormalOffsetOuterRings(p, surface);
+    const outerBaseRings = innerRings.slice(0, mouthIndex + 1).map((ring, index) => {
+      const thickness = wallThicknessAtRing(p, surface, index);
+      return ring.map((point) => radialOffsetPoint(point, thickness));
+    });
+    const outerRings = hasReturn ? trimmedOuterRings(p, surface, outerBaseRings) : outerBaseRings;
     const throatInner = innerRings[0];
     const throatZ = throatInner.reduce((sum, point) => sum + point.z, 0) / throatInner.length;
     const mountStartZ = throatZ;
