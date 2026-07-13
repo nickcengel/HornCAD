@@ -6,16 +6,23 @@
   <title>Center Profile Surface Explorer</title>
   <style>
     :root {
-      color-scheme: light;
-      --bg: #f6f6f2;
-      --panel: #ffffff;
-      --ink: #202326;
-      --muted: #666b70;
-      --line: #d6d8da;
-      --accent: #0f766e;
-      --accent-2: #8b5cf6;
-      --warn: #b45309;
-      --bad: #b91c1c;
+      color-scheme: dark;
+      --bg: #0c1014;
+      --panel: #121820;
+      --panel-2: #161f29;
+      --field: #0f151c;
+      --ink: #e5edf2;
+      --muted: #94a3ad;
+      --line: #2b3844;
+      --line-soft: #22303b;
+      --accent: #4db6a8;
+      --accent-strong: #69d6c8;
+      --accent-soft: #173c39;
+      --profile-red: #f06f65;
+      --handle: #8fa3af;
+      --normal: #ffd166;
+      --warn: #e5a449;
+      --bad: #f06f65;
     }
 
     * {
@@ -71,11 +78,12 @@
       padding: 12px;
       border: 1px solid var(--line);
       border-radius: 8px;
+      background: rgba(255, 255, 255, 0.015);
     }
 
     legend {
       padding: 0 5px;
-      color: #34383c;
+      color: var(--ink);
       font-size: 13px;
       font-weight: 700;
     }
@@ -86,7 +94,7 @@
       gap: 8px;
       align-items: center;
       margin: 9px 0;
-      color: #34383c;
+      color: var(--ink);
       font-size: 13px;
     }
 
@@ -104,7 +112,7 @@
       color: var(--ink);
       font: inherit;
       text-align: right;
-      background: #fff;
+      background: var(--field);
     }
 
     .toggle-control {
@@ -133,7 +141,7 @@
       padding: 7px 10px;
       border: 1px solid var(--line);
       border-radius: 7px;
-      background: #fff;
+      background: var(--field);
       color: var(--ink);
       font: inherit;
       cursor: pointer;
@@ -141,8 +149,8 @@
 
     button.active {
       border-color: var(--accent);
-      background: #e7f3f1;
-      color: #115e59;
+      background: var(--accent-soft);
+      color: var(--accent-strong);
       font-weight: 700;
     }
 
@@ -157,7 +165,7 @@
     .primary-action {
       border-color: var(--accent);
       background: var(--accent);
-      color: #fff;
+      color: #071211;
       font-weight: 700;
     }
 
@@ -176,7 +184,7 @@
       min-height: 0;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #fff;
+      background: var(--field);
       cursor: grab;
       touch-action: none;
       user-select: none;
@@ -197,7 +205,7 @@
       padding: 10px 12px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: var(--panel);
+      background: var(--panel-2);
     }
 
     .metric span {
@@ -230,7 +238,7 @@
 
     .curve-tools span {
       margin-right: auto;
-      color: #34383c;
+      color: var(--ink);
       font-size: 12px;
       font-weight: 700;
     }
@@ -247,7 +255,7 @@
       height: 150px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #fff;
+      background: var(--field);
       cursor: crosshair;
       touch-action: none;
     }
@@ -260,7 +268,7 @@
 
     .modifier-panel summary {
       cursor: pointer;
-      color: #34383c;
+      color: var(--ink);
       font-size: 13px;
       font-weight: 700;
     }
@@ -344,6 +352,17 @@
         Wireframe
         <input id="wireframe-visible" type="checkbox" checked>
       </label>
+      <label class="toggle-control">
+        Normals
+        <input id="normals-visible" type="checkbox">
+      </label>
+      <label>
+        STL export
+        <select data-control="stlExportMode">
+          <option value="body" selected>Body</option>
+          <option value="acoustic_surface">Acoustic surface</option>
+        </select>
+      </label>
       <div class="action-row">
         <button type="button" class="primary-action" data-export-stl>Export STL</button>
         <button type="button" data-export-yaml>Export YAML</button>
@@ -383,9 +402,42 @@
         <input data-control="mouthHeight" type="range" min="20" max="800" step="1" value="250">
       </label>
       <label>
-        Cylindrical mouth sag mm
+        Mouth sag mm
         <input data-control="mouthSag" type="number" min="0" max="160" step="1" value="60">
         <input data-control="mouthSag" type="range" min="0" max="160" step="1" value="60">
+      </label>
+      <label class="toggle-control">
+        H sag
+        <input id="mouth-sag-h-enabled" type="checkbox" checked>
+      </label>
+      <label class="toggle-control">
+        V sag
+        <input id="mouth-sag-v-enabled" type="checkbox" checked>
+      </label>
+      <label>
+        Mouth rear offset mm
+        <input data-control="mouthRearOffset" type="number" min="0" max="120" step="1" value="12">
+        <input data-control="mouthRearOffset" type="range" min="0" max="120" step="1" value="12">
+      </label>
+      <label>
+        Mount diameter mm
+        <input data-control="mountDiameter" type="number" min="20" max="400" step="1" value="120">
+        <input data-control="mountDiameter" type="range" min="20" max="400" step="1" value="120">
+      </label>
+      <label>
+        Mount flange thickness mm
+        <input data-control="mountFlangeThickness" type="number" min="1" max="80" step="1" value="12">
+        <input data-control="mountFlangeThickness" type="range" min="1" max="80" step="1" value="12">
+      </label>
+      <label>
+        Throat start wall mm
+        <input data-control="throatStartWall" type="number" min="0.5" max="80" step="0.5" value="8">
+        <input data-control="throatStartWall" type="range" min="0.5" max="80" step="0.5" value="8">
+      </label>
+      <label>
+        Minimum wall mm
+        <input data-control="minimumWall" type="number" min="0.5" max="80" step="0.5" value="5">
+        <input data-control="minimumWall" type="range" min="0.5" max="80" step="0.5" value="5">
       </label>
     </fieldset>
 
@@ -506,6 +558,9 @@
   const ctx = canvas.getContext("2d");
   const solidSurfaceInput = document.getElementById("solid-surface");
   const wireframeVisibleInput = document.getElementById("wireframe-visible");
+  const normalsVisibleInput = document.getElementById("normals-visible");
+  const mouthSagHEnabledInput = document.getElementById("mouth-sag-h-enabled");
+  const mouthSagVEnabledInput = document.getElementById("mouth-sag-v-enabled");
   const hModifierEnabledInput = document.getElementById("h-modifier-enabled");
   const vModifierEnabledInput = document.getElementById("v-modifier-enabled");
   const morphCurveCanvas = document.getElementById("morph-curve");
@@ -594,6 +649,19 @@
     sectionShape: document.getElementById("metric-section-n"),
     bow: document.getElementById("metric-cap"),
   };
+  const rootStyle = getComputedStyle(document.documentElement);
+  const theme = {
+    ink: rootStyle.getPropertyValue("--ink").trim(),
+    muted: rootStyle.getPropertyValue("--muted").trim(),
+    line: rootStyle.getPropertyValue("--line").trim(),
+    lineSoft: rootStyle.getPropertyValue("--line-soft").trim(),
+    field: rootStyle.getPropertyValue("--field").trim(),
+    accent: rootStyle.getPropertyValue("--accent").trim(),
+    accentStrong: rootStyle.getPropertyValue("--accent-strong").trim(),
+    profileRed: rootStyle.getPropertyValue("--profile-red").trim(),
+    handle: rootStyle.getPropertyValue("--handle").trim(),
+    normal: rootStyle.getPropertyValue("--normal").trim(),
+  };
 
   for (const input of document.querySelectorAll("[data-control]")) {
     const name = input.dataset.control;
@@ -617,6 +685,9 @@
   vModifierEnabledInput.addEventListener("change", scheduleRender);
   solidSurfaceInput.addEventListener("change", scheduleRender);
   wireframeVisibleInput.addEventListener("change", scheduleRender);
+  normalsVisibleInput.addEventListener("change", scheduleRender);
+  mouthSagHEnabledInput.addEventListener("change", scheduleRender);
+  mouthSagVEnabledInput.addEventListener("change", scheduleRender);
 
   document.querySelector("[data-export-stl]").addEventListener("click", exportStl);
   document.querySelector("[data-export-yaml]").addEventListener("click", exportYaml);
@@ -799,7 +870,8 @@
   }
 
   function value(name) {
-    return Number(controls.get(name)[0].value);
+    const control = controls.get(name)[0];
+    return control.tagName === "SELECT" ? control.value : Number(control.value);
   }
 
   function rad(deg) {
@@ -832,6 +904,14 @@
       vK: value("vK"),
       vN: value("vN"),
       mouthSag: value("mouthSag"),
+      mouthSagHEnabled: mouthSagHEnabledInput.checked,
+      mouthSagVEnabled: mouthSagVEnabledInput.checked,
+      mouthRearOffset: value("mouthRearOffset"),
+      mountDiameter: value("mountDiameter"),
+      mountFlangeThickness: value("mountFlangeThickness"),
+      throatStartWall: value("throatStartWall"),
+      minimumWall: value("minimumWall"),
+      stlExportMode: value("stlExportMode") || "body",
       hModifierEnabled: hModifierEnabledInput.checked,
       vModifierEnabled: vModifierEnabledInput.checked,
       solidOpacity: value("solidOpacity"),
@@ -1369,7 +1449,7 @@
     const curveCtx = editor.ctx;
     curveCtx.clearRect(0, 0, editor.canvas.width, editor.canvas.height);
     curveCtx.save();
-    curveCtx.strokeStyle = "#d6d8da";
+    curveCtx.strokeStyle = theme.line;
     curveCtx.lineWidth = 1;
     curveCtx.strokeRect(rect.x, rect.y, rect.width, rect.height);
 
@@ -1384,7 +1464,7 @@
       curveCtx.stroke();
     }
 
-    curveCtx.strokeStyle = "#697077";
+    curveCtx.strokeStyle = theme.muted;
     curveCtx.lineWidth = 2;
     curveCtx.beginPath();
     for (let i = 0; i <= 160; i += 1) {
@@ -1398,7 +1478,7 @@
     }
     curveCtx.stroke();
 
-    curveCtx.strokeStyle = "#b42318";
+    curveCtx.strokeStyle = theme.profileRed;
     curveCtx.lineWidth = 4;
     curveCtx.beginPath();
     for (let i = 0; i <= 160; i += 1) {
@@ -1412,7 +1492,7 @@
     }
     curveCtx.stroke();
 
-    curveCtx.strokeStyle = "#8b949e";
+    curveCtx.strokeStyle = theme.handle;
     curveCtx.lineWidth = 1.2;
     for (let i = 0; i < editor.anchors.length; i += 1) {
       const anchorCanvas = profileModifierToCanvas(editor, p, editor.anchors[i], view);
@@ -1427,8 +1507,8 @@
         curveCtx.lineTo(handleCanvas.x, handleCanvas.y);
         curveCtx.stroke();
         curveCtx.beginPath();
-        curveCtx.fillStyle = "#ffffff";
-        curveCtx.strokeStyle = "#b42318";
+        curveCtx.fillStyle = theme.field;
+        curveCtx.strokeStyle = theme.profileRed;
         curveCtx.lineWidth = 2;
         curveCtx.arc(handleCanvas.x, handleCanvas.y, 6, 0, Math.PI * 2);
         curveCtx.fill();
@@ -1439,8 +1519,8 @@
     for (let i = 0; i < editor.anchors.length; i += 1) {
       const point = profileModifierToCanvas(editor, p, editor.anchors[i], view);
       curveCtx.beginPath();
-      curveCtx.fillStyle = i === 0 || i === editor.anchors.length - 1 ? "#34383c" : "#b42318";
-      curveCtx.strokeStyle = "#ffffff";
+      curveCtx.fillStyle = i === 0 || i === editor.anchors.length - 1 ? theme.ink : theme.profileRed;
+      curveCtx.strokeStyle = theme.field;
       curveCtx.lineWidth = 2;
       curveCtx.arc(point.x, point.y, 9, 0, Math.PI * 2);
       curveCtx.fill();
@@ -1454,7 +1534,7 @@
     const curveCtx = editor.ctx;
     curveCtx.clearRect(0, 0, editor.canvas.width, editor.canvas.height);
     curveCtx.save();
-    curveCtx.strokeStyle = "#d6d8da";
+    curveCtx.strokeStyle = theme.line;
     curveCtx.lineWidth = 1;
     curveCtx.strokeRect(rect.x, rect.y, rect.width, rect.height);
 
@@ -1469,7 +1549,7 @@
       curveCtx.stroke();
     }
 
-    curveCtx.strokeStyle = "#8b949e";
+    curveCtx.strokeStyle = theme.handle;
     curveCtx.lineWidth = 1.2;
     for (let i = 0; i < editor.anchors.length; i += 1) {
       const anchorCanvas = splineToCanvas(editor, editor.anchors[i]);
@@ -1486,7 +1566,7 @@
       }
     }
 
-    curveCtx.strokeStyle = "#0f766e";
+    curveCtx.strokeStyle = theme.accent;
     curveCtx.lineWidth = 4;
     curveCtx.beginPath();
     for (let i = 0; i <= 160; i += 1) {
@@ -1508,8 +1588,8 @@
         }
         const handleCanvas = splineToCanvas(editor, handle);
         curveCtx.beginPath();
-        curveCtx.fillStyle = "#ffffff";
-        curveCtx.strokeStyle = "#0f766e";
+        curveCtx.fillStyle = theme.field;
+        curveCtx.strokeStyle = theme.accent;
         curveCtx.lineWidth = 2;
         curveCtx.arc(handleCanvas.x, handleCanvas.y, 6, 0, Math.PI * 2);
         curveCtx.fill();
@@ -1520,10 +1600,10 @@
     for (let i = 0; i < editor.anchors.length; i += 1) {
       const point = splineToCanvas(editor, editor.anchors[i]);
       curveCtx.beginPath();
-      curveCtx.fillStyle = i === 0 || i === editor.anchors.length - 1 ? "#34383c" : "#0f766e";
+      curveCtx.fillStyle = i === 0 || i === editor.anchors.length - 1 ? theme.ink : theme.accent;
       curveCtx.arc(point.x, point.y, 9, 0, Math.PI * 2);
       curveCtx.fill();
-      curveCtx.strokeStyle = "#ffffff";
+      curveCtx.strokeStyle = theme.field;
       curveCtx.lineWidth = 2;
       curveCtx.stroke();
     }
@@ -1535,7 +1615,7 @@
   }
 
   function radiusFromSag(halfSpan, sag) {
-    if (sag <= 0) {
+    if (sag <= 0 || halfSpan <= 0) {
       return Infinity;
     }
     return (halfSpan * halfSpan + sag * sag) / (2 * sag);
@@ -1548,12 +1628,24 @@
     return radius - Math.sqrt(Math.max(radius * radius - distance * distance, 0));
   }
 
-  function cylindricalMouthSetback(p, x, maxX) {
-    const sag = Math.max(0, p.mouthSag);
-    if (sag <= 0 || maxX <= 0) {
+  function mouthSagReferenceDistance(p, mouthHRadius, mouthVRadius) {
+    const x = p.mouthSagHEnabled ? mouthHRadius : 0;
+    const y = p.mouthSagVEnabled ? mouthVRadius : 0;
+    return Math.hypot(x, y);
+  }
+
+  function mouthSurfaceRadius(p, mouthHRadius, mouthVRadius) {
+    return radiusFromSag(mouthSagReferenceDistance(p, mouthHRadius, mouthVRadius), Math.max(0, p.mouthSag));
+  }
+
+  function mouthSetback(p, x, y, mouthHRadius, mouthVRadius) {
+    const radius = mouthSurfaceRadius(p, mouthHRadius, mouthVRadius);
+    if (!Number.isFinite(radius) || radius <= 0) {
       return 0;
     }
-    return setbackFromRadius(Math.abs(x), radiusFromSag(maxX, sag));
+    const dx = p.mouthSagHEnabled ? x : 0;
+    const dy = p.mouthSagVEnabled ? y : 0;
+    return setbackFromRadius(Math.hypot(dx, dy), radius);
   }
 
   function superellipsePoint(a, b, n, theta) {
@@ -1652,9 +1744,9 @@
         const a = refined[i];
         const b = refined[i + 1];
         const mid = (a + b) / 2;
-        const pa = sectionPoint(p, hRadius, vRadius, p.length, a, mouthHRadius, shapeN);
-        const pb = sectionPoint(p, hRadius, vRadius, p.length, b, mouthHRadius, shapeN);
-        const pm = sectionPoint(p, hRadius, vRadius, p.length, mid, mouthHRadius, shapeN);
+        const pa = sectionPoint(p, hRadius, vRadius, p.length, a, mouthHRadius, vRadius, shapeN);
+        const pb = sectionPoint(p, hRadius, vRadius, p.length, b, mouthHRadius, vRadius, shapeN);
+        const pm = sectionPoint(p, hRadius, vRadius, p.length, mid, mouthHRadius, vRadius, shapeN);
         const chord = Math.hypot(pb.z - pa.z, pb.x - pa.x);
         const error = projectedMouthError(pa, pb, pm);
 
@@ -1674,7 +1766,7 @@
     return refined;
   }
 
-  function sectionPoint(p, hRadius, vRadius, z, theta, mouthHRadius, shapeN = null) {
+  function sectionPoint(p, hRadius, vRadius, z, theta, mouthHRadius, mouthVRadius, shapeN = null) {
     const n = shapeN ?? superellipseNFromShape(sectionShape(p, Math.max(0, p.throatExtension) + z));
     const point = superellipsePoint(hRadius, vRadius, n, theta);
     return sectionPointFromXY(p, hRadius, vRadius, z, point.x, point.y, theta, mouthHRadius);
@@ -1690,7 +1782,7 @@
     point.x += Math.sign(point.x || Math.cos(theta)) * modifierDelta(p, "h", z, hRadius) * hWindow;
     point.y += Math.sign(point.y || Math.sin(theta)) * modifierDelta(p, "v", z, vRadius) * vWindow;
     const mouthProgress = Math.pow(Math.max(0, Math.min(1, z / Math.max(p.length, 1e-9))), 2.4);
-    const setback = cylindricalMouthSetback(p, point.x, mouthHRadius) * mouthProgress;
+    const setback = mouthSetback(p, point.x, point.y, mouthHRadius, mouthVRadius) * mouthProgress;
     return { x: point.x, y: point.y, z: z - setback };
   }
 
@@ -1716,7 +1808,7 @@
     for (const sample of squareBoundarySamples(sideSamples)) {
       const point = superellipseFromSquareBoundary(hRadius, vRadius, shapeN, sample);
       const mouthPoint = superellipseFromSquareBoundary(mouthHRadius, mouthVRadius, mouthShapeN, sample);
-      const localLength = Math.max(1e-9, p.length - cylindricalMouthSetback(p, mouthPoint.x, mouthHRadius));
+      const localLength = Math.max(1e-9, p.length - mouthSetback(p, mouthPoint.x, mouthPoint.y, mouthHRadius, mouthVRadius));
       const outputZ = tau * localLength;
       ring.push(sectionPointFromXYAtZ(p, hRadius, vRadius, profileZ, outputZ, point.x, point.y, point.theta, hDelta, vDelta));
     }
@@ -1737,11 +1829,46 @@
     return ring;
   }
 
+  function concentricRearMouthPoint(p, point, mouthHRadius, mouthVRadius) {
+    const offset = Math.max(0, p.mouthRearOffset);
+    const radius = mouthSurfaceRadius(p, mouthHRadius, mouthVRadius);
+    if (offset <= 0) {
+      return point;
+    }
+    if (!Number.isFinite(radius) || radius <= 0) {
+      return { x: point.x, y: point.y, z: p.length - offset };
+    }
+    const centerZ = p.length - radius;
+    const vector = {
+      x: p.mouthSagHEnabled ? point.x : 0,
+      y: p.mouthSagVEnabled ? point.y : 0,
+      z: point.z - centerZ,
+    };
+    const length = Math.hypot(vector.x, vector.y, vector.z);
+    if (length <= 1e-9) {
+      return point;
+    }
+    const scale = Math.max(1e-6, radius - offset) / length;
+    return {
+      x: p.mouthSagHEnabled ? vector.x * scale : point.x,
+      y: p.mouthSagVEnabled ? vector.y * scale : point.y,
+      z: centerZ + vector.z * scale,
+    };
+  }
+
+  function mouthRearRing(p, rings, mouthHRadius, mouthVRadius) {
+    if (rings.length < 2) {
+      return [];
+    }
+    const mouth = rings[rings.length - 1];
+    return mouth.map((point) => concentricRearMouthPoint(p, point, mouthHRadius, mouthVRadius));
+  }
+
   function mirroredSectionRing(p, hRadius, vRadius, z, angles, mouthHRadius) {
     const shapeN = superellipseNFromShape(sectionShape(p, Math.max(0, p.throatExtension) + z));
     const base = [];
     for (const theta of angles) {
-      const point = sectionPoint(p, hRadius, vRadius, z, theta, mouthHRadius, shapeN);
+      const point = sectionPoint(p, hRadius, vRadius, z, theta, mouthHRadius, vRadius, shapeN);
       base.push({ x: Math.abs(point.x), y: Math.abs(point.y), z: point.z });
     }
 
@@ -1799,6 +1926,10 @@
       }
       rings.push(ring);
     }
+    const mouthIndex = rings.length - 1;
+    if (p.mouthRearOffset > 0) {
+      rings.push(mouthRearRing(p, rings, mouthHRadius, mouthVRadius));
+    }
 
     return {
       rings,
@@ -1808,6 +1939,12 @@
       vEnd: vProfile(p.length),
       thetaCount: rings[0].length,
       zCount: rings.length,
+      mouthIndex,
+      mouthSagHEnabled: p.mouthSagHEnabled,
+      mouthSagVEnabled: p.mouthSagVEnabled,
+      mouthSurfaceCenterZ: Number.isFinite(mouthSurfaceRadius(p, mouthHRadius, mouthVRadius))
+        ? p.length - mouthSurfaceRadius(p, mouthHRadius, mouthVRadius)
+        : p.length,
     };
   }
 
@@ -1834,11 +1971,21 @@
       const profileZ = p.length * tau;
       rings.push(sectionRing(p, hProfile(profileZ), vProfile(profileZ), profileZ, tau, sideSamples, mouthHRadius, mouthVRadius));
     }
+    const mouthIndex = rings.length - 1;
+    if (p.mouthRearOffset > 0) {
+      rings.push(mouthRearRing(p, rings, mouthHRadius, mouthVRadius));
+    }
 
     return {
       rings,
       thetaCount: rings[0].length,
       zCount: rings.length,
+      mouthIndex,
+      mouthSagHEnabled: p.mouthSagHEnabled,
+      mouthSagVEnabled: p.mouthSagVEnabled,
+      mouthSurfaceCenterZ: Number.isFinite(mouthSurfaceRadius(p, mouthHRadius, mouthVRadius))
+        ? p.length - mouthSurfaceRadius(p, mouthHRadius, mouthVRadius)
+        : p.length,
     };
   }
 
@@ -1867,11 +2014,409 @@
       const next = surface.rings[i + 1];
       for (let j = 0; j < thetaCount; j += 1) {
         const k = (j + 1) % thetaCount;
-        triangles.push([row[j], next[k], next[j]]);
-        triangles.push([row[j], row[k], next[k]]);
+        const center = {
+          x: (row[j].x + row[k].x + next[j].x + next[k].x) / 4,
+          y: (row[j].y + row[k].y + next[j].y + next[k].y) / 4,
+          z: (row[j].z + row[k].z + next[j].z + next[k].z) / 4,
+        };
+        const normal = normalizeVector(cross(vectorBetween(row[j], next[j]), vectorBetween(row[j], row[k])));
+        const expected = expectedOutwardNormal(surface, i, center);
+        if (normal.x * expected.x + normal.y * expected.y + normal.z * expected.z >= 0) {
+          triangles.push([row[j], next[j], next[k]]);
+          triangles.push([row[j], next[k], row[k]]);
+        } else {
+          triangles.push([row[j], next[k], next[j]]);
+          triangles.push([row[j], row[k], next[k]]);
+        }
       }
     }
     return triangles;
+  }
+
+  function radialOffsetPoint(point, thickness) {
+    const radius = Math.hypot(point.x, point.y);
+    if (radius <= 1e-9) {
+      return { x: point.x + thickness, y: point.y, z: point.z };
+    }
+    return {
+      x: point.x + point.x / radius * thickness,
+      y: point.y + point.y / radius * thickness,
+      z: point.z,
+    };
+  }
+
+  function radialDistance(point) {
+    return Math.hypot(point.x, point.y);
+  }
+
+  function projectPointToMouthRadius(p, surface, point, targetRadius) {
+    if (!Number.isFinite(surface.mouthSurfaceCenterZ)) {
+      return { x: point.x, y: point.y, z: p.length - Math.max(0, p.mouthRearOffset) };
+    }
+    const vector = {
+      x: surface.mouthSagHEnabled ? point.x : 0,
+      y: surface.mouthSagVEnabled ? point.y : 0,
+      z: point.z - surface.mouthSurfaceCenterZ,
+    };
+    const length = Math.hypot(vector.x, vector.y, vector.z);
+    if (length <= 1e-9) {
+      return { x: point.x, y: point.y, z: point.z };
+    }
+    const scale = Math.max(1e-6, targetRadius) / length;
+    return {
+      x: surface.mouthSagHEnabled ? vector.x * scale : point.x,
+      y: surface.mouthSagVEnabled ? vector.y * scale : point.y,
+      z: surface.mouthSurfaceCenterZ + vector.z * scale,
+    };
+  }
+
+  function mouthReturnProjectedRing(p, surface, ring) {
+    const mouthRadius = p.length - surface.mouthSurfaceCenterZ;
+    const targetRadius = Number.isFinite(mouthRadius)
+      ? mouthRadius - Math.max(0, p.mouthRearOffset)
+      : Infinity;
+    return ring.map((point) => projectPointToMouthRadius(p, surface, point, targetRadius));
+  }
+
+  function mouthSurfaceVector(surface, point) {
+    return {
+      x: surface.mouthSagHEnabled ? point.x : 0,
+      y: surface.mouthSagVEnabled ? point.y : 0,
+      z: point.z - surface.mouthSurfaceCenterZ,
+    };
+  }
+
+  function mouthSurfaceDistance(surface, point) {
+    const vector = mouthSurfaceVector(surface, point);
+    return Math.hypot(vector.x, vector.y, vector.z);
+  }
+
+  function interpolatePoint(a, b, t) {
+    return {
+      x: a.x + (b.x - a.x) * t,
+      y: a.y + (b.y - a.y) * t,
+      z: a.z + (b.z - a.z) * t,
+    };
+  }
+
+  function mouthIntersectionPath(p, surface, outerRings, column) {
+    const mouthRadius = p.length - surface.mouthSurfaceCenterZ;
+    const targetRadius = Number.isFinite(mouthRadius)
+      ? mouthRadius - Math.max(0, p.mouthRearOffset)
+      : Infinity;
+    const path = [outerRings[0][column]];
+    if (!Number.isFinite(targetRadius)) {
+      for (let i = 1; i < outerRings.length; i += 1) {
+        path.push(outerRings[i][column]);
+      }
+      return path;
+    }
+
+    for (let i = 0; i < outerRings.length - 1; i += 1) {
+      const a = outerRings[i][column];
+      const b = outerRings[i + 1][column];
+      const da = mouthSurfaceDistance(surface, a);
+      const db = mouthSurfaceDistance(surface, b);
+      if (da < targetRadius) {
+        path[path.length - 1] = a;
+      }
+      if ((da - targetRadius) * (db - targetRadius) <= 0 && Math.abs(db - da) > 1e-9) {
+        const t = Math.max(0, Math.min(1, (targetRadius - da) / (db - da)));
+        path.push(interpolatePoint(a, b, t));
+        return path;
+      }
+      if (db < targetRadius) {
+        path.push(b);
+      }
+    }
+    path.push(projectPointToMouthRadius(p, surface, outerRings[outerRings.length - 1][column], targetRadius));
+    return path;
+  }
+
+  function pathLengths(path) {
+    const lengths = [0];
+    for (let i = 1; i < path.length; i += 1) {
+      lengths.push(lengths[i - 1] + Math.hypot(
+        path[i].x - path[i - 1].x,
+        path[i].y - path[i - 1].y,
+        path[i].z - path[i - 1].z
+      ));
+    }
+    return lengths;
+  }
+
+  function pointOnPath(path, lengths, distance) {
+    if (distance <= 0 || path.length === 1) {
+      return path[0];
+    }
+    const total = lengths[lengths.length - 1];
+    if (distance >= total) {
+      return path[path.length - 1];
+    }
+    for (let i = 0; i < lengths.length - 1; i += 1) {
+      if (distance <= lengths[i + 1]) {
+        const span = Math.max(1e-9, lengths[i + 1] - lengths[i]);
+        return interpolatePoint(path[i], path[i + 1], (distance - lengths[i]) / span);
+      }
+    }
+    return path[path.length - 1];
+  }
+
+  function trimmedOuterRings(p, surface, outerBaseRings) {
+    const ringCount = outerBaseRings.length;
+    const columnCount = outerBaseRings[0].length;
+    const columns = [];
+    for (let j = 0; j < columnCount; j += 1) {
+      const path = mouthIntersectionPath(p, surface, outerBaseRings, j);
+      columns.push({ path, lengths: pathLengths(path) });
+    }
+    const rings = [];
+    for (let i = 0; i < ringCount; i += 1) {
+      const t = i / Math.max(1, ringCount - 1);
+      rings.push(columns.map(({ path, lengths }) => pointOnPath(path, lengths, lengths[lengths.length - 1] * t)));
+    }
+    return rings;
+  }
+
+  function sphericalCapRings(p, surface, innerRing, outerRing) {
+    const mouthRadius = p.length - surface.mouthSurfaceCenterZ;
+    const targetRadius = Number.isFinite(mouthRadius)
+      ? mouthRadius - Math.max(0, p.mouthRearOffset)
+      : Infinity;
+    if (!Number.isFinite(targetRadius)) {
+      return [innerRing, outerRing];
+    }
+    const layerCount = 5;
+    const capSetback = Math.min(0.75, Math.max(0.05, Math.max(0, p.mouthRearOffset) * 0.04));
+    const rings = [];
+    for (let layer = 0; layer <= layerCount; layer += 1) {
+      if (layer === 0) {
+        rings.push(innerRing);
+        continue;
+      }
+      if (layer === layerCount) {
+        rings.push(outerRing);
+        continue;
+      }
+      const t = layer / layerCount;
+      rings.push(innerRing.map((inner, index) => {
+        const outer = outerRing[index];
+        const x = inner.x + (outer.x - inner.x) * t;
+        const y = inner.y + (outer.y - inner.y) * t;
+        const dx = surface.mouthSagHEnabled ? x : 0;
+        const dy = surface.mouthSagVEnabled ? y : 0;
+        const zOffset = Math.sqrt(Math.max(targetRadius * targetRadius - dx * dx - dy * dy, 0));
+        const setback = capSetback * Math.sin(Math.PI * t);
+        return {
+          x,
+          y,
+          z: surface.mouthSurfaceCenterZ + zOffset - setback,
+        };
+      }));
+    }
+    return rings;
+  }
+
+  function wallThicknessAtRing(p, surface, index) {
+    const denominator = Math.max(1, surface.zCount - 1);
+    const t = index / denominator;
+    const start = Math.max(0, p.throatStartWall);
+    const minimum = Math.max(0, p.minimumWall);
+    return Math.max(minimum, start + (minimum - start) * t);
+  }
+
+  function circleRingFromReference(referenceRing, radius, z) {
+    const count = referenceRing.length;
+    return referenceRing.map((point, index) => {
+      let angle = Math.atan2(point.y, point.x);
+      if (!Number.isFinite(angle) || Math.hypot(point.x, point.y) <= 1e-9) {
+        angle = 2 * Math.PI * index / count;
+      }
+      return {
+        x: radius * Math.cos(angle),
+        y: radius * Math.sin(angle),
+        z,
+      };
+    });
+  }
+
+  function ringAtZ(referenceRing, z) {
+    return referenceRing.map((point) => ({ x: point.x, y: point.y, z }));
+  }
+
+  function appendQuadTriangles(triangles, a0, a1, b0, b1) {
+    triangles.push([a0, b0, b1]);
+    triangles.push([a0, b1, a1]);
+  }
+
+  function appendRingBridge(triangles, a, b, reverse = false) {
+    const count = a.length;
+    for (let j = 0; j < count; j += 1) {
+      const k = (j + 1) % count;
+      if (reverse) {
+        appendQuadTriangles(triangles, a[j], b[j], a[k], b[k]);
+      } else {
+        appendQuadTriangles(triangles, a[j], a[k], b[j], b[k]);
+      }
+    }
+  }
+
+  function vertexKey(point) {
+    return `${point.x.toFixed(9)},${point.y.toFixed(9)},${point.z.toFixed(9)}`;
+  }
+
+  function indexedTriangles(triangles) {
+    const vertices = [];
+    const vertexByKey = new Map();
+    const faces = [];
+    for (const triangle of triangles) {
+      const face = [];
+      for (const point of triangle) {
+        const key = vertexKey(point);
+        let index = vertexByKey.get(key);
+        if (index === undefined) {
+          index = vertices.length;
+          vertexByKey.set(key, index);
+          vertices.push(point);
+        }
+        face.push(index);
+      }
+      faces.push(face);
+    }
+    return { vertices, faces };
+  }
+
+  function edgeEntry(faceIndex, a, b) {
+    const lo = Math.min(a, b);
+    const hi = Math.max(a, b);
+    return {
+      key: `${lo}:${hi}`,
+      faceIndex,
+      direction: a === lo ? 1 : -1,
+    };
+  }
+
+  function signedVolume(vertices, faces) {
+    let volume = 0;
+    for (const face of faces) {
+      const a = vertices[face[0]];
+      const b = vertices[face[1]];
+      const c = vertices[face[2]];
+      volume += (
+        a.x * (b.y * c.z - b.z * c.y)
+        - a.y * (b.x * c.z - b.z * c.x)
+        + a.z * (b.x * c.y - b.y * c.x)
+      ) / 6;
+    }
+    return volume;
+  }
+
+  function orientClosedTriangles(triangles) {
+    const { vertices, faces } = indexedTriangles(triangles);
+    const edgeMap = new Map();
+    faces.forEach((face, faceIndex) => {
+      for (const entry of [
+        edgeEntry(faceIndex, face[0], face[1]),
+        edgeEntry(faceIndex, face[1], face[2]),
+        edgeEntry(faceIndex, face[2], face[0]),
+      ]) {
+        if (!edgeMap.has(entry.key)) {
+          edgeMap.set(entry.key, []);
+        }
+        edgeMap.get(entry.key).push(entry);
+      }
+    });
+
+    const signs = new Array(faces.length).fill(0);
+    for (let start = 0; start < faces.length; start += 1) {
+      if (signs[start] !== 0) {
+        continue;
+      }
+      signs[start] = 1;
+      const stack = [start];
+      while (stack.length > 0) {
+        const faceIndex = stack.pop();
+        const face = faces[faceIndex];
+        for (const entry of [
+          edgeEntry(faceIndex, face[0], face[1]),
+          edgeEntry(faceIndex, face[1], face[2]),
+          edgeEntry(faceIndex, face[2], face[0]),
+        ]) {
+          const neighbors = edgeMap.get(entry.key) || [];
+          for (const neighbor of neighbors) {
+            if (neighbor.faceIndex === faceIndex) {
+              continue;
+            }
+            const requiredSign = -signs[faceIndex] * entry.direction / neighbor.direction;
+            if (signs[neighbor.faceIndex] === 0) {
+              signs[neighbor.faceIndex] = requiredSign;
+              stack.push(neighbor.faceIndex);
+            }
+          }
+        }
+      }
+    }
+
+    const orientedFaces = faces.map((face, index) => (
+      signs[index] < 0 ? [face[0], face[2], face[1]] : face.slice()
+    ));
+    if (signedVolume(vertices, orientedFaces) < 0) {
+      for (const face of orientedFaces) {
+        const tmp = face[1];
+        face[1] = face[2];
+        face[2] = tmp;
+      }
+    }
+    return orientedFaces.map((face) => face.map((index) => vertices[index]));
+  }
+
+  function buildBodyTriangles(p, surface) {
+    const innerRings = surface.rings;
+    const mouthIndex = surface.mouthIndex;
+    const hasReturn = mouthIndex < innerRings.length - 1;
+    const outerBaseRings = innerRings.slice(0, mouthIndex + 1).map((ring, index) => {
+      const thickness = wallThicknessAtRing(p, surface, index);
+      return ring.map((point) => radialOffsetPoint(point, thickness));
+    });
+    const outerRings = hasReturn ? trimmedOuterRings(p, surface, outerBaseRings) : outerBaseRings;
+    const throatInner = innerRings[0];
+    const throatOuter = outerRings[0];
+    const throatZ = throatInner.reduce((sum, point) => sum + point.z, 0) / throatInner.length;
+    const flangeBackZ = throatZ - Math.max(0, p.mountFlangeThickness);
+    const requiredMountRadius = Math.max(
+      Math.max(...throatOuter.map(radialDistance)),
+      Math.max(...throatInner.map(radialDistance)) + Math.max(0, p.minimumWall)
+    );
+    const mountRadius = Math.max(Math.max(0, p.mountDiameter) / 2, requiredMountRadius);
+    const throatInnerBack = ringAtZ(throatInner, flangeBackZ);
+    const mountOuterFront = circleRingFromReference(throatInner, mountRadius, throatZ);
+    const mountOuterBack = circleRingFromReference(throatInner, mountRadius, flangeBackZ);
+    const triangles = [];
+
+    for (let i = 0; i < innerRings.length - 1; i += 1) {
+      appendRingBridge(triangles, innerRings[i], innerRings[i + 1]);
+    }
+    appendRingBridge(triangles, throatInnerBack, throatInner);
+    if (hasReturn) {
+      const rearInner = innerRings[innerRings.length - 1];
+      const capRings = sphericalCapRings(p, surface, rearInner, outerRings[mouthIndex]);
+      let previousCapRing = rearInner;
+      for (let i = 1; i < capRings.length - 1; i += 1) {
+        appendRingBridge(triangles, previousCapRing, capRings[i]);
+        previousCapRing = capRings[i];
+      }
+      appendRingBridge(triangles, previousCapRing, outerRings[mouthIndex]);
+    } else {
+      appendRingBridge(triangles, innerRings[mouthIndex], outerRings[mouthIndex]);
+    }
+    for (let i = mouthIndex; i > 0; i -= 1) {
+      appendRingBridge(triangles, outerRings[i], outerRings[i - 1], true);
+    }
+    appendRingBridge(triangles, throatOuter, mountOuterFront, true);
+    appendRingBridge(triangles, mountOuterFront, mountOuterBack, true);
+    appendRingBridge(triangles, mountOuterBack, throatInnerBack);
+
+    return orientClosedTriangles(triangles);
   }
 
   function writeBinaryStl(triangles, name) {
@@ -1905,7 +2450,8 @@
     const length = Math.round(p.length);
     const width = Math.round(p.mouthWidth);
     const height = Math.round(p.mouthHeight);
-    return `center_profile_surface_${width}x${height}x${length}.stl`;
+    const mode = p.stlExportMode === "acoustic_surface" ? "acoustic_surface" : "body";
+    return `center_profile_surface_${mode}_${width}x${height}x${length}.stl`;
   }
 
   function configBasename(p) {
@@ -1929,7 +2475,9 @@
   function exportStl() {
     const p = params();
     const surface = buildExportSurface(p);
-    const triangles = buildTriangles(surface);
+    const triangles = p.stlExportMode === "acoustic_surface"
+      ? buildTriangles(surface)
+      : buildBodyTriangles(p, surface);
     const filename = stlFilename(p);
     const buffer = writeBinaryStl(triangles, filename.replace(/\.stl$/i, ""));
     const blob = new Blob([buffer], { type: "application/vnd.ms-pki.stl" });
@@ -1969,7 +2517,15 @@
       `    measured_total_length: ${yamlNumber(measuredLength(p))}`,
       `    mouth_width: ${yamlNumber(p.mouthWidth)}`,
       `    mouth_height: ${yamlNumber(p.mouthHeight)}`,
-      `    cylindrical_mouth_sag: ${yamlNumber(p.mouthSag)}`,
+      `    mouth_sag: ${yamlNumber(p.mouthSag)}`,
+      `    mouth_sag_h_enabled: ${p.mouthSagHEnabled}`,
+      `    mouth_sag_v_enabled: ${p.mouthSagVEnabled}`,
+      `    mouth_rear_offset: ${yamlNumber(p.mouthRearOffset)}`,
+      `    mount_diameter: ${yamlNumber(p.mountDiameter)}`,
+      `    mount_flange_thickness: ${yamlNumber(p.mountFlangeThickness)}`,
+      `    throat_start_wall_thickness: ${yamlNumber(p.throatStartWall)}`,
+      `    minimum_wall_thickness: ${yamlNumber(p.minimumWall)}`,
+      `    stl_export_mode: ${p.stlExportMode}`,
       "  horizontal_basis:",
       `    coverage_deg: ${yamlNumber(p.hCoverage)}`,
       `    k: ${yamlNumber(p.hK)}`,
@@ -2141,10 +2697,22 @@
     const light = normalizeVector({ x: -0.28, y: 0.46, z: 0.84 });
     const diffuse = Math.abs(normal.x * light.x + normal.y * light.y + normal.z * light.z);
     const shade = 0.34 + 0.66 * diffuse;
-    const r = Math.round(60 + 112 * shade);
-    const g = Math.round(92 + 128 * shade);
-    const b = Math.round(94 + 122 * shade);
+    const base = { r: 67, g: 132, b: 124 };
+    const r = Math.round(base.r * (0.58 + 0.42 * shade) + 42 * shade);
+    const g = Math.round(base.g * (0.58 + 0.42 * shade) + 42 * shade);
+    const b = Math.round(base.b * (0.58 + 0.42 * shade) + 42 * shade);
     return `rgba(${r}, ${g}, ${b}, ${clamp01(opacity)})`;
+  }
+
+  function expectedOutwardNormal(surface, i, point) {
+    if (i === surface.mouthIndex && surface.mouthSurfaceCenterZ !== null) {
+      return normalizeVector({
+        x: surface.mouthSagHEnabled ? point.x : 0,
+        y: surface.mouthSagVEnabled ? point.y : 0,
+        z: point.z - surface.mouthSurfaceCenterZ,
+      });
+    }
+    return normalizeVector({ x: point.x, y: point.y, z: 0 });
   }
 
   function surfaceBounds(p, surface) {
@@ -2170,9 +2738,11 @@
         const p01 = surface.rings[i][j1];
         const p11 = surface.rings[i1][j1];
         const p10 = surface.rings[i1][j];
-        const normal = normalizeVector(cross(vectorBetween(p00, p10), vectorBetween(p00, p01)));
+        const points = [p00, p10, p11, p01];
+        const { normal } = orientedQuadNormal(surface, i, p00, p01, p10, p11);
+        const projectedPoints = points.map((point) => project(point, bounds, rect));
         quads.push({
-          points: [p00, p10, p11, p01],
+          projectedPoints,
           color: shadedColor(normal, opacity),
           depth: (viewDepth(p00, bounds) + viewDepth(p01, bounds) + viewDepth(p10, bounds) + viewDepth(p11, bounds)) / 4,
         });
@@ -2185,8 +2755,7 @@
     for (const quad of quads) {
       ctx.fillStyle = quad.color;
       ctx.beginPath();
-      quad.points.forEach((point, index) => {
-        const projected = project(point, bounds, rect);
+      quad.projectedPoints.forEach((projected, index) => {
         if (index === 0) {
           ctx.moveTo(projected.x, projected.y);
         } else {
@@ -2195,6 +2764,57 @@
       });
       ctx.closePath();
       ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function orientedQuadNormal(surface, i, p00, p01, p10, p11) {
+    let normal = normalizeVector(cross(vectorBetween(p00, p10), vectorBetween(p00, p01)));
+    const center = {
+      x: (p00.x + p01.x + p10.x + p11.x) / 4,
+      y: (p00.y + p01.y + p10.y + p11.y) / 4,
+      z: (p00.z + p01.z + p10.z + p11.z) / 4,
+    };
+    const expected = expectedOutwardNormal(surface, i, center);
+    if (normal.x * expected.x + normal.y * expected.y + normal.z * expected.z < 0) {
+      normal = { x: -normal.x, y: -normal.y, z: -normal.z };
+    }
+    return { normal, center };
+  }
+
+  function drawSurfaceNormals(surface, bounds, rect) {
+    const zStep = Math.max(2, Math.round(surface.zCount / 14));
+    const thetaStep = Math.max(4, Math.round(surface.thetaCount / 36));
+    const length = Math.max(4, Math.min(surface.maxX, surface.maxY) * 0.09);
+
+    ctx.save();
+    ctx.strokeStyle = theme.normal;
+    ctx.fillStyle = theme.normal;
+    ctx.lineWidth = 1.4;
+    for (let i = 0; i < surface.zCount - 1; i += zStep) {
+      const i1 = Math.min(surface.zCount - 1, i + 1);
+      for (let j = 0; j < surface.thetaCount; j += thetaStep) {
+        const j1 = (j + 1) % surface.thetaCount;
+        const p00 = surface.rings[i][j];
+        const p01 = surface.rings[i][j1];
+        const p11 = surface.rings[i1][j1];
+        const p10 = surface.rings[i1][j];
+        const { normal, center } = orientedQuadNormal(surface, i, p00, p01, p10, p11);
+        const end = {
+          x: center.x + normal.x * length,
+          y: center.y + normal.y * length,
+          z: center.z + normal.z * length,
+        };
+        const a = project(center, bounds, rect);
+        const b = project(end, bounds, rect);
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
     ctx.restore();
   }
@@ -2212,14 +2832,22 @@
     if (wireframeVisibleInput.checked) {
       ctx.save();
       ctx.lineWidth = 1;
-      ctx.strokeStyle = "rgba(15, 118, 110, 0.34)";
+      ctx.strokeStyle = "rgba(77, 182, 168, 0.38)";
 
       for (let i = 0; i < surface.zCount; i += 1) {
-        const isMouth = i === surface.zCount - 1;
+        const isMouth = i === surface.mouthIndex;
+        const isRearMouth = i === surface.zCount - 1 && surface.mouthIndex !== i;
         if (isMouth && currentView === "top") {
           continue;
         }
-        drawPolyline(surface.rings[i], bounds, rect, isMouth ? "#0f766e" : "rgba(15, 118, 110, 0.34)", isMouth ? 2.4 : 1, true);
+        drawPolyline(
+          surface.rings[i],
+          bounds,
+          rect,
+          isMouth || isRearMouth ? theme.accentStrong : "rgba(77, 182, 168, 0.38)",
+          isMouth || isRearMouth ? 2.4 : 1,
+          true
+        );
       }
 
       if (currentView === "top") {
@@ -2232,10 +2860,13 @@
         for (let i = 0; i < surface.zCount; i += 1) {
           line.push(surface.rings[i][j]);
         }
-        drawPolyline(line, bounds, rect, j % (thetaStep * 3) === 0 ? "rgba(32, 35, 38, 0.55)" : "rgba(32, 35, 38, 0.25)", 1);
+        drawPolyline(line, bounds, rect, j % (thetaStep * 3) === 0 ? "rgba(148, 163, 173, 0.46)" : "rgba(148, 163, 173, 0.22)", 1);
       }
 
       ctx.restore();
+    }
+    if (normalsVisibleInput.checked) {
+      drawSurfaceNormals(surface, bounds, rect);
     }
     drawLabel(rect);
   }
@@ -2250,10 +2881,10 @@
       points.push({
         x,
         y: 0,
-        z: p.length - cylindricalMouthSetback(p, x, radius),
+        z: p.length - mouthSetback(p, x, 0, radius, surface.vEnd),
       });
     }
-    drawPolyline(points, bounds, rect, "#0f766e", 2.4);
+    drawPolyline(points, bounds, rect, theme.accentStrong, 2.4);
   }
 
   function drawPolyline(points, bounds, rect, color, width, close = false) {
@@ -2281,7 +2912,7 @@
 
   function drawLabel(rect) {
     ctx.save();
-    ctx.fillStyle = "#34383c";
+    ctx.fillStyle = theme.ink;
     ctx.font = "13px system-ui, sans-serif";
     ctx.fillText(`View: ${currentView}`, 16, 24);
     ctx.restore();
