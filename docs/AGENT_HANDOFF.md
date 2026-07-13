@@ -77,9 +77,9 @@ The supported exporter uses a square-boundary section topology:
   yellow mouth-offset ring. Do not add a red-style cap/closure from a rear
   return ring to a separate outside terminal ring; that is the failed topology
   this branch is avoiding,
-- compact near-mouth outside rings before meshing. The station blend can create
-  sub-millimeter strips just behind the yellow boundary; those are topologically
-  valid but render as seam gaps/slivers,
+- resample near-mouth outside rings by path length before meshing. The station
+  blend can create sub-millimeter strips just behind the yellow boundary; deleting
+  those rings sharpens the wall into a chord, so redistribute that suffix instead,
 - STL export mode can be `body` or `acoustic_surface`; body mode should be
   watertight, acoustic surface mode is intentionally open,
 - mesh exported through `trimesh`,

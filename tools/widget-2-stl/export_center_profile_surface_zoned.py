@@ -719,15 +719,37 @@ def compact_mouth_outer_rings(
     if len(outer_rings) <= 2:
         return outer_rings
     min_spacing = max(1.0, max(0.0, PARAMS["minimum_wall"]) * 0.25)
-    kept_reversed = [outer_rings[-1]]
-    for ring in reversed(outer_rings[:-1]):
-        distances = [math.dist(a, b) for a, b in zip(ring, kept_reversed[-1])]
-        if (
-            sum(distances) / max(1, len(distances)) >= min_spacing
-            and min(distances) >= min_spacing
-        ):
-            kept_reversed.append(ring)
-    return list(reversed(kept_reversed))
+    resample_span = max(min_spacing * 8.0, max(0.0, PARAMS["minimum_wall"]) * 4.0)
+    segment_lengths = [
+        sum(math.dist(a, b) for a, b in zip(outer_rings[i], outer_rings[i + 1])) / max(1, len(outer_rings[i]))
+        for i in range(len(outer_rings) - 1)
+    ]
+    cumulative = [0.0 for _ in outer_rings]
+    for i in range(len(outer_rings) - 2, -1, -1):
+        cumulative[i] = cumulative[i + 1] + segment_lengths[i]
+
+    start = len(outer_rings) - 1
+    while start > 0 and cumulative[start - 1] <= resample_span:
+        start -= 1
+    if start >= len(outer_rings) - 2:
+        return outer_rings
+
+    total = cumulative[start]
+    target_count = max(2, math.ceil(total / min_spacing) + 1)
+    targets = [total * (target_count - 1 - i) / (target_count - 1) for i in range(target_count)]
+
+    def ring_at_distance(distance_from_mouth: float) -> list[tuple[float, float, float]]:
+        for index in range(start, len(outer_rings) - 1):
+            if cumulative[index] >= distance_from_mouth >= cumulative[index + 1]:
+                span = max(1e-12, cumulative[index] - cumulative[index + 1])
+                t = (cumulative[index] - distance_from_mouth) / span
+                return [
+                    interpolate_point(outer_rings[index][column], outer_rings[index + 1][column], t)
+                    for column in range(len(outer_rings[index]))
+                ]
+        return outer_rings[-1]
+
+    return [*outer_rings[:start], *[ring_at_distance(target) for target in targets]]
 
 
 def build_body_mesh(
