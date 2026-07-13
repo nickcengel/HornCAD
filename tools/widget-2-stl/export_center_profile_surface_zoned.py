@@ -541,7 +541,7 @@ def mouth_outer_return_target_radius(mouth_h_radius: float, mouth_v_radius: floa
         return math.inf
     return max(
         1e-6,
-        radius - max(0.0, PARAMS["mouth_rear_offset"]) - 2.0 * max(0.0, PARAMS["minimum_wall"]),
+        radius - max(0.0, PARAMS["mouth_rear_offset"]) - max(0.0, PARAMS["minimum_wall"]),
     )
 
 

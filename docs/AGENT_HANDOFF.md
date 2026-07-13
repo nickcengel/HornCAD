@@ -72,8 +72,10 @@ The supported exporter uses a square-boundary section topology:
   mouth/corner geometry; do not normal-offset the rear return surface,
 - the inner rear mouth ring sits at `mouth_sag_radius - mouth_rear_offset`;
   the outer horn wall is trimmed to
-  `mouth_sag_radius - mouth_rear_offset - minimum_wall` so the return cannot
-  cross inside the acoustic surface near the mouth,
+  `mouth_sag_radius - mouth_rear_offset - minimum_wall`, not two wall
+  thicknesses. This keeps the authored rear return wall at the requested
+  minimum thickness while preventing the outside mouth boundary from exceeding
+  the requested mouth box,
 - STL export mode can be `body` or `acoustic_surface`; body mode should be
   watertight, acoustic surface mode is intentionally open,
 - mesh exported through `trimesh`,
