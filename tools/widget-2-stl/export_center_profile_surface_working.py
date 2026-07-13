@@ -18,18 +18,12 @@ PARAMS = {
     "h_coverage": 45.0,
     "h_k": 4.0,
     "h_n": 10.0,
-    "h_modifier_coverage": 1.0,
-    "h_modifier_k": 1.0,
-    "h_modifier_n": 1.0,
-    "h_modifier_amount": 0.0,
     "v_coverage": 30.0,
     "v_k": 4.0,
     "v_n": 10.0,
-    "v_modifier_coverage": 1.0,
-    "v_modifier_k": 1.0,
-    "v_modifier_n": 1.0,
-    "v_modifier_amount": 0.0,
     "mouth_sag": 60.0,
+    "h_modifier_enabled": False,
+    "v_modifier_enabled": False,
     "section_shape_1": 0.72,
     "squareness_morph_spline": [
         {"x": 0.0, "y": 0.0, "angle": 0.0, "tension": 0.35},
@@ -39,8 +33,16 @@ PARAMS = {
         {"x": 0.0, "y": 1.0, "angle": 0.0, "tension": 0.35},
         {"x": 1.0, "y": 0.0, "angle": 0.0, "tension": 0.35},
     ],
+    "h_modifier_profile_spline": [
+        {"x": 0.0, "y": 0.0, "angle": 0.0, "tension": 0.35},
+        {"x": 1.0, "y": 0.0, "angle": 0.0, "tension": 0.35},
+    ],
     "v_modifier_thickness_spline": [
         {"x": 0.0, "y": 1.0, "angle": 0.0, "tension": 0.35},
+        {"x": 1.0, "y": 0.0, "angle": 0.0, "tension": 0.35},
+    ],
+    "v_modifier_profile_spline": [
+        {"x": 0.0, "y": 0.0, "angle": 0.0, "tension": 0.35},
         {"x": 1.0, "y": 0.0, "angle": 0.0, "tension": 0.35},
     ],
     "density": 40,
@@ -104,7 +106,7 @@ def cubic_bezier_point(a: dict[str, float], b: dict[str, float], t: float) -> tu
     return x, y
 
 
-def spline_value(u: float, anchors: list[dict[str, float]]) -> float:
+def spline_value(u: float, anchors: list[dict[str, float]], clamp_y: bool = True) -> float:
     x = max(0.0, min(1.0, u))
     for index, anchor in enumerate(anchors[:-1]):
         next_anchor = anchors[index + 1]
@@ -119,7 +121,7 @@ def spline_value(u: float, anchors: list[dict[str, float]]) -> float:
                 else:
                     hi = mid
             _, y = cubic_bezier_point(anchor, next_anchor, (lo + hi) / 2.0)
-            return max(0.0, min(1.0, y))
+            return max(0.0, min(1.0, y)) if clamp_y else y
     return anchors[-1]["y"]
 
 
@@ -127,19 +129,10 @@ def modifier_thickness_value(axis: str, u: float) -> float:
     return spline_value(u, PARAMS[f"{axis}_modifier_thickness_spline"])
 
 
-def modifier_radius(axis: str, z: float) -> float:
-    p = PARAMS
-    coverage = p[f"{axis}_coverage"] * p[f"{axis}_modifier_coverage"]
-    k = p[f"{axis}_k"] * p[f"{axis}_modifier_k"]
-    n = p[f"{axis}_n"] * p[f"{axis}_modifier_n"]
-    end_radius = p["mouth_width"] / 2.0 if axis == "h" else p["mouth_height"] / 2.0
-    r0 = effective_throat_radius(p)
-    s = solved_s(p["length"], r0, coverage, k, n, end_radius, p["throat_angle"])
-    return osse_radius(z, p["length"], r0, coverage, k, n, s, p["throat_angle"])
-
-
 def modifier_delta(axis: str, z: float, basis_radius: float) -> float:
-    return (modifier_radius(axis, z) - basis_radius) * PARAMS[f"{axis}_modifier_amount"]
+    if not PARAMS.get(f"{axis}_modifier_enabled", False):
+        return 0.0
+    return spline_value(z / max(PARAMS["length"], 1e-9), PARAMS[f"{axis}_modifier_profile_spline"], False)
 
 
 def superellipse_n(shape: float) -> float:

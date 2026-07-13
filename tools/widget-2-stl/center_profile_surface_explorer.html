@@ -107,6 +107,20 @@
       background: #fff;
     }
 
+    .toggle-control {
+      display: flex;
+      grid-template-columns: none;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 0;
+    }
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+
     .viewbar {
       display: flex;
       gap: 8px;
@@ -209,7 +223,16 @@
     .curve-tools {
       display: flex;
       gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
       margin: 10px 0 8px;
+    }
+
+    .curve-tools span {
+      margin-right: auto;
+      color: #34383c;
+      font-size: 12px;
+      font-weight: 700;
     }
 
     .curve-tools button {
@@ -227,6 +250,23 @@
       background: #fff;
       cursor: crosshair;
       touch-action: none;
+    }
+
+    .modifier-panel {
+      margin-top: 10px;
+      border-top: 1px solid var(--line);
+      padding-top: 8px;
+    }
+
+    .modifier-panel summary {
+      cursor: pointer;
+      color: #34383c;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .modifier-panel[open] summary {
+      margin-bottom: 8px;
     }
 
     code {
@@ -291,6 +331,19 @@
         <input data-control="stlSideSamples" type="number" min="16" max="256" step="4" value="96">
         <input data-control="stlSideSamples" type="range" min="16" max="256" step="4" value="96">
       </label>
+      <label class="toggle-control">
+        Solid
+        <input id="solid-surface" type="checkbox" checked>
+      </label>
+      <label>
+        Solid opacity
+        <input data-control="solidOpacity" type="number" min="0" max="1" step="0.05" value="0.82">
+        <input data-control="solidOpacity" type="range" min="0" max="1" step="0.05" value="0.82">
+      </label>
+      <label class="toggle-control">
+        Wireframe
+        <input id="wireframe-visible" type="checkbox" checked>
+      </label>
       <div class="action-row">
         <button type="button" class="primary-action" data-export-stl>Export STL</button>
         <button type="button" data-export-yaml>Export YAML</button>
@@ -353,32 +406,27 @@
         <input data-control="hN" type="number" min="2" max="100" step="0.5" value="10">
         <input data-control="hN" type="range" min="2" max="100" step="0.5" value="10">
       </label>
-      <label>
-        Modifier coverage x
-        <input data-control="hModifierCoverage" type="number" min="0.05" max="3" step="0.05" value="1">
-        <input data-control="hModifierCoverage" type="range" min="0.05" max="3" step="0.05" value="1">
+      <label class="toggle-control">
+        Modifier enabled
+        <input id="h-modifier-enabled" type="checkbox">
       </label>
-      <label>
-        Modifier K x
-        <input data-control="hModifierK" type="number" min="0.05" max="3" step="0.05" value="1">
-        <input data-control="hModifierK" type="range" min="0.05" max="3" step="0.05" value="1">
-      </label>
-      <label>
-        Modifier N x
-        <input data-control="hModifierN" type="number" min="0.05" max="3" step="0.05" value="1">
-        <input data-control="hModifierN" type="range" min="0.05" max="3" step="0.05" value="1">
-      </label>
-      <label>
-        Modifier amount
-        <input data-control="hModifierAmount" type="number" min="-200" max="200" step="1" value="0">
-        <input data-control="hModifierAmount" type="range" min="-200" max="200" step="1" value="0">
-      </label>
-      <div class="curve-tools">
-        <button type="button" data-h-modifier-curve-add>Add point</button>
-        <button type="button" data-h-modifier-curve-remove>Remove point</button>
-        <button type="button" data-h-modifier-curve-reset>Reset</button>
-      </div>
-      <canvas id="h-modifier-curve" class="curve-editor" width="720" height="300"></canvas>
+      <details class="modifier-panel">
+        <summary>Modifiers</summary>
+        <div class="curve-tools">
+          <span>Profile Modifier</span>
+          <button type="button" data-h-profile-modifier-add>Add point</button>
+          <button type="button" data-h-profile-modifier-remove>Remove point</button>
+          <button type="button" data-h-profile-modifier-reset>Reset</button>
+        </div>
+        <canvas id="h-profile-modifier" class="curve-editor" width="720" height="300"></canvas>
+        <div class="curve-tools">
+          <span>Slice Modifier</span>
+          <button type="button" data-h-modifier-curve-add>Add point</button>
+          <button type="button" data-h-modifier-curve-remove>Remove point</button>
+          <button type="button" data-h-modifier-curve-reset>Reset</button>
+        </div>
+        <canvas id="h-modifier-curve" class="curve-editor" width="720" height="300"></canvas>
+      </details>
     </fieldset>
 
     <fieldset>
@@ -398,32 +446,27 @@
         <input data-control="vN" type="number" min="2" max="100" step="0.5" value="10">
         <input data-control="vN" type="range" min="2" max="100" step="0.5" value="10">
       </label>
-      <label>
-        Modifier coverage x
-        <input data-control="vModifierCoverage" type="number" min="0.05" max="3" step="0.05" value="1">
-        <input data-control="vModifierCoverage" type="range" min="0.05" max="3" step="0.05" value="1">
+      <label class="toggle-control">
+        Modifier enabled
+        <input id="v-modifier-enabled" type="checkbox">
       </label>
-      <label>
-        Modifier K x
-        <input data-control="vModifierK" type="number" min="0.05" max="3" step="0.05" value="1">
-        <input data-control="vModifierK" type="range" min="0.05" max="3" step="0.05" value="1">
-      </label>
-      <label>
-        Modifier N x
-        <input data-control="vModifierN" type="number" min="0.05" max="3" step="0.05" value="1">
-        <input data-control="vModifierN" type="range" min="0.05" max="3" step="0.05" value="1">
-      </label>
-      <label>
-        Modifier amount
-        <input data-control="vModifierAmount" type="number" min="-200" max="200" step="1" value="0">
-        <input data-control="vModifierAmount" type="range" min="-200" max="200" step="1" value="0">
-      </label>
-      <div class="curve-tools">
-        <button type="button" data-v-modifier-curve-add>Add point</button>
-        <button type="button" data-v-modifier-curve-remove>Remove point</button>
-        <button type="button" data-v-modifier-curve-reset>Reset</button>
-      </div>
-      <canvas id="v-modifier-curve" class="curve-editor" width="720" height="300"></canvas>
+      <details class="modifier-panel">
+        <summary>Modifiers</summary>
+        <div class="curve-tools">
+          <span>Profile Modifier</span>
+          <button type="button" data-v-profile-modifier-add>Add point</button>
+          <button type="button" data-v-profile-modifier-remove>Remove point</button>
+          <button type="button" data-v-profile-modifier-reset>Reset</button>
+        </div>
+        <canvas id="v-profile-modifier" class="curve-editor" width="720" height="300"></canvas>
+        <div class="curve-tools">
+          <span>Slice Modifier</span>
+          <button type="button" data-v-modifier-curve-add>Add point</button>
+          <button type="button" data-v-modifier-curve-remove>Remove point</button>
+          <button type="button" data-v-modifier-curve-reset>Reset</button>
+        </div>
+        <canvas id="v-modifier-curve" class="curve-editor" width="720" height="300"></canvas>
+      </details>
     </fieldset>
 
     <fieldset>
@@ -461,8 +504,16 @@
   const controls = new Map();
   const canvas = document.getElementById("surface");
   const ctx = canvas.getContext("2d");
+  const solidSurfaceInput = document.getElementById("solid-surface");
+  const wireframeVisibleInput = document.getElementById("wireframe-visible");
+  const hModifierEnabledInput = document.getElementById("h-modifier-enabled");
+  const vModifierEnabledInput = document.getElementById("v-modifier-enabled");
   const morphCurveCanvas = document.getElementById("morph-curve");
   const morphCurveCtx = morphCurveCanvas.getContext("2d");
+  const hProfileModifierCanvas = document.getElementById("h-profile-modifier");
+  const hProfileModifierCtx = hProfileModifierCanvas.getContext("2d");
+  const vProfileModifierCanvas = document.getElementById("v-profile-modifier");
+  const vProfileModifierCtx = vProfileModifierCanvas.getContext("2d");
   const hModifierCurveCanvas = document.getElementById("h-modifier-curve");
   const hModifierCurveCtx = hModifierCurveCanvas.getContext("2d");
   const vModifierCurveCanvas = document.getElementById("v-modifier-curve");
@@ -473,6 +524,10 @@
   ];
   const defaultModifierSpline = [
     { x: 0, y: 1, angle: 0, tension: 0.35 },
+    { x: 1, y: 0, angle: 0, tension: 0.35 },
+  ];
+  const defaultProfileModifierSpline = [
+    { x: 0, y: 0, angle: 0, tension: 0.35 },
     { x: 1, y: 0, angle: 0, tension: 0.35 },
   ];
   const morphCurve = {
@@ -497,6 +552,25 @@
     monotonic: "decreasing",
   };
   let activeSplineHandle = null;
+  const profileModifierSplines = {
+    h: cloneSpline(defaultProfileModifierSpline),
+    v: cloneSpline(defaultProfileModifierSpline),
+  };
+  let activeProfileModifierHandle = null;
+  const hProfileModifierEditor = {
+    canvas: hProfileModifierCanvas,
+    ctx: hProfileModifierCtx,
+    axis: "h",
+    anchors: profileModifierSplines.h,
+    defaults: defaultProfileModifierSpline,
+  };
+  const vProfileModifierEditor = {
+    canvas: vProfileModifierCanvas,
+    ctx: vProfileModifierCtx,
+    axis: "v",
+    anchors: profileModifierSplines.v,
+    defaults: defaultProfileModifierSpline,
+  };
   let currentView = "top";
   const orbit = {
     yaw: -Math.PI / 4,
@@ -506,6 +580,9 @@
     lastX: 0,
     lastY: 0,
   };
+  let renderQueued = false;
+  let cachedSurfaceKey = "";
+  let cachedSurface = null;
 
   const metrics = {
     width: document.getElementById("metric-width"),
@@ -530,17 +607,28 @@
           peer.value = input.value;
         }
       }
-      render();
+      scheduleRender();
     };
     input.addEventListener("input", syncControl);
     input.addEventListener("change", syncControl);
   }
+
+  hModifierEnabledInput.addEventListener("change", scheduleRender);
+  vModifierEnabledInput.addEventListener("change", scheduleRender);
+  solidSurfaceInput.addEventListener("change", scheduleRender);
+  wireframeVisibleInput.addEventListener("change", scheduleRender);
 
   document.querySelector("[data-export-stl]").addEventListener("click", exportStl);
   document.querySelector("[data-export-yaml]").addEventListener("click", exportYaml);
   document.querySelector("[data-curve-add]").addEventListener("click", () => addSplineAnchor(morphCurve));
   document.querySelector("[data-curve-remove]").addEventListener("click", () => removeSplineAnchor(morphCurve));
   document.querySelector("[data-curve-reset]").addEventListener("click", () => resetSplineCurve(morphCurve));
+  document.querySelector("[data-h-profile-modifier-add]").addEventListener("click", () => addProfileModifierAnchor(hProfileModifierEditor));
+  document.querySelector("[data-h-profile-modifier-remove]").addEventListener("click", () => removeProfileModifierAnchor(hProfileModifierEditor));
+  document.querySelector("[data-h-profile-modifier-reset]").addEventListener("click", () => resetProfileModifier(hProfileModifierEditor));
+  document.querySelector("[data-v-profile-modifier-add]").addEventListener("click", () => addProfileModifierAnchor(vProfileModifierEditor));
+  document.querySelector("[data-v-profile-modifier-remove]").addEventListener("click", () => removeProfileModifierAnchor(vProfileModifierEditor));
+  document.querySelector("[data-v-profile-modifier-reset]").addEventListener("click", () => resetProfileModifier(vProfileModifierEditor));
   document.querySelector("[data-h-modifier-curve-add]").addEventListener("click", () => addSplineAnchor(hModifierCurve));
   document.querySelector("[data-h-modifier-curve-remove]").addEventListener("click", () => removeSplineAnchor(hModifierCurve));
   document.querySelector("[data-h-modifier-curve-reset]").addEventListener("click", () => resetSplineCurve(hModifierCurve));
@@ -555,7 +643,7 @@
       for (const peer of document.querySelectorAll("[data-view]")) {
         peer.classList.toggle("active", peer === button);
       }
-      render();
+      scheduleRender();
     });
   }
 
@@ -578,7 +666,7 @@
     orbit.lastY = event.clientY;
     orbit.yaw += dx * 0.008;
     orbit.pitch = Math.max(-1.35, Math.min(1.35, orbit.pitch + dy * 0.008));
-    render();
+    scheduleRender();
   });
 
   canvas.addEventListener("pointerup", (event) => {
@@ -597,7 +685,7 @@
     setCurrentView("orbit");
     const factor = Math.exp(-event.deltaY * 0.001);
     orbit.zoom = Math.max(0.25, Math.min(5, orbit.zoom * factor));
-    render();
+    scheduleRender();
   }, { passive: false });
 
   morphCurveCanvas.addEventListener("pointerdown", (event) => {
@@ -626,6 +714,12 @@
 
   bindSplineEditor(hModifierCurve);
   bindSplineEditor(vModifierCurve);
+  bindProfileModifierEditor(hProfileModifierEditor);
+  bindProfileModifierEditor(vProfileModifierEditor);
+
+  for (const panel of document.querySelectorAll(".modifier-panel")) {
+    panel.addEventListener("toggle", scheduleRender);
+  }
 
   function bindSplineEditor(editor) {
     editor.canvas.addEventListener("pointerdown", (event) => {
@@ -650,6 +744,33 @@
 
     editor.canvas.addEventListener("pointercancel", () => {
       activeSplineHandle = null;
+    });
+  }
+
+  function bindProfileModifierEditor(editor) {
+    editor.canvas.addEventListener("pointerdown", (event) => {
+      const p = params();
+      activeProfileModifierHandle = nearestProfileModifierEditorHandle(editor, p, profileModifierEventPoint(editor, event));
+      if (activeProfileModifierHandle !== null) {
+        editor.canvas.setPointerCapture(event.pointerId);
+        moveProfileModifierEditorHandle(activeProfileModifierHandle, p, profileModifierEventPoint(editor, event));
+      }
+    });
+
+    editor.canvas.addEventListener("pointermove", (event) => {
+      if (activeProfileModifierHandle === null || activeProfileModifierHandle.editor !== editor) {
+        return;
+      }
+      moveProfileModifierEditorHandle(activeProfileModifierHandle, params(), profileModifierEventPoint(editor, event));
+    });
+
+    editor.canvas.addEventListener("pointerup", (event) => {
+      activeProfileModifierHandle = null;
+      editor.canvas.releasePointerCapture(event.pointerId);
+    });
+
+    editor.canvas.addEventListener("pointercancel", () => {
+      activeProfileModifierHandle = null;
     });
   }
 
@@ -707,18 +828,13 @@
       hCoverage: value("hCoverage"),
       hK: value("hK"),
       hN: value("hN"),
-      hModifierCoverage: value("hModifierCoverage"),
-      hModifierK: value("hModifierK"),
-      hModifierN: value("hModifierN"),
-      hModifierAmount: value("hModifierAmount") / 100,
       vCoverage: value("vCoverage"),
       vK: value("vK"),
       vN: value("vN"),
-      vModifierCoverage: value("vModifierCoverage"),
-      vModifierK: value("vModifierK"),
-      vModifierN: value("vModifierN"),
-      vModifierAmount: value("vModifierAmount") / 100,
       mouthSag: value("mouthSag"),
+      hModifierEnabled: hModifierEnabledInput.checked,
+      vModifierEnabled: vModifierEnabledInput.checked,
+      solidOpacity: value("solidOpacity"),
       sectionShape1: value("sectionShape1"),
       density: Math.max(8, Math.round(value("density"))),
       stlStations: Math.max(8, Math.round(value("stlStations"))),
@@ -760,56 +876,14 @@
     return (z) => osseRadius(z, p.length, r0, coverage, k, n, s, p.throatAngle);
   }
 
-  function axisParams(p, axis) {
-    return axis === "h"
-      ? {
-        coverage: p.hCoverage,
-        k: p.hK,
-        n: p.hN,
-        endRadius: p.mouthWidth / 2,
-        coverageMultiplier: p.hModifierCoverage,
-        kMultiplier: p.hModifierK,
-        nMultiplier: p.hModifierN,
-        amount: p.hModifierAmount,
-      }
-      : {
-        coverage: p.vCoverage,
-        k: p.vK,
-        n: p.vN,
-        endRadius: p.mouthHeight / 2,
-        coverageMultiplier: p.vModifierCoverage,
-        kMultiplier: p.vModifierK,
-        nMultiplier: p.vModifierN,
-        amount: p.vModifierAmount,
-      };
-  }
-
-  function modifierRadius(p, axis, z) {
-    const params = axisParams(p, axis);
-    const r0 = effectiveThroatRadius(p);
-    const coverage = params.coverage * params.coverageMultiplier;
-    const k = params.k * params.kMultiplier;
-    const n = params.n * params.nMultiplier;
-    const s = solvedS(p.length, r0, coverage, k, n, params.endRadius, p.throatAngle);
-    return osseRadius(z, p.length, r0, coverage, k, n, s, p.throatAngle);
-  }
-
   function modifierDelta(p, axis, z, basisRadius) {
-    return (modifierRadius(p, axis, z) - basisRadius) * axisParams(p, axis).amount;
-  }
-
-  function modifierSolvedS(p, axis) {
-    const params = axisParams(p, axis);
-    const r0 = effectiveThroatRadius(p);
-    return solvedS(
-      p.length,
-      r0,
-      params.coverage * params.coverageMultiplier,
-      params.k * params.kMultiplier,
-      params.n * params.nMultiplier,
-      params.endRadius,
-      p.throatAngle
-    );
+    if (axis === "h" && !p.hModifierEnabled) {
+      return 0;
+    }
+    if (axis === "v" && !p.vModifierEnabled) {
+      return 0;
+    }
+    return profileModifierValue(p, axis, z / Math.max(p.length, 1e-9));
   }
 
   function measuredLength(p) {
@@ -894,8 +968,11 @@
   }
 
   function splineValue(editor, u) {
+    return splineValueFromAnchors(editor.anchors, u, true);
+  }
+
+  function splineValueFromAnchors(anchors, u, clampY = true) {
     const x = clamp01(u);
-    const anchors = editor.anchors;
     for (let i = 0; i < anchors.length - 1; i += 1) {
       const a = anchors[i];
       const b = anchors[i + 1];
@@ -911,10 +988,44 @@
             hi = mid;
           }
         }
-        return clamp01(bezierPoint(a, b, (lo + hi) / 2).y);
+        const value = bezierPoint(a, b, (lo + hi) / 2).y;
+        return clampY ? clamp01(value) : value;
       }
     }
     return anchors[anchors.length - 1].y;
+  }
+
+  function profileModifierValue(p, axis, u) {
+    const profile = makeProfile(p, axis);
+    const absolute = profileModifierAbsoluteValue({ axis, anchors: profileModifierSplines[axis] }, p, u);
+    return absolute - profile(clamp01(u) * p.length);
+  }
+
+  function profileModifierAbsoluteValue(editor, p, u) {
+    const x = clamp01(u);
+    const profile = makeProfile(p, editor.axis);
+    const first = editor.anchors[0];
+    const last = editor.anchors[editor.anchors.length - 1];
+    if (x <= first.x || x >= last.x) {
+      return profile(x * p.length);
+    }
+    for (let i = 0; i < editor.anchors.length - 1; i += 1) {
+      if (x <= editor.anchors[i + 1].x || i === editor.anchors.length - 2) {
+        let lo = 0;
+        let hi = 1;
+        for (let pass = 0; pass < 18; pass += 1) {
+          const mid = (lo + hi) / 2;
+          const point = profileModifierBezierPoint(editor, p, i, mid);
+          if (point.x < x) {
+            lo = mid;
+          } else {
+            hi = mid;
+          }
+        }
+        return profileModifierBezierPoint(editor, p, i, (lo + hi) / 2).y;
+      }
+    }
+    return profileModifierAbsolutePoint(editor, p, last).y;
   }
 
   function splineHandlePoint(editor, index, direction) {
@@ -983,7 +1094,7 @@
       anchor.tension = Math.max(0, Math.min(1.5, Math.hypot(dx, dy) / span));
     }
     drawSplineEditor(editor);
-    render();
+    scheduleRender();
   }
 
   function clampAnchorY(editor, y, index) {
@@ -1008,7 +1119,7 @@
     const x = (editor.anchors[insertIndex - 1].x + editor.anchors[insertIndex].x) / 2;
     editor.anchors.splice(insertIndex, 0, { x, y: splineValue(editor, x), angle: 0, tension: 0.35 });
     drawSplineEditor(editor);
-    render();
+    scheduleRender();
   }
 
   function removeSplineAnchor(editor) {
@@ -1017,13 +1128,325 @@
     }
     editor.anchors.splice(editor.anchors.length - 2, 1);
     drawSplineEditor(editor);
-    render();
+    scheduleRender();
   }
 
   function resetSplineCurve(editor) {
     editor.anchors = cloneSpline(editor.defaults);
     drawSplineEditor(editor);
-    render();
+    scheduleRender();
+  }
+
+  function profileModifierBounds(editor, p) {
+    const profile = makeProfile(p, editor.axis);
+    let minY = Infinity;
+    let maxY = -Infinity;
+    for (let i = 0; i <= 160; i += 1) {
+      const u = i / 160;
+      const basis = profile(u * p.length);
+      const modified = basis + profileModifierValue(p, editor.axis, u);
+      minY = Math.min(minY, basis, modified);
+      maxY = Math.max(maxY, basis, modified);
+    }
+    const pad = Math.max(6, (maxY - minY) * 0.12);
+    return { minY: minY - pad, maxY: maxY + pad };
+  }
+
+  function profileModifierPlotRect(editor) {
+    return { x: 32, y: 16, width: editor.canvas.width - 48, height: editor.canvas.height - 42 };
+  }
+
+  function profileModifierView(editor, p) {
+    return {
+      rect: profileModifierPlotRect(editor),
+      bounds: profileModifierBounds(editor, p),
+      profile: makeProfile(p, editor.axis),
+    };
+  }
+
+  function profileModifierToCanvas(editor, p, point, view = profileModifierView(editor, p)) {
+    const { rect, bounds, profile } = view;
+    const y = profile(point.x * p.length) + point.y;
+    return {
+      x: rect.x + point.x * rect.width,
+      y: rect.y + (1 - (y - bounds.minY) / Math.max(bounds.maxY - bounds.minY, 1e-9)) * rect.height,
+    };
+  }
+
+  function profileModifierAbsoluteToCanvas(editor, p, point, view = profileModifierView(editor, p)) {
+    const { rect, bounds } = view;
+    return {
+      x: rect.x + point.x * rect.width,
+      y: rect.y + (1 - (point.y - bounds.minY) / Math.max(bounds.maxY - bounds.minY, 1e-9)) * rect.height,
+    };
+  }
+
+  function canvasToProfileModifier(editor, p, point, view = profileModifierView(editor, p)) {
+    const { rect, bounds, profile } = view;
+    const x = clamp01((point.x - rect.x) / rect.width);
+    const y = bounds.minY + (1 - (point.y - rect.y) / rect.height) * (bounds.maxY - bounds.minY);
+    return { x, y: y - profile(x * p.length) };
+  }
+
+  function canvasToProfileModifierAbsolute(editor, p, point, view = profileModifierView(editor, p)) {
+    const { rect, bounds } = view;
+    const x = clamp01((point.x - rect.x) / rect.width);
+    const y = bounds.minY + (1 - (point.y - rect.y) / rect.height) * (bounds.maxY - bounds.minY);
+    return { x, y };
+  }
+
+  function profileModifierEventPoint(editor, event) {
+    const rect = editor.canvas.getBoundingClientRect();
+    const scaleX = editor.canvas.width / rect.width;
+    const scaleY = editor.canvas.height / rect.height;
+    return {
+      x: (event.clientX - rect.left) * scaleX,
+      y: (event.clientY - rect.top) * scaleY,
+    };
+  }
+
+  function profileModifierHandlePoint(editor, p, index, direction) {
+    const anchor = editor.anchors[index];
+    const neighbor = direction > 0 ? editor.anchors[index + 1] : editor.anchors[index - 1];
+    if (!neighbor) {
+      return null;
+    }
+    return profileModifierHandleForAnchor(editor, p, anchor, neighbor, direction);
+  }
+
+  function profileModifierAbsolutePoint(editor, p, anchor) {
+    const profile = makeProfile(p, editor.axis);
+    return { x: anchor.x, y: profile(anchor.x * p.length) + anchor.y };
+  }
+
+  function basisProfileSlope(p, axis, u) {
+    const profile = makeProfile(p, axis);
+    const length = Math.max(p.length, 1e-9);
+    const center = clamp01(u) * length;
+    const step = Math.max(length * 1e-4, 1e-4);
+    const z0 = Math.max(0, center - step);
+    const z1 = Math.min(length, center + step);
+    return z1 === z0 ? 0 : (profile(z1) - profile(z0)) / (z1 - z0);
+  }
+
+  function profileModifierAnchorAngle(editor, p, index) {
+    if (index === 0 || index === editor.anchors.length - 1) {
+      return Math.atan(basisProfileSlope(p, editor.axis, editor.anchors[index].x));
+    }
+    return editor.anchors[index].angle;
+  }
+
+  function profileModifierHandleForAnchor(editor, p, anchor, neighbor, direction) {
+    const index = editor.anchors.indexOf(anchor);
+    const base = profileModifierAbsolutePoint(editor, p, anchor);
+    const angle = profileModifierAnchorAngle(editor, p, index);
+    const span = Math.abs(neighbor.x - anchor.x);
+    const length = Math.max(0, anchor.tension) * span;
+    return {
+      x: anchor.x + direction * Math.cos(angle) * length,
+      y: base.y + direction * Math.sin(angle) * length * p.length,
+    };
+  }
+
+  function profileModifierBezierPoint(editor, p, index, t) {
+    const a = editor.anchors[index];
+    const b = editor.anchors[index + 1];
+    const p0 = profileModifierAbsolutePoint(editor, p, a);
+    const p1 = profileModifierHandleForAnchor(editor, p, a, b, 1);
+    const p2 = profileModifierHandleForAnchor(editor, p, b, a, -1);
+    const p3 = profileModifierAbsolutePoint(editor, p, b);
+    const mt = 1 - t;
+    return {
+      x: mt ** 3 * p0.x + 3 * mt ** 2 * t * p1.x + 3 * mt * t ** 2 * p2.x + t ** 3 * p3.x,
+      y: mt ** 3 * p0.y + 3 * mt ** 2 * t * p1.y + 3 * mt * t ** 2 * p2.y + t ** 3 * p3.y,
+    };
+  }
+
+  function nearestProfileModifierEditorHandle(editor, p, canvasPoint) {
+    const view = profileModifierView(editor, p);
+    const hitRadius = 14 * (editor.canvas.width / Math.max(editor.canvas.getBoundingClientRect().width, 1));
+    let best = null;
+    let bestDistance = Infinity;
+    for (let i = 0; i < editor.anchors.length; i += 1) {
+      for (const direction of [-1, 1]) {
+        const handle = profileModifierHandlePoint(editor, p, i, direction);
+        if (!handle) {
+          continue;
+        }
+        const candidate = profileModifierAbsoluteToCanvas(editor, p, handle, view);
+        const distance = Math.hypot(candidate.x - canvasPoint.x, candidate.y - canvasPoint.y);
+        if (distance < bestDistance && distance <= hitRadius) {
+          best = { editor, type: "tangent", index: i, direction };
+          bestDistance = distance;
+        }
+      }
+    }
+    for (let i = 0; i < editor.anchors.length; i += 1) {
+      const candidate = profileModifierToCanvas(editor, p, editor.anchors[i], view);
+      const distance = Math.hypot(candidate.x - canvasPoint.x, candidate.y - canvasPoint.y);
+      if (distance < bestDistance && distance <= hitRadius) {
+        best = { editor, type: "anchor", index: i };
+        bestDistance = distance;
+      }
+    }
+    return best;
+  }
+
+  function moveProfileModifierEditorHandle(active, p, canvasPoint) {
+    const editor = active.editor;
+    const anchor = editor.anchors[active.index];
+    const view = profileModifierView(editor, p);
+    const point = canvasToProfileModifier(editor, p, canvasPoint, view);
+    if (active.type === "anchor") {
+      if (active.index === 0) {
+        const next = editor.anchors[1];
+        anchor.x = Math.max(0, Math.min(next.x - 0.01, point.x));
+        anchor.y = 0;
+      } else if (active.index === editor.anchors.length - 1) {
+        const previous = editor.anchors[active.index - 1];
+        anchor.x = Math.max(previous.x + 0.01, Math.min(1, point.x));
+        anchor.y = 0;
+      } else {
+        const previous = editor.anchors[active.index - 1];
+        const next = editor.anchors[active.index + 1];
+        anchor.x = Math.max(previous.x + 0.01, Math.min(next.x - 0.01, point.x));
+        anchor.y = point.y;
+      }
+    } else {
+      const absolutePoint = canvasToProfileModifierAbsolute(editor, p, canvasPoint, view);
+      const profile = makeProfile(p, editor.axis);
+      const anchorY = profile(anchor.x * p.length) + anchor.y;
+      const dx = Math.max(0, (absolutePoint.x - anchor.x) * active.direction);
+      const dy = ((absolutePoint.y - anchorY) / Math.max(p.length, 1e-9)) * active.direction;
+      const neighbor = active.direction > 0 ? editor.anchors[active.index + 1] : editor.anchors[active.index - 1];
+      const span = Math.max(1e-9, Math.abs(neighbor.x - anchor.x));
+      if (active.index === 0 || active.index === editor.anchors.length - 1) {
+        const angle = profileModifierAnchorAngle(editor, p, active.index);
+        const projected = dx * Math.cos(angle) + dy * Math.sin(angle);
+        anchor.tension = Math.max(0, Math.min(1.5, projected / span));
+      } else {
+        anchor.angle = Math.atan2(dy, dx);
+        anchor.tension = Math.max(0, Math.min(1.5, Math.hypot(dx, dy) / span));
+      }
+    }
+    editor.anchors[0].y = 0;
+    editor.anchors[editor.anchors.length - 1].y = 0;
+    drawProfileModifierEditor(editor, p);
+    scheduleRender();
+  }
+
+  function addProfileModifierAnchor(editor) {
+    let largestGap = 0;
+    let insertIndex = 1;
+    for (let i = 0; i < editor.anchors.length - 1; i += 1) {
+      const gap = editor.anchors[i + 1].x - editor.anchors[i].x;
+      if (gap > largestGap) {
+        largestGap = gap;
+        insertIndex = i + 1;
+      }
+    }
+    const x = (editor.anchors[insertIndex - 1].x + editor.anchors[insertIndex].x) / 2;
+    editor.anchors.splice(insertIndex, 0, { x, y: profileModifierValue(params(), editor.axis, x), angle: 0, tension: 0.35 });
+    scheduleRender();
+  }
+
+  function removeProfileModifierAnchor(editor) {
+    if (editor.anchors.length <= 2) {
+      return;
+    }
+    editor.anchors.splice(editor.anchors.length - 2, 1);
+    scheduleRender();
+  }
+
+  function resetProfileModifier(editor) {
+    editor.anchors.splice(0, editor.anchors.length, ...cloneSpline(editor.defaults));
+    scheduleRender();
+  }
+
+  function drawProfileModifierEditor(editor, p) {
+    const rect = profileModifierPlotRect(editor);
+    const view = profileModifierView(editor, p);
+    const curveCtx = editor.ctx;
+    curveCtx.clearRect(0, 0, editor.canvas.width, editor.canvas.height);
+    curveCtx.save();
+    curveCtx.strokeStyle = "#d6d8da";
+    curveCtx.lineWidth = 1;
+    curveCtx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+
+    for (let i = 1; i < 4; i += 1) {
+      const x = rect.x + rect.width * i / 4;
+      const y = rect.y + rect.height * i / 4;
+      curveCtx.beginPath();
+      curveCtx.moveTo(x, rect.y);
+      curveCtx.lineTo(x, rect.y + rect.height);
+      curveCtx.moveTo(rect.x, y);
+      curveCtx.lineTo(rect.x + rect.width, y);
+      curveCtx.stroke();
+    }
+
+    curveCtx.strokeStyle = "#697077";
+    curveCtx.lineWidth = 2;
+    curveCtx.beginPath();
+    for (let i = 0; i <= 160; i += 1) {
+      const x = i / 160;
+      const point = profileModifierToCanvas(editor, p, { x, y: 0 }, view);
+      if (i === 0) {
+        curveCtx.moveTo(point.x, point.y);
+      } else {
+        curveCtx.lineTo(point.x, point.y);
+      }
+    }
+    curveCtx.stroke();
+
+    curveCtx.strokeStyle = "#b42318";
+    curveCtx.lineWidth = 4;
+    curveCtx.beginPath();
+    for (let i = 0; i <= 160; i += 1) {
+      const x = i / 160;
+      const point = profileModifierToCanvas(editor, p, { x, y: profileModifierValue(p, editor.axis, x) }, view);
+      if (i === 0) {
+        curveCtx.moveTo(point.x, point.y);
+      } else {
+        curveCtx.lineTo(point.x, point.y);
+      }
+    }
+    curveCtx.stroke();
+
+    curveCtx.strokeStyle = "#8b949e";
+    curveCtx.lineWidth = 1.2;
+    for (let i = 0; i < editor.anchors.length; i += 1) {
+      const anchorCanvas = profileModifierToCanvas(editor, p, editor.anchors[i], view);
+      for (const direction of [-1, 1]) {
+        const handle = profileModifierHandlePoint(editor, p, i, direction);
+        if (!handle) {
+          continue;
+        }
+        const handleCanvas = profileModifierAbsoluteToCanvas(editor, p, handle, view);
+        curveCtx.beginPath();
+        curveCtx.moveTo(anchorCanvas.x, anchorCanvas.y);
+        curveCtx.lineTo(handleCanvas.x, handleCanvas.y);
+        curveCtx.stroke();
+        curveCtx.beginPath();
+        curveCtx.fillStyle = "#ffffff";
+        curveCtx.strokeStyle = "#b42318";
+        curveCtx.lineWidth = 2;
+        curveCtx.arc(handleCanvas.x, handleCanvas.y, 6, 0, Math.PI * 2);
+        curveCtx.fill();
+        curveCtx.stroke();
+      }
+    }
+
+    for (let i = 0; i < editor.anchors.length; i += 1) {
+      const point = profileModifierToCanvas(editor, p, editor.anchors[i], view);
+      curveCtx.beginPath();
+      curveCtx.fillStyle = i === 0 || i === editor.anchors.length - 1 ? "#34383c" : "#b42318";
+      curveCtx.strokeStyle = "#ffffff";
+      curveCtx.lineWidth = 2;
+      curveCtx.arc(point.x, point.y, 9, 0, Math.PI * 2);
+      curveCtx.fill();
+      curveCtx.stroke();
+    }
+    curveCtx.restore();
   }
 
   function drawSplineEditor(editor) {
@@ -1271,28 +1694,31 @@
     return { x: point.x, y: point.y, z: z - setback };
   }
 
-  function sectionPointFromXYAtZ(p, hRadius, vRadius, profileZ, outputZ, x, y, theta) {
+  function sectionPointFromXYAtZ(p, hRadius, vRadius, profileZ, outputZ, x, y, theta, hDelta = null, vDelta = null) {
     const point = { x, y };
     const u = Math.min(1, Math.abs(point.x) / Math.max(hRadius, 1e-9));
     const v = Math.min(1, Math.abs(point.y) / Math.max(vRadius, 1e-9));
     const hWindow = u * u * hModifierCurveValue(v);
     const vWindow = v * v * vModifierCurveValue(u);
-    const mouthFade = 1 - Math.pow(Math.max(0, Math.min(1, profileZ / Math.max(p.length, 1e-9))), 4);
-    point.x += Math.sign(point.x || Math.cos(theta)) * modifierDelta(p, "h", profileZ, hRadius) * hWindow;
-    point.y += Math.sign(point.y || Math.sin(theta)) * modifierDelta(p, "v", profileZ, vRadius) * vWindow;
+    const localHDelta = hDelta ?? modifierDelta(p, "h", profileZ, hRadius);
+    const localVDelta = vDelta ?? modifierDelta(p, "v", profileZ, vRadius);
+    point.x += Math.sign(point.x || Math.cos(theta)) * localHDelta * hWindow;
+    point.y += Math.sign(point.y || Math.sin(theta)) * localVDelta * vWindow;
     return { x: point.x, y: point.y, z: outputZ };
   }
 
   function sectionRing(p, hRadius, vRadius, profileZ, tau, sideSamples, mouthHRadius, mouthVRadius) {
     const shapeN = superellipseNFromShape(sectionShape(p, Math.max(0, p.throatExtension) + profileZ));
     const mouthShapeN = superellipseNFromShape(sectionShape(p, Math.max(0, p.throatExtension) + p.length));
+    const hDelta = modifierDelta(p, "h", profileZ, hRadius);
+    const vDelta = modifierDelta(p, "v", profileZ, vRadius);
     const ring = [];
     for (const sample of squareBoundarySamples(sideSamples)) {
       const point = superellipseFromSquareBoundary(hRadius, vRadius, shapeN, sample);
       const mouthPoint = superellipseFromSquareBoundary(mouthHRadius, mouthVRadius, mouthShapeN, sample);
       const localLength = Math.max(1e-9, p.length - cylindricalMouthSetback(p, mouthPoint.x, mouthHRadius));
       const outputZ = tau * localLength;
-      ring.push(sectionPointFromXYAtZ(p, hRadius, vRadius, profileZ, outputZ, point.x, point.y, point.theta));
+      ring.push(sectionPointFromXYAtZ(p, hRadius, vRadius, profileZ, outputZ, point.x, point.y, point.theta, hDelta, vDelta));
     }
 
     return ring;
@@ -1517,12 +1943,18 @@
     return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(6)));
   }
 
+  function profileModifierYamlPoints(p, axis) {
+    const editor = axis === "h" ? hProfileModifierEditor : vProfileModifierEditor;
+    return editor.anchors.map((point, index) => ({
+      ...point,
+      angle: profileModifierAnchorAngle(editor, p, index),
+    }));
+  }
+
   function widgetYaml(p) {
     const effectiveR0 = effectiveThroatRadius(p);
     const hS = solvedS(p.length, effectiveR0, p.hCoverage, p.hK, p.hN, p.mouthWidth / 2, p.throatAngle);
     const vS = solvedS(p.length, effectiveR0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2, p.throatAngle);
-    const hModifierS = modifierSolvedS(p, "h");
-    const vModifierS = modifierSolvedS(p, "v");
     return [
       "widget_config:",
       "  type: center_profile_surface_explorer",
@@ -1553,19 +1985,15 @@
       "    squareness_morph_spline:",
       ...morphCurve.anchors.map((point) => `      - {x: ${yamlNumber(point.x)}, y: ${yamlNumber(point.y)}, angle_deg: ${yamlNumber(point.angle * 180 / Math.PI)}, tension: ${yamlNumber(point.tension)}}`),
       "    horizontal_modifier:",
-      `      coverage_multiplier: ${yamlNumber(p.hModifierCoverage)}`,
-      `      k_multiplier: ${yamlNumber(p.hModifierK)}`,
-      `      n_multiplier: ${yamlNumber(p.hModifierN)}`,
-      `      amount_percent: ${yamlNumber(p.hModifierAmount * 100)}`,
-      `      solved_s: ${yamlNumber(hModifierS)}`,
+      `      enabled: ${p.hModifierEnabled ? "true" : "false"}`,
+      "      profile_delta_spline:",
+      ...profileModifierYamlPoints(p, "h").map((point) => `        - {x: ${yamlNumber(point.x)}, y_mm: ${yamlNumber(point.y)}, angle_deg: ${yamlNumber(point.angle * 180 / Math.PI)}, tension: ${yamlNumber(point.tension)}}`),
       "      thickness_spline:",
       ...hModifierCurve.anchors.map((point) => `        - {x: ${yamlNumber(point.x)}, y: ${yamlNumber(point.y)}, angle_deg: ${yamlNumber(point.angle * 180 / Math.PI)}, tension: ${yamlNumber(point.tension)}}`),
       "    vertical_modifier:",
-      `      coverage_multiplier: ${yamlNumber(p.vModifierCoverage)}`,
-      `      k_multiplier: ${yamlNumber(p.vModifierK)}`,
-      `      n_multiplier: ${yamlNumber(p.vModifierN)}`,
-      `      amount_percent: ${yamlNumber(p.vModifierAmount * 100)}`,
-      `      solved_s: ${yamlNumber(vModifierS)}`,
+      `      enabled: ${p.vModifierEnabled ? "true" : "false"}`,
+      "      profile_delta_spline:",
+      ...profileModifierYamlPoints(p, "v").map((point) => `        - {x: ${yamlNumber(point.x)}, y_mm: ${yamlNumber(point.y)}, angle_deg: ${yamlNumber(point.angle * 180 / Math.PI)}, tension: ${yamlNumber(point.tension)}}`),
       "      thickness_spline:",
       ...vModifierCurve.anchors.map((point) => `        - {x: ${yamlNumber(point.x)}, y: ${yamlNumber(point.y)}, angle_deg: ${yamlNumber(point.angle * 180 / Math.PI)}, tension: ${yamlNumber(point.tension)}}`),
       "  view:",
@@ -1673,43 +2101,142 @@
     };
   }
 
-  function drawSurface(p, surface) {
-    const rect = resizeCanvas();
-    ctx.clearRect(0, 0, rect.width, rect.height);
-    const bounds = {
+  function viewDepth(point, bounds) {
+    const centeredZ = point.z - bounds.centerZ;
+    if (currentView === "top") {
+      return point.y;
+    } else if (currentView === "side") {
+      return point.x;
+    } else if (currentView === "front") {
+      return centeredZ;
+    } else if (currentView === "orbit") {
+      const cy = Math.cos(orbit.yaw);
+      const sy = Math.sin(orbit.yaw);
+      return -point.x * sy + centeredZ * cy;
+    }
+    return (point.x + centeredZ) * Math.cos(Math.PI / 6) + point.y * 0.3;
+  }
+
+  function vectorBetween(a, b) {
+    return { x: b.x - a.x, y: b.y - a.y, z: b.z - a.z };
+  }
+
+  function cross(a, b) {
+    return {
+      x: a.y * b.z - a.z * b.y,
+      y: a.z * b.x - a.x * b.z,
+      z: a.x * b.y - a.y * b.x,
+    };
+  }
+
+  function normalizeVector(v) {
+    const length = Math.hypot(v.x, v.y, v.z);
+    if (length < 1e-9) {
+      return { x: 0, y: 0, z: 1 };
+    }
+    return { x: v.x / length, y: v.y / length, z: v.z / length };
+  }
+
+  function shadedColor(normal, opacity) {
+    const light = normalizeVector({ x: -0.28, y: 0.46, z: 0.84 });
+    const diffuse = Math.abs(normal.x * light.x + normal.y * light.y + normal.z * light.z);
+    const shade = 0.34 + 0.66 * diffuse;
+    const r = Math.round(60 + 112 * shade);
+    const g = Math.round(92 + 128 * shade);
+    const b = Math.round(94 + 122 * shade);
+    return `rgba(${r}, ${g}, ${b}, ${clamp01(opacity)})`;
+  }
+
+  function surfaceBounds(p, surface) {
+    return {
       maxX: surface.maxX,
       maxY: surface.maxY,
       length: measuredLength(p),
       centerZ: (p.length - Math.max(0, p.throatExtension)) / 2,
     };
+  }
+
+  function drawShadedSurface(surface, bounds, rect, opacity) {
+    const maxQuads = orbit.dragging ? 2600 : 7600;
+    const zStep = Math.max(1, Math.ceil((surface.zCount - 1) / Math.sqrt(maxQuads / 3)));
+    const thetaStep = Math.max(1, Math.ceil(surface.thetaCount / Math.sqrt(maxQuads * 3)));
+    const quads = [];
+
+    for (let i = 0; i < surface.zCount - 1; i += zStep) {
+      const i1 = Math.min(surface.zCount - 1, i + zStep);
+      for (let j = 0; j < surface.thetaCount; j += thetaStep) {
+        const j1 = (j + thetaStep) % surface.thetaCount;
+        const p00 = surface.rings[i][j];
+        const p01 = surface.rings[i][j1];
+        const p11 = surface.rings[i1][j1];
+        const p10 = surface.rings[i1][j];
+        const normal = normalizeVector(cross(vectorBetween(p00, p10), vectorBetween(p00, p01)));
+        quads.push({
+          points: [p00, p10, p11, p01],
+          color: shadedColor(normal, opacity),
+          depth: (viewDepth(p00, bounds) + viewDepth(p01, bounds) + viewDepth(p10, bounds) + viewDepth(p11, bounds)) / 4,
+        });
+      }
+    }
+
+    quads.sort((a, b) => a.depth - b.depth);
+    ctx.save();
+    ctx.lineWidth = 0;
+    for (const quad of quads) {
+      ctx.fillStyle = quad.color;
+      ctx.beginPath();
+      quad.points.forEach((point, index) => {
+        const projected = project(point, bounds, rect);
+        if (index === 0) {
+          ctx.moveTo(projected.x, projected.y);
+        } else {
+          ctx.lineTo(projected.x, projected.y);
+        }
+      });
+      ctx.closePath();
+      ctx.fill();
+    }
+    ctx.restore();
+  }
+
+  function drawSurface(p, surface) {
+    const rect = resizeCanvas();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+    const bounds = surfaceBounds(p, surface);
     bounds.transform = buildViewTransform(surface, bounds, rect);
 
-    ctx.save();
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "rgba(15, 118, 110, 0.34)";
-
-    for (let i = 0; i < surface.zCount; i += 1) {
-      const isMouth = i === surface.zCount - 1;
-      if (isMouth && currentView === "top") {
-        continue;
-      }
-      drawPolyline(surface.rings[i], bounds, rect, isMouth ? "#0f766e" : "rgba(15, 118, 110, 0.34)", isMouth ? 2.4 : 1, true);
+    if (solidSurfaceInput.checked) {
+      drawShadedSurface(surface, bounds, rect, p.solidOpacity);
     }
 
-    if (currentView === "top") {
-      drawTopMouthArc(p, surface, bounds, rect);
-    }
+    if (wireframeVisibleInput.checked) {
+      ctx.save();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(15, 118, 110, 0.34)";
 
-    const thetaStep = Math.max(1, Math.round(surface.thetaCount / 96));
-    for (let j = 0; j < surface.thetaCount; j += thetaStep) {
-      const line = [];
       for (let i = 0; i < surface.zCount; i += 1) {
-        line.push(surface.rings[i][j]);
+        const isMouth = i === surface.zCount - 1;
+        if (isMouth && currentView === "top") {
+          continue;
+        }
+        drawPolyline(surface.rings[i], bounds, rect, isMouth ? "#0f766e" : "rgba(15, 118, 110, 0.34)", isMouth ? 2.4 : 1, true);
       }
-      drawPolyline(line, bounds, rect, j % (thetaStep * 3) === 0 ? "rgba(32, 35, 38, 0.55)" : "rgba(32, 35, 38, 0.25)", 1);
-    }
 
-    ctx.restore();
+      if (currentView === "top") {
+        drawTopMouthArc(p, surface, bounds, rect);
+      }
+
+      const thetaStep = Math.max(1, Math.round(surface.thetaCount / 96));
+      for (let j = 0; j < surface.thetaCount; j += thetaStep) {
+        const line = [];
+        for (let i = 0; i < surface.zCount; i += 1) {
+          line.push(surface.rings[i][j]);
+        }
+        drawPolyline(line, bounds, rect, j % (thetaStep * 3) === 0 ? "rgba(32, 35, 38, 0.55)" : "rgba(32, 35, 38, 0.25)", 1);
+      }
+
+      ctx.restore();
+    }
     drawLabel(rect);
   }
 
@@ -1789,17 +2316,64 @@
     metrics.bow.textContent = `${format(peakHModifier, 4)} / ${format(peakVModifier, 4)} mm`;
   }
 
+  function visibleCanvas(canvasElement) {
+    return canvasElement.offsetParent !== null;
+  }
+
+  function surfaceKey(p) {
+    const { stlStations, stlSideSamples, ...previewParams } = p;
+    return JSON.stringify({
+      p: previewParams,
+      morph: morphCurve.anchors,
+      hProfileModifier: p.hModifierEnabled ? profileModifierSplines.h : null,
+      hModifierCurve: p.hModifierEnabled ? hModifierCurve.anchors : null,
+      vProfileModifier: p.vModifierEnabled ? profileModifierSplines.v : null,
+      vModifierCurve: p.vModifierEnabled ? vModifierCurve.anchors : null,
+    });
+  }
+
+  function surfaceForParams(p) {
+    const key = surfaceKey(p);
+    if (cachedSurface !== null && key === cachedSurfaceKey) {
+      return cachedSurface;
+    }
+    cachedSurfaceKey = key;
+    cachedSurface = buildSurface(p);
+    return cachedSurface;
+  }
+
+  function scheduleRender() {
+    if (renderQueued) {
+      return;
+    }
+    renderQueued = true;
+    requestAnimationFrame(() => {
+      renderQueued = false;
+      render();
+    });
+  }
+
   function render() {
     const p = params();
-    const surface = buildSurface(p);
+    const surface = surfaceForParams(p);
     drawSurface(p, surface);
     drawSplineEditor(morphCurve);
-    drawSplineEditor(hModifierCurve);
-    drawSplineEditor(vModifierCurve);
+    if (visibleCanvas(hProfileModifierEditor.canvas)) {
+      drawProfileModifierEditor(hProfileModifierEditor, p);
+    }
+    if (visibleCanvas(vProfileModifierEditor.canvas)) {
+      drawProfileModifierEditor(vProfileModifierEditor, p);
+    }
+    if (visibleCanvas(hModifierCurve.canvas)) {
+      drawSplineEditor(hModifierCurve);
+    }
+    if (visibleCanvas(vModifierCurve.canvas)) {
+      drawSplineEditor(vModifierCurve);
+    }
     updateMetrics(p, surface);
   }
 
-  window.addEventListener("resize", render);
+  window.addEventListener("resize", scheduleRender);
   render();
 </script>
 
