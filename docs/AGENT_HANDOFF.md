@@ -63,8 +63,10 @@ The supported exporter uses a square-boundary section topology:
   smoothed scalar expansion for each slice point; that scalar is applied along
   stable radial directions. The same outside-ring sequence continues across the
   rear mouth return, so the return is no longer a separate cap stitched onto the
-  horn wall. Directly projecting normal offsets into slice planes produced
-  unstable mouth/corner geometry; do not normal-offset the rear return surface,
+  horn wall. Rear mouth return rings are projected to the authored mouth offset
+  radius; do not radially offset the already-returned inner ring. Directly
+  projecting normal offsets into slice planes produced unstable mouth/corner
+  geometry; do not normal-offset the rear return surface,
 - the inner rear mouth ring sits at `mouth_sag_radius - mouth_rear_offset`;
   the outer horn wall is trimmed to
   `mouth_sag_radius - mouth_rear_offset - minimum_wall` so the return cannot

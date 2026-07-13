@@ -490,10 +490,7 @@ def station_scalar_offset_outer_rings(
         ]
         for ring, scalars in zip(horn_rings, scalar_rings)
     ] + [
-        [
-            radial_offset_point(point, scalar_rings[-1][j])
-            for j, point in enumerate(ring)
-        ]
+        mouth_return_projected_ring(ring, mouth_h, mouth_v)
         for ring in rings[mouth_index + 1 :]
     ]
 
