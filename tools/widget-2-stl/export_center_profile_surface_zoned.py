@@ -110,13 +110,23 @@ def adaptive_profile_z_samples(
     dense_count = max(count * 24, 1024)
     dense_z = [length * i / (dense_count - 1) for i in range(dense_count)]
     cumulative = [0.0]
+    throat_span = min(length * 0.16, max(length * 0.035, effective_throat_radius() * 4.0))
+    throat_weight = (
+        2.0
+        * max(abs(h_profile(length) - h_profile(0.0)), abs(v_profile(length) - v_profile(0.0)))
+        / max(length, 1e-9)
+    )
     for i in range(1, dense_count):
         prev_z = dense_z[i - 1]
         z = dense_z[i]
-        delta = max(
+        profile_delta = max(
             abs(h_profile(z) - h_profile(prev_z)),
             abs(v_profile(z) - v_profile(prev_z)),
         )
+        mid_z = (prev_z + z) / 2.0
+        throat_t = max(0.0, min(1.0, mid_z / max(throat_span, 1e-9)))
+        throat_fade = (1.0 - throat_t * throat_t) ** 2
+        delta = profile_delta + throat_weight * throat_fade * (z - prev_z)
         cumulative.append(cumulative[-1] + delta)
 
     total = cumulative[-1]

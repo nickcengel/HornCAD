@@ -47,7 +47,9 @@ The supported exporter uses a square-boundary section topology:
 - horn stations are adaptive in `z`: station spacing follows accumulated
   `max(abs(delta H radius), abs(delta V radius))`, not uniform distance along
   the horn. This keeps each slice closer to a constant amount of profile change
-  and avoids wasting samples where the profiles change slowly,
+  and avoids wasting samples where the profiles change slowly. A smooth throat
+  weighting term is added to the same cumulative metric so critical throat
+  geometry gets extra stations without a hard sampling transition,
 - mouth setback computed from one sag radius with H/V axis participation toggles,
 - inner acoustic surface is wrapped with a radial outer offset, a mouth return cap,
   and a driver mount flange to form the printable body,
