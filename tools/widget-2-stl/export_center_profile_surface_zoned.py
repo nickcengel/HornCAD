@@ -545,32 +545,33 @@ def mouth_constrained_outer_rings(
             continue
         station_t = i / max(1, ring_count - 1)
         station_weight = smoothstep(station_t**4)
-        constrained_ring = []
-        for inner, base, mouth_boundary in zip(inner_horn_rings[i], ring, mouth_boundary_ring):
-            lower_weight = mouth_envelope_blend_weight(base, mouth_boundary, mouth_h_radius, mouth_v_radius)
-            weight = max(station_weight, lower_weight)
-            candidate = interpolate_point(base, mouth_boundary, weight)
-            if math.dist(inner, candidate) < minimum_wall and math.dist(inner, base) >= minimum_wall:
-                low = 0.0
-                high = weight
-                for _ in range(40):
-                    mid = (low + high) / 2.0
-                    point = interpolate_point(base, mouth_boundary, mid)
-                    if math.dist(inner, point) >= minimum_wall:
-                        low = mid
-                    else:
-                        high = mid
-                if low >= lower_weight:
-                    candidate = interpolate_point(base, mouth_boundary, low)
-            distance = math.dist(inner, candidate)
-            if 1e-12 < distance < minimum_wall:
-                scale = minimum_wall / distance
-                candidate = (
-                    inner[0] + (candidate[0] - inner[0]) * scale,
-                    inner[1] + (candidate[1] - inner[1]) * scale,
-                    inner[2] + (candidate[2] - inner[2]) * scale,
-                )
-            constrained_ring.append(candidate)
+        envelope_weight = max(
+            mouth_envelope_blend_weight(base, mouth_boundary, mouth_h_radius, mouth_v_radius)
+            for base, mouth_boundary in zip(ring, mouth_boundary_ring)
+        )
+        weight = max(station_weight, envelope_weight)
+        constrained_ring = [
+            interpolate_point(base, mouth_boundary, weight)
+            for base, mouth_boundary in zip(ring, mouth_boundary_ring)
+        ]
+        if any(math.dist(inner, point) < minimum_wall for inner, point in zip(inner_horn_rings[i], constrained_ring)):
+            low = 0.0
+            high = weight
+            for _ in range(40):
+                mid = (low + high) / 2.0
+                candidate_ring = [
+                    interpolate_point(base, mouth_boundary, mid)
+                    for base, mouth_boundary in zip(ring, mouth_boundary_ring)
+                ]
+                if all(math.dist(inner, point) >= minimum_wall for inner, point in zip(inner_horn_rings[i], candidate_ring)):
+                    low = mid
+                else:
+                    high = mid
+            if low >= envelope_weight:
+                constrained_ring = [
+                    interpolate_point(base, mouth_boundary, low)
+                    for base, mouth_boundary in zip(ring, mouth_boundary_ring)
+                ]
         constrained.append(constrained_ring)
     return constrained
 
