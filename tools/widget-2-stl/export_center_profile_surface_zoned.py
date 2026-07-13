@@ -311,20 +311,6 @@ def normalize_vector(v: tuple[float, float, float]) -> tuple[float, float, float
     return v[0] / length, v[1] / length, v[2] / length
 
 
-def add_vector(
-    a: tuple[float, float, float],
-    b: tuple[float, float, float],
-) -> tuple[float, float, float]:
-    return a[0] + b[0], a[1] + b[1], a[2] + b[2]
-
-
-def scale_vector(
-    v: tuple[float, float, float],
-    scale: float,
-) -> tuple[float, float, float]:
-    return v[0] * scale, v[1] * scale, v[2] * scale
-
-
 def normal(
     a: tuple[float, float, float],
     b: tuple[float, float, float],
@@ -358,80 +344,180 @@ def radial_distance(point: tuple[float, float, float]) -> float:
     return math.hypot(point[0], point[1])
 
 
+def radial_offset_point(point: tuple[float, float, float], thickness: float) -> tuple[float, float, float]:
+    radius = radial_distance(point)
+    if radius <= 1e-12:
+        return point[0] + thickness, point[1], point[2]
+    return (
+        point[0] + point[0] / radius * thickness,
+        point[1] + point[1] / radius * thickness,
+        point[2],
+    )
+
+
+def project_point_to_mouth_radius(
+    point: tuple[float, float, float],
+    mouth_h_radius: float,
+    mouth_v_radius: float,
+    target_radius: float,
+) -> tuple[float, float, float]:
+    radius = mouth_radius(mouth_h_radius, mouth_v_radius)
+    x, y, z = point
+    if not math.isfinite(radius) or radius <= 0.0:
+        return x, y, PARAMS["length"] - max(0.0, PARAMS["mouth_rear_offset"])
+    center_z = PARAMS["length"] - radius
+    vector = (
+        x if PARAMS.get("mouth_sag_h_enabled", True) else 0.0,
+        y if PARAMS.get("mouth_sag_v_enabled", True) else 0.0,
+        z - center_z,
+    )
+    length = math.sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2])
+    if length <= 1e-12:
+        return x, y, z
+    scale = max(1e-6, target_radius) / length
+    return (
+        vector[0] * scale if PARAMS.get("mouth_sag_h_enabled", True) else x,
+        vector[1] * scale if PARAMS.get("mouth_sag_v_enabled", True) else y,
+        center_z + vector[2] * scale,
+    )
+
+
+def mouth_return_projected_ring(
+    ring: list[tuple[float, float, float]],
+    mouth_h_radius: float,
+    mouth_v_radius: float,
+) -> list[tuple[float, float, float]]:
+    return [
+        project_point_to_mouth_radius(point, mouth_h_radius, mouth_v_radius, mouth_outer_return_target_radius(mouth_h_radius, mouth_v_radius))
+        for point in ring
+    ]
+
+
+def mouth_outer_return_target_radius(mouth_h_radius: float, mouth_v_radius: float) -> float:
+    radius = mouth_radius(mouth_h_radius, mouth_v_radius)
+    if not math.isfinite(radius):
+        return math.inf
+    return max(
+        1e-6,
+        radius - max(0.0, PARAMS["mouth_rear_offset"]) - 2.0 * max(0.0, PARAMS["minimum_wall"]),
+    )
+
+
+def mouth_surface_vector(point: tuple[float, float, float], mouth_h_radius: float, mouth_v_radius: float) -> tuple[float, float, float]:
+    radius = mouth_radius(mouth_h_radius, mouth_v_radius)
+    center_z = PARAMS["length"] - radius if math.isfinite(radius) else PARAMS["length"]
+    return (
+        point[0] if PARAMS.get("mouth_sag_h_enabled", True) else 0.0,
+        point[1] if PARAMS.get("mouth_sag_v_enabled", True) else 0.0,
+        point[2] - center_z,
+    )
+
+
+def mouth_surface_distance(point: tuple[float, float, float], mouth_h_radius: float, mouth_v_radius: float) -> float:
+    vector = mouth_surface_vector(point, mouth_h_radius, mouth_v_radius)
+    return math.sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2])
+
+
+def interpolate_point(
+    a: tuple[float, float, float],
+    b: tuple[float, float, float],
+    t: float,
+) -> tuple[float, float, float]:
+    return (
+        a[0] + (b[0] - a[0]) * t,
+        a[1] + (b[1] - a[1]) * t,
+        a[2] + (b[2] - a[2]) * t,
+    )
+
+
+def mouth_intersection_path(
+    outer_rings: list[list[tuple[float, float, float]]],
+    column: int,
+    mouth_h_radius: float,
+    mouth_v_radius: float,
+) -> list[tuple[float, float, float]]:
+    target_radius = mouth_outer_return_target_radius(mouth_h_radius, mouth_v_radius)
+    path = [outer_rings[0][column]]
+    if not math.isfinite(target_radius):
+        return [ring[column] for ring in outer_rings]
+
+    for i in range(len(outer_rings) - 1):
+        a = outer_rings[i][column]
+        b = outer_rings[i + 1][column]
+        da = mouth_surface_distance(a, mouth_h_radius, mouth_v_radius)
+        db = mouth_surface_distance(b, mouth_h_radius, mouth_v_radius)
+        if da < target_radius:
+            path[-1] = a
+        if (da - target_radius) * (db - target_radius) <= 0.0 and abs(db - da) > 1e-12:
+            t = max(0.0, min(1.0, (target_radius - da) / (db - da)))
+            path.append(interpolate_point(a, b, t))
+            return path
+        if db < target_radius:
+            path.append(b)
+    path.append(project_point_to_mouth_radius(outer_rings[-1][column], mouth_h_radius, mouth_v_radius, target_radius))
+    return path
+
+
+def path_lengths(path: list[tuple[float, float, float]]) -> list[float]:
+    lengths = [0.0]
+    for i in range(1, len(path)):
+        lengths.append(lengths[-1] + math.dist(path[i - 1], path[i]))
+    return lengths
+
+
+def point_on_path(
+    path: list[tuple[float, float, float]],
+    lengths: list[float],
+    distance: float,
+) -> tuple[float, float, float]:
+    if distance <= 0.0 or len(path) == 1:
+        return path[0]
+    total = lengths[-1]
+    if distance >= total:
+        return path[-1]
+    for i in range(len(lengths) - 1):
+        if distance <= lengths[i + 1]:
+            span = max(1e-12, lengths[i + 1] - lengths[i])
+            return interpolate_point(path[i], path[i + 1], (distance - lengths[i]) / span)
+    return path[-1]
+
+
+def trimmed_outer_rings(
+    outer_base_rings: list[list[tuple[float, float, float]]],
+    mouth_h_radius: float,
+    mouth_v_radius: float,
+) -> list[list[tuple[float, float, float]]]:
+    ring_count = len(outer_base_rings)
+    column_count = len(outer_base_rings[0])
+    columns = []
+    for column in range(column_count):
+        path = mouth_intersection_path(outer_base_rings, column, mouth_h_radius, mouth_v_radius)
+        columns.append((path, path_lengths(path)))
+    rings = []
+    for i in range(ring_count):
+        t = i / max(1, ring_count - 1)
+        ring = []
+        for path, lengths in columns:
+            ring.append(point_on_path(path, lengths, lengths[-1] * t))
+        rings.append(ring)
+    return rings
+
+
+def spherical_cap_rings(
+    inner_ring: list[tuple[float, float, float]],
+    outer_ring: list[tuple[float, float, float]],
+    mouth_h_radius: float,
+    mouth_v_radius: float,
+) -> list[list[tuple[float, float, float]]]:
+    return [inner_ring, outer_ring]
+
+
 def wall_thickness_at_ring(index: int, ring_count: int) -> float:
     denominator = max(1, ring_count - 1)
     t = index / denominator
     start = max(0.0, PARAMS["throat_start_wall"])
     minimum = max(0.0, PARAMS["minimum_wall"])
     return max(minimum, start + (minimum - start) * t)
-
-
-def acoustic_vertex_normals(
-    rings: list[list[tuple[float, float, float]]],
-    mouth_index: int,
-    mouth_h: float,
-    mouth_v: float,
-) -> list[list[tuple[float, float, float]]]:
-    ring_count = len(rings)
-    ring_size = len(rings[0])
-    radius = mouth_radius(mouth_h, mouth_v)
-    mouth_center_z = PARAMS["length"] - radius if math.isfinite(radius) else PARAMS["length"]
-    accumulated = [[(0.0, 0.0, 0.0) for _ in range(ring_size)] for _ in range(ring_count)]
-
-    for i in range(ring_count - 1):
-        for j in range(ring_size):
-            k = (j + 1) % ring_size
-            a0 = rings[i][j]
-            a1 = rings[i][k]
-            b0 = rings[i + 1][j]
-            b1 = rings[i + 1][k]
-            center = (
-                (a0[0] + a1[0] + b0[0] + b1[0]) / 4.0,
-                (a0[1] + a1[1] + b0[1] + b1[1]) / 4.0,
-                (a0[2] + a1[2] + b0[2] + b1[2]) / 4.0,
-            )
-            face_normal = normal(a0, b0, a1)
-            if dot(face_normal, expected_outward_normal(i, center, mouth_index, mouth_center_z)) < 0.0:
-                face_normal = scale_vector(face_normal, -1.0)
-            for row, column in ((i, j), (i, k), (i + 1, j), (i + 1, k)):
-                accumulated[row][column] = add_vector(accumulated[row][column], face_normal)
-
-    return [[normalize_vector(vector) for vector in ring] for ring in accumulated]
-
-
-def offset_surface_rings(
-    rings: list[list[tuple[float, float, float]]],
-    mouth_index: int,
-    mouth_h: float,
-    mouth_v: float,
-) -> list[list[tuple[float, float, float]]]:
-    normals = acoustic_vertex_normals(rings, mouth_index, mouth_h, mouth_v)
-    ring_count = len(rings)
-    offset_rings = []
-    for i, ring in enumerate(rings):
-        thickness = wall_thickness_at_ring(min(i, mouth_index), ring_count)
-        offset_rings.append([
-            add_vector(point, scale_vector(normals[i][j], thickness))
-            for j, point in enumerate(ring)
-        ])
-    return offset_rings
-
-
-def clearance_diagnostics(
-    rings: list[list[tuple[float, float, float]]],
-    outer_rings: list[list[tuple[float, float, float]]],
-) -> tuple[float, int, int]:
-    best_distance = math.inf
-    best_ring = 0
-    best_column = 0
-    for i, ring in enumerate(rings):
-        for j, point in enumerate(ring):
-            distance = math.dist(point, outer_rings[i][j])
-            if distance < best_distance:
-                best_distance = distance
-                best_ring = i
-                best_column = j
-    return best_distance, best_ring, best_column
 
 
 def ring_at_z(reference_ring: list[tuple[float, float, float]], z: float) -> list[tuple[float, float, float]]:
@@ -550,7 +636,12 @@ def build_body_mesh(
 ) -> tuple[list[tuple[float, float, float]], list[tuple[int, int, int]]]:
     ring_count = len(rings)
     ring_size = len(rings[0])
-    outer_rings = offset_surface_rings(rings, mouth_index, mouth_h, mouth_v)
+    has_return = mouth_index < ring_count - 1
+    outer_base_rings = [
+        [radial_offset_point(point, wall_thickness_at_ring(index, ring_count)) for point in ring]
+        for index, ring in enumerate(rings[: mouth_index + 1])
+    ]
+    outer_rings = trimmed_outer_rings(outer_base_rings, mouth_h, mouth_v) if has_return else outer_base_rings
     throat_inner = rings[0]
     throat_outer = outer_rings[0]
     throat_z = sum(point[2] for point in throat_inner) / ring_size
@@ -575,8 +666,17 @@ def build_body_mesh(
     for i in range(ring_count - 1):
         append_ring_bridge(faces, inner_starts[i], inner_starts[i + 1], ring_size)
     append_ring_bridge(faces, throat_inner_back_start, inner_starts[0], ring_size)
-    append_ring_bridge(faces, inner_starts[-1], outer_starts[-1], ring_size)
-    for i in range(ring_count - 1, 0, -1):
+    if has_return:
+        cap_rings = spherical_cap_rings(rings[-1], outer_rings[mouth_index], mouth_h, mouth_v)
+        previous_start = inner_starts[-1]
+        for ring in cap_rings[1:-1]:
+            next_start = add_ring(vertices, ring)
+            append_ring_bridge(faces, previous_start, next_start, ring_size)
+            previous_start = next_start
+        append_ring_bridge(faces, previous_start, outer_starts[mouth_index], ring_size)
+    else:
+        append_ring_bridge(faces, inner_starts[mouth_index], outer_starts[mouth_index], ring_size)
+    for i in range(mouth_index, 0, -1):
         append_ring_bridge(faces, outer_starts[i], outer_starts[i - 1], ring_size, True)
     append_ring_bridge(faces, outer_starts[0], mount_outer_front_start, ring_size, True)
     append_ring_bridge(faces, mount_outer_front_start, mount_outer_back_start, ring_size, True)
@@ -648,11 +748,8 @@ def main() -> None:
     export_mode = PARAMS.get("stl_export_mode", "body")
     if export_mode == "acoustic_surface":
         vertices, faces = build_acoustic_surface_mesh(rings, mouth_index, mouth_h, mouth_v)
-        clearance = None
     else:
         export_mode = "body"
-        outer_rings = offset_surface_rings(rings, mouth_index, mouth_h, mouth_v)
-        clearance = clearance_diagnostics(rings, outer_rings)
         vertices, faces = build_body_mesh(rings, mouth_index, mouth_h, mouth_v)
 
     OUTPUT.parent.mkdir(parents=True, exist_ok=True)
@@ -663,11 +760,6 @@ def main() -> None:
     print(f"export_mode={export_mode}")
     print(f"inner_rings={len(rings)} vertices_per_ring={len(rings[0])} vertices={len(mesh.vertices)} triangles={len(mesh.faces)}")
     print(f"watertight={mesh.is_watertight} winding_consistent={mesh.is_winding_consistent} components={len(mesh.split(only_watertight=False))}")
-    if clearance:
-        print(
-            f"constructed_min_wall={clearance[0]:.6f} "
-            f"target={PARAMS['minimum_wall']:.6f} ring={clearance[1]} column={clearance[2]}"
-        )
 
 
 if __name__ == "__main__":

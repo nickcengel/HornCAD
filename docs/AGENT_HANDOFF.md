@@ -45,14 +45,12 @@ The supported exporter uses a square-boundary section topology:
 
 - all four sides sampled with the same method so H and V are peers,
 - mouth setback computed from one sag radius with H/V axis participation toggles,
-- inner acoustic surface, including the rear mouth return, is wrapped with an
-  acoustic-normal offset surface and a driver mount flange to form the printable
-  body,
+- inner acoustic surface is wrapped with a radial outer offset, a mouth return cap,
+  and a driver mount flange to form the printable body,
 - the inner rear mouth ring sits at `mouth_sag_radius - mouth_rear_offset`;
-  the outer rear mouth ring is offset from that rear ring instead of being
-  created by trimming and reparameterizing the forward outer horn wall,
-- body export prints `constructed_min_wall`; this is the corresponding
-  inner-to-outer offset-shell clearance and should be at least `minimum_wall`,
+  the outer horn wall is trimmed to
+  `mouth_sag_radius - mouth_rear_offset - minimum_wall` so the return cannot
+  cross inside the acoustic surface near the mouth,
 - STL export mode can be `body` or `acoustic_surface`; body mode should be
   watertight, acoustic surface mode is intentionally open,
 - mesh exported through `trimesh`,
@@ -61,12 +59,14 @@ The supported exporter uses a square-boundary section topology:
 - Browser and Python body export both run deterministic closed-face orientation
   before STL writing; do not rely only on `trimesh.fix_normals` because the
   browser exporter cannot use it.
-- Body rear caps must reuse the existing rear inner and rear offset rings.
-  Duplicating those boundary vertices creates coincident open edges and visible
-  corner slivers even when a post-processed mesh appears repaired.
-- Do not revive the old trimmed outer-ring return path. It produced watertight
-  meshes, but section diagnostics showed local clearance dropping below the
-  intended `minimum_wall` near the mouth return.
+- Body cap rings must reuse the existing boundary rings at the rear mouth and
+  outer horn intersection. Duplicating those boundary vertices creates coincident
+  open edges and visible corner slivers even when a post-processed mesh appears
+  repaired.
+- The mouth cap may use intermediate rings only if their mouth-surface radius
+  steps monotonically from the inner rear mouth radius down to the outer trim
+  radius. Do not add intermediate rings that remain on the same return radius as
+  the inner rear mouth; those caused visible corner poke-throughs.
 
 Do not reintroduce the removed angular comparison exporter or a separate H/V
 mesh topology.
