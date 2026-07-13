@@ -489,6 +489,12 @@ def station_scalar_offset_outer_rings(
             for j, point in enumerate(ring)
         ]
         for ring, scalars in zip(horn_rings, scalar_rings)
+    ] + [
+        [
+            radial_offset_point(point, scalar_rings[-1][j])
+            for j, point in enumerate(ring)
+        ]
+        for ring in rings[mouth_index + 1 :]
     ]
 
 
@@ -794,9 +800,8 @@ def build_body_mesh(
 ) -> tuple[list[tuple[float, float, float]], list[tuple[int, int, int]]]:
     ring_count = len(rings)
     ring_size = len(rings[0])
-    has_return = mouth_index < ring_count - 1
     outer_base_rings = station_scalar_offset_outer_rings(rings, mouth_index, mouth_h, mouth_v)
-    outer_rings = trimmed_outer_rings(outer_base_rings, mouth_h, mouth_v) if has_return else outer_base_rings
+    outer_rings = outer_base_rings
     throat_inner = rings[0]
     throat_z = sum(point[2] for point in throat_inner) / ring_size
     mount_start_z = throat_z
@@ -820,16 +825,7 @@ def build_body_mesh(
 
     for i in range(ring_count - 1):
         append_ring_bridge(faces, inner_starts[i], inner_starts[i + 1], ring_size)
-    if has_return:
-        cap_rings = spherical_cap_rings(rings[-1], outer_rings[mouth_index], mouth_h, mouth_v)
-        previous_start = inner_starts[-1]
-        for ring in cap_rings[1:-1]:
-            next_start = add_ring(vertices, ring)
-            append_ring_bridge(faces, previous_start, next_start, ring_size)
-            previous_start = next_start
-        append_ring_bridge(faces, previous_start, outer_wall_starts[-1], ring_size)
-    else:
-        append_ring_bridge(faces, inner_starts[mouth_index], outer_wall_starts[-1], ring_size)
+    append_ring_bridge(faces, inner_starts[-1], outer_wall_starts[-1], ring_size)
     for i in range(len(outer_wall_starts) - 1, 0, -1):
         append_ring_bridge(faces, outer_wall_starts[i], outer_wall_starts[i - 1], ring_size, True)
     append_ring_bridge(faces, outer_wall_starts[0], mount_outer_end_start, ring_size, True)
