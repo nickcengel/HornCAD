@@ -2161,11 +2161,7 @@
 
     return hornRings.map((ring, i) => (
       ring.map((point, j) => radialOffsetPoint(point, scalarRings[i][j]))
-    )).concat(
-      surface.rings.slice(surface.mouthIndex + 1).map((ring) => (
-        ring.map((point, j) => radialOffsetPoint(point, scalarRings[scalarRings.length - 1][j]))
-      ))
-    );
+    ));
   }
 
   function projectPointToMouthRadius(p, surface, point, targetRadius) {
@@ -2483,8 +2479,10 @@
 
   function buildBodyTriangles(p, surface) {
     const innerRings = surface.rings;
+    const mouthIndex = surface.mouthIndex;
+    const hasReturn = mouthIndex < innerRings.length - 1;
     const outerBaseRings = stationScalarOffsetOuterRings(p, surface);
-    const outerRings = outerBaseRings;
+    const outerRings = hasReturn ? trimmedOuterRings(p, surface, outerBaseRings) : outerBaseRings;
     const throatInner = innerRings[0];
     const throatZ = throatInner.reduce((sum, point) => sum + point.z, 0) / throatInner.length;
     const mountStartZ = throatZ;
@@ -2503,7 +2501,18 @@
     for (let i = 0; i < innerRings.length - 1; i += 1) {
       appendRingBridge(triangles, innerRings[i], innerRings[i + 1]);
     }
-    appendRingBridge(triangles, innerRings[innerRings.length - 1], outerWallRings[outerWallRings.length - 1]);
+    if (hasReturn) {
+      const rearInner = innerRings[innerRings.length - 1];
+      const capRings = sphericalCapRings(p, surface, rearInner, outerRings[mouthIndex]);
+      let previousCapRing = rearInner;
+      for (let i = 1; i < capRings.length - 1; i += 1) {
+        appendRingBridge(triangles, previousCapRing, capRings[i]);
+        previousCapRing = capRings[i];
+      }
+      appendRingBridge(triangles, previousCapRing, outerWallRings[outerWallRings.length - 1]);
+    } else {
+      appendRingBridge(triangles, innerRings[mouthIndex], outerWallRings[outerWallRings.length - 1]);
+    }
     for (let i = outerWallRings.length - 1; i > 0; i -= 1) {
       appendRingBridge(triangles, outerWallRings[i], outerWallRings[i - 1], true);
     }
