@@ -2192,7 +2192,7 @@
     }
     return Math.max(
       1e-6,
-      mouthRadius - Math.max(0, p.mouthRearOffset) - 2 * Math.max(0, p.minimumWall)
+      mouthRadius - Math.max(0, p.mouthRearOffset) - Math.max(0, p.minimumWall)
     );
   }
 
@@ -2295,12 +2295,6 @@
       rings.push(columns.map(({ path, lengths }) => pointOnPath(path, lengths, lengths[lengths.length - 1] * t)));
     }
     return rings;
-  }
-
-  function sphericalCapRings(p, surface, innerRing, outerRing) {
-    void p;
-    void surface;
-    return [innerRing, outerRing];
   }
 
   function wallThicknessAtRing(p, surface, index) {
@@ -2502,14 +2496,7 @@
       appendRingBridge(triangles, innerRings[i], innerRings[i + 1]);
     }
     if (hasReturn) {
-      const rearInner = innerRings[innerRings.length - 1];
-      const capRings = sphericalCapRings(p, surface, rearInner, outerRings[mouthIndex]);
-      let previousCapRing = rearInner;
-      for (let i = 1; i < capRings.length - 1; i += 1) {
-        appendRingBridge(triangles, previousCapRing, capRings[i]);
-        previousCapRing = capRings[i];
-      }
-      appendRingBridge(triangles, previousCapRing, outerWallRings[outerWallRings.length - 1]);
+      appendRingBridge(triangles, innerRings[innerRings.length - 1], outerWallRings[outerWallRings.length - 1]);
     } else {
       appendRingBridge(triangles, innerRings[mouthIndex], outerWallRings[outerWallRings.length - 1]);
     }

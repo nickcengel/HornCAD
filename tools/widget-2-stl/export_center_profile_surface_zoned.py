@@ -536,7 +536,7 @@ def mouth_outer_return_target_radius(mouth_h_radius: float, mouth_v_radius: floa
         return math.inf
     return max(
         1e-6,
-        radius - max(0.0, PARAMS["mouth_rear_offset"]) - 2.0 * max(0.0, PARAMS["minimum_wall"]),
+        radius - max(0.0, PARAMS["mouth_rear_offset"]) - max(0.0, PARAMS["minimum_wall"]),
     )
 
 
@@ -638,15 +638,6 @@ def trimmed_outer_rings(
             ring.append(point_on_path(path, lengths, lengths[-1] * t))
         rings.append(ring)
     return rings
-
-
-def spherical_cap_rings(
-    inner_ring: list[tuple[float, float, float]],
-    outer_ring: list[tuple[float, float, float]],
-    mouth_h_radius: float,
-    mouth_v_radius: float,
-) -> list[list[tuple[float, float, float]]]:
-    return [inner_ring, outer_ring]
 
 
 def wall_thickness_at_ring(index: int, ring_count: int) -> float:
@@ -821,13 +812,7 @@ def build_body_mesh(
     for i in range(ring_count - 1):
         append_ring_bridge(faces, inner_starts[i], inner_starts[i + 1], ring_size)
     if has_return:
-        cap_rings = spherical_cap_rings(rings[-1], outer_rings[mouth_index], mouth_h, mouth_v)
-        previous_start = inner_starts[-1]
-        for ring in cap_rings[1:-1]:
-            next_start = add_ring(vertices, ring)
-            append_ring_bridge(faces, previous_start, next_start, ring_size)
-            previous_start = next_start
-        append_ring_bridge(faces, previous_start, outer_wall_starts[-1], ring_size)
+        append_ring_bridge(faces, inner_starts[-1], outer_wall_starts[-1], ring_size)
     else:
         append_ring_bridge(faces, inner_starts[mouth_index], outer_wall_starts[-1], ring_size)
     for i in range(len(outer_wall_starts) - 1, 0, -1):
