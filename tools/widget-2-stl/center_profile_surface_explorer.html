@@ -2211,10 +2211,6 @@
     });
   }
 
-  function ringAtZ(referenceRing, z) {
-    return referenceRing.map((point) => ({ x: point.x, y: point.y, z }));
-  }
-
   function appendQuadTriangles(triangles, a0, a1, b0, b1) {
     triangles.push([a0, b0, b1]);
     triangles.push([a0, b1, a1]);
@@ -2353,21 +2349,20 @@
     const throatInner = innerRings[0];
     const throatOuter = outerRings[0];
     const throatZ = throatInner.reduce((sum, point) => sum + point.z, 0) / throatInner.length;
-    const flangeBackZ = throatZ - Math.max(0, p.mountFlangeThickness);
+    const mountStartZ = throatZ;
+    const mountEndZ = throatZ + Math.max(0, p.mountFlangeThickness);
     const requiredMountRadius = Math.max(
       Math.max(...throatOuter.map(radialDistance)),
       Math.max(...throatInner.map(radialDistance)) + Math.max(0, p.minimumWall)
     );
     const mountRadius = Math.max(Math.max(0, p.mountDiameter) / 2, requiredMountRadius);
-    const throatInnerBack = ringAtZ(throatInner, flangeBackZ);
-    const mountOuterFront = circleRingFromReference(throatInner, mountRadius, throatZ);
-    const mountOuterBack = circleRingFromReference(throatInner, mountRadius, flangeBackZ);
+    const mountOuterStart = circleRingFromReference(throatInner, mountRadius, mountStartZ);
+    const mountOuterEnd = circleRingFromReference(throatInner, mountRadius, mountEndZ);
     const triangles = [];
 
     for (let i = 0; i < innerRings.length - 1; i += 1) {
       appendRingBridge(triangles, innerRings[i], innerRings[i + 1]);
     }
-    appendRingBridge(triangles, throatInnerBack, throatInner);
     if (hasReturn) {
       const rearInner = innerRings[innerRings.length - 1];
       const capRings = sphericalCapRings(p, surface, rearInner, outerRings[mouthIndex]);
@@ -2383,9 +2378,9 @@
     for (let i = mouthIndex; i > 0; i -= 1) {
       appendRingBridge(triangles, outerRings[i], outerRings[i - 1], true);
     }
-    appendRingBridge(triangles, throatOuter, mountOuterFront, true);
-    appendRingBridge(triangles, mountOuterFront, mountOuterBack, true);
-    appendRingBridge(triangles, mountOuterBack, throatInnerBack);
+    appendRingBridge(triangles, throatOuter, mountOuterEnd, true);
+    appendRingBridge(triangles, mountOuterEnd, mountOuterStart, true);
+    appendRingBridge(triangles, mountOuterStart, throatInner);
 
     return orientClosedTriangles(triangles);
   }

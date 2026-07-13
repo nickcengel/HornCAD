@@ -520,10 +520,6 @@ def wall_thickness_at_ring(index: int, ring_count: int) -> float:
     return max(minimum, start + (minimum - start) * t)
 
 
-def ring_at_z(reference_ring: list[tuple[float, float, float]], z: float) -> list[tuple[float, float, float]]:
-    return [(point[0], point[1], z) for point in reference_ring]
-
-
 def circle_ring_from_reference(
     reference_ring: list[tuple[float, float, float]],
     radius: float,
@@ -645,27 +641,25 @@ def build_body_mesh(
     throat_inner = rings[0]
     throat_outer = outer_rings[0]
     throat_z = sum(point[2] for point in throat_inner) / ring_size
-    flange_back_z = throat_z - max(0.0, PARAMS["mount_flange_thickness"])
+    mount_start_z = throat_z
+    mount_end_z = throat_z + max(0.0, PARAMS["mount_flange_thickness"])
     required_mount_radius = max(
         max(radial_distance(point) for point in throat_outer),
         max(radial_distance(point) for point in throat_inner) + max(0.0, PARAMS["minimum_wall"]),
     )
     mount_radius = max(max(0.0, PARAMS["mount_diameter"]) / 2.0, required_mount_radius)
-    throat_inner_back = ring_at_z(throat_inner, flange_back_z)
-    mount_outer_front = circle_ring_from_reference(throat_inner, mount_radius, throat_z)
-    mount_outer_back = circle_ring_from_reference(throat_inner, mount_radius, flange_back_z)
+    mount_outer_start = circle_ring_from_reference(throat_inner, mount_radius, mount_start_z)
+    mount_outer_end = circle_ring_from_reference(throat_inner, mount_radius, mount_end_z)
 
     vertices: list[tuple[float, float, float]] = []
     faces: list[tuple[int, int, int]] = []
     inner_starts = [add_ring(vertices, ring) for ring in rings]
     outer_starts = [add_ring(vertices, ring) for ring in outer_rings]
-    throat_inner_back_start = add_ring(vertices, throat_inner_back)
-    mount_outer_front_start = add_ring(vertices, mount_outer_front)
-    mount_outer_back_start = add_ring(vertices, mount_outer_back)
+    mount_outer_start_start = add_ring(vertices, mount_outer_start)
+    mount_outer_end_start = add_ring(vertices, mount_outer_end)
 
     for i in range(ring_count - 1):
         append_ring_bridge(faces, inner_starts[i], inner_starts[i + 1], ring_size)
-    append_ring_bridge(faces, throat_inner_back_start, inner_starts[0], ring_size)
     if has_return:
         cap_rings = spherical_cap_rings(rings[-1], outer_rings[mouth_index], mouth_h, mouth_v)
         previous_start = inner_starts[-1]
@@ -678,9 +672,9 @@ def build_body_mesh(
         append_ring_bridge(faces, inner_starts[mouth_index], outer_starts[mouth_index], ring_size)
     for i in range(mouth_index, 0, -1):
         append_ring_bridge(faces, outer_starts[i], outer_starts[i - 1], ring_size, True)
-    append_ring_bridge(faces, outer_starts[0], mount_outer_front_start, ring_size, True)
-    append_ring_bridge(faces, mount_outer_front_start, mount_outer_back_start, ring_size, True)
-    append_ring_bridge(faces, mount_outer_back_start, throat_inner_back_start, ring_size)
+    append_ring_bridge(faces, outer_starts[0], mount_outer_end_start, ring_size, True)
+    append_ring_bridge(faces, mount_outer_end_start, mount_outer_start_start, ring_size, True)
+    append_ring_bridge(faces, mount_outer_start_start, inner_starts[0], ring_size)
 
     return vertices, orient_closed_faces(vertices, faces)
 

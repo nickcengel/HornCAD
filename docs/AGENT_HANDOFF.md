@@ -47,6 +47,9 @@ The supported exporter uses a square-boundary section topology:
 - mouth setback computed from one sag radius with H/V axis participation toggles,
 - inner acoustic surface is wrapped with a radial outer offset, a mouth return cap,
   and a driver mount flange to form the printable body,
+- the driver mount flange starts at the first horn ring. With a conic extension,
+  that first ring is the beginning of the conic section; do not extend mount
+  geometry behind the horn start in negative `z`,
 - the inner rear mouth ring sits at `mouth_sag_radius - mouth_rear_offset`;
   the outer horn wall is trimmed to
   `mouth_sag_radius - mouth_rear_offset - minimum_wall` so the return cannot
