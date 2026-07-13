@@ -956,6 +956,47 @@
     return (z) => osseRadius(z, p.length, r0, coverage, k, n, s, p.throatAngle);
   }
 
+  function adaptiveProfileZSamples(count, length, hProfile, vProfile) {
+    if (count <= 1) {
+      return [0];
+    }
+    const denseCount = Math.max(count * 24, 1024);
+    const denseZ = [];
+    const cumulative = [0];
+    for (let i = 0; i < denseCount; i += 1) {
+      denseZ.push(length * i / (denseCount - 1));
+    }
+    for (let i = 1; i < denseCount; i += 1) {
+      const prevZ = denseZ[i - 1];
+      const z = denseZ[i];
+      const delta = Math.max(
+        Math.abs(hProfile(z) - hProfile(prevZ)),
+        Math.abs(vProfile(z) - vProfile(prevZ))
+      );
+      cumulative.push(cumulative[cumulative.length - 1] + delta);
+    }
+
+    const total = cumulative[cumulative.length - 1];
+    if (total <= 1e-9) {
+      return Array.from({ length: count }, (_, i) => length * i / (count - 1));
+    }
+
+    const samples = [];
+    let cursor = 0;
+    for (let i = 0; i < count; i += 1) {
+      const target = total * i / (count - 1);
+      while (cursor < denseCount - 2 && cumulative[cursor + 1] < target) {
+        cursor += 1;
+      }
+      const span = Math.max(1e-12, cumulative[cursor + 1] - cumulative[cursor]);
+      const t = Math.max(0, Math.min(1, (target - cumulative[cursor]) / span));
+      samples.push(denseZ[cursor] + (denseZ[cursor + 1] - denseZ[cursor]) * t);
+    }
+    samples[0] = 0;
+    samples[samples.length - 1] = length;
+    return samples;
+  }
+
   function modifierDelta(p, axis, z, basisRadius) {
     if (axis === "h" && !p.hModifierEnabled) {
       return 0;
@@ -1913,10 +1954,12 @@
       }
     }
 
-    const hornStartIndex = extension > 0 ? 1 : 0;
-    for (let i = hornStartIndex; i < zCount; i += 1) {
-      const tau = i / (zCount - 1);
-      const profileZ = p.length * tau;
+    let hornSamples = adaptiveProfileZSamples(zCount, p.length, hProfile, vProfile);
+    if (extension > 0) {
+      hornSamples = hornSamples.slice(1);
+    }
+    for (const profileZ of hornSamples) {
+      const tau = profileZ / Math.max(p.length, 1e-9);
       const h = hProfile(profileZ);
       const v = vProfile(profileZ);
       const ring = sectionRing(p, h, v, profileZ, tau, sideSamples, mouthHRadius, mouthVRadius);
@@ -1965,10 +2008,12 @@
       }
     }
 
-    const hornStartIndex = extension > 0 ? 1 : 0;
-    for (let i = hornStartIndex; i < zCount; i += 1) {
-      const tau = i / (zCount - 1);
-      const profileZ = p.length * tau;
+    let hornSamples = adaptiveProfileZSamples(zCount, p.length, hProfile, vProfile);
+    if (extension > 0) {
+      hornSamples = hornSamples.slice(1);
+    }
+    for (const profileZ of hornSamples) {
+      const tau = profileZ / Math.max(p.length, 1e-9);
       rings.push(sectionRing(p, hProfile(profileZ), vProfile(profileZ), profileZ, tau, sideSamples, mouthHRadius, mouthVRadius));
     }
     const mouthIndex = rings.length - 1;

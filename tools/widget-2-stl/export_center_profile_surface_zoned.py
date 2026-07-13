@@ -99,6 +99,44 @@ def profile(axis: str):
     return lambda z: osse_radius(z, PARAMS["length"], r0, coverage, k, n, s, PARAMS["throat_angle"])
 
 
+def adaptive_profile_z_samples(
+    count: int,
+    length: float,
+    h_profile,
+    v_profile,
+) -> list[float]:
+    if count <= 1:
+        return [0.0]
+    dense_count = max(count * 24, 1024)
+    dense_z = [length * i / (dense_count - 1) for i in range(dense_count)]
+    cumulative = [0.0]
+    for i in range(1, dense_count):
+        prev_z = dense_z[i - 1]
+        z = dense_z[i]
+        delta = max(
+            abs(h_profile(z) - h_profile(prev_z)),
+            abs(v_profile(z) - v_profile(prev_z)),
+        )
+        cumulative.append(cumulative[-1] + delta)
+
+    total = cumulative[-1]
+    if total <= 1e-9:
+        return [length * i / (count - 1) for i in range(count)]
+
+    samples = []
+    cursor = 0
+    for i in range(count):
+        target = total * i / (count - 1)
+        while cursor < dense_count - 2 and cumulative[cursor + 1] < target:
+            cursor += 1
+        span = max(1e-12, cumulative[cursor + 1] - cumulative[cursor])
+        t = max(0.0, min(1.0, (target - cumulative[cursor]) / span))
+        samples.append(dense_z[cursor] + (dense_z[cursor + 1] - dense_z[cursor]) * t)
+    samples[0] = 0.0
+    samples[-1] = length
+    return samples
+
+
 def cubic_bezier_point(a: dict[str, float], b: dict[str, float], t: float) -> tuple[float, float]:
     dx = max(1e-9, b["x"] - a["x"])
     a_length = max(0.0, a["tension"]) * dx
@@ -729,10 +767,11 @@ def main() -> None:
         for i in range(extension_stations):
             rings.append(conical_extension_ring(i / (extension_stations - 1)))
 
-    horn_start_index = 1 if extension > 0.0 else 0
-    for i in range(horn_start_index, Z_STATIONS):
-        tau = i / (Z_STATIONS - 1)
-        profile_z = length * tau
+    horn_samples = adaptive_profile_z_samples(Z_STATIONS, length, h_profile, v_profile)
+    if extension > 0.0:
+        horn_samples = horn_samples[1:]
+    for profile_z in horn_samples:
+        tau = profile_z / max(length, 1e-9)
         rings.append(ring_at(tau, h_profile(profile_z), v_profile(profile_z), mouth_h, mouth_v))
 
     mouth_index = len(rings) - 1
