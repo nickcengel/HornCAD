@@ -997,45 +997,6 @@
     return samples;
   }
 
-  function throatReinforcedZSamples(p, count, length, hProfile, vProfile) {
-    const adaptiveCount = Math.max(2, count - 6);
-    const throatSpan = Math.min(length * 0.12, Math.max(length * 0.02, effectiveThroatRadius(p) * 3));
-    const throatCount = Math.min(7, Math.max(2, Math.floor(count / 5)));
-    const samples = adaptiveProfileZSamples(adaptiveCount, length, hProfile, vProfile);
-    for (let i = 0; i < throatCount; i += 1) {
-      samples.push(throatSpan * Math.pow(i / (throatCount - 1), 1.6));
-    }
-    if (count <= 8) {
-      for (let i = 0; i < count; i += 1) {
-        samples.push(length * i / (count - 1));
-      }
-    }
-    const deduped = Array.from(new Set(samples.map((sample) => (
-      Number(Math.max(0, Math.min(length, sample)).toFixed(9))
-    )))).sort((a, b) => a - b);
-    if (deduped.length <= count) {
-      return deduped;
-    }
-
-    const protectedSamples = new Set([0, length]);
-    for (let i = 0; i < throatCount; i += 1) {
-      protectedSamples.add(Number((throatSpan * Math.pow(i / (throatCount - 1), 1.6)).toFixed(9)));
-    }
-    const candidates = deduped.filter((sample) => !protectedSamples.has(sample));
-    const keepCount = Math.max(0, count - protectedSamples.size);
-    if (keepCount <= 0) {
-      return Array.from(protectedSamples).sort((a, b) => a - b).slice(0, count);
-    }
-    if (candidates.length <= keepCount) {
-      return Array.from(new Set([...protectedSamples, ...candidates])).sort((a, b) => a - b);
-    }
-    const selected = [];
-    for (let i = 0; i < keepCount; i += 1) {
-      selected.push(candidates[Math.round(i * (candidates.length - 1) / Math.max(1, keepCount - 1))]);
-    }
-    return Array.from(new Set([...protectedSamples, ...selected])).sort((a, b) => a - b);
-  }
-
   function modifierDelta(p, axis, z, basisRadius) {
     if (axis === "h" && !p.hModifierEnabled) {
       return 0;
@@ -1993,7 +1954,7 @@
       }
     }
 
-    let hornSamples = throatReinforcedZSamples(p, zCount, p.length, hProfile, vProfile);
+    let hornSamples = adaptiveProfileZSamples(zCount, p.length, hProfile, vProfile);
     if (extension > 0) {
       hornSamples = hornSamples.slice(1);
     }
@@ -2047,7 +2008,7 @@
       }
     }
 
-    let hornSamples = throatReinforcedZSamples(p, zCount, p.length, hProfile, vProfile);
+    let hornSamples = adaptiveProfileZSamples(zCount, p.length, hProfile, vProfile);
     if (extension > 0) {
       hornSamples = hornSamples.slice(1);
     }

@@ -137,38 +137,6 @@ def adaptive_profile_z_samples(
     return samples
 
 
-def throat_reinforced_z_samples(
-    count: int,
-    length: float,
-    h_profile,
-    v_profile,
-) -> list[float]:
-    adaptive_count = max(2, count - 6)
-    throat_span = min(length * 0.12, max(length * 0.02, effective_throat_radius() * 3.0))
-    throat_count = min(7, max(2, count // 5))
-    samples = adaptive_profile_z_samples(adaptive_count, length, h_profile, v_profile)
-    samples.extend(throat_span * (i / (throat_count - 1)) ** 1.6 for i in range(throat_count))
-    samples.extend((length * i / (count - 1) for i in range(count)) if count <= 8 else [])
-    deduped = sorted({round(max(0.0, min(length, sample)), 9) for sample in samples})
-    if len(deduped) <= count:
-        return deduped
-
-    protected = {0.0, length}
-    for i in range(throat_count):
-        protected.add(round(throat_span * (i / (throat_count - 1)) ** 1.6, 9))
-    candidates = [sample for sample in deduped if sample not in protected]
-    keep_count = max(0, count - len(protected))
-    if keep_count <= 0:
-        return sorted(protected)[:count]
-    if len(candidates) <= keep_count:
-        return sorted(protected | set(candidates))
-    selected = [
-        candidates[round(i * (len(candidates) - 1) / max(1, keep_count - 1))]
-        for i in range(keep_count)
-    ]
-    return sorted(protected | set(selected))
-
-
 def cubic_bezier_point(a: dict[str, float], b: dict[str, float], t: float) -> tuple[float, float]:
     dx = max(1e-9, b["x"] - a["x"])
     a_length = max(0.0, a["tension"]) * dx
@@ -825,7 +793,7 @@ def main() -> None:
         for i in range(extension_stations):
             rings.append(conical_extension_ring(i / (extension_stations - 1)))
 
-    horn_samples = throat_reinforced_z_samples(Z_STATIONS, length, h_profile, v_profile)
+    horn_samples = adaptive_profile_z_samples(Z_STATIONS, length, h_profile, v_profile)
     if extension > 0.0:
         horn_samples = horn_samples[1:]
     for profile_z in horn_samples:
