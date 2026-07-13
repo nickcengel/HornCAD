@@ -445,7 +445,7 @@ def station_scalar_offset_outer_rings(
     ring_size = len(horn_rings[0])
     radius = mouth_radius(mouth_h, mouth_v)
     mouth_center_z = PARAMS["length"] - radius if math.isfinite(radius) else PARAMS["length"]
-    outer_rings = []
+    scalar_rings = []
 
     for i, ring in enumerate(horn_rings):
         if i == 0:
@@ -470,13 +470,26 @@ def station_scalar_offset_outer_rings(
             slope_factor = 1.0 / max(xy, 1e-6)
             scalars.append(max(thickness, min(thickness * 1.5, thickness * slope_factor)))
 
-        scalars = smooth_cyclic_values(scalars, 3)
-        outer_rings.append([
+        scalar_rings.append(smooth_cyclic_values(scalars, 8))
+
+    for _ in range(3):
+        scalar_rings = [
+            [
+                0.25 * scalar_rings[max(0, i - 1)][j]
+                + 0.5 * scalar_rings[i][j]
+                + 0.25 * scalar_rings[min(ring_count - 1, i + 1)][j]
+                for j in range(ring_size)
+            ]
+            for i in range(ring_count)
+        ]
+
+    return [
+        [
             radial_offset_point(point, scalars[j])
             for j, point in enumerate(ring)
-        ])
-
-    return outer_rings
+        ]
+        for ring, scalars in zip(horn_rings, scalar_rings)
+    ]
 
 
 def project_point_to_mouth_radius(
