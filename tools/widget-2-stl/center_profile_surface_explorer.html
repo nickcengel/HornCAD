@@ -2198,7 +2198,7 @@
     }
     return Math.max(
       1e-6,
-      mouthRadius - Math.max(0, p.mouthRearOffset) - Math.max(0, p.minimumWall)
+      mouthRadius - Math.max(0, p.mouthRearOffset) - 2 * Math.max(0, p.minimumWall)
     );
   }
 
