@@ -18,25 +18,33 @@ PARAMS = {
     "h_coverage": 45.0,
     "h_k": 4.0,
     "h_n": 10.0,
+    "h_modifier_coverage": 1.0,
+    "h_modifier_k": 1.0,
+    "h_modifier_n": 1.0,
+    "h_modifier_amount": 0.0,
     "v_coverage": 30.0,
     "v_k": 4.0,
     "v_n": 10.0,
+    "v_modifier_coverage": 1.0,
+    "v_modifier_k": 1.0,
+    "v_modifier_n": 1.0,
+    "v_modifier_amount": 0.0,
     "mouth_sag": 60.0,
     "section_shape_1": 0.72,
-    "squareness_morph_curve": [
-        (0.0, 0.0),
-        (0.35, 0.28175),
-        (0.65, 0.71825),
-        (1.0, 1.0),
+    "squareness_morph_spline": [
+        {"x": 0.0, "y": 0.0, "angle": 0.0, "tension": 0.35},
+        {"x": 1.0, "y": 1.0, "angle": 0.0, "tension": 0.35},
     ],
-    "side_bow": 0.0,
+    "h_modifier_thickness_spline": [
+        {"x": 0.0, "y": 1.0, "angle": 0.0, "tension": 0.35},
+        {"x": 1.0, "y": 0.0, "angle": 0.0, "tension": 0.35},
+    ],
+    "v_modifier_thickness_spline": [
+        {"x": 0.0, "y": 1.0, "angle": 0.0, "tension": 0.35},
+        {"x": 1.0, "y": 0.0, "angle": 0.0, "tension": 0.35},
+    ],
     "density": 40,
 }
-
-
-def smoothstep(t: float) -> float:
-    x = max(0.0, min(1.0, t))
-    return x * x * (3.0 - 2.0 * x)
 
 
 def osse_base_radius(z: float, length: float, r0: float, coverage: float, k: float, throat_angle: float = 0.0) -> float:
@@ -79,19 +87,59 @@ def profile(axis: str):
 
 
 def section_shape(z: float) -> float:
-    return morph_curve_value(z / max(measured_length(), 1e-9)) * PARAMS["section_shape_1"]
+    return spline_value(z / max(measured_length(), 1e-9), PARAMS["squareness_morph_spline"]) * PARAMS["section_shape_1"]
 
 
-def morph_curve_value(u: float) -> float:
+def cubic_bezier_point(a: dict[str, float], b: dict[str, float], t: float) -> tuple[float, float]:
+    dx = max(1e-9, b["x"] - a["x"])
+    a_length = max(0.0, a["tension"]) * dx
+    b_length = max(0.0, b["tension"]) * dx
+    p0 = (a["x"], a["y"])
+    p1 = (a["x"] + math.cos(a["angle"]) * a_length, a["y"] + math.sin(a["angle"]) * a_length)
+    p2 = (b["x"] - math.cos(b["angle"]) * b_length, b["y"] - math.sin(b["angle"]) * b_length)
+    p3 = (b["x"], b["y"])
+    u = 1.0 - t
+    x = u**3 * p0[0] + 3.0 * u * u * t * p1[0] + 3.0 * u * t * t * p2[0] + t**3 * p3[0]
+    y = u**3 * p0[1] + 3.0 * u * u * t * p1[1] + 3.0 * u * t * t * p2[1] + t**3 * p3[1]
+    return x, y
+
+
+def spline_value(u: float, anchors: list[dict[str, float]]) -> float:
     x = max(0.0, min(1.0, u))
-    points = PARAMS["squareness_morph_curve"]
-    for index, (x0, y0) in enumerate(points[:-1]):
-        x1, y1 = points[index + 1]
-        if x <= x1 or index == len(points) - 2:
-            span = max(x1 - x0, 1e-9)
-            t = smoothstep((x - x0) / span)
-            return y0 + (y1 - y0) * t
-    return 1.0
+    for index, anchor in enumerate(anchors[:-1]):
+        next_anchor = anchors[index + 1]
+        if x <= next_anchor["x"] or index == len(anchors) - 2:
+            lo = 0.0
+            hi = 1.0
+            for _ in range(18):
+                mid = (lo + hi) / 2.0
+                point_x, _ = cubic_bezier_point(anchor, next_anchor, mid)
+                if point_x < x:
+                    lo = mid
+                else:
+                    hi = mid
+            _, y = cubic_bezier_point(anchor, next_anchor, (lo + hi) / 2.0)
+            return max(0.0, min(1.0, y))
+    return anchors[-1]["y"]
+
+
+def modifier_thickness_value(axis: str, u: float) -> float:
+    return spline_value(u, PARAMS[f"{axis}_modifier_thickness_spline"])
+
+
+def modifier_radius(axis: str, z: float) -> float:
+    p = PARAMS
+    coverage = p[f"{axis}_coverage"] * p[f"{axis}_modifier_coverage"]
+    k = p[f"{axis}_k"] * p[f"{axis}_modifier_k"]
+    n = p[f"{axis}_n"] * p[f"{axis}_modifier_n"]
+    end_radius = p["mouth_width"] / 2.0 if axis == "h" else p["mouth_height"] / 2.0
+    r0 = effective_throat_radius(p)
+    s = solved_s(p["length"], r0, coverage, k, n, end_radius, p["throat_angle"])
+    return osse_radius(z, p["length"], r0, coverage, k, n, s, p["throat_angle"])
+
+
+def modifier_delta(axis: str, z: float, basis_radius: float) -> float:
+    return (modifier_radius(axis, z) - basis_radius) * PARAMS[f"{axis}_modifier_amount"]
 
 
 def superellipse_n(shape: float) -> float:
@@ -204,9 +252,11 @@ def section_point(h_radius: float, v_radius: float, z: float, theta: float, mout
     x, y = superellipse_point(h_radius, v_radius, shape_n, theta)
     u = min(1.0, abs(x) / max(h_radius, 1e-9))
     v = min(1.0, abs(y) / max(v_radius, 1e-9))
-    side_window = u * u * (1.0 - v * v)
+    h_window = u * u * modifier_thickness_value("h", v)
+    v_window = v * v * modifier_thickness_value("v", u)
     mouth_fade = 1.0 - max(0.0, min(1.0, z / max(PARAMS["length"], 1e-9))) ** 4.0
-    x += (1.0 if (x or math.cos(theta)) >= 0.0 else -1.0) * PARAMS["side_bow"] * side_window * mouth_fade
+    x += (1.0 if (x or math.cos(theta)) >= 0.0 else -1.0) * modifier_delta("h", z, h_radius) * h_window * mouth_fade
+    y += (1.0 if (y or math.sin(theta)) >= 0.0 else -1.0) * modifier_delta("v", z, v_radius) * v_window * mouth_fade
     mouth_progress = max(0.0, min(1.0, z / max(PARAMS["length"], 1e-9))) ** 2.4
     return x, y, z - cylindrical_mouth_setback(x, mouth_h_radius) * mouth_progress
 

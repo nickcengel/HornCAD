@@ -96,8 +96,7 @@
       accent-color: var(--accent);
     }
 
-    input[type="number"],
-    select {
+    input[type="number"] {
       width: 76px;
       padding: 5px 6px;
       border: 1px solid var(--line);
@@ -106,11 +105,6 @@
       font: inherit;
       text-align: right;
       background: #fff;
-    }
-
-    select {
-      width: 118px;
-      text-align: left;
     }
 
     .viewbar {
@@ -293,9 +287,9 @@
         <input data-control="stlStations" type="range" min="8" max="160" step="1" value="44">
       </label>
       <label>
-        STL half samples
-        <input data-control="stlHalfSamples" type="number" min="32" max="384" step="8" value="128">
-        <input data-control="stlHalfSamples" type="range" min="32" max="384" step="8" value="128">
+        STL side samples
+        <input data-control="stlSideSamples" type="number" min="16" max="256" step="4" value="96">
+        <input data-control="stlSideSamples" type="range" min="16" max="256" step="4" value="96">
       </label>
       <div class="action-row">
         <button type="button" class="primary-action" data-export-stl>Export STL</button>
@@ -360,15 +354,31 @@
         <input data-control="hN" type="range" min="2" max="100" step="0.5" value="10">
       </label>
       <label>
-        Modifier K
-        <input data-control="sideGuideK" type="number" min="0.05" max="10" step="0.05" value="1">
-        <input data-control="sideGuideK" type="range" min="0.05" max="10" step="0.05" value="1">
+        Modifier coverage x
+        <input data-control="hModifierCoverage" type="number" min="0.05" max="3" step="0.05" value="1">
+        <input data-control="hModifierCoverage" type="range" min="0.05" max="3" step="0.05" value="1">
+      </label>
+      <label>
+        Modifier K x
+        <input data-control="hModifierK" type="number" min="0.05" max="3" step="0.05" value="1">
+        <input data-control="hModifierK" type="range" min="0.05" max="3" step="0.05" value="1">
+      </label>
+      <label>
+        Modifier N x
+        <input data-control="hModifierN" type="number" min="0.05" max="3" step="0.05" value="1">
+        <input data-control="hModifierN" type="range" min="0.05" max="3" step="0.05" value="1">
       </label>
       <label>
         Modifier amount
-        <input data-control="sideGuideAmount" type="number" min="-200" max="200" step="1" value="0">
-        <input data-control="sideGuideAmount" type="range" min="-200" max="200" step="1" value="0">
+        <input data-control="hModifierAmount" type="number" min="-200" max="200" step="1" value="0">
+        <input data-control="hModifierAmount" type="range" min="-200" max="200" step="1" value="0">
       </label>
+      <div class="curve-tools">
+        <button type="button" data-h-modifier-curve-add>Add point</button>
+        <button type="button" data-h-modifier-curve-remove>Remove point</button>
+        <button type="button" data-h-modifier-curve-reset>Reset</button>
+      </div>
+      <canvas id="h-modifier-curve" class="curve-editor" width="720" height="300"></canvas>
     </fieldset>
 
     <fieldset>
@@ -388,10 +398,36 @@
         <input data-control="vN" type="number" min="2" max="100" step="0.5" value="10">
         <input data-control="vN" type="range" min="2" max="100" step="0.5" value="10">
       </label>
+      <label>
+        Modifier coverage x
+        <input data-control="vModifierCoverage" type="number" min="0.05" max="3" step="0.05" value="1">
+        <input data-control="vModifierCoverage" type="range" min="0.05" max="3" step="0.05" value="1">
+      </label>
+      <label>
+        Modifier K x
+        <input data-control="vModifierK" type="number" min="0.05" max="3" step="0.05" value="1">
+        <input data-control="vModifierK" type="range" min="0.05" max="3" step="0.05" value="1">
+      </label>
+      <label>
+        Modifier N x
+        <input data-control="vModifierN" type="number" min="0.05" max="3" step="0.05" value="1">
+        <input data-control="vModifierN" type="range" min="0.05" max="3" step="0.05" value="1">
+      </label>
+      <label>
+        Modifier amount
+        <input data-control="vModifierAmount" type="number" min="-200" max="200" step="1" value="0">
+        <input data-control="vModifierAmount" type="range" min="-200" max="200" step="1" value="0">
+      </label>
+      <div class="curve-tools">
+        <button type="button" data-v-modifier-curve-add>Add point</button>
+        <button type="button" data-v-modifier-curve-remove>Remove point</button>
+        <button type="button" data-v-modifier-curve-reset>Reset</button>
+      </div>
+      <canvas id="v-modifier-curve" class="curve-editor" width="720" height="300"></canvas>
     </fieldset>
 
     <fieldset>
-      <legend>Section Modifier Curve</legend>
+      <legend>Square Morph Function</legend>
       <label>
         Mouth Squareness
         <input data-control="sectionShape1" type="number" min="0" max="1" step="0.01" value="0.72">
@@ -427,14 +463,40 @@
   const ctx = canvas.getContext("2d");
   const morphCurveCanvas = document.getElementById("morph-curve");
   const morphCurveCtx = morphCurveCanvas.getContext("2d");
-  const defaultMorphCurvePoints = [
-    { x: 0, y: 0 },
-    { x: 0.35, y: smoothstep(0.35) },
-    { x: 0.65, y: smoothstep(0.65) },
-    { x: 1, y: 1 },
+  const hModifierCurveCanvas = document.getElementById("h-modifier-curve");
+  const hModifierCurveCtx = hModifierCurveCanvas.getContext("2d");
+  const vModifierCurveCanvas = document.getElementById("v-modifier-curve");
+  const vModifierCurveCtx = vModifierCurveCanvas.getContext("2d");
+  const defaultMorphSpline = [
+    { x: 0, y: 0, angle: 0, tension: 0.35 },
+    { x: 1, y: 1, angle: 0, tension: 0.35 },
   ];
-  let morphCurvePoints = defaultMorphCurvePoints.map((point) => ({ ...point }));
-  let activeMorphPoint = null;
+  const defaultModifierSpline = [
+    { x: 0, y: 1, angle: 0, tension: 0.35 },
+    { x: 1, y: 0, angle: 0, tension: 0.35 },
+  ];
+  const morphCurve = {
+    canvas: morphCurveCanvas,
+    ctx: morphCurveCtx,
+    anchors: cloneSpline(defaultMorphSpline),
+    defaults: defaultMorphSpline,
+    monotonic: "increasing",
+  };
+  const hModifierCurve = {
+    canvas: hModifierCurveCanvas,
+    ctx: hModifierCurveCtx,
+    anchors: cloneSpline(defaultModifierSpline),
+    defaults: defaultModifierSpline,
+    monotonic: "decreasing",
+  };
+  const vModifierCurve = {
+    canvas: vModifierCurveCanvas,
+    ctx: vModifierCurveCtx,
+    anchors: cloneSpline(defaultModifierSpline),
+    defaults: defaultModifierSpline,
+    monotonic: "decreasing",
+  };
+  let activeSplineHandle = null;
   let currentView = "top";
   const orbit = {
     yaw: -Math.PI / 4,
@@ -462,21 +524,29 @@
       controls.set(name, []);
     }
     controls.get(name).push(input);
-    input.addEventListener("input", () => {
+    const syncControl = () => {
       for (const peer of controls.get(name)) {
         if (peer !== input) {
           peer.value = input.value;
         }
       }
       render();
-    });
+    };
+    input.addEventListener("input", syncControl);
+    input.addEventListener("change", syncControl);
   }
 
   document.querySelector("[data-export-stl]").addEventListener("click", exportStl);
   document.querySelector("[data-export-yaml]").addEventListener("click", exportYaml);
-  document.querySelector("[data-curve-add]").addEventListener("click", addMorphPoint);
-  document.querySelector("[data-curve-remove]").addEventListener("click", removeMorphPoint);
-  document.querySelector("[data-curve-reset]").addEventListener("click", resetMorphCurve);
+  document.querySelector("[data-curve-add]").addEventListener("click", () => addSplineAnchor(morphCurve));
+  document.querySelector("[data-curve-remove]").addEventListener("click", () => removeSplineAnchor(morphCurve));
+  document.querySelector("[data-curve-reset]").addEventListener("click", () => resetSplineCurve(morphCurve));
+  document.querySelector("[data-h-modifier-curve-add]").addEventListener("click", () => addSplineAnchor(hModifierCurve));
+  document.querySelector("[data-h-modifier-curve-remove]").addEventListener("click", () => removeSplineAnchor(hModifierCurve));
+  document.querySelector("[data-h-modifier-curve-reset]").addEventListener("click", () => resetSplineCurve(hModifierCurve));
+  document.querySelector("[data-v-modifier-curve-add]").addEventListener("click", () => addSplineAnchor(vModifierCurve));
+  document.querySelector("[data-v-modifier-curve-remove]").addEventListener("click", () => removeSplineAnchor(vModifierCurve));
+  document.querySelector("[data-v-modifier-curve-reset]").addEventListener("click", () => resetSplineCurve(vModifierCurve));
 
   for (const button of document.querySelectorAll("[data-view]")) {
     button.addEventListener("click", () => {
@@ -531,29 +601,57 @@
   }, { passive: false });
 
   morphCurveCanvas.addEventListener("pointerdown", (event) => {
-    const point = morphCurveEventPoint(event);
-    activeMorphPoint = nearestMorphPoint(point);
-    if (activeMorphPoint !== null) {
+    activeSplineHandle = nearestSplineHandle(morphCurve, splineEventPoint(morphCurve, event));
+    if (activeSplineHandle !== null) {
       morphCurveCanvas.setPointerCapture(event.pointerId);
-      moveMorphPoint(activeMorphPoint, point);
+      moveSplineHandle(activeSplineHandle, splineEventPoint(morphCurve, event));
     }
   });
 
   morphCurveCanvas.addEventListener("pointermove", (event) => {
-    if (activeMorphPoint === null) {
+    if (activeSplineHandle === null || activeSplineHandle.editor !== morphCurve) {
       return;
     }
-    moveMorphPoint(activeMorphPoint, morphCurveEventPoint(event));
+    moveSplineHandle(activeSplineHandle, splineEventPoint(morphCurve, event));
   });
 
   morphCurveCanvas.addEventListener("pointerup", (event) => {
-    activeMorphPoint = null;
+    activeSplineHandle = null;
     morphCurveCanvas.releasePointerCapture(event.pointerId);
   });
 
   morphCurveCanvas.addEventListener("pointercancel", () => {
-    activeMorphPoint = null;
+    activeSplineHandle = null;
   });
+
+  bindSplineEditor(hModifierCurve);
+  bindSplineEditor(vModifierCurve);
+
+  function bindSplineEditor(editor) {
+    editor.canvas.addEventListener("pointerdown", (event) => {
+      activeSplineHandle = nearestSplineHandle(editor, splineEventPoint(editor, event));
+      if (activeSplineHandle !== null) {
+        editor.canvas.setPointerCapture(event.pointerId);
+        moveSplineHandle(activeSplineHandle, splineEventPoint(editor, event));
+      }
+    });
+
+    editor.canvas.addEventListener("pointermove", (event) => {
+      if (activeSplineHandle === null || activeSplineHandle.editor !== editor) {
+        return;
+      }
+      moveSplineHandle(activeSplineHandle, splineEventPoint(editor, event));
+    });
+
+    editor.canvas.addEventListener("pointerup", (event) => {
+      activeSplineHandle = null;
+      editor.canvas.releasePointerCapture(event.pointerId);
+    });
+
+    editor.canvas.addEventListener("pointercancel", () => {
+      activeSplineHandle = null;
+    });
+  }
 
   function setCurrentView(view) {
     currentView = view;
@@ -587,11 +685,6 @@
     return deg * Math.PI / 180;
   }
 
-  function smoothstep(t) {
-    const x = Math.max(0, Math.min(1, t));
-    return x * x * (3 - 2 * x);
-  }
-
   function clamp01(value) {
     return Math.max(0, Math.min(1, value));
   }
@@ -614,16 +707,22 @@
       hCoverage: value("hCoverage"),
       hK: value("hK"),
       hN: value("hN"),
+      hModifierCoverage: value("hModifierCoverage"),
+      hModifierK: value("hModifierK"),
+      hModifierN: value("hModifierN"),
+      hModifierAmount: value("hModifierAmount") / 100,
       vCoverage: value("vCoverage"),
       vK: value("vK"),
       vN: value("vN"),
+      vModifierCoverage: value("vModifierCoverage"),
+      vModifierK: value("vModifierK"),
+      vModifierN: value("vModifierN"),
+      vModifierAmount: value("vModifierAmount") / 100,
       mouthSag: value("mouthSag"),
       sectionShape1: value("sectionShape1"),
-      sideGuideK: value("sideGuideK"),
-      sideGuideAmount: value("sideGuideAmount") / 100,
       density: Math.max(8, Math.round(value("density"))),
       stlStations: Math.max(8, Math.round(value("stlStations"))),
-      stlHalfSamples: Math.max(32, Math.round(value("stlHalfSamples"))),
+      stlSideSamples: Math.max(16, Math.round(value("stlSideSamples"))),
     };
   }
 
@@ -661,16 +760,56 @@
     return (z) => osseRadius(z, p.length, r0, coverage, k, n, s, p.throatAngle);
   }
 
-  function sideGuideRadius(p, z) {
-    const endRadius = p.mouthWidth / 2;
-    const n = p.hN;
-    const r0 = effectiveThroatRadius(p);
-    const s = solvedS(p.length, r0, p.hCoverage, p.sideGuideK, n, endRadius, p.throatAngle);
-    return osseRadius(z, p.length, r0, p.hCoverage, p.sideGuideK, n, s, p.throatAngle);
+  function axisParams(p, axis) {
+    return axis === "h"
+      ? {
+        coverage: p.hCoverage,
+        k: p.hK,
+        n: p.hN,
+        endRadius: p.mouthWidth / 2,
+        coverageMultiplier: p.hModifierCoverage,
+        kMultiplier: p.hModifierK,
+        nMultiplier: p.hModifierN,
+        amount: p.hModifierAmount,
+      }
+      : {
+        coverage: p.vCoverage,
+        k: p.vK,
+        n: p.vN,
+        endRadius: p.mouthHeight / 2,
+        coverageMultiplier: p.vModifierCoverage,
+        kMultiplier: p.vModifierK,
+        nMultiplier: p.vModifierN,
+        amount: p.vModifierAmount,
+      };
   }
 
-  function sideGuideDelta(p, z, hRadius) {
-    return (sideGuideRadius(p, z) - hRadius) * p.sideGuideAmount;
+  function modifierRadius(p, axis, z) {
+    const params = axisParams(p, axis);
+    const r0 = effectiveThroatRadius(p);
+    const coverage = params.coverage * params.coverageMultiplier;
+    const k = params.k * params.kMultiplier;
+    const n = params.n * params.nMultiplier;
+    const s = solvedS(p.length, r0, coverage, k, n, params.endRadius, p.throatAngle);
+    return osseRadius(z, p.length, r0, coverage, k, n, s, p.throatAngle);
+  }
+
+  function modifierDelta(p, axis, z, basisRadius) {
+    return (modifierRadius(p, axis, z) - basisRadius) * axisParams(p, axis).amount;
+  }
+
+  function modifierSolvedS(p, axis) {
+    const params = axisParams(p, axis);
+    const r0 = effectiveThroatRadius(p);
+    return solvedS(
+      p.length,
+      r0,
+      params.coverage * params.coverageMultiplier,
+      params.k * params.kMultiplier,
+      params.n * params.nMultiplier,
+      params.endRadius,
+      p.throatAngle
+    );
   }
 
   function measuredLength(p) {
@@ -682,156 +821,290 @@
   }
 
   function morphCurveValue(u) {
-    const x = clamp01(u);
-    const points = morphCurvePoints;
-    for (let i = 0; i < points.length - 1; i += 1) {
-      const a = points[i];
-      const b = points[i + 1];
-      if (x <= b.x || i === points.length - 2) {
-        const span = Math.max(b.x - a.x, 1e-9);
-        const t = smoothstep((x - a.x) / span);
-        return a.y + (b.y - a.y) * t;
-      }
-    }
-    return 1;
+    return splineValue(morphCurve, u);
   }
 
-  function morphCurvePlotRect() {
-    return { x: 32, y: 16, width: morphCurveCanvas.width - 48, height: morphCurveCanvas.height - 42 };
+  function hModifierCurveValue(v) {
+    return splineValue(hModifierCurve, v);
   }
 
-  function morphCurveToCanvas(point) {
-    const rect = morphCurvePlotRect();
+  function vModifierCurveValue(u) {
+    return splineValue(vModifierCurve, u);
+  }
+
+  function cloneSpline(anchors) {
+    return anchors.map((anchor) => ({ ...anchor }));
+  }
+
+  function splinePlotRect(editor) {
+    return { x: 32, y: 16, width: editor.canvas.width - 48, height: editor.canvas.height - 42 };
+  }
+
+  function splineToCanvas(editor, point) {
+    const rect = splinePlotRect(editor);
     return {
       x: rect.x + point.x * rect.width,
       y: rect.y + (1 - point.y) * rect.height,
     };
   }
 
-  function canvasToMorphCurve(point) {
-    const rect = morphCurvePlotRect();
+  function canvasToSpline(editor, point) {
+    const rect = splinePlotRect(editor);
     return {
       x: clamp01((point.x - rect.x) / rect.width),
       y: clamp01(1 - (point.y - rect.y) / rect.height),
     };
   }
 
-  function morphCurveEventPoint(event) {
-    const rect = morphCurveCanvas.getBoundingClientRect();
-    const scaleX = morphCurveCanvas.width / rect.width;
-    const scaleY = morphCurveCanvas.height / rect.height;
-    return canvasToMorphCurve({
+  function splineEventPoint(editor, event) {
+    const rect = editor.canvas.getBoundingClientRect();
+    const scaleX = editor.canvas.width / rect.width;
+    const scaleY = editor.canvas.height / rect.height;
+    return canvasToSpline(editor, {
       x: (event.clientX - rect.left) * scaleX,
       y: (event.clientY - rect.top) * scaleY,
     });
   }
 
-  function nearestMorphPoint(point) {
+  function bezierPoint(a, b, t) {
+    const controls = splineSegmentControls(a, b);
+    const u = 1 - t;
+    return {
+      x: u * u * u * controls.p0.x + 3 * u * u * t * controls.p1.x + 3 * u * t * t * controls.p2.x + t * t * t * controls.p3.x,
+      y: u * u * u * controls.p0.y + 3 * u * u * t * controls.p1.y + 3 * u * t * t * controls.p2.y + t * t * t * controls.p3.y,
+    };
+  }
+
+  function splineSegmentControls(a, b) {
+    const dx = Math.max(1e-9, b.x - a.x);
+    const aLength = Math.max(0, a.tension) * dx;
+    const bLength = Math.max(0, b.tension) * dx;
+    return {
+      p0: { x: a.x, y: a.y },
+      p1: {
+        x: a.x + Math.cos(a.angle) * aLength,
+        y: a.y + Math.sin(a.angle) * aLength,
+      },
+      p2: {
+        x: b.x - Math.cos(b.angle) * bLength,
+        y: b.y - Math.sin(b.angle) * bLength,
+      },
+      p3: { x: b.x, y: b.y },
+    };
+  }
+
+  function splineValue(editor, u) {
+    const x = clamp01(u);
+    const anchors = editor.anchors;
+    for (let i = 0; i < anchors.length - 1; i += 1) {
+      const a = anchors[i];
+      const b = anchors[i + 1];
+      if (x <= b.x || i === anchors.length - 2) {
+        let lo = 0;
+        let hi = 1;
+        for (let pass = 0; pass < 18; pass += 1) {
+          const mid = (lo + hi) / 2;
+          const point = bezierPoint(a, b, mid);
+          if (point.x < x) {
+            lo = mid;
+          } else {
+            hi = mid;
+          }
+        }
+        return clamp01(bezierPoint(a, b, (lo + hi) / 2).y);
+      }
+    }
+    return anchors[anchors.length - 1].y;
+  }
+
+  function splineHandlePoint(editor, index, direction) {
+    const anchor = editor.anchors[index];
+    const neighbor = direction > 0 ? editor.anchors[index + 1] : editor.anchors[index - 1];
+    if (!neighbor) {
+      return null;
+    }
+    const span = Math.abs(neighbor.x - anchor.x);
+    const length = Math.max(0, anchor.tension) * span;
+    return {
+      x: anchor.x + direction * Math.cos(anchor.angle) * length,
+      y: anchor.y + direction * Math.sin(anchor.angle) * length,
+    };
+  }
+
+  function nearestSplineHandle(editor, point) {
+    const rect = editor.canvas.getBoundingClientRect();
+    const hitRadius = 14 * (editor.canvas.width / Math.max(rect.width, 1));
+    const target = splineToCanvas(editor, point);
     let best = null;
     let bestDistance = Infinity;
-    const rect = morphCurveCanvas.getBoundingClientRect();
-    const hitRadius = 14 * (morphCurveCanvas.width / Math.max(rect.width, 1));
-    const target = morphCurveToCanvas(point);
-    for (let i = 0; i < morphCurvePoints.length; i += 1) {
-      const candidate = morphCurveToCanvas(morphCurvePoints[i]);
+
+    for (let i = 0; i < editor.anchors.length; i += 1) {
+      for (const direction of [-1, 1]) {
+        const handle = splineHandlePoint(editor, i, direction);
+        if (!handle) {
+          continue;
+        }
+        const candidate = splineToCanvas(editor, handle);
+        const distance = Math.hypot(candidate.x - target.x, candidate.y - target.y);
+        if (distance < bestDistance && distance <= hitRadius) {
+          best = { editor, type: "tangent", index: i, direction };
+          bestDistance = distance;
+        }
+      }
+    }
+
+    for (let i = 0; i < editor.anchors.length; i += 1) {
+      const candidate = splineToCanvas(editor, editor.anchors[i]);
       const distance = Math.hypot(candidate.x - target.x, candidate.y - target.y);
       if (distance < bestDistance && distance <= hitRadius) {
-        best = i;
+        best = { editor, type: "anchor", index: i };
         bestDistance = distance;
       }
     }
     return best;
   }
 
-  function moveMorphPoint(index, point) {
-    if (index === 0 || index === morphCurvePoints.length - 1) {
-      return;
+  function moveSplineHandle(active, point) {
+    const editor = active.editor;
+    const anchor = editor.anchors[active.index];
+    if (active.type === "anchor") {
+      if (active.index !== 0 && active.index !== editor.anchors.length - 1) {
+        const previous = editor.anchors[active.index - 1];
+        const next = editor.anchors[active.index + 1];
+        anchor.x = Math.max(previous.x + 0.01, Math.min(next.x - 0.01, point.x));
+        anchor.y = clampAnchorY(editor, point.y, active.index);
+      }
+    } else {
+      const dx = Math.max(0, (point.x - anchor.x) * active.direction);
+      const dy = (point.y - anchor.y) * active.direction;
+      const neighbor = active.direction > 0 ? editor.anchors[active.index + 1] : editor.anchors[active.index - 1];
+      const span = Math.max(1e-9, Math.abs(neighbor.x - anchor.x));
+      anchor.angle = Math.atan2(dy, dx);
+      anchor.tension = Math.max(0, Math.min(1.5, Math.hypot(dx, dy) / span));
     }
-    const previous = morphCurvePoints[index - 1];
-    const next = morphCurvePoints[index + 1];
-    morphCurvePoints[index] = {
-      x: Math.max(previous.x + 0.01, Math.min(next.x - 0.01, point.x)),
-      y: Math.max(previous.y, Math.min(next.y, point.y)),
-    };
-    drawMorphCurveEditor();
+    drawSplineEditor(editor);
     render();
   }
 
-  function addMorphPoint() {
+  function clampAnchorY(editor, y, index) {
+    const previous = editor.anchors[index - 1];
+    const next = editor.anchors[index + 1];
+    if (editor.monotonic === "increasing") {
+      return Math.max(previous.y, Math.min(next.y, y));
+    }
+    return Math.max(next.y, Math.min(previous.y, y));
+  }
+
+  function addSplineAnchor(editor) {
     let largestGap = 0;
     let insertIndex = 1;
-    for (let i = 0; i < morphCurvePoints.length - 1; i += 1) {
-      const gap = morphCurvePoints[i + 1].x - morphCurvePoints[i].x;
+    for (let i = 0; i < editor.anchors.length - 1; i += 1) {
+      const gap = editor.anchors[i + 1].x - editor.anchors[i].x;
       if (gap > largestGap) {
         largestGap = gap;
         insertIndex = i + 1;
       }
     }
-    const x = (morphCurvePoints[insertIndex - 1].x + morphCurvePoints[insertIndex].x) / 2;
-    morphCurvePoints.splice(insertIndex, 0, { x, y: morphCurveValue(x) });
-    drawMorphCurveEditor();
+    const x = (editor.anchors[insertIndex - 1].x + editor.anchors[insertIndex].x) / 2;
+    editor.anchors.splice(insertIndex, 0, { x, y: splineValue(editor, x), angle: 0, tension: 0.35 });
+    drawSplineEditor(editor);
     render();
   }
 
-  function removeMorphPoint() {
-    if (morphCurvePoints.length <= 2) {
+  function removeSplineAnchor(editor) {
+    if (editor.anchors.length <= 2) {
       return;
     }
-    morphCurvePoints.splice(morphCurvePoints.length - 2, 1);
-    drawMorphCurveEditor();
+    editor.anchors.splice(editor.anchors.length - 2, 1);
+    drawSplineEditor(editor);
     render();
   }
 
-  function resetMorphCurve() {
-    morphCurvePoints = defaultMorphCurvePoints.map((point) => ({ ...point }));
-    drawMorphCurveEditor();
+  function resetSplineCurve(editor) {
+    editor.anchors = cloneSpline(editor.defaults);
+    drawSplineEditor(editor);
     render();
   }
 
-  function drawMorphCurveEditor() {
-    const rect = morphCurvePlotRect();
-    morphCurveCtx.clearRect(0, 0, morphCurveCanvas.width, morphCurveCanvas.height);
-    morphCurveCtx.save();
-    morphCurveCtx.strokeStyle = "#d6d8da";
-    morphCurveCtx.lineWidth = 1;
-    morphCurveCtx.strokeRect(rect.x, rect.y, rect.width, rect.height);
+  function drawSplineEditor(editor) {
+    const rect = splinePlotRect(editor);
+    const curveCtx = editor.ctx;
+    curveCtx.clearRect(0, 0, editor.canvas.width, editor.canvas.height);
+    curveCtx.save();
+    curveCtx.strokeStyle = "#d6d8da";
+    curveCtx.lineWidth = 1;
+    curveCtx.strokeRect(rect.x, rect.y, rect.width, rect.height);
 
     for (let i = 1; i < 4; i += 1) {
       const x = rect.x + rect.width * i / 4;
       const y = rect.y + rect.height * i / 4;
-      morphCurveCtx.beginPath();
-      morphCurveCtx.moveTo(x, rect.y);
-      morphCurveCtx.lineTo(x, rect.y + rect.height);
-      morphCurveCtx.moveTo(rect.x, y);
-      morphCurveCtx.lineTo(rect.x + rect.width, y);
-      morphCurveCtx.stroke();
+      curveCtx.beginPath();
+      curveCtx.moveTo(x, rect.y);
+      curveCtx.lineTo(x, rect.y + rect.height);
+      curveCtx.moveTo(rect.x, y);
+      curveCtx.lineTo(rect.x + rect.width, y);
+      curveCtx.stroke();
     }
 
-    morphCurveCtx.strokeStyle = "#0f766e";
-    morphCurveCtx.lineWidth = 4;
-    morphCurveCtx.beginPath();
-    for (let i = 0; i <= 160; i += 1) {
-      const x = i / 160;
-      const point = morphCurveToCanvas({ x, y: morphCurveValue(x) });
-      if (i === 0) {
-        morphCurveCtx.moveTo(point.x, point.y);
-      } else {
-        morphCurveCtx.lineTo(point.x, point.y);
+    curveCtx.strokeStyle = "#8b949e";
+    curveCtx.lineWidth = 1.2;
+    for (let i = 0; i < editor.anchors.length; i += 1) {
+      const anchorCanvas = splineToCanvas(editor, editor.anchors[i]);
+      for (const direction of [-1, 1]) {
+        const handle = splineHandlePoint(editor, i, direction);
+        if (!handle) {
+          continue;
+        }
+        const handleCanvas = splineToCanvas(editor, handle);
+        curveCtx.beginPath();
+        curveCtx.moveTo(anchorCanvas.x, anchorCanvas.y);
+        curveCtx.lineTo(handleCanvas.x, handleCanvas.y);
+        curveCtx.stroke();
       }
     }
-    morphCurveCtx.stroke();
 
-    for (let i = 0; i < morphCurvePoints.length; i += 1) {
-      const point = morphCurveToCanvas(morphCurvePoints[i]);
-      morphCurveCtx.beginPath();
-      morphCurveCtx.fillStyle = i === 0 || i === morphCurvePoints.length - 1 ? "#34383c" : "#0f766e";
-      morphCurveCtx.arc(point.x, point.y, 9, 0, Math.PI * 2);
-      morphCurveCtx.fill();
-      morphCurveCtx.strokeStyle = "#ffffff";
-      morphCurveCtx.lineWidth = 2;
-      morphCurveCtx.stroke();
+    curveCtx.strokeStyle = "#0f766e";
+    curveCtx.lineWidth = 4;
+    curveCtx.beginPath();
+    for (let i = 0; i <= 160; i += 1) {
+      const x = i / 160;
+      const point = splineToCanvas(editor, { x, y: splineValue(editor, x) });
+      if (i === 0) {
+        curveCtx.moveTo(point.x, point.y);
+      } else {
+        curveCtx.lineTo(point.x, point.y);
+      }
     }
-    morphCurveCtx.restore();
+    curveCtx.stroke();
+
+    for (let i = 0; i < editor.anchors.length; i += 1) {
+      for (const direction of [-1, 1]) {
+        const handle = splineHandlePoint(editor, i, direction);
+        if (!handle) {
+          continue;
+        }
+        const handleCanvas = splineToCanvas(editor, handle);
+        curveCtx.beginPath();
+        curveCtx.fillStyle = "#ffffff";
+        curveCtx.strokeStyle = "#0f766e";
+        curveCtx.lineWidth = 2;
+        curveCtx.arc(handleCanvas.x, handleCanvas.y, 6, 0, Math.PI * 2);
+        curveCtx.fill();
+        curveCtx.stroke();
+      }
+    }
+
+    for (let i = 0; i < editor.anchors.length; i += 1) {
+      const point = splineToCanvas(editor, editor.anchors[i]);
+      curveCtx.beginPath();
+      curveCtx.fillStyle = i === 0 || i === editor.anchors.length - 1 ? "#34383c" : "#0f766e";
+      curveCtx.arc(point.x, point.y, 9, 0, Math.PI * 2);
+      curveCtx.fill();
+      curveCtx.strokeStyle = "#ffffff";
+      curveCtx.lineWidth = 2;
+      curveCtx.stroke();
+    }
+    curveCtx.restore();
   }
 
   function superellipseNFromShape(shape) {
@@ -870,12 +1143,36 @@
     };
   }
 
-  function superellipseY(a, b, n, x, sign) {
-    if (a <= 0 || b <= 0) {
-      return 0;
+  function squareBoundarySamples(sideSamples) {
+    const samples = [];
+    for (let i = 0; i < sideSamples; i += 1) {
+      const t = i / sideSamples;
+      samples.push({ sx: -1 + 2 * t, sy: 1 });
     }
-    const u = Math.min(1, Math.abs(x) / a);
-    return sign * b * Math.pow(Math.max(0, 1 - Math.pow(u, n)), 1 / n);
+    for (let i = 0; i < sideSamples; i += 1) {
+      const t = i / sideSamples;
+      samples.push({ sx: 1, sy: 1 - 2 * t });
+    }
+    for (let i = 0; i < sideSamples; i += 1) {
+      const t = i / sideSamples;
+      samples.push({ sx: 1 - 2 * t, sy: -1 });
+    }
+    for (let i = 0; i < sideSamples; i += 1) {
+      const t = i / sideSamples;
+      samples.push({ sx: -1, sy: -1 + 2 * t });
+    }
+    return samples;
+  }
+
+  function superellipseFromSquareBoundary(hRadius, vRadius, shapeN, sample) {
+    const n = Math.max(shapeN, 1e-9);
+    const denom = Math.pow(Math.pow(Math.abs(sample.sx), n) + Math.pow(Math.abs(sample.sy), n), 1 / n);
+    if (denom <= 1e-12) {
+      return { x: 0, y: 0, theta: 0 };
+    }
+    const x = hRadius * sample.sx / denom;
+    const y = vRadius * sample.sy / denom;
+    return { x, y, theta: Math.atan2(y, x) };
   }
 
   function thetaFromX(a, n, xFraction) {
@@ -964,9 +1261,11 @@
     const point = { x, y };
     const u = Math.min(1, Math.abs(point.x) / Math.max(hRadius, 1e-9));
     const v = Math.min(1, Math.abs(point.y) / Math.max(vRadius, 1e-9));
-    const sideWindow = u * u * (1 - v * v);
+    const hWindow = u * u * hModifierCurveValue(v);
+    const vWindow = v * v * vModifierCurveValue(u);
     const mouthFade = 1 - Math.pow(Math.max(0, Math.min(1, z / Math.max(p.length, 1e-9))), 4);
-    point.x += Math.sign(point.x || Math.cos(theta)) * sideGuideDelta(p, z, hRadius) * sideWindow;
+    point.x += Math.sign(point.x || Math.cos(theta)) * modifierDelta(p, "h", z, hRadius) * hWindow;
+    point.y += Math.sign(point.y || Math.sin(theta)) * modifierDelta(p, "v", z, vRadius) * vWindow;
     const mouthProgress = Math.pow(Math.max(0, Math.min(1, z / Math.max(p.length, 1e-9))), 2.4);
     const setback = cylindricalMouthSetback(p, point.x, mouthHRadius) * mouthProgress;
     return { x: point.x, y: point.y, z: z - setback };
@@ -976,82 +1275,39 @@
     const point = { x, y };
     const u = Math.min(1, Math.abs(point.x) / Math.max(hRadius, 1e-9));
     const v = Math.min(1, Math.abs(point.y) / Math.max(vRadius, 1e-9));
-    const sideWindow = u * u * (1 - v * v);
+    const hWindow = u * u * hModifierCurveValue(v);
+    const vWindow = v * v * vModifierCurveValue(u);
     const mouthFade = 1 - Math.pow(Math.max(0, Math.min(1, profileZ / Math.max(p.length, 1e-9))), 4);
-    point.x += Math.sign(point.x || Math.cos(theta)) * sideGuideDelta(p, profileZ, hRadius) * sideWindow;
+    point.x += Math.sign(point.x || Math.cos(theta)) * modifierDelta(p, "h", profileZ, hRadius) * hWindow;
+    point.y += Math.sign(point.y || Math.sin(theta)) * modifierDelta(p, "v", profileZ, vRadius) * vWindow;
     return { x: point.x, y: point.y, z: outputZ };
   }
 
-  function xSampledSectionRing(p, hRadius, vRadius, z, halfSamples, mouthHRadius) {
-    const shapeN = superellipseNFromShape(sectionShape(p, Math.max(0, p.throatExtension) + z));
-    const ring = [];
-
-    for (let i = 0; i < halfSamples; i += 1) {
-      const t = i / halfSamples;
-      const x = -hRadius + 2 * hRadius * t;
-      const y = superellipseY(hRadius, vRadius, shapeN, x, 1);
-      ring.push(sectionPointFromXY(p, hRadius, vRadius, z, x, y, Math.atan2(y, x), mouthHRadius));
-    }
-
-    for (let i = 0; i < halfSamples; i += 1) {
-      const t = i / halfSamples;
-      const x = hRadius - 2 * hRadius * t;
-      const y = superellipseY(hRadius, vRadius, shapeN, x, -1);
-      ring.push(sectionPointFromXY(p, hRadius, vRadius, z, x, y, Math.atan2(y, x), mouthHRadius));
-    }
-
-    return ring;
-  }
-
-  function scaledLengthSectionRing(p, hRadius, vRadius, profileZ, tau, halfSamples, mouthHRadius) {
+  function sectionRing(p, hRadius, vRadius, profileZ, tau, sideSamples, mouthHRadius, mouthVRadius) {
     const shapeN = superellipseNFromShape(sectionShape(p, Math.max(0, p.throatExtension) + profileZ));
+    const mouthShapeN = superellipseNFromShape(sectionShape(p, Math.max(0, p.throatExtension) + p.length));
     const ring = [];
-
-    for (let i = 0; i < halfSamples; i += 1) {
-      const t = i / halfSamples;
-      const mouthX = -mouthHRadius + 2 * mouthHRadius * t;
-      const localLength = Math.max(1e-9, p.length - cylindricalMouthSetback(p, mouthX, mouthHRadius));
+    for (const sample of squareBoundarySamples(sideSamples)) {
+      const point = superellipseFromSquareBoundary(hRadius, vRadius, shapeN, sample);
+      const mouthPoint = superellipseFromSquareBoundary(mouthHRadius, mouthVRadius, mouthShapeN, sample);
+      const localLength = Math.max(1e-9, p.length - cylindricalMouthSetback(p, mouthPoint.x, mouthHRadius));
       const outputZ = tau * localLength;
-      const x = -hRadius + 2 * hRadius * t;
-      const y = superellipseY(hRadius, vRadius, shapeN, x, 1);
-      ring.push(sectionPointFromXYAtZ(p, hRadius, vRadius, profileZ, outputZ, x, y, Math.atan2(y, x)));
-    }
-
-    for (let i = 0; i < halfSamples; i += 1) {
-      const t = i / halfSamples;
-      const mouthT = 1 - t;
-      const mouthX = -mouthHRadius + 2 * mouthHRadius * mouthT;
-      const localLength = Math.max(1e-9, p.length - cylindricalMouthSetback(p, mouthX, mouthHRadius));
-      const outputZ = tau * localLength;
-      const x = hRadius - 2 * hRadius * t;
-      const y = superellipseY(hRadius, vRadius, shapeN, x, -1);
-      ring.push(sectionPointFromXYAtZ(p, hRadius, vRadius, profileZ, outputZ, x, y, Math.atan2(y, x)));
+      ring.push(sectionPointFromXYAtZ(p, hRadius, vRadius, profileZ, outputZ, point.x, point.y, point.theta));
     }
 
     return ring;
   }
 
-  function conicalExtensionRing(p, tau, halfSamples) {
+  function conicalExtensionRing(p, tau, sideSamples) {
     const extension = Math.max(0, p.throatExtension);
     const radius = p.r0 + extension * tau * Math.tan(rad(p.throatAngle));
     const z = -extension + extension * tau;
     const shapeN = superellipseNFromShape(sectionShape(p, extension * tau));
     const ring = [];
-
-    for (let i = 0; i < halfSamples; i += 1) {
-      const t = i / halfSamples;
-      const x = -radius + 2 * radius * t;
-      const y = superellipseY(radius, radius, shapeN, x, 1);
-      ring.push({ x, y, z });
+    for (const sample of squareBoundarySamples(sideSamples)) {
+      const point = superellipseFromSquareBoundary(radius, radius, shapeN, sample);
+      ring.push({ x: point.x, y: point.y, z });
     }
-
-    for (let i = 0; i < halfSamples; i += 1) {
-      const t = i / halfSamples;
-      const x = radius - 2 * radius * t;
-      const y = superellipseY(radius, radius, shapeN, x, -1);
-      ring.push({ x, y, z });
-    }
-
     return ring;
   }
 
@@ -1085,7 +1341,8 @@
     const vProfile = makeProfile(p, "v");
     const zCount = p.density;
     const mouthHRadius = hProfile(p.length);
-    const halfSamples = Math.max(96, Math.round(p.density * 3));
+    const mouthVRadius = vProfile(p.length);
+    const sideSamples = Math.max(48, Math.round(p.density * 2));
     const rings = [];
     let maxX = 0;
     let maxY = 0;
@@ -1094,7 +1351,7 @@
     if (extension > 0) {
       const extensionStations = Math.max(2, Math.round(zCount * extension / Math.max(p.length, 1e-9)) + 1);
       for (let i = 0; i < extensionStations; i += 1) {
-        const ring = conicalExtensionRing(p, i / (extensionStations - 1), halfSamples);
+        const ring = conicalExtensionRing(p, i / (extensionStations - 1), sideSamples);
         for (const point of ring) {
           maxX = Math.max(maxX, Math.abs(point.x));
           maxY = Math.max(maxY, Math.abs(point.y));
@@ -1109,7 +1366,7 @@
       const profileZ = p.length * tau;
       const h = hProfile(profileZ);
       const v = vProfile(profileZ);
-      const ring = scaledLengthSectionRing(p, h, v, profileZ, tau, halfSamples, mouthHRadius);
+      const ring = sectionRing(p, h, v, profileZ, tau, sideSamples, mouthHRadius, mouthVRadius);
       for (const point of ring) {
         maxX = Math.max(maxX, Math.abs(point.x));
         maxY = Math.max(maxY, Math.abs(point.y));
@@ -1132,15 +1389,16 @@
     const hProfile = makeProfile(p, "h");
     const vProfile = makeProfile(p, "v");
     const zCount = p.stlStations;
-    const halfSamples = p.stlHalfSamples;
+    const sideSamples = p.stlSideSamples;
     const mouthHRadius = hProfile(p.length);
+    const mouthVRadius = vProfile(p.length);
     const rings = [];
     const extension = Math.max(0, p.throatExtension);
 
     if (extension > 0) {
       const extensionStations = Math.max(2, Math.round(zCount * extension / Math.max(p.length, 1e-9)) + 1);
       for (let i = 0; i < extensionStations; i += 1) {
-        rings.push(conicalExtensionRing(p, i / (extensionStations - 1), halfSamples));
+        rings.push(conicalExtensionRing(p, i / (extensionStations - 1), sideSamples));
       }
     }
 
@@ -1148,7 +1406,7 @@
     for (let i = hornStartIndex; i < zCount; i += 1) {
       const tau = i / (zCount - 1);
       const profileZ = p.length * tau;
-      rings.push(scaledLengthSectionRing(p, hProfile(profileZ), vProfile(profileZ), profileZ, tau, halfSamples, mouthHRadius));
+      rings.push(sectionRing(p, hProfile(profileZ), vProfile(profileZ), profileZ, tau, sideSamples, mouthHRadius, mouthVRadius));
     }
 
     return {
@@ -1263,7 +1521,8 @@
     const effectiveR0 = effectiveThroatRadius(p);
     const hS = solvedS(p.length, effectiveR0, p.hCoverage, p.hK, p.hN, p.mouthWidth / 2, p.throatAngle);
     const vS = solvedS(p.length, effectiveR0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2, p.throatAngle);
-    const sideGuideS = solvedS(p.length, effectiveR0, p.hCoverage, p.sideGuideK, p.hN, p.mouthWidth / 2, p.throatAngle);
+    const hModifierS = modifierSolvedS(p, "h");
+    const vModifierS = modifierSolvedS(p, "v");
     return [
       "widget_config:",
       "  type: center_profile_surface_explorer",
@@ -1291,17 +1550,29 @@
       `    solved_s: ${yamlNumber(vS)}`,
       "  section_modifier:",
       `    mouth_squareness: ${yamlNumber(p.sectionShape1)}`,
-      "    squareness_morph_curve:",
-      ...morphCurvePoints.map((point) => `      - [${yamlNumber(point.x)}, ${yamlNumber(point.y)}]`),
+      "    squareness_morph_spline:",
+      ...morphCurve.anchors.map((point) => `      - {x: ${yamlNumber(point.x)}, y: ${yamlNumber(point.y)}, angle_deg: ${yamlNumber(point.angle * 180 / Math.PI)}, tension: ${yamlNumber(point.tension)}}`),
       "    horizontal_modifier:",
-      `      k: ${yamlNumber(p.sideGuideK)}`,
-      `      amount_percent: ${yamlNumber(p.sideGuideAmount * 100)}`,
-      `      solved_s: ${yamlNumber(sideGuideS)}`,
+      `      coverage_multiplier: ${yamlNumber(p.hModifierCoverage)}`,
+      `      k_multiplier: ${yamlNumber(p.hModifierK)}`,
+      `      n_multiplier: ${yamlNumber(p.hModifierN)}`,
+      `      amount_percent: ${yamlNumber(p.hModifierAmount * 100)}`,
+      `      solved_s: ${yamlNumber(hModifierS)}`,
+      "      thickness_spline:",
+      ...hModifierCurve.anchors.map((point) => `        - {x: ${yamlNumber(point.x)}, y: ${yamlNumber(point.y)}, angle_deg: ${yamlNumber(point.angle * 180 / Math.PI)}, tension: ${yamlNumber(point.tension)}}`),
+      "    vertical_modifier:",
+      `      coverage_multiplier: ${yamlNumber(p.vModifierCoverage)}`,
+      `      k_multiplier: ${yamlNumber(p.vModifierK)}`,
+      `      n_multiplier: ${yamlNumber(p.vModifierN)}`,
+      `      amount_percent: ${yamlNumber(p.vModifierAmount * 100)}`,
+      `      solved_s: ${yamlNumber(vModifierS)}`,
+      "      thickness_spline:",
+      ...vModifierCurve.anchors.map((point) => `        - {x: ${yamlNumber(point.x)}, y: ${yamlNumber(point.y)}, angle_deg: ${yamlNumber(point.angle * 180 / Math.PI)}, tension: ${yamlNumber(point.tension)}}`),
       "  view:",
       `    wire_density: ${yamlNumber(p.density)}`,
       "  export:",
       `    stl_z_stations: ${yamlNumber(p.stlStations)}`,
-      `    stl_half_samples: ${yamlNumber(p.stlHalfSamples)}`,
+      `    stl_side_samples: ${yamlNumber(p.stlSideSamples)}`,
       "",
     ].join("\n");
   }
@@ -1491,12 +1762,18 @@
 
   function updateMetrics(p, surface) {
     const hProfile = makeProfile(p, "h");
-    let peakSideGuide = 0;
+    const vProfile = makeProfile(p, "v");
+    let peakHModifier = 0;
+    let peakVModifier = 0;
     for (let i = 0; i < p.density; i += 1) {
       const z = p.length * i / Math.max(p.density - 1, 1);
-      const delta = sideGuideDelta(p, z, hProfile(z));
-      if (Math.abs(delta) > Math.abs(peakSideGuide)) {
-        peakSideGuide = delta;
+      const hDelta = modifierDelta(p, "h", z, hProfile(z));
+      const vDelta = modifierDelta(p, "v", z, vProfile(z));
+      if (Math.abs(hDelta) > Math.abs(peakHModifier)) {
+        peakHModifier = hDelta;
+      }
+      if (Math.abs(vDelta) > Math.abs(peakVModifier)) {
+        peakVModifier = vDelta;
       }
     }
     metrics.width.textContent = `${format(surface.maxX * 2, 5)} mm`;
@@ -1509,14 +1786,16 @@
     const vS = solvedS(p.length, effectiveR0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2, p.throatAngle);
     metrics.derivedS.textContent = `${format(hS, 5)} / ${format(vS, 5)}`;
     metrics.sectionShape.textContent = format(sectionShape(p, measuredLength(p)), 4);
-    metrics.bow.textContent = `${format(peakSideGuide, 4)} mm`;
+    metrics.bow.textContent = `${format(peakHModifier, 4)} / ${format(peakVModifier, 4)} mm`;
   }
 
   function render() {
     const p = params();
     const surface = buildSurface(p);
     drawSurface(p, surface);
-    drawMorphCurveEditor();
+    drawSplineEditor(morphCurve);
+    drawSplineEditor(hModifierCurve);
+    drawSplineEditor(vModifierCurve);
     updateMetrics(p, surface);
   }
 
