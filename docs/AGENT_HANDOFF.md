@@ -61,17 +61,17 @@ The supported exporter uses a square-boundary section topology:
   interpolate the outer wall start ring there,
 - on the `new-outside-surface` branch, station-local surface normals derive a
   smoothed scalar expansion for each slice point; that scalar is applied along
-  stable radial directions. The horn-side outside field is trimmed by its
-  intersection with the authored mouth boundary; do not append projected or
-  radial-offset rear return rings to the outside field. Directly projecting
-  normal offsets into slice planes produced unstable mouth/corner geometry; do
-  not normal-offset the rear return surface,
-- the inner rear mouth ring sits at `mouth_sag_radius - mouth_rear_offset`;
-  the outer horn wall is trimmed to
-  `mouth_sag_radius - mouth_rear_offset - minimum_wall`, not two wall
-  thicknesses. This keeps the rear return at the requested minimum thickness
-  while preventing the outside mouth boundary from exceeding the requested mouth
-  box,
+  stable radial directions. The outside field is station-preserving: it starts
+  from that offset field, blends toward the authored yellow mouth-offset
+  boundary as stations approach the mouth, and clamps corresponding samples back
+  to at least `minimum_wall`. The yellow ring,
+  `mouth_sag_radius - mouth_rear_offset`, is the outside surface's mouth
+  boundary. Do not append projected or radial-offset rear return rings to the
+  outside field,
+- the mouth lip/return is only the face from the pink acoustic mouth ring to the
+  yellow mouth-offset ring. Do not add a red-style cap/closure from a rear
+  return ring to a separate outside terminal ring; that is the failed topology
+  this branch is avoiding,
 - STL export mode can be `body` or `acoustic_surface`; body mode should be
   watertight, acoustic surface mode is intentionally open,
 - mesh exported through `trimesh`,

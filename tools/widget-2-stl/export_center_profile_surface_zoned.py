@@ -492,69 +492,6 @@ def station_scalar_offset_outer_rings(
     ]
 
 
-def project_point_to_mouth_radius(
-    point: tuple[float, float, float],
-    mouth_h_radius: float,
-    mouth_v_radius: float,
-    target_radius: float,
-) -> tuple[float, float, float]:
-    radius = mouth_radius(mouth_h_radius, mouth_v_radius)
-    x, y, z = point
-    if not math.isfinite(radius) or radius <= 0.0:
-        return x, y, PARAMS["length"] - max(0.0, PARAMS["mouth_rear_offset"])
-    center_z = PARAMS["length"] - radius
-    vector = (
-        x if PARAMS.get("mouth_sag_h_enabled", True) else 0.0,
-        y if PARAMS.get("mouth_sag_v_enabled", True) else 0.0,
-        z - center_z,
-    )
-    length = math.sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2])
-    if length <= 1e-12:
-        return x, y, z
-    scale = max(1e-6, target_radius) / length
-    return (
-        vector[0] * scale if PARAMS.get("mouth_sag_h_enabled", True) else x,
-        vector[1] * scale if PARAMS.get("mouth_sag_v_enabled", True) else y,
-        center_z + vector[2] * scale,
-    )
-
-
-def mouth_return_projected_ring(
-    ring: list[tuple[float, float, float]],
-    mouth_h_radius: float,
-    mouth_v_radius: float,
-) -> list[tuple[float, float, float]]:
-    return [
-        project_point_to_mouth_radius(point, mouth_h_radius, mouth_v_radius, mouth_outer_return_target_radius(mouth_h_radius, mouth_v_radius))
-        for point in ring
-    ]
-
-
-def mouth_outer_return_target_radius(mouth_h_radius: float, mouth_v_radius: float) -> float:
-    radius = mouth_radius(mouth_h_radius, mouth_v_radius)
-    if not math.isfinite(radius):
-        return math.inf
-    return max(
-        1e-6,
-        radius - max(0.0, PARAMS["mouth_rear_offset"]) - max(0.0, PARAMS["minimum_wall"]),
-    )
-
-
-def mouth_surface_vector(point: tuple[float, float, float], mouth_h_radius: float, mouth_v_radius: float) -> tuple[float, float, float]:
-    radius = mouth_radius(mouth_h_radius, mouth_v_radius)
-    center_z = PARAMS["length"] - radius if math.isfinite(radius) else PARAMS["length"]
-    return (
-        point[0] if PARAMS.get("mouth_sag_h_enabled", True) else 0.0,
-        point[1] if PARAMS.get("mouth_sag_v_enabled", True) else 0.0,
-        point[2] - center_z,
-    )
-
-
-def mouth_surface_distance(point: tuple[float, float, float], mouth_h_radius: float, mouth_v_radius: float) -> float:
-    vector = mouth_surface_vector(point, mouth_h_radius, mouth_v_radius)
-    return math.sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2])
-
-
 def interpolate_point(
     a: tuple[float, float, float],
     b: tuple[float, float, float],
@@ -567,77 +504,70 @@ def interpolate_point(
     )
 
 
-def mouth_intersection_path(
-    outer_rings: list[list[tuple[float, float, float]]],
-    column: int,
+def smoothstep(t: float) -> float:
+    t = max(0.0, min(1.0, t))
+    return t * t * (3.0 - 2.0 * t)
+
+
+def mouth_envelope_blend_weight(
+    point: tuple[float, float, float],
+    target: tuple[float, float, float],
     mouth_h_radius: float,
     mouth_v_radius: float,
-) -> list[tuple[float, float, float]]:
-    target_radius = mouth_outer_return_target_radius(mouth_h_radius, mouth_v_radius)
-    path = [outer_rings[0][column]]
-    if not math.isfinite(target_radius):
-        return [ring[column] for ring in outer_rings]
-
-    for i in range(len(outer_rings) - 1):
-        a = outer_rings[i][column]
-        b = outer_rings[i + 1][column]
-        da = mouth_surface_distance(a, mouth_h_radius, mouth_v_radius)
-        db = mouth_surface_distance(b, mouth_h_radius, mouth_v_radius)
-        if da < target_radius:
-            path[-1] = a
-        if (da - target_radius) * (db - target_radius) <= 0.0 and abs(db - da) > 1e-12:
-            t = max(0.0, min(1.0, (target_radius - da) / (db - da)))
-            path.append(interpolate_point(a, b, t))
-            return path
-        if db < target_radius:
-            path.append(b)
-    path.append(project_point_to_mouth_radius(outer_rings[-1][column], mouth_h_radius, mouth_v_radius, target_radius))
-    return path
+) -> float:
+    required = 0.0
+    for axis, limit in ((0, mouth_h_radius), (1, mouth_v_radius)):
+        point_value = abs(point[axis])
+        target_value = abs(target[axis])
+        if point_value > limit and point_value > target_value + 1e-12:
+            required = max(required, (point_value - limit) / (point_value - target_value))
+    return max(0.0, min(1.0, required))
 
 
-def path_lengths(path: list[tuple[float, float, float]]) -> list[float]:
-    lengths = [0.0]
-    for i in range(1, len(path)):
-        lengths.append(lengths[-1] + math.dist(path[i - 1], path[i]))
-    return lengths
-
-
-def point_on_path(
-    path: list[tuple[float, float, float]],
-    lengths: list[float],
-    distance: float,
-) -> tuple[float, float, float]:
-    if distance <= 0.0 or len(path) == 1:
-        return path[0]
-    total = lengths[-1]
-    if distance >= total:
-        return path[-1]
-    for i in range(len(lengths) - 1):
-        if distance <= lengths[i + 1]:
-            span = max(1e-12, lengths[i + 1] - lengths[i])
-            return interpolate_point(path[i], path[i + 1], (distance - lengths[i]) / span)
-    return path[-1]
-
-
-def trimmed_outer_rings(
+def mouth_constrained_outer_rings(
+    inner_horn_rings: list[list[tuple[float, float, float]]],
     outer_base_rings: list[list[tuple[float, float, float]]],
+    mouth_boundary_ring: list[tuple[float, float, float]],
     mouth_h_radius: float,
     mouth_v_radius: float,
 ) -> list[list[tuple[float, float, float]]]:
     ring_count = len(outer_base_rings)
-    column_count = len(outer_base_rings[0])
-    columns = []
-    for column in range(column_count):
-        path = mouth_intersection_path(outer_base_rings, column, mouth_h_radius, mouth_v_radius)
-        columns.append((path, path_lengths(path)))
-    rings = []
-    for i in range(ring_count):
-        t = i / max(1, ring_count - 1)
-        ring = []
-        for path, lengths in columns:
-            ring.append(point_on_path(path, lengths, lengths[-1] * t))
-        rings.append(ring)
-    return rings
+    minimum_wall = max(0.0, PARAMS["minimum_wall"])
+    constrained: list[list[tuple[float, float, float]]] = []
+    for i, ring in enumerate(outer_base_rings):
+        if i == ring_count - 1:
+            constrained.append(mouth_boundary_ring)
+            continue
+        station_t = i / max(1, ring_count - 1)
+        station_weight = smoothstep(station_t**4)
+        constrained_ring = []
+        for inner, base, mouth_boundary in zip(inner_horn_rings[i], ring, mouth_boundary_ring):
+            lower_weight = mouth_envelope_blend_weight(base, mouth_boundary, mouth_h_radius, mouth_v_radius)
+            weight = max(station_weight, lower_weight)
+            candidate = interpolate_point(base, mouth_boundary, weight)
+            if math.dist(inner, candidate) < minimum_wall and math.dist(inner, base) >= minimum_wall:
+                low = 0.0
+                high = weight
+                for _ in range(40):
+                    mid = (low + high) / 2.0
+                    point = interpolate_point(base, mouth_boundary, mid)
+                    if math.dist(inner, point) >= minimum_wall:
+                        low = mid
+                    else:
+                        high = mid
+                if low >= lower_weight:
+                    candidate = interpolate_point(base, mouth_boundary, low)
+            distance = math.dist(inner, candidate)
+            if 1e-12 < distance < minimum_wall:
+                scale = minimum_wall / distance
+                candidate = (
+                    inner[0] + (candidate[0] - inner[0]) * scale,
+                    inner[1] + (candidate[1] - inner[1]) * scale,
+                    inner[2] + (candidate[2] - inner[2]) * scale,
+                )
+            constrained_ring.append(candidate)
+        constrained.append(constrained_ring)
+    return constrained
 
 
 def wall_thickness_at_ring(index: int, ring_count: int) -> float:
@@ -786,8 +716,13 @@ def build_body_mesh(
     ring_count = len(rings)
     ring_size = len(rings[0])
     has_return = mouth_index < ring_count - 1
+    inner_rings = rings[: mouth_index + 1] if has_return else rings
     outer_base_rings = station_scalar_offset_outer_rings(rings, mouth_index, mouth_h, mouth_v)
-    outer_rings = trimmed_outer_rings(outer_base_rings, mouth_h, mouth_v) if has_return else outer_base_rings
+    outer_rings = (
+        mouth_constrained_outer_rings(inner_rings, outer_base_rings, rings[-1], mouth_h, mouth_v)
+        if has_return
+        else outer_base_rings
+    )
     throat_inner = rings[0]
     throat_z = sum(point[2] for point in throat_inner) / ring_size
     mount_start_z = throat_z
@@ -804,17 +739,14 @@ def build_body_mesh(
 
     vertices: list[tuple[float, float, float]] = []
     faces: list[tuple[int, int, int]] = []
-    inner_starts = [add_ring(vertices, ring) for ring in rings]
+    inner_starts = [add_ring(vertices, ring) for ring in inner_rings]
     outer_wall_starts = [add_ring(vertices, ring) for ring in outer_wall_rings]
     mount_outer_start_start = add_ring(vertices, mount_outer_start)
     mount_outer_end_start = add_ring(vertices, mount_outer_end)
 
-    for i in range(ring_count - 1):
+    for i in range(len(inner_rings) - 1):
         append_ring_bridge(faces, inner_starts[i], inner_starts[i + 1], ring_size)
-    if has_return:
-        append_ring_bridge(faces, inner_starts[-1], outer_wall_starts[-1], ring_size)
-    else:
-        append_ring_bridge(faces, inner_starts[mouth_index], outer_wall_starts[-1], ring_size)
+    append_ring_bridge(faces, inner_starts[-1], outer_wall_starts[-1], ring_size)
     for i in range(len(outer_wall_starts) - 1, 0, -1):
         append_ring_bridge(faces, outer_wall_starts[i], outer_wall_starts[i - 1], ring_size, True)
     append_ring_bridge(faces, outer_wall_starts[0], mount_outer_end_start, ring_size, True)
