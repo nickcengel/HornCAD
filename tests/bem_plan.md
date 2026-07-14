@@ -210,6 +210,18 @@ problem, not against an unrelated generic Helmholtz benchmark.
   contour wherever the plotted quantity makes that threshold meaningful.
   Angular axes use 15-degree increments (0, 15, 30, 45, 60, 75, 90 and
   signed counterparts) unless a task explicitly requires finer labels.
+- Checkpoint `0ba9add` improves the mixed matrix-free preconditioner by applying
+  the pressure-to-mouth trace coupling in a lower block-triangular solve. On the
+  accepted mesh at 5 kHz this reduced GMRES from 992 iterations / 313 seconds to
+  293 iterations / 92 seconds without changing the computed response.
+- The dense comparison sweep is complete at 81 logarithmically spaced points
+  from 500 Hz through 5 kHz. Every point converged. The repository package under
+  `analysis/3d_comparison/` compares the same frequencies with the lossless
+  Webster impedance model and uniform curved-aperture coverage model, and keeps
+  the dense complex mouth fields in compressed form. This completes the useful
+  dense sweep, preconditioner improvement, and comparison with the earlier
+  simplified analysis. Mesh convergence and exterior lip diffraction remain
+  later roadmap items.
 
 Primary references used for the solver decision:
 

@@ -66,17 +66,19 @@ is 10.387 mm, passing the 11.440 mm limit corresponding to six elements per
 wavelength at 5 kHz. Maximum boundary deviation from the authored acoustic
 surface is 0.249 mm.
 
-All six tested frequencies converged. Solver cost rises sharply with frequency:
-5 kHz required 992 of the allowed 1,000 GMRES iterations. This makes the present
-preconditioner adequate for the proof, but not yet comfortable for production.
+All six original proof frequencies converged. The later lower-block-triangular
+preconditioner reduced the accepted-mesh 5 kHz solve from 992 iterations and
+313 seconds to 293 iterations and 93 seconds without changing its response.
+An 81-point logarithmic sweep subsequently converged at every frequency from
+500 Hz through 5 kHz. Its compact fields, comparisons, and plots are in
+[`../3d_comparison/`](../3d_comparison/).
 
 ## What this does not establish
 
 This is not yet a convergence-certified response. Only the six-elements-per-
 wavelength mesh has been solved. Results should not be used for design decisions
 until an 8/10/12-elements-per-wavelength study stabilizes the relevant response
-metrics and the high-frequency preconditioner is improved. No AKABAK comparison
-has yet been performed.
+metrics. No equivalently configured AKABAK comparison has yet been performed.
 
 ## Reproduction
 

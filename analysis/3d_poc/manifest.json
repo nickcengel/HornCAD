@@ -37,7 +37,7 @@
   "solver": {
     "implementation": "../../app/mfem/interior_acoustics.cpp",
     "method": "matrix-free mixed restarted GMRES",
-    "preconditioner": "sparse pressure-block UMFPACK plus complex dense aperture-block LU",
+    "preconditioner": "lower block-triangular sparse pressure UMFPACK plus complex dense aperture LU",
     "pressure_dofs": 53848,
     "mouth_dofs": 4006
   },
@@ -49,10 +49,10 @@
   },
   "limitations": [
     "Only one mesh resolution has been run.",
-    "The 5 kHz solve used 992 of 1000 allowed GMRES iterations.",
+    "The original 5 kHz artifact predates the improved preconditioner; a rerun used 293 GMRES iterations.",
     "The 1 m3/s source is a calibration input and produces intentionally large absolute powers.",
     "No AKABAK comparison has yet been performed.",
     "Ideal coverage excludes finite-lip diffraction and exterior-body scattering.",
-    "Impedance and coverage are sampled at only six frequencies."
+    "This proof package is sampled at six frequencies; the linked 3d_comparison package contains the 81-point dense sweep."
   ]
 }
