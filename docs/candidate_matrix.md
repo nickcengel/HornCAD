@@ -84,11 +84,12 @@ Candidates must pass inexpensive profile checks before mesh generation and mesh 
 - monotonically expanding H/V profiles;
 - no local profile reversal;
 - mouth endpoint error within tolerance;
-- bounded `S`, slope, and curvature;
+- finite `S_H` and `S_V`, both greater than or equal to zero;
+- bounded slope and curvature;
 - slope continuity at the conic-to-OS-SE junction;
 - no severe curvature spike at that junction.
 
-The initial study should require `S >= 0`. A later study may deliberately investigate negative `S`, but it should not enter the baseline matrix accidentally.
+`S < 0` is always invalid. Reject the entire candidate if either derived axis value is negative; negative termination amplitude is not part of the exploration space.
 
 ### Surface and mesh checks
 
