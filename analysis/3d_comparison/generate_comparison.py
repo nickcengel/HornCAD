@@ -254,17 +254,19 @@ def main() -> None:
                   FIGURES / "coverage_comparison.png")
     metrics_plot(frequencies, dense, coherence, widths, FIGURES / "metrics.png")
     manifest = {
-        "status": "dense_comparison_not_mesh_convergence_certified",
+        "status": "dense_comparison_mesh_convergence_supported",
         "frequency_range_hz": [float(frequencies[0]), float(frequencies[-1])],
         "frequency_count": len(frequencies),
         "spacing": "logarithmic",
         "models": {
-            "primary": "3D interior FEM with nonlocal infinite-baffle aperture operator",
+            "primary": ("8-EPW 3D interior FEM symmetry quadrant with four-image "
+                        "nonlocal infinite-baffle aperture operator"),
             "impedance_baseline": "lossless Webster 1D with baffled-piston mouth load",
             "coverage_baseline": "uniform-velocity curved aperture in an ideal baffle",
         },
         "limitations": [
-            "The 3D result uses only the accepted 6-elements-per-wavelength mesh.",
+            "Representative 6/8/10-EPW convergence supports the 8-EPW dense sweep.",
+            "The symmetry reduction requires a centred symmetric source and geometry.",
             "Coverage propagation is ideal-baffle radiation and excludes lip diffraction.",
             "The baseline models intentionally omit the solved nonuniform mouth field.",
         ],

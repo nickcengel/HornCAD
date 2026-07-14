@@ -1,12 +1,14 @@
 # Dense 3D / Simplified-Model Comparison
 
-This package compares the wavelength-resolved 3D interior/aperture proof with
+This package compares the wavelength-resolved 3D interior/aperture model with
 the repository's earlier simplified models at the same 81 logarithmically
 spaced frequencies from 500 Hz through 5 kHz.
 
-The primary model is the horn's interior air volume with a rigid wall, a unit
+The primary model is the positive-X/positive-Y symmetry quadrant of the horn's
+interior air volume with rigid wall/symmetry faces, a centred unit
 volume-velocity throat source, and a computational mouth surface coupled to a
-nonlocal infinite-baffle radiation-impedance operator. The impedance baseline
+four-image nonlocal infinite-baffle radiation-impedance operator. Full-mouth
+fields are reconstructed by mirroring. The impedance baseline
 is the lossless one-dimensional Webster model with a baffled-piston load. The
 coverage baseline is the uniformly driven curved mouth aperture.
 
@@ -40,5 +42,8 @@ coherence, and records the solver cost across the sweep.
 - `generate_comparison.py`: regeneration script; its argument is the directory
   containing resumable `d000` through `d080` MFEM field exports.
 
-These results use one accepted 6-elements-per-wavelength mesh. They are useful
-for comparison with the earlier methods but are not mesh-convergence certified.
+These dense results use the accepted 8-elements-per-wavelength quadrant mesh.
+Representative 6/8/10-EPW comparisons at 500, 1k, 2k, 3k, 4k, and 5 kHz show
+less than 0.8% change from 8 to 10 EPW in impedance magnitude, radiated power,
+mouth RMS fields, and -6 dB beamwidth. See
+[`../mesh_convergence/`](../mesh_convergence/) for the validation evidence.

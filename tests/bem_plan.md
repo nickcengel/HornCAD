@@ -223,6 +223,11 @@ problem, not against an unrelated generic Helmholtz benchmark.
   4000/5000 Hz. From 8 to 10 EPW, impedance magnitude, power, mouth RMS fields,
   and -6 dB beamwidth all change by less than 0.8%. Use 8 EPW for dense
   production sweeps and 10 EPW as the verification reference for this model.
+- The convergence-supported 8-EPW quadrant dense sweep is complete at 81
+  logarithmically spaced frequencies from 500 Hz through 5 kHz. All points
+  converged; the 5 kHz point used 97 GMRES iterations and 10.6 solver seconds.
+  `analysis/3d_comparison/` now contains this dense result rather than the
+  former 6-EPW full-domain proof data.
 - Checkpoint `0ba9add` improves the mixed matrix-free preconditioner by applying
   the pressure-to-mouth trace coupling in a lower block-triangular solve. On the
   accepted mesh at 5 kHz this reduced GMRES from 992 iterations / 313 seconds to

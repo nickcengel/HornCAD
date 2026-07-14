@@ -19,14 +19,19 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--count", type=int, default=81,
                         help="81 gives approximately 24 points/octave over 500–5000 Hz")
     parser.add_argument("--workers", type=int, default=10)
+    parser.add_argument("--quadrant-symmetry", action="store_true")
     return parser.parse_args()
 
 
 def run_one(binary: Path, mesh: Path, output_dir: Path,
-            index: int, frequency: float) -> str:
+            index: int, frequency: float, quadrant_symmetry: bool) -> str:
     prefix = output_dir / f"d{index:03d}"
+    if Path(f"{prefix}_summary.csv").exists():
+        return "already complete"
     command = [str(binary), str(mesh), f"{frequency:.17g}",
                "--output-prefix", str(prefix)]
+    if quadrant_symmetry:
+        command.append("--quadrant-symmetry")
     result = subprocess.run(command, check=True, text=True,
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     return result.stdout.strip()
@@ -42,7 +47,7 @@ def main() -> None:
                header="frequency_hz", comments="")
     with ThreadPoolExecutor(max_workers=args.workers) as executor:
         jobs = {executor.submit(run_one, args.binary, args.mesh, args.output_dir,
-                                index, float(frequency)): (index, frequency)
+                                index, float(frequency), args.quadrant_symmetry): (index, frequency)
                 for index, frequency in enumerate(frequencies)}
         for future in as_completed(jobs):
             index, frequency = jobs[future]
