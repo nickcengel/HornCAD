@@ -208,6 +208,8 @@ problem, not against an unrelated generic Helmholtz benchmark.
 - Plotting convention: every frequency axis must be logarithmic (Bode-style).
   Coverage heatmaps place log frequency on x, angle on y, and show a -6 dB
   contour wherever the plotted quantity makes that threshold meaningful.
+  Angular axes use 15-degree increments (0, 15, 30, 45, 60, 75, 90 and
+  signed counterparts) unless a task explicitly requires finer labels.
 
 Primary references used for the solver decision:
 

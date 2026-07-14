@@ -172,6 +172,7 @@ def coverage_figure(runs: list[tuple[float, np.ndarray, np.ndarray]]) -> None:
         axis.clabel(contour, fmt={-6.0: "−6 dB"}, inline=True, fontsize=8)
         _set_log_frequency_axis(axis)
         axis.set(xlabel="Frequency (Hz, log scale)", title=title)
+        axis.set_yticks(np.arange(-90, 91, 15))
         axis.grid(True, which="both", alpha=0.15)
     axes[0].set_ylabel("Off-axis angle (degrees)")
     figure.colorbar(image, ax=axes, label="Relative level (dB; normalized per frequency)")
