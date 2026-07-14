@@ -1,5 +1,84 @@
 # Expand HornCAD’s BEM Process into a Validated Comparison Pipeline
 
+## Restart Here: Corrected Primary Model (2026-07-14)
+
+The primary analysis target is **not** the full printable-body exterior BEM
+prototype. That prototype was useful for exercising geometry, source
+normalization, resumable artifacts, and output generation, but it does not
+match the requested AKABAK-style comparison problem.
+
+Resume work through these two coupled workstreams:
+
+1. Select and benchmark an Apple Silicon solver stack that runs natively on
+   ARM64, scales across the M1 Ultra's 20 CPU cores, stays within a configurable
+   portion of its 64 GiB memory, and supports a nonlocal Helmholtz radiation
+   operator on the mouth aperture. Bempp-cl may remain a dense numerical
+   reference, but its Apple OpenCL route is incompatible and its ExaFMM-t
+   backend failed the local complex-operator validation on ARM64.
+2. Replace the full printable-body problem with the reduced acoustic model:
+   the internal horn surface, a prescribed-volume-velocity throat piston, and a
+   computational mouth closure. The mouth closure is a coupling interface, not
+   a rigid cap. It must apply a spatially coupled exterior radiation-impedance
+   or boundary-integral operator and retain nonuniform complex pressure and
+   normal velocity.
+
+The workstreams are coupled: evaluate solver tools against this exact reduced
+problem, not against an unrelated generic Helmholtz benchmark.
+
+### Required boundary model
+
+- Horn wall: rigid, `v_n = 0`.
+- Throat piston: uniform prescribed normal velocity, normalized by default to
+  integrated volume velocity `Q = 1 m3/s`.
+- Mouth aperture: a meshed computational closure with a nonlocal exterior
+  half-space radiation operator relating the complete pressure and velocity
+  distributions across the aperture.
+- Printable thickness, rear body, and exterior enclosure: excluded from the
+  primary model. Keep the full-body exterior solve only as an optional later
+  diffraction/scattering comparison.
+- Primary frequency range: 500 Hz through 5 kHz. A lower-frequency run is only
+  a software smoke test and is not acoustically relevant acceptance evidence.
+
+### Acceptance evidence
+
+- Native ARM64 dependency and version manifest.
+- Measured runtime, peak memory, and scaling at useful core counts up to 20.
+- One shared mesh sized for 5 kHz, with wavelength and quality checks.
+- Complex throat impedance and complex mouth pressure/normal velocity.
+- Radiated power plus horizontal, diagonal, and vertical directivity.
+- Resumable per-frequency artifacts over 500 Hz--5 kHz.
+- Mesh-convergence comparisons at 6/8/10 elements per wavelength before
+  production acceptance.
+- Comparison with an equivalently configured AKABAK model using the same
+  internal surface, throat source, mouth aperture/baffle assumption, medium,
+  frequencies, and observation definitions.
+
+### Current recovery state
+
+- Branch checkpoint before this correction: `9219110`.
+- The current dense combined-field full-body solver is too expensive at useful
+  resolution; do not extend it as the primary model.
+- The `single-layer-preview` option is resonance-sensitive and exists only for
+  pipeline experiments.
+- A locally patched ExaFMM-t 0.1.1 build ran on ARM64 but produced about 1.56
+  relative error against Bempp's dense complex Helmholtz operator. It was
+  uninstalled and must not be used for results.
+- The last full-body smoke artifact is under `/private/tmp` and is disposable;
+  it is not validation of the corrected model.
+
+### Immediate next actions
+
+1. Shortlist native ARM64 FEM/BEM/FMM stacks against the required mouth
+   operator and create a small reproducible operator benchmark.
+2. Add a geometry API that emits three labeled pieces in metres: internal rigid
+   wall, throat disk, and mouth aperture, with shared conforming edge loops.
+3. Validate orientation, areas, watertight computational closure, and unit
+   volume velocity without invoking a solver.
+4. Implement the best-supported nonlocal aperture coupling and run a
+   deliberately small but relevant 500 Hz--5 kHz proof sweep.
+5. Record performance and numerical comparisons before choosing the production
+   backend.
+
   ## Summary
 
   Turn the current 3D BEM prototype into a reproducible acoustic-analysis pipeline suitable for geometry comparisons and
