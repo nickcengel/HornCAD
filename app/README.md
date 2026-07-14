@@ -63,10 +63,11 @@ By default, the model sweeps 100 Hz to 20 kHz and terminates the equivalent circ
 ```text
 <design>-Webster1D.csv
 <design>-Webster1D-Area.csv
+<design>-Webster1D-Normalized-Impedance.png
 <design>-Webster1D.json
 ```
 
-The frequency CSV contains complex input impedance, throat reflection, mouth pressure, mouth volume velocity, and radiated power for a unit throat volume velocity. The area CSV records the sampled geometry. The JSON file records assumptions, run settings, derived `S`, summary metrics, and artifact paths.
+The frequency CSV contains complex input impedance, throat reflection, mouth pressure, mouth volume velocity, and radiated power for a unit throat volume velocity. The area CSV records the sampled geometry. The PNG plots complex throat input impedance normalized by `rho*c/throat_area` over logarithmic frequency. The JSON file records assumptions, run settings, derived `S`, summary metrics, and artifact paths.
 
 Useful options:
 

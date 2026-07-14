@@ -11,6 +11,9 @@ from pathlib import Path
 import json
 import math
 
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import numpy as np
 from scipy.special import j1, struve
 
@@ -294,11 +297,12 @@ def write_results(
     results: list[FrequencyResult],
     medium: Medium,
     mouth_load: str,
-) -> tuple[Path, Path, Path]:
+) -> tuple[Path, Path, Path, Path]:
     output_dir.mkdir(parents=True, exist_ok=True)
     stem = f"{yaml_path.stem}-Webster1D"
     csv_path = output_dir / f"{stem}.csv"
     area_path = output_dir / f"{stem}-Area.csv"
+    plot_path = output_dir / f"{stem}-Normalized-Impedance.png"
     summary_path = output_dir / f"{stem}.json"
 
     rows = [result_row(result) for result in results]
@@ -314,6 +318,27 @@ def write_results(
             writer.writerow((float(position), float(area), equivalent_radius(float(area))))
 
     reflection_magnitudes = np.array([abs(result.throat_reflection) for result in results])
+    throat_characteristic = (
+        medium.density_kg_m3 * medium.sound_speed_m_s / float(profile.areas_m2[0])
+    )
+    frequencies = np.array([result.frequency_hz for result in results])
+    normalized_impedance = np.array(
+        [result.input_impedance_pa_s_m3 / throat_characteristic for result in results]
+    )
+    figure, axis = plt.subplots(figsize=(10.5, 6.25), constrained_layout=True)
+    axis.semilogx(frequencies, normalized_impedance.real, label="Resistance Re(Zin/Z0)", linewidth=1.8)
+    axis.semilogx(frequencies, normalized_impedance.imag, label="Reactance Im(Zin/Z0)", linewidth=1.5)
+    axis.semilogx(frequencies, np.abs(normalized_impedance), label="Magnitude |Zin/Z0|", linewidth=1.8)
+    axis.axhline(0.0, color="black", linewidth=0.7, alpha=0.55)
+    axis.axhline(1.0, color="black", linewidth=0.7, alpha=0.3, linestyle="--")
+    axis.set_title("HornCAD Webster 1D — Normalized Throat Input Impedance")
+    axis.set_xlabel("Frequency (Hz)")
+    axis.set_ylabel("Normalized impedance")
+    axis.grid(True, which="both", alpha=0.25)
+    axis.legend()
+    figure.savefig(plot_path, dpi=180)
+    plt.close(figure)
+
     peak_index = int(np.argmax(reflection_magnitudes))
     summary = {
         "model": "lossless_webster_1d",
@@ -329,6 +354,7 @@ def write_results(
         "station_count": len(profile.positions_m),
         "length_m": float(profile.positions_m[-1] - profile.positions_m[0]),
         "throat_area_m2": float(profile.areas_m2[0]),
+        "throat_characteristic_impedance_pa_s_m3": throat_characteristic,
         "mouth_area_m2": float(profile.areas_m2[-1]),
         "derived_s": {
             "horizontal": profile.s_horizontal,
@@ -347,10 +373,11 @@ def write_results(
         "artifacts": {
             "frequency_response_csv": str(csv_path),
             "area_profile_csv": str(area_path),
+            "normalized_impedance_plot": str(plot_path),
         },
     }
     summary_path.write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
-    return csv_path, area_path, summary_path
+    return csv_path, area_path, plot_path, summary_path
 
 
 def parse_args() -> argparse.Namespace:
@@ -378,7 +405,7 @@ def main() -> None:
     profile = horncad_area_profile(args.yaml, args.stations)
     frequencies = frequency_grid(args.start_hz, args.stop_hz, args.frequencies, args.spacing)
     results = solve_sweep(profile, frequencies, medium, args.mouth_load)
-    csv_path, area_path, summary_path = write_results(
+    csv_path, area_path, plot_path, summary_path = write_results(
         args.yaml,
         args.output_dir,
         profile,
@@ -388,6 +415,7 @@ def main() -> None:
     )
     print(csv_path)
     print(area_path)
+    print(plot_path)
     print(summary_path)
     print(f"derived_s={profile.s_horizontal:.6g}/{profile.s_vertical:.6g}")
     print(f"sections={len(profile.positions_m)} frequencies={len(results)}")

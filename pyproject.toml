@@ -11,6 +11,7 @@ dependencies = [
     "cadquery>=2.8",
     "manifold3d>=3.5",
     "mapbox-earcut>=2.0",
+    "matplotlib>=3.10",
     "numpy>=2.4",
     "scipy>=1.18",
     "shapely>=2.1",
