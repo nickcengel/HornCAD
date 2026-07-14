@@ -107,6 +107,7 @@ Use `--output-dir` to change the destination and `--mode surface|body` to overri
 - `app/HornCAD.html` defines the browser controls, preview, and YAML writer.
 - `app/export_horncad.py` defines command-line YAML loading and STL generation.
 - `app/README.md` documents usage.
+- `docs/candidate_matrix.md` defines the planned comparative-testing program.
 - `docs/Research/` contains background papers; it is not an implementation specification.
 
 When behavior or schema changes, update both implementations, the sample YAML in `test_project/`, and the two READMEs together.

@@ -22,6 +22,7 @@ Historical experiments and superseded designs live in `archive/` and are not par
 Kept live documentation:
 
 - `docs/horncad_context.md`
+- `docs/candidate_matrix.md`
 - `docs/Research/`
 
 For app-specific notes, see `app/README.md`.
