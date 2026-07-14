@@ -7,6 +7,7 @@
 - `HornCAD.html` - browser app for designing horn geometry and authoring YAML.
 - `export_horncad.py` - Python STL exporter for the same geometry path.
 - `webster_1d.py` - one-dimensional acoustic screening model.
+- `aperture_directivity.py` - normalized H/V far-field aperture estimate.
 - `output/` - ignored output from the Python exporter.
 
 ## Browser Output
@@ -80,3 +81,13 @@ python app/webster_1d.py config.YAML --output-dir experiments/
 ```
 
 This is a comparative plane-wave model, not a directivity simulation. It assumes lossless rigid walls, uses projected section area, and represents the varying horn as locally uniform transmission-line segments. It does not model transverse modes, H/V directivity, corner behavior, viscothermal loss, or full three-dimensional mouth diffraction.
+
+## Aperture Directivity Estimate
+
+Generate normalized horizontal and vertical directivity heatmaps from 250 Hz to 10 kHz:
+
+```bash
+python app/aperture_directivity.py path/to/config.YAML
+```
+
+This integrates a uniform-velocity source over HornCAD's projected mouth outline and includes phase differences from mouth curvature. Every frequency is normalized to 0 dB on-axis. The output is useful for examining aperture size and shape, but it is not a Helmholtz simulation: it does not include the horn's internal pressure distribution, nonuniform mouth velocity, edge diffraction, or H/V mode coupling.
