@@ -23,7 +23,7 @@ widget_config:
     screw_hole_count: 3
     screw_hole_diameter: 5
     screw_pattern_diameter: 110
-    mount_fillet: 0
+    mount_fillet: 12
     stl_export_mode: body
   horizontal_basis:
     coverage_deg: 45

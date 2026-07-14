@@ -37,7 +37,7 @@ PARAMS = {
     "screw_hole_count": 3,
     "screw_hole_diameter": 5.0,
     "screw_pattern_diameter": 110.0,
-    "mount_fillet": 0.0,
+    "mount_fillet": 12.0,
     "stl_export_mode": "body",
     "h_modifier_enabled": False,
     "v_modifier_enabled": False,
@@ -869,23 +869,58 @@ def compact_mouth_outer_rings(
     return [*outer_rings[:start], *[ring_at_distance(target) for target in targets]]
 
 
-def mount_fillet_blend_rings(
+def mount_fillet_arc_rings(
     outer_wall_start: list[tuple[float, float, float]],
-    mount_outer_end: list[tuple[float, float, float]],
+    mount_end_z: float,
 ) -> list[list[tuple[float, float, float]]]:
     fillet = max(0.0, float(PARAMS.get("mount_fillet", 0.0)))
     if fillet <= 1e-9:
         return []
+    import cadquery as cq
+
     steps = max(3, min(18, round(fillet / 1.5) + 2))
+    arc = cq.Edge.makeCircle(
+        fillet,
+        cq.Vector(0.0, 0.0, 0.0),
+        cq.Vector(0.0, 0.0, 1.0),
+        180.0,
+        270.0,
+    )
     rings: list[list[tuple[float, float, float]]] = []
     for index in range(1, steps):
         t = index / steps
-        u = smoothstep(t)
-        rings.append([
-            interpolate_point(outer_point, mount_point, u)
-            for outer_point, mount_point in zip(outer_wall_start, mount_outer_end)
-        ])
+        offset = arc.positionAt(t)
+        ring: list[tuple[float, float, float]] = []
+        for outer_point in outer_wall_start:
+            outer_radius = radial_distance(outer_point)
+            if outer_radius <= 1e-12:
+                unit_x, unit_y = 1.0, 0.0
+            else:
+                unit_x, unit_y = outer_point[0] / outer_radius, outer_point[1] / outer_radius
+            radius = outer_radius + fillet + offset.x
+            z = mount_end_z + fillet + offset.y
+            ring.append((unit_x * radius, unit_y * radius, z))
+        rings.append(ring)
     return rings
+
+
+def mount_fillet_foot_ring(
+    outer_wall_start: list[tuple[float, float, float]],
+    mount_end_z: float,
+) -> list[tuple[float, float, float]]:
+    fillet = max(0.0, float(PARAMS.get("mount_fillet", 0.0)))
+    if fillet <= 1e-9:
+        return outer_wall_start
+    foot_ring: list[tuple[float, float, float]] = []
+    for outer_point in outer_wall_start:
+        outer_radius = radial_distance(outer_point)
+        if outer_radius <= 1e-12:
+            unit_x, unit_y = 1.0, 0.0
+        else:
+            unit_x, unit_y = outer_point[0] / outer_radius, outer_point[1] / outer_radius
+        radius = outer_radius + fillet
+        foot_ring.append((unit_x * radius, unit_y * radius, mount_end_z))
+    return foot_ring
 
 
 def build_body_mesh(
@@ -912,7 +947,9 @@ def build_body_mesh(
     outer_wall_start_z = min(PARAMS["length"], mount_end_z + fillet)
     outer_wall_rings = compact_mouth_outer_rings(outer_wall_rings_after_mount(outer_rings, outer_wall_start_z))
     outer_wall_start = outer_wall_rings[0]
+    mount_fillet_foot = mount_fillet_foot_ring(outer_wall_start, mount_end_z)
     required_mount_radius = max(
+        max(radial_distance(point) for point in mount_fillet_foot),
         max(radial_distance(point) for point in outer_wall_start),
         max(radial_distance(point) for point in throat_inner) + max(0.0, PARAMS["minimum_wall"]),
     )
@@ -926,8 +963,9 @@ def build_body_mesh(
     outer_wall_starts = [add_ring(vertices, ring) for ring in outer_wall_rings]
     blend_starts = [
         add_ring(vertices, ring)
-        for ring in mount_fillet_blend_rings(outer_wall_start, mount_outer_end)
+        for ring in mount_fillet_arc_rings(outer_wall_start, mount_end_z)
     ]
+    mount_fillet_foot_start = add_ring(vertices, mount_fillet_foot)
     mount_outer_start_start = add_ring(vertices, mount_outer_start)
     mount_outer_end_start = add_ring(vertices, mount_outer_end)
 
@@ -940,7 +978,8 @@ def build_body_mesh(
     for blend_start in blend_starts:
         append_ring_bridge(faces, previous_start, blend_start, ring_size, True)
         previous_start = blend_start
-    append_ring_bridge(faces, previous_start, mount_outer_end_start, ring_size, True)
+    append_ring_bridge(faces, previous_start, mount_fillet_foot_start, ring_size, True)
+    append_ring_bridge(faces, mount_fillet_foot_start, mount_outer_end_start, ring_size, True)
     append_ring_bridge(faces, mount_outer_end_start, mount_outer_start_start, ring_size, True)
     append_ring_bridge(faces, mount_outer_start_start, inner_starts[0], ring_size)
 
