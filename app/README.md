@@ -8,6 +8,7 @@
 - `export_horncad.py` - Python STL exporter for the same geometry path.
 - `webster_1d.py` - one-dimensional acoustic screening model.
 - `aperture_directivity.py` - normalized H/V far-field aperture estimate.
+- `helmholtz_2d.py` - independent H/V pressure-acoustics FEM solver.
 - `output/` - ignored output from the Python exporter.
 
 ## Browser Output
@@ -91,3 +92,17 @@ python app/aperture_directivity.py path/to/config.YAML
 ```
 
 This integrates a uniform-velocity source over HornCAD's projected mouth outline and includes phase differences from mouth curvature. Every frequency is normalized to 0 dB on-axis. The output is useful for examining aperture size and shape, but it is not a Helmholtz simulation: it does not include the horn's internal pressure distribution, nonuniform mouth velocity, edge diffraction, or H/V mode coupling.
+
+## Helmholtz 2D Directivity
+
+Run independent horizontal and vertical pressure-acoustics FEM models from 250 Hz to 10 kHz:
+
+```bash
+python app/helmholtz_2d.py path/to/config.YAML
+```
+
+Each model uses the corresponding HornCAD wall profile, a symmetry boundary along the horn axis, rigid horn and baffle surfaces, a throat source, an exterior air domain, and a first-order outgoing-wave boundary. Receiver pressure is sampled on a semicircular arc and normalized to the axial receiver at every frequency.
+
+The default mesh uses six linear elements per wavelength at 10 kHz. Increase convergence with `--elements-per-wavelength 8` or move the outgoing boundary with `--exterior-extent 0.5`. Exact null depths should not be trusted until both settings have been checked.
+
+This is substantially more informative than the uniform-aperture estimate, but it remains a 2D approximation. Each plane assumes invariance in its missing dimension, and the first-order absorbing boundary leaves some exterior-domain sensitivity. It cannot reproduce H/V coupling, diagonal radiation, three-dimensional corner modes, or the loading of the complete rectangular aperture.
