@@ -1061,7 +1061,7 @@ HornCAD writes one project output bundle beside the project file.
 Recommended command shape:
 
 ```text
-python -m horncad.refine examples/811b/811b.yaml --workers auto
+python -m horncad.refine archive/examples/811b/811b.yaml --workers auto
 ```
 
 Output directory:
@@ -1085,7 +1085,7 @@ output/
 ```
 
 Where `project_stem` is derived from the input project file name without its
-extension. For example, `examples/811b/811b.yaml` produces filenames prefixed
+extension. For example, `archive/examples/811b/811b.yaml` produces filenames prefixed
 with `811b`.
 
 The user should not need to specify output filenames for standard artifacts.
@@ -1325,8 +1325,8 @@ Example input configuration:
 
 See also:
 
-- `docs/design_flow.md` for the recommended normal design workflow and output-reading order.
-- `examples/811b/811b.yaml` for the current example project.
+- `archive/docs/design_flow.md` for the archived design workflow and output-reading order.
+- `archive/examples/811b/811b.yaml` for the archived example project.
 
 ```yaml
 throat:

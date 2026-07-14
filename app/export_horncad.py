@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Export a symmetric square-boundary preview mesh for the center-profile surface."""
+"""Export a HornCAD acoustic surface or printable body mesh."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ from pathlib import Path
 import trimesh
 
 
-OUTPUT = Path(__file__).resolve().parent / "output" / "center_profile_surface_zoned.stl"
+OUTPUT_DIR = Path(__file__).resolve().parent / "output"
 Z_STATIONS = 44
 SIDE_SAMPLES = 160
 
@@ -869,11 +869,16 @@ def main() -> None:
         export_mode = "body"
         vertices, faces = build_body_mesh(rings, mouth_index, mouth_h, mouth_v)
 
-    OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+    mode_label = "Surface" if export_mode == "acoustic_surface" else "Body"
+    output = OUTPUT_DIR / (
+        f"HornCAD-{mode_label}-{round(PARAMS['mouth_width'])}x"
+        f"{round(PARAMS['mouth_height'])}x{round(PARAMS['length'])}.STL"
+    )
+    output.parent.mkdir(parents=True, exist_ok=True)
     mesh = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
     trimesh.repair.fix_normals(mesh, multibody=True)
-    mesh.export(OUTPUT)
-    print(OUTPUT)
+    mesh.export(output)
+    print(output)
     print(f"export_mode={export_mode}")
     print(f"inner_rings={len(rings)} vertices_per_ring={len(rings[0])} vertices={len(mesh.vertices)} triangles={len(mesh.faces)}")
     print(f"watertight={mesh.is_watertight} winding_consistent={mesh.is_winding_consistent} components={len(mesh.split(only_watertight=False))}")

@@ -2,7 +2,7 @@ PYTHON ?= /opt/homebrew/bin/python3.13
 VENV := .venv
 VENV_PYTHON := $(VENV)/bin/python
 
-.PHONY: bootstrap test clean-venv python-info
+.PHONY: bootstrap validate clean-venv python-info
 
 bootstrap:
 	@if [ ! -x "$(PYTHON)" ]; then \
@@ -15,8 +15,9 @@ bootstrap:
 	$(VENV_PYTHON) -m pip install --upgrade pip setuptools wheel
 	$(VENV_PYTHON) -m pip install -e '.[dev]'
 
-test:
-	$(VENV_PYTHON) -m pytest
+validate:
+	$(VENV_PYTHON) -m py_compile app/export_horncad.py
+	node -e "const fs=require('fs'); const html=fs.readFileSync('app/HornCAD.html','utf8'); const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n'); new Function(scripts); console.log('js_parse_ok');"
 
 clean-venv:
 	rm -rf $(VENV)

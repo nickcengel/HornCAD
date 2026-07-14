@@ -6,6 +6,8 @@ __pycache__/
 design_review/
 surface_review/
 refine_review/
+output/
+app/output/
 tools/output/
 tools/widget-2-stl/output/
 .aider*
