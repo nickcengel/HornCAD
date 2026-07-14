@@ -20,7 +20,7 @@ An exponential horn should eventually be implemented as a separate reference pro
 - mouth height `H`;
 - total physical length `L_total`;
 - horizontal and vertical coverage;
-- throat diameter and angle.
+- throat diameter and driver throat angle, which is also the conic-extension exit angle.
 
 Coverage is an authorial constraint. Candidate fitting must not silently change it to make a profile feasible.
 
@@ -28,7 +28,7 @@ Coverage is an authorial constraint. Candidate fitting must not silently change 
 
 - horizontal and vertical `K`;
 - horizontal and vertical `N`;
-- conic-extension fraction and exit angle;
+- conic-extension fraction;
 - squareness-morph start and easing.
 
 ### Derived values
@@ -120,11 +120,10 @@ Acoustic results should remain separate initially. Combining scores too early wo
 | `K_H`, `K_V` | `0, 0.5, 1, 2, 5, 10` |
 | `N_H`, `N_V` | `2, 3, 4, 6, 10` |
 | Conic fraction | `0%, 10%, 25%, 40%` of `L_total` |
-| Conic exit angle | `0.5x, 1x, 2x` throat half-angle |
 | Morph start | `0%, 25%, 50%, 75%` of `L_total` |
 | Morph character | fast, neutral, slow |
 
-Exit angles must be capped at a physically sensible maximum. The first pass should use symmetric parameters (`K_H = K_V` and `N_H = N_V`). H/V values should be decoupled only after viable symmetric regions are known.
+The conic-extension exit angle is not a matrix variable: it is always the authored driver throat angle. The first pass should use symmetric parameters (`K_H = K_V` and `N_H = N_V`). H/V values should be decoupled only after viable symmetric regions are known.
 
 ## Staged Experiment Matrix
 
@@ -154,10 +153,10 @@ Test each against:
 
 ```text
 conic fraction: 0%, 10%, 25%, 40%
-exit angle:     0.5x, 1x, 2x throat half-angle
+exit angle:     authored driver throat angle (constant)
 ```
 
-This gives 36 raw candidates, including no-extension cases that can be deduplicated. Record effective throat radius, remaining profile length, derived `S`, best viable `K`, junction slope mismatch, nearby curvature, and eventually acoustic response.
+This gives 12 candidates: four extension fractions for each of three basis profiles. Record effective throat radius, remaining profile length, derived `S`, best viable `K`, junction slope mismatch, nearby curvature, and eventually acoustic response.
 
 A mesh may be topologically valid while retaining a sharp acoustic discontinuity, so slope and curvature continuity are essential measurements.
 
@@ -193,7 +192,7 @@ Keep H/V coverage fixed. Select a sparse set around the best symmetric cases rat
 ## Recommended First Campaign
 
 - 30 no-extension `K x N` basis cases;
-- 12 to 18 deduplicated extension cases around three good bases;
+- 12 extension cases around three good bases;
 - 15 morph cases around three good extended or unextended profiles;
 - 12 H/V-decoupled cases.
 
@@ -210,7 +209,7 @@ throat diameter and angle
 horizontal and vertical coverage
 K_H, K_V, N_H, and N_V
 derived S_H and S_V
-conic length, fraction, and exit angle
+conic length and fraction
 morph schedule and control points
 profile validity results
 slope and curvature metrics
