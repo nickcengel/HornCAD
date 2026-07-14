@@ -145,15 +145,18 @@ private:
    DenseMatrix radiation_imag_;
    Array<int> pivots_;
    ComplexLUFactors radiation_solver_;
+   const BoundaryTrace &mouth_;
    int pressure_size_;
    int system_size_;
 
 public:
-   MixedBlockPreconditioner(SparseMatrix &pressure, const DenseMatrix &radiation_real,
+   MixedBlockPreconditioner(SparseMatrix &pressure, const BoundaryTrace &mouth,
+                            const DenseMatrix &radiation_real,
                             const DenseMatrix &radiation_imag)
       : Solver(2 * (pressure.Height() + radiation_real.Height())),
         pressure_solver_(pressure), radiation_real_(radiation_real),
         radiation_imag_(radiation_imag), pivots_(radiation_real.Height()),
+        mouth_(mouth),
         pressure_size_(pressure.Height()),
         system_size_(pressure.Height() + radiation_real.Height())
    {
@@ -183,8 +186,13 @@ public:
       Vector aperture_imag(y.GetData() + system_size_ + pressure_size_, mouth_size);
       for (int local = 0; local < mouth_size; ++local)
       {
-         aperture_real[local] = x[pressure_size_ + local];
-         aperture_imag[local] = x[system_size_ + pressure_size_ + local];
+         // Lower-triangular block solve for [-T, Z]: after p=A^-1 r_p,
+         // solve Z v = r_v + T p. This captures the pressure-to-mouth trace
+         // coupling omitted by the former block-diagonal preconditioner.
+         aperture_real[local] = x[pressure_size_ + local]
+                                + output_real[mouth_.dofs[local]];
+         aperture_imag[local] = x[system_size_ + pressure_size_ + local]
+                                + output_imag[mouth_.dofs[local]];
       }
       radiation_solver_.Solve(mouth_size, 1, aperture_real.GetData(),
                               aperture_imag.GetData());
@@ -270,7 +278,7 @@ int main(int argc, char *argv[])
    MixedRealOperator real(helmholtz.SpMat(), mouth, radiation_real);
    MixedImagOperator imag(pressure_size, mouth, radiation_imag, omega * density);
    ComplexOperator system(&real, &imag, false, false);
-   MixedBlockPreconditioner preconditioner(helmholtz.SpMat(), radiation_real,
+   MixedBlockPreconditioner preconditioner(helmholtz.SpMat(), mouth, radiation_real,
                                            radiation_imag);
 
    Vector rhs(2 * system_size), solution(2 * system_size);

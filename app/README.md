@@ -191,6 +191,12 @@ the globally coupled matrix. On the current 3,974-pressure/963-mouth-DOF
 validation mesh, the 500 Hz solve takes about 0.9 seconds instead of roughly 18
 minutes for the former global complex-UMFPACK validation solve.
 
+The preconditioner is block-triangular: it solves the sparse pressure block,
+injects that pressure trace into the mouth residual, then solves the complex
+aperture block. On the accepted 5 kHz mesh this reduced the 5 kHz solve from
+992 iterations / 313 seconds to 293 iterations / 92 seconds without changing
+the acoustic result.
+
 This executable is still a serial single-frequency reference. Independent
 frequencies can be run as bounded processes on the M1 Ultra, but a single large
 production solve will not use all 20 cores until the pressure space and aperture
