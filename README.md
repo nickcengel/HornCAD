@@ -32,3 +32,9 @@ To regenerate an STL from a YAML file exported by the app:
 ```bash
 python app/export_horncad.py path/to/config.YAML
 ```
+
+To run the one-dimensional Webster acoustic screening model:
+
+```bash
+python app/webster_1d.py path/to/config.YAML
+```

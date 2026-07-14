@@ -6,6 +6,7 @@
 
 - `HornCAD.html` - browser app for designing horn geometry and authoring YAML.
 - `export_horncad.py` - Python STL exporter for the same geometry path.
+- `webster_1d.py` - one-dimensional acoustic screening model.
 - `output/` - ignored output from the Python exporter.
 
 ## Browser Output
@@ -46,3 +47,35 @@ Running without a YAML file exports the built-in defaults:
 ```bash
 python app/export_horncad.py
 ```
+
+## Webster 1D Acoustic Screening
+
+Run the lossless one-dimensional Webster model against a browser-exported design:
+
+```bash
+python app/webster_1d.py path/to/HornCAD-Body-400x260x250.YAML
+```
+
+The solver samples HornCAD's actual section polygons into an area profile, including the conical extension, squareness morph, and enabled profile modifiers. It derives and validates horizontal and vertical `S`; either value being negative rejects the design.
+
+By default, the model sweeps 100 Hz to 20 kHz and terminates the equivalent circular mouth with a baffled-piston radiation impedance. It writes three files to `app/output/`:
+
+```text
+<design>-Webster1D.csv
+<design>-Webster1D-Area.csv
+<design>-Webster1D.json
+```
+
+The frequency CSV contains complex input impedance, throat reflection, mouth pressure, mouth volume velocity, and radiated power for a unit throat volume velocity. The area CSV records the sampled geometry. The JSON file records assumptions, run settings, derived `S`, summary metrics, and artifact paths.
+
+Useful options:
+
+```bash
+python app/webster_1d.py config.YAML --start-hz 200 --stop-hz 16000
+python app/webster_1d.py config.YAML --frequencies 401 --spacing linear
+python app/webster_1d.py config.YAML --stations 801 --mouth-load anechoic
+python app/webster_1d.py config.YAML --density 1.2041 --sound-speed 343.21
+python app/webster_1d.py config.YAML --output-dir experiments/
+```
+
+This is a comparative plane-wave model, not a directivity simulation. It assumes lossless rigid walls, uses projected section area, and represents the varying horn as locally uniform transmission-line segments. It does not model transverse modes, H/V directivity, corner behavior, viscothermal loss, or full three-dimensional mouth diffraction.

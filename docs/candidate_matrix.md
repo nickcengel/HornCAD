@@ -261,7 +261,7 @@ An optimizer must not make an invalid design appear successful by quietly changi
 2. Extract deterministic profile and surface generation into callable Python functions.
 3. Implement profile metrics and structured rejection reasons.
 4. Define normalized candidate-configuration and result schemas.
-5. Implement Phase A without acoustic simulation.
+5. Use the Webster 1D runner to implement the first Phase A acoustic screen.
 6. Review plots and metrics to set defensible `S`, slope, and curvature bounds.
 7. Add Phase B and Phase C studies.
 8. Select and integrate an acoustic modeling library.

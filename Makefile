@@ -16,7 +16,8 @@ bootstrap:
 	$(VENV_PYTHON) -m pip install -e '.[dev]'
 
 validate:
-	$(VENV_PYTHON) -m py_compile app/export_horncad.py
+	$(VENV_PYTHON) -m py_compile app/export_horncad.py app/webster_1d.py
+	$(VENV_PYTHON) -m unittest discover -s tests -v
 	node -e "const fs=require('fs'); const html=fs.readFileSync('app/HornCAD.html','utf8'); const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n'); new Function(scripts); console.log('js_parse_ok');"
 
 clean-venv:
