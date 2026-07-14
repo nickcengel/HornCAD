@@ -180,6 +180,56 @@ def build_interior_acoustic_domain(yaml_path: Path, side_samples: int = 32,
                                   throat_center, mouth_center, throat_area, mouth_area)
 
 
+def build_quadrant_acoustic_domain(yaml_path: Path, side_samples: int = 32,
+                                   axial_stations: int = 32) -> InteriorAcousticDomain:
+    """Build the positive-X/positive-Y symmetry quadrant of the acoustic domain.
+
+    The two Boolean cut faces are assigned to the rigid-wall attribute. For an
+    even pressure solution this is the natural zero-normal-gradient symmetry
+    condition. Throat and mouth areas are one quarter of the full-domain areas.
+    """
+    full = build_interior_acoustic_domain(yaml_path, side_samples, axial_stations)
+    low, high = full.surface.bounds
+    extent = high - low
+    # The box starts at both symmetry planes and extends comfortably beyond the
+    # positive half of the horn. Manifold supplies a closed, conforming cut.
+    box_extents = np.array([2.0 * max(high[0], extent[0]),
+                            2.0 * max(high[1], extent[1]),
+                            2.0 * extent[2]])
+    box_center = np.array([box_extents[0] / 2.0, box_extents[1] / 2.0,
+                           0.5 * (low[2] + high[2])])
+    box = trimesh.creation.box(
+        extents=box_extents,
+        transform=trimesh.transformations.translation_matrix(box_center))
+    quadrant = trimesh.boolean.intersection([full.surface, box], engine="manifold")
+    if quadrant is None or not quadrant.is_watertight or not quadrant.is_winding_consistent:
+        raise ValueError("quadrant Boolean did not produce a watertight oriented domain")
+    if np.min(quadrant.vertices[:, :2]) < -1e-10:
+        raise ValueError("quadrant Boolean crossed a symmetry plane")
+
+    centers = quadrant.triangles_center
+    distance_by_label = []
+    for label in (RIGID_WALL, THROAT_PISTON, MOUTH_APERTURE):
+        patch = trimesh.Trimesh(full.surface.vertices,
+                                full.surface.faces[full.face_domains == label],
+                                process=False)
+        _, distances, _ = trimesh.proximity.closest_point(patch, centers)
+        distance_by_label.append(distances)
+    face_domains = np.argmin(np.stack(distance_by_label, axis=1), axis=1).astype(np.uint8)
+    symmetry = (np.abs(centers[:, 0]) < 1e-10) | (np.abs(centers[:, 1]) < 1e-10)
+    face_domains[symmetry] = RIGID_WALL
+    areas = quadrant.area_faces
+    throat_area = float(areas[face_domains == THROAT_PISTON].sum())
+    mouth_area = float(areas[face_domains == MOUTH_APERTURE].sum())
+    if not math.isclose(throat_area * 4.0, full.throat_area_m2, rel_tol=0.01):
+        raise ValueError("quadrant throat area is not one quarter of the full throat")
+    if not math.isclose(mouth_area * 4.0, full.mouth_area_m2, rel_tol=0.01):
+        raise ValueError("quadrant mouth area is not one quarter of the full mouth")
+    empty = np.array([], dtype=np.int64)
+    return InteriorAcousticDomain(quadrant, face_domains, empty, empty, -1, -1,
+                                  throat_area, mouth_area)
+
+
 def write_gmsh_volume_mesh(domain: InteriorAcousticDomain, path: Path,
                            maximum_edge_m: float) -> VolumeMeshReport:
     """Tetrahedralize the closed air volume and preserve its boundary labels.

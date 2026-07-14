@@ -206,20 +206,26 @@ int main(int argc, char *argv[])
    if (argc < 3)
    {
       std::cerr << "usage: horncad_mfem_interior MESH.msh FREQUENCY_HZ "
-                   "[--output-prefix PATH]\n";
+                   "[--quadrant-symmetry] [--output-prefix PATH]\n";
       return 2;
    }
    const std::string mesh_path = argv[1];
    const double frequency = std::stod(argv[2]);
    std::string output_prefix;
-   if (argc == 5 && std::string(argv[3]) == "--output-prefix")
+   bool quadrant_symmetry = false;
+   for (int argument = 3; argument < argc; ++argument)
    {
-      output_prefix = argv[4];
-   }
-   else if (argc != 3)
-   {
-      std::cerr << "invalid output arguments\n";
-      return 2;
+      const std::string option = argv[argument];
+      if (option == "--quadrant-symmetry") { quadrant_symmetry = true; }
+      else if (option == "--output-prefix" && argument + 1 < argc)
+      {
+         output_prefix = argv[++argument];
+      }
+      else
+      {
+         std::cerr << "invalid output arguments\n";
+         return 2;
+      }
    }
    MFEM_VERIFY(frequency > 0.0, "frequency must be positive");
    constexpr double density = 1.2041;
@@ -248,26 +254,32 @@ int main(int argc, char *argv[])
    {
       for (int column = 0; column < mouth_size; ++column)
       {
-         std::complex<double> integral;
-         if (row == column)
+         std::complex<double> integral = 0.0;
+         const int image_count = quadrant_symmetry ? 4 : 1;
+         for (int image = 0; image < image_count; ++image)
          {
-            const double radius = std::sqrt(mouth.weights[column] / pi);
-            integral = 2.0 * pi *
-                       (1.0 - std::exp(std::complex<double>(0.0, -wave_number * radius))) /
-                       std::complex<double>(0.0, wave_number);
-         }
-         else
-         {
+            const double image_x = (image & 1) ? -mouth.points[column][0]
+                                                : mouth.points[column][0];
+            const double image_y = (image & 2) ? -mouth.points[column][1]
+                                                : mouth.points[column][1];
             double distance_squared = 0.0;
-            for (int axis = 0; axis < 3; ++axis)
-            {
-               const double delta = mouth.points[row][axis] - mouth.points[column][axis];
-               distance_squared += delta * delta;
-            }
+            const double dx = mouth.points[row][0] - image_x;
+            const double dy = mouth.points[row][1] - image_y;
+            const double dz = mouth.points[row][2] - mouth.points[column][2];
+            distance_squared = dx * dx + dy * dy + dz * dz;
             const double distance = std::sqrt(distance_squared);
-            integral = mouth.weights[column] *
-                       std::exp(std::complex<double>(0.0, -wave_number * distance)) /
-                       distance;
+            if (distance < 1e-14)
+            {
+               const double radius = std::sqrt(mouth.weights[column] / pi);
+               integral += 2.0 * pi *
+                  (1.0 - std::exp(std::complex<double>(0.0, -wave_number * radius))) /
+                  std::complex<double>(0.0, wave_number);
+            }
+            else
+            {
+               integral += mouth.weights[column] *
+                  std::exp(std::complex<double>(0.0, -wave_number * distance)) / distance;
+            }
          }
          const std::complex<double> impedance =
             std::complex<double>(0.0, density * omega / (2.0 * pi)) * integral;
@@ -286,7 +298,9 @@ int main(int argc, char *argv[])
    solution = 0.0;
    double throat_area = 0.0;
    for (double weight : throat.weights) { throat_area += weight; }
-   const double derivative_imaginary = omega * density * volume_velocity / throat_area;
+   const double quadrant_fraction = quadrant_symmetry ? 0.25 : 1.0;
+   const double derivative_imaginary =
+      omega * density * volume_velocity * quadrant_fraction / throat_area;
    for (int local = 0; local < static_cast<int>(throat.dofs.size()); ++local)
    {
       rhs[system_size + throat.dofs[local]] +=
@@ -323,6 +337,7 @@ int main(int argc, char *argv[])
       radiated_power += 0.5 * mouth.weights[local] *
                         std::real(pressure * std::conj(velocity));
    }
+   if (quadrant_symmetry) { radiated_power *= 4.0; }
    std::complex<double> average_throat_pressure;
    for (int local = 0; local < static_cast<int>(throat.dofs.size()); ++local)
    {
@@ -341,16 +356,23 @@ int main(int argc, char *argv[])
       mouth_output << std::setprecision(17)
                    << "x_m,y_m,z_m,area_weight_m2,pressure_real_pa,pressure_imag_pa,"
                       "normal_velocity_real_m_s,normal_velocity_imag_m_s\n";
+      const int image_count = quadrant_symmetry ? 4 : 1;
       for (int local = 0; local < mouth_size; ++local)
       {
          const int pressure_dof = mouth.dofs[local];
          const int velocity_dof = pressure_size + local;
-         mouth_output << mouth.points[local][0] << ',' << mouth.points[local][1] << ','
-                      << mouth.points[local][2] << ',' << mouth.weights[local] << ','
-                      << solution[pressure_dof] << ','
-                      << solution[system_size + pressure_dof] << ','
-                      << solution[velocity_dof] << ','
-                      << solution[system_size + velocity_dof] << '\n';
+         for (int image = 0; image < image_count; ++image)
+         {
+            const double x = (image & 1) ? -mouth.points[local][0]
+                                          : mouth.points[local][0];
+            const double y = (image & 2) ? -mouth.points[local][1]
+                                          : mouth.points[local][1];
+            mouth_output << x << ',' << y << ',' << mouth.points[local][2] << ','
+                         << mouth.weights[local] << ',' << solution[pressure_dof] << ','
+                         << solution[system_size + pressure_dof] << ','
+                         << solution[velocity_dof] << ','
+                         << solution[system_size + velocity_dof] << '\n';
+         }
       }
       std::ofstream throat_output(output_prefix + "_throat.csv");
       throat_output << std::setprecision(17)
@@ -358,9 +380,16 @@ int main(int argc, char *argv[])
       for (int local = 0; local < static_cast<int>(throat.dofs.size()); ++local)
       {
          const int dof = throat.dofs[local];
-         throat_output << throat.points[local][0] << ',' << throat.points[local][1] << ','
-                       << throat.points[local][2] << ',' << throat.weights[local] << ','
-                       << solution[dof] << ',' << solution[system_size + dof] << '\n';
+         for (int image = 0; image < image_count; ++image)
+         {
+            const double x = (image & 1) ? -throat.points[local][0]
+                                          : throat.points[local][0];
+            const double y = (image & 2) ? -throat.points[local][1]
+                                          : throat.points[local][1];
+            throat_output << x << ',' << y << ',' << throat.points[local][2] << ','
+                          << throat.weights[local] << ',' << solution[dof] << ','
+                          << solution[system_size + dof] << '\n';
+         }
       }
       std::ofstream summary_output(output_prefix + "_summary.csv");
       summary_output << std::setprecision(17)
@@ -381,6 +410,7 @@ int main(int argc, char *argv[])
              << " input_impedance_imag_pa_s_m3=" << input_impedance.imag()
              << " radiated_power_w=" << radiated_power
              << " solver=matrix_free_gmres"
+             << " symmetry=" << (quadrant_symmetry ? "quadrant" : "full")
              << " converged=" << solver.GetConverged()
              << " iterations=" << solver.GetNumIterations()
              << " solve_seconds=" << solve_seconds

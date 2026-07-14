@@ -197,6 +197,15 @@ aperture block. On the accepted 5 kHz mesh this reduced the 5 kHz solve from
 992 iterations / 313 seconds to 293 iterations / 92 seconds without changing
 the acoustic result.
 
+For designs and sources symmetric about both centre planes, build the positive-X/
+positive-Y domain with `build_quadrant_acoustic_domain(...)` and run MFEM with
+`--quadrant-symmetry`. The cut faces use the natural rigid/even-pressure
+condition. The nonlocal aperture operator includes all four mirrored source
+images, source flow is quartered, power is restored to the full aperture, and
+field CSVs reconstruct all four quadrants. Validation against full-domain 6/8
+EPW solves agrees within 0.35% for impedance magnitude and power while reducing
+solve time by up to about 31x.
+
 This executable is still a serial single-frequency reference. Independent
 frequencies can be run as bounded processes on the M1 Ultra, but a single large
 production solve will not use all 20 cores until the pressure space and aperture

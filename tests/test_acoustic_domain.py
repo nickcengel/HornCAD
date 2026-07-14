@@ -11,6 +11,7 @@ from app.acoustic_domain import (
     build_interior_acoustic_domain,
     write_gmsh_volume_mesh,
     write_tetwild_volume_mesh,
+    build_quadrant_acoustic_domain,
 )
 
 
@@ -95,6 +96,20 @@ class InteriorAcousticDomainTests(unittest.TestCase):
                                delta=domain.throat_area_m2 * 0.05)
         self.assertAlmostEqual(float(areas[tags == 3].sum()), domain.mouth_area_m2,
                                delta=domain.mouth_area_m2 * 0.02)
+
+    def test_quadrant_is_watertight_and_one_quarter_area(self) -> None:
+        yaml_path = (Path(__file__).parents[1] / "test_project"
+                     / "HornCAD-Body-400x260x250.YAML")
+        full = build_interior_acoustic_domain(yaml_path, 16, 24)
+        quadrant = build_quadrant_acoustic_domain(yaml_path, 16, 24)
+        self.assertTrue(quadrant.surface.is_watertight)
+        self.assertTrue(quadrant.surface.is_winding_consistent)
+        self.assertGreaterEqual(float(quadrant.surface.vertices[:, 0].min()), -1e-10)
+        self.assertGreaterEqual(float(quadrant.surface.vertices[:, 1].min()), -1e-10)
+        self.assertAlmostEqual(quadrant.throat_area_m2 * 4.0,
+                               full.throat_area_m2, delta=full.throat_area_m2 * 0.01)
+        self.assertAlmostEqual(quadrant.mouth_area_m2 * 4.0,
+                               full.mouth_area_m2, delta=full.mouth_area_m2 * 0.01)
 
 
 if __name__ == "__main__":
