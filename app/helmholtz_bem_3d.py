@@ -24,6 +24,13 @@ import tempfile
 import time
 from typing import Any, Iterable
 
+# Keep JIT and plotting caches writable and shared by spawned frequency workers.
+# This avoids recompilation/font scans when the user's home cache is restricted.
+_CACHE_ROOT = Path(tempfile.gettempdir()) / "horncad-bem-cache"
+os.environ.setdefault("NUMBA_CACHE_DIR", str(_CACHE_ROOT / "numba"))
+os.environ.setdefault("MPLCONFIGDIR", str(_CACHE_ROOT / "matplotlib"))
+os.environ.setdefault("XDG_CACHE_HOME", str(_CACHE_ROOT / "xdg"))
+
 import bempp_cl.api as bempp
 import matplotlib
 matplotlib.use("Agg")
@@ -138,8 +145,39 @@ class PipelineSettings:
     gmres_tolerance: float = 1e-5
     gmres_max_iterations: int = 300
     full_sphere: bool = False
-    maximum_workers: int = 1
+    maximum_workers: int = 0
     memory_limit_gib: float | None = None
+
+
+@dataclass(frozen=True)
+class ExecutionPlan:
+    workers: int
+    threads_per_worker: int
+    cpu_count: int
+    memory_limit_gib: float
+    estimated_memory_per_worker_gib: float
+
+
+def _physical_memory_gib() -> float:
+    """Return installed memory without platform-specific subprocesses."""
+    try:
+        return os.sysconf("SC_PHYS_PAGES") * os.sysconf("SC_PAGE_SIZE") / 1024 ** 3
+    except (ValueError, OSError, AttributeError):
+        return 8.0
+
+
+def execution_plan(settings: PipelineSettings, mesh: AcousticMesh,
+                   pending_frequencies: int) -> ExecutionPlan:
+    """Allocate cores and memory across independent dense BEM solves."""
+    cpus = os.cpu_count() or 1
+    memory_limit = settings.memory_limit_gib or 0.75 * _physical_memory_gib()
+    # The combined-field solve can retain several complex dense operators plus
+    # factorization/work arrays. Five matrices is a conservative working-set estimate.
+    per_worker = max(0.25, 5.0 * mesh.report.estimated_dense_matrix_gib)
+    memory_workers = max(1, int(memory_limit // per_worker))
+    requested = cpus if settings.maximum_workers == 0 else max(1, settings.maximum_workers)
+    workers = max(1, min(requested, cpus, memory_workers, pending_frequencies or 1))
+    return ExecutionPlan(workers, max(1, cpus // workers), cpus, memory_limit, per_worker)
 
 
 def _jsonable(value: Any) -> Any:
@@ -504,11 +542,12 @@ def _load_frequency(path: Path) -> FrequencyResult:
             json.loads(str(data["metrics_json"])))
 
 
-def _solve_frequency_worker(payload: tuple[Path, PipelineSettings, float, Path]) -> str:
+def _solve_frequency_worker(payload: tuple[AcousticMesh, ApertureObserver, PipelineSettings,
+                                           float, Path, int]) -> str:
     """Isolated frequency worker; Bempp/Numba state is process-local."""
-    yaml_path, settings, frequency, artifact = payload
-    mesh = build_acoustic_mesh(yaml_path, settings.mesh)
-    observer = make_aperture_observer(mesh, settings.observer_offset_m)
+    mesh, observer, settings, frequency, artifact, threads = payload
+    import numba
+    numba.set_num_threads(threads)
     grid = bempp.Grid(mesh.surface.vertices.T, mesh.surface.faces.T,
                       domain_indices=mesh.domain_indices)
     result = solve_frequency(grid, frequency, np.asarray(settings.angles_deg),
@@ -545,17 +584,24 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
     artifacts = [frequency_dir / f"{frequency:.9f}.npz" for frequency in frequencies]
     pending = [(float(frequency), artifact) for frequency, artifact in zip(frequencies, artifacts)
                if not (resume and artifact.exists())]
-    workers = max(1, min(settings.maximum_workers, len(pending) or 1))
-    if settings.memory_limit_gib is not None and mesh.report.estimated_dense_matrix_gib * workers > settings.memory_limit_gib:
-        workers = max(1, int(settings.memory_limit_gib // max(mesh.report.estimated_dense_matrix_gib, 1e-12)))
-    if workers > 1:
-        context = multiprocessing.get_context("spawn")
-        with ProcessPoolExecutor(max_workers=workers, mp_context=context) as executor:
-            futures = [executor.submit(_solve_frequency_worker, (yaml_path, settings, frequency, artifact))
-                       for frequency, artifact in pending]
-            for future in as_completed(futures):
-                future.result()
-    elif pending:
+    plan = execution_plan(settings, mesh, len(pending))
+    used_parallel_workers = plan.workers
+    if plan.workers > 1:
+        try:
+            context = multiprocessing.get_context("spawn")
+            with ProcessPoolExecutor(max_workers=plan.workers, mp_context=context) as executor:
+                futures = [executor.submit(_solve_frequency_worker,
+                           (mesh, observer, settings, frequency, artifact, plan.threads_per_worker))
+                           for frequency, artifact in pending]
+                for future in as_completed(futures):
+                    future.result()
+        except (PermissionError, NotImplementedError):
+            # Restricted macOS sandboxes may deny POSIX semaphore discovery.
+            # Preserve correctness and use all cores within one Numba process.
+            used_parallel_workers = 1
+    if pending and (plan.workers == 1 or used_parallel_workers == 1):
+        import numba
+        numba.set_num_threads(plan.cpu_count)
         grid = bempp.Grid(mesh.surface.vertices.T, mesh.surface.faces.T,
                           domain_indices=mesh.domain_indices)
         for frequency, artifact in pending:
@@ -579,6 +625,7 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
         "mesh_hash": mesh.content_hash, "mesh_report": asdict(mesh.report),
         "solver": {"formulation": "regularized_combined_field_exterior_neumann", "library": "bempp-cl",
             "tolerance": settings.gmres_tolerance, "max_iterations": settings.gmres_max_iterations},
+        "execution": {**asdict(plan), "workers_used": used_parallel_workers},
         "versions": {"python": platform.python_version(), "numpy": np.__version__, "trimesh": trimesh.__version__},
         "convergence": {"all_solved": True, "mesh_convergence_checked": False},
         "runtime_seconds": time.monotonic() - started,
@@ -721,7 +768,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--sound-speed", type=float, default=343.21); parser.add_argument("--density", type=float, default=1.2041)
     parser.add_argument("--gmres-tolerance", type=float, default=1e-5); parser.add_argument("--gmres-max-iterations", type=int, default=300)
     parser.add_argument("--observer-offset-mm", type=float, default=1); parser.add_argument("--no-resume", action="store_true")
-    parser.add_argument("--maximum-workers", type=int, default=1)
+    parser.add_argument("--maximum-workers", type=int, default=0,
+                        help="concurrent frequencies; 0 selects a CPU/memory-safe value")
     parser.add_argument("--memory-limit-gib", type=float)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     return parser.parse_args(argv)

@@ -12,6 +12,8 @@ from app.helmholtz_bem_3d import (
     make_aperture_observer,
     piston_boundary_values,
     receiver_directions,
+    execution_plan,
+    PipelineSettings,
 )
 
 
@@ -61,6 +63,18 @@ class HelmholtzBEM3DTests(unittest.TestCase):
         self.assertTrue(np.all(observer.area_weights_m2 > 0.0))
         self.assertGreater(float(observer.area_weights_m2.sum()), 0.0)
         self.assertEqual(observer.positions_m.shape, observer.normals.shape)
+
+    def test_execution_plan_avoids_cpu_oversubscription(self) -> None:
+        yaml_path = Path(__file__).parents[1] / "test_project" / "HornCAD-Body-400x260x250.YAML"
+        mesh = build_acoustic_mesh(
+            yaml_path, MeshSettings(1_000.0, 6.0), side_samples=8, axial_stations=10
+        )
+        settings = PipelineSettings((500.0, 1_000.0), (0.0, 90.0),
+                                    mesh=MeshSettings(1_000.0, 6.0),
+                                    maximum_workers=0, memory_limit_gib=1.0)
+        plan = execution_plan(settings, mesh, 2)
+        self.assertLessEqual(plan.workers * plan.threads_per_worker, plan.cpu_count)
+        self.assertLessEqual(plan.workers, 2)
 
 
 if __name__ == "__main__":
