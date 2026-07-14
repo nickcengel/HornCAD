@@ -196,6 +196,15 @@ problem, not against an unrelated generic Helmholtz benchmark.
   solve is too close to the 1,000-iteration ceiling, so improve the Helmholtz
   preconditioner before an 8/10/12 elements-per-wavelength convergence study.
   These are resolved proof values, not yet convergence-certified response data.
+- Native MFEM now exports weighted complex pressure/velocity fields at the
+  4,006 mouth nodes, weighted complex throat pressure, and acoustic input
+  impedance `mean(p_throat)/Q`. The accepted six-frequency mesh was rerun and
+  the repository review package now includes all field CSVs, impedance CSV and
+  plot, mouth pressure/velocity maps, and preliminary horizontal/vertical
+  ideal-aperture coverage heatmaps. The coverage integral includes interference
+  across the solved mouth field but explicitly excludes lip diffraction and
+  exterior-body scattering; six frequency samples are too sparse for final
+  resonance or coverage characterization.
 
 Primary references used for the solver decision:
 

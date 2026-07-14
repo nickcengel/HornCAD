@@ -168,6 +168,11 @@ cmake --build build/mfem --parallel 20
 build/mfem/horncad_mfem_interior path/to/interior.msh 500
 ```
 
+Add `--output-prefix path/to/f0500` to write weighted complex mouth pressure and
+normal velocity, weighted throat pressure, and a summary containing complex
+acoustic input impedance. The executable creates `_mouth.csv`, `_throat.csv`,
+and `_summary.csv` files.
+
 For the native Apple Silicon tetrahedral backend, install the optional group:
 
 ```bash

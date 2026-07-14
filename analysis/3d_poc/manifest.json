@@ -41,11 +41,18 @@
     "pressure_dofs": 53848,
     "mouth_dofs": 4006
   },
-  "results": "sweep.csv",
+  "results": {
+    "sweep": "sweep.csv",
+    "impedance": "impedance.csv",
+    "complex_boundary_fields": "fields/",
+    "ideal_coverage_figure": "figures/ideal_coverage_heatmaps.png"
+  },
   "limitations": [
     "Only one mesh resolution has been run.",
     "The 5 kHz solve used 992 of 1000 allowed GMRES iterations.",
     "The 1 m3/s source is a calibration input and produces intentionally large absolute powers.",
-    "No AKABAK comparison has yet been performed."
+    "No AKABAK comparison has yet been performed.",
+    "Ideal coverage excludes finite-lip diffraction and exterior-body scattering.",
+    "Impedance and coverage are sampled at only six frequencies."
   ]
 }

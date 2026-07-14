@@ -5,6 +5,8 @@
 #include <chrono>
 #include <cmath>
 #include <complex>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <map>
 #include <string>
@@ -195,11 +197,22 @@ int main(int argc, char *argv[])
    Mpi::Init(argc, argv);
    if (argc < 3)
    {
-      std::cerr << "usage: horncad_mfem_interior MESH.msh FREQUENCY_HZ\n";
+      std::cerr << "usage: horncad_mfem_interior MESH.msh FREQUENCY_HZ "
+                   "[--output-prefix PATH]\n";
       return 2;
    }
    const std::string mesh_path = argv[1];
    const double frequency = std::stod(argv[2]);
+   std::string output_prefix;
+   if (argc == 5 && std::string(argv[3]) == "--output-prefix")
+   {
+      output_prefix = argv[4];
+   }
+   else if (argc != 3)
+   {
+      std::cerr << "invalid output arguments\n";
+      return 2;
+   }
    MFEM_VERIFY(frequency > 0.0, "frequency must be positive");
    constexpr double density = 1.2041;
    constexpr double sound_speed = 343.21;
@@ -302,17 +315,68 @@ int main(int argc, char *argv[])
       radiated_power += 0.5 * mouth.weights[local] *
                         std::real(pressure * std::conj(velocity));
    }
+   std::complex<double> average_throat_pressure;
+   for (int local = 0; local < static_cast<int>(throat.dofs.size()); ++local)
+   {
+      const int dof = throat.dofs[local];
+      average_throat_pressure += throat.weights[local] *
+         std::complex<double>(solution[dof], solution[system_size + dof]);
+   }
+   average_throat_pressure /= throat_area;
+   const std::complex<double> input_impedance =
+      average_throat_pressure / volume_velocity;
+   const double relative_residual = residual.Norml2() / rhs.Norml2();
+
+   if (!output_prefix.empty())
+   {
+      std::ofstream mouth_output(output_prefix + "_mouth.csv");
+      mouth_output << std::setprecision(17)
+                   << "x_m,y_m,z_m,area_weight_m2,pressure_real_pa,pressure_imag_pa,"
+                      "normal_velocity_real_m_s,normal_velocity_imag_m_s\n";
+      for (int local = 0; local < mouth_size; ++local)
+      {
+         const int pressure_dof = mouth.dofs[local];
+         const int velocity_dof = pressure_size + local;
+         mouth_output << mouth.points[local][0] << ',' << mouth.points[local][1] << ','
+                      << mouth.points[local][2] << ',' << mouth.weights[local] << ','
+                      << solution[pressure_dof] << ','
+                      << solution[system_size + pressure_dof] << ','
+                      << solution[velocity_dof] << ','
+                      << solution[system_size + velocity_dof] << '\n';
+      }
+      std::ofstream throat_output(output_prefix + "_throat.csv");
+      throat_output << std::setprecision(17)
+                    << "x_m,y_m,z_m,area_weight_m2,pressure_real_pa,pressure_imag_pa\n";
+      for (int local = 0; local < static_cast<int>(throat.dofs.size()); ++local)
+      {
+         const int dof = throat.dofs[local];
+         throat_output << throat.points[local][0] << ',' << throat.points[local][1] << ','
+                       << throat.points[local][2] << ',' << throat.weights[local] << ','
+                       << solution[dof] << ',' << solution[system_size + dof] << '\n';
+      }
+      std::ofstream summary_output(output_prefix + "_summary.csv");
+      summary_output << std::setprecision(17)
+                     << "frequency_hz,input_impedance_real_pa_s_m3,"
+                        "input_impedance_imag_pa_s_m3,radiated_power_w,"
+                        "gmres_iterations,solve_seconds,relative_residual\n"
+                     << frequency << ',' << input_impedance.real() << ','
+                     << input_impedance.imag() << ',' << radiated_power << ','
+                     << solver.GetNumIterations() << ',' << solve_seconds << ','
+                     << relative_residual << '\n';
+   }
    std::cout << "frequency_hz=" << frequency
              << " pressure_dofs=" << pressure_size
              << " mouth_dofs=" << mouth_size
              << " throat_area_m2=" << throat_area
              << " mouth_area_m2=" << mouth_area
+             << " input_impedance_real_pa_s_m3=" << input_impedance.real()
+             << " input_impedance_imag_pa_s_m3=" << input_impedance.imag()
              << " radiated_power_w=" << radiated_power
              << " solver=matrix_free_gmres"
              << " converged=" << solver.GetConverged()
              << " iterations=" << solver.GetNumIterations()
              << " solve_seconds=" << solve_seconds
-             << " relative_residual=" << residual.Norml2() / rhs.Norml2()
+             << " relative_residual=" << relative_residual
              << std::endl;
    return 0;
 }

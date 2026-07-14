@@ -24,11 +24,38 @@ intentionally large.
 
 - [`artifacts/interior_5khz_6ppw.msh`](artifacts/interior_5khz_6ppw.msh): accepted labeled volume mesh.
 - [`sweep.csv`](sweep.csv): numerical sweep and solver convergence data.
+- [`impedance.csv`](impedance.csv): complex acoustic throat impedance.
+- [`fields/`](fields/): weighted complex throat and mouth fields at every solved frequency.
 - [`manifest.json`](manifest.json): model, mesh, solver, checksum, and limitations.
 - [`figures/resolved_sweep.png`](figures/resolved_sweep.png): response and iteration plot.
 - [`figures/acoustic_mesh.png`](figures/acoustic_mesh.png): labeled acoustic boundary.
 
 ![Resolved sweep](figures/resolved_sweep.png)
+
+## Field, impedance, and preliminary coverage outputs
+
+![Throat impedance](figures/throat_impedance.png)
+
+The impedance is the acoustic input impedance `mean(throat pressure) / volume
+velocity`, in Pa·s/m³. It is not electrical driver impedance. Only six
+frequencies have been solved, so this plot is a sparse comparison artifact and
+does not resolve narrow resonances.
+
+![Mouth fields](figures/mouth_fields.png)
+
+The mouth files contain the solved complex pressure and normal velocity at all
+4,006 weighted mouth nodes. These are reusable inputs for exterior radiation
+calculations; the FEM solve does not need to be repeated to test different
+observer grids.
+
+![Ideal coverage](figures/ideal_coverage_heatmaps.png)
+
+The heatmaps apply a Rayleigh-style monopole-sheet propagation integral to the
+solved mouth velocity and normalize each frequency independently. They include
+interference across the nonuniform mouth field, but exclude finite-lip
+diffraction and exterior-body scattering. Because the computational mouth is
+curved while this remains an ideal-baffle approximation, these plots are
+preliminary comparison results—not the eventual full-exterior prediction.
 
 ## Current result
 
@@ -63,6 +90,12 @@ Run a frequency from the repository root with:
 ```bash
 /private/tmp/horncad-mfem-build/horncad_mfem_interior \
   analysis/3d_poc/artifacts/interior_5khz_6ppw.msh 5000
+```
+
+Persist the complex boundary fields by adding:
+
+```bash
+--output-prefix analysis/3d_poc/fields/f5000
 ```
 
 The temporary build path in that last command is not part of the deliverable;
