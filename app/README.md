@@ -118,6 +118,6 @@ python app/helmholtz_bem_3d.py path/to/config.YAML
 
 The solver builds a closed acoustic obstacle from the printable HornCAD body and unions a thin cap into the open throat. The horn-facing disk of that cap is the only driven Neumann boundary; the horn walls, mouth body, and exterior body are rigid. This prevents a rear monopole from leaking around the mount while allowing the throat, horn interior, mouth, and exterior field to remain fully coupled.
 
-The exterior radiation problem uses Bempp-cl's second-kind single-layer Neumann equation. GMRES convergence is checked at every frequency because this formulation can become ill-conditioned near fictitious interior resonances. The output contains normalized horizontal, diagonal, and vertical far-field cuts and their CSV matrices.
+The exterior radiation problem uses Bempp-cl's second-kind single-layer Neumann equation. GMRES convergence is checked at every frequency because this formulation can become ill-conditioned near fictitious interior resonances. The output contains normalized horizontal, diagonal, and vertical far-field cuts, a discrete low-resolution heatmap, and their CSV matrices. The heatmap keeps each simulated frequency as a separate column without interpolation.
 
 The default `--side-samples 16 --stations 18` mesh is a practical pilot mesh, not a converged 5 kHz production mesh. Increase it with, for example, `--side-samples 20 --stations 22`, and compare lobe locations and broad levels. Deep null depth is especially mesh-sensitive.

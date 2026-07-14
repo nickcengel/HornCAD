@@ -218,6 +218,48 @@ def plot_cuts(
     plt.close(figure)
 
 
+def plot_heatmaps(
+    path: Path,
+    angles_deg: np.ndarray,
+    frequencies_hz: np.ndarray,
+    cuts: dict[str, np.ndarray],
+    floor_db: float,
+) -> None:
+    """Plot discrete BEM samples without interpolating between frequency columns."""
+    figure, axes = plt.subplots(
+        1, 3, figsize=(17.0, 6.0), sharey=True, constrained_layout=True
+    )
+    figure.patch.set_facecolor("white")
+    peak_db = max(float(np.max(values)) for values in cuts.values())
+    ceiling_db = max(0.0, math.ceil(peak_db))
+    image = None
+    extent = (-0.5, len(frequencies_hz) - 0.5, float(angles_deg[0]), float(angles_deg[-1]))
+    labels = [f"{value / 1000:.2g}k" for value in frequencies_hz]
+    for axis, name in zip(axes, ("horizontal", "diagonal", "vertical")):
+        image = axis.imshow(
+            np.maximum(cuts[name], floor_db),
+            origin="lower",
+            aspect="auto",
+            interpolation="nearest",
+            extent=extent,
+            cmap="turbo",
+            vmin=floor_db,
+            vmax=ceiling_db,
+        )
+        axis.set_xticks(np.arange(len(frequencies_hz)))
+        axis.set_xticklabels(labels, rotation=45, ha="right")
+        axis.set_xlabel("Frequency (kHz)")
+        axis.set_title(f"{name.capitalize()} plane")
+    axes[0].set_ylabel("Off-axis angle (degrees)")
+    figure.suptitle(
+        "HornCAD Coupled 3D Helmholtz BEM — Discrete Normalized Directivity"
+    )
+    colorbar = figure.colorbar(image, ax=axes, pad=0.02)
+    colorbar.set_label("Level relative to on-axis (dB)")
+    figure.savefig(path, dpi=180, facecolor="white")
+    plt.close(figure)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("yaml", type=Path)
@@ -273,8 +315,13 @@ def main() -> None:
     args.output_dir.mkdir(parents=True, exist_ok=True)
     stem = f"{args.yaml.stem}-HelmholtzBEM3D-Directivity"
     plot_path = args.output_dir / f"{stem}.png"
+    heatmap_path = args.output_dir / f"{stem}-Heatmap.png"
     plot_cuts(plot_path, angles_deg, frequencies_hz, cuts, args.floor_db)
+    plot_heatmaps(
+        heatmap_path, angles_deg, frequencies_hz, cuts, args.floor_db
+    )
     print(plot_path)
+    print(heatmap_path)
     for name in cuts:
         csv_path = args.output_dir / f"{stem}-{name.capitalize()}.csv"
         write_cut_csv(csv_path, angles_deg, frequencies_hz, cuts[name])
