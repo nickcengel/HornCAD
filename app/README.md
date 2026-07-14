@@ -168,8 +168,17 @@ cmake --build build/mfem --parallel 20
 build/mfem/horncad_mfem_interior path/to/interior.msh 500
 ```
 
-The current MFEM executable uses complex UMFPACK and exists to validate the
-assembled mixed system against the Python reference. It is not the production
-solver: factoring the globally assembled dense mouth block is slow. Production
-work must apply the mouth matrix in an iterative block operator and precondition
-the sparse interior Helmholtz block without factoring the coupled matrix.
+The MFEM executable uses a matrix-free mixed operator with restarted GMRES. It
+applies the sparse interior Helmholtz matrix and dense nonlocal aperture matrix
+as separate blocks. Its preconditioner factors those two diagonal blocks, not
+the globally coupled matrix. On the current 3,974-pressure/963-mouth-DOF
+validation mesh, the 500 Hz solve takes about 0.9 seconds instead of roughly 18
+minutes for the former global complex-UMFPACK validation solve.
+
+This executable is still a serial single-frequency reference. Independent
+frequencies can be run as bounded processes on the M1 Ultra, but a single large
+production solve will not use all 20 cores until the pressure space and aperture
+trace are ported to MFEM's parallel mesh/finite-element interfaces. Also, the
+current 28.5 mm validation mesh is not resolved for 5 kHz; use a
+wavelength-controlled mesh and demonstrate mesh convergence before accepting a
+500--5,000 Hz response.

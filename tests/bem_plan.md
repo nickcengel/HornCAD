@@ -137,11 +137,23 @@ problem, not against an unrelated generic Helmholtz benchmark.
   complex UMFPACK solve matches the Python reference: 40,137.5 W radiated
   power, 0.000440309 m2 throat, 0.105677 m2 mouth, and `6.13e-13` residual.
   This is a strong independent assembly/sign cross-check.
-- The native direct factorization took about 18 minutes for only 3,974 pressure
-  and 963 mouth DOFs. Treat complex UMFPACK as validation-only. The next task is
-  a matrix-free mixed `Operator` with GMRES: sparse `K-k^2M` action, dense `Z`
-  matvec, trace gather/scatter, and a block preconditioner. Do not benchmark
-  frequency-level MPI until that single-frequency algorithm is in place.
+- Checkpoint after `d75d1f0` replaces the 18-minute globally coupled direct
+  factorization with a matrix-free mixed MFEM operator and restarted GMRES.
+  It applies sparse `K-k^2M`, dense nonlocal `Z`, and trace gather/scatter
+  separately. A block preconditioner factors only the sparse pressure block
+  and the complex aperture block; it never assembles or factors the coupled
+  system.
+- At 500 Hz the iterative solve reproduces 40,137.5 W and finishes in 0.89 s
+  (134 iterations, `5.9e-9` true residual) on the M1 Ultra. On the same coarse
+  validation mesh, 4 kHz and 5 kHz now converge in 4.2 s and 6.1 s. Their
+  response values are not physically accepted: the measured 28.5 mm maximum
+  edge is much too coarse at 5 kHz (68.6 mm wavelength).
+- The next task is a wavelength-controlled production mesh (start with at
+  least 6 elements/wavelength, 11.4 mm at 5 kHz), followed by mesh convergence.
+  Then distribute the pressure space and aperture trace with `ParMesh`/
+  `ParFiniteElementSpace`. Until that port is complete, exploit the 20 cores
+  by running independent frequencies as bounded processes; each native solve
+  is currently serial, aside from optimized library kernels.
 
 Primary references used for the solver decision:
 

@@ -2,6 +2,7 @@
 #include <mfem.hpp>
 
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <complex>
 #include <iostream>
@@ -75,20 +76,118 @@ BoundaryTrace boundary_trace(Mesh &mesh, FiniteElementSpace &fes, int attribute)
    return trace;
 }
 
-void copy_sparse(const SparseMatrix &source, SparseMatrix &real, SparseMatrix &imag)
+class MixedRealOperator : public Operator
 {
-   Array<int> columns;
-   Vector values;
-   for (int row = 0; row < source.Height(); ++row)
+private:
+   const SparseMatrix &pressure_;
+   const BoundaryTrace &mouth_;
+   const DenseMatrix &radiation_;
+   int pressure_size_;
+
+public:
+   MixedRealOperator(const SparseMatrix &pressure, const BoundaryTrace &mouth,
+                     const DenseMatrix &radiation)
+      : Operator(pressure.Height() + radiation.Height()), pressure_(pressure),
+        mouth_(mouth), radiation_(radiation), pressure_size_(pressure.Height()) { }
+
+   void Mult(const Vector &x, Vector &y) const override
    {
-      source.GetRow(row, columns, values);
-      for (int entry = 0; entry < columns.Size(); ++entry)
+      y = 0.0;
+      Vector pressure_in(const_cast<double *>(x.GetData()), pressure_size_);
+      Vector pressure_out(y.GetData(), pressure_size_);
+      pressure_.Mult(pressure_in, pressure_out);
+      Vector velocity_in(const_cast<double *>(x.GetData()) + pressure_size_,
+                         radiation_.Width());
+      Vector aperture_out(y.GetData() + pressure_size_, radiation_.Height());
+      radiation_.Mult(velocity_in, aperture_out);
+      for (int local = 0; local < radiation_.Height(); ++local)
       {
-         real.Add(row, columns[entry], values[entry]);
-         imag.Add(row, columns[entry], 0.0);
+         aperture_out[local] -= pressure_in[mouth_.dofs[local]];
       }
    }
-}
+};
+
+class MixedImagOperator : public Operator
+{
+private:
+   const BoundaryTrace &mouth_;
+   const DenseMatrix &radiation_;
+   int pressure_size_;
+   double coupling_;
+
+public:
+   MixedImagOperator(int pressure_size, const BoundaryTrace &mouth,
+                     const DenseMatrix &radiation, double coupling)
+      : Operator(pressure_size + radiation.Height()), mouth_(mouth),
+        radiation_(radiation), pressure_size_(pressure_size), coupling_(coupling) { }
+
+   void Mult(const Vector &x, Vector &y) const override
+   {
+      y = 0.0;
+      Vector velocity_in(const_cast<double *>(x.GetData()) + pressure_size_,
+                         radiation_.Width());
+      Vector aperture_out(y.GetData() + pressure_size_, radiation_.Height());
+      radiation_.Mult(velocity_in, aperture_out);
+      for (int local = 0; local < radiation_.Height(); ++local)
+      {
+         y[mouth_.dofs[local]] += coupling_ * mouth_.weights[local] * velocity_in[local];
+      }
+   }
+};
+
+class MixedBlockPreconditioner : public Solver
+{
+private:
+   UMFPackSolver pressure_solver_;
+   DenseMatrix radiation_real_;
+   DenseMatrix radiation_imag_;
+   Array<int> pivots_;
+   ComplexLUFactors radiation_solver_;
+   int pressure_size_;
+   int system_size_;
+
+public:
+   MixedBlockPreconditioner(SparseMatrix &pressure, const DenseMatrix &radiation_real,
+                            const DenseMatrix &radiation_imag)
+      : Solver(2 * (pressure.Height() + radiation_real.Height())),
+        pressure_solver_(pressure), radiation_real_(radiation_real),
+        radiation_imag_(radiation_imag), pivots_(radiation_real.Height()),
+        pressure_size_(pressure.Height()),
+        system_size_(pressure.Height() + radiation_real.Height())
+   {
+      radiation_solver_.data_r = radiation_real_.Data();
+      radiation_solver_.data_i = radiation_imag_.Data();
+      radiation_solver_.ipiv = pivots_.GetData();
+      MFEM_VERIFY(radiation_solver_.Factor(radiation_real_.Height()),
+                  "aperture impedance factorization failed");
+   }
+
+   void SetOperator(const Operator &op) override
+   {
+      MFEM_VERIFY(op.Height() == Height(), "preconditioner size cannot change");
+   }
+
+   void Mult(const Vector &x, Vector &y) const override
+   {
+      y = 0.0;
+      Vector input_real(const_cast<double *>(x.GetData()), pressure_size_);
+      Vector output_real(y.GetData(), pressure_size_);
+      Vector input_imag(const_cast<double *>(x.GetData()) + system_size_, pressure_size_);
+      Vector output_imag(y.GetData() + system_size_, pressure_size_);
+      pressure_solver_.Mult(input_real, output_real);
+      pressure_solver_.Mult(input_imag, output_imag);
+      const int mouth_size = radiation_real_.Height();
+      Vector aperture_real(y.GetData() + pressure_size_, mouth_size);
+      Vector aperture_imag(y.GetData() + system_size_ + pressure_size_, mouth_size);
+      for (int local = 0; local < mouth_size; ++local)
+      {
+         aperture_real[local] = x[pressure_size_ + local];
+         aperture_imag[local] = x[system_size_ + pressure_size_ + local];
+      }
+      radiation_solver_.Solve(mouth_size, 1, aperture_real.GetData(),
+                              aperture_imag.GetData());
+   }
+};
 } // namespace
 
 int main(int argc, char *argv[])
@@ -123,18 +222,7 @@ int main(int argc, char *argv[])
    const int pressure_size = space.GetVSize();
    const int mouth_size = static_cast<int>(mouth.dofs.size());
    const int system_size = pressure_size + mouth_size;
-   auto *real = new SparseMatrix(system_size);
-   auto *imag = new SparseMatrix(system_size);
-   copy_sparse(helmholtz.SpMat(), *real, *imag);
-
-   for (int local = 0; local < mouth_size; ++local)
-   {
-      imag->Add(mouth.dofs[local], pressure_size + local,
-                omega * density * mouth.weights[local]);
-      real->Add(mouth.dofs[local], pressure_size + local, 0.0);
-      real->Add(pressure_size + local, mouth.dofs[local], -1.0);
-      imag->Add(pressure_size + local, mouth.dofs[local], 0.0);
-   }
+   DenseMatrix radiation_real(mouth_size), radiation_imag(mouth_size);
    for (int row = 0; row < mouth_size; ++row)
    {
       for (int column = 0; column < mouth_size; ++column)
@@ -162,13 +250,15 @@ int main(int argc, char *argv[])
          }
          const std::complex<double> impedance =
             std::complex<double>(0.0, density * omega / (2.0 * pi)) * integral;
-         real->Add(pressure_size + row, pressure_size + column, impedance.real());
-         imag->Add(pressure_size + row, pressure_size + column, impedance.imag());
+         radiation_real(row, column) = impedance.real();
+         radiation_imag(row, column) = impedance.imag();
       }
    }
-   real->Finalize(0);
-   imag->Finalize(0);
-   ComplexSparseMatrix system(real, imag, true, true);
+   MixedRealOperator real(helmholtz.SpMat(), mouth, radiation_real);
+   MixedImagOperator imag(pressure_size, mouth, radiation_imag, omega * density);
+   ComplexOperator system(&real, &imag, false, false);
+   MixedBlockPreconditioner preconditioner(helmholtz.SpMat(), radiation_real,
+                                           radiation_imag);
 
    Vector rhs(2 * system_size), solution(2 * system_size);
    rhs = 0.0;
@@ -181,9 +271,20 @@ int main(int argc, char *argv[])
       rhs[system_size + throat.dofs[local]] +=
          derivative_imaginary * throat.weights[local];
    }
-   ComplexUMFPackSolver solver(system);
+   GMRESSolver solver;
+   solver.SetOperator(system);
+   solver.SetPreconditioner(preconditioner);
+   // The preconditioned residual understates the physical-system residual by
+   // several orders of magnitude for this mixed scaling.
+   solver.SetRelTol(1e-12);
+   solver.SetAbsTol(0.0);
+   solver.SetMaxIter(1000);
+   solver.SetKDim(100);
    solver.SetPrintLevel(0);
+   const auto solve_start = std::chrono::steady_clock::now();
    solver.Mult(rhs, solution);
+   const double solve_seconds = std::chrono::duration<double>(
+      std::chrono::steady_clock::now() - solve_start).count();
 
    Vector residual(2 * system_size);
    system.Mult(solution, residual);
@@ -207,6 +308,10 @@ int main(int argc, char *argv[])
              << " throat_area_m2=" << throat_area
              << " mouth_area_m2=" << mouth_area
              << " radiated_power_w=" << radiated_power
+             << " solver=matrix_free_gmres"
+             << " converged=" << solver.GetConverged()
+             << " iterations=" << solver.GetNumIterations()
+             << " solve_seconds=" << solve_seconds
              << " relative_residual=" << residual.Norml2() / rhs.Norml2()
              << std::endl;
    return 0;
