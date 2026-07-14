@@ -1,4 +1,5 @@
 from pathlib import Path
+import tempfile
 import unittest
 
 import numpy as np
@@ -8,6 +9,7 @@ from app.acoustic_domain import (
     RIGID_WALL,
     THROAT_PISTON,
     build_interior_acoustic_domain,
+    write_gmsh_volume_mesh,
 )
 
 
@@ -41,6 +43,20 @@ class InteriorAcousticDomainTests(unittest.TestCase):
     def test_unit_inward_volume_flow_has_negative_boundary_normal_velocity(self) -> None:
         normal_velocity = -1.0 / self.domain.throat_area_m2
         self.assertAlmostEqual(-normal_velocity * self.domain.throat_area_m2, 1.0, places=12)
+
+    def test_gmsh_volume_preserves_boundary_physical_groups(self) -> None:
+        import meshio
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "interior.msh"
+            report = write_gmsh_volume_mesh(self.domain, path, 0.05)
+            mesh = meshio.read(path)
+        physical = np.concatenate(mesh.cell_data["gmsh:physical"])
+        self.assertEqual(set(np.unique(physical)), {1, 2, 3, 4})
+        self.assertGreater(report.nodes, 0)
+        self.assertGreater(report.tetrahedra, 0)
+        self.assertEqual(set(report.boundary_surface_patches),
+                         {RIGID_WALL, THROAT_PISTON, MOUTH_APERTURE})
+        self.assertLess(report.maximum_label_match_error_m, 1e-6)
 
 
 if __name__ == "__main__":

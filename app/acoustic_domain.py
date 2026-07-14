@@ -9,7 +9,9 @@ interfaces, not printable geometry.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import math
 from pathlib import Path
+import tempfile
 
 import numpy as np
 import trimesh
@@ -47,6 +49,15 @@ class InteriorAcousticDomain:
     @property
     def mouth_faces(self) -> np.ndarray:
         return self.face_domains == MOUTH_APERTURE
+
+
+@dataclass(frozen=True)
+class VolumeMeshReport:
+    nodes: int
+    tetrahedra: int
+    maximum_tetrahedron_edge_m: float
+    boundary_surface_patches: dict[int, list[int]]
+    maximum_label_match_error_m: float
 
 
 def _internal_rings(yaml_path: Path, side_samples: int,
@@ -111,3 +122,81 @@ def build_interior_acoustic_domain(yaml_path: Path, side_samples: int = 32,
     return InteriorAcousticDomain(mesh, face_domains, throat_ring, mouth_ring,
                                   throat_center, mouth_center, throat_area, mouth_area)
 
+
+def write_gmsh_volume_mesh(domain: InteriorAcousticDomain, path: Path,
+                           maximum_edge_m: float) -> VolumeMeshReport:
+    """Tetrahedralize the closed air volume and preserve its boundary labels.
+
+    Gmsh physical attributes are 1=wall, 2=throat, 3=mouth, and 4=air volume.
+    """
+    if maximum_edge_m <= 0.0:
+        raise ValueError("maximum tetrahedron edge must be positive")
+    import gmsh
+    from scipy.spatial import cKDTree
+
+    path.parent.mkdir(parents=True, exist_ok=True)
+    source_centers = domain.surface.triangles_center
+    source_tree = cKDTree(source_centers)
+    gmsh.initialize()
+    try:
+        gmsh.option.setNumber("General.Terminal", 0)
+        with tempfile.TemporaryDirectory(prefix="horncad-acoustic-") as temporary:
+            stl_path = Path(temporary) / "closure.stl"
+            domain.surface.export(stl_path)
+            gmsh.merge(str(stl_path))
+        gmsh.model.mesh.classifySurfaces(math.radians(35.0), True, False,
+                                         math.pi, True)
+        gmsh.model.mesh.createGeometry()
+        surface_tags = [tag for dim, tag in gmsh.model.getEntities(2)]
+        patches: dict[int, list[int]] = {RIGID_WALL: [], THROAT_PISTON: [], MOUTH_APERTURE: []}
+        maximum_match_error = 0.0
+        for tag in surface_tags:
+            element_types, _, element_nodes = gmsh.model.mesh.getElements(2, tag)
+            barycenters: list[np.ndarray] = []
+            for element_type, nodes in zip(element_types, element_nodes):
+                properties = gmsh.model.mesh.getElementProperties(element_type)
+                nodes_per_element = properties[3]
+                for row in np.asarray(nodes).reshape(-1, nodes_per_element):
+                    coordinates = np.asarray([
+                        gmsh.model.mesh.getNode(int(node))[0] for node in row])
+                    barycenters.append(coordinates.mean(axis=0))
+            distances, indices = source_tree.query(np.asarray(barycenters))
+            maximum_match_error = max(maximum_match_error, float(np.max(distances)))
+            labels = domain.face_domains[indices]
+            label = int(np.bincount(labels, minlength=3).argmax())
+            patches[label].append(tag)
+
+        surface_loop = gmsh.model.geo.addSurfaceLoop(surface_tags)
+        volume = gmsh.model.geo.addVolume([surface_loop])
+        gmsh.model.geo.synchronize()
+        names = {RIGID_WALL: "wall", THROAT_PISTON: "throat", MOUTH_APERTURE: "mouth"}
+        for label, tags in patches.items():
+            physical = gmsh.model.addPhysicalGroup(2, tags, label + 1)
+            gmsh.model.setPhysicalName(2, physical, names[label])
+        physical_volume = gmsh.model.addPhysicalGroup(3, [volume], 4)
+        gmsh.model.setPhysicalName(3, physical_volume, "air")
+        gmsh.option.setNumber("Mesh.MeshSizeMax", maximum_edge_m)
+        gmsh.option.setNumber("Mesh.MeshSizeMin", maximum_edge_m * 0.25)
+        gmsh.option.setNumber("Mesh.MshFileVersion", 2.2)
+        gmsh.model.mesh.generate(3)
+        gmsh.write(str(path))
+
+        node_tags, coordinates, _ = gmsh.model.mesh.getNodes()
+        coordinates = np.asarray(coordinates).reshape(-1, 3)
+        node_index = {int(tag): index for index, tag in enumerate(node_tags)}
+        tetrahedra: list[np.ndarray] = []
+        for element_type, _, nodes in zip(*gmsh.model.mesh.getElements(3, volume)):
+            properties = gmsh.model.mesh.getElementProperties(element_type)
+            if properties[1] != 3 or properties[3] != 4:
+                continue
+            tetrahedra.extend(np.asarray(nodes).reshape(-1, 4))
+        maximum_actual_edge = 0.0
+        for tetrahedron in tetrahedra:
+            points = coordinates[[node_index[int(tag)] for tag in tetrahedron]]
+            edges = points[:, None, :] - points[None, :, :]
+            maximum_actual_edge = max(maximum_actual_edge,
+                                      float(np.linalg.norm(edges, axis=2).max()))
+        return VolumeMeshReport(len(node_tags), len(tetrahedra), maximum_actual_edge,
+                                patches, maximum_match_error)
+    finally:
+        gmsh.finalize()
