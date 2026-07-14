@@ -75,6 +75,7 @@ class HelmholtzBEM3DTests(unittest.TestCase):
         plan = execution_plan(settings, mesh, 2)
         self.assertLessEqual(plan.workers * plan.threads_per_worker, plan.cpu_count)
         self.assertLessEqual(plan.workers, 2)
+        self.assertEqual(settings.formulation, "combined-field")
 
 
 if __name__ == "__main__":

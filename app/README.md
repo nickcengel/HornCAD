@@ -131,6 +131,8 @@ python app/helmholtz_bem_3d.py config.YAML --mesh-tier preview
 python app/helmholtz_bem_3d.py config.YAML --elements-per-wavelength 10
 python app/helmholtz_bem_3d.py config.YAML --observer-offset-mm 1 --no-resume
 python app/helmholtz_bem_3d.py config.YAML --maximum-workers 0 --memory-limit-gib 48
+python app/helmholtz_bem_3d.py config.YAML --direct-solve-max-dofs 500
+python app/helmholtz_bem_3d.py config.YAML --formulation single-layer-preview
 ```
 
 `--maximum-workers 0` (the default) auto-schedules independent frequencies from
@@ -138,5 +140,14 @@ the available CPU count and a conservative dense-operator memory estimate. It
 also partitions Numba threads between workers, preventing process/thread
 oversubscription. On a 20-core, 64 GiB machine, `--memory-limit-gib 48` reserves
 roughly one quarter of memory for the operating system and plotting.
+GMRES is used at every mesh size by default; dense LU is cubic and is reserved
+for deliberately tiny reference cases through `--direct-solve-max-dofs`.
+The `single-layer-preview` formulation assembles one dense operator and is
+intended for low-cost proof-of-concept sweeps. It can fail near fictitious
+interior resonances. The default `combined-field` formulation is resonance-safe,
+uses four operators, and remains the production-validation target.
+The experimental `--operator-assembler fmm` path must not be used for accepted
+results until the installed ExaFMM backend passes a dense complex-operator
+comparison on the target platform.
 
 For programmatic studies, construct `PipelineSettings` and call `run_pipeline(...)`. The returned structure contains the mesh report, observer geometry, complex per-frequency results, manifest, and artifact paths. A single mesh always covers the entire sweep. Production acceptance still requires an explicit 8/10/12 convergence study; deep-null depth is not a stable optimization metric until that study passes.

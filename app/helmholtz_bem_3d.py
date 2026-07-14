@@ -144,6 +144,9 @@ class PipelineSettings:
     observer_offset_m: float = 0.001
     gmres_tolerance: float = 1e-5
     gmres_max_iterations: int = 300
+    formulation: str = "combined-field"
+    operator_assembler: str = "dense"
+    direct_solve_max_dofs: int = 0
     full_sphere: bool = False
     maximum_workers: int = 0
     memory_limit_gib: float | None = None
@@ -369,15 +372,19 @@ def make_aperture_observer(mesh: AcousticMesh, offset_m: float = 0.001) -> Apert
 
 
 def _combined_field_solve(grid: bempp.Grid, neumann_value: complex, frequency_hz: float,
-                          medium: AcousticMedium, tolerance: float, max_iterations: int):
+                          medium: AcousticMedium, tolerance: float, max_iterations: int,
+                          operator_assembler: str = "dense", direct_solve_max_dofs: int = 0):
     """Regularized Burton-Miller equation for the exterior Neumann problem."""
     k = 2 * math.pi * frequency_hz / medium.sound_speed_m_s
     space = bempp.function_space(grid, "P", 1)
     identity = bempp.operators.boundary.sparse.identity(space, space, space)
-    double = bempp.operators.boundary.helmholtz.double_layer(space, space, space, k)
-    adjoint = bempp.operators.boundary.helmholtz.adjoint_double_layer(space, space, space, k)
-    single = bempp.operators.boundary.helmholtz.single_layer(space, space, space, k)
-    hyper = bempp.operators.boundary.helmholtz.hypersingular(space, space, space, k)
+    if operator_assembler not in {"dense", "fmm"}:
+        raise ValueError("operator assembler must be 'dense' or 'fmm'")
+    options = {"assembler": operator_assembler}
+    double = bempp.operators.boundary.helmholtz.double_layer(space, space, space, k, **options)
+    adjoint = bempp.operators.boundary.helmholtz.adjoint_double_layer(space, space, space, k, **options)
+    single = bempp.operators.boundary.helmholtz.single_layer(space, space, space, k, **options)
+    hyper = bempp.operators.boundary.helmholtz.hypersingular(space, space, space, k, **options)
     # W has inverse-length units, so the dimensionless double-layer term must
     # be scaled by k (not 1/k).  The positive imaginary coupling removes the
     # real-axis interior resonances of either constituent equation.
@@ -390,9 +397,8 @@ def _combined_field_solve(grid: bempp.Grid, neumann_value: complex, frequency_hz
 
     g = bempp.GridFunction(space, fun=prescribed)
     rhs = (0.5 * identity + adjoint) * g - eta * single * g
-    if space.global_dof_count <= 2_000:
-        # Small preview systems are more reproducibly solved directly; the
-        # production path remains iterative because LU scales cubically.
+    if direct_solve_max_dofs > 0 and space.global_dof_count <= direct_solve_max_dofs:
+        # LU is reserved for deliberately tiny numerical-reference cases.
         trace = bempp.linalg.lu(lhs, rhs)
         iterations = 0
     else:
@@ -401,6 +407,30 @@ def _combined_field_solve(grid: bempp.Grid, neumann_value: complex, frequency_hz
         if info != 0:
             raise RuntimeError(f"combined-field GMRES failed at {frequency_hz:g} Hz: info={info}, iterations={iterations}")
     return space, trace, g, iterations
+
+
+def _single_layer_solve(grid: bempp.Grid, neumann_value: complex, frequency_hz: float,
+                        medium: AcousticMedium, tolerance: float, max_iterations: int,
+                        operator_assembler: str = "dense") -> tuple[Any, Any, int]:
+    """Fast preview equation; susceptible to fictitious interior resonances."""
+    k = 2 * math.pi * frequency_hz / medium.sound_speed_m_s
+    space = bempp.function_space(grid, "P", 1)
+    identity = bempp.operators.boundary.sparse.identity(space, space, space)
+    adjoint = bempp.operators.boundary.helmholtz.adjoint_double_layer(
+        space, space, space, k, assembler=operator_assembler)
+
+    @bempp.complex_callable
+    def prescribed(_x, _n, domain_index, result):
+        result[0] = neumann_value if domain_index == 1 else 0.0
+
+    rhs = bempp.GridFunction(space, fun=prescribed)
+    density, info, iterations = bempp.linalg.gmres(
+        -0.5 * identity + adjoint, rhs, tol=tolerance, maxiter=max_iterations,
+        use_strong_form=True, return_iteration_count=True)
+    if info != 0:
+        raise RuntimeError(
+            f"single-layer GMRES failed at {frequency_hz:g} Hz: info={info}, iterations={iterations}")
+    return space, density, iterations
 
 
 def ideal_aperture_pressure(observer: ApertureObserver, normal_velocity: np.ndarray,
@@ -446,14 +476,17 @@ def solve_frequency(grid: bempp.Grid, frequency_hz: float, angles_deg: np.ndarra
                     gmres_max_iterations: int, *, acoustic_mesh: AcousticMesh | None = None,
                     observer: ApertureObserver | None = None,
                     medium: AcousticMedium | None = None,
-                    source: SourceDefinition | None = None) -> tuple[dict[str, np.ndarray], int, float] | FrequencyResult:
+                    source: SourceDefinition | None = None,
+                    formulation: str = "combined-field",
+                    operator_assembler: str = "dense",
+                    direct_solve_max_dofs: int = 0) -> tuple[dict[str, np.ndarray], int, float] | FrequencyResult:
     """Solve one frequency. Legacy calls receive normalized dB cuts."""
     medium = medium or AcousticMedium(sound_speed_m_s= sound_speed_m_s)
     source = source or SourceDefinition()
     if acoustic_mesh is None:
         # Legacy unit Neumann loading, now using the resonance-safe formulation.
         space, trace, g, iterations = _combined_field_solve(grid, 1 + 0j, frequency_hz, medium,
-                                                             gmres_tolerance, gmres_max_iterations)
+            gmres_tolerance, gmres_max_iterations, operator_assembler, direct_solve_max_dofs)
         cuts = {}
         k = 2 * math.pi * frequency_hz / medium.sound_speed_m_s
         for name, azimuth in CUT_AZIMUTHS.items():
@@ -465,24 +498,46 @@ def solve_frequency(grid: bempp.Grid, frequency_hz: float, angles_deg: np.ndarra
         return cuts, iterations, float(space.global_dof_count)
     observer = observer or make_aperture_observer(acoustic_mesh)
     velocity, neumann = piston_boundary_values(acoustic_mesh, source, frequency_hz, medium)
-    space, trace, g, iterations = _combined_field_solve(grid, neumann, frequency_hz, medium,
-                                                         gmres_tolerance, gmres_max_iterations)
     k = 2 * math.pi * frequency_hz / medium.sound_speed_m_s
+    if formulation == "single-layer-preview":
+        space, density, iterations = _single_layer_solve(
+            grid, neumann, frequency_hz, medium, gmres_tolerance,
+            gmres_max_iterations, operator_assembler)
+
+        def evaluate(points: np.ndarray) -> np.ndarray:
+            return np.asarray(bempp.operators.potential.helmholtz.single_layer(
+                space, points, k).evaluate(density)).reshape(-1)
+    elif formulation == "combined-field":
+        space, trace, g, iterations = _combined_field_solve(
+            grid, neumann, frequency_hz, medium, gmres_tolerance,
+            gmres_max_iterations, operator_assembler, direct_solve_max_dofs)
+
+        def evaluate(points: np.ndarray) -> np.ndarray:
+            return np.asarray((bempp.operators.potential.helmholtz.double_layer(
+                space, points, k).evaluate(trace) -
+                bempp.operators.potential.helmholtz.single_layer(
+                    space, points, k).evaluate(g))).reshape(-1)
+    else:
+        raise ValueError("formulation must be 'single-layer-preview' or 'combined-field'")
     points = observer.positions_m.T
-    p = np.asarray((bempp.operators.potential.helmholtz.double_layer(space, points, k).evaluate(trace) -
-                    bempp.operators.potential.helmholtz.single_layer(space, points, k).evaluate(g))).reshape(-1)
+    p = evaluate(points)
     # Euler's equation, evaluated by a stable one-sided normal pressure difference.
     epsilon = max(1e-5, observer.offset_m * 0.1)
     points2 = (observer.positions_m + epsilon * observer.normals).T
-    p2 = np.asarray((bempp.operators.potential.helmholtz.double_layer(space, points2, k).evaluate(trace) -
-                     bempp.operators.potential.helmholtz.single_layer(space, points2, k).evaluate(g))).reshape(-1)
+    p2 = evaluate(points2)
     vn = -(p2 - p) / epsilon / (1j * 2 * math.pi * frequency_hz * medium.density_kg_m3)
     full, ideal = {}, {}
     for name, azimuth in CUT_AZIMUTHS.items():
         directions = receiver_directions(angles_deg, azimuth)
-        fd = bempp.operators.far_field.helmholtz.double_layer(space, directions, k).evaluate(trace)
-        fs = bempp.operators.far_field.helmholtz.single_layer(space, directions, k).evaluate(g)
-        full[name] = np.asarray(fd - fs).reshape(-1) * np.exp(1j * k * (directions.T @ acoustic_mesh.mouth_center_m))
+        if formulation == "single-layer-preview":
+            far = bempp.operators.far_field.helmholtz.single_layer(
+                space, directions, k).evaluate(density)
+        else:
+            far = (bempp.operators.far_field.helmholtz.double_layer(
+                space, directions, k).evaluate(trace) -
+                bempp.operators.far_field.helmholtz.single_layer(
+                    space, directions, k).evaluate(g))
+        full[name] = np.asarray(far).reshape(-1) * np.exp(1j * k * (directions.T @ acoustic_mesh.mouth_center_m))
         ideal[name] = ideal_aperture_pressure(observer, vn, directions, frequency_hz, medium,
                                                acoustic_mesh.mouth_center_m)
     metrics = aperture_metrics(observer, p, vn)
@@ -552,7 +607,10 @@ def _solve_frequency_worker(payload: tuple[AcousticMesh, ApertureObserver, Pipel
                       domain_indices=mesh.domain_indices)
     result = solve_frequency(grid, frequency, np.asarray(settings.angles_deg),
         settings.medium.sound_speed_m_s, settings.gmres_tolerance, settings.gmres_max_iterations,
-        acoustic_mesh=mesh, observer=observer, medium=settings.medium, source=settings.source)
+        acoustic_mesh=mesh, observer=observer, medium=settings.medium, source=settings.source,
+        formulation=settings.formulation,
+        operator_assembler=settings.operator_assembler,
+        direct_solve_max_dofs=settings.direct_solve_max_dofs)
     assert isinstance(result, FrequencyResult)
     _save_frequency(artifact, result)
     return str(artifact)
@@ -607,7 +665,10 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
         for frequency, artifact in pending:
             result = solve_frequency(grid, frequency, np.asarray(settings.angles_deg),
                 settings.medium.sound_speed_m_s, settings.gmres_tolerance, settings.gmres_max_iterations,
-                acoustic_mesh=mesh, observer=observer, medium=settings.medium, source=settings.source)
+                acoustic_mesh=mesh, observer=observer, medium=settings.medium, source=settings.source,
+                formulation=settings.formulation,
+                operator_assembler=settings.operator_assembler,
+                direct_solve_max_dofs=settings.direct_solve_max_dofs)
             assert isinstance(result, FrequencyResult)
             _save_frequency(artifact, result)
     results: list[FrequencyResult] = []
@@ -623,7 +684,7 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
         "observer": {"kind": "conformal_mouth_aperture", "offset_m": observer.offset_m,
             "samples": len(observer.positions_m), "alters_boundary": False},
         "mesh_hash": mesh.content_hash, "mesh_report": asdict(mesh.report),
-        "solver": {"formulation": "regularized_combined_field_exterior_neumann", "library": "bempp-cl",
+        "solver": {"formulation": settings.formulation, "library": "bempp-cl",
             "tolerance": settings.gmres_tolerance, "max_iterations": settings.gmres_max_iterations},
         "execution": {**asdict(plan), "workers_used": used_parallel_workers},
         "versions": {"python": platform.python_version(), "numpy": np.__version__, "trimesh": trimesh.__version__},
@@ -767,6 +828,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--elements-per-wavelength", type=float); parser.add_argument("--maximum-frequency-hz", type=float)
     parser.add_argument("--sound-speed", type=float, default=343.21); parser.add_argument("--density", type=float, default=1.2041)
     parser.add_argument("--gmres-tolerance", type=float, default=1e-5); parser.add_argument("--gmres-max-iterations", type=int, default=300)
+    parser.add_argument("--formulation", choices=("single-layer-preview", "combined-field"),
+                        default="combined-field")
+    parser.add_argument("--operator-assembler", choices=("dense", "fmm"), default="dense")
+    parser.add_argument("--direct-solve-max-dofs", type=int, default=0,
+                        help="use cubic LU at or below this DOF count; 0 always uses GMRES")
     parser.add_argument("--observer-offset-mm", type=float, default=1); parser.add_argument("--no-resume", action="store_true")
     parser.add_argument("--maximum-workers", type=int, default=0,
                         help="concurrent frequencies; 0 selects a CPU/memory-safe value")
@@ -786,6 +852,9 @@ def main() -> None:
         MeshSettings(maximum, epw), AcousticMedium(args.density, args.sound_speed),
         observer_offset_m=args.observer_offset_mm * 1e-3,
         gmres_tolerance=args.gmres_tolerance, gmres_max_iterations=args.gmres_max_iterations,
+        formulation=args.formulation,
+        operator_assembler=args.operator_assembler,
+        direct_solve_max_dofs=args.direct_solve_max_dofs,
         maximum_workers=args.maximum_workers, memory_limit_gib=args.memory_limit_gib)
     result = run_pipeline(args.yaml, settings, args.output_dir, not args.no_resume)
     print(result["manifest_path"])
