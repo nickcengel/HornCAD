@@ -244,6 +244,15 @@ def plot_heatmaps(
             vmin=floor_db,
             vmax=ceiling_db,
         )
+        minus_six = axis.contour(
+            frequencies_hz,
+            angles_deg,
+            cuts[name],
+            levels=[-6.0],
+            colors="black",
+            linewidths=1.4,
+        )
+        axis.clabel(minus_six, fmt={-6.0: "−6 dB"}, fontsize=8, inline=True)
         axis.set_xscale("log")
         axis.set_xlim(float(frequencies_hz[0]), float(frequencies_hz[-1]))
         ticks = [500.0, 700.0, 1000.0, 2000.0, 3000.0, 5000.0]
