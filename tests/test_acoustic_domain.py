@@ -10,6 +10,7 @@ from app.acoustic_domain import (
     THROAT_PISTON,
     build_interior_acoustic_domain,
     write_gmsh_volume_mesh,
+    write_tetwild_volume_mesh,
 )
 
 
@@ -70,6 +71,30 @@ class InteriorAcousticDomainTests(unittest.TestCase):
                                delta=self.domain.throat_area_m2 * 0.15)
         self.assertAlmostEqual(float(areas[tags == 3].sum()), self.domain.mouth_area_m2,
                                delta=self.domain.mouth_area_m2 * 0.02)
+
+    def test_tetwild_volume_transfers_acoustic_boundaries(self) -> None:
+        import meshio
+        yaml_path = Path(__file__).parents[1] / "test_project" / "HornCAD-Body-400x260x250.YAML"
+        domain = build_interior_acoustic_domain(yaml_path, 8, 8)
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "interior-tetwild.msh"
+            report = write_tetwild_volume_mesh(
+                domain, path, 0.08, threads=2, edge_length_ratio=0.06)
+            mesh = meshio.read(path)
+        physical = np.concatenate(mesh.cell_data["gmsh:physical"])
+        self.assertEqual(set(np.unique(physical)), {1, 2, 3, 4})
+        self.assertLessEqual(report.maximum_tetrahedron_edge_m, 0.08)
+        self.assertLess(report.maximum_label_match_error_m, 3e-4)
+        triangles = next(block.data for block in mesh.cells if block.type == "triangle")
+        tags = next(tags for block, tags in zip(mesh.cells, mesh.cell_data["gmsh:physical"])
+                    if block.type == "triangle")
+        points = mesh.points[triangles]
+        areas = 0.5 * np.linalg.norm(np.cross(points[:, 1] - points[:, 0],
+                                              points[:, 2] - points[:, 0]), axis=1)
+        self.assertAlmostEqual(float(areas[tags == 2].sum()), domain.throat_area_m2,
+                               delta=domain.throat_area_m2 * 0.05)
+        self.assertAlmostEqual(float(areas[tags == 3].sum()), domain.mouth_area_m2,
+                               delta=domain.mouth_area_m2 * 0.02)
 
 
 if __name__ == "__main__":

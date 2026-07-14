@@ -176,6 +176,18 @@ problem, not against an unrelated generic Helmholtz benchmark.
   geometric deviation, maximum edge, positive volumes, and MFEM import before
   making it an optional production backend. TetWild may alter the input
   surface, so label and aperture-area tolerances are mandatory.
+- Checkpoint after `d6c5e67` integrates TetWild as an optional backend with
+  nearest-triangle wall/throat/mouth label transfer, 5% throat and 2% mouth
+  area gates, outward boundary extraction, degenerate-tetrahedron rejection,
+  hard maximum-edge audit, Gmsh 2.2 output, and an automated regression test.
+- The accepted 5 kHz / 6-elements-per-wavelength proof used 20 threads and
+  `edge_length_r=0.011`: 53,848 nodes, 282,443 tetrahedra, 10.387 mm maximum
+  edge against an 11.440 mm limit, and 0.249 mm maximum surface deviation.
+  Meshing took 199.8 s wall / 640.8 s aggregate CPU. MFEM imported the mesh;
+  at 500 Hz it had 53,848 pressure and 4,006 mouth DOFs, converged in 76 GMRES
+  iterations (23.75 s solver, 56.9 s total), and produced 41,170 W for the
+  deliberately calibrated 1 m3/s source. Throat area was 0.000500634 m2 and
+  mouth area 0.105261 m2.
 
 Primary references used for the solver decision:
 

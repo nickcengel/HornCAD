@@ -21,3 +21,10 @@ dependencies = [
     "trimesh>=4.0",
     "PyYAML>=6.0",
 ]
+
+[project.optional-dependencies]
+acoustics-native = [
+    "meshio>=5.3",
+    "rtree>=1.4",
+    "wildmeshing==0.4.0",
+]

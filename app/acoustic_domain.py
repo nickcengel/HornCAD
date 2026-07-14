@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+import os
 from pathlib import Path
 import tempfile
 
@@ -60,6 +61,30 @@ class VolumeMeshReport:
     maximum_tetrahedron_edge_m: float
     boundary_surface_patches: dict[int, list[int]]
     maximum_label_match_error_m: float
+
+
+def _maximum_tetrahedron_edge(vertices: np.ndarray, tetrahedra: np.ndarray) -> float:
+    maximum = 0.0
+    edge_pairs = ((0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3))
+    for start in range(0, len(tetrahedra), 250_000):
+        points = vertices[tetrahedra[start:start + 250_000]]
+        for first, second in edge_pairs:
+            delta = points[:, first] - points[:, second]
+            squared = np.einsum("ij,ij->i", delta, delta)
+            maximum = max(maximum, math.sqrt(float(np.max(squared))))
+    return maximum
+
+
+def _tetrahedron_boundary(tetrahedra: np.ndarray) -> np.ndarray:
+    """Return outward-oriented faces occurring on exactly one tetrahedron."""
+    combinations = ((1, 2, 3, 0), (0, 3, 2, 1),
+                    (0, 1, 3, 2), (0, 2, 1, 3))
+    faces = np.vstack([tetrahedra[:, (a, b, c)] for a, b, c, _ in combinations])
+    opposite = np.concatenate([tetrahedra[:, other] for *_, other in combinations])
+    keys = np.sort(faces, axis=1)
+    _, first, counts = np.unique(keys, axis=0, return_index=True, return_counts=True)
+    boundary_index = first[counts == 1]
+    return np.column_stack((faces[boundary_index], opposite[boundary_index]))
 
 
 def _internal_rings(yaml_path: Path, side_samples: int,
@@ -244,3 +269,100 @@ def write_gmsh_volume_mesh(domain: InteriorAcousticDomain, path: Path,
                                 patches, maximum_match_error)
     finally:
         gmsh.finalize()
+
+
+def write_tetwild_volume_mesh(domain: InteriorAcousticDomain, path: Path,
+                              maximum_edge_m: float, *, threads: int | None = None,
+                              edge_length_ratio: float | None = None) -> VolumeMeshReport:
+    """Tetrahedralize with native TetWild and transfer acoustic boundary labels."""
+    if maximum_edge_m <= 0.0:
+        raise ValueError("maximum tetrahedron edge must be positive")
+    import meshio
+    import wildmeshing
+    from scipy.spatial import cKDTree
+
+    vertices = np.asarray(domain.surface.vertices, dtype=np.float64)
+    faces = np.asarray(domain.surface.faces, dtype=np.int32)
+    diagonal = float(np.linalg.norm(vertices.max(axis=0) - vertices.min(axis=0)))
+    # TetWild's edge_length_r is an ideal length, not a hard maximum. The
+    # calibrated safety factor leaves room for its quality optimization; the
+    # measured audit below remains authoritative.
+    ratio = edge_length_ratio or 0.52 * maximum_edge_m / diagonal
+    worker_count = threads or min(20, os.cpu_count() or 1)
+    tetrahedralizer = wildmeshing.Tetrahedralizer(
+        max_threads=worker_count, edge_length_r=ratio, epsilon=0.0005,
+        skip_simplify=True, coarsen=False)
+    tetrahedralizer.set_log_level(6)
+    tetrahedralizer.set_mesh(vertices, faces)
+    tetrahedralizer.tetrahedralize()
+    output_vertices, tetrahedra, _ = tetrahedralizer.get_tet_mesh()
+    output_vertices = np.asarray(output_vertices, dtype=np.float64)
+    tetrahedra = np.asarray(tetrahedra, dtype=np.int64)
+    if not len(tetrahedra):
+        raise ValueError("TetWild produced no tetrahedra")
+    signed_six_volume = np.einsum(
+        "ij,ij->i",
+        output_vertices[tetrahedra[:, 1]] - output_vertices[tetrahedra[:, 0]],
+        np.cross(output_vertices[tetrahedra[:, 2]] - output_vertices[tetrahedra[:, 0]],
+                 output_vertices[tetrahedra[:, 3]] - output_vertices[tetrahedra[:, 0]]))
+    if np.any(np.abs(signed_six_volume) < 1e-18):
+        raise ValueError("TetWild produced a degenerate tetrahedron")
+
+    maximum_actual_edge = _maximum_tetrahedron_edge(output_vertices, tetrahedra)
+    if maximum_actual_edge > maximum_edge_m * 1.000001:
+        raise ValueError(
+            f"TetWild mesh edge {maximum_actual_edge:.6g} m exceeds "
+            f"requested limit {maximum_edge_m:.6g} m")
+
+    boundary_with_opposite = _tetrahedron_boundary(tetrahedra)
+    boundary = boundary_with_opposite[:, :3].copy()
+    boundary_points = output_vertices[boundary]
+    opposite_points = output_vertices[boundary_with_opposite[:, 3]]
+    normals = np.cross(boundary_points[:, 1] - boundary_points[:, 0],
+                       boundary_points[:, 2] - boundary_points[:, 0])
+    inward = np.einsum("ij,ij->i", normals,
+                       opposite_points - boundary_points.mean(axis=1)) > 0.0
+    boundary[inward, 1], boundary[inward, 2] = (boundary[inward, 2].copy(),
+                                                boundary[inward, 1].copy())
+
+    boundary_centers = output_vertices[boundary].mean(axis=1)
+    distance_by_label = []
+    for label in (RIGID_WALL, THROAT_PISTON, MOUTH_APERTURE):
+        patch = trimesh.Trimesh(domain.surface.vertices,
+                                domain.surface.faces[domain.face_domains == label],
+                                process=False)
+        _, distances, _ = trimesh.proximity.closest_point(patch, boundary_centers)
+        distance_by_label.append(distances)
+    distance_by_label = np.stack(distance_by_label, axis=1)
+    labels = np.argmin(distance_by_label, axis=1).astype(np.uint8)
+    geometric_error = np.min(distance_by_label, axis=1)
+    if set(np.unique(labels)) != {RIGID_WALL, THROAT_PISTON, MOUTH_APERTURE}:
+        raise ValueError("TetWild boundary label transfer lost an acoustic patch")
+    boundary_geometry = output_vertices[boundary]
+    boundary_areas = 0.5 * np.linalg.norm(
+        np.cross(boundary_geometry[:, 1] - boundary_geometry[:, 0],
+                 boundary_geometry[:, 2] - boundary_geometry[:, 0]), axis=1)
+    transferred_throat_area = float(boundary_areas[labels == THROAT_PISTON].sum())
+    transferred_mouth_area = float(boundary_areas[labels == MOUTH_APERTURE].sum())
+    if not math.isclose(transferred_throat_area, domain.throat_area_m2, rel_tol=0.05):
+        raise ValueError("TetWild throat area changed by more than 5%")
+    if not math.isclose(transferred_mouth_area, domain.mouth_area_m2, rel_tol=0.02):
+        raise ValueError("TetWild mouth area changed by more than 2%")
+
+    cells = [("triangle", boundary), ("tetra", tetrahedra)]
+    triangle_attributes = labels.astype(np.int32) + 1
+    cell_data = {
+        "gmsh:physical": [triangle_attributes,
+                          np.full(len(tetrahedra), 4, dtype=np.int32)],
+        "gmsh:geometrical": [triangle_attributes,
+                             np.full(len(tetrahedra), 4, dtype=np.int32)],
+    }
+    field_data = {"wall": np.array([1, 2]), "throat": np.array([2, 2]),
+                  "mouth": np.array([3, 2]), "air": np.array([4, 3])}
+    path.parent.mkdir(parents=True, exist_ok=True)
+    meshio.write(path, meshio.Mesh(output_vertices, cells, cell_data=cell_data,
+                                  field_data=field_data), file_format="gmsh22",
+                 binary=False)
+    return VolumeMeshReport(len(output_vertices), len(tetrahedra), maximum_actual_edge,
+                            {label: [label + 1] for label in range(3)},
+                            float(np.max(geometric_error)))

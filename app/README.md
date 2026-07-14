@@ -168,6 +168,17 @@ cmake --build build/mfem --parallel 20
 build/mfem/horncad_mfem_interior path/to/interior.msh 500
 ```
 
+For the native Apple Silicon tetrahedral backend, install the optional group:
+
+```bash
+python -m pip install -e '.[acoustics-native]'
+```
+
+`write_tetwild_volume_mesh(...)` uses TetWild's native ARM64/TBB wheel, transfers
+the wall/throat/mouth labels by closest-surface queries, enforces throat and
+mouth area tolerances, and rejects any tetrahedron exceeding the requested hard
+edge limit. The original Gmsh writer remains available as the portable reference.
+
 The MFEM executable uses a matrix-free mixed operator with restarted GMRES. It
 applies the sparse interior Helmholtz matrix and dense nonlocal aperture matrix
 as separate blocks. Its preconditioner factors those two diagonal blocks, not
