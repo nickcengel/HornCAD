@@ -34,7 +34,7 @@ PARAMS = {
     "mount_flange_thickness": 12.0,
     "throat_start_wall": 6.0,
     "minimum_wall": 6.0,
-    "stl_export_mode": "body",
+    "stl_export_mode": "acoustic_surface",
     "h_modifier_enabled": False,
     "v_modifier_enabled": False,
     "section_shape_1": 0.72,
@@ -862,7 +862,7 @@ def main() -> None:
     if PARAMS["mouth_rear_offset"] > 0.0:
         rings.append(mouth_rear_ring(rings, mouth_h, mouth_v))
 
-    export_mode = PARAMS.get("stl_export_mode", "body")
+    export_mode = PARAMS.get("stl_export_mode", "acoustic_surface")
     if export_mode == "acoustic_surface":
         vertices, faces = build_acoustic_surface_mesh(rings, mouth_index, mouth_h, mouth_v)
     else:

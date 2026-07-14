@@ -359,8 +359,8 @@
       <label>
         STL export
         <select data-control="stlExportMode">
-          <option value="body" selected>Body</option>
-          <option value="acoustic_surface">Acoustic surface</option>
+          <option value="body">Body</option>
+          <option value="acoustic_surface" selected>Acoustic surface</option>
         </select>
       </label>
       <div class="action-row">
@@ -913,7 +913,7 @@
       mountFlangeThickness: value("mountFlangeThickness"),
       throatStartWall: value("throatStartWall"),
       minimumWall: value("minimumWall"),
-      stlExportMode: value("stlExportMode") || "body",
+      stlExportMode: value("stlExportMode") || "acoustic_surface",
       hModifierEnabled: hModifierEnabledInput.checked,
       vModifierEnabled: vModifierEnabledInput.checked,
       solidOpacity: value("solidOpacity"),
