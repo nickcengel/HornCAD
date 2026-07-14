@@ -10,14 +10,14 @@ app/HornCAD.html
 
 The app can export:
 
-- `HornCAD-Surface-<WxHxL>.YAML` or `HornCAD-Body-<WxHxL>.YAML` - widget configuration.
+- `HornCAD-Surface-<WxHxL>.YAML` or `HornCAD-Body-<WxHxL>.YAML` - design configuration.
 
 Use the Python exporter to convert YAML to STL:
 
 - `HornCAD-Surface-<WxHxL>.STL` - open acoustic surface.
 - `HornCAD-Body-<WxHxL>.STL` - thickened printable body.
 
-The Python package, tests, examples, exploratory widgets, and older design docs have been moved to `archive/`. They are retained for reference but are not part of the current app workflow.
+Historical experiments and superseded designs live in `archive/` and are not part of the current workflow.
 
 Kept live documentation:
 

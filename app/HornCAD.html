@@ -2565,14 +2565,14 @@
     }));
   }
 
-  function widgetYaml(p) {
+  function horncadYaml(p) {
     const effectiveR0 = effectiveThroatRadius(p);
     const hS = solvedS(p.length, effectiveR0, p.hCoverage, p.hK, p.hN, p.mouthWidth / 2, p.throatAngle);
     const vS = solvedS(p.length, effectiveR0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2, p.throatAngle);
     return [
-      "widget_config:",
+      "horncad_config:",
       "  type: HornCAD",
-      "  version: 1",
+      "  version: 2",
       "  units: mm",
       "  global:",
       `    length: ${yamlNumber(p.length)}`,
@@ -2635,7 +2635,7 @@
   function exportYaml() {
     const p = params();
     const filename = `${configBasename(p)}.YAML`;
-    const blob = new Blob([widgetYaml(p)], { type: "text/yaml" });
+    const blob = new Blob([horncadYaml(p)], { type: "text/yaml" });
     downloadBlob(blob, filename);
   }
 

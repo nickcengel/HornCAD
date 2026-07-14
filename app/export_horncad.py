@@ -77,15 +77,15 @@ def spline_from_yaml(points: list[dict[str, float]], y_key: str = "y") -> list[d
     ]
 
 
-def apply_widget_yaml(path: Path) -> None:
+def apply_horncad_yaml(path: Path) -> None:
     global Z_STATIONS, SIDE_SAMPLES
 
     with path.open("r", encoding="utf-8") as handle:
         data = yaml.safe_load(handle)
-    if not isinstance(data, dict) or not isinstance(data.get("widget_config"), dict):
-        raise ValueError(f"{path} does not look like a HornCAD widget YAML file")
+    if not isinstance(data, dict) or not isinstance(data.get("horncad_config"), dict):
+        raise ValueError(f"{path} does not look like a HornCAD YAML file")
 
-    config = data["widget_config"]
+    config = data["horncad_config"]
     global_config = config.get("global", {})
     body_config = config.get("body", {})
     h_basis = config.get("horizontal_basis", {})
@@ -125,25 +125,6 @@ def apply_widget_yaml(path: Path) -> None:
     for param_name, (source, yaml_name) in mapping.items():
         if yaml_name in source:
             PARAMS[param_name] = source[yaml_name]
-
-    # Older YAML exports wrote body fields in the global section.
-    legacy_body_mapping = {
-        "mouth_rear_offset": "mouth_rear_offset",
-        "mount_diameter": "mount_diameter",
-        "mount_flange_thickness": "mount_flange_thickness",
-        "throat_start_wall": "throat_start_wall_thickness",
-        "minimum_wall": "minimum_wall_thickness",
-        "screw_hole_count": "screw_hole_count",
-        "screw_hole_diameter": "screw_hole_diameter",
-        "screw_pattern_diameter": "screw_pattern_diameter",
-        "mount_fillet": "mount_fillet",
-        "stl_export_mode": "stl_export_mode",
-    }
-    for param_name, yaml_name in legacy_body_mapping.items():
-        if yaml_name in body_config:
-            continue
-        if yaml_name in global_config:
-            PARAMS[param_name] = global_config[yaml_name]
 
     if "squareness_morph_spline" in section_config:
         PARAMS["squareness_morph_spline"] = spline_from_yaml(section_config["squareness_morph_spline"])
@@ -1056,7 +1037,7 @@ def subtract_mount_screw_holes(mesh: trimesh.Trimesh) -> trimesh.Trimesh:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Export a HornCAD STL from defaults or from a widget YAML file."
+        description="Export a HornCAD STL from defaults or a HornCAD YAML file."
     )
     parser.add_argument(
         "yaml",
@@ -1085,7 +1066,7 @@ def normalized_export_mode(mode: object) -> str:
 def main() -> None:
     args = parse_args()
     if args.yaml is not None:
-        apply_widget_yaml(args.yaml)
+        apply_horncad_yaml(args.yaml)
     if args.mode is not None:
         PARAMS["stl_export_mode"] = normalized_export_mode(args.mode)
 
