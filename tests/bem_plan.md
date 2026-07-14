@@ -111,6 +111,25 @@ problem, not against an unrelated generic Helmholtz benchmark.
   the input surface constrained the volume mesh. Production meshing must first
   seed/refine the closed surface below `c/(elements_per_wavelength*f_max)`, then
   reject the tetrahedral result if any measured edge exceeds the same limit.
+- Checkpoint `9286d7e` adds the nonlocal Rayleigh aperture impedance operator.
+  At `ka ~= 0.5`, a 486-panel circular-piston test matches the analytic
+  specific radiation impedance within 0.23%. Complex pressure/velocity
+  round-trip and conditioning checks also pass.
+- Checkpoint `b50958f` adds a serial sparse reference coupling using
+  scikit-fem/SciPy. It assembles `K - k^2 M + i*omega*rho*W*inv(Z)` on the mouth
+  trace and the prescribed throat Neumann load. A 500 Hz reduced-horn solve has
+  3,974 pressure DOFs, 963 mouth nodes, positive radiated power, and a
+  `6.2e-14` relative residual; meshing plus solve takes about 2.3 seconds.
+- The reference mesh uses a hard measured 31 mm edge contract and is not a
+  5 kHz production mesh. Its remeshed throat area differs from the authored
+  polygon by 12.9%; unit volume velocity is correctly normalized on the final
+  mesh, but production requires throat-area convergence as well as edge
+  convergence.
+- The Python reference explicitly validates signs and coupling algebra. The
+  next step is to implement the same aperture action as an MFEM operator and
+  distribute its mouth trace over MPI ranks; do not attempt a nominal 5 kHz
+  production sweep by forming and inverting an unnecessarily dense global
+  matrix in the serial reference.
 
 Primary references used for the solver decision:
 
