@@ -210,6 +210,9 @@ problem, not against an unrelated generic Helmholtz benchmark.
   contour wherever the plotted quantity makes that threshold meaningful.
   Angular axes use 15-degree increments (0, 15, 30, 45, 60, 75, 90 and
   signed counterparts) unless a task explicitly requires finer labels.
+- Impedance figures plot magnitude only by default. Do not add separate
+  resistance, reactance, or phase traces unless a task explicitly requests
+  them; retain complex impedance in exported numerical data.
 - Checkpoint `0ba9add` improves the mixed matrix-free preconditioner by applying
   the pressure-to-mouth trace coupling in a lower block-triangular solve. On the
   accepted mesh at 5 kHz this reduced GMRES from 992 iterations / 313 seconds to

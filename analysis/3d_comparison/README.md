@@ -22,9 +22,9 @@ or exterior-body scattering.
 
 ![Impedance comparison](figures/impedance_comparison.png)
 
-Impedance is normalized by each model's own throat characteristic impedance,
-which avoids confusing the small mesh/authored throat-area difference with an
-acoustic-model difference.
+Only impedance magnitude is plotted. It is normalized by each model's own
+throat characteristic impedance, which avoids confusing the small
+mesh/authored throat-area difference with an acoustic-model difference.
 
 ![Metrics](figures/metrics.png)
 

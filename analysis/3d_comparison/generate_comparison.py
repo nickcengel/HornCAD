@@ -167,22 +167,16 @@ def coverage_plot(frequencies: np.ndarray, angles: np.ndarray, matrices: list[np
 
 def impedance_plot(frequencies: np.ndarray, fem_z: np.ndarray, webster_z: np.ndarray,
                    fem_z0: float, webster_z0: float, path: Path) -> None:
-    figure, axes = plt.subplots(2, 1, figsize=(9, 8), sharex=True, constrained_layout=True)
+    figure, axis = plt.subplots(figsize=(9, 6), constrained_layout=True)
     for impedance, z0, label, style in ((fem_z, fem_z0, "3D FEM + nonlocal aperture", "-"),
                                         (webster_z, webster_z0, "Webster 1D + piston load", "--")):
         normalized = impedance / z0
-        axes[0].plot(frequencies, normalized.real, style, label=f"{label}: resistance")
-        axes[0].plot(frequencies, normalized.imag, style, alpha=0.78,
-                     label=f"{label}: reactance")
-        axes[1].plot(frequencies, np.abs(normalized), style, label=label)
-    axes[0].axhline(0, color="black", linewidth=0.7)
-    axes[0].set_ylabel("Re(Z/Z₀), Im(Z/Z₀)")
-    axes[1].set_ylabel("|Z/Z₀|")
-    axes[1].set_xlabel("Frequency (Hz, log scale)")
-    for axis in axes:
-        set_frequency_axis(axis)
-        axis.legend(fontsize=8, ncol=2)
-    figure.suptitle("Throat acoustic input impedance comparison")
+        axis.plot(frequencies, np.abs(normalized), style, linewidth=2.0, label=label)
+    axis.set_ylabel("Impedance magnitude |Z/Z₀|")
+    axis.set_xlabel("Frequency (Hz, log scale)")
+    set_frequency_axis(axis)
+    axis.legend()
+    axis.set_title("Throat acoustic input impedance magnitude")
     figure.savefig(path, dpi=180, facecolor="white")
     plt.close(figure)
 
