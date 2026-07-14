@@ -12,6 +12,7 @@ import bempp_cl.api as bempp
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FixedFormatter, FixedLocator, NullFormatter
 import numpy as np
 import trimesh
 
@@ -233,22 +234,34 @@ def plot_heatmaps(
     peak_db = max(float(np.max(values)) for values in cuts.values())
     ceiling_db = max(0.0, math.ceil(peak_db))
     image = None
-    extent = (-0.5, len(frequencies_hz) - 0.5, float(angles_deg[0]), float(angles_deg[-1]))
-    labels = [f"{value / 1000:.2g}k" for value in frequencies_hz]
     for axis, name in zip(axes, ("horizontal", "diagonal", "vertical")):
-        image = axis.imshow(
+        image = axis.pcolormesh(
+            frequencies_hz,
+            angles_deg,
             np.maximum(cuts[name], floor_db),
-            origin="lower",
-            aspect="auto",
-            interpolation="nearest",
-            extent=extent,
+            shading="nearest",
             cmap="turbo",
             vmin=floor_db,
             vmax=ceiling_db,
         )
-        axis.set_xticks(np.arange(len(frequencies_hz)))
-        axis.set_xticklabels(labels, rotation=45, ha="right")
-        axis.set_xlabel("Frequency (kHz)")
+        axis.set_xscale("log")
+        axis.set_xlim(float(frequencies_hz[0]), float(frequencies_hz[-1]))
+        ticks = [500.0, 700.0, 1000.0, 2000.0, 3000.0, 5000.0]
+        visible_ticks = [
+            tick for tick in ticks if frequencies_hz[0] <= tick <= frequencies_hz[-1]
+        ]
+        axis.xaxis.set_major_locator(FixedLocator(visible_ticks))
+        axis.xaxis.set_major_formatter(
+            FixedFormatter(
+                [
+                    f"{tick / 1000:g}k" if tick >= 1000.0 else f"{tick:g}"
+                    for tick in visible_ticks
+                ]
+            )
+        )
+        axis.xaxis.set_minor_formatter(NullFormatter())
+        axis.xaxis.get_offset_text().set_visible(False)
+        axis.set_xlabel("Frequency (Hz, logarithmic)")
         axis.set_title(f"{name.capitalize()} plane")
     axes[0].set_ylabel("Off-axis angle (degrees)")
     figure.suptitle(
