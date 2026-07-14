@@ -56,6 +56,8 @@ interference across the nonuniform mouth field, but exclude finite-lip
 diffraction and exterior-body scattering. Because the computational mouth is
 curved while this remains an ideal-baffle approximation, these plots are
 preliminary comparison results—not the eventual full-exterior prediction.
+Frequency is plotted logarithmically on the x-axis, angle is on the y-axis, and
+the white contour marks the −6 dB coverage boundary.
 
 ## Current result
 

@@ -205,6 +205,9 @@ problem, not against an unrelated generic Helmholtz benchmark.
   across the solved mouth field but explicitly excludes lip diffraction and
   exterior-body scattering; six frequency samples are too sparse for final
   resonance or coverage characterization.
+- Plotting convention: every frequency axis must be logarithmic (Bode-style).
+  Coverage heatmaps place log frequency on x, angle on y, and show a -6 dB
+  contour wherever the plotted quantity makes that threshold meaningful.
 
 Primary references used for the solver decision:
 

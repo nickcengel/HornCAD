@@ -4,6 +4,7 @@ from pathlib import Path
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+from matplotlib.ticker import NullFormatter, ScalarFormatter
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 import meshio
 import numpy as np
@@ -11,6 +12,13 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent
 FIELD_ROOT = ROOT / "fields"
+
+
+def _set_log_frequency_axis(axis: plt.Axes) -> None:
+    axis.set_xscale("log")
+    axis.set_xticks([500, 1000, 2000, 5000])
+    axis.xaxis.set_major_formatter(ScalarFormatter())
+    axis.xaxis.set_minor_formatter(NullFormatter())
 
 
 def response_figure() -> None:
@@ -24,6 +32,7 @@ def response_figure() -> None:
     axes[1].set(xlabel="Frequency (Hz)", ylabel="GMRES iterations")
     axes[1].grid(True, alpha=0.3)
     axes[1].legend()
+    _set_log_frequency_axis(axes[1])
     figure.suptitle("Resolved 3D interior/aperture proof — not convergence certified")
     figure.tight_layout()
     figure.savefig(ROOT / "figures" / "resolved_sweep.png", dpi=180)
@@ -91,6 +100,7 @@ def impedance_figure(runs: list[tuple[float, np.ndarray, np.ndarray]]) -> None:
     phase_axis.set_ylabel("Phase (degrees)", color="tab:orange")
     for axis in axes:
         axis.grid(True, alpha=0.3)
+        _set_log_frequency_axis(axis)
     figure.suptitle("Acoustic throat input impedance for Q = 1 m³/s")
     figure.tight_layout()
     figure.savefig(ROOT / "figures" / "throat_impedance.png", dpi=180)
@@ -152,16 +162,22 @@ def coverage_figure(runs: list[tuple[float, np.ndarray, np.ndarray]]) -> None:
                             for frequency, mouth, _ in runs])
     vertical = np.vstack([_ideal_coverage(mouth, frequency, "vertical", angles)
                           for frequency, mouth, _ in runs])
-    figure, axes = plt.subplots(2, 1, figsize=(10, 7), sharex=True, constrained_layout=True)
+    figure, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True, constrained_layout=True)
     for axis, values, title in zip(axes, (horizontal, vertical),
                                    ("Horizontal", "Vertical")):
-        image = axis.pcolormesh(angles, frequencies, values, shading="nearest",
+        image = axis.pcolormesh(frequencies, angles, values.T, shading="nearest",
                                 vmin=-30, vmax=0, cmap="turbo")
-        axis.set(ylabel="Frequency (Hz)", title=title)
-    axes[-1].set_xlabel("Off-axis angle (degrees)")
+        contour = axis.contour(frequencies, angles, values.T, levels=[-6.0],
+                               colors="white", linewidths=1.5)
+        axis.clabel(contour, fmt={-6.0: "−6 dB"}, inline=True, fontsize=8)
+        _set_log_frequency_axis(axis)
+        axis.set(xlabel="Frequency (Hz, log scale)", title=title)
+        axis.grid(True, which="both", alpha=0.15)
+    axes[0].set_ylabel("Off-axis angle (degrees)")
     figure.colorbar(image, ax=axes, label="Relative level (dB; normalized per frequency)")
     figure.suptitle("Preliminary ideal-aperture coverage — excludes lip diffraction")
-    figure.savefig(ROOT / "figures" / "ideal_coverage_heatmaps.png", dpi=180)
+    figure.savefig(ROOT / "figures" / "ideal_coverage_heatmaps.png", dpi=180,
+                   bbox_inches="tight")
     plt.close(figure)
 
 
