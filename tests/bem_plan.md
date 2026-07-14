@@ -79,6 +79,38 @@ problem, not against an unrelated generic Helmholtz benchmark.
 5. Record performance and numerical comparisons before choosing the production
    backend.
 
+### Progress log: 2026-07-14
+
+- Checkpoint `fbe21b4` adds `app/acoustic_domain.py`. It emits a closed,
+  conforming surface with separately labeled rigid wall, throat piston, and
+  mouth aperture. On the test project at 32/32 seed resolution it has 9,216
+  triangles, a 0.000506353 m2 throat, a 0.108743 m2 mouth, and one positive
+  watertight air volume. Tests verify labels, cap areas, normal orientation,
+  shared loops, and the throat normal-velocity sign.
+- Native solver shortlist result: use MFEM for the first parallel interior FEM
+  prototype. Homebrew MFEM 4.9 installs as an ARM64 shared library with
+  OpenMPI, Hypre, Metis, OpenBLAS, and SuiteSparse. A compiled complex-operator
+  probe ran successfully at 1 and 4 MPI ranks. The bottle has MPI enabled but
+  not OpenMP, so allocate cores with MPI processes.
+- Keep DOLFINx/PETSc as the second candidate. Its official complex Helmholtz
+  example and facet-submesh support fit the formulation, but neither DOLFINx
+  nor PETSc was installed locally and bringing up that stack is more involved.
+- MFEM does not supply the desired acoustic aperture operator. HornCAD must
+  assemble the nonlocal complex mouth block and couple it to the boundary
+  trace DOFs. The operator requires its own analytic validation before a horn
+  result is accepted.
+- Next implementation step: generate a tetrahedral air-volume mesh that
+  preserves the three boundary attributes, load it into parallel MFEM, assemble
+  the complex interior Helmholtz system, and add the aperture block.
+
+Primary references used for the solver decision:
+
+- MFEM build/platform support: https://mfem.org/building/
+- MFEM parallel complex example 35p: https://docs.mfem.org/4.8/ex35p_8cpp_source.html
+- DOLFINx complex Helmholtz example:
+  https://docs.fenicsproject.org/dolfinx/main/python/demos/demo_helmholtz.html
+- PETSc complex and macOS configuration: https://petsc.org/main/install/install/
+
   ## Summary
 
   Turn the current 3D BEM prototype into a reproducible acoustic-analysis pipeline suitable for geometry comparisons and
