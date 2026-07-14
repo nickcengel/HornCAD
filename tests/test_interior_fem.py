@@ -16,6 +16,8 @@ class InteriorFEMTests(unittest.TestCase):
             mesh_path = Path(temporary) / "interior.msh"
             write_gmsh_volume_mesh(domain, mesh_path, 0.031)
             result = solve_interior_frequency(mesh_path, 500.0)
+            condensed = solve_interior_frequency(mesh_path, 500.0,
+                                                  coupling_method="condensed")
         self.assertLess(result.relative_residual, 1e-9)
         self.assertGreater(result.radiated_power_w, 0.0)
         self.assertAlmostEqual(result.throat_area_m2, domain.throat_area_m2,
@@ -23,6 +25,11 @@ class InteriorFEMTests(unittest.TestCase):
         self.assertAlmostEqual(result.mouth_area_m2, domain.mouth_area_m2, delta=2e-3)
         self.assertTrue(np.all(np.isfinite(result.mouth_pressure)))
         self.assertTrue(np.all(np.isfinite(result.mouth_normal_velocity)))
+        np.testing.assert_allclose(result.pressure, condensed.pressure,
+                                   rtol=2e-9, atol=2e-6)
+        np.testing.assert_allclose(result.mouth_normal_velocity,
+                                   condensed.mouth_normal_velocity,
+                                   rtol=2e-9, atol=2e-9)
 
 
 if __name__ == "__main__":

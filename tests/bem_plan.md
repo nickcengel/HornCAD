@@ -130,6 +130,18 @@ problem, not against an unrelated generic Helmholtz benchmark.
   distribute its mouth trace over MPI ranks; do not attempt a nominal 5 kHz
   production sweep by forming and inverting an unnecessarily dense global
   matrix in the serial reference.
+- The mixed unknown form `[p, v_mouth]` is now verified against the condensed
+  `Z^-1` reference to tight numerical tolerances. It removes an explicit
+  aperture inverse and is the form to carry into the production operator.
+- Native MFEM source and CMake configuration live in `app/mfem/`. At 500 Hz its
+  complex UMFPACK solve matches the Python reference: 40,137.5 W radiated
+  power, 0.000440309 m2 throat, 0.105677 m2 mouth, and `6.13e-13` residual.
+  This is a strong independent assembly/sign cross-check.
+- The native direct factorization took about 18 minutes for only 3,974 pressure
+  and 963 mouth DOFs. Treat complex UMFPACK as validation-only. The next task is
+  a matrix-free mixed `Operator` with GMRES: sparse `K-k^2M` action, dense `Z`
+  matvec, trace gather/scatter, and a block preconditioner. Do not benchmark
+  frequency-level MPI until that single-frequency algorithm is in place.
 
 Primary references used for the solver decision:
 

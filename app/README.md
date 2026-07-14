@@ -151,3 +151,25 @@ results until the installed ExaFMM backend passes a dense complex-operator
 comparison on the target platform.
 
 For programmatic studies, construct `PipelineSettings` and call `run_pipeline(...)`. The returned structure contains the mesh report, observer geometry, complex per-frequency results, manifest, and artifact paths. A single mesh always covers the entire sweep. Production acceptance still requires an explicit 8/10/12 convergence study; deep-null depth is not a stable optimization metric until that study passes.
+
+## Reduced Interior-Aperture Reference
+
+`acoustic_domain.py` builds the primary reduced model: internal rigid wall,
+driven throat disk, and a computational mouth aperture. `aperture_radiation.py`
+implements the nonlocal infinite-baffle Rayleigh operator, and
+`interior_fem.py` provides the serial reference coupled solve.
+
+The native MFEM cross-check is built separately:
+
+```bash
+cmake -S app/mfem -B build/mfem -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_PREFIX_PATH=/opt/homebrew/opt/mfem
+cmake --build build/mfem --parallel 20
+build/mfem/horncad_mfem_interior path/to/interior.msh 500
+```
+
+The current MFEM executable uses complex UMFPACK and exists to validate the
+assembled mixed system against the Python reference. It is not the production
+solver: factoring the globally assembled dense mouth block is slow. Production
+work must apply the mouth matrix in an iterative block operator and precondition
+the sparse interior Helmholtz block without factoring the coupled matrix.
