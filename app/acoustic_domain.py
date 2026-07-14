@@ -15,6 +15,7 @@ import tempfile
 
 import numpy as np
 import trimesh
+from scipy.interpolate import LinearNDInterpolator
 from scipy.spatial import Delaunay
 
 try:
@@ -83,12 +84,50 @@ def _internal_rings(yaml_path: Path, side_samples: int,
     return rings
 
 
+def _append_cap(vertices: list[np.ndarray], boundary: np.ndarray,
+                faces: list[tuple[int, int, int]], domains: list[int],
+                domain: int) -> int:
+    """Triangulate a cap with graded interior rings and an exact outer boundary."""
+    boundary_points = np.asarray([vertices[index] for index in boundary])
+    center = boundary_points.mean(axis=0)
+    surface_height = LinearNDInterpolator(boundary_points[:, :2], boundary_points[:, 2])
+    cap_indices = list(int(index) for index in boundary)
+    cap_points = list(boundary_points)
+    radial_layers = max(2, math.ceil(len(boundary) / (2.0 * math.pi)))
+    for layer in range(1, radial_layers):
+        fraction = layer / radial_layers
+        sample_count = max(6, round(len(boundary) * fraction))
+        parameters = np.arange(sample_count, dtype=float) * len(boundary) / sample_count
+        lower = np.floor(parameters).astype(int)
+        blend = parameters - lower
+        perimeter = ((1.0 - blend[:, None]) * boundary_points[lower]
+                     + blend[:, None] * boundary_points[(lower + 1) % len(boundary)])
+        interior_xy = center[:2] + fraction * (perimeter[:, :2] - center[:2])
+        interior_z = np.asarray(surface_height(interior_xy))
+        if np.any(~np.isfinite(interior_z)):
+            raise ValueError("cap interpolation left the aperture projection")
+        for point in np.column_stack((interior_xy, interior_z)):
+            cap_indices.append(len(vertices))
+            cap_points.append(point)
+            vertices.append(point)
+    center_index = len(vertices)
+    center[2] = np.asarray(surface_height(center[:2])).item()
+    vertices.append(center)
+    cap_indices.append(center_index)
+    cap_points.append(center)
+    for triangle in Delaunay(np.asarray(cap_points)[:, :2]).simplices:
+        faces.append(tuple(cap_indices[index] for index in triangle))
+        domains.append(domain)
+    return center_index
+
+
 def build_interior_acoustic_domain(yaml_path: Path, side_samples: int = 32,
                                    axial_stations: int = 32) -> InteriorAcousticDomain:
     """Build a conforming wall/throat/mouth computational closure in metres."""
     rings = _internal_rings(yaml_path, side_samples, axial_stations)
     ring_size = len(rings[0])
-    vertices = np.asarray([point for ring in rings for point in ring], dtype=float) * 1e-3
+    vertices = [point for point in
+                np.asarray([point for ring in rings for point in ring], dtype=float) * 1e-3]
     faces: list[tuple[int, int, int]] = []
     domains: list[int] = []
     for station in range(len(rings) - 1):
@@ -102,18 +141,10 @@ def build_interior_acoustic_domain(yaml_path: Path, side_samples: int = 32,
     throat_ring = np.arange(ring_size, dtype=np.int64)
     mouth_ring = np.arange((len(rings) - 1) * ring_size,
                            len(rings) * ring_size, dtype=np.int64)
-    throat_center = len(vertices)
-    mouth_center = throat_center + 1
-    vertices = np.vstack((vertices, vertices[throat_ring].mean(axis=0),
-                          vertices[mouth_ring].mean(axis=0)))
-    for triangle in Delaunay(vertices[throat_ring, :2]).simplices:
-        faces.append(tuple(int(throat_ring[index]) for index in triangle))
-        domains.append(THROAT_PISTON)
-    for triangle in Delaunay(vertices[mouth_ring, :2]).simplices:
-        faces.append(tuple(int(mouth_ring[index]) for index in triangle))
-        domains.append(MOUTH_APERTURE)
+    throat_center = _append_cap(vertices, throat_ring, faces, domains, THROAT_PISTON)
+    mouth_center = _append_cap(vertices, mouth_ring, faces, domains, MOUTH_APERTURE)
 
-    mesh = trimesh.Trimesh(vertices=vertices, faces=np.asarray(faces), process=False)
+    mesh = trimesh.Trimesh(vertices=np.asarray(vertices), faces=np.asarray(faces), process=False)
     trimesh.repair.fix_normals(mesh, multibody=False)
     if not mesh.is_watertight or not mesh.is_winding_consistent or len(mesh.split()) != 1:
         raise ValueError("interior acoustic closure is not one watertight oriented component")
@@ -186,24 +217,30 @@ def write_gmsh_volume_mesh(domain: InteriorAcousticDomain, path: Path,
 
         node_tags, coordinates, _ = gmsh.model.mesh.getNodes()
         coordinates = np.asarray(coordinates).reshape(-1, 3)
-        node_index = {int(tag): index for index, tag in enumerate(node_tags)}
-        tetrahedra: list[np.ndarray] = []
+        tetrahedron_blocks: list[np.ndarray] = []
         for element_type, _, nodes in zip(*gmsh.model.mesh.getElements(3, volume)):
             properties = gmsh.model.mesh.getElementProperties(element_type)
             if properties[1] != 3 or properties[3] != 4:
                 continue
-            tetrahedra.extend(np.asarray(nodes).reshape(-1, 4))
+            tetrahedron_blocks.append(np.asarray(nodes, dtype=np.int64).reshape(-1, 4))
+        tetrahedron_tags = np.vstack(tetrahedron_blocks)
+        tag_to_index = np.full(int(np.max(node_tags)) + 1, -1, dtype=np.int64)
+        tag_to_index[np.asarray(node_tags, dtype=np.int64)] = np.arange(len(node_tags))
+        tetrahedron_indices = tag_to_index[tetrahedron_tags]
         maximum_actual_edge = 0.0
-        for tetrahedron in tetrahedra:
-            points = coordinates[[node_index[int(tag)] for tag in tetrahedron]]
-            edges = points[:, None, :] - points[None, :, :]
-            maximum_actual_edge = max(maximum_actual_edge,
-                                      float(np.linalg.norm(edges, axis=2).max()))
+        edge_pairs = ((0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3))
+        for start in range(0, len(tetrahedron_indices), 250_000):
+            points = coordinates[tetrahedron_indices[start:start + 250_000]]
+            for first, second in edge_pairs:
+                delta = points[:, first] - points[:, second]
+                squared = np.einsum("ij,ij->i", delta, delta)
+                maximum_actual_edge = max(maximum_actual_edge,
+                                          math.sqrt(float(np.max(squared))))
         if maximum_actual_edge > maximum_edge_m + maximum_edge_m * 1e-6:
             raise ValueError(
                 f"tetrahedral mesh edge {maximum_actual_edge:.6g} m exceeds "
                 f"requested limit {maximum_edge_m:.6g} m")
-        return VolumeMeshReport(len(node_tags), len(tetrahedra), maximum_actual_edge,
+        return VolumeMeshReport(len(node_tags), len(tetrahedron_tags), maximum_actual_edge,
                                 patches, maximum_match_error)
     finally:
         gmsh.finalize()

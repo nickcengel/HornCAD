@@ -154,6 +154,20 @@ problem, not against an unrelated generic Helmholtz benchmark.
   `ParFiniteElementSpace`. Until that port is complete, exploit the 20 cores
   by running independent frequencies as bounded processes; each native solve
   is currently serial, aside from optimized library kernels.
+- The mouth and throat closures now contain graded interior rings while
+  retaining the exact shared perimeter and the original piecewise nonplanar
+  mouth surface. This removes long boundary-only Delaunay chords. The
+  tetrahedral maximum-edge audit was also vectorized in 250k-element chunks:
+  auditing a 1.11-million-tetrahedron trial mesh takes about 3 seconds instead
+  of several minutes and uses bounded temporary memory.
+- The current STL `classifySurfaces` handoff remains the 5 kHz meshing blocker.
+  It remeshes a 9.57 mm source-wall maximum edge into a 14.58 mm wall edge, so
+  the 11.44 mm (6 elements/wavelength) contract correctly rejects the mesh.
+  More source samples and Netgen/HXT optimization did not cure it. A direct
+  labeled discrete-surface experiment did not produce a Gmsh volume and was
+  rolled back. Next investigate a conforming Gmsh OCC/geo surface construction
+  or a different tetrahedralizer that preserves labeled input facets; do not
+  weaken the measured-edge acceptance criterion to make this trial pass.
 
 Primary references used for the solver decision:
 
