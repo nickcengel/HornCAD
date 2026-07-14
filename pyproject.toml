@@ -8,6 +8,10 @@ version = "0.0.0"
 description = "Browser-based horn and waveguide geometry tool."
 requires-python = ">=3.13,<3.14"
 dependencies = [
+    "manifold3d>=3.5",
+    "mapbox-earcut>=2.0",
+    "scipy>=1.18",
+    "shapely>=2.1",
     "trimesh>=4.0",
     "PyYAML>=6.0",
 ]

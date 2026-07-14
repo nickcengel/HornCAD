@@ -498,6 +498,22 @@ def radial_distance(point: tuple[float, float, float]) -> float:
     return math.hypot(point[0], point[1])
 
 
+def screw_hole_centers() -> list[tuple[float, float]]:
+    count = max(0, round(float(PARAMS.get("screw_hole_count", 0))))
+    diameter = max(0.0, float(PARAMS.get("screw_hole_diameter", 0.0)))
+    pattern_radius = max(0.0, float(PARAMS.get("screw_pattern_diameter", 0.0))) / 2.0
+    if count <= 0 or diameter <= 0.0 or pattern_radius <= 0.0:
+        return []
+    start_angle = math.pi / 2.0
+    return [
+        (
+            pattern_radius * math.cos(start_angle + 2.0 * math.pi * index / count),
+            pattern_radius * math.sin(start_angle + 2.0 * math.pi * index / count),
+        )
+        for index in range(count)
+    ]
+
+
 def radial_offset_point(point: tuple[float, float, float], thickness: float) -> tuple[float, float, float]:
     radius = radial_distance(point)
     if radius <= 1e-12:
@@ -853,6 +869,25 @@ def compact_mouth_outer_rings(
     return [*outer_rings[:start], *[ring_at_distance(target) for target in targets]]
 
 
+def mount_fillet_blend_rings(
+    outer_wall_start: list[tuple[float, float, float]],
+    mount_outer_end: list[tuple[float, float, float]],
+) -> list[list[tuple[float, float, float]]]:
+    fillet = max(0.0, float(PARAMS.get("mount_fillet", 0.0)))
+    if fillet <= 1e-9:
+        return []
+    steps = max(3, min(18, round(fillet / 1.5) + 2))
+    rings: list[list[tuple[float, float, float]]] = []
+    for index in range(1, steps):
+        t = index / steps
+        u = smoothstep(t)
+        rings.append([
+            interpolate_point(outer_point, mount_point, u)
+            for outer_point, mount_point in zip(outer_wall_start, mount_outer_end)
+        ])
+    return rings
+
+
 def build_body_mesh(
     rings: list[list[tuple[float, float, float]]],
     mouth_index: int,
@@ -873,7 +908,9 @@ def build_body_mesh(
     throat_z = sum(point[2] for point in throat_inner) / ring_size
     mount_start_z = throat_z
     mount_end_z = throat_z + max(0.0, PARAMS["mount_flange_thickness"])
-    outer_wall_rings = compact_mouth_outer_rings(outer_wall_rings_after_mount(outer_rings, mount_end_z))
+    fillet = max(0.0, float(PARAMS.get("mount_fillet", 0.0)))
+    outer_wall_start_z = min(PARAMS["length"], mount_end_z + fillet)
+    outer_wall_rings = compact_mouth_outer_rings(outer_wall_rings_after_mount(outer_rings, outer_wall_start_z))
     outer_wall_start = outer_wall_rings[0]
     required_mount_radius = max(
         max(radial_distance(point) for point in outer_wall_start),
@@ -887,6 +924,10 @@ def build_body_mesh(
     faces: list[tuple[int, int, int]] = []
     inner_starts = [add_ring(vertices, ring) for ring in inner_rings]
     outer_wall_starts = [add_ring(vertices, ring) for ring in outer_wall_rings]
+    blend_starts = [
+        add_ring(vertices, ring)
+        for ring in mount_fillet_blend_rings(outer_wall_start, mount_outer_end)
+    ]
     mount_outer_start_start = add_ring(vertices, mount_outer_start)
     mount_outer_end_start = add_ring(vertices, mount_outer_end)
 
@@ -895,7 +936,11 @@ def build_body_mesh(
     append_ring_bridge(faces, inner_starts[-1], outer_wall_starts[-1], ring_size)
     for i in range(len(outer_wall_starts) - 1, 0, -1):
         append_ring_bridge(faces, outer_wall_starts[i], outer_wall_starts[i - 1], ring_size, True)
-    append_ring_bridge(faces, outer_wall_starts[0], mount_outer_end_start, ring_size, True)
+    previous_start = outer_wall_starts[0]
+    for blend_start in blend_starts:
+        append_ring_bridge(faces, previous_start, blend_start, ring_size, True)
+        previous_start = blend_start
+    append_ring_bridge(faces, previous_start, mount_outer_end_start, ring_size, True)
     append_ring_bridge(faces, mount_outer_end_start, mount_outer_start_start, ring_size, True)
     append_ring_bridge(faces, mount_outer_start_start, inner_starts[0], ring_size)
 
@@ -936,6 +981,38 @@ def build_acoustic_surface_mesh(
                 faces.append((row + j, next_row + k, next_row + j))
                 faces.append((row + j, row + k, next_row + k))
     return vertices, faces
+
+
+def subtract_mount_screw_holes(mesh: trimesh.Trimesh) -> trimesh.Trimesh:
+    centers = screw_hole_centers()
+    if not centers:
+        return mesh
+
+    hole_radius = max(0.0, float(PARAMS["screw_hole_diameter"])) / 2.0
+    extension = max(0.0, float(PARAMS["throat_extension"]))
+    mount_thickness = max(0.0, float(PARAMS["mount_flange_thickness"]))
+    mount_fillet = max(0.0, float(PARAMS.get("mount_fillet", 0.0)))
+    start_z = -extension - 1.0
+    end_z = -extension + mount_thickness + mount_fillet + 1.0
+    cutters = []
+    for center_x, center_y in centers:
+        cutters.append(
+            trimesh.creation.cylinder(
+                radius=hole_radius,
+                height=end_z - start_z,
+                sections=64,
+                transform=trimesh.transformations.translation_matrix(
+                    [center_x, center_y, (start_z + end_z) / 2.0]
+                ),
+            )
+        )
+
+    result = trimesh.boolean.difference([mesh, *cutters], engine="manifold")
+    if isinstance(result, list):
+        result = trimesh.util.concatenate(result)
+    result.process(validate=True)
+    trimesh.repair.fix_normals(result, multibody=True)
+    return result
 
 
 def parse_args() -> argparse.Namespace:
@@ -1013,6 +1090,8 @@ def main() -> None:
     output.parent.mkdir(parents=True, exist_ok=True)
     mesh = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
     trimesh.repair.fix_normals(mesh, multibody=True)
+    if export_mode == "body":
+        mesh = subtract_mount_screw_holes(mesh)
     mesh.export(output)
     print(output)
     print(f"export_mode={export_mode}")
