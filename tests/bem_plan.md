@@ -168,6 +168,14 @@ problem, not against an unrelated generic Helmholtz benchmark.
   rolled back. Next investigate a conforming Gmsh OCC/geo surface construction
   or a different tetrahedralizer that preserves labeled input facets; do not
   weaken the measured-edge acceptance criterion to make this trial pass.
+- `wildmeshing==0.4.0` is installed in `.venv` from its native CPython 3.13
+  macOS ARM64 wheel. A first TetWild proof used `max_threads=20`, processed the
+  coarse closed acoustic surface in 5.1 s wall time (18.0 s aggregate CPU), and
+  returned 976 vertices / 2,889 tetrahedra. This confirms native multicore M1
+  Ultra execution. Next add boundary extraction/label transfer and verify
+  geometric deviation, maximum edge, positive volumes, and MFEM import before
+  making it an optional production backend. TetWild may alter the input
+  surface, so label and aperture-area tolerances are mandatory.
 
 Primary references used for the solver decision:
 
