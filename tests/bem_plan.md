@@ -188,6 +188,14 @@ problem, not against an unrelated generic Helmholtz benchmark.
   iterations (23.75 s solver, 56.9 s total), and produced 41,170 W for the
   deliberately calibrated 1 m3/s source. Throat area was 0.000500634 m2 and
   mouth area 0.105261 m2.
+- A frequency-parallel resolved-mesh proof completed at 1/2/3/4/5 kHz. All
+  solves converged, respectively in 93/190/388/652/992 GMRES iterations and
+  29.9/60.4/123.0/205.5/313.1 solver seconds. Radiated powers for the unit
+  1 m3/s calibration source were 359068/468071/400793/389055/412698 W.
+  The five processes ran concurrently to exploit the M1 Ultra cores. The 5 kHz
+  solve is too close to the 1,000-iteration ceiling, so improve the Helmholtz
+  preconditioner before an 8/10/12 elements-per-wavelength convergence study.
+  These are resolved proof values, not yet convergence-certified response data.
 
 Primary references used for the solver decision:
 
