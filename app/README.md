@@ -9,6 +9,7 @@
 - `webster_1d.py` - one-dimensional acoustic screening model.
 - `aperture_directivity.py` - normalized H/V far-field aperture estimate.
 - `helmholtz_2d.py` - independent H/V pressure-acoustics FEM solver.
+- `helmholtz_bem_3d.py` - coupled three-dimensional Helmholtz BEM solver.
 - `output/` - ignored output from the Python exporter.
 
 ## Browser Output
@@ -106,3 +107,17 @@ Each model uses the corresponding HornCAD wall profile, a symmetry boundary alon
 The default mesh uses six linear elements per wavelength at 10 kHz. Increase convergence with `--elements-per-wavelength 8` or move the outgoing boundary with `--exterior-extent 0.5`. Exact null depths should not be trusted until both settings have been checked.
 
 This is substantially more informative than the uniform-aperture estimate, but it remains a 2D approximation. Each plane assumes invariance in its missing dimension, and the first-order absorbing boundary leaves some exterior-domain sensitivity. It cannot reproduce H/V coupling, diagonal radiation, three-dimensional corner modes, or the loading of the complete rectangular aperture.
+
+## Helmholtz 3D BEM Directivity
+
+Run the coupled 3D boundary-element model at eight logarithmically spaced frequencies from 500 Hz to 5 kHz:
+
+```bash
+python app/helmholtz_bem_3d.py path/to/config.YAML
+```
+
+The solver builds a closed acoustic obstacle from the printable HornCAD body and unions a thin cap into the open throat. The horn-facing disk of that cap is the only driven Neumann boundary; the horn walls, mouth body, and exterior body are rigid. This prevents a rear monopole from leaking around the mount while allowing the throat, horn interior, mouth, and exterior field to remain fully coupled.
+
+The exterior radiation problem uses Bempp-cl's second-kind single-layer Neumann equation. GMRES convergence is checked at every frequency because this formulation can become ill-conditioned near fictitious interior resonances. The output contains normalized horizontal, diagonal, and vertical far-field cuts and their CSV matrices.
+
+The default `--side-samples 16 --stations 18` mesh is a practical pilot mesh, not a converged 5 kHz production mesh. Increase it with, for example, `--side-samples 20 --stations 22`, and compare lobe locations and broad levels. Deep null depth is especially mesh-sensitive.
