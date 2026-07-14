@@ -1,30 +1,27 @@
 # HornCAD App
 
-`HornCAD.html` is the current app. It is a standalone browser tool: open the file directly, adjust the controls, then export STL or YAML from the page.
+`HornCAD.html` is the current app. It is a standalone browser tool: open the file directly, adjust the controls, then export YAML from the page.
 
 ## Files
 
-- `HornCAD.html` - browser app for designing and exporting horn geometry.
-- `export_horncad.py` - Python reference exporter for the same geometry path.
+- `HornCAD.html` - browser app for designing horn geometry and authoring YAML.
+- `export_horncad.py` - Python STL exporter for the same geometry path.
 - `output/` - ignored Python exporter output.
 
-## Export Modes
+## Browser Output
 
-- `Acoustic surface` exports the open inner acoustic surface.
-- `Body` exports the thickened printable body with mouth return and mounting flange.
+The browser always renders the open acoustic surface. The Body/Acoustic surface option controls the YAML export mode only; STL generation happens from the command line.
 
-Browser exports are named:
+Browser YAML exports are named:
 
 ```text
-HornCAD-Surface-<WxHxL>.STL
-HornCAD-Body-<WxHxL>.STL
 HornCAD-Surface-<WxHxL>.YAML
 HornCAD-Body-<WxHxL>.YAML
 ```
 
 ## Command-Line STL Export
 
-The browser is the primary app. Use the Python exporter when you want to regenerate an STL from a YAML file exported by the app:
+Use the Python exporter when you want to regenerate an STL from a YAML file exported by the app:
 
 ```bash
 python app/export_horncad.py path/to/HornCAD-Surface-400x260x250.YAML
