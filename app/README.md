@@ -110,14 +110,26 @@ This is substantially more informative than the uniform-aperture estimate, but i
 
 ## Helmholtz 3D BEM Directivity
 
-Run the coupled 3D boundary-element model at eight logarithmically spaced frequencies from 500 Hz to 5 kHz:
+Run the coupled 3D boundary-element comparison pipeline at eight logarithmically spaced frequencies from 500 Hz to 5 kHz:
 
 ```bash
 python app/helmholtz_bem_3d.py path/to/config.YAML
 ```
 
-The solver builds a closed acoustic obstacle from the printable HornCAD body and unions a thin cap into the open throat. The horn-facing disk of that cap is the only driven Neumann boundary; the horn walls, mouth body, and exterior body are rigid. This prevents a rear monopole from leaking around the mount while allowing the throat, horn interior, mouth, and exterior field to remain fully coupled.
+The solver builds a closed acoustic obstacle from the printable HornCAD body and a circular throat cap. The horn-facing disk is a uniform axial piston; by default its integrated volume velocity is exactly 1 m³/s. Its pressure Neumann condition is derived from that velocity and the recorded medium properties. All other physical surfaces are rigid.
 
-The exterior radiation problem uses Bempp-cl's second-kind single-layer Neumann equation. GMRES convergence is checked at every frequency because this formulation can become ill-conditioned near fictitious interior resonances. The output contains normalized horizontal, diagonal, and vertical far-field cuts, a discrete low-resolution heatmap, and their CSV matrices. The heatmap keeps each simulated frequency as a separate column without interpolation.
+The exterior radiation problem uses a regularized combined-field Neumann equation to avoid fictitious interior resonances. Production meshes enforce every edge at eight elements per wavelength at the sweep's highest frequency. `--mesh-tier preview` selects 6; verification tiers select 10 or 12. Watertightness, orientation, connectedness, edge length, minimum angle, and aspect ratio are checked before solving.
 
-The default `--side-samples 16 --stations 18` mesh is a practical pilot mesh, not a converged 5 kHz production mesh. Increase it with, for example, `--side-samples 20 --stations 22`, and compare lobe locations and broad levels. Deep null depth is especially mesh-sensitive.
+Each frequency is stored atomically as a complex NPZ artifact, so an interrupted run resumes without recomputing completed frequencies. The JSON manifest records normalized inputs, source and coordinate definitions, mesh quality and cost, solver tolerances and versions, artifact hashes, and convergence status. Compact optimizer-facing metrics are written to CSV.
+
+At each frequency the pipeline preserves complex pressure and outward normal velocity on a conformal mouth observer offset 1 mm into the exterior. It calculates two first-class radiation results from the same solution: full exterior BEM (including the finite body and edge diffraction) and an ideal infinite-baffle aperture integral (excluding those effects). Both retain unnormalized complex pressure and use the mouth centre as phase origin; normalized plots are derived products.
+
+Useful controls:
+
+```bash
+python app/helmholtz_bem_3d.py config.YAML --mesh-tier preview
+python app/helmholtz_bem_3d.py config.YAML --elements-per-wavelength 10
+python app/helmholtz_bem_3d.py config.YAML --observer-offset-mm 1 --no-resume
+```
+
+For programmatic studies, construct `PipelineSettings` and call `run_pipeline(...)`. The returned structure contains the mesh report, observer geometry, complex per-frequency results, manifest, and artifact paths. A single mesh always covers the entire sweep. Production acceptance still requires an explicit 8/10/12 convergence study; deep-null depth is not a stable optimization metric until that study passes.

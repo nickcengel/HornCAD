@@ -3,7 +3,16 @@ import unittest
 
 import numpy as np
 
-from app.helmholtz_bem_3d import acoustic_body_mesh, receiver_directions
+from app.helmholtz_bem_3d import (
+    AcousticMedium,
+    MeshSettings,
+    SourceDefinition,
+    acoustic_body_mesh,
+    build_acoustic_mesh,
+    make_aperture_observer,
+    piston_boundary_values,
+    receiver_directions,
+)
 
 
 class HelmholtzBEM3DTests(unittest.TestCase):
@@ -26,6 +35,32 @@ class HelmholtzBEM3DTests(unittest.TestCase):
         np.testing.assert_allclose(horizontal[:, 0], [0.0, 0.0, 1.0], atol=1e-12)
         np.testing.assert_allclose(horizontal[:, 1], [1.0, 0.0, 0.0], atol=1e-12)
         np.testing.assert_allclose(vertical[:, 1], [0.0, 1.0, 0.0], atol=1e-12)
+
+    def test_wavelength_mesh_and_unit_volume_velocity(self) -> None:
+        yaml_path = Path(__file__).parents[1] / "test_project" / "HornCAD-Body-400x260x250.YAML"
+        settings = MeshSettings(maximum_frequency_hz=1_000.0, elements_per_wavelength=6.0)
+        mesh = build_acoustic_mesh(yaml_path, settings, side_samples=8, axial_stations=10)
+        self.assertLessEqual(mesh.report.maximum_edge_m, settings.target_edge_m + 1e-10)
+        self.assertTrue(mesh.report.watertight)
+        self.assertEqual(mesh.report.connected_components, 1)
+        self.assertEqual(mesh.report.quality_failures, [])
+        velocity, neumann = piston_boundary_values(
+            mesh, SourceDefinition(), 1_000.0, AcousticMedium()
+        )
+        self.assertAlmostEqual((velocity * mesh.source_area_m2).real, 1.0, places=12)
+        self.assertAlmostEqual((velocity * mesh.source_area_m2).imag, 0.0, places=12)
+        self.assertLess(neumann.imag, 0.0)
+
+    def test_mouth_observer_is_offset_outward_and_area_weighted(self) -> None:
+        yaml_path = Path(__file__).parents[1] / "test_project" / "HornCAD-Body-400x260x250.YAML"
+        mesh = build_acoustic_mesh(
+            yaml_path, MeshSettings(1_000.0, 6.0), side_samples=8, axial_stations=10
+        )
+        observer = make_aperture_observer(mesh, 0.001)
+        self.assertTrue(np.all(observer.normals[:, 2] > 0.0))
+        self.assertTrue(np.all(observer.area_weights_m2 > 0.0))
+        self.assertGreater(float(observer.area_weights_m2.sum()), 0.0)
+        self.assertEqual(observer.positions_m.shape, observer.normals.shape)
 
 
 if __name__ == "__main__":

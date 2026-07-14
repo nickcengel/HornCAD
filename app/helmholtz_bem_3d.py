@@ -1,12 +1,28 @@
 #!/usr/bin/env python3
-"""Solve coupled 3D HornCAD radiation with a Helmholtz boundary-element model."""
+"""Reproducible 3-D exterior BEM comparison pipeline for HornCAD.
+
+Coordinates are metres.  The geometry origin is the throat centre and radiation
+results are referred to the authored mouth centre.  The source is a uniform
+axial piston; observers are evaluation points and never part of the boundary.
+"""
 
 from __future__ import annotations
 
 import argparse
+from concurrent.futures import ProcessPoolExecutor, as_completed
 import csv
-from pathlib import Path
+from dataclasses import asdict, dataclass, field
+from datetime import datetime, timezone
+import hashlib
+import json
 import math
+import os
+from pathlib import Path
+import platform
+import multiprocessing
+import tempfile
+import time
+from typing import Any, Iterable
 
 import bempp_cl.api as bempp
 import matplotlib
@@ -25,329 +41,706 @@ except ImportError:
 
 
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parent / "output"
+MESH_TIERS = {"preview": 6.0, "production": 8.0, "verification-10": 10.0,
+              "verification-12": 12.0}
+CUT_AZIMUTHS = {"horizontal": 0.0, "diagonal": 45.0, "vertical": 90.0}
 
 
-def acoustic_body_mesh(
-    yaml_path: Path,
-    side_samples: int = 16,
-    axial_stations: int = 18,
-) -> tuple[trimesh.Trimesh, np.ndarray]:
-    """Build a closed rigid body with a marked driven throat-cap patch."""
-    if side_samples < 6 or axial_stations < 8:
-        raise ValueError("BEM mesh requires at least 6 side samples and 8 axial stations")
+@dataclass(frozen=True)
+class AcousticMedium:
+    density_kg_m3: float = 1.2041
+    sound_speed_m_s: float = 343.21
+
+
+@dataclass(frozen=True)
+class MeshSettings:
+    maximum_frequency_hz: float = 5_000.0
+    elements_per_wavelength: float = 8.0
+    curvature_tolerance_m: float | None = None
+    minimum_angle_deg: float = 0.01
+    maximum_aspect_ratio: float = 3_000.0
+
+    @property
+    def target_edge_m(self) -> float:
+        if self.maximum_frequency_hz <= 0 or self.elements_per_wavelength <= 0:
+            raise ValueError("maximum frequency and elements per wavelength must be positive")
+        return AcousticMedium().sound_speed_m_s / (
+            self.maximum_frequency_hz * self.elements_per_wavelength
+        )
+
+
+@dataclass(frozen=True)
+class SourceDefinition:
+    volume_velocity_m3_s: complex = 1.0 + 0.0j
+    normal: tuple[float, float, float] = (0.0, 0.0, 1.0)
+
+
+@dataclass
+class MeshReport:
+    triangles: int
+    vertices: int
+    estimated_dofs: int
+    minimum_edge_m: float
+    mean_edge_m: float
+    maximum_edge_m: float
+    target_edge_m: float
+    minimum_angle_deg: float
+    maximum_aspect_ratio: float
+    watertight: bool
+    winding_consistent: bool
+    connected_components: int
+    quality_failures: list[str]
+    minimum_wavelength_m: float
+    supported_maximum_frequency_hz: float
+    estimated_dense_matrix_gib: float
+
+
+@dataclass
+class AcousticMesh:
+    surface: trimesh.Trimesh
+    domain_indices: np.ndarray
+    source_area_m2: float
+    mouth_center_m: np.ndarray
+    mouth_ring_m: np.ndarray
+    report: MeshReport
+    content_hash: str
+
+
+@dataclass
+class ApertureObserver:
+    positions_m: np.ndarray
+    normals: np.ndarray
+    area_weights_m2: np.ndarray
+    projected_xy_m: np.ndarray
+    offset_m: float = 0.001
+
+
+@dataclass
+class FrequencyResult:
+    frequency_hz: float
+    gmres_iterations: int
+    dofs: int
+    mouth_pressure: np.ndarray
+    mouth_normal_velocity: np.ndarray
+    full_exterior_pressure: dict[str, np.ndarray]
+    ideal_aperture_pressure: dict[str, np.ndarray]
+    metrics: dict[str, float]
+
+
+@dataclass(frozen=True)
+class PipelineSettings:
+    frequencies_hz: tuple[float, ...]
+    angles_deg: tuple[float, ...]
+    mesh: MeshSettings = field(default_factory=MeshSettings)
+    medium: AcousticMedium = field(default_factory=AcousticMedium)
+    source: SourceDefinition = field(default_factory=SourceDefinition)
+    observer_offset_m: float = 0.001
+    gmres_tolerance: float = 1e-5
+    gmres_max_iterations: int = 300
+    full_sphere: bool = False
+    maximum_workers: int = 1
+    memory_limit_gib: float | None = None
+
+
+def _jsonable(value: Any) -> Any:
+    if isinstance(value, complex):
+        return {"real": value.real, "imag": value.imag}
+    if isinstance(value, np.ndarray):
+        return value.tolist()
+    if isinstance(value, Path):
+        return str(value)
+    if isinstance(value, dict):
+        return {str(k): _jsonable(v) for k, v in value.items()}
+    if isinstance(value, (list, tuple)):
+        return [_jsonable(v) for v in value]
+    return value
+
+
+def _hash_arrays(*arrays: np.ndarray, metadata: bytes = b"") -> str:
+    digest = hashlib.sha256(metadata)
+    for array in arrays:
+        contiguous = np.ascontiguousarray(array)
+        digest.update(str(contiguous.dtype).encode())
+        digest.update(str(contiguous.shape).encode())
+        digest.update(contiguous.tobytes())
+    return digest.hexdigest()
+
+
+def receiver_directions(angles_deg: np.ndarray, azimuth_deg: float) -> np.ndarray:
+    polar = np.radians(angles_deg)
+    azimuth = math.radians(azimuth_deg)
+    return np.vstack((np.sin(polar) * math.cos(azimuth),
+                      np.sin(polar) * math.sin(azimuth), np.cos(polar)))
+
+
+def _triangle_quality(mesh: trimesh.Trimesh) -> tuple[np.ndarray, np.ndarray]:
+    sides = np.sort(np.linalg.norm(mesh.triangles - np.roll(mesh.triangles, 1, axis=1), axis=2), axis=1)
+    aspect = sides[:, 2] / np.maximum(sides[:, 0], 1e-15)
+    cosine = np.clip((sides[:, 1] ** 2 + sides[:, 2] ** 2 - sides[:, 0] ** 2) /
+                     np.maximum(2.0 * sides[:, 1] * sides[:, 2], 1e-30), -1.0, 1.0)
+    minimum_angle = np.degrees(np.arccos(cosine))
+    return minimum_angle, aspect
+
+
+def mesh_quality_report(mesh: trimesh.Trimesh, settings: MeshSettings) -> MeshReport:
+    edges = np.linalg.norm(mesh.vertices[mesh.edges_unique[:, 0]] - mesh.vertices[mesh.edges_unique[:, 1]], axis=1)
+    angles, aspects = _triangle_quality(mesh)
+    components = len(mesh.split(only_watertight=False))
+    failures: list[str] = []
+    tolerance = settings.target_edge_m * 1e-6 + 1e-12
+    if float(edges.max()) > settings.target_edge_m + tolerance:
+        failures.append("maximum_edge_exceeds_wavelength_limit")
+    if float(angles.min()) < settings.minimum_angle_deg:
+        failures.append("minimum_angle_below_limit")
+    if float(aspects.max()) > settings.maximum_aspect_ratio:
+        failures.append("aspect_ratio_above_limit")
+    if not mesh.is_watertight:
+        failures.append("not_watertight")
+    if not mesh.is_winding_consistent:
+        failures.append("inconsistent_orientation")
+    if components != 1:
+        failures.append("not_connected")
+    supported = AcousticMedium().sound_speed_m_s / (settings.elements_per_wavelength * float(edges.max()))
+    dofs = len(mesh.vertices)
+    return MeshReport(len(mesh.faces), len(mesh.vertices), dofs, float(edges.min()),
+                      float(edges.mean()), float(edges.max()), settings.target_edge_m,
+                      float(angles.min()), float(aspects.max()), bool(mesh.is_watertight),
+                      bool(mesh.is_winding_consistent), components, failures,
+                      AcousticMedium().sound_speed_m_s / settings.maximum_frequency_hz,
+                      supported, (dofs * dofs * 16) / 1024 ** 3)
+
+
+def _authored_mesh(yaml_path: Path, side_samples: int, axial_stations: int) -> tuple[trimesh.Trimesh, np.ndarray, float]:
+    """Create the closed obstacle in millimetres and return its authored mouth ring."""
     horncad_area_profile(yaml_path, 41)
     geometry.SIDE_SAMPLES = side_samples
     geometry.Z_STATIONS = axial_stations
-    h_profile = geometry.profile("h")
-    v_profile = geometry.profile("v")
+    hp, vp = geometry.profile("h"), geometry.profile("v")
     length = float(geometry.PARAMS["length"])
-    mouth_h = h_profile(length)
-    mouth_v = v_profile(length)
+    mouth_h, mouth_v = hp(length), vp(length)
     extension = max(0.0, float(geometry.PARAMS["throat_extension"]))
     rings: list[list[tuple[float, float, float]]] = []
-
-    if extension > 0.0:
-        extension_stations = max(
-            2,
-            round(axial_stations * extension / max(length, 1e-9)) + 1,
-        )
-        for index in range(extension_stations):
-            rings.append(geometry.conical_extension_ring(index / (extension_stations - 1)))
-    horn_samples = geometry.adaptive_profile_z_samples(
-        axial_stations, length, h_profile, v_profile
-    )
-    if extension > 0.0:
-        horn_samples = horn_samples[1:]
-    for profile_z in horn_samples:
-        rings.append(
-            geometry.ring_at(
-                profile_z / length,
-                h_profile(profile_z),
-                v_profile(profile_z),
-                mouth_h,
-                mouth_v,
-            )
-        )
+    if extension > 0:
+        count = max(2, round(axial_stations * extension / max(length, 1e-9)) + 1)
+        rings.extend(geometry.conical_extension_ring(i / (count - 1)) for i in range(count))
+    samples = geometry.adaptive_profile_z_samples(axial_stations, length, hp, vp)
+    if extension > 0:
+        samples = samples[1:]
+    for z in samples:
+        rings.append(geometry.ring_at(z / length, hp(z), vp(z), mouth_h, mouth_v))
     mouth_index = len(rings) - 1
-    if geometry.PARAMS["mouth_rear_offset"] > 0.0:
+    mouth_ring = np.asarray(rings[mouth_index], dtype=float)
+    if geometry.PARAMS["mouth_rear_offset"] > 0:
         rings.append(geometry.mouth_rear_ring(rings, mouth_h, mouth_v))
-    vertices, faces = geometry.build_body_mesh(
-        rings, mouth_index, mouth_h, mouth_v
-    )
-    body = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
-
+    vertices, faces = geometry.build_body_mesh(rings, mouth_index, mouth_h, mouth_v)
     throat_radius = float(geometry.PARAMS["r0"])
+    body = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
     throat_z = -extension
-    overlap_mm = 0.3
-    cap_depth_mm = 2.0
-    cap_top_z = throat_z + overlap_mm
-    cap_bottom_z = throat_z - cap_depth_mm
-    cap = trimesh.creation.cylinder(
-        radius=throat_radius + overlap_mm,
-        height=cap_top_z - cap_bottom_z,
-        sections=max(32, side_samples * 4),
-        transform=trimesh.transformations.translation_matrix(
-            (0.0, 0.0, (cap_top_z + cap_bottom_z) / 2.0)
-        ),
-    )
+    overlap, depth = 0.3, 2.0
+    top, bottom = throat_z + overlap, throat_z - depth
+    cap = trimesh.creation.cylinder(radius=throat_radius + overlap, height=top - bottom,
+        sections=max(32, side_samples * 4), transform=trimesh.transformations.translation_matrix((0, 0, (top + bottom) / 2)))
     combined = trimesh.boolean.union((body, cap), engine="manifold")
     if isinstance(combined, list):
         combined = trimesh.util.concatenate(combined)
     combined.process(validate=True)
     trimesh.repair.fix_normals(combined, multibody=True)
-    if not combined.is_watertight or not combined.is_winding_consistent:
-        raise ValueError("BEM acoustic boundary is not a valid closed oriented mesh")
-
-    centers = combined.triangles_center
-    normals = combined.face_normals
-    radial = np.hypot(centers[:, 0], centers[:, 1])
-    source_faces = (
-        (normals[:, 2] > 0.8)
-        & (centers[:, 2] > cap_top_z - 0.4)
-        & (radial < throat_radius * 0.98)
-    )
-    if not np.any(source_faces):
-        raise ValueError("failed to identify the driven throat patch")
-    domain_indices = source_faces.astype(np.uint32)
-    combined.apply_scale(1e-3)
-    return combined, domain_indices
+    return combined, mouth_ring, throat_radius
 
 
-def receiver_directions(
-    angles_deg: np.ndarray,
-    azimuth_deg: float,
-) -> np.ndarray:
-    polar = np.radians(angles_deg)
-    azimuth = math.radians(azimuth_deg)
-    return np.vstack(
-        (
-            np.sin(polar) * math.cos(azimuth),
-            np.sin(polar) * math.sin(azimuth),
-            np.cos(polar),
+def build_acoustic_mesh(yaml_path: Path, settings: MeshSettings,
+                        side_samples: int | None = None, axial_stations: int | None = None) -> AcousticMesh:
+    """Build, edge-refine, validate and mark a physically closed acoustic boundary."""
+    # Ring density is only a geometry seed; actual acceptance is based on every edge.
+    side_samples = side_samples or max(8, int(math.ceil(0.30 / settings.target_edge_m)))
+    axial_stations = axial_stations or max(10, int(math.ceil(0.30 / settings.target_edge_m)))
+    mesh, mouth_ring_mm, throat_radius_mm = _authored_mesh(yaml_path, side_samples, axial_stations)
+    mesh.apply_scale(1e-3)
+    # Selective ``subdivide_to_size`` leaves T-junctions where refined and
+    # unrefined faces meet.  Conforming global passes cost more triangles but
+    # preserve the closed boundary required by an exterior BEM.
+    for _ in range(12):
+        edge_lengths = np.linalg.norm(
+            mesh.vertices[mesh.edges_unique[:, 0]] - mesh.vertices[mesh.edges_unique[:, 1]], axis=1
         )
-    )
+        if float(edge_lengths.max()) <= settings.target_edge_m + 1e-12:
+            break
+        vertices, faces = trimesh.remesh.subdivide(mesh.vertices, mesh.faces)
+        mesh = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+    else:
+        raise ValueError("mesh refinement did not reach the wavelength edge limit")
+    trimesh.repair.fix_normals(mesh, multibody=True)
+    centers, normals = mesh.triangles_center, mesh.face_normals
+    throat_z = float(np.min(mouth_ring_mm[:, 2])) * 0.0 - max(0.0, float(geometry.PARAMS["throat_extension"])) * 1e-3
+    radius = np.hypot(centers[:, 0], centers[:, 1])
+    source_faces = ((normals[:, 2] > 0.8) & (centers[:, 2] > throat_z - 0.0002) &
+                    (centers[:, 2] < throat_z + 0.0007) & (radius < throat_radius_mm * 0.00098))
+    if not np.any(source_faces):
+        raise ValueError("failed to identify the driven throat piston")
+    domains = source_faces.astype(np.uint32)
+    report = mesh_quality_report(mesh, settings)
+    if report.quality_failures:
+        raise ValueError("invalid acoustic mesh: " + ", ".join(report.quality_failures))
+    source_area = float(mesh.area_faces[source_faces].sum())
+    mouth_ring = mouth_ring_mm * 1e-3
+    mouth_center = np.array([0.0, 0.0, float(np.mean(mouth_ring[:, 2]))])
+    content_hash = _hash_arrays(mesh.vertices, mesh.faces, domains,
+                                metadata=json.dumps(_jsonable(asdict(settings)), sort_keys=True).encode())
+    return AcousticMesh(mesh, domains, source_area, mouth_center, mouth_ring, report, content_hash)
 
 
-def solve_frequency(
-    grid: bempp.Grid,
-    frequency_hz: float,
-    angles_deg: np.ndarray,
-    sound_speed_m_s: float,
-    gmres_tolerance: float,
-    gmres_max_iterations: int,
-) -> tuple[dict[str, np.ndarray], int, float]:
-    wave_number = 2.0 * math.pi * frequency_hz / sound_speed_m_s
+def acoustic_body_mesh(yaml_path: Path, side_samples: int = 16, axial_stations: int = 18,
+                       maximum_frequency_hz: float | None = None,
+                       elements_per_wavelength: float = 8.0) -> tuple[trimesh.Trimesh, np.ndarray]:
+    """Compatibility wrapper; new callers should use :func:`build_acoustic_mesh`."""
+    if side_samples < 6 or axial_stations < 8:
+        raise ValueError("BEM mesh requires at least 6 side samples and 8 axial stations")
+    if maximum_frequency_hz is None:
+        mesh, _, throat_radius = _authored_mesh(yaml_path, side_samples, axial_stations)
+        mesh.apply_scale(1e-3)
+        centers, normals = mesh.triangles_center, mesh.face_normals
+        radius = np.hypot(centers[:, 0], centers[:, 1])
+        domains = ((normals[:, 2] > .8) & (radius < throat_radius * .00098)).astype(np.uint32)
+        return mesh, domains
+    result = build_acoustic_mesh(yaml_path, MeshSettings(maximum_frequency_hz, elements_per_wavelength),
+                                 side_samples, axial_stations)
+    return result.surface, result.domain_indices
+
+
+def piston_boundary_values(mesh: AcousticMesh, source: SourceDefinition,
+                           frequency_hz: float, medium: AcousticMedium) -> tuple[complex, complex]:
+    """Return uniform velocity and Neumann pressure derivative ``dp/dn``."""
+    velocity = source.volume_velocity_m3_s / mesh.source_area_m2
+    neumann = -1j * 2 * math.pi * frequency_hz * medium.density_kg_m3 * velocity
+    return velocity, neumann
+
+
+def make_aperture_observer(mesh: AcousticMesh, offset_m: float = 0.001) -> ApertureObserver:
+    """Triangulate the curved authored mouth opening without adding a boundary."""
+    ring = mesh.mouth_ring_m
+    centre = mesh.mouth_center_m
+    triangles = np.asarray([[centre, ring[i], ring[(i + 1) % len(ring)]] for i in range(len(ring))])
+    cross = np.cross(triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0])
+    flip = cross[:, 2] < 0
+    triangles[flip, 1], triangles[flip, 2] = triangles[flip, 2].copy(), triangles[flip, 1].copy()
+    cross = np.cross(triangles[:, 1] - triangles[:, 0], triangles[:, 2] - triangles[:, 0])
+    area = np.linalg.norm(cross, axis=1) / 2
+    normals = cross / np.maximum(np.linalg.norm(cross, axis=1)[:, None], 1e-30)
+    positions = triangles.mean(axis=1) + offset_m * normals
+    return ApertureObserver(positions, normals, area, positions[:, :2].copy(), offset_m)
+
+
+def _combined_field_solve(grid: bempp.Grid, neumann_value: complex, frequency_hz: float,
+                          medium: AcousticMedium, tolerance: float, max_iterations: int):
+    """Regularized Burton-Miller equation for the exterior Neumann problem."""
+    k = 2 * math.pi * frequency_hz / medium.sound_speed_m_s
     space = bempp.function_space(grid, "P", 1)
     identity = bempp.operators.boundary.sparse.identity(space, space, space)
-    adjoint = bempp.operators.boundary.helmholtz.adjoint_double_layer(
-        space, space, space, wave_number
-    )
-    operator = -0.5 * identity + adjoint
+    double = bempp.operators.boundary.helmholtz.double_layer(space, space, space, k)
+    adjoint = bempp.operators.boundary.helmholtz.adjoint_double_layer(space, space, space, k)
+    single = bempp.operators.boundary.helmholtz.single_layer(space, space, space, k)
+    hyper = bempp.operators.boundary.helmholtz.hypersingular(space, space, space, k)
+    # W has inverse-length units, so the dimensionless double-layer term must
+    # be scaled by k (not 1/k).  The positive imaginary coupling removes the
+    # real-axis interior resonances of either constituent equation.
+    eta = 1j * max(k, 1e-12)
+    lhs = hyper + eta * (0.5 * identity - double)
 
     @bempp.complex_callable
-    def prescribed_neumann(_x, _n, domain_index, result):
-        result[0] = 1.0 if domain_index == 1 else 0.0
+    def prescribed(_x, _n, domain_index, result):
+        result[0] = neumann_value if domain_index == 1 else 0.0
 
-    rhs = bempp.GridFunction(space, fun=prescribed_neumann)
-    density, info, iterations = bempp.linalg.gmres(
-        operator,
-        rhs,
-        tol=gmres_tolerance,
-        maxiter=gmres_max_iterations,
-        use_strong_form=True,
-        return_iteration_count=True,
-    )
-    if info != 0:
-        raise RuntimeError(
-            f"BEM GMRES failed at {frequency_hz:g} Hz: info={info}, iterations={iterations}"
-        )
+    g = bempp.GridFunction(space, fun=prescribed)
+    rhs = (0.5 * identity + adjoint) * g - eta * single * g
+    if space.global_dof_count <= 2_000:
+        # Small preview systems are more reproducibly solved directly; the
+        # production path remains iterative because LU scales cubically.
+        trace = bempp.linalg.lu(lhs, rhs)
+        iterations = 0
+    else:
+        trace, info, iterations = bempp.linalg.gmres(lhs, rhs, tol=tolerance,
+            maxiter=max_iterations, use_strong_form=True, return_iteration_count=True)
+        if info != 0:
+            raise RuntimeError(f"combined-field GMRES failed at {frequency_hz:g} Hz: info={info}, iterations={iterations}")
+    return space, trace, g, iterations
 
-    cuts: dict[str, np.ndarray] = {}
-    for name, azimuth in (("horizontal", 0.0), ("diagonal", 45.0), ("vertical", 90.0)):
+
+def ideal_aperture_pressure(observer: ApertureObserver, normal_velocity: np.ndarray,
+                            directions: np.ndarray, frequency_hz: float,
+                            medium: AcousticMedium, origin_m: np.ndarray) -> np.ndarray:
+    """Infinite-baffle Rayleigh integral, retaining calibrated complex pressure."""
+    k = 2 * math.pi * frequency_hz / medium.sound_speed_m_s
+    phase = np.exp(-1j * k * (directions.T @ (observer.positions_m - origin_m).T))
+    direct = np.maximum(0.0, directions.T @ observer.normals.T)
+    return 1j * medium.density_kg_m3 * 2 * math.pi * frequency_hz / (2 * math.pi) * (
+        phase * direct @ (normal_velocity * observer.area_weights_m2))
+
+
+def _beamwidth(angles: np.ndarray, pressure: np.ndarray) -> float:
+    level = 20 * np.log10(np.maximum(np.abs(pressure) / max(abs(pressure[0]), 1e-30), 1e-15))
+    indices = np.flatnonzero(level <= -6)
+    if not len(indices):
+        return 180.0
+    i = int(indices[0])
+    if i == 0:
+        return 0.0
+    crossing = np.interp(-6.0, level[i-1:i+1][::-1], angles[i-1:i+1][::-1])
+    return 2 * float(crossing)
+
+
+def aperture_metrics(observer: ApertureObserver, pressure: np.ndarray, velocity: np.ndarray) -> dict[str, float]:
+    weights = observer.area_weights_m2 / observer.area_weights_m2.sum()
+    magnitude = np.abs(pressure)
+    phase = np.unwrap(np.angle(pressure))
+    mean_mag = float(np.sum(weights * magnitude))
+    active = float(np.sum(observer.area_weights_m2[magnitude >= 0.5 * max(float(magnitude.max()), 1e-30)]))
+    power = 0.5 * float(np.sum(observer.area_weights_m2 * np.real(pressure * np.conj(velocity))))
+    return {"mouth_magnitude_cv": float(np.sqrt(np.sum(weights * (magnitude - mean_mag) ** 2)) / max(mean_mag, 1e-30)),
+            "mouth_phase_spread_deg": float(np.degrees(phase.max() - phase.min())),
+            "mouth_active_area_m2": active, "mouth_active_area_fraction": active / float(observer.area_weights_m2.sum()),
+            "mouth_acoustic_power_w": power,
+            "mouth_modal_asymmetry": float(abs(np.sum(weights * pressure * np.sign(observer.projected_xy_m[:, 0]))) /
+                                             max(abs(np.sum(weights * pressure)), 1e-30))}
+
+
+def solve_frequency(grid: bempp.Grid, frequency_hz: float, angles_deg: np.ndarray,
+                    sound_speed_m_s: float, gmres_tolerance: float,
+                    gmres_max_iterations: int, *, acoustic_mesh: AcousticMesh | None = None,
+                    observer: ApertureObserver | None = None,
+                    medium: AcousticMedium | None = None,
+                    source: SourceDefinition | None = None) -> tuple[dict[str, np.ndarray], int, float] | FrequencyResult:
+    """Solve one frequency. Legacy calls receive normalized dB cuts."""
+    medium = medium or AcousticMedium(sound_speed_m_s= sound_speed_m_s)
+    source = source or SourceDefinition()
+    if acoustic_mesh is None:
+        # Legacy unit Neumann loading, now using the resonance-safe formulation.
+        space, trace, g, iterations = _combined_field_solve(grid, 1 + 0j, frequency_hz, medium,
+                                                             gmres_tolerance, gmres_max_iterations)
+        cuts = {}
+        k = 2 * math.pi * frequency_hz / medium.sound_speed_m_s
+        for name, azimuth in CUT_AZIMUTHS.items():
+            directions = receiver_directions(angles_deg, azimuth)
+            far_d = bempp.operators.far_field.helmholtz.double_layer(space, directions, k).evaluate(trace)
+            far_s = bempp.operators.far_field.helmholtz.single_layer(space, directions, k).evaluate(g)
+            pressure = np.asarray(far_d - far_s).reshape(-1)
+            cuts[name] = 20 * np.log10(np.maximum(np.abs(pressure) / max(abs(pressure[0]), 1e-15), 1e-15))
+        return cuts, iterations, float(space.global_dof_count)
+    observer = observer or make_aperture_observer(acoustic_mesh)
+    velocity, neumann = piston_boundary_values(acoustic_mesh, source, frequency_hz, medium)
+    space, trace, g, iterations = _combined_field_solve(grid, neumann, frequency_hz, medium,
+                                                         gmres_tolerance, gmres_max_iterations)
+    k = 2 * math.pi * frequency_hz / medium.sound_speed_m_s
+    points = observer.positions_m.T
+    p = np.asarray((bempp.operators.potential.helmholtz.double_layer(space, points, k).evaluate(trace) -
+                    bempp.operators.potential.helmholtz.single_layer(space, points, k).evaluate(g))).reshape(-1)
+    # Euler's equation, evaluated by a stable one-sided normal pressure difference.
+    epsilon = max(1e-5, observer.offset_m * 0.1)
+    points2 = (observer.positions_m + epsilon * observer.normals).T
+    p2 = np.asarray((bempp.operators.potential.helmholtz.double_layer(space, points2, k).evaluate(trace) -
+                     bempp.operators.potential.helmholtz.single_layer(space, points2, k).evaluate(g))).reshape(-1)
+    vn = -(p2 - p) / epsilon / (1j * 2 * math.pi * frequency_hz * medium.density_kg_m3)
+    full, ideal = {}, {}
+    for name, azimuth in CUT_AZIMUTHS.items():
         directions = receiver_directions(angles_deg, azimuth)
-        single_far = bempp.operators.far_field.helmholtz.single_layer(
-            space, directions, wave_number
-        )
-        pressure = np.asarray(single_far.evaluate(density)).reshape(-1)
-        reference = max(abs(pressure[0]), 1e-15)
-        cuts[name] = 20.0 * np.log10(np.maximum(np.abs(pressure) / reference, 1e-15))
-    return cuts, iterations, float(space.global_dof_count)
+        fd = bempp.operators.far_field.helmholtz.double_layer(space, directions, k).evaluate(trace)
+        fs = bempp.operators.far_field.helmholtz.single_layer(space, directions, k).evaluate(g)
+        full[name] = np.asarray(fd - fs).reshape(-1) * np.exp(1j * k * (directions.T @ acoustic_mesh.mouth_center_m))
+        ideal[name] = ideal_aperture_pressure(observer, vn, directions, frequency_hz, medium,
+                                               acoustic_mesh.mouth_center_m)
+    metrics = aperture_metrics(observer, p, vn)
+    metrics.update({f"{name}_beamwidth_deg": _beamwidth(angles_deg, full[name]) for name in CUT_AZIMUTHS})
+    diffs = np.concatenate([full[n] / max(abs(full[n][0]), 1e-30) - ideal[n] / max(abs(ideal[n][0]), 1e-30)
+                            for n in CUT_AZIMUTHS])
+    metrics["diffraction_penalty_rms"] = float(np.sqrt(np.mean(np.abs(diffs) ** 2)))
+    metrics["source_velocity_m_s"] = float(abs(velocity))
+    return FrequencyResult(frequency_hz, iterations, int(space.global_dof_count), p, vn, full, ideal, metrics)
 
 
-def write_cut_csv(
-    path: Path,
-    angles_deg: np.ndarray,
-    frequencies_hz: np.ndarray,
-    values_db: np.ndarray,
-) -> None:
+def _atomic_npz(path: Path, **arrays: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=path.stem + "-", suffix=".npz", dir=path.parent)
+    os.close(fd)
+    try:
+        np.savez_compressed(temporary, **arrays)
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def _atomic_json(path: Path, value: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temporary = tempfile.mkstemp(prefix=path.stem + "-", suffix=".json", dir=path.parent)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8") as handle:
+            json.dump(_jsonable(value), handle, indent=2, sort_keys=True)
+            handle.write("\n")
+            handle.flush()
+            os.fsync(handle.fileno())
+        os.replace(temporary, path)
+    finally:
+        if os.path.exists(temporary):
+            os.unlink(temporary)
+
+
+def _save_frequency(path: Path, result: FrequencyResult) -> None:
+    arrays: dict[str, Any] = {"frequency_hz": result.frequency_hz,
+        "gmres_iterations": result.gmres_iterations, "dofs": result.dofs,
+        "mouth_pressure": result.mouth_pressure, "mouth_normal_velocity": result.mouth_normal_velocity,
+        "metrics_json": json.dumps(result.metrics, sort_keys=True)}
+    for mode, cuts in (("full", result.full_exterior_pressure), ("ideal", result.ideal_aperture_pressure)):
+        arrays.update({f"{mode}_{name}": values for name, values in cuts.items()})
+    arrays.update({f"difference_{name}": result.full_exterior_pressure[name] - result.ideal_aperture_pressure[name]
+                   for name in CUT_AZIMUTHS})
+    _atomic_npz(path, **arrays)
+
+
+def _load_frequency(path: Path) -> FrequencyResult:
+    with np.load(path, allow_pickle=False) as data:
+        full = {n: data[f"full_{n}"].copy() for n in CUT_AZIMUTHS}
+        ideal = {n: data[f"ideal_{n}"].copy() for n in CUT_AZIMUTHS}
+        return FrequencyResult(float(data["frequency_hz"]), int(data["gmres_iterations"]), int(data["dofs"]),
+            data["mouth_pressure"].copy(), data["mouth_normal_velocity"].copy(), full, ideal,
+            json.loads(str(data["metrics_json"])))
+
+
+def _solve_frequency_worker(payload: tuple[Path, PipelineSettings, float, Path]) -> str:
+    """Isolated frequency worker; Bempp/Numba state is process-local."""
+    yaml_path, settings, frequency, artifact = payload
+    mesh = build_acoustic_mesh(yaml_path, settings.mesh)
+    observer = make_aperture_observer(mesh, settings.observer_offset_m)
+    grid = bempp.Grid(mesh.surface.vertices.T, mesh.surface.faces.T,
+                      domain_indices=mesh.domain_indices)
+    result = solve_frequency(grid, frequency, np.asarray(settings.angles_deg),
+        settings.medium.sound_speed_m_s, settings.gmres_tolerance, settings.gmres_max_iterations,
+        acoustic_mesh=mesh, observer=observer, medium=settings.medium, source=settings.source)
+    assert isinstance(result, FrequencyResult)
+    _save_frequency(artifact, result)
+    return str(artifact)
+
+
+def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path = DEFAULT_OUTPUT_DIR,
+                 resume: bool = True) -> dict[str, Any]:
+    """Callable staged API. Results contain arrays and artifact paths, never only plots."""
+    started = time.monotonic()
+    frequencies = np.asarray(settings.frequencies_hz, dtype=float)
+    if len(frequencies) == 0 or np.any(frequencies <= 0):
+        raise ValueError("at least one positive frequency is required")
+    if abs(float(frequencies.max()) - settings.mesh.maximum_frequency_hz) > 1e-9:
+        raise ValueError("mesh maximum_frequency_hz must equal the sweep's highest frequency")
+    mesh = build_acoustic_mesh(yaml_path, settings.mesh)
+    if settings.memory_limit_gib is not None and mesh.report.estimated_dense_matrix_gib > settings.memory_limit_gib:
+        raise ValueError(f"estimated solve cost {mesh.report.estimated_dense_matrix_gib:.3g} GiB exceeds memory limit")
+    observer = make_aperture_observer(mesh, settings.observer_offset_m)
+    config_hash = hashlib.sha256(yaml_path.read_bytes() + json.dumps(_jsonable(asdict(settings)), sort_keys=True).encode()).hexdigest()
+    run_dir = output_dir / f"{yaml_path.stem}-BEM-{config_hash[:12]}"
+    frequency_dir = run_dir / "frequencies"
+    frequency_dir.mkdir(parents=True, exist_ok=True)
+    _atomic_npz(run_dir / "mesh.npz", vertices=mesh.surface.vertices, faces=mesh.surface.faces,
+                domain_indices=mesh.domain_indices, mouth_ring_m=mesh.mouth_ring_m,
+                mouth_center_m=mesh.mouth_center_m)
+    _atomic_npz(run_dir / "mouth_observer.npz", positions_m=observer.positions_m,
+                normals=observer.normals, area_weights_m2=observer.area_weights_m2,
+                projected_xy_m=observer.projected_xy_m)
+    artifacts = [frequency_dir / f"{frequency:.9f}.npz" for frequency in frequencies]
+    pending = [(float(frequency), artifact) for frequency, artifact in zip(frequencies, artifacts)
+               if not (resume and artifact.exists())]
+    workers = max(1, min(settings.maximum_workers, len(pending) or 1))
+    if settings.memory_limit_gib is not None and mesh.report.estimated_dense_matrix_gib * workers > settings.memory_limit_gib:
+        workers = max(1, int(settings.memory_limit_gib // max(mesh.report.estimated_dense_matrix_gib, 1e-12)))
+    if workers > 1:
+        context = multiprocessing.get_context("spawn")
+        with ProcessPoolExecutor(max_workers=workers, mp_context=context) as executor:
+            futures = [executor.submit(_solve_frequency_worker, (yaml_path, settings, frequency, artifact))
+                       for frequency, artifact in pending]
+            for future in as_completed(futures):
+                future.result()
+    elif pending:
+        grid = bempp.Grid(mesh.surface.vertices.T, mesh.surface.faces.T,
+                          domain_indices=mesh.domain_indices)
+        for frequency, artifact in pending:
+            result = solve_frequency(grid, frequency, np.asarray(settings.angles_deg),
+                settings.medium.sound_speed_m_s, settings.gmres_tolerance, settings.gmres_max_iterations,
+                acoustic_mesh=mesh, observer=observer, medium=settings.medium, source=settings.source)
+            assert isinstance(result, FrequencyResult)
+            _save_frequency(artifact, result)
+    results: list[FrequencyResult] = []
+    for frequency, artifact in zip(frequencies, artifacts):
+        results.append(_load_frequency(artifact))
+    manifest = {"schema_version": 1, "status": "complete", "created_utc": datetime.now(timezone.utc).isoformat(),
+        "input_yaml": str(yaml_path.resolve()), "configuration_hash": config_hash,
+        "normalized_settings": _jsonable(asdict(settings)), "coordinate_references": {
+            "geometry_origin_m": [0, 0, 0], "radiation_origin_m": mesh.mouth_center_m.tolist()},
+        "source": {**_jsonable(asdict(settings.source)), "area_m2": mesh.source_area_m2,
+            "uniform_velocity_m_s": _jsonable(settings.source.volume_velocity_m3_s / mesh.source_area_m2),
+            "boundary_condition": "dp/dn=-i*omega*rho*v_n", "driven_domain": 1, "rigid_domain": 0},
+        "observer": {"kind": "conformal_mouth_aperture", "offset_m": observer.offset_m,
+            "samples": len(observer.positions_m), "alters_boundary": False},
+        "mesh_hash": mesh.content_hash, "mesh_report": asdict(mesh.report),
+        "solver": {"formulation": "regularized_combined_field_exterior_neumann", "library": "bempp-cl",
+            "tolerance": settings.gmres_tolerance, "max_iterations": settings.gmres_max_iterations},
+        "versions": {"python": platform.python_version(), "numpy": np.__version__, "trimesh": trimesh.__version__},
+        "convergence": {"all_solved": True, "mesh_convergence_checked": False},
+        "runtime_seconds": time.monotonic() - started,
+        "artifact_hashes": {"mesh.npz": _sha256_file(run_dir / "mesh.npz"),
+            "mouth_observer.npz": _sha256_file(run_dir / "mouth_observer.npz"),
+            **{str((frequency_dir / f"{f:.9f}.npz").relative_to(run_dir)):
+               _sha256_file(frequency_dir / f"{f:.9f}.npz") for f in frequencies}},
+        "frequency_artifacts": [str((frequency_dir / f"{f:.9f}.npz").relative_to(run_dir)) for f in frequencies]}
+    manifest_path = run_dir / "manifest.json"
+    _atomic_json(manifest_path, manifest)
+    write_summary_csv(run_dir / "metrics.csv", results)
+    angles = np.asarray(settings.angles_deg)
+    for mode, attribute in (("full-exterior", "full_exterior_pressure"),
+                            ("ideal-aperture", "ideal_aperture_pressure")):
+        cuts = {name: np.column_stack([getattr(result, attribute)[name] for result in results])
+                for name in CUT_AZIMUTHS}
+        db = {name: _normalized_db(values) for name, values in cuts.items()}
+        plot_cuts(run_dir / f"{mode}-cuts.png", angles, frequencies, db, -40.0)
+        plot_heatmaps(run_dir / f"{mode}-heatmap.png", angles, frequencies, db, -40.0)
+        for name in CUT_AZIMUTHS:
+            write_cut_csv(run_dir / f"{mode}-{name}.csv", angles, frequencies, db[name])
+    for result in results:
+        plot_mouth_fields(run_dir / f"mouth-{result.frequency_hz:.9f}.png", observer,
+                          result.mouth_pressure, result.mouth_normal_velocity, result.frequency_hz)
+    return {"mesh": mesh, "observer": observer, "frequencies": results,
+            "manifest": manifest, "manifest_path": manifest_path, "run_dir": run_dir}
+
+
+def convergence_metrics(coarse: list[FrequencyResult], fine: list[FrequencyResult],
+                        angles_deg: np.ndarray) -> dict[str, float]:
+    """Compare complex fields and robust lobe measures between two mesh tiers."""
+    if [r.frequency_hz for r in coarse] != [r.frequency_hz for r in fine]:
+        raise ValueError("convergence results must share the same frequency grid")
+    relative_errors, beam_errors, phase_errors = [], [], []
+    for left, right in zip(coarse, fine):
+        for name in CUT_AZIMUTHS:
+            a, b = left.full_exterior_pressure[name], right.full_exterior_pressure[name]
+            scale = max(float(np.linalg.norm(b)), 1e-30)
+            relative_errors.append(float(np.linalg.norm(a - b) / scale))
+            beam_errors.append(abs(_beamwidth(angles_deg, a) - _beamwidth(angles_deg, b)))
+        phase_errors.append(abs(left.metrics["mouth_phase_spread_deg"] - right.metrics["mouth_phase_spread_deg"]))
+    worst = max(relative_errors, default=math.inf)
+    return {"maximum_complex_pressure_relative_error": worst,
+            "maximum_beamwidth_change_deg": max(beam_errors, default=math.inf),
+            "maximum_mouth_phase_spread_change_deg": max(phase_errors, default=math.inf),
+            "convergence_confidence": float(max(0.0, 1.0 - worst))}
+
+
+def candidate_is_acceptable(result: dict[str, Any], *, require_mesh_convergence: bool = True) -> bool:
+    """Hard gate used by candidate/optimizer runners."""
+    manifest = result.get("manifest", {})
+    mesh_report = manifest.get("mesh_report", {})
+    convergence = manifest.get("convergence", {})
+    return bool(manifest.get("status") == "complete" and not mesh_report.get("quality_failures") and
+                convergence.get("all_solved") and
+                (not require_mesh_convergence or convergence.get("mesh_convergence_checked")))
+
+
+def _sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.hexdigest()
+
+
+def write_summary_csv(path: Path, results: Iterable[FrequencyResult]) -> None:
+    results = list(results)
+    keys = sorted({key for result in results for key in result.metrics})
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.DictWriter(handle, fieldnames=["frequency_hz", "gmres_iterations", "dofs", *keys])
+        writer.writeheader()
+        for result in results:
+            writer.writerow({"frequency_hz": result.frequency_hz, "gmres_iterations": result.gmres_iterations,
+                             "dofs": result.dofs, **result.metrics})
+
+
+def write_cut_csv(path: Path, angles_deg: np.ndarray, frequencies_hz: np.ndarray, values: np.ndarray) -> None:
     with path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
-        writer.writerow(("angle_deg", *[float(value) for value in frequencies_hz]))
-        for angle, row in zip(angles_deg, values_db):
-            writer.writerow((float(angle), *[float(value) for value in row]))
+        writer.writerow(("angle_deg", *[float(v) for v in frequencies_hz]))
+        writer.writerows((float(a), *[float(v) for v in row]) for a, row in zip(angles_deg, values))
 
 
-def plot_cuts(
-    path: Path,
-    angles_deg: np.ndarray,
-    frequencies_hz: np.ndarray,
-    cuts: dict[str, np.ndarray],
-    floor_db: float,
-) -> None:
-    figure, axes = plt.subplots(1, 3, figsize=(17.0, 5.8), sharey=True, constrained_layout=True)
-    figure.patch.set_facecolor("white")
-    colors = plt.cm.viridis(np.linspace(0.0, 1.0, len(frequencies_hz)))
-    for axis, name in zip(axes, ("horizontal", "diagonal", "vertical")):
-        for index, frequency_hz in enumerate(frequencies_hz):
-            axis.plot(
-                angles_deg,
-                np.maximum(cuts[name][:, index], floor_db),
-                color=colors[index],
-                label=f"{frequency_hz:g} Hz",
-                linewidth=1.4,
-            )
-        axis.axhline(-6.0, color="black", alpha=0.3, linestyle="--", linewidth=0.8)
-        axis.set_xlim(0.0, 90.0)
-        axis.set_ylim(floor_db, max(3.0, math.ceil(float(np.max(cuts[name])))))
-        axis.grid(True, alpha=0.25)
-        axis.set_xlabel("Off-axis angle (degrees)")
-        axis.set_title(f"{name.capitalize()} plane")
-    axes[0].set_ylabel("Level relative to on-axis (dB)")
-    axes[-1].legend(loc="lower left", fontsize=8)
-    figure.suptitle("HornCAD Coupled 3D Helmholtz BEM — Normalized Far Field")
-    figure.savefig(path, dpi=180, facecolor="white")
-    plt.close(figure)
+def _normalized_db(pressure: np.ndarray) -> np.ndarray:
+    return 20 * np.log10(np.maximum(np.abs(pressure) / np.maximum(np.abs(pressure[0:1]), 1e-30), 1e-15))
 
 
-def plot_heatmaps(
-    path: Path,
-    angles_deg: np.ndarray,
-    frequencies_hz: np.ndarray,
-    cuts: dict[str, np.ndarray],
-    floor_db: float,
-) -> None:
-    """Plot discrete BEM samples without interpolating between frequency columns."""
-    figure, axes = plt.subplots(
-        1, 3, figsize=(17.0, 6.0), sharey=True, constrained_layout=True
-    )
-    figure.patch.set_facecolor("white")
-    peak_db = max(float(np.max(values)) for values in cuts.values())
-    ceiling_db = max(0.0, math.ceil(peak_db))
+def plot_mouth_fields(path: Path, observer: ApertureObserver, pressure: np.ndarray,
+                      velocity: np.ndarray, frequency_hz: float) -> None:
+    """Planar mouth-view projection; the plotted plane is not a boundary."""
+    impedance = pressure / np.where(np.abs(velocity) > 1e-30, velocity, np.nan + 0j)
+    fields = ((np.abs(pressure), "|p| (Pa)"), (np.degrees(np.angle(pressure)), "phase(p) (deg)"),
+              (np.abs(velocity), "|vₙ| (m/s)"), (np.degrees(np.angle(velocity)), "phase(vₙ) (deg)"),
+              (np.real(impedance), "Re(p/vₙ) (Pa·s/m)"))
+    figure, axes = plt.subplots(1, 5, figsize=(19, 4), constrained_layout=True)
+    xy = observer.projected_xy_m * 1e3
+    sizes = 30 + 400 * observer.area_weights_m2 / max(float(observer.area_weights_m2.max()), 1e-30)
+    for axis, (values, label) in zip(axes, fields):
+        image = axis.scatter(xy[:, 0], xy[:, 1], c=values, s=sizes, cmap="viridis")
+        axis.set_aspect("equal"); axis.set_xlabel("x (mm)"); axis.set_title(label)
+        figure.colorbar(image, ax=axis, shrink=.8)
+    axes[0].set_ylabel("y (mm)")
+    figure.suptitle(f"Conformal mouth fields — {frequency_hz:g} Hz")
+    figure.savefig(path, dpi=160); plt.close(figure)
+
+
+def plot_cuts(path: Path, angles_deg: np.ndarray, frequencies_hz: np.ndarray,
+              cuts: dict[str, np.ndarray], floor_db: float) -> None:
+    figure, axes = plt.subplots(1, 3, figsize=(17, 5.8), sharey=True, constrained_layout=True)
+    colors = plt.cm.viridis(np.linspace(0, 1, len(frequencies_hz)))
+    for axis, name in zip(axes, CUT_AZIMUTHS):
+        for i, frequency in enumerate(frequencies_hz):
+            axis.plot(angles_deg, np.maximum(cuts[name][:, i], floor_db), color=colors[i], label=f"{frequency:g} Hz")
+        axis.axhline(-6, color="black", alpha=.3, linestyle="--"); axis.grid(True, alpha=.25)
+        axis.set(xlim=(0, 90), ylim=(floor_db, 3), xlabel="Off-axis angle (degrees)", title=f"{name.capitalize()} plane")
+    axes[0].set_ylabel("Level relative to on-axis (dB)"); axes[-1].legend(fontsize=8)
+    figure.savefig(path, dpi=180); plt.close(figure)
+
+
+def plot_heatmaps(path: Path, angles_deg: np.ndarray, frequencies_hz: np.ndarray,
+                  cuts: dict[str, np.ndarray], floor_db: float) -> None:
+    figure, axes = plt.subplots(1, 3, figsize=(17, 6), sharey=True, constrained_layout=True)
     image = None
-    for axis, name in zip(axes, ("horizontal", "diagonal", "vertical")):
-        image = axis.pcolormesh(
-            frequencies_hz,
-            angles_deg,
-            np.maximum(cuts[name], floor_db),
-            shading="nearest",
-            cmap="turbo",
-            vmin=floor_db,
-            vmax=ceiling_db,
-        )
-        minus_six = axis.contour(
-            frequencies_hz,
-            angles_deg,
-            cuts[name],
-            levels=[-6.0],
-            colors="black",
-            linewidths=1.4,
-        )
-        axis.clabel(minus_six, fmt={-6.0: "−6 dB"}, fontsize=8, inline=True)
-        axis.set_xscale("log")
-        axis.set_xlim(float(frequencies_hz[0]), float(frequencies_hz[-1]))
-        ticks = [500.0, 700.0, 1000.0, 2000.0, 3000.0, 5000.0]
-        visible_ticks = [
-            tick for tick in ticks if frequencies_hz[0] <= tick <= frequencies_hz[-1]
-        ]
-        axis.xaxis.set_major_locator(FixedLocator(visible_ticks))
-        axis.xaxis.set_major_formatter(
-            FixedFormatter(
-                [
-                    f"{tick / 1000:g}k" if tick >= 1000.0 else f"{tick:g}"
-                    for tick in visible_ticks
-                ]
-            )
-        )
-        axis.xaxis.set_minor_formatter(NullFormatter())
-        axis.xaxis.get_offset_text().set_visible(False)
-        axis.set_xlabel("Frequency (Hz, logarithmic)")
-        axis.set_title(f"{name.capitalize()} plane")
-    axes[0].set_ylabel("Off-axis angle (degrees)")
-    figure.suptitle(
-        "HornCAD Coupled 3D Helmholtz BEM — Discrete Normalized Directivity"
-    )
-    colorbar = figure.colorbar(image, ax=axes, pad=0.02)
-    colorbar.set_label("Level relative to on-axis (dB)")
-    figure.savefig(path, dpi=180, facecolor="white")
-    plt.close(figure)
+    for axis, name in zip(axes, CUT_AZIMUTHS):
+        image = axis.pcolormesh(frequencies_hz, angles_deg, np.maximum(cuts[name], floor_db), shading="nearest", cmap="turbo", vmin=floor_db, vmax=0)
+        contour = axis.contour(frequencies_hz, angles_deg, cuts[name], levels=[-6], colors="black")
+        axis.clabel(contour, fmt={-6: "−6 dB"}); axis.set_xscale("log"); axis.set_title(f"{name.capitalize()} plane")
+    axes[0].set_ylabel("Off-axis angle (degrees)"); figure.colorbar(image, ax=axes, label="Level relative to on-axis (dB)")
+    figure.savefig(path, dpi=180); plt.close(figure)
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("yaml", type=Path)
-    parser.add_argument("--start-hz", type=float, default=500.0)
-    parser.add_argument("--stop-hz", type=float, default=5_000.0)
-    parser.add_argument("--frequencies", type=int, default=8)
-    parser.add_argument("--angles", type=int, default=91)
-    parser.add_argument("--floor-db", type=float, default=-40.0)
-    parser.add_argument("--side-samples", type=int, default=16)
-    parser.add_argument("--stations", type=int, default=18)
-    parser.add_argument("--sound-speed", type=float, default=Medium.sound_speed_m_s)
-    parser.add_argument("--gmres-tolerance", type=float, default=1e-5)
-    parser.add_argument("--gmres-max-iterations", type=int, default=300)
+    parser.add_argument("yaml", type=Path); parser.add_argument("--start-hz", type=float, default=500)
+    parser.add_argument("--stop-hz", type=float, default=5_000); parser.add_argument("--frequencies", type=int, default=8)
+    parser.add_argument("--angles", type=int, default=91); parser.add_argument("--floor-db", type=float, default=-40)
+    parser.add_argument("--mesh-tier", choices=MESH_TIERS, default="production")
+    parser.add_argument("--elements-per-wavelength", type=float); parser.add_argument("--maximum-frequency-hz", type=float)
+    parser.add_argument("--sound-speed", type=float, default=343.21); parser.add_argument("--density", type=float, default=1.2041)
+    parser.add_argument("--gmres-tolerance", type=float, default=1e-5); parser.add_argument("--gmres-max-iterations", type=int, default=300)
+    parser.add_argument("--observer-offset-mm", type=float, default=1); parser.add_argument("--no-resume", action="store_true")
+    parser.add_argument("--maximum-workers", type=int, default=1)
+    parser.add_argument("--memory-limit-gib", type=float)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def main() -> None:
     args = parse_args()
-    frequencies_hz = frequency_grid(
-        args.start_hz, args.stop_hz, args.frequencies, "log"
-    )
-    angles_deg = np.linspace(0.0, 90.0, args.angles)
-    body, domain_indices = acoustic_body_mesh(
-        args.yaml, args.side_samples, args.stations
-    )
-    grid = bempp.Grid(
-        body.vertices.T,
-        body.faces.T,
-        domain_indices=domain_indices,
-    )
-    cuts = {
-        name: np.empty((len(angles_deg), len(frequencies_hz)), dtype=float)
-        for name in ("horizontal", "diagonal", "vertical")
-    }
-    for index, frequency_hz in enumerate(frequencies_hz):
-        result, iterations, dofs = solve_frequency(
-            grid,
-            float(frequency_hz),
-            angles_deg,
-            args.sound_speed,
-            args.gmres_tolerance,
-            args.gmres_max_iterations,
-        )
-        for name in cuts:
-            cuts[name][:, index] = result[name]
-        print(
-            f"frequency_hz={frequency_hz:.6g} dofs={int(dofs)} "
-            f"gmres_iterations={iterations}",
-            flush=True,
-        )
-
-    args.output_dir.mkdir(parents=True, exist_ok=True)
-    stem = f"{args.yaml.stem}-HelmholtzBEM3D-Directivity"
-    plot_path = args.output_dir / f"{stem}.png"
-    heatmap_path = args.output_dir / f"{stem}-Heatmap.png"
-    plot_cuts(plot_path, angles_deg, frequencies_hz, cuts, args.floor_db)
-    plot_heatmaps(
-        heatmap_path, angles_deg, frequencies_hz, cuts, args.floor_db
-    )
-    print(plot_path)
-    print(heatmap_path)
-    for name in cuts:
-        csv_path = args.output_dir / f"{stem}-{name.capitalize()}.csv"
-        write_cut_csv(csv_path, angles_deg, frequencies_hz, cuts[name])
-        print(csv_path)
+    frequencies = frequency_grid(args.start_hz, args.stop_hz, args.frequencies, "log")
+    maximum = args.maximum_frequency_hz or float(frequencies.max())
+    if abs(maximum - float(frequencies.max())) > 1e-9:
+        raise SystemExit("--maximum-frequency-hz must equal the highest requested frequency")
+    epw = args.elements_per_wavelength or MESH_TIERS[args.mesh_tier]
+    settings = PipelineSettings(tuple(frequencies), tuple(np.linspace(0, 90, args.angles)),
+        MeshSettings(maximum, epw), AcousticMedium(args.density, args.sound_speed),
+        observer_offset_m=args.observer_offset_mm * 1e-3,
+        gmres_tolerance=args.gmres_tolerance, gmres_max_iterations=args.gmres_max_iterations,
+        maximum_workers=args.maximum_workers, memory_limit_gib=args.memory_limit_gib)
+    result = run_pipeline(args.yaml, settings, args.output_dir, not args.no_resume)
+    print(result["manifest_path"])
 
 
 if __name__ == "__main__":
