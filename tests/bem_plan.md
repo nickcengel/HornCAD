@@ -102,6 +102,15 @@ problem, not against an unrelated generic Helmholtz benchmark.
 - Next implementation step: generate a tetrahedral air-volume mesh that
   preserves the three boundary attributes, load it into parallel MFEM, assemble
   the complex interior Helmholtz system, and add the aperture block.
+- Checkpoint `fabeda6` adds tetrahedralization through Gmsh with physical
+  attributes 1=wall, 2=throat, 3=mouth, and 4=air. Nine tests pass. A native
+  MFEM probe loaded and partitioned the generated mesh over four MPI ranks while
+  retaining all attributes.
+- Do not trust Gmsh's requested `MeshSizeMax` alone. A 30 mm request applied to
+  a coarse closure produced a measured 65.1 mm maximum tetrahedron edge because
+  the input surface constrained the volume mesh. Production meshing must first
+  seed/refine the closed surface below `c/(elements_per_wavelength*f_max)`, then
+  reject the tetrahedral result if any measured edge exceeds the same limit.
 
 Primary references used for the solver decision:
 
