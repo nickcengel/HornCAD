@@ -17,7 +17,7 @@ class InteriorAcousticDomainTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         yaml_path = Path(__file__).parents[1] / "test_project" / "HornCAD-Body-400x260x250.YAML"
-        cls.domain = build_interior_acoustic_domain(yaml_path, 16, 12)
+        cls.domain = build_interior_acoustic_domain(yaml_path, 16, 24)
 
     def test_closure_is_conforming_watertight_and_labeled(self) -> None:
         domain = self.domain
@@ -48,15 +48,28 @@ class InteriorAcousticDomainTests(unittest.TestCase):
         import meshio
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "interior.msh"
-            report = write_gmsh_volume_mesh(self.domain, path, 0.05)
+            report = write_gmsh_volume_mesh(self.domain, path, 0.031)
             mesh = meshio.read(path)
         physical = np.concatenate(mesh.cell_data["gmsh:physical"])
         self.assertEqual(set(np.unique(physical)), {1, 2, 3, 4})
         self.assertGreater(report.nodes, 0)
         self.assertGreater(report.tetrahedra, 0)
+        self.assertLessEqual(report.maximum_tetrahedron_edge_m, 0.031 * 1.000001)
         self.assertEqual(set(report.boundary_surface_patches),
                          {RIGID_WALL, THROAT_PISTON, MOUTH_APERTURE})
         self.assertLess(report.maximum_label_match_error_m, 1e-6)
+        triangle_blocks = [block.data for block in mesh.cells if block.type == "triangle"]
+        triangle_tags = [tags for block, tags in zip(mesh.cells, mesh.cell_data["gmsh:physical"])
+                         if block.type == "triangle"]
+        triangles = np.vstack(triangle_blocks)
+        tags = np.concatenate(triangle_tags)
+        points = mesh.points[triangles]
+        areas = 0.5 * np.linalg.norm(np.cross(points[:, 1] - points[:, 0],
+                                              points[:, 2] - points[:, 0]), axis=1)
+        self.assertAlmostEqual(float(areas[tags == 2].sum()), self.domain.throat_area_m2,
+                               delta=self.domain.throat_area_m2 * 0.15)
+        self.assertAlmostEqual(float(areas[tags == 3].sum()), self.domain.mouth_area_m2,
+                               delta=self.domain.mouth_area_m2 * 0.02)
 
 
 if __name__ == "__main__":

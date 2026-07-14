@@ -15,6 +15,7 @@ import tempfile
 
 import numpy as np
 import trimesh
+from scipy.spatial import Delaunay
 
 try:
     from . import export_horncad as geometry
@@ -105,11 +106,11 @@ def build_interior_acoustic_domain(yaml_path: Path, side_samples: int = 32,
     mouth_center = throat_center + 1
     vertices = np.vstack((vertices, vertices[throat_ring].mean(axis=0),
                           vertices[mouth_ring].mean(axis=0)))
-    for j in range(ring_size):
-        k = (j + 1) % ring_size
-        faces.append((throat_center, int(throat_ring[k]), int(throat_ring[j])))
+    for triangle in Delaunay(vertices[throat_ring, :2]).simplices:
+        faces.append(tuple(int(throat_ring[index]) for index in triangle))
         domains.append(THROAT_PISTON)
-        faces.append((mouth_center, int(mouth_ring[j]), int(mouth_ring[k])))
+    for triangle in Delaunay(vertices[mouth_ring, :2]).simplices:
+        faces.append(tuple(int(mouth_ring[index]) for index in triangle))
         domains.append(MOUTH_APERTURE)
 
     mesh = trimesh.Trimesh(vertices=vertices, faces=np.asarray(faces), process=False)
@@ -175,8 +176,10 @@ def write_gmsh_volume_mesh(domain: InteriorAcousticDomain, path: Path,
             gmsh.model.setPhysicalName(2, physical, names[label])
         physical_volume = gmsh.model.addPhysicalGroup(3, [volume], 4)
         gmsh.model.setPhysicalName(3, physical_volume, "air")
-        gmsh.option.setNumber("Mesh.MeshSizeMax", maximum_edge_m)
-        gmsh.option.setNumber("Mesh.MeshSizeMin", maximum_edge_m * 0.25)
+        # Gmsh's characteristic size is not a longest-edge guarantee. Use a
+        # conservative conversion, then enforce the public contract below.
+        gmsh.option.setNumber("Mesh.MeshSizeMax", maximum_edge_m / 2.5)
+        gmsh.option.setNumber("Mesh.MeshSizeMin", maximum_edge_m / 8.0)
         gmsh.option.setNumber("Mesh.MshFileVersion", 2.2)
         gmsh.model.mesh.generate(3)
         gmsh.write(str(path))
@@ -196,6 +199,10 @@ def write_gmsh_volume_mesh(domain: InteriorAcousticDomain, path: Path,
             edges = points[:, None, :] - points[None, :, :]
             maximum_actual_edge = max(maximum_actual_edge,
                                       float(np.linalg.norm(edges, axis=2).max()))
+        if maximum_actual_edge > maximum_edge_m + maximum_edge_m * 1e-6:
+            raise ValueError(
+                f"tetrahedral mesh edge {maximum_actual_edge:.6g} m exceeds "
+                f"requested limit {maximum_edge_m:.6g} m")
         return VolumeMeshReport(len(node_tags), len(tetrahedra), maximum_actual_edge,
                                 patches, maximum_match_error)
     finally:
