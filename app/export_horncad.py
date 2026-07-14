@@ -34,11 +34,11 @@ PARAMS = {
     "mount_flange_thickness": 12.0,
     "throat_start_wall": 6.0,
     "minimum_wall": 6.0,
-    "screw_hole_count": 0,
+    "screw_hole_count": 3,
     "screw_hole_diameter": 5.0,
     "screw_pattern_diameter": 110.0,
     "mount_fillet": 0.0,
-    "stl_export_mode": "acoustic_surface",
+    "stl_export_mode": "body",
     "h_modifier_enabled": False,
     "v_modifier_enabled": False,
     "section_shape_1": 0.72,
@@ -962,12 +962,16 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
+def normalized_export_mode(mode: object) -> str:
+    return "surface" if mode in ("surface", "acoustic_surface") else "body"
+
+
 def main() -> None:
     args = parse_args()
     if args.yaml is not None:
         apply_widget_yaml(args.yaml)
     if args.mode is not None:
-        PARAMS["stl_export_mode"] = "acoustic_surface" if args.mode == "surface" else args.mode
+        PARAMS["stl_export_mode"] = normalized_export_mode(args.mode)
 
     h_profile = profile("h")
     v_profile = profile("v")
@@ -989,18 +993,19 @@ def main() -> None:
         tau = profile_z / max(length, 1e-9)
         rings.append(ring_at(tau, h_profile(profile_z), v_profile(profile_z), mouth_h, mouth_v))
 
-    mouth_index = len(rings) - 1
-    if PARAMS["mouth_rear_offset"] > 0.0:
-        rings.append(mouth_rear_ring(rings, mouth_h, mouth_v))
-
-    export_mode = PARAMS.get("stl_export_mode", "acoustic_surface")
-    if export_mode == "acoustic_surface":
+    export_mode = normalized_export_mode(PARAMS.get("stl_export_mode", "body"))
+    if export_mode == "surface":
+        mouth_index = len(rings) - 1
         vertices, faces = build_acoustic_surface_mesh(rings, mouth_index, mouth_h, mouth_v)
     else:
         export_mode = "body"
-        vertices, faces = build_body_mesh(rings, mouth_index, mouth_h, mouth_v)
+        body_rings = list(rings)
+        mouth_index = len(body_rings) - 1
+        if PARAMS["mouth_rear_offset"] > 0.0:
+            body_rings.append(mouth_rear_ring(body_rings, mouth_h, mouth_v))
+        vertices, faces = build_body_mesh(body_rings, mouth_index, mouth_h, mouth_v)
 
-    mode_label = "Surface" if export_mode == "acoustic_surface" else "Body"
+    mode_label = "Surface" if export_mode == "surface" else "Body"
     output = args.output_dir / (
         f"HornCAD-{mode_label}-{round(PARAMS['mouth_width'])}x"
         f"{round(PARAMS['mouth_height'])}x{round(PARAMS['length'])}.STL"
@@ -1011,7 +1016,8 @@ def main() -> None:
     mesh.export(output)
     print(output)
     print(f"export_mode={export_mode}")
-    print(f"inner_rings={len(rings)} vertices_per_ring={len(rings[0])} vertices={len(mesh.vertices)} triangles={len(mesh.faces)}")
+    export_ring_count = len(rings) if export_mode == "surface" else len(body_rings)
+    print(f"inner_rings={export_ring_count} vertices_per_ring={len(rings[0])} vertices={len(mesh.vertices)} triangles={len(mesh.faces)}")
     print(f"watertight={mesh.is_watertight} winding_consistent={mesh.is_winding_consistent} components={len(mesh.split(only_watertight=False))}")
 
 

@@ -359,8 +359,8 @@
       <label>
         YAML export mode
         <select data-control="stlExportMode">
-          <option value="body">Body</option>
-          <option value="acoustic_surface" selected>Acoustic surface</option>
+          <option value="body" selected>Body</option>
+          <option value="surface">Acoustic surface</option>
         </select>
       </label>
       <div class="action-row">
@@ -444,8 +444,8 @@
       </label>
       <label>
         Screw count
-        <input data-control="screwHoleCount" type="number" min="0" max="8" step="1" value="0">
-        <input data-control="screwHoleCount" type="range" min="0" max="8" step="1" value="0">
+        <input data-control="screwHoleCount" type="number" min="0" max="8" step="1" value="3">
+        <input data-control="screwHoleCount" type="range" min="0" max="8" step="1" value="3">
       </label>
       <label>
         Screw diameter mm
@@ -939,7 +939,7 @@
       screwHoleDiameter: value("screwHoleDiameter"),
       screwPatternDiameter: value("screwPatternDiameter"),
       mountFillet: value("mountFillet"),
-      stlExportMode: value("stlExportMode") || "acoustic_surface",
+      stlExportMode: value("stlExportMode") || "body",
       hModifierEnabled: hModifierEnabledInput.checked,
       vModifierEnabled: vModifierEnabledInput.checked,
       solidOpacity: value("solidOpacity"),
@@ -2535,7 +2535,7 @@
     const length = Math.round(p.length);
     const width = Math.round(p.mouthWidth);
     const height = Math.round(p.mouthHeight);
-    const mode = p.stlExportMode === "acoustic_surface" ? "Surface" : "Body";
+    const mode = p.stlExportMode === "surface" ? "Surface" : "Body";
     return `HornCAD-${mode}-${width}x${height}x${length}`;
   }
 

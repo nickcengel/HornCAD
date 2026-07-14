@@ -10,7 +10,7 @@
 
 ## Browser Output
 
-The browser always renders the open acoustic surface. The Body/Acoustic surface option controls the YAML export mode only; STL generation happens from the command line.
+The browser always renders the open acoustic surface. The Body/Acoustic surface option controls the YAML export mode only; STL generation happens from the command line. YAML writes `stl_export_mode` as `body` or `surface`.
 
 Browser YAML exports are named:
 

@@ -20,11 +20,11 @@ widget_config:
     mount_flange_thickness: 12
     throat_start_wall_thickness: 6
     minimum_wall_thickness: 6
-    screw_hole_count: 0
+    screw_hole_count: 3
     screw_hole_diameter: 5
     screw_pattern_diameter: 110
     mount_fillet: 0
-    stl_export_mode: acoustic_surface
+    stl_export_mode: body
   horizontal_basis:
     coverage_deg: 45
     k: 10
