@@ -9,4 +9,5 @@ description = "Browser-based horn and waveguide geometry tool."
 requires-python = ">=3.13,<3.14"
 dependencies = [
     "trimesh>=4.0",
+    "PyYAML>=6.0",
 ]

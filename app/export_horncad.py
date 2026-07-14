@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Export a HornCAD acoustic surface or printable body mesh."""
 
-from __future__ import annotations
-
+import argparse
 import math
 from pathlib import Path
 
 import trimesh
+import yaml
 
 
 OUTPUT_DIR = Path(__file__).resolve().parent / "output"
@@ -59,6 +59,95 @@ PARAMS = {
         {"x": 1.0, "y": 0.0, "angle": 0.0, "tension": 0.35},
     ],
 }
+
+
+def spline_from_yaml(points: list[dict[str, float]], y_key: str = "y") -> list[dict[str, float]]:
+    return [
+        {
+            "x": float(point.get("x", 0.0)),
+            "y": float(point.get(y_key, point.get("y", 0.0))),
+            "angle": math.radians(float(point.get("angle_deg", 0.0))),
+            "tension": float(point.get("tension", 0.35)),
+        }
+        for point in points
+    ]
+
+
+def apply_widget_yaml(path: Path) -> None:
+    global Z_STATIONS, SIDE_SAMPLES
+
+    with path.open("r", encoding="utf-8") as handle:
+        data = yaml.safe_load(handle)
+    if not isinstance(data, dict) or not isinstance(data.get("widget_config"), dict):
+        raise ValueError(f"{path} does not look like a HornCAD widget YAML file")
+
+    config = data["widget_config"]
+    global_config = config.get("global", {})
+    body_config = config.get("body", {})
+    h_basis = config.get("horizontal_basis", {})
+    v_basis = config.get("vertical_basis", {})
+    section_config = config.get("section_modifier", {})
+    export_config = config.get("export", {})
+
+    mapping = {
+        "length": (global_config, "length"),
+        "r0": (global_config, "throat_radius"),
+        "throat_angle": (global_config, "throat_angle_deg"),
+        "throat_extension": (global_config, "conical_extension_length"),
+        "mouth_width": (global_config, "mouth_width"),
+        "mouth_height": (global_config, "mouth_height"),
+        "mouth_sag": (global_config, "mouth_sag"),
+        "mouth_sag_h_enabled": (global_config, "mouth_sag_h_enabled"),
+        "mouth_sag_v_enabled": (global_config, "mouth_sag_v_enabled"),
+        "mouth_rear_offset": (body_config, "mouth_rear_offset"),
+        "mount_diameter": (body_config, "mount_diameter"),
+        "mount_flange_thickness": (body_config, "mount_flange_thickness"),
+        "throat_start_wall": (body_config, "throat_start_wall_thickness"),
+        "minimum_wall": (body_config, "minimum_wall_thickness"),
+        "stl_export_mode": (body_config, "stl_export_mode"),
+        "h_coverage": (h_basis, "coverage_deg"),
+        "h_k": (h_basis, "k"),
+        "h_n": (h_basis, "n"),
+        "v_coverage": (v_basis, "coverage_deg"),
+        "v_k": (v_basis, "k"),
+        "v_n": (v_basis, "n"),
+        "section_shape_1": (section_config, "mouth_squareness"),
+    }
+
+    for param_name, (source, yaml_name) in mapping.items():
+        if yaml_name in source:
+            PARAMS[param_name] = source[yaml_name]
+
+    # Older YAML exports wrote body fields in the global section.
+    legacy_body_mapping = {
+        "mouth_rear_offset": "mouth_rear_offset",
+        "mount_diameter": "mount_diameter",
+        "mount_flange_thickness": "mount_flange_thickness",
+        "throat_start_wall": "throat_start_wall_thickness",
+        "minimum_wall": "minimum_wall_thickness",
+        "stl_export_mode": "stl_export_mode",
+    }
+    for param_name, yaml_name in legacy_body_mapping.items():
+        if yaml_name in body_config:
+            continue
+        if yaml_name in global_config:
+            PARAMS[param_name] = global_config[yaml_name]
+
+    if "squareness_morph_spline" in section_config:
+        PARAMS["squareness_morph_spline"] = spline_from_yaml(section_config["squareness_morph_spline"])
+
+    for axis, yaml_name in (("h", "horizontal_modifier"), ("v", "vertical_modifier")):
+        modifier = section_config.get(yaml_name, {})
+        PARAMS[f"{axis}_modifier_enabled"] = bool(modifier.get("enabled", PARAMS[f"{axis}_modifier_enabled"]))
+        if "profile_delta_spline" in modifier:
+            PARAMS[f"{axis}_modifier_profile_spline"] = spline_from_yaml(modifier["profile_delta_spline"], "y_mm")
+        if "thickness_spline" in modifier:
+            PARAMS[f"{axis}_modifier_thickness_spline"] = spline_from_yaml(modifier["thickness_spline"])
+
+    if "stl_z_stations" in export_config:
+        Z_STATIONS = max(8, round(float(export_config["stl_z_stations"])))
+    if "stl_side_samples" in export_config:
+        SIDE_SAMPLES = max(96, round(float(export_config["stl_side_samples"])))
 
 
 def osse_base_radius(z: float, length: float, r0: float, coverage: float, k: float, throat_angle: float = 0.0) -> float:
@@ -837,7 +926,37 @@ def build_acoustic_surface_mesh(
     return vertices, faces
 
 
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Export a HornCAD STL from defaults or from a widget YAML file."
+    )
+    parser.add_argument(
+        "yaml",
+        nargs="?",
+        type=Path,
+        help="HornCAD YAML exported from the browser app.",
+    )
+    parser.add_argument(
+        "--mode",
+        choices=("acoustic_surface", "surface", "body"),
+        help="Override the STL export mode from YAML/defaults.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=OUTPUT_DIR,
+        help=f"Directory for the generated STL. Defaults to {OUTPUT_DIR}.",
+    )
+    return parser.parse_args()
+
+
 def main() -> None:
+    args = parse_args()
+    if args.yaml is not None:
+        apply_widget_yaml(args.yaml)
+    if args.mode is not None:
+        PARAMS["stl_export_mode"] = "acoustic_surface" if args.mode == "surface" else args.mode
+
     h_profile = profile("h")
     v_profile = profile("v")
     length = PARAMS["length"]
@@ -870,7 +989,7 @@ def main() -> None:
         vertices, faces = build_body_mesh(rings, mouth_index, mouth_h, mouth_v)
 
     mode_label = "Surface" if export_mode == "acoustic_surface" else "Body"
-    output = OUTPUT_DIR / (
+    output = args.output_dir / (
         f"HornCAD-{mode_label}-{round(PARAMS['mouth_width'])}x"
         f"{round(PARAMS['mouth_height'])}x{round(PARAMS['length'])}.STL"
     )

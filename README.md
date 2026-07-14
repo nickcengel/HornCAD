@@ -22,3 +22,9 @@ Kept live documentation:
 - `docs/Research/`
 
 For app-specific notes, see `app/README.md`.
+
+To regenerate an STL from a YAML file exported by the app:
+
+```bash
+python app/export_horncad.py path/to/config.YAML
+```

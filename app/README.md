@@ -22,12 +22,30 @@ HornCAD-Surface-<WxHxL>.YAML
 HornCAD-Body-<WxHxL>.YAML
 ```
 
-## Python Reference Export
+## Command-Line STL Export
 
-The browser is the primary app. Use the Python exporter only when you need a script-generated reference STL:
+The browser is the primary app. Use the Python exporter when you want to regenerate an STL from a YAML file exported by the app:
+
+```bash
+python app/export_horncad.py path/to/HornCAD-Surface-400x260x250.YAML
+```
+
+The exporter reads the YAML settings, writes an STL to `app/output/`, and names it with the same convention as the browser:
+
+```text
+HornCAD-<Surface|Body>-<WxHxL>.STL
+```
+
+Useful options:
+
+```bash
+python app/export_horncad.py path/to/config.YAML --mode body
+python app/export_horncad.py path/to/config.YAML --mode surface
+python app/export_horncad.py path/to/config.YAML --output-dir exports/
+```
+
+Running without a YAML file exports the built-in defaults:
 
 ```bash
 python app/export_horncad.py
 ```
-
-The exporter writes to `app/output/`.
