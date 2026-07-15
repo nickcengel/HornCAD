@@ -38,3 +38,10 @@ To run the one-dimensional Webster acoustic screening model:
 ```bash
 python app/webster_1d.py path/to/config.YAML
 ```
+
+To generate the complete reduced 3D FEM review directly from YAML:
+
+```bash
+python app/run_fem_suite.py path/to/config.YAML \
+  --output-dir analysis/my-study --title "My horn"
+```

@@ -159,6 +159,55 @@ driven throat disk, and a computational mouth aperture. `aperture_radiation.py`
 implements the nonlocal infinite-baffle Rayleigh operator, and
 `interior_fem.py` provides the serial reference coupled solve.
 
+### Complete FEM suite from YAML
+
+Run mesh generation, a resumable parallel frequency sweep, and all standard
+review plots with one command:
+
+```bash
+python app/run_fem_suite.py path/to/HornCAD-Body-400x280x300.YAML \
+  --output-dir analysis/my-study --title "400 × 280 study"
+```
+
+Defaults are the accepted study settings: quadrant symmetry, eight elements
+per wavelength at 5 kHz, 500 Hz–5 kHz, 12 points per octave, 20 TetWild
+threads, and up to 10 concurrent frequency solves. The output directory
+contains:
+
+```text
+interior_quadrant.msh
+mesh_report.json
+run_settings.json
+fields/
+figures/coverage_heatmaps.png
+figures/throat_impedance_magnitude.png
+figures/solver_performance.png
+metrics.csv
+responses.npz
+```
+
+The YAML hash and numerical settings in `run_settings.json` prevent accidental
+reuse of a mesh generated for another design or resolution. Re-running the
+same command resumes completed frequencies. Use a different output directory
+for changed settings; `--force-remesh` deliberately deletes that directory's
+existing raw fields and rebuilds the mesh.
+
+Useful controls:
+
+```bash
+python app/run_fem_suite.py config.YAML --output-dir analysis/run \
+  --start-hz 500 --stop-hz 5000 --points-per-octave 12 \
+  --elements-per-wavelength 8 --workers 10 --mesh-threads 20
+python app/run_fem_suite.py config.YAML --output-dir analysis/run \
+  --binary /path/to/horncad_mfem_interior
+```
+
+The current serial UMFPACK pressure-block backend is validated only through
+5 kHz at this resolution. The CLI rejects a higher stop frequency unless
+`--allow-above-validated-limit` is supplied for deliberate backend experiments;
+that override does not make the result validated or guarantee that the sparse
+factorization will fit in memory.
+
 The native MFEM cross-check is built separately:
 
 ```bash
