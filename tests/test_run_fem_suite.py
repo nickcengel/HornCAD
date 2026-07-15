@@ -38,10 +38,11 @@ class RunFEMSuiteTests(unittest.TestCase):
             args = Namespace(
                 yaml=yaml_path, points_per_octave=12.0,
                 elements_per_wavelength=8.0, side_samples=32,
-                axial_stations=44, tetwild_edge_factor=0.46)
+                axial_stations=44, tetwild_edge_factor=0.46, mpi_ranks=4)
             frequencies = frequency_grid(500.0, 5_000.0, 12.0)
             settings = run_settings(args, frequencies, binary)
             self.assertEqual(settings["frequency_count"], 41)
+            self.assertEqual(settings["solver_mpi_ranks"], 4)
             self.assertAlmostEqual(settings["maximum_edge_m"], 0.00858025)
             self.assertEqual(len(settings["yaml_sha256"]), 64)
             self.assertEqual(len(settings["solver_binary_sha256"]), 64)

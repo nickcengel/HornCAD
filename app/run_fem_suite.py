@@ -62,6 +62,7 @@ def run_settings(args: argparse.Namespace, frequencies: np.ndarray,
         "yaml_sha256": yaml_sha256(args.yaml),
         "solver_binary_path": str(binary.resolve()),
         "solver_binary_sha256": yaml_sha256(binary),
+        "solver_mpi_ranks": args.mpi_ranks,
         "frequency_start_hz": float(frequencies[0]),
         "frequency_stop_hz": float(frequencies[-1]),
         "frequency_count": len(frequencies),
@@ -116,7 +117,7 @@ def prepare_mesh(args: argparse.Namespace, settings: dict, mesh_path: Path,
 
 
 def solve_frequency(binary: Path, mesh: Path, fields: Path,
-                    index: int, frequency: float) -> str:
+                    index: int, frequency: float, mpi_ranks: int = 1) -> str:
     prefix = fields / f"d{index:03d}"
     summary = Path(f"{prefix}_summary.csv")
     mouth = Path(f"{prefix}_mouth.csv")
@@ -125,6 +126,8 @@ def solve_frequency(binary: Path, mesh: Path, fields: Path,
         return "already complete"
     command = [str(binary), str(mesh), f"{frequency:.17g}",
                "--output-prefix", str(prefix), "--quadrant-symmetry"]
+    if mpi_ranks > 1:
+        command = ["mpirun", "-np", str(mpi_ranks), *command]
     result = subprocess.run(command, check=True, text=True,
                             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     lines = result.stdout.strip().splitlines()
@@ -132,14 +135,14 @@ def solve_frequency(binary: Path, mesh: Path, fields: Path,
 
 
 def solve_sweep(binary: Path, mesh: Path, fields: Path,
-                frequencies: np.ndarray, workers: int) -> None:
+                frequencies: np.ndarray, workers: int, mpi_ranks: int = 1) -> None:
     fields.mkdir(parents=True, exist_ok=True)
     np.savetxt(fields / "frequencies.csv", frequencies, delimiter=",",
                header="frequency_hz", comments="")
     with ThreadPoolExecutor(max_workers=workers) as executor:
         jobs = {
             executor.submit(solve_frequency, binary, mesh, fields, index,
-                            float(frequency)): (index, frequency)
+                            float(frequency), mpi_ranks): (index, frequency)
             for index, frequency in enumerate(frequencies)
         }
         completed = 0
@@ -164,6 +167,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--mesh-threads", type=int,
                         default=min(20, os.cpu_count() or 1))
     parser.add_argument("--binary", type=Path)
+    parser.add_argument("--mpi-ranks", type=int, default=1,
+                        help="MPI ranks per frequency (use with the parallel backend)")
     parser.add_argument("--side-samples", type=int, default=32)
     parser.add_argument("--axial-stations", type=int, default=44)
     parser.add_argument("--tetwild-edge-factor", type=float, default=0.46)
@@ -176,7 +181,7 @@ def main() -> None:
     args = parse_args()
     if not args.yaml.is_file():
         raise FileNotFoundError(args.yaml)
-    if args.workers < 1 or args.mesh_threads < 1:
+    if args.workers < 1 or args.mesh_threads < 1 or args.mpi_ranks < 1:
         raise ValueError("worker counts must be positive")
     if args.elements_per_wavelength <= 0.0:
         raise ValueError("elements per wavelength must be positive")
@@ -198,7 +203,7 @@ def main() -> None:
         shutil.rmtree(args.output_dir / "fields", ignore_errors=True)
     prepare_mesh(args, settings, mesh_path, manifest_path)
     solve_sweep(binary, mesh_path, args.output_dir / "fields",
-                frequencies, args.workers)
+                frequencies, args.workers, args.mpi_ranks)
     generate_review(args.output_dir / "fields", args.output_dir, args.title)
     print(f"review: {args.output_dir}", flush=True)
 

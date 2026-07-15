@@ -217,6 +217,27 @@ cmake --build build/mfem --parallel 20
 build/mfem/horncad_mfem_interior path/to/interior.msh 500
 ```
 
+When MFEM is built with MPI and 64-bit SuperLU_DIST, CMake also creates
+`horncad_mfem_interior_parallel`. Run one frequency with, for example:
+
+```bash
+mpirun -np 4 build/mfem/horncad_mfem_interior_parallel \
+  path/to/interior.msh 5000 --quadrant-symmetry \
+  --output-prefix path/to/f5000
+```
+
+The YAML suite can invoke that backend directly. Start with one frequency job
+at a time because each MPI solve performs a distributed sparse factorization:
+
+```bash
+python app/run_fem_suite.py config.YAML --output-dir analysis/run \
+  --binary build/mfem/horncad_mfem_interior_parallel \
+  --mpi-ranks 4 --workers 1
+```
+
+Build and validation details, including the current 10 kHz status, are recorded
+in `docs/fem_parallel_pressure_backend.md`.
+
 Add `--output-prefix path/to/f0500` to write weighted complex mouth pressure and
 normal velocity, weighted throat pressure, and a summary containing complex
 acoustic input impedance. The executable creates `_mouth.csv`, `_throat.csv`,
@@ -272,10 +293,7 @@ field CSVs reconstruct all four quadrants. Validation against full-domain 6/8
 EPW solves agrees within 0.35% for impedance magnitude and power while reducing
 solve time by up to about 31x.
 
-This executable is still a serial single-frequency reference. Independent
-frequencies can be run as bounded processes on the M1 Ultra, but a single large
-production solve will not use all 20 cores until the pressure space and aperture
-trace are ported to MFEM's parallel mesh/finite-element interfaces. Also, the
-current 28.5 mm validation mesh is not resolved for 5 kHz; use a
-wavelength-controlled mesh and demonstrate mesh convergence before accepting a
-500--5,000 Hz response.
+The original executable remains a serial single-frequency reference. The
+parallel executable distributes the pressure space and sparse factorization;
+the aperture vector remains replicated because it is much smaller than the
+volume pressure problem.

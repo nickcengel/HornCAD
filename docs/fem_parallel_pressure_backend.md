@@ -56,21 +56,41 @@ reproduce its physical residual and acoustic outputs.
 Rejected experimental code was removed; the production executable remains on
 the last validated UMFPACK implementation.
 
-## Required implementation
+## Implemented backend
 
-Port the pressure domain to MFEM's distributed interfaces:
+Branch `parallel-fem-backend` implements the distributed solver in
+`app/mfem/parallel_interior_acoustics.cpp`:
 
-1. Build a `ParMesh` and `ParFiniteElementSpace` for pressure.
-2. Partition aperture velocity unknowns consistently across MPI ranks.
-3. All-gather the aperture vector for the dense nonlocal radiation product.
-4. Apply pressure-to-mouth coupling using owned true DOFs and global aperture
-   indices.
-5. Run flexible GMRES collectively with an MPI AMG or domain-decomposition
-   pressure preconditioner.
-6. Validate against existing full/quadrant 5 kHz UMFPACK results before
-   resuming test4.
-7. Benchmark rank count and per-rank threading on the M1 Ultra, then run the
-   53-point 500 Hz–10 kHz sweep.
+- MFEM `ParMesh`, `ParFiniteElementSpace`, and distributed Hypre pressure matrix;
+- MPI-distributed matrix-free mixed operator and flexible GMRES;
+- replicated aperture trace and dense radiation operator;
+- SuperLU_DIST pressure-block factorization using 64-bit global indices;
+- simultaneous real/imaginary pressure solves with one reused factorization.
 
-The 5 kHz published test4 review remains authoritative until this validation
-passes.
+The new backend reproduces the accepted serial acoustic results:
+
+| Case | Serial solve | Distributed solve | Result |
+|---|---:|---:|---|
+| 6-EPW convergence mesh, 500 Hz | 1.76 s | 1.18 s (2 ranks) | impedance/power agree to at least 7 significant digits |
+| 6-EPW convergence mesh, 5 kHz | 3.97 s | 2.26 s (2 ranks) | impedance/power agree to at least 7 significant digits |
+| test4 8-EPW mesh, 5 kHz | 28.63 s | 11.87 s (4 ranks) | impedance/power agree to at least 7 significant digits |
+| test4 6-EPW mesh, 10 kHz | UMFPACK out of memory | 89.40 s (4 ranks) | converged in 145 iterations |
+
+The 10 kHz result removes the serial memory blocker at 6 EPW. It does not yet
+establish mesh convergence at 10 kHz, and the retained 468,962-DOF 8-EPW mesh
+still needs to be attempted. The published 5 kHz test4 review remains the
+authoritative production result until the higher-frequency sweep and mesh
+comparison are complete.
+
+Four ranks are the current M1 Ultra default. On the test4 5 kHz mesh, eight
+ranks took 22.40 seconds versus 11.87 seconds with four; communication and
+factorization overhead outweighed the extra cores at this problem size.
+
+## Remaining work
+
+1. Package the 64-bit SuperLU_DIST/MFEM build so it is reproducible outside the
+   current development build directory.
+2. Measure peak memory at 10 kHz before running several MPI frequencies
+   concurrently or attempting the larger mesh.
+3. Attempt the retained 10 kHz 8-EPW mesh.
+4. Run and review a 500 Hz–8 or 10 kHz sweep, then update the validated CLI limit.
