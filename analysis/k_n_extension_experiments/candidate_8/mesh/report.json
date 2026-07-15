@@ -1,0 +1,9 @@
+{
+  "candidate": 8,
+  "status": "complete",
+  "seconds": 118.4970871671103,
+  "nodes": 59367,
+  "tetrahedra": 316161,
+  "maximum_edge_m": 0.008568692279398578,
+  "maximum_surface_deviation_m": 0.00012461950482908955
+}
