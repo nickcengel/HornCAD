@@ -117,6 +117,8 @@ class AcousticMesh:
     mouth_ring_m: np.ndarray
     report: MeshReport
     content_hash: str
+    symmetry_factor: int = 1
+    symmetry_planes: tuple[str, ...] = ()
 
 
 @dataclass
@@ -163,6 +165,7 @@ class PipelineSettings:
     fmm_order_factor: float = 0.8
     fmm_separation: float = 1.5
     fmm_max_direct: int = 100
+    quadrant_symmetry: bool = True
 
 
 @dataclass(frozen=True)
@@ -197,8 +200,9 @@ def execution_plan(settings: PipelineSettings, mesh: AcousticMesh,
     else:
         # Fits measured peaks at 13.8k DOF (1.97 GiB) and 38.9k DOF
         # (2.43 GiB), then adds 15% scheduling headroom.
+        integration_dofs = mesh.report.estimated_dofs * mesh.symmetry_factor
         per_worker = 1.15 * (
-            1.5 + mesh.report.estimated_dofs * 30_000 / 1024 ** 3)
+            1.5 + integration_dofs * 30_000 / 1024 ** 3)
     memory_workers = max(1, int(memory_limit // per_worker))
     default_workers = max(1, cpus // 2) if settings.solver_backend == "ngsolve-fmm" else cpus
     requested = default_workers if settings.maximum_workers == 0 else max(1, settings.maximum_workers)
@@ -374,6 +378,137 @@ def build_acoustic_mesh(yaml_path: Path, settings: MeshSettings,
     content_hash = _hash_arrays(mesh.vertices, mesh.faces, domains,
                                 metadata=json.dumps(_jsonable(asdict(settings)), sort_keys=True).encode())
     return AcousticMesh(mesh, domains, source_area, mouth_center, mouth_ring, report, content_hash)
+
+
+def build_quadrant_acoustic_mesh(yaml_path: Path, settings: MeshSettings,
+                                  side_samples: int | None = None,
+                                  axial_stations: int | None = None) -> AcousticMesh:
+    """Cut the validated full mesh to the open +x/+y symmetry quadrant.
+
+    The cut planes are mathematical reflection boundaries, not physical BEM
+    faces. ``source_area_m2`` deliberately retains the full piston area so a
+    unit total volume velocity produces the same local Neumann data as the
+    full-geometry reference.
+    """
+    full = build_acoustic_mesh(yaml_path, settings, side_samples, axial_stations)
+    side_samples = side_samples or GEOMETRY_SEED_SIDE_SAMPLES
+    axial_stations = axial_stations or GEOMETRY_SEED_AXIAL_STATIONS
+    authored, _, throat_radius_mm = _authored_mesh(
+        yaml_path, side_samples, axial_stations)
+    authored.apply_scale(1e-3)
+    capped = authored
+    for normal in (np.asarray([1.0, 0.0, 0.0]),
+                   np.asarray([0.0, 1.0, 0.0])):
+        capped = trimesh.intersections.slice_mesh_plane(
+            capped, normal, np.zeros(3), cap=True)
+    # The intersection of the two temporary caps can contain one collinear
+    # T-junction: edges a-m, m-z and a-z. Split the face using a-z at m rather
+    # than retaining a zero-area triangle that crashes Netgen's STL front-end.
+    capped.update_faces(capped.nondegenerate_faces(height=1e-12))
+    capped.remove_unreferenced_vertices()
+    capped.merge_vertices(digits_vertex=12)
+    for _ in range(32):
+        edge_keys, incidence = np.unique(capped.edges_sorted, axis=0,
+                                         return_counts=True)
+        boundary_edges = edge_keys[incidence == 1]
+        if not len(boundary_edges):
+            break
+        boundary_ids = np.unique(boundary_edges)
+        repaired = False
+        for a, z in boundary_edges:
+            start, end = capped.vertices[a], capped.vertices[z]
+            direction = end - start
+            length_squared = float(np.dot(direction, direction))
+            if length_squared <= 1e-24:
+                continue
+            relative = capped.vertices[boundary_ids] - start
+            fraction = relative @ direction / length_squared
+            distance = np.linalg.norm(
+                relative - fraction[:, None] * direction, axis=1)
+            interior = boundary_ids[(fraction > 1e-9) & (fraction < 1 - 1e-9)
+                                    & (distance < 1e-10)]
+            if not len(interior):
+                continue
+            face_index = next((index for index, face in enumerate(capped.faces)
+                               if a in face and z in face), None)
+            if face_index is None:
+                continue
+            face = list(map(int, capped.faces[face_index]))
+            other = next(index for index in face if index not in (a, z))
+            ordered = list(interior[np.argsort(
+                (capped.vertices[interior] - start) @ direction)])
+            chain = [int(a), *map(int, ordered), int(z)]
+            if (face.index(a) + 1) % 3 != face.index(z):
+                chain.reverse()
+            replacement = [(chain[index], chain[index + 1], other)
+                           for index in range(len(chain) - 1)]
+            capped.faces = np.vstack(
+                (np.delete(capped.faces, face_index, axis=0), replacement))
+            repaired = True
+            break
+        if not repaired:
+            break
+    trimesh.repair.fix_normals(capped, multibody=True)
+    if not capped.is_watertight:
+        raise ValueError("temporary quadrant meshing caps are not closed")
+
+    throat_z = (-max(0.0, float(geometry.PARAMS["throat_extension"]))
+                + 0.3) * 1e-3
+    throat_points = capped.vertices[
+        np.abs(capped.vertices[:, 2] - throat_z) < 1e-8]
+    quadrant = _netgen_surface_remesh(
+        capped, settings.target_edge_m * settings.netgen_maxh_factor,
+        throat_points,
+        min(settings.target_edge_m * settings.netgen_maxh_factor,
+            2 * math.pi * throat_radius_mm * 1e-3 / 32))
+    cap_faces = ((np.max(np.abs(quadrant.triangles[:, :, 0]), axis=1) < 1e-10)
+                 | (np.max(np.abs(quadrant.triangles[:, :, 1]), axis=1) < 1e-10))
+    quadrant.update_faces(~cap_faces)
+    quadrant.remove_unreferenced_vertices()
+    quadrant.merge_vertices(digits_vertex=12)
+    quadrant.update_faces(quadrant.unique_faces())
+    quadrant.remove_unreferenced_vertices()
+    trimesh.repair.fix_normals(quadrant, multibody=True)
+
+    edge_keys, incidence = np.unique(quadrant.edges_sorted, axis=0,
+                                     return_counts=True)
+    if np.any(incidence > 2):
+        raise ValueError("quadrant symmetry cut created non-manifold edges")
+    boundary_edges = edge_keys[incidence == 1]
+    boundary_vertices = quadrant.vertices[np.unique(boundary_edges)]
+    tolerance = max(settings.target_edge_m * 1e-8, 1e-12)
+    on_symmetry_plane = ((np.abs(boundary_vertices[:, 0]) <= tolerance)
+                         | (np.abs(boundary_vertices[:, 1]) <= tolerance))
+    if not np.all(on_symmetry_plane):
+        raise ValueError("quadrant has boundary edges away from symmetry planes")
+    if (not quadrant.is_winding_consistent
+            or len(quadrant.split(only_watertight=False)) != 1):
+        raise ValueError("quadrant must be connected and consistently oriented")
+
+    full_source_centers = full.surface.triangles_center[full.domain_indices == 1]
+    throat_z = float(np.median(full_source_centers[:, 2]))
+    throat_radius = throat_radius_mm * 0.001001
+    centers, normals = quadrant.triangles_center, quadrant.face_normals
+    planar_throat = np.max(np.abs(quadrant.triangles[:, :, 2] - throat_z),
+                           axis=1) <= tolerance
+    source_faces = (planar_throat & (normals[:, 2] > 0.8)
+                    & (np.hypot(centers[:, 0], centers[:, 1])
+                       <= throat_radius + tolerance))
+    if not np.any(source_faces):
+        raise ValueError("failed to identify quadrant throat source")
+    domains = source_faces.astype(np.uint32)
+    report = mesh_quality_report(quadrant, settings)
+    report.quality_failures = [failure for failure in report.quality_failures
+                               if failure != "not_watertight"]
+    mouth_ring = full.mouth_ring_m
+    content_hash = _hash_arrays(
+        quadrant.vertices, quadrant.faces, domains,
+        metadata=b"even-even-quadrant-x-y")
+    quadrant_source_area = float(
+        4.0 * quadrant.area_faces[source_faces].sum())
+    return AcousticMesh(quadrant, domains, quadrant_source_area,
+                        full.mouth_center_m, mouth_ring, report, content_hash,
+                        symmetry_factor=4, symmetry_planes=("x=0", "y=0"))
 
 
 def _netgen_surface_remesh(source: trimesh.Trimesh, maximum_size_m: float,
@@ -674,7 +809,8 @@ def _solve_frequency_ngsolve(acoustic_mesh: AcousticMesh,
                              fmm_min_order=fmm_min_order,
                              fmm_order_factor=fmm_order_factor,
                              fmm_separation=fmm_separation,
-                             fmm_max_direct=fmm_max_direct)
+                             fmm_max_direct=fmm_max_direct,
+                             symmetry_planes=acoustic_mesh.symmetry_planes)
     k = solution.wavenumber_m1
     epsilon = max(1e-5, observer.offset_m * 0.1)
     second_mouth = observer.positions_m + epsilon * observer.normals
@@ -812,9 +948,14 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
         raise ValueError("at least one positive frequency is required")
     if abs(float(frequencies.max()) - settings.mesh.maximum_frequency_hz) > 1e-9:
         raise ValueError("mesh maximum_frequency_hz must equal the sweep's highest frequency")
-    mesh = build_acoustic_mesh(yaml_path, settings.mesh,
-                               settings.geometry_side_samples,
-                               settings.geometry_axial_stations)
+    if settings.quadrant_symmetry and settings.solver_backend != "ngsolve-fmm":
+        raise ValueError("quadrant symmetry currently requires ngsolve-fmm; "
+                         "use full geometry for the dense reference backend")
+    mesh_builder = (build_quadrant_acoustic_mesh
+                    if settings.quadrant_symmetry else build_acoustic_mesh)
+    mesh = mesh_builder(yaml_path, settings.mesh,
+                        settings.geometry_side_samples,
+                        settings.geometry_axial_stations)
     if (settings.solver_backend == "bempp-dense" and settings.memory_limit_gib is not None
             and mesh.report.estimated_dense_matrix_gib > settings.memory_limit_gib):
         raise ValueError(f"estimated solve cost {mesh.report.estimated_dense_matrix_gib:.3g} GiB exceeds memory limit")
@@ -825,7 +966,9 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
     frequency_dir.mkdir(parents=True, exist_ok=True)
     _atomic_npz(run_dir / "mesh.npz", vertices=mesh.surface.vertices, faces=mesh.surface.faces,
                 domain_indices=mesh.domain_indices, mouth_ring_m=mesh.mouth_ring_m,
-                mouth_center_m=mesh.mouth_center_m)
+                mouth_center_m=mesh.mouth_center_m,
+                symmetry_factor=mesh.symmetry_factor,
+                symmetry_planes=np.asarray(mesh.symmetry_planes))
     _atomic_npz(run_dir / "mouth_observer.npz", positions_m=observer.positions_m,
                 normals=observer.normals, area_weights_m2=observer.area_weights_m2,
                 projected_xy_m=observer.projected_xy_m)
@@ -1063,6 +1206,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--fmm-order-factor", type=float, default=0.8)
     parser.add_argument("--fmm-separation", type=float, default=1.5)
     parser.add_argument("--fmm-max-direct", type=int, default=100)
+    parser.add_argument("--full-geometry", action="store_true",
+                        help="disable default x/y quadrant symmetry for a reference solve")
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     return parser.parse_args(argv)
 
@@ -1092,7 +1237,8 @@ def main() -> None:
         fmm_min_order=args.fmm_min_order,
         fmm_order_factor=args.fmm_order_factor,
         fmm_separation=args.fmm_separation,
-        fmm_max_direct=args.fmm_max_direct)
+        fmm_max_direct=args.fmm_max_direct,
+        quadrant_symmetry=not args.full_geometry)
     result = run_pipeline(args.yaml, settings, args.output_dir, not args.no_resume)
     print(result["manifest_path"])
 

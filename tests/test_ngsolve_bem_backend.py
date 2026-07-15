@@ -3,6 +3,7 @@ import unittest
 
 import numpy as np
 from netgen.occ import Fuse, Sphere
+import trimesh
 
 from app.ngsolve_bem_backend import make_point_evaluator, solve_neumann
 
@@ -46,6 +47,34 @@ class NGSolveBEMBackendTests(unittest.TestCase):
         values = make_point_evaluator(solution, points)(points)
         self.assertTrue(np.all(np.isfinite(values)))
         self.assertLess(abs(abs(values[0]) - abs(values[1])), 0.03 * abs(values[0]))
+
+    def test_even_even_quarter_sphere_matches_analytic_trace(self) -> None:
+        vertices, faces, _ = self.sphere_surface(0.6)
+        quarter = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+        for normal in (np.asarray([1.0, 0.0, 0.0]),
+                       np.asarray([0.0, 1.0, 0.0])):
+            quarter = trimesh.intersections.slice_mesh_plane(
+                quarter, normal, np.zeros(3), cap=False)
+            quarter.remove_unreferenced_vertices()
+        quarter.merge_vertices(digits_vertex=12)
+        quarter.update_faces(quarter.unique_faces())
+        quarter.remove_unreferenced_vertices()
+        domains = np.ones(len(quarter.faces), dtype=np.uint32)
+        solution = solve_neumann(
+            quarter.vertices, quarter.faces, domains, 1 + 0j,
+            frequency_hz=2 * 343.21 / (2 * np.pi),
+            sound_speed_m_s=343.21, tolerance=1e-4,
+            symmetry_planes=("x=0", "y=0"))
+        from ngsolve import BND, Integrate
+        mean = Integrate(solution.trace, solution.mesh, BND) / Integrate(
+            1, solution.mesh, BND)
+        h0 = lambda z: -1j * cmath.exp(1j * z) / z
+        dh0 = lambda z: (cmath.exp(1j * z) / z
+                         + 1j * cmath.exp(1j * z) / z ** 2)
+        exact = h0(2) / (2 * dh0(2))
+        self.assertLess(abs(mean - exact) / abs(exact), 0.02)
+        self.assertLess(solution.relative_residual, 1e-4)
+        self.assertLess(len(quarter.vertices), len(vertices))
 
 
 if __name__ == "__main__":

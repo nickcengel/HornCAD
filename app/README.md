@@ -117,7 +117,19 @@ Run the coupled 3D boundary-element comparison pipeline at ten logarithmically s
 python app/helmholtz_bem_3d.py path/to/config.YAML
 ```
 
-The solver builds a closed acoustic obstacle from the printable HornCAD body and a circular throat cap. The horn-facing disk is a uniform axial piston; by default its integrated volume velocity is exactly 1 m³/s. Its pressure Neumann condition is derived from that velocity and the recorded medium properties. All other physical surfaces are rigid.
+The solver authors the complete closed acoustic obstacle from the printable
+HornCAD body and circular throat cap, then uses the design's `x=0` and `y=0`
+reflection symmetries by default. Netgen temporarily closes the positive-x,
+positive-y quadrant for surface remeshing; those cap triangles are removed
+before BEM assembly and are never physical scattering faces. The open quadrant
+is reflected and merged internally, and mirrored H1 degrees of freedom are
+periodically identified and compressed. Thus the solver retains full connected
+surface quadrature and unrestricted 4π free-air radiation with approximately
+one quarter of the independent unknowns. `--full-geometry` disables symmetry
+for validation references. The horn-facing disk is a uniform axial piston; by
+default its integrated volume velocity is exactly 1 m³/s. Its pressure Neumann
+condition is L²-projected from that velocity and the recorded medium properties.
+All other physical surfaces are rigid.
 
 The exterior radiation problem uses a regularized combined-field Neumann equation to avoid fictitious interior resonances. Select `--solver-backend ngsolve-fmm` for native matrix-free layer operators, singular quadrature, FMM evaluation, weakly singular hypersingular regularization, and Laplace-Calderon-preconditioned GMRES. Python remains the geometry, sweep, and artifact layer. The legacy `bempp-dense` backend is retained as a small-problem numerical reference; results made before the 2026-07-15 Calderon sign correction must be regenerated.
 
@@ -153,6 +165,7 @@ Useful controls:
 ```bash
 python app/helmholtz_bem_3d.py config.YAML --mesh-tier preview
 python app/helmholtz_bem_3d.py config.YAML --solver-backend ngsolve-fmm
+python app/helmholtz_bem_3d.py config.YAML --full-geometry
 python app/helmholtz_bem_3d.py config.YAML --geometry-side-samples 6 --geometry-axial-stations 8
 python app/helmholtz_bem_3d.py config.YAML --surface-mesher netgen --netgen-maxh-factor 0.5
 python app/helmholtz_bem_3d.py config.YAML --fmm-min-order 6 --fmm-order-factor 0.8 --fmm-separation 1.5

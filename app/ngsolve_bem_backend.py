@@ -67,9 +67,20 @@ class NGSolveBEMSolution:
     relative_residual: float
     timings_s: dict[str, float]
     peak_rss_gib: float
+    image_traces: tuple[Any, ...] = ()
+    image_neumann: tuple[Any, ...] = ()
+    image_single_layers: tuple[Any, ...] = ()
+    image_double_layers: tuple[Any, ...] = ()
 
     def potential(self) -> Any:
         # NGSolve's exterior Calderon convention is u = K p - V g.
+        if self.image_traces:
+            terms = [
+                double.GetPotential(trace) - single.GetPotential(neumann)
+                for trace, neumann, single, double in zip(
+                    self.image_traces, self.image_neumann,
+                    self.image_single_layers, self.image_double_layers)]
+            return sum(terms[1:], terms[0])
         return (self.double_layer.GetPotential(self.trace)
                 - self.single_layer.GetPotential(self.neumann))
 
@@ -78,9 +89,11 @@ def _imports() -> dict[str, Any]:
     try:
         from netgen.csg import Pnt
         from netgen.meshing import Element2D, FaceDescriptor, Mesh, MeshPoint
-        from ngsolve import (BilinearForm, GridFunction, H1, TaskManager, ds,
-                             grad, specialcf, Norm, solvers)
-        from ngsolve.bem import HelmholtzDL, HelmholtzSL
+        from ngsolve import (BilinearForm, LinearForm, GridFunction, H1,
+                             TaskManager, ds, grad, specialcf, Norm, solvers,
+                             Periodic, Compress)
+        from ngsolve.bem import (HelmholtzDL, HelmholtzSL,
+                                 HelmholtzHypersingularOperator)
     except ImportError as exc:  # pragma: no cover - exercised without optional extra
         raise RuntimeError(
             "the ngsolve-fmm backend requires ngsolve>=6.2.2606"
@@ -108,6 +121,61 @@ def surface_mesh(vertices: np.ndarray, faces: np.ndarray,
     return NGSolveMesh(raw)
 
 
+def symmetric_periodic_surface_space(vertices: np.ndarray, faces: np.ndarray,
+                                     domain_indices: np.ndarray) -> tuple[Any, Any]:
+    """Reflect a quadrant mesh and compress even-even identified H1 DOFs."""
+    ng = _imports()
+    reflected_vertices: list[np.ndarray] = []
+    reflected_faces: list[list[int]] = []
+    reflected_domains: list[int] = []
+    coordinate_index: dict[tuple[float, float, float], int] = {}
+    representatives: list[tuple[float, float, float]] = []
+    for x_sign, y_sign in ((1.0, 1.0), (-1.0, 1.0),
+                           (1.0, -1.0), (-1.0, -1.0)):
+        local_indices = []
+        for point in np.asarray(vertices, dtype=float):
+            reflected = np.asarray(
+                [x_sign * point[0], y_sign * point[1], point[2]])
+            reflected[np.abs(reflected) < 5e-13] = 0.0
+            key = tuple(np.round(reflected, 12))
+            if key not in coordinate_index:
+                coordinate_index[key] = len(reflected_vertices)
+                reflected_vertices.append(reflected)
+                representatives.append(tuple(np.round(
+                    [abs(reflected[0]), abs(reflected[1]), reflected[2]], 12)))
+            local_indices.append(coordinate_index[key])
+        image_faces = (np.asarray(faces)[:, [0, 2, 1]]
+                       if x_sign * y_sign < 0 else np.asarray(faces))
+        for face, domain in zip(image_faces, domain_indices):
+            reflected_faces.append([local_indices[int(index)] for index in face])
+            reflected_domains.append(int(domain))
+
+    raw = ng["Mesh"](dim=3)
+    points = [raw.Add(ng["MeshPoint"](ng["Pnt"](*map(float, point))))
+              for point in reflected_vertices]
+    raw.Add(ng["FaceDescriptor"](bc=1))
+    raw.Add(ng["FaceDescriptor"](bc=2))
+    raw.SetBCName(0, "rigid")
+    raw.SetBCName(1, "throat")
+    for face, domain in zip(reflected_faces, reflected_domains):
+        raw.Add(ng["Element2D"](domain + 1,
+                                [points[index] for index in face]))
+    for index, representative in enumerate(representatives):
+        master = coordinate_index[representative]
+        if index != master:
+            raw.AddPointIdentification(points[master], points[index], 1)
+    from ngsolve import Mesh as NGSolveMesh
+    mesh = NGSolveMesh(raw)
+    base_space = ng["H1"](mesh, order=1, complex=True)
+    periodic = ng["Periodic"](base_space)
+    space = ng["Compress"](periodic, active_dofs=periodic.FreeDofs())
+    if space.ndof != len(vertices):
+        raise RuntimeError(
+            f"symmetry compression produced {space.ndof} DOFs for "
+            f"{len(vertices)} quadrant vertices")
+    return mesh, space
+
+
 def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
                   domain_indices: np.ndarray, neumann_value: complex,
                   frequency_hz: float, sound_speed_m_s: float,
@@ -118,7 +186,8 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
                   fmm_order_factor: float = 0.8,
                   fmm_separation: float = 1.5,
                   fmm_max_direct: int = 100,
-                  regularizer: str = "laplace") -> NGSolveBEMSolution:
+                  regularizer: str = "laplace",
+                  symmetry_planes: tuple[str, ...] = ()) -> NGSolveBEMSolution:
     """Solve the resonance-safe direct Burton--Miller Neumann equation.
 
     With NGSolve's exterior Calderon signs,
@@ -141,8 +210,30 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
         return now
 
     ng = _imports()
-    mesh = surface_mesh(vertices, faces, domain_indices)
-    space = ng["H1"](mesh, order=1, complex=True)
+    if symmetry_planes not in ((), ("x=0", "y=0")):
+        raise ValueError("supported symmetry is empty or ('x=0', 'y=0')")
+    if symmetry_planes:
+        mesh, space = symmetric_periodic_surface_space(
+            vertices, faces, domain_indices)
+    else:
+        mesh = surface_mesh(vertices, faces, domain_indices)
+        space = ng["H1"](mesh, order=1, complex=True)
+    image_specs = ((1.0, 1.0),)
+    image_meshes = [mesh]
+    image_spaces = [space]
+    for x_sign, y_sign in image_specs[1:]:
+        reflected_vertices = np.asarray(vertices, dtype=float).copy()
+        reflected_vertices[:, 0] *= x_sign
+        reflected_vertices[:, 1] *= y_sign
+        reflected_faces = np.asarray(faces, dtype=int).copy()
+        if x_sign * y_sign < 0:
+            reflected_faces = reflected_faces[:, [0, 2, 1]]
+        reflected_mesh = surface_mesh(reflected_vertices, reflected_faces,
+                                      domain_indices)
+        image_meshes.append(reflected_mesh)
+        image_spaces.append(ng["H1"](reflected_mesh, order=1, complex=True))
+    if any(image_space.ndof != space.ndof for image_space in image_spaces):
+        raise RuntimeError("reflected symmetry spaces changed coefficient ordering")
     trial, test = space.TnT()
     checkpoint = phase("surface_setup", started)
     k = 2 * math.pi * frequency_hz / sound_speed_m_s
@@ -154,41 +245,53 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
     # The surface curl is n x grad_Gamma. It cannot be replaced by grad_Gamma
     # inside the nonlocal dot product because source and target normals differ.
     from ngsolve import Cross
-    trial_rotation = Cross(normal, ng["grad"](trial).Trace())
     test_rotation = Cross(normal, ng["grad"](test).Trace())
+    singles, doubles, hypers = [], [], []
+    add_operators = lambda operators: sum(operators[1:], operators[0])
     with ng["TaskManager"]():
-        single = ng["HelmholtzSL"](trial * ng["ds"], k, **fmm_options) * test * ng["ds"]
-        double = ng["HelmholtzDL"](trial * ng["ds"], k, **fmm_options) * test * ng["ds"]
-        # Weakly singular regularization of the Helmholtz hypersingular form:
-        # <D p,q> = <V curl_Gamma p,curl_Gamma q>
-        #             - k^2 <V(n p),n q>.
-        # Component-wise scalar potentials avoid the vector-FMM SIMD bug in
-        # NGSolve 6.2.2606 and expose the FMM accuracy controls.
-        surface_gradient_terms = [
-            ng["HelmholtzSL"](trial_rotation[i] * ng["ds"], k, **fmm_options)
-            * test_rotation[i] * ng["ds"] for i in range(3)]
-        surface_gradient = (surface_gradient_terms[0] + surface_gradient_terms[1]
-                            + surface_gradient_terms[2])
-        normal_mass_terms = [
-            ng["HelmholtzSL"]((normal[i] * trial) * ng["ds"], k, **fmm_options)
-            * (normal[i] * test) * ng["ds"] for i in range(3)]
-        normal_mass = normal_mass_terms[0] + normal_mass_terms[1] + normal_mass_terms[2]
-        hyper = surface_gradient - k * k * normal_mass
+        for image_space in image_spaces:
+            image_trial, _ = image_space.TnT()
+            trial_rotation = Cross(normal, ng["grad"](image_trial).Trace())
+            single_image = (ng["HelmholtzSL"](
+                image_trial * ng["ds"], k, **fmm_options) * test * ng["ds"])
+            double_image = (ng["HelmholtzDL"](
+                image_trial * ng["ds"], k, **fmm_options) * test * ng["ds"])
+            singles.append(single_image)
+            doubles.append(double_image)
+            surface_gradient_terms = [
+                ng["HelmholtzSL"](trial_rotation[i] * ng["ds"], k,
+                                   **fmm_options)
+                * test_rotation[i] * ng["ds"] for i in range(3)]
+            normal_mass_terms = [
+                ng["HelmholtzSL"]((normal[i] * image_trial) * ng["ds"], k,
+                                   **fmm_options)
+                * (normal[i] * test) * ng["ds"] for i in range(3)]
+            hypers.append(add_operators(surface_gradient_terms)
+                          - k * k * add_operators(normal_mass_terms))
+        single = add_operators(singles)
+        double = add_operators(doubles)
+        hyper = add_operators(hypers)
         mass = ng["BilinearForm"](trial * test * ng["ds"]).Assemble()
         if regularizer == "physical":
             regularizing_single = single
         elif regularizer == "imaginary":
-            regularizing_single = (ng["HelmholtzSL"](
-                trial * ng["ds"], 1j * k, **fmm_options) * test * ng["ds"])
+            regularizing_single = add_operators([
+                ng["HelmholtzSL"](image_space.TnT()[0] * ng["ds"], 1j * k,
+                                   **fmm_options) * test * ng["ds"]
+                for image_space in image_spaces])
         elif regularizer == "laplace":
-            regularizing_single = (ng["HelmholtzSL"](
-                trial * ng["ds"], 1e-10, **fmm_options) * test * ng["ds"])
+            regularizing_single = add_operators([
+                ng["HelmholtzSL"](image_space.TnT()[0] * ng["ds"], 1e-10,
+                                   **fmm_options) * test * ng["ds"]
+                for image_space in image_spaces])
         else:
             raise ValueError("regularizer must be 'physical', 'imaginary', or 'laplace'")
     checkpoint = phase("operator_setup", checkpoint)
 
     prescribed = ng["GridFunction"](space)
-    prescribed.Set(neumann_value, definedon=mesh.Boundaries("throat"))
+    throat_load = ng["LinearForm"](
+        neumann_value * test * ng["ds"]("throat")).Assemble()
+    prescribed.vec.data = mass.mat.Inverse() * throat_load.vec
     eta = 1j * k
     lhs = hyper.mat + eta * (0.5 * mass.mat - double.mat)
     rhs = prescribed.vec.CreateVector()
@@ -222,7 +325,7 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
     with ng["TaskManager"]():
         vector = ng["solvers"].GMRes(
             A=lhs, b=scaled_rhs, pre=preconditioner,
-            tol=0.5 * tolerance, maxsteps=max_iterations,
+            tol=0.1 * tolerance, maxsteps=max_iterations,
             restart=gmres_restart, callback=count_iteration,
             printrates=False)
         vector *= rhs_scale
@@ -241,12 +344,23 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
             f"{iterations} iterations: relative residual={relative_residual:.3g}")
     trace = ng["GridFunction"](space)
     trace.vec.data = vector
+    image_traces = []
+    image_neumann = []
+    for image_space in image_spaces:
+        image_trace = ng["GridFunction"](image_space)
+        image_trace.vec.data = vector
+        image_g = ng["GridFunction"](image_space)
+        image_g.vec.data = prescribed.vec
+        image_traces.append(image_trace)
+        image_neumann.append(image_g)
     timings["total"] = time.perf_counter() - started
     peak_rss = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
     peak_rss_gib = peak_rss / 1024 ** 3 if sys.platform == "darwin" else peak_rss / 1024 ** 2
     return NGSolveBEMSolution(trace, prescribed, single, double, mesh,
                               int(space.ndof), iterations, k, relative_residual,
-                              timings, peak_rss_gib)
+                              timings, peak_rss_gib, tuple(image_traces),
+                              tuple(image_neumann), tuple(singles),
+                              tuple(doubles))
 
 
 def make_point_evaluator(solution: NGSolveBEMSolution,

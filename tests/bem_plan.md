@@ -4,6 +4,35 @@
 
 ### All-BEM backend checkpoint (2026-07-15)
 
+#### Required quadrant symmetry backend
+
+Production all-BEM sweeps must exploit Test4's `x=0` and `y=0` reflection
+symmetry. The intended boundary is the open positive-x/positive-y physical
+quadrant; symmetry-plane caps are meshing scaffolds only and are removed before
+operator assembly. The free-space kernel is the even-even sum of physical,
+x-reflected, y-reflected, and xy-reflected sources, so the reconstructed problem
+still radiates into 4π space.
+
+An initial four-cross-mesh image prototype passed the analytic quarter-sphere
+but exposed inaccurate hypersingular seam interactions on the longer HornCAD
+cuts. The accepted implementation instead reflects and merges the clean
+quadrant into a connected integration surface, adds periodic point
+identifications for both reflection planes, and compresses the H1 space to its
+positive-quadrant representatives. NGSolve therefore retains its native
+singular quadrature at the seams while solving only the independent even-even
+unknowns.
+
+A coarse analytic quarter-sphere converges to an `8.4e-6` true residual with
+1.37% trace error. Test4 temporary-cap meshing at 500 Hz produces 416 independent
+vertices versus 1,298 full, maximum aspect 5.48, and no non-symmetry boundary
+edges. Against the independently remeshed full solve, the periodic-compressed
+solution used 416 versus 1,298 DOFs and 28 versus 36 iterations. Complex H/D/V
+pressure differed by 0.92% raw and 0.22% after a best complex scale; maximum
+normalized level difference was 0.029 dB and the best scale was within 0.9% of
+unity. The full integration panel set is still present internally, so this
+milestone reduces independent unknowns and iterations but does not yet claim a
+fourfold FMM matvec reduction. `--full-geometry` remains the validation path.
+
 Optimization checkpoint: the native backend now uses a component-wise
 weakly-singular regularization of the hypersingular operator, a Laplace
 single-layer Calderon preconditioner, and tuned FMM controls (minimum order 6,

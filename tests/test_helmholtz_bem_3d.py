@@ -12,6 +12,7 @@ from app.helmholtz_bem_3d import (
     SourceDefinition,
     acoustic_body_mesh,
     build_acoustic_mesh,
+    build_quadrant_acoustic_mesh,
     make_aperture_observer,
     piston_boundary_values,
     receiver_directions,
@@ -30,8 +31,10 @@ class HelmholtzBEM3DTests(unittest.TestCase):
         self.assertEqual(args.mesh_tier, "production")
         self.assertEqual(MeshSettings().maximum_frequency_hz, 8_000)
         self.assertEqual(MeshSettings().elements_per_wavelength, 6)
+        self.assertFalse(args.full_geometry)
         self.assertEqual(GEOMETRY_SEED_SIDE_SAMPLES, 12)
         self.assertEqual(GEOMETRY_SEED_AXIAL_STATIONS, 16)
+        self.assertTrue(PipelineSettings((500.0,), (0.0,)).quadrant_symmetry)
 
     def test_acoustic_body_is_closed_and_has_driven_throat_faces(self) -> None:
         yaml_path = (
@@ -44,6 +47,30 @@ class HelmholtzBEM3DTests(unittest.TestCase):
         self.assertTrue(body.is_winding_consistent)
         self.assertEqual(len(domains), len(body.faces))
         self.assertGreater(int(np.count_nonzero(domains)), 0)
+
+    def test_quadrant_mesh_has_only_open_symmetry_boundaries(self) -> None:
+        yaml_path = Path(__file__).parents[1] / "test_project" / "HornCAD-Body-400x260x250.YAML"
+        full = build_acoustic_mesh(yaml_path, MeshSettings(1_000.0, 6.0))
+        quadrant = build_quadrant_acoustic_mesh(
+            yaml_path, MeshSettings(1_000.0, 6.0))
+        self.assertEqual(quadrant.symmetry_factor, 4)
+        self.assertEqual(quadrant.symmetry_planes, ("x=0", "y=0"))
+        self.assertLess(quadrant.report.vertices, full.report.vertices / 2)
+        self.assertFalse(quadrant.surface.is_watertight)
+        self.assertTrue(quadrant.surface.is_winding_consistent)
+        self.assertEqual(quadrant.report.quality_failures, [])
+        self.assertGreater(int(np.count_nonzero(quadrant.domain_indices)), 0)
+        self.assertAlmostEqual(
+            quadrant.source_area_m2,
+            4 * quadrant.surface.area_faces[
+                quadrant.domain_indices == 1].sum())
+        self.assertLess(abs(quadrant.source_area_m2 - full.source_area_m2),
+                        0.1 * full.source_area_m2)
+        edges, counts = np.unique(quadrant.surface.edges_sorted, axis=0,
+                                  return_counts=True)
+        boundary = quadrant.surface.vertices[np.unique(edges[counts == 1])]
+        self.assertTrue(np.all((np.abs(boundary[:, 0]) < 1e-10)
+                               | (np.abs(boundary[:, 1]) < 1e-10)))
 
     def test_receiver_axes_follow_horn_coordinates(self) -> None:
         angles = np.array([0.0, 90.0])
