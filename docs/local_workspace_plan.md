@@ -15,15 +15,30 @@ a small Python service running locally and the existing browser UI.
 
 HornCAD becomes one locally served application with internal pages:
 
-1. **Design** — current geometry controls and interactive 3D preview.
-2. **Simulation** — FEM settings, estimated job size, run/resume/cancel controls,
+1. **Design** — acoustic-surface geometry controls and interactive acoustic
+   surface preview.
+2. **Manufacture** — printable-body parameters, mounting features, and body
+   export preview derived from the acoustic surface.
+3. **Simulation** — FEM settings, estimated job size, run/resume/cancel controls,
    and progress.
-3. **Results** — interactive coverage and impedance plots for the selected run,
+4. **Results** — interactive coverage and impedance plots for the selected run,
    accompanied by the horn preview and identifying design information.
-4. **Compare** — select several saved designs/runs and overlay their response
+5. **Compare** — select several saved designs/runs and overlay their response
    curves with consistent colors, names, and horn thumbnails or previews.
-5. **Project** — project identity, notes, file locations, saved runs, and basic
+6. **Project** — project identity, notes, file locations, saved runs, and basic
    maintenance actions.
+
+The boundary between the first two pages is intentional:
+
+- **Design defines the acoustic surface:** throat, OS-SE basis profiles, mouth
+  dimensions and sag, section shape, and acoustic profile modifiers.
+- **Manufacture defines the physical body around that surface:** wall thickness,
+  rear offsets, flange and mount geometry, fillets, screw holes, printable-body
+  sampling, and body STL export.
+
+Manufacturing parameters must not alter the acoustic surface. Acoustic analyses
+use the Design geometry and remain independent of whether a printable body has
+been configured or exported.
 
 The app should remember a local project library. Normal use should involve
 selecting projects and runs by name rather than entering paths.
@@ -143,14 +158,19 @@ until the distributed pressure backend described in
 
 ### Phase 1 — Organize the existing app
 
-- Add internal Design, Simulation, Results, Compare, and Project navigation.
-- Move existing controls into the Design page without changing geometry math.
+- Add internal Design, Manufacture, Simulation, Results, Compare, and Project
+  navigation.
+- Move acoustic-surface controls into Design and printable-body controls into
+  Manufacture without changing geometry math.
+- Give Manufacture its own body preview mode while retaining the acoustic
+  surface as the immutable design reference.
 - Keep the 3D preview responsive and avoid recomputing export geometry while a
   parameter is dragged.
 - Add empty but clearly labeled shells for the later pages.
 
-**Complete when:** existing design/edit/export behavior is preserved, each page
-is usable at normal window sizes, and navigation does not reset the design.
+**Complete when:** existing design/edit/export behavior is preserved; acoustic
+and manufacturing parameters are clearly separated; each page is usable at
+normal window sizes; and navigation does not reset either parameter set.
 
 ### Phase 2 — Define projects and runs
 
