@@ -565,7 +565,7 @@
     <div class="metrics">
       <div class="metric"><span>Measured width</span><strong id="metric-width">400.00 mm</strong></div>
       <div class="metric"><span>Measured height</span><strong id="metric-height">260.00 mm</strong></div>
-      <div class="metric"><span>Measured STL length</span><strong id="metric-total-length">280.00 mm</strong></div>
+      <div class="metric"><span>Measured export length</span><strong id="metric-total-length">280.00 mm</strong></div>
       <div class="metric"><span>Mouth radius</span><strong id="metric-mouth-radius">504.17 mm</strong></div>
       <div class="metric"><span>H endpoint</span><strong id="metric-h-end">291.50 mm</strong></div>
       <div class="metric"><span>V endpoint</span><strong id="metric-v-end">140.00 mm</strong></div>
@@ -662,6 +662,8 @@
   let renderQueued = false;
   let cachedSurfaceKey = "";
   let cachedSurface = null;
+  let cachedExportLengthKey = "";
+  let cachedExportLength = null;
 
   const metrics = {
     width: document.getElementById("metric-width"),
@@ -1048,13 +1050,30 @@
     return p.length + Math.max(0, p.throatExtension);
   }
 
-  function measuredStlLength(p) {
+  function exportGeometryKey(p) {
+    return JSON.stringify({
+      p,
+      morph: morphCurve.anchors,
+      hProfileModifier: p.hModifierEnabled ? profileModifierSplines.h : null,
+      hModifierCurve: p.hModifierEnabled ? hModifierCurve.anchors : null,
+      vProfileModifier: p.vModifierEnabled ? profileModifierSplines.v : null,
+      vModifierCurve: p.vModifierEnabled ? vModifierCurve.anchors : null,
+    });
+  }
+
+  function measuredExportLength(p) {
+    const key = exportGeometryKey(p);
+    if (cachedExportLength !== null && key === cachedExportLengthKey) {
+      return cachedExportLength;
+    }
     const exportSurface = buildExportSurface(p);
     const triangles = p.stlExportMode === "body"
       ? buildBodyTriangles(p, exportSurface)
       : null;
     const bounds = displayZBounds(exportSurface, triangles);
-    return bounds.maxZ - bounds.minZ;
+    cachedExportLengthKey = key;
+    cachedExportLength = bounds.maxZ - bounds.minZ;
+    return cachedExportLength;
   }
 
   function sectionShape(p, distanceFromThroatStart) {
@@ -2589,7 +2608,7 @@
       `    throat_angle_deg: ${yamlNumber(p.throatAngle)}`,
       `    conical_extension_length: ${yamlNumber(p.throatExtension)}`,
       `    effective_throat_radius: ${yamlNumber(effectiveR0)}`,
-      `    measured_total_length: ${yamlNumber(measuredStlLength(p))}`,
+      `    measured_total_length: ${yamlNumber(measuredExportLength(p))}`,
       `    mouth_width: ${yamlNumber(p.mouthWidth)}`,
       `    mouth_height: ${yamlNumber(p.mouthHeight)}`,
       `    mouth_sag: ${yamlNumber(p.mouthSag)}`,
@@ -3095,7 +3114,7 @@
     }
     metrics.width.textContent = `${format(surface.maxX * 2, 5)} mm`;
     metrics.height.textContent = `${format(surface.maxY * 2, 5)} mm`;
-    metrics.totalLength.textContent = `${format(measuredStlLength(p), 5)} mm`;
+    metrics.totalLength.textContent = `${format(measuredExportLength(p), 5)} mm`;
     metrics.mouthRadius.textContent = `${format(mouthSurfaceRadius(p, surface.hEnd, surface.vEnd), 5)} mm`;
     metrics.hEnd.textContent = `${format(surface.hEnd, 5)} mm`;
     metrics.vEnd.textContent = `${format(surface.vEnd, 5)} mm`;
