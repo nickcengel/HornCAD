@@ -6,8 +6,11 @@ import numpy as np
 
 from app.aperture_field import (
     ApertureField,
+    FREE_FIELD_MODEL,
     RADIATION_MODEL,
     TIME_CONVENTION,
+    free_field_monopole_plane_level,
+    free_field_monopole_pressure,
     normalized_level_db,
     plane_directions,
     rayleigh_baffle_plane_level,
@@ -70,6 +73,22 @@ class ApertureFieldTests(unittest.TestCase):
             [6.020599913, 0.0],
         )
 
+    def test_free_field_sheet_is_half_the_rayleigh_baffle_pressure(self) -> None:
+        observers = np.array([[0.0, 0.0, 10.0], [-2.0, 1.0, -8.0]])
+        rayleigh = rayleigh_baffle_pressure(self.field, observers)
+        free = free_field_monopole_pressure(self.field, observers)
+        np.testing.assert_allclose(free, 0.5 * rayleigh, rtol=0.0, atol=0.0)
+        ratio_db = 20.0 * np.log10(np.abs(free / rayleigh))
+        np.testing.assert_allclose(ratio_db, -6.020599913279624)
+
+    def test_free_field_and_rayleigh_normalized_patterns_match(self) -> None:
+        angles = np.arange(-90.0, 91.0)
+        free = free_field_monopole_plane_level(
+            self.field, angles, "vertical")
+        rayleigh = rayleigh_baffle_plane_level(
+            self.field, angles, "vertical")
+        np.testing.assert_allclose(free, rayleigh, rtol=0.0, atol=0.0)
+
     def test_mfem_reader_preserves_complex_fields_without_inventing_normals(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary) / "mouth.csv"
@@ -97,6 +116,10 @@ class ApertureFieldTests(unittest.TestCase):
         self.assertEqual(
             RADIATION_MODEL,
             "rayleigh_infinite_planar_baffle_curved_source_coordinates",
+        )
+        self.assertEqual(
+            FREE_FIELD_MODEL,
+            "free_field_monopole_sheet_curved_source_coordinates",
         )
 
 

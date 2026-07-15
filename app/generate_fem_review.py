@@ -14,18 +14,24 @@ import numpy as np
 try:
     from .aperture_field import (
         ApertureField,
+        FREE_FIELD_MODEL,
         RADIATION_MODEL,
         TIME_CONVENTION,
+        free_field_monopole_plane_pressure,
+        normalized_level_db,
         read_mfem_mouth_csv,
-        rayleigh_baffle_plane_level,
+        rayleigh_baffle_plane_pressure,
     )
 except ImportError:
     from aperture_field import (
         ApertureField,
+        FREE_FIELD_MODEL,
         RADIATION_MODEL,
         TIME_CONVENTION,
+        free_field_monopole_plane_pressure,
+        normalized_level_db,
         read_mfem_mouth_csv,
-        rayleigh_baffle_plane_level,
+        rayleigh_baffle_plane_pressure,
     )
 
 
@@ -51,7 +57,9 @@ def coverage(mouth: np.ndarray, frequency: float, plane: str) -> np.ndarray:
         normal_velocity_m_s=(mouth["normal_velocity_real_m_s"]
                              + 1j * mouth["normal_velocity_imag_m_s"]),
     )
-    return rayleigh_baffle_plane_level(field, ANGLES, plane, sound_speed_m_s=SOUND_SPEED)
+    pressure = rayleigh_baffle_plane_pressure(field, ANGLES, plane,
+                                              sound_speed_m_s=SOUND_SPEED)
+    return normalized_level_db(pressure)
 
 
 def positive_crossing(level: np.ndarray) -> float:
@@ -63,10 +71,35 @@ def positive_crossing(level: np.ndarray) -> float:
     return 90.0
 
 
+def plot_coverage_heatmaps(path: Path, frequencies: np.ndarray,
+                           horizontal: np.ndarray, vertical: np.ndarray,
+                           title: str) -> None:
+    figure, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True,
+                               constrained_layout=True)
+    image = None
+    for axis, values, plane_title in zip(
+            axes, (horizontal, vertical), ("Horizontal", "Vertical")):
+        image = axis.pcolormesh(frequencies, ANGLES, values.T, shading="nearest",
+                                vmin=-30.0, vmax=0.0, cmap="turbo")
+        axis.contour(frequencies, ANGLES, values.T, levels=[-6.0],
+                     colors="white", linewidths=1.5)
+        axis.set_title(plane_title)
+        axis.set_xlabel("Frequency (Hz, log scale)")
+        axis.set_yticks(np.arange(-90, 91, 15))
+        log_axis(axis)
+    axes[0].set_ylabel("Off-axis angle (degrees)")
+    figure.colorbar(image, ax=axes, label="Relative level (dB)")
+    figure.suptitle(title)
+    figure.savefig(path, dpi=180, bbox_inches="tight")
+    plt.close(figure)
+
+
 def generate_review(fields: Path, output_dir: Path, title: str) -> None:
     figures = output_dir / "figures"
     figures.mkdir(parents=True, exist_ok=True)
     frequencies, impedance, horizontal, vertical, rows = [], [], [], [], []
+    rayleigh_horizontal_pressure, rayleigh_vertical_pressure = [], []
+    free_horizontal_pressure, free_vertical_pressure = [], []
     summary_paths = sorted(fields.glob("d*_summary.csv"))
     if not summary_paths:
         raise ValueError(f"no d*_summary.csv files found in {fields}")
@@ -80,14 +113,24 @@ def generate_review(fields: Path, output_dir: Path, title: str) -> None:
         mouth = read_mfem_mouth_csv(mouth_path, frequency)
         value = complex(float(summary["input_impedance_real_pa_s_m3"]),
                         float(summary["input_impedance_imag_pa_s_m3"]))
-        h_level = rayleigh_baffle_plane_level(mouth, ANGLES, "horizontal",
-                                              sound_speed_m_s=SOUND_SPEED)
-        v_level = rayleigh_baffle_plane_level(mouth, ANGLES, "vertical",
-                                              sound_speed_m_s=SOUND_SPEED)
+        h_pressure = rayleigh_baffle_plane_pressure(
+            mouth, ANGLES, "horizontal", sound_speed_m_s=SOUND_SPEED)
+        v_pressure = rayleigh_baffle_plane_pressure(
+            mouth, ANGLES, "vertical", sound_speed_m_s=SOUND_SPEED)
+        free_h_pressure = free_field_monopole_plane_pressure(
+            mouth, ANGLES, "horizontal", sound_speed_m_s=SOUND_SPEED)
+        free_v_pressure = free_field_monopole_plane_pressure(
+            mouth, ANGLES, "vertical", sound_speed_m_s=SOUND_SPEED)
+        h_level = normalized_level_db(h_pressure)
+        v_level = normalized_level_db(v_pressure)
         frequencies.append(frequency)
         impedance.append(value)
         horizontal.append(h_level)
         vertical.append(v_level)
+        rayleigh_horizontal_pressure.append(h_pressure)
+        rayleigh_vertical_pressure.append(v_pressure)
+        free_horizontal_pressure.append(free_h_pressure)
+        free_vertical_pressure.append(free_v_pressure)
         rows.append({
             "frequency_hz": frequency,
             "impedance_magnitude_pa_s_m3": abs(value),
@@ -102,11 +145,27 @@ def generate_review(fields: Path, output_dir: Path, title: str) -> None:
     impedance = np.asarray(impedance)
     horizontal = np.asarray(horizontal)
     vertical = np.asarray(vertical)
+    rayleigh_horizontal_pressure = np.asarray(rayleigh_horizontal_pressure)
+    rayleigh_vertical_pressure = np.asarray(rayleigh_vertical_pressure)
+    free_horizontal_pressure = np.asarray(free_horizontal_pressure)
+    free_vertical_pressure = np.asarray(free_vertical_pressure)
+    free_horizontal = np.asarray([normalized_level_db(value)
+                                  for value in free_horizontal_pressure])
+    free_vertical = np.asarray([normalized_level_db(value)
+                                for value in free_vertical_pressure])
     output_dir.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(output_dir / "responses.npz", frequencies_hz=frequencies,
                         angles_deg=ANGLES, horizontal_db=horizontal,
                         vertical_db=vertical, impedance=impedance,
                         radiation_model=RADIATION_MODEL,
+                        rayleigh_horizontal_pressure_pa=rayleigh_horizontal_pressure,
+                        rayleigh_vertical_pressure_pa=rayleigh_vertical_pressure,
+                        free_field_model=FREE_FIELD_MODEL,
+                        free_field_horizontal_pressure_pa=free_horizontal_pressure,
+                        free_field_vertical_pressure_pa=free_vertical_pressure,
+                        free_field_horizontal_db=free_horizontal,
+                        free_field_vertical_db=free_vertical,
+                        free_field_to_rayleigh_pressure_ratio=0.5,
                         time_convention=TIME_CONVENTION,
                         receiver_radius_m=10.0,
                         normalization="peak_per_frequency")
@@ -115,22 +174,13 @@ def generate_review(fields: Path, output_dir: Path, title: str) -> None:
         writer.writeheader()
         writer.writerows(rows)
 
-    figure, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True, constrained_layout=True)
-    image = None
-    for axis, values, plane_title in zip(axes, (horizontal, vertical), ("Horizontal", "Vertical")):
-        image = axis.pcolormesh(frequencies, ANGLES, values.T, shading="nearest",
-                                vmin=-30.0, vmax=0.0, cmap="turbo")
-        axis.contour(frequencies, ANGLES, values.T, levels=[-6.0],
-                     colors="white", linewidths=1.5)
-        axis.set_title(plane_title)
-        axis.set_xlabel("Frequency (Hz, log scale)")
-        axis.set_yticks(np.arange(-90, 91, 15))
-        log_axis(axis)
-    axes[0].set_ylabel("Off-axis angle (degrees)")
-    figure.colorbar(image, ax=axes, label="Relative level (dB)")
-    figure.suptitle(f"{title} — Rayleigh infinite-planar-baffle reference")
-    figure.savefig(figures / "coverage_heatmaps.png", dpi=180, bbox_inches="tight")
-    plt.close(figure)
+    plot_coverage_heatmaps(
+        figures / "coverage_heatmaps.png", frequencies, horizontal, vertical,
+        f"{title} — Rayleigh infinite-planar-baffle reference")
+    plot_coverage_heatmaps(
+        figures / "free_field_monopole_heatmaps.png", frequencies,
+        free_horizontal, free_vertical,
+        f"{title} — free-field curved monopole-sheet baseline")
 
     figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
     axis.plot(frequencies, np.abs(impedance), linewidth=1.8)

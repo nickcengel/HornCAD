@@ -193,6 +193,15 @@ spherical-baffle solution and it contains no finite-lip diffraction. The
 `responses.npz` artifact records the radiation-model identifier, time
 convention, receiver radius, and normalization convention used by the review.
 
+The same artifact also contains a free-field curved monopole-sheet baseline
+under the `free_field_*` keys, including calibrated complex H/V receiver
+pressure and normalized levels. This source sheet is not a zero-thickness rigid
+screen: it is a prescribed equivalent-source integral in unrestricted space,
+with no lip boundary or diffraction. Removing the Rayleigh image source makes
+its calibrated pressure exactly half the infinite-baffle result
+(`-6.0206 dB`) while leaving peak-normalized directivity unchanged. A separate
+`figures/free_field_monopole_heatmaps.png` makes that baseline explicit.
+
 The YAML hash and numerical settings in `run_settings.json` prevent accidental
 reuse of a mesh generated for another design or resolution. Re-running the
 same command resumes completed frequencies. Use a different output directory

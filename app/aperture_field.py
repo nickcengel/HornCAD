@@ -17,6 +17,7 @@ import numpy as np
 
 TIME_CONVENTION = "exp(+i omega t)"
 RADIATION_MODEL = "rayleigh_infinite_planar_baffle_curved_source_coordinates"
+FREE_FIELD_MODEL = "free_field_monopole_sheet_curved_source_coordinates"
 
 
 @dataclass(frozen=True)
@@ -143,6 +144,22 @@ def rayleigh_baffle_pressure(field: ApertureField, observers_m: np.ndarray, *,
     return 1j * density_kg_m3 * omega / (2.0 * math.pi) * integral
 
 
+def free_field_monopole_pressure(field: ApertureField, observers_m: np.ndarray, *,
+                                 density_kg_m3: float = 1.2041,
+                                 sound_speed_m_s: float = 343.21) -> np.ndarray:
+    """Evaluate the free-field monopole-sheet baseline.
+
+    The prescribed velocity-weighted source sheet radiates through the ordinary
+    free-space Green function. It is not a rigid zero-thickness screen and has
+    no lip boundary or edge diffraction. For the same source field its pressure
+    is exactly half the infinite-baffle Rayleigh result.
+    """
+    return 0.5 * rayleigh_baffle_pressure(
+        field, observers_m, density_kg_m3=density_kg_m3,
+        sound_speed_m_s=sound_speed_m_s,
+    )
+
+
 def normalized_level_db(pressure: np.ndarray, *, reference: str = "peak",
                         on_axis_index: int | None = None,
                         floor_db: float = -30.0) -> np.ndarray:
@@ -164,6 +181,42 @@ def normalized_level_db(pressure: np.ndarray, *, reference: str = "peak",
     return np.maximum(level, floor_db)
 
 
+def plane_observers(field: ApertureField, angles_deg: np.ndarray, plane: str, *,
+                    receiver_radius_m: float = 10.0) -> np.ndarray:
+    """Place finite-distance receivers about the area-weighted mouth centre."""
+    if receiver_radius_m <= 0.0:
+        raise ValueError("receiver radius must be positive")
+    angles = np.asarray(angles_deg, dtype=float)
+    directions = plane_directions(angles, plane)
+    return field.center_m + receiver_radius_m * directions
+
+
+def rayleigh_baffle_plane_pressure(field: ApertureField, angles_deg: np.ndarray,
+                                   plane: str, *, receiver_radius_m: float = 10.0,
+                                   density_kg_m3: float = 1.2041,
+                                   sound_speed_m_s: float = 343.21) -> np.ndarray:
+    """Return calibrated complex pressure for the current Rayleigh reference."""
+    observers = plane_observers(field, angles_deg, plane,
+                                receiver_radius_m=receiver_radius_m)
+    return rayleigh_baffle_pressure(
+        field, observers, density_kg_m3=density_kg_m3,
+        sound_speed_m_s=sound_speed_m_s,
+    )
+
+
+def free_field_monopole_plane_pressure(
+        field: ApertureField, angles_deg: np.ndarray, plane: str, *,
+        receiver_radius_m: float = 10.0, density_kg_m3: float = 1.2041,
+        sound_speed_m_s: float = 343.21) -> np.ndarray:
+    """Return calibrated pressure from the curved free-field monopole sheet."""
+    observers = plane_observers(field, angles_deg, plane,
+                                receiver_radius_m=receiver_radius_m)
+    return free_field_monopole_pressure(
+        field, observers, density_kg_m3=density_kg_m3,
+        sound_speed_m_s=sound_speed_m_s,
+    )
+
+
 def rayleigh_baffle_plane_level(field: ApertureField, angles_deg: np.ndarray,
                                 plane: str, *, receiver_radius_m: float = 10.0,
                                 reference: str = "peak",
@@ -171,14 +224,26 @@ def rayleigh_baffle_plane_level(field: ApertureField, angles_deg: np.ndarray,
                                 density_kg_m3: float = 1.2041,
                                 sound_speed_m_s: float = 343.21) -> np.ndarray:
     """Reproduce the current FEM review coverage with documented conventions."""
-    if receiver_radius_m <= 0.0:
-        raise ValueError("receiver radius must be positive")
     angles = np.asarray(angles_deg, dtype=float)
-    directions = plane_directions(angles, plane)
-    observers = field.center_m + receiver_radius_m * directions
-    pressure = rayleigh_baffle_pressure(
-        field, observers, density_kg_m3=density_kg_m3,
-        sound_speed_m_s=sound_speed_m_s,
+    pressure = rayleigh_baffle_plane_pressure(
+        field, angles, plane, receiver_radius_m=receiver_radius_m,
+        density_kg_m3=density_kg_m3, sound_speed_m_s=sound_speed_m_s,
+    )
+    on_axis = int(np.argmin(np.abs(angles)))
+    return normalized_level_db(pressure, reference=reference,
+                               on_axis_index=on_axis, floor_db=floor_db)
+
+
+def free_field_monopole_plane_level(
+        field: ApertureField, angles_deg: np.ndarray, plane: str, *,
+        receiver_radius_m: float = 10.0, reference: str = "peak",
+        floor_db: float = -30.0, density_kg_m3: float = 1.2041,
+        sound_speed_m_s: float = 343.21) -> np.ndarray:
+    """Normalize the free-field monopole-sheet baseline explicitly."""
+    angles = np.asarray(angles_deg, dtype=float)
+    pressure = free_field_monopole_plane_pressure(
+        field, angles, plane, receiver_radius_m=receiver_radius_m,
+        density_kg_m3=density_kg_m3, sound_speed_m_s=sound_speed_m_s,
     )
     on_axis = int(np.argmin(np.abs(angles)))
     return normalized_level_db(pressure, reference=reference,

@@ -212,6 +212,17 @@ Initial proof targets, subject to tightening from the reference cases, are:
   CSV files do not yet export surface normals; the adapter deliberately leaves
   them absent rather than inventing them. Normals become mandatory for the
   subsequent equivalent-source and local-lip formulations.
+- **Free-field equivalent-source baseline (completed 2026-07-15).**
+  The shared aperture module now evaluates a prescribed curved monopole sheet
+  through the ordinary free-space Green function with no rigid screen,
+  scattering object, or edge boundary. It preserves calibrated complex H/V
+  pressure as well as normalized levels in the FEM review artifact. For a
+  fixed mouth velocity this baseline is exactly one half of the doubled
+  Rayleigh-baffle pressure (`-6.0206 dB`), so its normalized forward pattern is
+  intentionally identical. Tests enforce both facts. This is a mathematical
+  no-scatter reference, not a physical zero-thickness horn or accepted free-air
+  solution. The first angular change belongs to the next milestone, where a
+  finite closed local-lip solid scatters this incident field.
 
 ## Completed Foundation: Reduced Interior Model (2026-07-14)
 
