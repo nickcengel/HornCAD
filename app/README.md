@@ -177,10 +177,15 @@ python app/helmholtz_bem_3d.py config.YAML --formulation single-layer-preview
 ```
 
 `--maximum-workers 0` (the default) balances the complete native-FMM solve:
-standalone RHS construction is effectively serial per frequency, while GMRES
-scales across native threads. On the 20-core reference machine the default is
-therefore ten frequency workers with two threads each. Frequencies are queued
-highest first to expose memory or convergence failures early. The measured FMM
+NGSolve 6.2.2606's asymmetric full-source/quadrant-target hypersingular path is
+not thread-safe, so a symmetry solve deliberately uses one native thread per
+frequency. Parallelism is recovered across independent frequency processes. A
+ten-point sweep therefore uses ten cores on the 20-core reference machine; a
+20-point sweep can use all 20 when memory permits. Full-geometry reference
+solves retain the two-thread-per-frequency policy. Frequencies are queued
+highest first to expose memory or convergence failures early. Every quadrant
+solve repeats one combined-operator application and aborts if it is not bitwise
+stable, preventing the library race from silently corrupting GMRES. The measured FMM
 memory model includes fixed process cost, DOF-dependent storage, and 15%
 headroom; `--memory-limit-gib 48` also reserves roughly one quarter of the
 machine for the operating system and final artifact generation. The execution

@@ -90,7 +90,7 @@ def _imports() -> dict[str, Any]:
         from netgen.csg import Pnt
         from netgen.meshing import Element2D, FaceDescriptor, Mesh, MeshPoint
         from ngsolve import (BilinearForm, LinearForm, GridFunction, H1,
-                             TaskManager, ds, grad, specialcf, Norm, solvers,
+                             TaskManager, SetNumThreads, ds, grad, specialcf, Norm, solvers,
                              Periodic, Compress)
         from ngsolve.bem import (HelmholtzDL, HelmholtzSL,
                                  HelmholtzHypersingularOperator)
@@ -122,16 +122,18 @@ def surface_mesh(vertices: np.ndarray, faces: np.ndarray,
 
 
 def symmetric_periodic_surface_space(vertices: np.ndarray, faces: np.ndarray,
-                                     domain_indices: np.ndarray) -> tuple[Any, Any]:
-    """Reflect a quadrant mesh and compress even-even identified H1 DOFs."""
+                                     domain_indices: np.ndarray
+                                     ) -> tuple[Any, Any, str, str]:
+    """Build connected seam topology and label the independent target quadrant."""
     ng = _imports()
     reflected_vertices: list[np.ndarray] = []
     reflected_faces: list[list[int]] = []
     reflected_domains: list[int] = []
     coordinate_index: dict[tuple[float, float, float], int] = {}
     representatives: list[tuple[float, float, float]] = []
-    for x_sign, y_sign in ((1.0, 1.0), (-1.0, 1.0),
-                           (1.0, -1.0), (-1.0, -1.0)):
+    for image_index, (x_sign, y_sign) in enumerate(
+            ((1.0, 1.0), (-1.0, 1.0),
+             (1.0, -1.0), (-1.0, -1.0))):
         local_indices = []
         for point in np.asarray(vertices, dtype=float):
             reflected = np.asarray(
@@ -148,15 +150,16 @@ def symmetric_periodic_surface_space(vertices: np.ndarray, faces: np.ndarray,
                        if x_sign * y_sign < 0 else np.asarray(faces))
         for face, domain in zip(image_faces, domain_indices):
             reflected_faces.append([local_indices[int(index)] for index in face])
-            reflected_domains.append(int(domain))
+            reflected_domains.append(2 * image_index + int(domain))
 
     raw = ng["Mesh"](dim=3)
     points = [raw.Add(ng["MeshPoint"](ng["Pnt"](*map(float, point))))
               for point in reflected_vertices]
-    raw.Add(ng["FaceDescriptor"](bc=1))
-    raw.Add(ng["FaceDescriptor"](bc=2))
-    raw.SetBCName(0, "rigid")
-    raw.SetBCName(1, "throat")
+    for image_index in range(4):
+        raw.Add(ng["FaceDescriptor"](bc=2 * image_index + 1))
+        raw.Add(ng["FaceDescriptor"](bc=2 * image_index + 2))
+        raw.SetBCName(2 * image_index, f"rigid_q{image_index}")
+        raw.SetBCName(2 * image_index + 1, f"throat_q{image_index}")
     for face, domain in zip(reflected_faces, reflected_domains):
         raw.Add(ng["Element2D"](domain + 1,
                                 [points[index] for index in face]))
@@ -173,7 +176,7 @@ def symmetric_periodic_surface_space(vertices: np.ndarray, faces: np.ndarray,
         raise RuntimeError(
             f"symmetry compression produced {space.ndof} DOFs for "
             f"{len(vertices)} quadrant vertices")
-    return mesh, space
+    return mesh, space, "rigid_q0|throat_q0", "throat_q0"
 
 
 def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
@@ -213,11 +216,16 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
     if symmetry_planes not in ((), ("x=0", "y=0")):
         raise ValueError("supported symmetry is empty or ('x=0', 'y=0')")
     if symmetry_planes:
-        mesh, space = symmetric_periodic_surface_space(
+        # NGSolve 6.2.2606 races in the asymmetric full-source/q0-target
+        # hypersingular apply. Enforce correctness for direct API callers too;
+        # the sweep scheduler recovers parallelism across frequency processes.
+        ng["SetNumThreads"](1)
+        mesh, space, target_boundaries, target_throat = symmetric_periodic_surface_space(
             vertices, faces, domain_indices)
     else:
         mesh = surface_mesh(vertices, faces, domain_indices)
         space = ng["H1"](mesh, order=1, complex=True)
+        target_boundaries, target_throat = "rigid|throat", "throat"
     image_specs = ((1.0, 1.0),)
     image_meshes = [mesh]
     image_spaces = [space]
@@ -235,12 +243,19 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
     if any(image_space.ndof != space.ndof for image_space in image_spaces):
         raise RuntimeError("reflected symmetry spaces changed coefficient ordering")
     trial, test = space.TnT()
+    target_ds = ng["ds"](target_boundaries)
     checkpoint = phase("surface_setup", started)
     k = 2 * math.pi * frequency_hz / sound_speed_m_s
     fmm_options = {"fmm_minorder": fmm_min_order,
                    "fmm_order_factor": fmm_order_factor,
                    "fmm_separation": fmm_separation,
                    "fmm_maxdirect": fmm_max_direct}
+    def image_options(signs: tuple[float, float, float, float]) -> dict[str, Any]:
+        # The connected reflected surface already supplies all four source
+        # images. Periodic compression retains quadrant unknowns while the
+        # stock FMM handles its full source tree and q0 target region.
+        return fmm_options
+    scalar_options = image_options((1.0, 1.0, 1.0, 1.0))
     normal = ng["specialcf"].normal(3)
     # The surface curl is n x grad_Gamma. It cannot be replaced by grad_Gamma
     # inside the nonlocal dot product because source and target normals differ.
@@ -253,36 +268,42 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
             image_trial, _ = image_space.TnT()
             trial_rotation = Cross(normal, ng["grad"](image_trial).Trace())
             single_image = (ng["HelmholtzSL"](
-                image_trial * ng["ds"], k, **fmm_options) * test * ng["ds"])
+                image_trial * ng["ds"], k, **scalar_options) * test * target_ds)
             double_image = (ng["HelmholtzDL"](
-                image_trial * ng["ds"], k, **fmm_options) * test * ng["ds"])
+                image_trial * ng["ds"], k, **scalar_options) * test * target_ds)
             singles.append(single_image)
             doubles.append(double_image)
+            curl_signs = ((1., 1., -1., -1.),
+                          (1., -1., 1., -1.),
+                          (1., -1., -1., 1.))
+            normal_signs = ((1., -1., 1., -1.),
+                            (1., 1., -1., -1.),
+                            (1., 1., 1., 1.))
             surface_gradient_terms = [
                 ng["HelmholtzSL"](trial_rotation[i] * ng["ds"], k,
-                                   **fmm_options)
-                * test_rotation[i] * ng["ds"] for i in range(3)]
+                                   **image_options(curl_signs[i]))
+                * test_rotation[i] * target_ds for i in range(3)]
             normal_mass_terms = [
                 ng["HelmholtzSL"]((normal[i] * image_trial) * ng["ds"], k,
-                                   **fmm_options)
-                * (normal[i] * test) * ng["ds"] for i in range(3)]
+                                   **image_options(normal_signs[i]))
+                * (normal[i] * test) * target_ds for i in range(3)]
             hypers.append(add_operators(surface_gradient_terms)
                           - k * k * add_operators(normal_mass_terms))
         single = add_operators(singles)
         double = add_operators(doubles)
         hyper = add_operators(hypers)
-        mass = ng["BilinearForm"](trial * test * ng["ds"]).Assemble()
+        mass = ng["BilinearForm"](trial * test * target_ds).Assemble()
         if regularizer == "physical":
             regularizing_single = single
         elif regularizer == "imaginary":
             regularizing_single = add_operators([
                 ng["HelmholtzSL"](image_space.TnT()[0] * ng["ds"], 1j * k,
-                                   **fmm_options) * test * ng["ds"]
+                                   **scalar_options) * test * target_ds
                 for image_space in image_spaces])
         elif regularizer == "laplace":
             regularizing_single = add_operators([
                 ng["HelmholtzSL"](image_space.TnT()[0] * ng["ds"], 1e-10,
-                                   **fmm_options) * test * ng["ds"]
+                                   **scalar_options) * test * target_ds
                 for image_space in image_spaces])
         else:
             raise ValueError("regularizer must be 'physical', 'imaginary', or 'laplace'")
@@ -290,11 +311,24 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
 
     prescribed = ng["GridFunction"](space)
     throat_load = ng["LinearForm"](
-        neumann_value * test * ng["ds"]("throat")).Assemble()
+        neumann_value * test * ng["ds"](target_throat)).Assemble()
     prescribed.vec.data = mass.mat.Inverse() * throat_load.vec
     eta = 1j * k
     lhs = hyper.mat + eta * (0.5 * mass.mat - double.mat)
     rhs = prescribed.vec.CreateVector()
+    if symmetry_planes:
+        probe = prescribed.vec.CreateVector()
+        probe.FV().NumPy()[:] = (np.arange(len(probe)) % 17 - 8) + 1j * (
+            np.arange(len(probe)) % 11 - 5)
+        first = rhs.CreateVector(); second = rhs.CreateVector()
+        with ng["TaskManager"]():
+            first.data = lhs * probe
+            second.data = lhs * probe
+        repeat_error = float(ng['Norm'](first-second)/max(ng['Norm'](first),1e-30))
+        print(f"BEM {frequency_hz:g} Hz: operator repeat error {repeat_error:.3g}",
+              flush=True)
+        if repeat_error > 1e-12:
+            raise RuntimeError(f"quadrant FMM is not repeatable: {repeat_error:.3g}")
     with ng["TaskManager"]():
         rhs.data = ((-0.5 * mass.mat - double.mat.T) * prescribed.vec
                     - eta * single.mat * prescribed.vec)

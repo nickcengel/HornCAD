@@ -189,9 +189,9 @@ def execution_plan(settings: PipelineSettings, mesh: AcousticMesh,
                    pending_frequencies: int) -> ExecutionPlan:
     """Allocate cores and memory for whole-solve throughput.
 
-    Native FMM GMRES scales well to two threads per frequency on the target
-    20-core workstation, while RHS construction is effectively serial. Ten
-    two-thread workers therefore balance both phases without oversubscription.
+    NGSolve 6.2.2606's asymmetric full-source/quadrant-target hypersingular
+    operator is not thread-safe. Quadrant solves therefore use one native
+    thread per frequency and recover parallelism across frequency processes.
     """
     cpus = os.cpu_count() or 1
     memory_limit = settings.memory_limit_gib or 0.75 * _physical_memory_gib()
@@ -204,11 +204,16 @@ def execution_plan(settings: PipelineSettings, mesh: AcousticMesh,
         per_worker = 1.15 * (
             1.5 + integration_dofs * 30_000 / 1024 ** 3)
     memory_workers = max(1, int(memory_limit // per_worker))
-    default_workers = max(1, cpus // 2) if settings.solver_backend == "ngsolve-fmm" else cpus
+    serial_quadrant_fmm = (settings.solver_backend == "ngsolve-fmm"
+                           and settings.quadrant_symmetry)
+    default_workers = (cpus if serial_quadrant_fmm else
+                       max(1, cpus // 2) if settings.solver_backend == "ngsolve-fmm"
+                       else cpus)
     requested = default_workers if settings.maximum_workers == 0 else max(1, settings.maximum_workers)
     workers = max(1, min(requested, cpus, memory_workers,
                          pending_frequencies or 1))
-    return ExecutionPlan(workers, max(1, cpus // workers), cpus, memory_limit, per_worker)
+    threads = 1 if serial_quadrant_fmm else max(1, cpus // workers)
+    return ExecutionPlan(workers, threads, cpus, memory_limit, per_worker)
 
 
 def _jsonable(value: Any) -> Any:
@@ -1002,10 +1007,10 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
                   flush=True)
     if pending and (plan.workers == 1 or used_parallel_workers == 1):
         import numba
-        numba.set_num_threads(plan.cpu_count)
+        numba.set_num_threads(plan.threads_per_worker)
         if settings.solver_backend == "ngsolve-fmm":
             from ngsolve import SetNumThreads
-            SetNumThreads(plan.cpu_count)
+            SetNumThreads(plan.threads_per_worker)
         grid = (bempp.Grid(mesh.surface.vertices.T, mesh.surface.faces.T,
                            domain_indices=mesh.domain_indices)
                 if settings.solver_backend == "bempp-dense" else None)

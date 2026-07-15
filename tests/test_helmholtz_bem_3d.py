@@ -119,7 +119,7 @@ class HelmholtzBEM3DTests(unittest.TestCase):
         self.assertLessEqual(plan.workers, 2)
         self.assertEqual(settings.formulation, "combined-field")
 
-    def test_fmm_execution_plan_balances_serial_and_threaded_phases(self) -> None:
+    def test_fmm_execution_plan_parallelizes_safe_quadrant_frequencies(self) -> None:
         yaml_path = Path(__file__).parents[1] / "test_project" / "HornCAD-Body-400x260x250.YAML"
         mesh = build_acoustic_mesh(
             yaml_path, MeshSettings(1_000.0, 6.0), side_samples=8,
@@ -129,7 +129,7 @@ class HelmholtzBEM3DTests(unittest.TestCase):
         with patch("app.helmholtz_bem_3d.os.cpu_count", return_value=20):
             plan = execution_plan(settings, mesh, 10)
         self.assertEqual(plan.workers, 10)
-        self.assertEqual(plan.threads_per_worker, 2)
+        self.assertEqual(plan.threads_per_worker, 1)
         self.assertLess(plan.workers * plan.estimated_memory_per_worker_gib, 48)
 
 
