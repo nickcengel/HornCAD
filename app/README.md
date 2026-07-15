@@ -111,7 +111,7 @@ This is substantially more informative than the uniform-aperture estimate, but i
 
 ## Helmholtz 3D BEM Directivity
 
-Run the coupled 3D boundary-element comparison pipeline at eight logarithmically spaced frequencies from 500 Hz to 8 kHz:
+Run the coupled 3D boundary-element comparison pipeline at ten logarithmically spaced frequencies from 500 Hz to 8 kHz:
 
 ```bash
 python app/helmholtz_bem_3d.py path/to/config.YAML
@@ -122,7 +122,8 @@ The solver builds a closed acoustic obstacle from the printable HornCAD body and
 The exterior radiation problem uses a regularized combined-field Neumann equation to avoid fictitious interior resonances. Select `--solver-backend ngsolve-fmm` for native matrix-free layer operators, singular quadrature, FMM evaluation, weakly singular hypersingular regularization, and Laplace-Calderon-preconditioned GMRES. Python remains the geometry, sweep, and artifact layer. The legacy `bempp-dense` backend is retained as a small-problem numerical reference; results made before the 2026-07-15 Calderon sign correction must be regenerated.
 
 The default production sweep is 500 Hz--8 kHz at six elements per wavelength.
-The eight logarithmically spaced frequencies include both endpoints. Use
+The ten logarithmically spaced frequencies include both endpoints and match
+the default 10-process by 2-thread execution plan on a 20-core workstation. Use
 `--mesh-tier verification-8`, `verification-10`, or `verification-12` for
 convergence runs. Watertightness, orientation, connectedness, edge length,
 minimum angle, and aspect ratio are checked before solving.
@@ -153,11 +154,17 @@ python app/helmholtz_bem_3d.py config.YAML --direct-solve-max-dofs 500
 python app/helmholtz_bem_3d.py config.YAML --formulation single-layer-preview
 ```
 
-`--maximum-workers 0` (the default) auto-schedules independent frequencies from
-the available CPU count and a conservative dense-operator memory estimate. It
-also partitions Numba threads between workers, preventing process/thread
-oversubscription. On a 20-core, 64 GiB machine, `--memory-limit-gib 48` reserves
-roughly one quarter of memory for the operating system and plotting.
+`--maximum-workers 0` (the default) balances the complete native-FMM solve:
+standalone RHS construction is effectively serial per frequency, while GMRES
+scales across native threads. On the 20-core reference machine the default is
+therefore ten frequency workers with two threads each. Frequencies are queued
+highest first to expose memory or convergence failures early. The measured FMM
+memory model includes fixed process cost, DOF-dependent storage, and 15%
+headroom; `--memory-limit-gib 48` also reserves roughly one quarter of the
+machine for the operating system and final artifact generation. The execution
+plan is printed before solving, and a sandbox-induced serial fallback is
+reported as a warning. Receiver points are evaluated in one native batch rather
+than a serial Python loop.
 GMRES is used at every mesh size by default; dense LU is cubic and is reserved
 for deliberately tiny reference cases through `--direct-solve-max-dofs`.
 The `single-layer-preview` formulation assembles one dense operator and is

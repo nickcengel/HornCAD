@@ -20,6 +20,7 @@ import os
 from pathlib import Path
 import platform
 import multiprocessing
+import sys
 import tempfile
 import time
 from typing import Any, Iterable
@@ -181,17 +182,26 @@ def _physical_memory_gib() -> float:
 
 def execution_plan(settings: PipelineSettings, mesh: AcousticMesh,
                    pending_frequencies: int) -> ExecutionPlan:
-    """Allocate cores and memory across independent dense BEM solves."""
+    """Allocate cores and memory for whole-solve throughput.
+
+    Native FMM GMRES scales well to two threads per frequency on the target
+    20-core workstation, while RHS construction is effectively serial. Ten
+    two-thread workers therefore balance both phases without oversubscription.
+    """
     cpus = os.cpu_count() or 1
     memory_limit = settings.memory_limit_gib or 0.75 * _physical_memory_gib()
-    # The combined-field solve can retain several complex dense operators plus
-    # factorization/work arrays. Five matrices is a conservative working-set estimate.
-    per_worker = (max(0.25, 5.0 * mesh.report.estimated_dense_matrix_gib)
-                  if settings.solver_backend == "bempp-dense"
-                  else max(0.5, mesh.report.estimated_dofs * 150_000 / 1024 ** 3))
+    if settings.solver_backend == "bempp-dense":
+        per_worker = max(0.25, 5.0 * mesh.report.estimated_dense_matrix_gib)
+    else:
+        # Fits measured peaks at 13.8k DOF (1.97 GiB) and 38.9k DOF
+        # (2.43 GiB), then adds 15% scheduling headroom.
+        per_worker = 1.15 * (
+            1.5 + mesh.report.estimated_dofs * 30_000 / 1024 ** 3)
     memory_workers = max(1, int(memory_limit // per_worker))
-    requested = cpus if settings.maximum_workers == 0 else max(1, settings.maximum_workers)
-    workers = max(1, min(requested, cpus, memory_workers, pending_frequencies or 1))
+    default_workers = max(1, cpus // 2) if settings.solver_backend == "ngsolve-fmm" else cpus
+    requested = default_workers if settings.maximum_workers == 0 else max(1, settings.maximum_workers)
+    workers = max(1, min(requested, cpus, memory_workers,
+                         pending_frequencies or 1))
     return ExecutionPlan(workers, max(1, cpus // workers), cpus, memory_limit, per_worker)
 
 
@@ -676,8 +686,12 @@ def _solve_frequency_ngsolve(acoustic_mesh: AcousticMesh,
         directions_by_cut[name] = directions
         far_points[name] = acoustic_mesh.mouth_center_m + far_radius * directions.T
     all_points = np.vstack((observer.positions_m, second_mouth, *far_points.values()))
+    evaluation_started = time.perf_counter()
     evaluate = make_point_evaluator(solution, all_points)
     values = evaluate(all_points)
+    evaluation_s = time.perf_counter() - evaluation_started
+    print(f"BEM {frequency_hz:g} Hz: batched field evaluation "
+          f"{evaluation_s:.2f}s for {len(all_points)} points", flush=True)
     count = len(observer.positions_m)
     p = values[:count]
     p2 = values[count:2 * count]
@@ -703,6 +717,10 @@ def _solve_frequency_ngsolve(acoustic_mesh: AcousticMesh,
     metrics["source_velocity_m_s"] = float(abs(velocity))
     metrics["far_field_evaluation_radius_m"] = far_radius
     metrics["solver_relative_residual"] = solution.relative_residual
+    metrics["field_evaluation_s"] = evaluation_s
+    metrics["solver_peak_rss_gib"] = solution.peak_rss_gib
+    metrics.update({f"solver_{name}_s": value
+                    for name, value in solution.timings_s.items()})
     return FrequencyResult(frequency_hz, solution.iterations, solution.dofs, p, vn,
                            full, ideal, metrics)
 
@@ -813,20 +831,30 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
     pending = [(float(frequency), artifact) for frequency, artifact in zip(frequencies, artifacts)
                if not (resume and artifact.exists())]
     plan = execution_plan(settings, mesh, len(pending))
+    print(f"BEM execution plan: {plan.workers} frequency workers x "
+          f"{plan.threads_per_worker} native threads; "
+          f"{plan.estimated_memory_per_worker_gib:.2f} GiB/worker estimated; "
+          f"{len(pending)} frequencies pending", flush=True)
     used_parallel_workers = plan.workers
     if plan.workers > 1:
         try:
             context = multiprocessing.get_context("spawn")
             with ProcessPoolExecutor(max_workers=plan.workers, mp_context=context) as executor:
+                # Start the highest frequencies first: they expose convergence
+                # and memory failures early, while lower frequencies backfill
+                # workers through the executor's dynamic queue.
                 futures = [executor.submit(_solve_frequency_worker,
                            (mesh, observer, settings, frequency, artifact, plan.threads_per_worker))
-                           for frequency, artifact in pending]
+                           for frequency, artifact in sorted(pending, reverse=True)]
                 for future in as_completed(futures):
                     future.result()
         except (PermissionError, NotImplementedError):
             # Restricted macOS sandboxes may deny POSIX semaphore discovery.
             # Preserve correctness and use all cores within one Numba process.
             used_parallel_workers = 1
+            print("WARNING: multiprocessing unavailable; falling back to one "
+                  "frequency process using all native threads", file=sys.stderr,
+                  flush=True)
     if pending and (plan.workers == 1 or used_parallel_workers == 1):
         import numba
         numba.set_num_threads(plan.cpu_count)
@@ -1006,7 +1034,7 @@ def plot_heatmaps(path: Path, angles_deg: np.ndarray, frequencies_hz: np.ndarray
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("yaml", type=Path); parser.add_argument("--start-hz", type=float, default=500)
-    parser.add_argument("--stop-hz", type=float, default=8_000); parser.add_argument("--frequencies", type=int, default=8)
+    parser.add_argument("--stop-hz", type=float, default=8_000); parser.add_argument("--frequencies", type=int, default=10)
     parser.add_argument("--angles", type=int, default=91); parser.add_argument("--floor-db", type=float, default=-40)
     parser.add_argument("--mesh-tier", choices=MESH_TIERS, default="production")
     parser.add_argument("--elements-per-wavelength", type=float); parser.add_argument("--maximum-frequency-hz", type=float)
@@ -1039,7 +1067,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
-    frequencies = frequency_grid(args.start_hz, args.stop_hz, args.frequencies, "log")
+    if args.frequencies == 1:
+        frequencies = np.asarray([args.stop_hz], dtype=float)
+    else:
+        frequencies = frequency_grid(args.start_hz, args.stop_hz, args.frequencies, "log")
     maximum = args.maximum_frequency_hz or float(frequencies.max())
     if abs(maximum - float(frequencies.max())) > 1e-9:
         raise SystemExit("--maximum-frequency-hz must equal the highest requested frequency")

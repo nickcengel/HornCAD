@@ -8,6 +8,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
+import resource
+import sys
+import time
 from typing import Any, Callable
 
 import numpy as np
@@ -62,6 +65,8 @@ class NGSolveBEMSolution:
     iterations: int
     wavenumber_m1: float
     relative_residual: float
+    timings_s: dict[str, float]
+    peak_rss_gib: float
 
     def potential(self) -> Any:
         # NGSolve's exterior Calderon convention is u = K p - V g.
@@ -125,10 +130,21 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
     """
     if frequency_hz <= 0 or sound_speed_m_s <= 0:
         raise ValueError("frequency and sound speed must be positive")
+    started = time.perf_counter()
+    timings: dict[str, float] = {}
+
+    def phase(name: str, since: float) -> float:
+        now = time.perf_counter()
+        timings[name] = now - since
+        print(f"BEM {frequency_hz:g} Hz: {name} {timings[name]:.2f}s "
+              f"(elapsed {now - started:.2f}s)", flush=True)
+        return now
+
     ng = _imports()
     mesh = surface_mesh(vertices, faces, domain_indices)
     space = ng["H1"](mesh, order=1, complex=True)
     trial, test = space.TnT()
+    checkpoint = phase("surface_setup", started)
     k = 2 * math.pi * frequency_hz / sound_speed_m_s
     fmm_options = {"fmm_minorder": fmm_min_order,
                    "fmm_order_factor": fmm_order_factor,
@@ -169,19 +185,25 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
                 trial * ng["ds"], 1e-10, **fmm_options) * test * ng["ds"])
         else:
             raise ValueError("regularizer must be 'physical', 'imaginary', or 'laplace'")
+    checkpoint = phase("operator_setup", checkpoint)
 
     prescribed = ng["GridFunction"](space)
     prescribed.Set(neumann_value, definedon=mesh.Boundaries("throat"))
     eta = 1j * k
     lhs = hyper.mat + eta * (0.5 * mass.mat - double.mat)
     rhs = prescribed.vec.CreateVector()
-    rhs.data = ((-0.5 * mass.mat - double.mat.T) * prescribed.vec
-                - eta * single.mat * prescribed.vec)
+    with ng["TaskManager"]():
+        rhs.data = ((-0.5 * mass.mat - double.mat.T) * prescribed.vec
+                    - eta * single.mat * prescribed.vec)
+    checkpoint = phase("rhs", checkpoint)
     iterations = 0
 
     def count_iteration(_solution: Any) -> None:
         nonlocal iterations
         iterations += 1
+        if iterations == 1 or iterations % 10 == 0:
+            print(f"BEM {frequency_hz:g} Hz: GMRES iteration {iterations} "
+                  f"(elapsed {time.perf_counter() - started:.2f}s)", flush=True)
 
     mass_inverse = mass.mat.Inverse()
     # Calderon operator preconditioning: V maps the order +1 principal part
@@ -190,11 +212,13 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
     preconditioner = _ThreeMatrixProduct.build(
         mass_inverse, regularizing_single.mat, mass_inverse)
     weighted_rhs = rhs.CreateVector()
-    weighted_rhs.data = preconditioner * rhs
+    with ng["TaskManager"]():
+        weighted_rhs.data = preconditioner * rhs
     rhs_scale = max(float(ng["Norm"](weighted_rhs)), 1e-30)
     scaled_rhs = rhs.CreateVector()
     scaled_rhs.data = rhs
     scaled_rhs *= 1.0 / rhs_scale
+    checkpoint = phase("preconditioner_rhs", checkpoint)
     with ng["TaskManager"]():
         vector = ng["solvers"].GMRes(
             A=lhs, b=scaled_rhs, pre=preconditioner,
@@ -202,6 +226,7 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
             restart=gmres_restart, callback=count_iteration,
             printrates=False)
         vector *= rhs_scale
+    checkpoint = phase("gmres", checkpoint)
     with ng["TaskManager"]():
         residual = rhs.CreateVector()
         residual.data = rhs - lhs * vector
@@ -209,14 +234,19 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
         weighted_residual.data = preconditioner * residual
         relative_residual = float(ng["Norm"](weighted_residual)
                                   / max(ng["Norm"](weighted_rhs), 1e-30))
+    checkpoint = phase("residual", checkpoint)
     if relative_residual > tolerance * 1.25:
         raise RuntimeError(
             f"NGSolve BEM GMRES failed at {frequency_hz:g} Hz after "
             f"{iterations} iterations: relative residual={relative_residual:.3g}")
     trace = ng["GridFunction"](space)
     trace.vec.data = vector
+    timings["total"] = time.perf_counter() - started
+    peak_rss = float(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
+    peak_rss_gib = peak_rss / 1024 ** 3 if sys.platform == "darwin" else peak_rss / 1024 ** 2
     return NGSolveBEMSolution(trace, prescribed, single, double, mesh,
-                              int(space.ndof), iterations, k, relative_residual)
+                              int(space.ndof), iterations, k, relative_residual,
+                              timings, peak_rss_gib)
 
 
 def make_point_evaluator(solution: NGSolveBEMSolution,
@@ -241,12 +271,9 @@ def make_point_evaluator(solution: NGSolveBEMSolution,
 
     def evaluate(query_points_m: np.ndarray) -> np.ndarray:
         query = np.asarray(query_points_m, dtype=float)
-        # Some FMM evaluation paths return a one-entry SIMD container while
-        # direct paths return a Python complex. Normalize both to one scalar.
-        values = []
-        for point in query:
-            value = np.asarray(potential(target_mesh(*map(float, point))), dtype=complex)
-            values.append(complex(value.reshape(-1)[0]))
-        return np.asarray(values, dtype=complex)
+        # Submit all target coordinates together. Calling the potential once
+        # per point creates a long serial Python/FMM tail on production meshes.
+        mapped = target_mesh(query[:, 0], query[:, 1], query[:, 2])
+        return np.asarray(potential(mapped), dtype=complex).reshape(-1)
 
     return evaluate

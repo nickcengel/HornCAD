@@ -21,11 +21,19 @@ used an overly conservative internal tolerance factor that has since been
 relaxed and was a scaling benchmark, not response data.
 
 Thread profiling at 5 kHz measured one operator-plus-preconditioner application
-at 19.98/10.43/5.45/2.90/1.73 s for 1/2/4/8/20 threads. Frequency workers now
-set NGSolve's native thread count explicitly, and scheduling budgets roughly
-150 kB per surface DOF (about 2 GB at 13.8k DOFs). On the current 20-core,
-64-GiB machine, many one-thread frequency workers offer higher aggregate
-throughput than one frequency consuming every core.
+at 19.98/10.43/5.45/2.90/1.73 s for 1/2/4/8/20 threads. Whole-solve profiling
+then exposed two regimes: standalone RHS/preconditioner applications are
+effectively serial per frequency in this NGSolve FMM path, while GMRES reached
+about 18.7 cores when assigned 20 threads. The 38,890-DOF Test4 mesh reached
+2.43 GiB peak RSS before its diagnostic run was deliberately stopped.
+
+The default 20-core policy is therefore ten frequency processes with two
+native threads each: about ten utilized cores during serial-per-process work
+and all twenty during GMRES. A fixed-plus-DOF memory fit to the 13.8k and 38.9k
+measurements includes 15% headroom. Highest frequencies enter the dynamic queue
+first, execution plans and serial fallbacks are printed, and phase times,
+iteration progress, residual, and peak RSS are retained in result metrics.
+Receiver evaluation is now one batched native call rather than a Python loop.
 
 The active implementation path is now a single throat-driven, free-air BEM
 analysis on the closed acoustic boundary: internal horn wall, lip, simplified

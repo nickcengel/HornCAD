@@ -1,5 +1,6 @@
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
@@ -23,6 +24,7 @@ class HelmholtzBEM3DTests(unittest.TestCase):
         args = parse_args(["horn.yaml"])
         self.assertEqual(args.start_hz, 500)
         self.assertEqual(args.stop_hz, 8_000)
+        self.assertEqual(args.frequencies, 10)
         self.assertEqual(args.mesh_tier, "production")
         self.assertEqual(MeshSettings().maximum_frequency_hz, 8_000)
         self.assertEqual(MeshSettings().elements_per_wavelength, 6)
@@ -85,6 +87,19 @@ class HelmholtzBEM3DTests(unittest.TestCase):
         self.assertLessEqual(plan.workers * plan.threads_per_worker, plan.cpu_count)
         self.assertLessEqual(plan.workers, 2)
         self.assertEqual(settings.formulation, "combined-field")
+
+    def test_fmm_execution_plan_balances_serial_and_threaded_phases(self) -> None:
+        yaml_path = Path(__file__).parents[1] / "test_project" / "HornCAD-Body-400x260x250.YAML"
+        mesh = build_acoustic_mesh(
+            yaml_path, MeshSettings(1_000.0, 6.0), side_samples=8,
+            axial_stations=10)
+        settings = PipelineSettings(tuple(np.linspace(500, 8_000, 10)),
+                                    (0.0, 90.0), memory_limit_gib=48.0)
+        with patch("app.helmholtz_bem_3d.os.cpu_count", return_value=20):
+            plan = execution_plan(settings, mesh, 10)
+        self.assertEqual(plan.workers, 10)
+        self.assertEqual(plan.threads_per_worker, 2)
+        self.assertLess(plan.workers * plan.estimated_memory_per_worker_gib, 48)
 
 
 if __name__ == "__main__":
