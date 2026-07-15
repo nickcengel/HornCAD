@@ -45,3 +45,11 @@ To generate the complete reduced 3D FEM review directly from YAML:
 python app/run_fem_suite.py path/to/config.YAML \
   --output-dir analysis/my-study --title "My horn"
 ```
+
+To scatter a saved FEM mouth field from a finite local lip without meshing the
+complete body:
+
+```bash
+python app/local_lip_bem.py path/to/config.YAML path/to/d000_mouth.csv 500 \
+  --retained-depth-mm 25 --output-dir analysis/local-lip-500
+```

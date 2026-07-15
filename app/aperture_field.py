@@ -111,8 +111,11 @@ def plane_directions(angles_deg: np.ndarray, plane: str) -> np.ndarray:
     elif plane == "vertical":
         directions = np.column_stack((np.zeros_like(radians), np.sin(radians),
                                       np.cos(radians)))
+    elif plane == "diagonal":
+        transverse = np.sin(radians) / math.sqrt(2.0)
+        directions = np.column_stack((transverse, transverse, np.cos(radians)))
     else:
-        raise ValueError("plane must be 'horizontal' or 'vertical'")
+        raise ValueError("plane must be 'horizontal', 'diagonal', or 'vertical'")
     return directions
 
 

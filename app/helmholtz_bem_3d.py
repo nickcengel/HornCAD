@@ -375,8 +375,25 @@ def _combined_field_solve(grid: bempp.Grid, neumann_value: complex, frequency_hz
                           medium: AcousticMedium, tolerance: float, max_iterations: int,
                           operator_assembler: str = "dense", direct_solve_max_dofs: int = 0):
     """Regularized Burton-Miller equation for the exterior Neumann problem."""
-    k = 2 * math.pi * frequency_hz / medium.sound_speed_m_s
     space = bempp.function_space(grid, "P", 1)
+
+    @bempp.complex_callable
+    def prescribed(_x, _n, domain_index, result):
+        result[0] = neumann_value if domain_index == 1 else 0.0
+
+    g = bempp.GridFunction(space, fun=prescribed)
+    trace, iterations = _combined_field_solve_grid_function(
+        space, g, frequency_hz, medium, tolerance, max_iterations,
+        operator_assembler, direct_solve_max_dofs)
+    return space, trace, g, iterations
+
+
+def _combined_field_solve_grid_function(
+        space: Any, g: Any, frequency_hz: float, medium: AcousticMedium,
+        tolerance: float, max_iterations: int,
+        operator_assembler: str = "dense", direct_solve_max_dofs: int = 0):
+    """Solve the combined-field equation for an arbitrary Neumann grid function."""
+    k = 2 * math.pi * frequency_hz / medium.sound_speed_m_s
     identity = bempp.operators.boundary.sparse.identity(space, space, space)
     if operator_assembler not in {"dense", "fmm"}:
         raise ValueError("operator assembler must be 'dense' or 'fmm'")
@@ -391,11 +408,6 @@ def _combined_field_solve(grid: bempp.Grid, neumann_value: complex, frequency_hz
     eta = 1j * max(k, 1e-12)
     lhs = hyper + eta * (0.5 * identity - double)
 
-    @bempp.complex_callable
-    def prescribed(_x, _n, domain_index, result):
-        result[0] = neumann_value if domain_index == 1 else 0.0
-
-    g = bempp.GridFunction(space, fun=prescribed)
     rhs = (0.5 * identity + adjoint) * g - eta * single * g
     if direct_solve_max_dofs > 0 and space.global_dof_count <= direct_solve_max_dofs:
         # LU is reserved for deliberately tiny numerical-reference cases.
@@ -406,7 +418,7 @@ def _combined_field_solve(grid: bempp.Grid, neumann_value: complex, frequency_hz
             maxiter=max_iterations, use_strong_form=True, return_iteration_count=True)
         if info != 0:
             raise RuntimeError(f"combined-field GMRES failed at {frequency_hz:g} Hz: info={info}, iterations={iterations}")
-    return space, trace, g, iterations
+    return trace, iterations
 
 
 def _single_layer_solve(grid: bempp.Grid, neumann_value: complex, frequency_hz: float,

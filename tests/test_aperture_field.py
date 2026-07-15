@@ -110,7 +110,13 @@ class ApertureFieldTests(unittest.TestCase):
             ApertureField(1_000.0, np.zeros((1, 3)), np.array([0.0]),
                           np.array([1.0 + 0j]))
         with self.assertRaisesRegex(ValueError, "plane"):
-            plane_directions(np.array([0.0]), "diagonal")
+            plane_directions(np.array([0.0]), "sagittal")
+
+    def test_diagonal_cut_is_unit_length_and_bisects_xy_axes(self) -> None:
+        directions = plane_directions(np.array([0.0, 90.0]), "diagonal")
+        np.testing.assert_allclose(np.linalg.norm(directions, axis=1), 1.0)
+        np.testing.assert_allclose(directions[1], [2 ** -0.5, 2 ** -0.5, 0.0],
+                                   atol=1e-15)
 
     def test_model_identifier_is_unambiguous(self) -> None:
         self.assertEqual(

@@ -10,6 +10,7 @@
 - `aperture_directivity.py` - normalized H/V far-field aperture estimate.
 - `helmholtz_2d.py` - independent H/V pressure-acoustics FEM solver.
 - `helmholtz_bem_3d.py` - coupled three-dimensional Helmholtz BEM solver.
+- `local_lip_bem.py` - one-way local rigid-lip scattering from saved FEM mouth fields.
 - `output/` - ignored output from the Python exporter.
 
 ## Browser Output
@@ -149,6 +150,30 @@ uses four operators, and remains the production-validation target.
 The experimental `--operator-assembler fmm` path must not be used for accepted
 results until the installed ExaFMM backend passes a dense complex-operator
 comparison on the target platform.
+
+### One-way local-lip scattering
+
+Use a saved MFEM mouth field as a curved free-field monopole sheet and scatter
+it from a watertight mouth-end section of the authored thick body:
+
+```bash
+python app/local_lip_bem.py config.YAML path/to/d000_mouth.csv 500 \
+  --retained-depth-mm 25 --elements-per-wavelength 6 \
+  --output-dir analysis/local-lip-500
+```
+
+The retained depth is measured behind the rearmost point of the curved mouth,
+which keeps the complete perimeter connected. The clipped rear annulus is a
+numerical closure and therefore must be varied in a retained-depth convergence
+study. Outputs include the local STL, provenance manifest, calibrated complex
+incident/scattered/total H/D/V pressures, the complex lip difference, and a
+comparison plot. This is a one-way model: the lip scatters the saved FEM field
+but does not feed back into the interior solution or throat impedance.
+
+Proof-scale meshes below 2,000 unknowns use dense LU. Larger cases use the
+combined-field GMRES path and fail rather than accepting non-convergence. The
+current result is an exploratory local-scattering model, not yet the accepted
+coupled free-air solution.
 
 For programmatic studies, construct `PipelineSettings` and call `run_pipeline(...)`. The returned structure contains the mesh report, observer geometry, complex per-frequency results, manifest, and artifact paths. A single mesh always covers the entire sweep. Production acceptance still requires an explicit 8/10/12 convergence study; deep-null depth is not a stable optimization metric until that study passes.
 

@@ -223,6 +223,23 @@ Initial proof targets, subject to tightening from the reference cases, are:
   no-scatter reference, not a physical zero-thickness horn or accepted free-air
   solution. The first angular change belongs to the next milestone, where a
   finite closed local-lip solid scatters this incident field.
+- **Closed local-lip scattering model (completed 2026-07-15, exploratory).**
+  `app/local_lip_bem.py` clips the authored thick body to a configurable
+  mouth-end slab, producing one oriented watertight annular solid containing
+  the terminal inner wall, physical lip, exterior return, and an explicit rear
+  numerical closure. Retained depth is measured behind the rearmost curved-mouth
+  point; 25 and 50 mm geometry tests verify nested closure positions and
+  increasing solid volume. The saved FEM velocity monopole sheet supplies the
+  incident field, and a resonance-safe combined-field exterior Neumann solve
+  supplies rigid-lip scattering. Results retain calibrated complex incident,
+  scattered, total, and lip-difference H/D/V pressure. A 25 mm, 6-EPW, 500 Hz
+  test4 proof solved 1,548 unknowns with dense LU; scattered/incident pressure
+  norms were 0.105 horizontally and 0.115 vertically, changing the normalized
+  patterns by up to 0.355 and 0.069 dB respectively. This proves the executable
+  geometry-to-scattering path, not retained-depth convergence or two-way
+  acoustic coupling. The rear closure remains an artificial scatterer until a
+  depth study passes, and production-sized iterative solves still require a
+  convergent preconditioned path.
 
 ## Completed Foundation: Reduced Interior Model (2026-07-14)
 
