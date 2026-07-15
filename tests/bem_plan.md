@@ -35,6 +35,13 @@ first, execution plans and serial fallbacks are printed, and phase times,
 iteration progress, residual, and peak RSS are retained in result metrics.
 Receiver evaluation is now one batched native call rather than a Python loop.
 
+An end-to-end 500--1,000 Hz smoke run validated the policy with ten concurrent
+1,989-DOF solves. During GMRES each worker used roughly 1.4--2.0 cores, totaling
+about 17--18 of 20 cores. All ten frequencies converged in 33--46 iterations;
+the slowest completed in 140 s. Batched evaluation of 369 mouth/far-field
+points took 0.70--0.75 s per frequency, and measured worker RSS was about
+0.37--0.38 GiB. This is scheduler evidence, not a mesh-converged horn result.
+
 The active implementation path is now a single throat-driven, free-air BEM
 analysis on the closed acoustic boundary: internal horn wall, lip, simplified
 external body, and driven throat cap. Python remains geometry/run glue while
