@@ -53,6 +53,8 @@ MESH_TIERS = {"preview": 6.0, "production": 6.0, "verification-8": 8.0,
               "verification-10": 10.0,
               "verification-12": 12.0}
 CUT_AZIMUTHS = {"horizontal": 0.0, "diagonal": 45.0, "vertical": 90.0}
+GEOMETRY_SEED_SIDE_SAMPLES = 12
+GEOMETRY_SEED_AXIAL_STATIONS = 16
 
 
 @dataclass(frozen=True)
@@ -323,8 +325,8 @@ def build_acoustic_mesh(yaml_path: Path, settings: MeshSettings,
         # This seed describes the authored faceted geometry; Netgen supplies
         # wavelength refinement. Increasing it with frequency creates
         # overlapping lip facets before remeshing on the current exporter.
-        side_samples = side_samples or 12
-        axial_stations = axial_stations or 12
+        side_samples = side_samples or GEOMETRY_SEED_SIDE_SAMPLES
+        axial_stations = axial_stations or GEOMETRY_SEED_AXIAL_STATIONS
     else:
         side_samples = side_samples or max(8, int(math.ceil(0.30 / settings.target_edge_m)))
         axial_stations = axial_stations or max(10, int(math.ceil(0.30 / settings.target_edge_m)))

@@ -6,6 +6,8 @@ import numpy as np
 
 from app.helmholtz_bem_3d import (
     AcousticMedium,
+    GEOMETRY_SEED_AXIAL_STATIONS,
+    GEOMETRY_SEED_SIDE_SAMPLES,
     MeshSettings,
     SourceDefinition,
     acoustic_body_mesh,
@@ -28,6 +30,8 @@ class HelmholtzBEM3DTests(unittest.TestCase):
         self.assertEqual(args.mesh_tier, "production")
         self.assertEqual(MeshSettings().maximum_frequency_hz, 8_000)
         self.assertEqual(MeshSettings().elements_per_wavelength, 6)
+        self.assertEqual(GEOMETRY_SEED_SIDE_SAMPLES, 12)
+        self.assertEqual(GEOMETRY_SEED_AXIAL_STATIONS, 16)
 
     def test_acoustic_body_is_closed_and_has_driven_throat_faces(self) -> None:
         yaml_path = (

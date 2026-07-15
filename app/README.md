@@ -135,6 +135,15 @@ subdivide` retains the historical mesh for controlled comparisons. The default
 GMRES tolerance is `1e-4`; use `1e-3` for scaling previews and `1e-5` for a
 verification rerun.
 
+The authored STL tessellation supplied to Netgen defaults to 12 samples around
+each section and 16 stations axially. This is distinct from acoustic 6-EPW
+resolution. A Test4 meshing-only study found that 12×16 removes the persistent
+aspect-32 transition produced by 12×12 (maximum aspect approximately 2.4),
+reduces the 2 kHz mesh by 11%, and leaves 8 kHz mesh size and time essentially
+unchanged. Higher seed density did not consistently reduce the final mesh and
+some combinations damaged closure. See
+`analysis/all_bem_backend_optimization/mesh-seed-study.md`.
+
 Each frequency is stored atomically as a complex NPZ artifact, so an interrupted run resumes without recomputing completed frequencies. The JSON manifest records normalized inputs, source and coordinate definitions, mesh quality and cost, solver tolerances and versions, artifact hashes, and convergence status. Compact optimizer-facing metrics are written to CSV.
 
 At each frequency the pipeline preserves complex pressure and outward normal velocity on a conformal mouth observer offset 1 mm into the exterior. It calculates two first-class radiation results from the same solution: full exterior BEM (including the finite body and edge diffraction) and an ideal infinite-baffle aperture integral (excluding those effects). Both retain unnormalized complex pressure and use the mouth centre as phase origin; normalized plots are derived products.
