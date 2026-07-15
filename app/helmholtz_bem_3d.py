@@ -145,11 +145,14 @@ class PipelineSettings:
     gmres_tolerance: float = 1e-5
     gmres_max_iterations: int = 300
     formulation: str = "combined-field"
+    solver_backend: str = "ngsolve-fmm"
     operator_assembler: str = "dense"
     direct_solve_max_dofs: int = 0
     full_sphere: bool = False
     maximum_workers: int = 0
     memory_limit_gib: float | None = None
+    geometry_side_samples: int | None = None
+    geometry_axial_stations: int | None = None
 
 
 @dataclass(frozen=True)
@@ -176,7 +179,9 @@ def execution_plan(settings: PipelineSettings, mesh: AcousticMesh,
     memory_limit = settings.memory_limit_gib or 0.75 * _physical_memory_gib()
     # The combined-field solve can retain several complex dense operators plus
     # factorization/work arrays. Five matrices is a conservative working-set estimate.
-    per_worker = max(0.25, 5.0 * mesh.report.estimated_dense_matrix_gib)
+    per_worker = (max(0.25, 5.0 * mesh.report.estimated_dense_matrix_gib)
+                  if settings.solver_backend == "bempp-dense"
+                  else max(0.25, mesh.report.estimated_dofs * 2_000 / 1024 ** 3))
     memory_workers = max(1, int(memory_limit // per_worker))
     requested = cpus if settings.maximum_workers == 0 else max(1, settings.maximum_workers)
     workers = max(1, min(requested, cpus, memory_workers, pending_frequencies or 1))
@@ -408,7 +413,11 @@ def _combined_field_solve_grid_function(
     eta = 1j * max(k, 1e-12)
     lhs = hyper + eta * (0.5 * identity - double)
 
-    rhs = (0.5 * identity + adjoint) * g - eta * single * g
+    # Exterior Calderon convention:
+    #   D p = (-M/2 - K') g,  (M/2 - K) p = -V g.
+    # The former positive RHS signs selected the wrong trace branch and fail
+    # the analytic pulsating-sphere Neumann problem.
+    rhs = (-0.5 * identity - adjoint) * g - eta * single * g
     if direct_solve_max_dofs > 0 and space.global_dof_count <= direct_solve_max_dofs:
         # LU is reserved for deliberately tiny numerical-reference cases.
         trace = bempp.linalg.lu(lhs, rhs)
@@ -490,11 +499,19 @@ def solve_frequency(grid: bempp.Grid, frequency_hz: float, angles_deg: np.ndarra
                     medium: AcousticMedium | None = None,
                     source: SourceDefinition | None = None,
                     formulation: str = "combined-field",
+                    solver_backend: str = "bempp-dense",
                     operator_assembler: str = "dense",
                     direct_solve_max_dofs: int = 0) -> tuple[dict[str, np.ndarray], int, float] | FrequencyResult:
     """Solve one frequency. Legacy calls receive normalized dB cuts."""
     medium = medium or AcousticMedium(sound_speed_m_s= sound_speed_m_s)
     source = source or SourceDefinition()
+    if solver_backend == "ngsolve-fmm":
+        if acoustic_mesh is None:
+            raise ValueError("ngsolve-fmm requires the labeled AcousticMesh")
+        return _solve_frequency_ngsolve(acoustic_mesh, observer, frequency_hz,
+            angles_deg, medium, source, gmres_tolerance, gmres_max_iterations)
+    if solver_backend != "bempp-dense":
+        raise ValueError("solver_backend must be 'bempp-dense' or 'ngsolve-fmm'")
     if acoustic_mesh is None:
         # Legacy unit Neumann loading, now using the resonance-safe formulation.
         space, trace, g, iterations = _combined_field_solve(grid, 1 + 0j, frequency_hz, medium,
@@ -561,6 +578,63 @@ def solve_frequency(grid: bempp.Grid, frequency_hz: float, angles_deg: np.ndarra
     return FrequencyResult(frequency_hz, iterations, int(space.global_dof_count), p, vn, full, ideal, metrics)
 
 
+def _solve_frequency_ngsolve(acoustic_mesh: AcousticMesh,
+                             observer: ApertureObserver | None,
+                             frequency_hz: float, angles_deg: np.ndarray,
+                             medium: AcousticMedium, source: SourceDefinition,
+                             tolerance: float, max_iterations: int) -> FrequencyResult:
+    """Run the same throat-driven problem with native matrix-free operators."""
+    from .ngsolve_bem_backend import make_point_evaluator, solve_neumann
+
+    observer = observer or make_aperture_observer(acoustic_mesh)
+    velocity, neumann = piston_boundary_values(acoustic_mesh, source, frequency_hz, medium)
+    solution = solve_neumann(acoustic_mesh.surface.vertices, acoustic_mesh.surface.faces,
+                             acoustic_mesh.domain_indices, neumann, frequency_hz,
+                             medium.sound_speed_m_s, tolerance, max_iterations)
+    k = solution.wavenumber_m1
+    epsilon = max(1e-5, observer.offset_m * 0.1)
+    second_mouth = observer.positions_m + epsilon * observer.normals
+    # Evaluate sufficiently far away to recover the 1/r far-field coefficient.
+    diameter = max(float(np.ptp(acoustic_mesh.surface.vertices, axis=0).max()), 1e-3)
+    far_radius = 100.0 * max(diameter, 2 * math.pi / k)
+    far_points: dict[str, np.ndarray] = {}
+    directions_by_cut: dict[str, np.ndarray] = {}
+    for name, azimuth in CUT_AZIMUTHS.items():
+        directions = receiver_directions(angles_deg, azimuth)
+        directions_by_cut[name] = directions
+        far_points[name] = acoustic_mesh.mouth_center_m + far_radius * directions.T
+    all_points = np.vstack((observer.positions_m, second_mouth, *far_points.values()))
+    evaluate = make_point_evaluator(solution, all_points)
+    values = evaluate(all_points)
+    count = len(observer.positions_m)
+    p = values[:count]
+    p2 = values[count:2 * count]
+    vn = -(p2 - p) / epsilon / (1j * 2 * math.pi * frequency_hz * medium.density_kg_m3)
+    full, ideal = {}, {}
+    cursor = 2 * count
+    for name in CUT_AZIMUTHS:
+        directions = directions_by_cut[name]
+        cut_count = directions.shape[1]
+        radial_pressure = values[cursor:cursor + cut_count]
+        cursor += cut_count
+        full[name] = radial_pressure * far_radius * np.exp(-1j * k * far_radius)
+        ideal[name] = ideal_aperture_pressure(observer, vn, directions, frequency_hz,
+                                               medium, acoustic_mesh.mouth_center_m)
+    metrics = aperture_metrics(observer, p, vn)
+    metrics.update({f"{name}_beamwidth_deg": _beamwidth(angles_deg, full[name])
+                    for name in CUT_AZIMUTHS})
+    differences = np.concatenate([
+        full[name] / max(abs(full[name][0]), 1e-30)
+        - ideal[name] / max(abs(ideal[name][0]), 1e-30)
+        for name in CUT_AZIMUTHS])
+    metrics["diffraction_penalty_rms"] = float(np.sqrt(np.mean(np.abs(differences) ** 2)))
+    metrics["source_velocity_m_s"] = float(abs(velocity))
+    metrics["far_field_evaluation_radius_m"] = far_radius
+    metrics["solver_relative_residual"] = solution.relative_residual
+    return FrequencyResult(frequency_hz, solution.iterations, solution.dofs, p, vn,
+                           full, ideal, metrics)
+
+
 def _atomic_npz(path: Path, **arrays: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary = tempfile.mkstemp(prefix=path.stem + "-", suffix=".npz", dir=path.parent)
@@ -615,12 +689,14 @@ def _solve_frequency_worker(payload: tuple[AcousticMesh, ApertureObserver, Pipel
     mesh, observer, settings, frequency, artifact, threads = payload
     import numba
     numba.set_num_threads(threads)
-    grid = bempp.Grid(mesh.surface.vertices.T, mesh.surface.faces.T,
-                      domain_indices=mesh.domain_indices)
+    grid = (bempp.Grid(mesh.surface.vertices.T, mesh.surface.faces.T,
+                       domain_indices=mesh.domain_indices)
+            if settings.solver_backend == "bempp-dense" else None)
     result = solve_frequency(grid, frequency, np.asarray(settings.angles_deg),
         settings.medium.sound_speed_m_s, settings.gmres_tolerance, settings.gmres_max_iterations,
         acoustic_mesh=mesh, observer=observer, medium=settings.medium, source=settings.source,
         formulation=settings.formulation,
+        solver_backend=settings.solver_backend,
         operator_assembler=settings.operator_assembler,
         direct_solve_max_dofs=settings.direct_solve_max_dofs)
     assert isinstance(result, FrequencyResult)
@@ -637,8 +713,11 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
         raise ValueError("at least one positive frequency is required")
     if abs(float(frequencies.max()) - settings.mesh.maximum_frequency_hz) > 1e-9:
         raise ValueError("mesh maximum_frequency_hz must equal the sweep's highest frequency")
-    mesh = build_acoustic_mesh(yaml_path, settings.mesh)
-    if settings.memory_limit_gib is not None and mesh.report.estimated_dense_matrix_gib > settings.memory_limit_gib:
+    mesh = build_acoustic_mesh(yaml_path, settings.mesh,
+                               settings.geometry_side_samples,
+                               settings.geometry_axial_stations)
+    if (settings.solver_backend == "bempp-dense" and settings.memory_limit_gib is not None
+            and mesh.report.estimated_dense_matrix_gib > settings.memory_limit_gib):
         raise ValueError(f"estimated solve cost {mesh.report.estimated_dense_matrix_gib:.3g} GiB exceeds memory limit")
     observer = make_aperture_observer(mesh, settings.observer_offset_m)
     config_hash = hashlib.sha256(yaml_path.read_bytes() + json.dumps(_jsonable(asdict(settings)), sort_keys=True).encode()).hexdigest()
@@ -672,13 +751,15 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
     if pending and (plan.workers == 1 or used_parallel_workers == 1):
         import numba
         numba.set_num_threads(plan.cpu_count)
-        grid = bempp.Grid(mesh.surface.vertices.T, mesh.surface.faces.T,
-                          domain_indices=mesh.domain_indices)
+        grid = (bempp.Grid(mesh.surface.vertices.T, mesh.surface.faces.T,
+                           domain_indices=mesh.domain_indices)
+                if settings.solver_backend == "bempp-dense" else None)
         for frequency, artifact in pending:
             result = solve_frequency(grid, frequency, np.asarray(settings.angles_deg),
                 settings.medium.sound_speed_m_s, settings.gmres_tolerance, settings.gmres_max_iterations,
                 acoustic_mesh=mesh, observer=observer, medium=settings.medium, source=settings.source,
                 formulation=settings.formulation,
+                solver_backend=settings.solver_backend,
                 operator_assembler=settings.operator_assembler,
                 direct_solve_max_dofs=settings.direct_solve_max_dofs)
             assert isinstance(result, FrequencyResult)
@@ -696,7 +777,9 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
         "observer": {"kind": "conformal_mouth_aperture", "offset_m": observer.offset_m,
             "samples": len(observer.positions_m), "alters_boundary": False},
         "mesh_hash": mesh.content_hash, "mesh_report": asdict(mesh.report),
-        "solver": {"formulation": settings.formulation, "library": "bempp-cl",
+        "solver": {"formulation": settings.formulation,
+            "backend": settings.solver_backend,
+            "library": "ngsolve" if settings.solver_backend == "ngsolve-fmm" else "bempp-cl",
             "tolerance": settings.gmres_tolerance, "max_iterations": settings.gmres_max_iterations},
         "execution": {**asdict(plan), "workers_used": used_parallel_workers},
         "versions": {"python": platform.python_version(), "numpy": np.__version__, "trimesh": trimesh.__version__},
@@ -825,8 +908,11 @@ def plot_heatmaps(path: Path, angles_deg: np.ndarray, frequencies_hz: np.ndarray
     image = None
     for axis, name in zip(axes, CUT_AZIMUTHS):
         image = axis.pcolormesh(frequencies_hz, angles_deg, np.maximum(cuts[name], floor_db), shading="nearest", cmap="turbo", vmin=floor_db, vmax=0)
-        contour = axis.contour(frequencies_hz, angles_deg, cuts[name], levels=[-6], colors="black")
-        axis.clabel(contour, fmt={-6: "−6 dB"}); axis.set_xscale("log"); axis.set_title(f"{name.capitalize()} plane")
+        if (len(frequencies_hz) >= 2 and len(angles_deg) >= 2
+                and float(np.nanmin(cuts[name])) <= -6 <= float(np.nanmax(cuts[name]))):
+            contour = axis.contour(frequencies_hz, angles_deg, cuts[name], levels=[-6], colors="black")
+            axis.clabel(contour, fmt={-6: "−6 dB"})
+        axis.set_xscale("log"); axis.set_title(f"{name.capitalize()} plane")
     axes[0].set_ylabel("Off-axis angle (degrees)"); figure.colorbar(image, ax=axes, label="Level relative to on-axis (dB)")
     figure.savefig(path, dpi=180); plt.close(figure)
 
@@ -842,6 +928,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--gmres-tolerance", type=float, default=1e-5); parser.add_argument("--gmres-max-iterations", type=int, default=300)
     parser.add_argument("--formulation", choices=("single-layer-preview", "combined-field"),
                         default="combined-field")
+    parser.add_argument("--solver-backend", choices=("bempp-dense", "ngsolve-fmm"),
+                        default="ngsolve-fmm")
     parser.add_argument("--operator-assembler", choices=("dense", "fmm"), default="dense")
     parser.add_argument("--direct-solve-max-dofs", type=int, default=0,
                         help="use cubic LU at or below this DOF count; 0 always uses GMRES")
@@ -849,6 +937,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--maximum-workers", type=int, default=0,
                         help="concurrent frequencies; 0 selects a CPU/memory-safe value")
     parser.add_argument("--memory-limit-gib", type=float)
+    parser.add_argument("--geometry-side-samples", type=int,
+                        help="optional geometry seed; wavelength refinement still applies")
+    parser.add_argument("--geometry-axial-stations", type=int,
+                        help="optional geometry seed; wavelength refinement still applies")
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     return parser.parse_args(argv)
 
@@ -865,9 +957,12 @@ def main() -> None:
         observer_offset_m=args.observer_offset_mm * 1e-3,
         gmres_tolerance=args.gmres_tolerance, gmres_max_iterations=args.gmres_max_iterations,
         formulation=args.formulation,
+        solver_backend=args.solver_backend,
         operator_assembler=args.operator_assembler,
         direct_solve_max_dofs=args.direct_solve_max_dofs,
-        maximum_workers=args.maximum_workers, memory_limit_gib=args.memory_limit_gib)
+        maximum_workers=args.maximum_workers, memory_limit_gib=args.memory_limit_gib,
+        geometry_side_samples=args.geometry_side_samples,
+        geometry_axial_stations=args.geometry_axial_stations)
     result = run_pipeline(args.yaml, settings, args.output_dir, not args.no_resume)
     print(result["manifest_path"])
 

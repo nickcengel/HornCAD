@@ -2,6 +2,42 @@
 
 ## Restart Here: Free-Air Curved-Mouth and Local-Lip Model (2026-07-15)
 
+### All-BEM backend checkpoint (2026-07-15)
+
+The active implementation path is now a single throat-driven, free-air BEM
+analysis on the closed acoustic boundary: internal horn wall, lip, simplified
+external body, and driven throat cap. Python remains geometry/run glue while
+NGSolve's native C++ core supplies matrix-free Helmholtz layer operators,
+singular quadrature, FMM evaluation, and Krylov iteration.
+
+The direct exterior Neumann solve uses the Burton--Miller equation in
+NGSolve's Calderon convention,
+
+\[
+[D+i k(M/2-K)]p=[-M/2-K'-i kV]g,
+\]
+
+with single-layer Calderon preconditioning. A coarse 230-DOF pulsating sphere
+matches the analytic complex boundary pressure within 0.35%. The first
+930-DOF HornCAD solve completed in about 60 seconds and 96 iterations at a
+relaxed benchmark tolerance; preconditioning and FMM parameter tuning remain
+necessary before production sweeps.
+
+This validation also found a sign error in the former Bempp dense reference:
+its positive `M/2 + K'` right-hand-side branch had 137% complex trace error on
+the pulsating sphere. The corrected negative branch has 0.47% error on the
+same reference class. Any old full-body Bempp results produced before this
+checkpoint must be treated as invalid and regenerated.
+
+Immediate acceptance work:
+
+- compare corrected Bempp dense and NGSolve FMM results on the identical small
+  HornCAD mesh;
+- verify far-field extraction at multiple finite radii;
+- measure mesh-convergence, memory scaling, and iteration growth;
+- improve the order-one Neumann preconditioner before a frequency sweep;
+- validate simplified exterior bodies against a full exterior reference.
+
 The next objective is to quantify diffraction from the HornCAD mouth and lip
 for a horn radiating in free air. Do not extend the existing printable-body
 exterior BEM as the default path. Model only the exterior geometry demonstrated

@@ -119,7 +119,9 @@ python app/helmholtz_bem_3d.py path/to/config.YAML
 
 The solver builds a closed acoustic obstacle from the printable HornCAD body and a circular throat cap. The horn-facing disk is a uniform axial piston; by default its integrated volume velocity is exactly 1 m³/s. Its pressure Neumann condition is derived from that velocity and the recorded medium properties. All other physical surfaces are rigid.
 
-The exterior radiation problem uses a regularized combined-field Neumann equation to avoid fictitious interior resonances. Production meshes enforce every edge at eight elements per wavelength at the sweep's highest frequency. `--mesh-tier preview` selects 6; verification tiers select 10 or 12. Watertightness, orientation, connectedness, edge length, minimum angle, and aspect ratio are checked before solving.
+The exterior radiation problem uses a regularized combined-field Neumann equation to avoid fictitious interior resonances. Select `--solver-backend ngsolve-fmm` for native matrix-free layer operators, singular quadrature, FMM evaluation, and Calderon-preconditioned GMRES. Python remains the geometry, sweep, and artifact layer. The legacy `bempp-dense` backend is retained as a small-problem numerical reference; results made before the 2026-07-15 Calderon sign correction must be regenerated.
+
+Production meshes enforce every edge at eight elements per wavelength at the sweep's highest frequency. `--mesh-tier preview` selects 6; verification tiers select 10 or 12. Watertightness, orientation, connectedness, edge length, minimum angle, and aspect ratio are checked before solving.
 
 Each frequency is stored atomically as a complex NPZ artifact, so an interrupted run resumes without recomputing completed frequencies. The JSON manifest records normalized inputs, source and coordinate definitions, mesh quality and cost, solver tolerances and versions, artifact hashes, and convergence status. Compact optimizer-facing metrics are written to CSV.
 
@@ -129,6 +131,8 @@ Useful controls:
 
 ```bash
 python app/helmholtz_bem_3d.py config.YAML --mesh-tier preview
+python app/helmholtz_bem_3d.py config.YAML --solver-backend ngsolve-fmm
+python app/helmholtz_bem_3d.py config.YAML --geometry-side-samples 6 --geometry-axial-stations 8
 python app/helmholtz_bem_3d.py config.YAML --elements-per-wavelength 10
 python app/helmholtz_bem_3d.py config.YAML --observer-offset-mm 1 --no-resume
 python app/helmholtz_bem_3d.py config.YAML --maximum-workers 0 --memory-limit-gib 48

@@ -1,0 +1,142 @@
+{
+  "artifact_hashes": {
+    "frequencies/100.000000000.npz": "c2d7d0ff0b4b38852e03da4b9eeb3b3eb0a840eddbe90f1fc61d5adc576faadf",
+    "mesh.npz": "178ff483f1fb221b98851a6c620116546a63257404d7d4bfc8d8316f9bc942a6",
+    "mouth_observer.npz": "58469294a9ca2996c325b907e8bb706b4cae3ab6bbdbfd7c92c837fb4caafa85"
+  },
+  "configuration_hash": "3c92cb93921d66e7b57220af87a086ec1e46bb69940eaa1c6e22de6d268d02d0",
+  "convergence": {
+    "all_solved": true,
+    "mesh_convergence_checked": false
+  },
+  "coordinate_references": {
+    "geometry_origin_m": [
+      0,
+      0,
+      0
+    ],
+    "radiation_origin_m": [
+      0.0,
+      0.0,
+      0.20716269449138947
+    ]
+  },
+  "created_utc": "2026-07-15T19:23:21.985275+00:00",
+  "execution": {
+    "cpu_count": 20,
+    "estimated_memory_per_worker_gib": 0.25,
+    "memory_limit_gib": 48.0,
+    "threads_per_worker": 20,
+    "workers": 1,
+    "workers_used": 1
+  },
+  "frequency_artifacts": [
+    "frequencies/100.000000000.npz"
+  ],
+  "input_yaml": "/Users/nickengel/Documents/GitHub/HornCAD/test_project/HornCAD-Body-400x260x250.YAML",
+  "mesh_hash": "ac746b1c19398439c82df44f3132cf4c75273258929805d7823dced03b3f5d03",
+  "mesh_report": {
+    "connected_components": 1,
+    "estimated_dense_matrix_gib": 0.0032358765602111816,
+    "estimated_dofs": 466,
+    "maximum_aspect_ratio": 817.1467722757278,
+    "maximum_edge_m": 0.13599605649894972,
+    "mean_edge_m": 0.031037186419585378,
+    "minimum_angle_deg": 0.06568170942774693,
+    "minimum_edge_m": 3.6876140957478576e-05,
+    "minimum_wavelength_m": 3.4320999999999997,
+    "quality_failures": [],
+    "supported_maximum_frequency_hz": 420.6126864208627,
+    "target_edge_m": 0.5720166666666666,
+    "triangles": 928,
+    "vertices": 466,
+    "watertight": true,
+    "winding_consistent": true
+  },
+  "normalized_settings": {
+    "angles_deg": [
+      0.0,
+      22.5,
+      45.0,
+      67.5,
+      90.0
+    ],
+    "direct_solve_max_dofs": 0,
+    "formulation": "combined-field",
+    "frequencies_hz": [
+      100.0
+    ],
+    "full_sphere": false,
+    "geometry_axial_stations": 5,
+    "geometry_side_samples": 4,
+    "gmres_max_iterations": 300,
+    "gmres_tolerance": 1e-05,
+    "maximum_workers": 1,
+    "medium": {
+      "density_kg_m3": 1.2041,
+      "sound_speed_m_s": 343.21
+    },
+    "memory_limit_gib": null,
+    "mesh": {
+      "curvature_tolerance_m": null,
+      "elements_per_wavelength": 6,
+      "maximum_aspect_ratio": 3000.0,
+      "maximum_frequency_hz": 100,
+      "minimum_angle_deg": 0.01
+    },
+    "observer_offset_m": 0.001,
+    "operator_assembler": "dense",
+    "solver_backend": "ngsolve-fmm",
+    "source": {
+      "normal": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "volume_velocity_m3_s": {
+        "imag": 0.0,
+        "real": 1.0
+      }
+    }
+  },
+  "observer": {
+    "alters_boundary": false,
+    "kind": "conformal_mouth_aperture",
+    "offset_m": 0.001,
+    "samples": 16
+  },
+  "runtime_seconds": 3.2657914170995355,
+  "schema_version": 1,
+  "solver": {
+    "backend": "ngsolve-fmm",
+    "formulation": "combined-field",
+    "library": "ngsolve",
+    "max_iterations": 300,
+    "tolerance": 1e-05
+  },
+  "source": {
+    "area_m2": 0.0004892883868788769,
+    "boundary_condition": "dp/dn=-i*omega*rho*v_n",
+    "driven_domain": 1,
+    "normal": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "rigid_domain": 0,
+    "uniform_velocity_m_s": {
+      "imag": 0.0,
+      "real": 2043.784456808597
+    },
+    "volume_velocity_m3_s": {
+      "imag": 0.0,
+      "real": 1.0
+    }
+  },
+  "status": "complete",
+  "versions": {
+    "numpy": "2.4.6",
+    "python": "3.13.14",
+    "trimesh": "4.12.2"
+  }
+}
