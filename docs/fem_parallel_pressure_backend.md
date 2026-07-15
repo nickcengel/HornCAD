@@ -22,6 +22,15 @@ UMFPACK: ERROR: out of memory
 The failure is fill growth in the serial direct factorization, not volume-mesh
 generation or total system memory during meshing.
 
+A subsequent 10 kHz / 6-EPW feasibility test also failed in the same UMFPACK
+numeric factorization before GMRES. Its quadrant mesh contained 170,413
+pressure nodes and 938,520 tetrahedra, with a 5.020 mm measured maximum edge
+against the 5.720 mm limit. Meshing completed in 275.04 seconds using 20 TetWild
+threads; UMFPACK reported out of memory after 16.78 seconds. The full local mesh
+and logs are retained under `analysis/test4/10khz_6epw/` and ignored by Git.
+Reducing the 10 kHz mesh from 8 to 6 EPW is therefore insufficient to make the
+current serial direct pressure preconditioner viable.
+
 ## Rejected substitutions
 
 Each candidate was required to converge on the accepted test4 5 kHz mesh and
