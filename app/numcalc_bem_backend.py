@@ -7,9 +7,12 @@ import argparse
 from dataclasses import dataclass
 import json
 import math
+import os
 from pathlib import Path
 import re
+import resource
 import subprocess
+import sys
 import time
 from typing import Iterable
 
@@ -46,6 +49,7 @@ class NumCalcRun:
     iterations: int
     relative_error: float
     converged: bool
+    peak_rss_gib: float
 
 
 def reflect_quadrant_mesh(mesh: AcousticMesh) -> AcousticMesh:
@@ -107,8 +111,25 @@ def _write_elements(path: Path, identifiers: np.ndarray, faces: np.ndarray,
 def _evaluation_mesh(points: np.ndarray, first_node: int = 1_000_000,
                      first_element: int = 2_000_000
                      ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    """Make tiny disconnected evaluation triangles containing exact points."""
+    """Connect exact cut points locally so every observer is an eval node."""
     points = np.asarray(points, dtype=float)
+    if len(points) >= 9 and len(points) % 3 == 0:
+        per_cut = len(points) // 3
+        faces = []
+        for cut in range(3):
+            start = cut * per_cut
+            faces.extend((first_node + start + index,
+                          first_node + start + index + 1,
+                          first_node + start + index + 2)
+                         for index in range(per_cut - 2))
+        node_ids = np.arange(first_node, first_node + len(points), dtype=int)
+        element_ids = np.arange(first_element,
+                                first_element + len(faces), dtype=int)
+        return ((points, np.asarray(faces, dtype=int), node_ids, element_ids),
+                np.arange(len(points), dtype=int))
+
+    # Small unit/smoke grids may not contain three points per cut. Give each
+    # requested point its own tiny triangle in that exceptional case.
     scale = max(float(np.max(np.linalg.norm(points, axis=1))), 1.0) * 1e-7
     vertices: list[np.ndarray] = []
     faces: list[tuple[int, int, int]] = []
@@ -153,6 +174,7 @@ def far_field_points(mouth_center_m: np.ndarray, frequency_hz: float,
 def export_numcalc_case(root: Path, mesh: AcousticMesh, frequency_hz: float,
                         evaluation_points_m: np.ndarray, *, method: str = "mlfmm",
                         linear_solver: str = "iterative",
+                        shared_object_dir: Path | None = None,
                         sound_speed_m_s: float = 343.21,
                         density_kg_m3: float = 1.2041) -> NumCalcCase:
     """Write a standalone NumCalc project from a HornCAD acoustic mesh."""
@@ -178,9 +200,24 @@ def export_numcalc_case(root: Path, mesh: AcousticMesh, frequency_hz: float,
     vertices = np.asarray(mesh.surface.vertices, dtype=float)
     boundary_node_ids = np.arange(len(vertices), dtype=int)
     boundary_element_ids = np.arange(len(faces), dtype=int)
-    _write_nodes(object_dir / "Nodes.txt", boundary_node_ids, vertices)
-    _write_elements(object_dir / "Elements.txt", boundary_element_ids,
-                    faces, property_id=0, group_id=1)
+    if shared_object_dir is None:
+        _write_nodes(object_dir / "Nodes.txt", boundary_node_ids, vertices)
+        _write_elements(object_dir / "Elements.txt", boundary_element_ids,
+                        faces, property_id=0, group_id=1)
+    else:
+        shared_object_dir.mkdir(parents=True, exist_ok=True)
+        shared_nodes = shared_object_dir / "Nodes.txt"
+        shared_elements = shared_object_dir / "Elements.txt"
+        if not shared_nodes.exists():
+            _write_nodes(shared_nodes, boundary_node_ids, vertices)
+            _write_elements(shared_elements, boundary_element_ids,
+                            faces, property_id=0, group_id=1)
+        for name, target in (("Nodes.txt", shared_nodes),
+                             ("Elements.txt", shared_elements)):
+            link = object_dir / name
+            if link.exists() or link.is_symlink():
+                link.unlink()
+            link.symlink_to(Path(os.path.relpath(target, object_dir)))
 
     (eval_vertices, eval_faces, eval_node_ids, eval_element_ids), requested = (
         _evaluation_mesh(evaluation_points_m))
@@ -269,6 +306,11 @@ def run_numcalc(case: NumCalcCase, executable: Path,
         [str(executable), "-nitermax", str(max_iterations)], cwd=case.source_dir,
         text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
     elapsed = time.perf_counter() - started
+    usage = resource.getrusage(resource.RUSAGE_CHILDREN)
+    # macOS reports bytes; Linux reports KiB.
+    rss_bytes = float(usage.ru_maxrss)
+    if not sys.platform.startswith("darwin"):
+        rss_bytes *= 1024.0
     equation_match = re.search(r"Number of equations = (\d+)", result.stdout)
     iteration_match = re.search(
         r"CGS solver: number of iterations = (\d+), relative error = ([0-9.eE+-]+)",
@@ -283,12 +325,14 @@ def run_numcalc(case: NumCalcCase, executable: Path,
                  and "Maximum number of iterations is reached" not in result.stdout
                  and math.isfinite(relative_error)
                  and (direct or relative_error < 1e-6))
-    run = NumCalcRun(elapsed, equations, iterations, relative_error, converged)
+    run = NumCalcRun(elapsed, equations, iterations, relative_error, converged,
+                     rss_bytes / 1024 ** 3)
     (case.root / "run.json").write_text(json.dumps({
         "command": [str(executable), "-nitermax", str(max_iterations)],
         "returncode": result.returncode, "wall_time_s": elapsed,
         "equations": equations, "iterations": iterations,
         "relative_error": relative_error, "converged": converged,
+        "peak_rss_gib": run.peak_rss_gib,
         "stdout": result.stdout,
     }, indent=2) + "\n", encoding="utf-8")
     if result.returncode:
@@ -298,6 +342,24 @@ def run_numcalc(case: NumCalcCase, executable: Path,
             f"NumCalc did not converge: iterations={iterations}, "
             f"relative_error={relative_error:.3g}")
     return run
+
+
+def estimate_numcalc_ram(case: NumCalcCase, executable: Path) -> float:
+    """Return NumCalc's own a-priori FMM memory estimate in GiB."""
+    result = subprocess.run(
+        [str(executable), "-estimate_ram"], cwd=case.source_dir, text=True,
+        stdout=subprocess.PIPE, stderr=subprocess.STDOUT, check=False)
+    if result.returncode:
+        raise RuntimeError(f"NumCalc RAM estimate failed:\n{result.stdout}")
+    match = re.search(r"RAM Estimation: ([0-9.eE+-]+) GByte", result.stdout)
+    if not match:
+        raise RuntimeError(f"NumCalc did not report a RAM estimate:\n{result.stdout}")
+    estimate = float(match.group(1))
+    metadata_path = case.root / "horncad-numcalc.json"
+    metadata = json.loads(metadata_path.read_text())
+    metadata["estimated_ram_gib"] = estimate
+    metadata_path.write_text(json.dumps(metadata, indent=2, sort_keys=True) + "\n")
+    return estimate
 
 
 def read_evaluation_pressure(case_root: Path) -> np.ndarray:

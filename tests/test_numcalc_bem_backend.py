@@ -9,6 +9,7 @@ from app.helmholtz_bem_3d import AcousticMesh, MeshReport
 from app.numcalc_bem_backend import (
     export_numcalc_case, far_field_points, reflect_quadrant_mesh,
 )
+from app.run_numcalc_sweep import ppo_frequency_grid
 
 
 class NumCalcBackendTests(unittest.TestCase):
@@ -49,6 +50,15 @@ class NumCalcBackendTests(unittest.TestCase):
         self.assertEqual(full.symmetry_factor, 1)
         self.assertEqual(full.symmetry_planes, ())
         self.assertEqual(full.source_area_m2, quarter.source_area_m2)
+
+    def test_default_ppo_grid_uses_about_ten_points_per_octave(self) -> None:
+        frequencies = ppo_frequency_grid(500, 5_000, 10)
+        self.assertEqual(len(frequencies), 35)
+        self.assertEqual(frequencies[0], 500)
+        self.assertEqual(frequencies[-1], 5_000)
+        actual = (len(frequencies) - 1) / np.log2(10)
+        self.assertGreaterEqual(actual, 10)
+        self.assertLess(actual, 10.25)
 
 
 if __name__ == "__main__":

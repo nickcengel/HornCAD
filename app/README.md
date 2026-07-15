@@ -221,6 +221,23 @@ The output directory includes the exact node/element meshes, raw complex
 boundary and evaluation fields, solver input/logs, and JSON metadata. The
 initial Test4 validation and timing results are recorded in
 `analysis/all_bem_backend_optimization/numcalc_test4_500hz/README.md`.
+
+For a resource-aware production sweep, use:
+
+```bash
+python app/run_numcalc_sweep.py config.YAML \
+  --numcalc /path/to/native/NumCalc --output-dir analysis/numcalc-sweeps
+```
+
+Its accepted defaults are 500--5,000 Hz, ten points per octave (35 frequencies),
+one shared maximum-frequency 8-EPW quadrant mesh, 91 angles per cut, ML-FMM,
+and automatic CPU/RAM scheduling. NumCalc is single-threaded within a
+frequency, so the scheduler fills the machine with independent native solver
+processes. Use `--dry-run` to build the shared mesh, export every case, obtain
+NumCalc's RAM estimates, and print the worker plan without solving. Completed
+frequencies resume by default. The resolution evidence and current absolute-SPL
+limitation are documented in
+`analysis/all_bem_backend_optimization/numcalc_resolution_500-5k/README.md`.
 The experimental `--operator-assembler fmm` path must not be used for accepted
 results until the installed ExaFMM backend passes a dense complex-operator
 comparison on the target platform.
