@@ -11,6 +11,23 @@ import matplotlib.pyplot as plt
 from matplotlib.ticker import NullFormatter, ScalarFormatter
 import numpy as np
 
+try:
+    from .aperture_field import (
+        ApertureField,
+        RADIATION_MODEL,
+        TIME_CONVENTION,
+        read_mfem_mouth_csv,
+        rayleigh_baffle_plane_level,
+    )
+except ImportError:
+    from aperture_field import (
+        ApertureField,
+        RADIATION_MODEL,
+        TIME_CONVENTION,
+        read_mfem_mouth_csv,
+        rayleigh_baffle_plane_level,
+    )
+
 
 ANGLES = np.arange(-90.0, 91.0)
 SOUND_SPEED = 343.21
@@ -25,24 +42,16 @@ def log_axis(axis: plt.Axes) -> None:
 
 
 def coverage(mouth: np.ndarray, frequency: float, plane: str) -> np.ndarray:
-    weights = mouth["area_weight_m2"]
-    points = np.column_stack([mouth[name] for name in ("x_m", "y_m", "z_m")])
-    center = np.average(points, axis=0, weights=weights)
-    radians = np.radians(ANGLES)
-    if plane == "horizontal":
-        directions = np.column_stack((np.sin(radians), np.zeros_like(radians),
-                                      np.cos(radians)))
-    else:
-        directions = np.column_stack((np.zeros_like(radians), np.sin(radians),
-                                      np.cos(radians)))
-    observers = center + 10.0 * directions
-    distance = np.linalg.norm(observers[:, None, :] - points[None, :, :], axis=2)
-    velocity = mouth["normal_velocity_real_m_s"] + 1j * mouth["normal_velocity_imag_m_s"]
-    pressure = np.sum(velocity[None, :] * weights[None, :]
-                      * np.exp(-1j * 2.0 * np.pi * frequency / SOUND_SPEED * distance)
-                      / distance, axis=1)
-    level = 20.0 * np.log10(np.maximum(np.abs(pressure) / np.max(np.abs(pressure)), 1e-9))
-    return np.maximum(level, -30.0)
+    """Compatibility wrapper for callers that already loaded a structured CSV."""
+    field = ApertureField(
+        frequency_hz=frequency,
+        positions_m=np.column_stack([mouth[name] for name in ("x_m", "y_m", "z_m")]),
+        area_weights_m2=mouth["area_weight_m2"],
+        pressure_pa=mouth["pressure_real_pa"] + 1j * mouth["pressure_imag_pa"],
+        normal_velocity_m_s=(mouth["normal_velocity_real_m_s"]
+                             + 1j * mouth["normal_velocity_imag_m_s"]),
+    )
+    return rayleigh_baffle_plane_level(field, ANGLES, plane, sound_speed_m_s=SOUND_SPEED)
 
 
 def positive_crossing(level: np.ndarray) -> float:
@@ -67,12 +76,14 @@ def generate_review(fields: Path, output_dir: Path, title: str) -> None:
         mouth_path = fields / f"{stem}_mouth.csv"
         if not mouth_path.is_file():
             raise FileNotFoundError(mouth_path)
-        mouth = np.genfromtxt(mouth_path, delimiter=",", names=True)
         frequency = float(summary["frequency_hz"])
+        mouth = read_mfem_mouth_csv(mouth_path, frequency)
         value = complex(float(summary["input_impedance_real_pa_s_m3"]),
                         float(summary["input_impedance_imag_pa_s_m3"]))
-        h_level = coverage(mouth, frequency, "horizontal")
-        v_level = coverage(mouth, frequency, "vertical")
+        h_level = rayleigh_baffle_plane_level(mouth, ANGLES, "horizontal",
+                                              sound_speed_m_s=SOUND_SPEED)
+        v_level = rayleigh_baffle_plane_level(mouth, ANGLES, "vertical",
+                                              sound_speed_m_s=SOUND_SPEED)
         frequencies.append(frequency)
         impedance.append(value)
         horizontal.append(h_level)
@@ -94,7 +105,11 @@ def generate_review(fields: Path, output_dir: Path, title: str) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     np.savez_compressed(output_dir / "responses.npz", frequencies_hz=frequencies,
                         angles_deg=ANGLES, horizontal_db=horizontal,
-                        vertical_db=vertical, impedance=impedance)
+                        vertical_db=vertical, impedance=impedance,
+                        radiation_model=RADIATION_MODEL,
+                        time_convention=TIME_CONVENTION,
+                        receiver_radius_m=10.0,
+                        normalization="peak_per_frequency")
     with (output_dir / "metrics.csv").open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
@@ -113,7 +128,7 @@ def generate_review(fields: Path, output_dir: Path, title: str) -> None:
         log_axis(axis)
     axes[0].set_ylabel("Off-axis angle (degrees)")
     figure.colorbar(image, ax=axes, label="Relative level (dB)")
-    figure.suptitle(f"{title} — ideal-baffle coverage")
+    figure.suptitle(f"{title} — Rayleigh infinite-planar-baffle reference")
     figure.savefig(figures / "coverage_heatmaps.png", dpi=180, bbox_inches="tight")
     plt.close(figure)
 

@@ -1,6 +1,219 @@
 # Expand HornCAD’s BEM Process into a Validated Comparison Pipeline
 
-## Restart Here: Corrected Primary Model (2026-07-14)
+## Restart Here: Free-Air Curved-Mouth and Local-Lip Model (2026-07-15)
+
+The next objective is to quantify diffraction from the HornCAD mouth and lip
+for a horn radiating in free air. Do not extend the existing printable-body
+exterior BEM as the default path. Model only the exterior geometry demonstrated
+by convergence to affect the result.
+
+The accepted reduced interior FEM remains the source of the horn's nonuniform
+complex mouth field. Development proceeds in two stages:
+
+1. A one-way exterior calculation driven by the saved FEM mouth normal
+   velocity. This is the fastest useful lip-diffraction tool and the immediate
+   implementation target.
+2. A coupled FEM--BEM calculation in which the exterior BEM replaces the
+   current Rayleigh mouth operator. This is the eventual authoritative model
+   because exterior loading then changes the interior mouth field and throat
+   impedance.
+
+### Audit of the current "ideal aperture" result
+
+The current radiation operator in `app/aperture_radiation.py` is the Rayleigh
+infinite-planar-baffle kernel. It evaluates source and receiver separations at
+the actual nonplanar mouth coordinates, so it retains phase offsets caused by
+mouth setback, but the operator is not a rigorous free-air boundary condition
+for a curved aperture:
+
+- it uses the doubled free-space Green function derived for a planar rigid
+  infinite baffle;
+- its coupled pressure-to-velocity matrix uses positions and panel weights but
+  not the spatially varying mouth normals;
+- it suppresses rear radiation and contains no finite edge around which sound
+  can diffract;
+- it is not a spherical-baffle model.
+
+The BEM `ideal_aperture_pressure` postprocessor includes a per-panel directional
+factor, but it remains an aperture integral and not a solution for a physical
+curved baffle. Until replaced, label current plots and artifacts as
+`Rayleigh infinite-planar-baffle approximation with curved source coordinates`,
+not simply `ideal curved aperture`.
+
+This limitation affects both the plotted directivity and the load used by the
+interior FEM. A one-way lip calculation can validly explore scattering of the
+saved FEM mouth field, but it must be reported as uncoupled: the FEM field was
+calculated under the Rayleigh load and the lip cannot feed back into it.
+
+### Physical and numerical model
+
+The desired exterior problem contains:
+
+- the actual curved mouth coupling surface;
+- the terminal portion of the internal wall needed to reach the lip;
+- the complete rounded lip or sharp rim geometry;
+- a configurable length of the exterior return surface behind the lip;
+- unbounded free air everywhere else.
+
+Printable rear thickness, enclosure surfaces, mounting hardware, and the rest
+of the body are excluded unless an exterior-depth convergence study shows that
+they materially affect the requested result.
+
+The one-way model prescribes the complex normal velocity exported by MFEM on
+the mouth. The local lip surfaces are acoustically rigid. It returns calibrated
+complex exterior pressure, radiated power, and horizontal/diagonal/vertical
+far-field cuts. Unit throat volume velocity remains the source normalization,
+and the mouth centre remains the radiation phase origin.
+
+The coupled model replaces the Rayleigh relation with an exterior operator of
+the form
+
+\[
+p_\mathrm{mouth}=Z_\mathrm{exterior}v_\mathrm{mouth}.
+\]
+
+That operator must include the curved interface and local rigid lip so that lip
+loading affects mouth pressure, mouth velocity, throat impedance, radiated
+power, and directivity.
+
+### Minimal exterior geometry and truncation
+
+"Lip only" is an outcome to demonstrate, not an assumption. Retained exterior
+depth is a convergence parameter. Begin with a nested family such as:
+
+- mouth/rim with no exterior return;
+- lip plus 25 mm of exterior return;
+- lip plus 50 mm;
+- lip plus 100 mm;
+- full body only as a diagnostic reference if the local sequence does not
+  converge.
+
+Record the actual geometry definition and retained depth in every manifest.
+Compare adjacent depths using complex pressure before normalization, radiated
+power, -6 dB beamwidth, and the finite-lip-minus-free-aperture response. Accept
+the smallest model for which further extension changes robust results by less
+than established tolerances at all validation frequencies.
+
+A conventional closed-obstacle exterior BEM cannot be truncated by adding an
+arbitrary rigid rear cap without study: the cap is a new scatterer. Evaluate
+these representations explicitly:
+
+1. A thin, physically plausible closed annular lip/short-return solid. This is
+   the preferred first implementation with Bempp because it fits the existing
+   closed-surface machinery.
+2. An open-screen formulation containing only the real rigid lip surfaces.
+   This avoids a false closure but requires suitable open-surface spaces and
+   edge treatment.
+3. The coupled FEM--BEM interface plus local rigid surfaces. This is the
+   preferred accepted architecture once the one-way proof works.
+
+Never interpret agreement from a single artificial closure as proof that the
+truncated geometry is adequate.
+
+### Shared data contract
+
+Introduce one `ApertureField`-style representation shared by FEM review and
+BEM radiation code. At minimum it contains:
+
+- frequency and time convention;
+- sample positions and outward normals in metres;
+- positive area weights;
+- complex normal velocity and, when available, complex pressure;
+- mouth centre and radiation reference;
+- source volume velocity and medium properties;
+- symmetry reconstruction metadata.
+
+The adapter must read the existing MFEM `_mouth.csv` outputs without losing
+their nonuniform complex field. Tests must catch reversed normals, conjugated
+time conventions, incorrect quadrant reconstruction, area mismatch, and an
+incorrect integrated volume velocity.
+
+### Validation ladder
+
+Validate identical mathematical problems before comparing different physical
+models:
+
+1. **Radiation plumbing.** Feed the same saved mouth field to the existing FEM
+   coverage calculation and a shared aperture integrator. Use the same
+   far-field kernel, angle grid, phase origin, time convention, normals, and
+   normalization. Their result should agree to numerical precision. The
+   current FEM review uses receivers at 10 m while BEM uses a far-field
+   expression; remove that mismatch from the comparison harness.
+2. **Analytic BEM references.** Verify a pulsating sphere and a uniform
+   circular-piston/baffle case. Demonstrate decreasing complex-pressure error
+   at 6/8/10 elements per wavelength.
+3. **Controlled finite-edge case.** Compare the same uniform circular or
+   rectangular source with no finite edge and with a finite flat baffle/lip.
+   An increasing baffle should approach the appropriate reference over the
+   validated angular region while a smaller edge produces repeatable
+   diffraction.
+4. **HornCAD one-way lip proof.** Use an accepted FEM mouth field at 1, 2.5,
+   and 5 kHz. Compare free curved-source radiation, Rayleigh-baffle radiation,
+   and local-lip BEM radiation. Repeat the most sensitive frequency at 6/8/10
+   EPW and across exterior-depth variants.
+5. **Coupled verification.** Replace the Rayleigh mouth load with the exterior
+   BEM operator and compare one-way and coupled mouth fields, impedance, power,
+   and far field. Only the coupled result is eligible to become the accepted
+   free-air model.
+
+Deep-null magnitude is not an acceptance metric until both mesh and retained
+geometry converge. Prefer complex-pressure norm, main-lobe shape, beamwidth,
+power, and symmetry error.
+
+### First comparison artifact
+
+Produce FEM-style logarithmic-frequency heatmaps on a common signed angle grid
+from -90 to +90 degrees, with a common dB floor and -6 dB contours. The first
+review figure has four rows (or four clearly matched panels) for both horizontal
+and vertical planes:
+
+1. current FEM Rayleigh infinite-baffle approximation;
+2. the same FEM mouth field through the shared no-lip/free-space integrator;
+3. the same field through the finite local-lip BEM;
+4. local lip minus no lip, calculated from calibrated complex pressure before
+   conversion to the displayed level difference.
+
+Retain unnormalized complex pressure in NPZ/HDF5. CSV is reserved for compact
+cuts and metrics.
+
+Initial proof targets, subject to tightening from the reference cases, are:
+
+- shared-integrator plumbing agreement within 0.1 dB throughout the main lobe;
+- decreasing analytic-reference error with mesh refinement;
+- less than 1 degree change in -6 dB beamwidth from 8 to 10 EPW;
+- stable power sign and negligible symmetry error;
+- retained-depth convergence of complex main-lobe pressure, power, and
+  beamwidth.
+
+### Immediate implementation sequence
+
+1. Extract a shared aperture-field reader and common far-field conventions.
+2. Rename plot labels and manifest descriptions that overstate the current
+   Rayleigh approximation.
+3. Add analytic radiation tests and a controlled finite-edge geometry.
+4. Add a one-way, prescribed-mouth-velocity exterior BEM entry point.
+5. Add parameterized HornCAD local-lip/return geometry without requiring the
+   printable full body.
+6. Generate the three-frequency comparison and exterior-depth study.
+7. Verify the sensitive case at 6/8/10 EPW.
+8. Design and implement the coupled FEM--BEM mouth operator only after the
+   one-way geometry and radiation conventions pass these checks.
+
+### Milestone status
+
+- **Rayleigh reference plumbing (completed 2026-07-15).**
+  `app/aperture_field.py` now provides a validated shared mouth-field record,
+  MFEM CSV adapter, explicit finite-distance Rayleigh pressure evaluator,
+  horizontal/vertical direction conventions, and explicit peak or on-axis
+  normalization. `generate_fem_review.py` uses this shared path and records the
+  model identifier, `exp(+i omega t)` convention, 10 m receiver radius, and
+  legacy peak-per-frequency normalization in `responses.npz`. Regression tests
+  compare the shared result directly with the former coverage equation. MFEM
+  CSV files do not yet export surface normals; the adapter deliberately leaves
+  them absent rather than inventing them. Normals become mandatory for the
+  subsequent equivalent-source and local-lip formulations.
+
+## Completed Foundation: Reduced Interior Model (2026-07-14)
 
 The primary analysis target is **not** the full printable-body exterior BEM
 prototype. That prototype was useful for exercising geometry, source
@@ -248,6 +461,13 @@ Primary references used for the solver decision:
 - DOLFINx complex Helmholtz example:
   https://docs.fenicsproject.org/dolfinx/main/python/demos/demo_helmholtz.html
 - PETSc complex and macOS configuration: https://petsc.org/main/install/install/
+
+The indented roadmap below is the original full-body BEM proposal. It is kept
+only as historical design context. Its `full_exterior_bem` default, complete
+printable-body geometry, and generic `ideal_baffled_aperture` comparison are
+superseded by the 2026-07-15 free-air curved-mouth/local-lip restart section at
+the top of this document. Do not use its delivery sequence as the active work
+queue.
 
   ## Summary
 

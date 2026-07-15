@@ -186,6 +186,13 @@ metrics.csv
 responses.npz
 ```
 
+The coverage review is explicitly a Rayleigh infinite-planar-baffle reference.
+It evaluates solved mouth velocity at the actual nonplanar mouth coordinates,
+so mouth-setback phase is retained, but it is not a curved- or
+spherical-baffle solution and it contains no finite-lip diffraction. The
+`responses.npz` artifact records the radiation-model identifier, time
+convention, receiver radius, and normalization convention used by the review.
+
 The YAML hash and numerical settings in `run_settings.json` prevent accidental
 reuse of a mesh generated for another design or resolution. Re-running the
 same command resumes completed frequencies. Use a different output directory
