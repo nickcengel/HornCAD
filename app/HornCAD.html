@@ -664,6 +664,7 @@
   let cachedSurface = null;
   let cachedExportLengthKey = "";
   let cachedExportLength = null;
+  let exportLengthTimer = null;
 
   const metrics = {
     width: document.getElementById("metric-width"),
@@ -1074,6 +1075,22 @@
     cachedExportLengthKey = key;
     cachedExportLength = bounds.maxZ - bounds.minZ;
     return cachedExportLength;
+  }
+
+  function updateMeasuredExportLengthMetric(p) {
+    const key = exportGeometryKey(p);
+    if (cachedExportLength !== null && key === cachedExportLengthKey) {
+      metrics.totalLength.textContent = `${format(cachedExportLength, 5)} mm`;
+      return;
+    }
+    if (exportLengthTimer !== null) {
+      clearTimeout(exportLengthTimer);
+    }
+    exportLengthTimer = setTimeout(() => {
+      exportLengthTimer = null;
+      const currentParams = params();
+      metrics.totalLength.textContent = `${format(measuredExportLength(currentParams), 5)} mm`;
+    }, 150);
   }
 
   function sectionShape(p, distanceFromThroatStart) {
@@ -3114,7 +3131,7 @@
     }
     metrics.width.textContent = `${format(surface.maxX * 2, 5)} mm`;
     metrics.height.textContent = `${format(surface.maxY * 2, 5)} mm`;
-    metrics.totalLength.textContent = `${format(measuredExportLength(p), 5)} mm`;
+    updateMeasuredExportLengthMetric(p);
     metrics.mouthRadius.textContent = `${format(mouthSurfaceRadius(p, surface.hEnd, surface.vEnd), 5)} mm`;
     metrics.hEnd.textContent = `${format(surface.hEnd, 5)} mm`;
     metrics.vEnd.textContent = `${format(surface.vEnd, 5)} mm`;
