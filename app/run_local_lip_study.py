@@ -61,7 +61,8 @@ def beamwidth_deg(angles_deg: np.ndarray, pressure: np.ndarray) -> float:
 def depth_metrics(depth_m: float, result: LocalLipResult,
                   angles_deg: np.ndarray) -> dict[str, float]:
     row: dict[str, float] = {"retained_depth_mm": depth_m * 1e3,
-                             "dofs": float(result.dofs)}
+                             "dofs": float(result.dofs),
+                             "absorbed_power_w": result.absorbed_power_w}
     for cut in CUTS:
         incident = result.incident_pressure_pa[cut]
         scattered = result.scattered_pressure_pa[cut]
@@ -102,7 +103,8 @@ def write_csv(path: Path, rows: list[dict[str, float]]) -> None:
 def run_study(yaml_path: Path, mouth_csv: Path, frequency_hz: float,
               depths_mm: list[float], output_dir: Path, *,
               elements_per_wavelength: float = 6.0,
-              direct_solve_max_dofs: int = 2_500) -> dict[str, object]:
+              direct_solve_max_dofs: int = 2_500,
+              termination_impedance_factor: float | None = None) -> dict[str, object]:
     if len(depths_mm) < 2 or any(depth <= 0.0 for depth in depths_mm):
         raise ValueError("provide at least two positive retained depths")
     if any(b <= a for a, b in zip(depths_mm, depths_mm[1:])):
@@ -117,7 +119,8 @@ def run_study(yaml_path: Path, mouth_csv: Path, frequency_hz: float,
         settings = LocalLipSettings(
             retained_depth_m=depth_m,
             elements_per_wavelength=elements_per_wavelength,
-            direct_solve_max_dofs=direct_solve_max_dofs)
+            direct_solve_max_dofs=direct_solve_max_dofs,
+            termination_impedance_factor=termination_impedance_factor)
         lip = build_local_lip_mesh(yaml_path, frequency_hz, settings)
         result = solve_local_lip(field, lip, angles, settings)
         write_result(output_dir / f"depth_{depth_mm:g}mm", field, lip,
@@ -139,6 +142,7 @@ def run_study(yaml_path: Path, mouth_csv: Path, frequency_hz: float,
         "status": "complete", "accepted": accepted,
         "frequency_hz": frequency_hz, "retained_depths_mm": depths_mm,
         "elements_per_wavelength": elements_per_wavelength,
+        "termination_impedance_factor_rho_c": termination_impedance_factor,
         "depth_metrics": depth_rows, "adjacent_convergence": adjacent,
         "acceptance_limits": {
             "complex_relative_l2": COMPLEX_RELATIVE_L2_LIMIT,
@@ -176,12 +180,15 @@ def main() -> None:
                         default=[25.0, 50.0, 100.0])
     parser.add_argument("--elements-per-wavelength", type=float, default=6.0)
     parser.add_argument("--direct-solve-max-dofs", type=int, default=2_500)
+    parser.add_argument("--termination-impedance-factor", type=float,
+                        help="Aft closure impedance divided by rho*c; omit for rigid")
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
     run_study(args.yaml, args.mouth_csv, args.frequency_hz, args.depths_mm,
               args.output_dir,
               elements_per_wavelength=args.elements_per_wavelength,
-              direct_solve_max_dofs=args.direct_solve_max_dofs)
+              direct_solve_max_dofs=args.direct_solve_max_dofs,
+              termination_impedance_factor=args.termination_impedance_factor)
     print(args.output_dir)
 
 

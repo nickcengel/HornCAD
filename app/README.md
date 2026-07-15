@@ -180,6 +180,7 @@ Run a retained-depth study with identical numerical settings using:
 ```bash
 python app/run_local_lip_study.py config.YAML path/to/d000_mouth.csv 500 \
   --depths-mm 25 50 100 --elements-per-wavelength 6 \
+  --termination-impedance-factor 1 \
   --output-dir analysis/local-lip-depth-500
 ```
 
@@ -188,6 +189,13 @@ adjacent complex-pressure convergence, a comparison plot, and an explicit
 acceptance result. Provisional gates require the deepest adjacent pair to stay
 within 5% complex L2 error, 0.5 dB normalized-pattern change, and 1 degree
 beamwidth change in every H/D/V cut.
+
+`--termination-impedance-factor 1` replaces the artificial rigid aft closure
+with the local characteristic impedance `Z=rho*c`; other positive values scale
+that impedance. The physical lip and return remain rigid. This Robin condition
+is assembled into the dense combined-field matrix, not applied as a
+postprocessing correction. The manifest records closure faces, source-sheet
+offset, impedance factor, and positive absorbed power.
 
 For programmatic studies, construct `PipelineSettings` and call `run_pipeline(...)`. The returned structure contains the mesh report, observer geometry, complex per-frequency results, manifest, and artifact paths. A single mesh always covers the entire sweep. Production acceptance still requires an explicit 8/10/12 convergence study; deep-null depth is not a stable optimization metric until that study passes.
 

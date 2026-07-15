@@ -18,6 +18,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy import linalg
 import trimesh
 
 try:
@@ -30,11 +31,10 @@ try:
     from .helmholtz_bem_3d import (
         AcousticMedium,
         _authored_mesh,
-        _combined_field_solve_grid_function,
     )
 except ImportError:
     from aperture_field import ApertureField, FREE_FIELD_MODEL, plane_directions, read_mfem_mouth_csv
-    from helmholtz_bem_3d import AcousticMedium, _authored_mesh, _combined_field_solve_grid_function
+    from helmholtz_bem_3d import AcousticMedium, _authored_mesh
 
 
 LOCAL_LIP_MODEL = "one_way_rigid_closed_local_lip_scattering"
@@ -50,6 +50,8 @@ class LocalLipSettings:
     direct_solve_max_dofs: int = 2_500
     minimum_angle_deg: float = 0.01
     maximum_aspect_ratio: float = 3_000.0
+    termination_impedance_factor: float | None = None
+    source_sheet_offset_m: float = 0.001
 
 
 @dataclass
@@ -61,6 +63,9 @@ class LocalLipMesh:
     rear_closure_z_m: float
     minimum_angle_deg: float
     maximum_aspect_ratio: float
+    rear_face_mask: np.ndarray
+    rear_vertex_mask: np.ndarray
+    rear_vertex_area_weights_m2: np.ndarray
 
 
 @dataclass
@@ -70,6 +75,7 @@ class LocalLipResult:
     total_pressure_pa: dict[str, np.ndarray]
     gmres_iterations: int
     dofs: int
+    absorbed_power_w: float = 0.0
 
 
 def build_local_lip_mesh(yaml_path: Path, frequency_hz: float,
@@ -128,8 +134,19 @@ def build_local_lip_mesh(yaml_path: Path, frequency_hz: float,
         raise ValueError("local lip mesh minimum angle is below its quality limit")
     if float(aspects.max()) > settings.maximum_aspect_ratio:
         raise ValueError("local lip mesh aspect ratio exceeds its quality limit")
-    return LocalLipMesh(clipped, settings.retained_depth_m, float(edges.max()),
-                        target, rear_z, float(angles.min()), float(aspects.max()))
+    rear_face_mask = np.all(
+        np.abs(clipped.triangles[:, :, 2] - rear_z) <= 1e-7, axis=1)
+    if not np.any(rear_face_mask):
+        raise ValueError("local lip mesh has no identifiable rear closure faces")
+    rear_vertex_mask = np.zeros(len(clipped.vertices), dtype=bool)
+    rear_vertex_mask[np.unique(clipped.faces[rear_face_mask])] = True
+    rear_weights = np.zeros(len(clipped.vertices), dtype=float)
+    for face, area in zip(clipped.faces[rear_face_mask], clipped.area_faces[rear_face_mask]):
+        rear_weights[face] += area / 3.0
+    return LocalLipMesh(
+        clipped, settings.retained_depth_m, float(edges.max()), target, rear_z,
+        float(angles.min()), float(aspects.max()), rear_face_mask,
+        rear_vertex_mask, rear_weights)
 
 
 def monopole_pressure_gradient(field: ApertureField, points_m: np.ndarray,
@@ -157,45 +174,78 @@ def solve_local_lip(field: ApertureField, lip: LocalLipMesh,
                     angles_deg: np.ndarray, settings: LocalLipSettings,
                     medium: AcousticMedium = AcousticMedium()) -> LocalLipResult:
     """Solve rigid scattering and return finite-distance incident/scattered fields."""
+    if settings.source_sheet_offset_m <= 0.0:
+        raise ValueError("source sheet offset must be positive")
+    shifted_positions = field.positions_m.copy()
+    shifted_positions[:, 2] += settings.source_sheet_offset_m
+    incident_field = ApertureField(
+        field.frequency_hz, shifted_positions, field.area_weights_m2,
+        field.normal_velocity_m_s, field.pressure_pa, field.normals,
+        field.time_convention)
     grid = bempp.Grid(lip.surface.vertices.T, lip.surface.faces.T)
     space = bempp.function_space(grid, "P", 1)
-    source_positions = np.ascontiguousarray(field.positions_m)
-    source_strengths = np.ascontiguousarray(
-        field.normal_velocity_m_s * field.area_weights_m2)
     omega = 2.0 * math.pi * field.frequency_hz
     k = omega / medium.sound_speed_m_s
-    coefficient = 1j * medium.density_kg_m3 * omega / (4.0 * math.pi)
+    points = lip.surface.vertices
+    incident_surface_pressure, incident_gradient = monopole_pressure_gradient(
+        incident_field, points, medium)
+    incident_normal_derivative = np.sum(
+        incident_gradient * lip.surface.vertex_normals, axis=1)
+    if space.global_dof_count != len(points):
+        raise ValueError("local lip Robin solve requires vertex-aligned P1 unknowns")
+    if space.global_dof_count > settings.direct_solve_max_dofs:
+        raise ValueError("local lip mixed-boundary proof exceeds dense solve limit")
 
-    @bempp.complex_callable
-    def rigid_neumann(x, n, _domain_index, result):
-        value = 0.0j
-        for index in range(source_positions.shape[0]):
-            dx = x[0] - source_positions[index, 0]
-            dy = x[1] - source_positions[index, 1]
-            dz = x[2] - source_positions[index, 2]
-            radius = math.sqrt(dx * dx + dy * dy + dz * dz)
-            radial = np.exp(-1j * k * radius) * (-1j * k / (radius * radius)
-                                                  - 1.0 / (radius ** 3))
-            value += radial * (dx * n[0] + dy * n[1] + dz * n[2]) * source_strengths[index]
-        result[0] = -coefficient * value
-
-    neumann = bempp.GridFunction(space, fun=rigid_neumann)
-    trace, iterations = _combined_field_solve_grid_function(
-        space, neumann, field.frequency_hz, medium, settings.gmres_tolerance,
-        settings.gmres_max_iterations, direct_solve_max_dofs=settings.direct_solve_max_dofs)
+    identity = bempp.operators.boundary.sparse.identity(space, space, space)
+    double_boundary = bempp.operators.boundary.helmholtz.double_layer
+    adjoint_boundary = bempp.operators.boundary.helmholtz.adjoint_double_layer
+    single_boundary = bempp.operators.boundary.helmholtz.single_layer
+    hyper_boundary = bempp.operators.boundary.helmholtz.hypersingular
+    double_op = double_boundary(space, space, space, k, assembler="dense")
+    adjoint_op = adjoint_boundary(space, space, space, k, assembler="dense")
+    single_op = single_boundary(space, space, space, k, assembler="dense")
+    hyper_op = hyper_boundary(space, space, space, k, assembler="dense")
+    eta = 1j * max(k, 1e-12)
+    a_matrix = np.asarray(
+        (hyper_op + eta * (0.5 * identity - double_op)).weak_form().to_dense())
+    b_matrix = np.asarray(
+        ((0.5 * identity + adjoint_op) - eta * single_op).weak_form().to_dense())
+    factor = settings.termination_impedance_factor
+    if factor is not None and factor <= 0.0:
+        raise ValueError("termination impedance factor must be positive")
+    alpha = 0.0j if factor is None else 1j * k / factor
+    multiplier = alpha * lip.rear_vertex_mask.astype(float)
+    q0 = -incident_normal_derivative - multiplier * incident_surface_pressure
+    system = a_matrix + b_matrix * multiplier[None, :]
+    trace_coefficients = linalg.solve(system, b_matrix @ q0,
+                                      assume_a="gen", check_finite=True)
+    scattered_neumann_coefficients = q0 - multiplier * trace_coefficients
+    trace = bempp.GridFunction(space, coefficients=trace_coefficients)
+    neumann = bempp.GridFunction(space, coefficients=scattered_neumann_coefficients)
+    iterations = 0
     single = bempp.operators.potential.helmholtz.single_layer
     double = bempp.operators.potential.helmholtz.double_layer
     incident, scattered, total = {}, {}, {}
     for plane in ("horizontal", "diagonal", "vertical"):
         directions = plane_directions(angles_deg, plane)
         observers = field.center_m + settings.receiver_radius_m * directions
-        incident[plane], _ = monopole_pressure_gradient(field, observers, medium)
+        incident[plane], _ = monopole_pressure_gradient(incident_field, observers, medium)
         scattered[plane] = np.asarray((
             double(space, observers.T, k).evaluate(trace)
             - single(space, observers.T, k).evaluate(neumann))).reshape(-1)
         total[plane] = incident[plane] + scattered[plane]
+    total_surface_pressure = incident_surface_pressure + trace_coefficients
+    total_surface_velocity = (alpha * total_surface_pressure
+                              / (1j * omega * medium.density_kg_m3))
+    absorbed_power = 0.5 * float(np.sum(
+        lip.rear_vertex_area_weights_m2
+        * np.real(total_surface_pressure * np.conj(total_surface_velocity))))
+    if factor is None:
+        absorbed_power = 0.0
+    elif absorbed_power < -1e-9:
+        raise ValueError("absorbing termination produced negative absorbed power")
     return LocalLipResult(incident, scattered, total, iterations,
-                          int(space.global_dof_count))
+                          int(space.global_dof_count), absorbed_power)
 
 
 def write_result(path: Path, field: ApertureField, lip: LocalLipMesh,
@@ -219,6 +269,10 @@ def write_result(path: Path, field: ApertureField, lip: LocalLipMesh,
         "maximum_edge_m": lip.maximum_edge_m, "target_edge_m": lip.target_edge_m,
         "minimum_angle_deg": lip.minimum_angle_deg,
         "maximum_aspect_ratio": lip.maximum_aspect_ratio,
+        "rear_closure_faces": int(np.count_nonzero(lip.rear_face_mask)),
+        "termination_impedance_factor_rho_c": settings.termination_impedance_factor,
+        "source_sheet_axial_offset_m": settings.source_sheet_offset_m,
+        "absorbed_power_w": result.absorbed_power_w,
         "iterations": result.gmres_iterations,
         "linear_solver": ("dense_lu" if result.gmres_iterations == 0 else "gmres"),
         "settings": settings.__dict__, "incident_model": FREE_FIELD_MODEL,
@@ -250,12 +304,15 @@ def main() -> None:
     parser.add_argument("--retained-depth-mm", type=float, default=50.0)
     parser.add_argument("--elements-per-wavelength", type=float, default=6.0)
     parser.add_argument("--direct-solve-max-dofs", type=int, default=2_500)
+    parser.add_argument("--termination-impedance-factor", type=float,
+                        help="Aft closure impedance divided by rho*c; omit for rigid")
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
     settings = LocalLipSettings(
         retained_depth_m=args.retained_depth_mm * 1e-3,
         elements_per_wavelength=args.elements_per_wavelength,
-        direct_solve_max_dofs=args.direct_solve_max_dofs)
+        direct_solve_max_dofs=args.direct_solve_max_dofs,
+        termination_impedance_factor=args.termination_impedance_factor)
     field = read_mfem_mouth_csv(args.mouth_csv, args.frequency_hz)
     lip = build_local_lip_mesh(args.yaml, args.frequency_hz, settings)
     angles = np.arange(-90.0, 91.0)

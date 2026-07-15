@@ -26,6 +26,11 @@ class LocalLipBEMTests(unittest.TestCase):
         self.assertAlmostEqual(lip.retained_depth_m, 0.025)
         self.assertLess(lip.rear_closure_z_m, lip.surface.bounds[1, 2])
         self.assertGreater(lip.surface.volume, 0.0)
+        self.assertGreater(int(np.count_nonzero(lip.rear_face_mask)), 0)
+        self.assertGreater(int(np.count_nonzero(lip.rear_vertex_mask)), 0)
+        self.assertAlmostEqual(
+            float(np.sum(lip.rear_vertex_area_weights_m2)),
+            float(np.sum(lip.surface.area_faces[lip.rear_face_mask])), places=12)
         self.assertGreaterEqual(lip.minimum_angle_deg, settings.minimum_angle_deg)
         self.assertLessEqual(lip.maximum_aspect_ratio, settings.maximum_aspect_ratio)
         deeper = build_local_lip_mesh(

@@ -1,0 +1,81 @@
+{
+  "status": "complete",
+  "accepted": false,
+  "frequency_hz": 500.0,
+  "retained_depths_mm": [
+    25.0,
+    50.0,
+    100.0
+  ],
+  "elements_per_wavelength": 6.0,
+  "termination_impedance_factor_rho_c": 1.0,
+  "depth_metrics": [
+    {
+      "retained_depth_mm": 25.0,
+      "dofs": 1548.0,
+      "absorbed_power_w": 668.2233561692577,
+      "horizontal_scattered_to_incident_l2": 0.1395566993378339,
+      "horizontal_beamwidth_deg": 180.0,
+      "diagonal_scattered_to_incident_l2": 0.13754179408275077,
+      "diagonal_beamwidth_deg": 180.0,
+      "vertical_scattered_to_incident_l2": 0.13682301697804167,
+      "vertical_beamwidth_deg": 180.0
+    },
+    {
+      "retained_depth_mm": 50.0,
+      "dofs": 1790.0,
+      "absorbed_power_w": 600.8666946563546,
+      "horizontal_scattered_to_incident_l2": 0.2451941433623557,
+      "horizontal_beamwidth_deg": 180.0,
+      "diagonal_scattered_to_incident_l2": 0.2467955752517241,
+      "diagonal_beamwidth_deg": 180.0,
+      "vertical_scattered_to_incident_l2": 0.24917006452208226,
+      "vertical_beamwidth_deg": 180.0
+    },
+    {
+      "retained_depth_mm": 100.0,
+      "dofs": 2198.0,
+      "absorbed_power_w": 477.8171939009374,
+      "horizontal_scattered_to_incident_l2": 0.6040056330606546,
+      "horizontal_beamwidth_deg": 180.0,
+      "diagonal_scattered_to_incident_l2": 0.6139963537535523,
+      "diagonal_beamwidth_deg": 180.0,
+      "vertical_scattered_to_incident_l2": 0.6231917338387335,
+      "vertical_beamwidth_deg": 180.0
+    }
+  ],
+  "adjacent_convergence": [
+    {
+      "coarse_depth_mm": 25.0,
+      "fine_depth_mm": 50.0,
+      "horizontal_complex_relative_l2": 0.14228875150694648,
+      "horizontal_normalized_max_delta_db": 0.44315052698059,
+      "horizontal_beamwidth_change_deg": 0.0,
+      "diagonal_complex_relative_l2": 0.1480107996581541,
+      "diagonal_normalized_max_delta_db": 0.3376454980197505,
+      "diagonal_beamwidth_change_deg": 0.0,
+      "vertical_complex_relative_l2": 0.1529601781852594,
+      "vertical_normalized_max_delta_db": 0.29071647601531336,
+      "vertical_beamwidth_change_deg": 0.0
+    },
+    {
+      "coarse_depth_mm": 50.0,
+      "fine_depth_mm": 100.0,
+      "horizontal_complex_relative_l2": 0.8321902796006893,
+      "horizontal_normalized_max_delta_db": 3.4555890862371705,
+      "horizontal_beamwidth_change_deg": 0.0,
+      "diagonal_complex_relative_l2": 0.8710764858683442,
+      "diagonal_normalized_max_delta_db": 2.6191347853383924,
+      "diagonal_beamwidth_change_deg": 0.0,
+      "vertical_complex_relative_l2": 0.8989550195694709,
+      "vertical_normalized_max_delta_db": 2.10992515692834,
+      "vertical_beamwidth_change_deg": 0.0
+    }
+  ],
+  "acceptance_limits": {
+    "complex_relative_l2": 0.05,
+    "normalized_max_delta_db": 0.5,
+    "beamwidth_change_deg": 1.0
+  },
+  "acceptance_note": "Deepest adjacent pair fails provisional retained-depth gates."
+}

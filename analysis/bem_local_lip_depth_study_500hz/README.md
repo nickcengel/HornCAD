@@ -12,6 +12,8 @@ mathematical problem substantially.
 
 ## Start here
 
+- `local_lip_meshes.png` shows the three exact scattering meshes side by side;
+  blue is retained body and red is the artificial rear closure.
 - `retained_depth_comparison.png` overlays peak-normalized total H/D/V pressure
   for all three depths.
 - `adjacent_convergence.csv` contains the 25-to-50 and 50-to-100 mm complex and

@@ -254,6 +254,18 @@ Initial proof targets, subject to tightening from the reference cases, are:
   production sweep on this representation. The next formulation must eliminate
   that artificial rear-incident field (a justified one-sided equivalent source
   or, preferably, coupled FEM--BEM) before repeating depth convergence.
+- **Absorbing-closure experiment (completed 2026-07-15; rejected).** The aft
+  closure can now use a mixed Robin condition with `Z/(rho*c)` recorded in the
+  manifest; only labeled closure DOFs are absorbing, while the physical lip and
+  return stay rigid. A 1 mm axial source offset avoids the point-source/rim
+  coincidence and is applied consistently to incident and scattered fields.
+  At `Z=rho*c`, the 25/50/100 mm cases absorbed positive 668/601/478 W, proving
+  that the sink was active. Nevertheless, 50-to-100 mm changes remained
+  83.2--89.9% complex L2 and 2.11--3.46 dB normalized. This is essentially the
+  rigid-closure failure. Therefore aft reflection is not the dominant error;
+  the two-sided monopole sheet illuminates the increasing internal-wall area.
+  Do not tune termination impedance further. Move to a one-sided equivalent
+  representation or coupled FEM--BEM.
 
 ## Completed Foundation: Reduced Interior Model (2026-07-14)
 
