@@ -198,6 +198,29 @@ The `single-layer-preview` formulation assembles one dense operator and is
 intended for low-cost proof-of-concept sweeps. It can fail near fictitious
 interior resonances. The default `combined-field` formulation is resonance-safe,
 uses four operators, and remains the production-validation target.
+
+### Experimental native-symmetry NumCalc adapter
+
+`numcalc_bem_backend.py` exports HornCAD's actual positive-X/positive-Y mesh to
+NumCalc without reconstructing four-quadrant input geometry. NumCalc applies
+the two hard mirror planes inside its Burton--Miller BEM/FMM implementation.
+The adapter also supports an exact mirrored-full control for validation:
+
+```bash
+python app/numcalc_bem_backend.py config.YAML \
+  --numcalc /path/to/native/NumCalc --output-dir analysis/numcalc-quadrant \
+  --geometry quadrant --frequency 500 --method mlfmm
+
+python app/numcalc_bem_backend.py config.YAML \
+  --numcalc /path/to/native/NumCalc --output-dir analysis/numcalc-full \
+  --geometry mirrored-full --frequency 500 --method dense \
+  --linear-solver direct
+```
+
+The output directory includes the exact node/element meshes, raw complex
+boundary and evaluation fields, solver input/logs, and JSON metadata. The
+initial Test4 validation and timing results are recorded in
+`analysis/all_bem_backend_optimization/numcalc_test4_500hz/README.md`.
 The experimental `--operator-assembler fmm` path must not be used for accepted
 results until the installed ExaFMM backend passes a dense complex-operator
 comparison on the target platform.
