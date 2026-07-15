@@ -1,0 +1,27 @@
+{
+  "status": "complete",
+  "coupling": "one_way_prescribed_fem_mouth_velocity",
+  "frequency_hz": 500.0,
+  "retained_depth_m": 0.05,
+  "rear_closure_z_m": 0.19051090064489096,
+  "triangles": 3580,
+  "dofs": 1790,
+  "maximum_edge_m": 0.045837949849439154,
+  "target_edge_m": 0.11440333333333333,
+  "minimum_angle_deg": 0.4156269581653005,
+  "maximum_aspect_ratio": 79.64828598942277,
+  "iterations": 0,
+  "linear_solver": "dense_lu",
+  "settings": {
+    "retained_depth_m": 0.05,
+    "elements_per_wavelength": 6.0,
+    "receiver_radius_m": 10.0,
+    "gmres_tolerance": 1e-05,
+    "gmres_max_iterations": 300,
+    "direct_solve_max_dofs": 2500,
+    "minimum_angle_deg": 0.01,
+    "maximum_aspect_ratio": 3000.0
+  },
+  "incident_model": "free_field_monopole_sheet_curved_source_coordinates",
+  "scattering_model": "one_way_rigid_closed_local_lip_scattering"
+}

@@ -1,0 +1,3 @@
+coarse_depth_mm,fine_depth_mm,horizontal_complex_relative_l2,horizontal_normalized_max_delta_db,horizontal_beamwidth_change_deg,diagonal_complex_relative_l2,diagonal_normalized_max_delta_db,diagonal_beamwidth_change_deg,vertical_complex_relative_l2,vertical_normalized_max_delta_db,vertical_beamwidth_change_deg
+25.0,50.0,0.14280089854836886,0.2545672560247567,0.0,0.14833662019428,0.2022454702312788,0.0,0.15263460080358135,0.19433626447607155,0.0
+50.0,100.0,0.8524395483139476,3.5782319652296577,0.0,0.8797634661371478,2.9846680716687333,0.0,0.8971099878690396,2.081459205097236,0.0
