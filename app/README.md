@@ -200,6 +200,14 @@ python app/generate_fem_review.py path/to/fields --output-dir path/to/study \
   --title "Design name"
 ```
 
+Compare the −6 dB horizontal/vertical coverage and magnitude-only throat
+impedance from two or more generated review packages with:
+
+```bash
+python app/compare_fem_reviews.py path/to/study-a path/to/study-b \
+  --labels "Study A" "Study B" --output-dir path/to/comparison
+```
+
 The preconditioner is block-triangular: it solves the sparse pressure block,
 injects that pressure trace into the mouth residual, then solves the complex
 aperture block. On the accepted 5 kHz mesh this reduced the 5 kHz solve from
