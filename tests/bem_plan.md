@@ -240,6 +240,20 @@ Initial proof targets, subject to tightening from the reference cases, are:
   acoustic coupling. The rear closure remains an artificial scatterer until a
   depth study passes, and production-sized iterative solves still require a
   convergent preconditioned path.
+- **First retained-depth audit (completed 2026-07-15; failed convergence).**
+  `app/run_local_lip_study.py` now runs an ordered depth sequence with identical
+  source, receiver, mesh, formulation, and solver class; preserves each
+  STL/manifest/complex NPZ; and writes per-depth and adjacent-depth metrics.
+  The test4 500 Hz, 6-EPW dense-reference study solved 25/50/100 mm models with
+  1,548/1,790/2,198 unknowns. The 25-to-50 mm change was 14.3--15.3% complex L2
+  and at most 0.255 dB normalized. The 50-to-100 mm change grew to 85.2--89.7%
+  complex L2 and 2.08--3.58 dB. Scattered/incident norms rose from about 0.11
+  to 0.23 to 0.61. Therefore no return length is accepted. The likely cause is
+  rear radiation from the two-sided monopole sheet interacting with increasing
+  retained inner-wall length and the artificial rear closure. Do not spend a
+  production sweep on this representation. The next formulation must eliminate
+  that artificial rear-incident field (a justified one-sided equivalent source
+  or, preferably, coupled FEM--BEM) before repeating depth convergence.
 
 ## Completed Foundation: Reduced Interior Model (2026-07-14)
 

@@ -47,7 +47,7 @@ class LocalLipSettings:
     receiver_radius_m: float = 10.0
     gmres_tolerance: float = 1e-5
     gmres_max_iterations: int = 300
-    direct_solve_max_dofs: int = 2_000
+    direct_solve_max_dofs: int = 2_500
     minimum_angle_deg: float = 0.01
     maximum_aspect_ratio: float = 3_000.0
 
@@ -249,10 +249,13 @@ def main() -> None:
     parser.add_argument("frequency_hz", type=float)
     parser.add_argument("--retained-depth-mm", type=float, default=50.0)
     parser.add_argument("--elements-per-wavelength", type=float, default=6.0)
+    parser.add_argument("--direct-solve-max-dofs", type=int, default=2_500)
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
-    settings = LocalLipSettings(args.retained_depth_mm * 1e-3,
-                                args.elements_per_wavelength)
+    settings = LocalLipSettings(
+        retained_depth_m=args.retained_depth_mm * 1e-3,
+        elements_per_wavelength=args.elements_per_wavelength,
+        direct_solve_max_dofs=args.direct_solve_max_dofs)
     field = read_mfem_mouth_csv(args.mouth_csv, args.frequency_hz)
     lip = build_local_lip_mesh(args.yaml, args.frequency_hz, settings)
     angles = np.arange(-90.0, 91.0)

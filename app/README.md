@@ -175,6 +175,20 @@ combined-field GMRES path and fail rather than accepting non-convergence. The
 current result is an exploratory local-scattering model, not yet the accepted
 coupled free-air solution.
 
+Run a retained-depth study with identical numerical settings using:
+
+```bash
+python app/run_local_lip_study.py config.YAML path/to/d000_mouth.csv 500 \
+  --depths-mm 25 50 100 --elements-per-wavelength 6 \
+  --output-dir analysis/local-lip-depth-500
+```
+
+The runner keeps every depth's complete artifacts and writes per-depth metrics,
+adjacent complex-pressure convergence, a comparison plot, and an explicit
+acceptance result. Provisional gates require the deepest adjacent pair to stay
+within 5% complex L2 error, 0.5 dB normalized-pattern change, and 1 degree
+beamwidth change in every H/D/V cut.
+
 For programmatic studies, construct `PipelineSettings` and call `run_pipeline(...)`. The returned structure contains the mesh report, observer geometry, complex per-frequency results, manifest, and artifact paths. A single mesh always covers the entire sweep. Production acceptance still requires an explicit 8/10/12 convergence study; deep-null depth is not a stable optimization metric until that study passes.
 
 ## Reduced Interior-Aperture Reference
