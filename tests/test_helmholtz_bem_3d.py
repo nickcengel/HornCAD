@@ -13,11 +13,20 @@ from app.helmholtz_bem_3d import (
     piston_boundary_values,
     receiver_directions,
     execution_plan,
+    parse_args,
     PipelineSettings,
 )
 
 
 class HelmholtzBEM3DTests(unittest.TestCase):
+    def test_default_sweep_is_500_to_8000_hz_at_6_epw(self) -> None:
+        args = parse_args(["horn.yaml"])
+        self.assertEqual(args.start_hz, 500)
+        self.assertEqual(args.stop_hz, 8_000)
+        self.assertEqual(args.mesh_tier, "production")
+        self.assertEqual(MeshSettings().maximum_frequency_hz, 8_000)
+        self.assertEqual(MeshSettings().elements_per_wavelength, 6)
+
     def test_acoustic_body_is_closed_and_has_driven_throat_faces(self) -> None:
         yaml_path = (
             Path(__file__).parents[1]

@@ -111,7 +111,7 @@ This is substantially more informative than the uniform-aperture estimate, but i
 
 ## Helmholtz 3D BEM Directivity
 
-Run the coupled 3D boundary-element comparison pipeline at eight logarithmically spaced frequencies from 500 Hz to 5 kHz:
+Run the coupled 3D boundary-element comparison pipeline at eight logarithmically spaced frequencies from 500 Hz to 8 kHz:
 
 ```bash
 python app/helmholtz_bem_3d.py path/to/config.YAML
@@ -121,7 +121,11 @@ The solver builds a closed acoustic obstacle from the printable HornCAD body and
 
 The exterior radiation problem uses a regularized combined-field Neumann equation to avoid fictitious interior resonances. Select `--solver-backend ngsolve-fmm` for native matrix-free layer operators, singular quadrature, FMM evaluation, weakly singular hypersingular regularization, and Laplace-Calderon-preconditioned GMRES. Python remains the geometry, sweep, and artifact layer. The legacy `bempp-dense` backend is retained as a small-problem numerical reference; results made before the 2026-07-15 Calderon sign correction must be regenerated.
 
-Production meshes enforce every edge at eight elements per wavelength at the sweep's highest frequency. `--mesh-tier preview` selects 6; verification tiers select 10 or 12. Watertightness, orientation, connectedness, edge length, minimum angle, and aspect ratio are checked before solving.
+The default production sweep is 500 Hz--8 kHz at six elements per wavelength.
+The eight logarithmically spaced frequencies include both endpoints. Use
+`--mesh-tier verification-8`, `verification-10`, or `verification-12` for
+convergence runs. Watertightness, orientation, connectedness, edge length,
+minimum angle, and aspect ratio are checked before solving.
 
 The default `netgen` surface mesher remeshes the closed authored shell before
 solving. It removes the extreme slivers retained by global subdivision and is

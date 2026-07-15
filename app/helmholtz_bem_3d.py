@@ -48,7 +48,8 @@ except ImportError:
 
 
 DEFAULT_OUTPUT_DIR = Path(__file__).resolve().parent / "output"
-MESH_TIERS = {"preview": 6.0, "production": 8.0, "verification-10": 10.0,
+MESH_TIERS = {"preview": 6.0, "production": 6.0, "verification-8": 8.0,
+              "verification-10": 10.0,
               "verification-12": 12.0}
 CUT_AZIMUTHS = {"horizontal": 0.0, "diagonal": 45.0, "vertical": 90.0}
 
@@ -61,8 +62,8 @@ class AcousticMedium:
 
 @dataclass(frozen=True)
 class MeshSettings:
-    maximum_frequency_hz: float = 5_000.0
-    elements_per_wavelength: float = 8.0
+    maximum_frequency_hz: float = 8_000.0
+    elements_per_wavelength: float = 6.0
     curvature_tolerance_m: float | None = None
     minimum_angle_deg: float = 0.01
     maximum_aspect_ratio: float = 3_000.0
@@ -1002,7 +1003,7 @@ def plot_heatmaps(path: Path, angles_deg: np.ndarray, frequencies_hz: np.ndarray
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("yaml", type=Path); parser.add_argument("--start-hz", type=float, default=500)
-    parser.add_argument("--stop-hz", type=float, default=5_000); parser.add_argument("--frequencies", type=int, default=8)
+    parser.add_argument("--stop-hz", type=float, default=8_000); parser.add_argument("--frequencies", type=int, default=8)
     parser.add_argument("--angles", type=int, default=91); parser.add_argument("--floor-db", type=float, default=-40)
     parser.add_argument("--mesh-tier", choices=MESH_TIERS, default="production")
     parser.add_argument("--elements-per-wavelength", type=float); parser.add_argument("--maximum-frequency-hz", type=float)
