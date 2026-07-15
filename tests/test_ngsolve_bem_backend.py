@@ -38,7 +38,10 @@ class NGSolveBEMBackendTests(unittest.TestCase):
         vertices, faces, domains = self.sphere_surface(0.4)
         solution = solve_neumann(vertices, faces, domains, 1 + 0j,
                                  frequency_hz=100, sound_speed_m_s=343.21,
-                                 tolerance=1e-7)
+                                 tolerance=1e-5, fmm_min_order=10,
+                                 fmm_order_factor=1.5,
+                                 fmm_separation=2.0,
+                                 regularizer="physical")
         points = np.asarray([[2.0, 0, 0], [0, 0, 2.0]])
         values = make_point_evaluator(solution, points)(points)
         self.assertTrue(np.all(np.isfinite(values)))

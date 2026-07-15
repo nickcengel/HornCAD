@@ -4,6 +4,29 @@
 
 ### All-BEM backend checkpoint (2026-07-15)
 
+Optimization checkpoint: the native backend now uses a component-wise
+weakly-singular regularization of the hypersingular operator, a Laplace
+single-layer Calderon preconditioner, and tuned FMM controls (minimum order 6,
+order factor 0.8, separation 1.5). On the 466-DOF dense-reference horn case it
+completed in 5.46 s versus 59.07 s for corrected Bempp dense LU. Normalized
+complex directivity differed by 0.245--0.267%, with a 0.0176 dB maximum level
+difference. The former native path took 14.6 s on this case.
+
+Netgen surface remeshing replaces global subdivision by default. At 6 EPW it
+produced accepted watertight meshes of 3,350 DOFs at 2 kHz, 13,828 at 5 kHz,
+and 53,465 at 10 kHz, with maximum aspect ratios 6.15, 5.63, and 3.30. A real
+5 kHz / 13,828-DOF solve completed in 293 s and 134 iterations, using about
+1.97 GB peak RSS; its measured preconditioned residual was 4.97e-5. This run
+used an overly conservative internal tolerance factor that has since been
+relaxed and was a scaling benchmark, not response data.
+
+Thread profiling at 5 kHz measured one operator-plus-preconditioner application
+at 19.98/10.43/5.45/2.90/1.73 s for 1/2/4/8/20 threads. Frequency workers now
+set NGSolve's native thread count explicitly, and scheduling budgets roughly
+150 kB per surface DOF (about 2 GB at 13.8k DOFs). On the current 20-core,
+64-GiB machine, many one-thread frequency workers offer higher aggregate
+throughput than one frequency consuming every core.
+
 The active implementation path is now a single throat-driven, free-air BEM
 analysis on the closed acoustic boundary: internal horn wall, lip, simplified
 external body, and driven throat cap. Python remains geometry/run glue while

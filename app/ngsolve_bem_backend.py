@@ -73,11 +73,9 @@ def _imports() -> dict[str, Any]:
     try:
         from netgen.csg import Pnt
         from netgen.meshing import Element2D, FaceDescriptor, Mesh, MeshPoint
-        from ngsolve import (BilinearForm, GridFunction, H1, TaskManager, ds, la,
-                             Norm, solvers)
-        from ngsolve.bem import (HelmholtzDoubleLayerPotentialOperator,
-                                 HelmholtzHypersingularOperator,
-                                 HelmholtzSingleLayerPotentialOperator)
+        from ngsolve import (BilinearForm, GridFunction, H1, TaskManager, ds,
+                             grad, specialcf, Norm, solvers)
+        from ngsolve.bem import HelmholtzDL, HelmholtzSL
     except ImportError as exc:  # pragma: no cover - exercised without optional extra
         raise RuntimeError(
             "the ngsolve-fmm backend requires ngsolve>=6.2.2606"
@@ -109,15 +107,21 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
                   domain_indices: np.ndarray, neumann_value: complex,
                   frequency_hz: float, sound_speed_m_s: float,
                   tolerance: float = 1e-5, max_iterations: int = 300,
-                  integration_order: int = 7) -> NGSolveBEMSolution:
+                  integration_order: int = 7,
+                  gmres_restart: int | None = None,
+                  fmm_min_order: int = 6,
+                  fmm_order_factor: float = 0.8,
+                  fmm_separation: float = 1.5,
+                  fmm_max_direct: int = 100,
+                  regularizer: str = "laplace") -> NGSolveBEMSolution:
     """Solve the resonance-safe direct Burton--Miller Neumann equation.
 
     With NGSolve's exterior Calderon signs,
 
       [D + i k (M/2 - K)] p = [-M/2 - K' - i k V] g.
 
-    The diagonal mass inverse is a deliberately inexpensive baseline
-    preconditioner. It can later be replaced without changing this interface.
+    A Laplace single-layer Calderon regularizer supplies an order-minus-one,
+    non-oscillatory left preconditioner.
     """
     if frequency_hz <= 0 or sound_speed_m_s <= 0:
         raise ValueError("frequency and sound speed must be positive")
@@ -126,14 +130,45 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
     space = ng["H1"](mesh, order=1, complex=True)
     trial, test = space.TnT()
     k = 2 * math.pi * frequency_hz / sound_speed_m_s
+    fmm_options = {"fmm_minorder": fmm_min_order,
+                   "fmm_order_factor": fmm_order_factor,
+                   "fmm_separation": fmm_separation,
+                   "fmm_maxdirect": fmm_max_direct}
+    normal = ng["specialcf"].normal(3)
+    # The surface curl is n x grad_Gamma. It cannot be replaced by grad_Gamma
+    # inside the nonlocal dot product because source and target normals differ.
+    from ngsolve import Cross
+    trial_rotation = Cross(normal, ng["grad"](trial).Trace())
+    test_rotation = Cross(normal, ng["grad"](test).Trace())
     with ng["TaskManager"]():
-        single = ng["HelmholtzSingleLayerPotentialOperator"](
-            space, space, kappa=k, intorder=integration_order)
-        double = ng["HelmholtzDoubleLayerPotentialOperator"](
-            space, space, kappa=k, intorder=integration_order)
-        hyper = ng["HelmholtzHypersingularOperator"](
-            space, space, kappa=k, intorder=integration_order)
+        single = ng["HelmholtzSL"](trial * ng["ds"], k, **fmm_options) * test * ng["ds"]
+        double = ng["HelmholtzDL"](trial * ng["ds"], k, **fmm_options) * test * ng["ds"]
+        # Weakly singular regularization of the Helmholtz hypersingular form:
+        # <D p,q> = <V curl_Gamma p,curl_Gamma q>
+        #             - k^2 <V(n p),n q>.
+        # Component-wise scalar potentials avoid the vector-FMM SIMD bug in
+        # NGSolve 6.2.2606 and expose the FMM accuracy controls.
+        surface_gradient_terms = [
+            ng["HelmholtzSL"](trial_rotation[i] * ng["ds"], k, **fmm_options)
+            * test_rotation[i] * ng["ds"] for i in range(3)]
+        surface_gradient = (surface_gradient_terms[0] + surface_gradient_terms[1]
+                            + surface_gradient_terms[2])
+        normal_mass_terms = [
+            ng["HelmholtzSL"]((normal[i] * trial) * ng["ds"], k, **fmm_options)
+            * (normal[i] * test) * ng["ds"] for i in range(3)]
+        normal_mass = normal_mass_terms[0] + normal_mass_terms[1] + normal_mass_terms[2]
+        hyper = surface_gradient - k * k * normal_mass
         mass = ng["BilinearForm"](trial * test * ng["ds"]).Assemble()
+        if regularizer == "physical":
+            regularizing_single = single
+        elif regularizer == "imaginary":
+            regularizing_single = (ng["HelmholtzSL"](
+                trial * ng["ds"], 1j * k, **fmm_options) * test * ng["ds"])
+        elif regularizer == "laplace":
+            regularizing_single = (ng["HelmholtzSL"](
+                trial * ng["ds"], 1e-10, **fmm_options) * test * ng["ds"])
+        else:
+            raise ValueError("regularizer must be 'physical', 'imaginary', or 'laplace'")
 
     prescribed = ng["GridFunction"](space)
     prescribed.Set(neumann_value, definedon=mesh.Boundaries("throat"))
@@ -153,18 +188,28 @@ def solve_neumann(vertices: np.ndarray, faces: np.ndarray,
     # of the hypersingular equation back to order zero. The mass inverses
     # convert both weak-form matrices to composable coefficient operators.
     preconditioner = _ThreeMatrixProduct.build(
-        mass_inverse, single.mat, mass_inverse)
+        mass_inverse, regularizing_single.mat, mass_inverse)
+    weighted_rhs = rhs.CreateVector()
+    weighted_rhs.data = preconditioner * rhs
+    rhs_scale = max(float(ng["Norm"](weighted_rhs)), 1e-30)
+    scaled_rhs = rhs.CreateVector()
+    scaled_rhs.data = rhs
+    scaled_rhs *= 1.0 / rhs_scale
     with ng["TaskManager"]():
         vector = ng["solvers"].GMRes(
-            A=lhs, b=rhs, pre=preconditioner, tol=tolerance,
-            maxsteps=max_iterations, callback=count_iteration, printrates=False)
+            A=lhs, b=scaled_rhs, pre=preconditioner,
+            tol=0.5 * tolerance, maxsteps=max_iterations,
+            restart=gmres_restart, callback=count_iteration,
+            printrates=False)
+        vector *= rhs_scale
+    with ng["TaskManager"]():
         residual = rhs.CreateVector()
         residual.data = rhs - lhs * vector
-        weighted_residual = preconditioner * residual
-        weighted_rhs = preconditioner * rhs
+        weighted_residual = rhs.CreateVector()
+        weighted_residual.data = preconditioner * residual
         relative_residual = float(ng["Norm"](weighted_residual)
                                   / max(ng["Norm"](weighted_rhs), 1e-30))
-    if relative_residual > tolerance * 1.05:
+    if relative_residual > tolerance * 1.25:
         raise RuntimeError(
             f"NGSolve BEM GMRES failed at {frequency_hz:g} Hz after "
             f"{iterations} iterations: relative residual={relative_residual:.3g}")

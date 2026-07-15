@@ -66,6 +66,8 @@ class MeshSettings:
     curvature_tolerance_m: float | None = None
     minimum_angle_deg: float = 0.01
     maximum_aspect_ratio: float = 3_000.0
+    surface_mesher: str = "netgen"
+    netgen_maxh_factor: float = 0.5
 
     @property
     def target_edge_m(self) -> float:
@@ -142,7 +144,7 @@ class PipelineSettings:
     medium: AcousticMedium = field(default_factory=AcousticMedium)
     source: SourceDefinition = field(default_factory=SourceDefinition)
     observer_offset_m: float = 0.001
-    gmres_tolerance: float = 1e-5
+    gmres_tolerance: float = 1e-4
     gmres_max_iterations: int = 300
     formulation: str = "combined-field"
     solver_backend: str = "ngsolve-fmm"
@@ -153,6 +155,10 @@ class PipelineSettings:
     memory_limit_gib: float | None = None
     geometry_side_samples: int | None = None
     geometry_axial_stations: int | None = None
+    fmm_min_order: int = 6
+    fmm_order_factor: float = 0.8
+    fmm_separation: float = 1.5
+    fmm_max_direct: int = 100
 
 
 @dataclass(frozen=True)
@@ -181,7 +187,7 @@ def execution_plan(settings: PipelineSettings, mesh: AcousticMesh,
     # factorization/work arrays. Five matrices is a conservative working-set estimate.
     per_worker = (max(0.25, 5.0 * mesh.report.estimated_dense_matrix_gib)
                   if settings.solver_backend == "bempp-dense"
-                  else max(0.25, mesh.report.estimated_dofs * 2_000 / 1024 ** 3))
+                  else max(0.5, mesh.report.estimated_dofs * 150_000 / 1024 ** 3))
     memory_workers = max(1, int(memory_limit // per_worker))
     requested = cpus if settings.maximum_workers == 0 else max(1, settings.maximum_workers)
     workers = max(1, min(requested, cpus, memory_workers, pending_frequencies or 1))
@@ -298,29 +304,51 @@ def build_acoustic_mesh(yaml_path: Path, settings: MeshSettings,
                         side_samples: int | None = None, axial_stations: int | None = None) -> AcousticMesh:
     """Build, edge-refine, validate and mark a physically closed acoustic boundary."""
     # Ring density is only a geometry seed; actual acceptance is based on every edge.
-    side_samples = side_samples or max(8, int(math.ceil(0.30 / settings.target_edge_m)))
-    axial_stations = axial_stations or max(10, int(math.ceil(0.30 / settings.target_edge_m)))
+    if settings.surface_mesher not in {"netgen", "subdivide"}:
+        raise ValueError("surface_mesher must be 'netgen' or 'subdivide'")
+    if not 0 < settings.netgen_maxh_factor <= 1:
+        raise ValueError("netgen_maxh_factor must be in (0, 1]")
+    if settings.surface_mesher == "netgen":
+        # This seed describes the authored faceted geometry; Netgen supplies
+        # wavelength refinement. Increasing it with frequency creates
+        # overlapping lip facets before remeshing on the current exporter.
+        side_samples = side_samples or 12
+        axial_stations = axial_stations or 12
+    else:
+        side_samples = side_samples or max(8, int(math.ceil(0.30 / settings.target_edge_m)))
+        axial_stations = axial_stations or max(10, int(math.ceil(0.30 / settings.target_edge_m)))
     mesh, mouth_ring_mm, throat_radius_mm = _authored_mesh(yaml_path, side_samples, axial_stations)
     mesh.apply_scale(1e-3)
-    # Selective ``subdivide_to_size`` leaves T-junctions where refined and
-    # unrefined faces meet.  Conforming global passes cost more triangles but
-    # preserve the closed boundary required by an exterior BEM.
-    for _ in range(12):
-        edge_lengths = np.linalg.norm(
-            mesh.vertices[mesh.edges_unique[:, 0]] - mesh.vertices[mesh.edges_unique[:, 1]], axis=1
-        )
-        if float(edge_lengths.max()) <= settings.target_edge_m + 1e-12:
-            break
-        vertices, faces = trimesh.remesh.subdivide(mesh.vertices, mesh.faces)
-        mesh = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+    throat_z = (-max(0.0, float(geometry.PARAMS["throat_extension"])) + 0.3) * 1e-3
+    if settings.surface_mesher == "netgen":
+        throat_points = mesh.vertices[
+            np.abs(mesh.vertices[:, 2] - throat_z) < 1e-8]
+        mesh = _netgen_surface_remesh(
+            mesh, settings.target_edge_m * settings.netgen_maxh_factor,
+            throat_points,
+            min(settings.target_edge_m * settings.netgen_maxh_factor,
+                2 * math.pi * throat_radius_mm * 1e-3 / 32))
     else:
-        raise ValueError("mesh refinement did not reach the wavelength edge limit")
+        # Selective ``subdivide_to_size`` leaves T-junctions where refined and
+        # unrefined faces meet. Conforming global passes preserve closure.
+        for _ in range(12):
+            edge_lengths = np.linalg.norm(
+                mesh.vertices[mesh.edges_unique[:, 0]] - mesh.vertices[mesh.edges_unique[:, 1]], axis=1
+            )
+            if float(edge_lengths.max()) <= settings.target_edge_m + 1e-12:
+                break
+            vertices, faces = trimesh.remesh.subdivide(mesh.vertices, mesh.faces)
+            mesh = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+        else:
+            raise ValueError("mesh refinement did not reach the wavelength edge limit")
     trimesh.repair.fix_normals(mesh, multibody=True)
     centers, normals = mesh.triangles_center, mesh.face_normals
-    throat_z = float(np.min(mouth_ring_mm[:, 2])) * 0.0 - max(0.0, float(geometry.PARAMS["throat_extension"])) * 1e-3
+    # `_authored_mesh` overlaps the throat closure by 0.3 mm so the driven
+    # face is the planar top at -extension + overlap.
     radius = np.hypot(centers[:, 0], centers[:, 1])
-    source_faces = ((normals[:, 2] > 0.8) & (centers[:, 2] > throat_z - 0.0002) &
-                    (centers[:, 2] < throat_z + 0.0007) & (radius < throat_radius_mm * 0.00098))
+    planar_throat = np.max(np.abs(mesh.triangles[:, :, 2] - throat_z), axis=1) < 1e-8
+    source_faces = planar_throat & (normals[:, 2] > 0.8) & (
+        radius < throat_radius_mm * 0.001001)
     if not np.any(source_faces):
         raise ValueError("failed to identify the driven throat piston")
     domains = source_faces.astype(np.uint32)
@@ -333,6 +361,35 @@ def build_acoustic_mesh(yaml_path: Path, settings: MeshSettings,
     content_hash = _hash_arrays(mesh.vertices, mesh.faces, domains,
                                 metadata=json.dumps(_jsonable(asdict(settings)), sort_keys=True).encode())
     return AcousticMesh(mesh, domains, source_area, mouth_center, mouth_ring, report, content_hash)
+
+
+def _netgen_surface_remesh(source: trimesh.Trimesh, maximum_size_m: float,
+                           refinement_points_m: np.ndarray | None = None,
+                           refinement_size_m: float | None = None) -> trimesh.Trimesh:
+    """Create a watertight, shape-regular triangular surface from an STL shell."""
+    from netgen.meshing import MeshingParameters, MeshingStep, Point3d
+    from netgen.stl import STLGeometry
+
+    fd, filename = tempfile.mkstemp(prefix="horncad-bem-surface-", suffix=".stl")
+    os.close(fd)
+    try:
+        source.export(filename)
+        geometry_stl = STLGeometry(filename)
+        if refinement_points_m is not None and refinement_size_m is not None:
+            for point in np.asarray(refinement_points_m):
+                geometry_stl.RestrictH(Point3d(*map(float, point)), refinement_size_m)
+        parameters = MeshingParameters(
+            maxh=maximum_size_m, perfstepsend=MeshingStep.MESHSURFACE)
+        generated = geometry_stl.GenerateMesh(mp=parameters)
+        vertices = np.asarray([[point.p[0], point.p[1], point.p[2]]
+                               for point in generated.Points()])
+        faces = np.asarray([[vertex.nr - 1 for vertex in element.vertices]
+                            for element in generated.Elements2D()], dtype=np.int64)
+        result = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+        trimesh.repair.fix_normals(result, multibody=True)
+        return result
+    finally:
+        os.unlink(filename)
 
 
 def acoustic_body_mesh(yaml_path: Path, side_samples: int = 16, axial_stations: int = 18,
@@ -501,7 +558,10 @@ def solve_frequency(grid: bempp.Grid, frequency_hz: float, angles_deg: np.ndarra
                     formulation: str = "combined-field",
                     solver_backend: str = "bempp-dense",
                     operator_assembler: str = "dense",
-                    direct_solve_max_dofs: int = 0) -> tuple[dict[str, np.ndarray], int, float] | FrequencyResult:
+                    direct_solve_max_dofs: int = 0,
+                    fmm_min_order: int = 6, fmm_order_factor: float = 0.8,
+                    fmm_separation: float = 1.5,
+                    fmm_max_direct: int = 100) -> tuple[dict[str, np.ndarray], int, float] | FrequencyResult:
     """Solve one frequency. Legacy calls receive normalized dB cuts."""
     medium = medium or AcousticMedium(sound_speed_m_s= sound_speed_m_s)
     source = source or SourceDefinition()
@@ -509,7 +569,8 @@ def solve_frequency(grid: bempp.Grid, frequency_hz: float, angles_deg: np.ndarra
         if acoustic_mesh is None:
             raise ValueError("ngsolve-fmm requires the labeled AcousticMesh")
         return _solve_frequency_ngsolve(acoustic_mesh, observer, frequency_hz,
-            angles_deg, medium, source, gmres_tolerance, gmres_max_iterations)
+            angles_deg, medium, source, gmres_tolerance, gmres_max_iterations,
+            fmm_min_order, fmm_order_factor, fmm_separation, fmm_max_direct)
     if solver_backend != "bempp-dense":
         raise ValueError("solver_backend must be 'bempp-dense' or 'ngsolve-fmm'")
     if acoustic_mesh is None:
@@ -582,7 +643,10 @@ def _solve_frequency_ngsolve(acoustic_mesh: AcousticMesh,
                              observer: ApertureObserver | None,
                              frequency_hz: float, angles_deg: np.ndarray,
                              medium: AcousticMedium, source: SourceDefinition,
-                             tolerance: float, max_iterations: int) -> FrequencyResult:
+                             tolerance: float, max_iterations: int,
+                             fmm_min_order: int, fmm_order_factor: float,
+                             fmm_separation: float,
+                             fmm_max_direct: int) -> FrequencyResult:
     """Run the same throat-driven problem with native matrix-free operators."""
     from .ngsolve_bem_backend import make_point_evaluator, solve_neumann
 
@@ -590,7 +654,11 @@ def _solve_frequency_ngsolve(acoustic_mesh: AcousticMesh,
     velocity, neumann = piston_boundary_values(acoustic_mesh, source, frequency_hz, medium)
     solution = solve_neumann(acoustic_mesh.surface.vertices, acoustic_mesh.surface.faces,
                              acoustic_mesh.domain_indices, neumann, frequency_hz,
-                             medium.sound_speed_m_s, tolerance, max_iterations)
+                             medium.sound_speed_m_s, tolerance, max_iterations,
+                             fmm_min_order=fmm_min_order,
+                             fmm_order_factor=fmm_order_factor,
+                             fmm_separation=fmm_separation,
+                             fmm_max_direct=fmm_max_direct)
     k = solution.wavenumber_m1
     epsilon = max(1e-5, observer.offset_m * 0.1)
     second_mouth = observer.positions_m + epsilon * observer.normals
@@ -689,6 +757,9 @@ def _solve_frequency_worker(payload: tuple[AcousticMesh, ApertureObserver, Pipel
     mesh, observer, settings, frequency, artifact, threads = payload
     import numba
     numba.set_num_threads(threads)
+    if settings.solver_backend == "ngsolve-fmm":
+        from ngsolve import SetNumThreads
+        SetNumThreads(threads)
     grid = (bempp.Grid(mesh.surface.vertices.T, mesh.surface.faces.T,
                        domain_indices=mesh.domain_indices)
             if settings.solver_backend == "bempp-dense" else None)
@@ -698,7 +769,11 @@ def _solve_frequency_worker(payload: tuple[AcousticMesh, ApertureObserver, Pipel
         formulation=settings.formulation,
         solver_backend=settings.solver_backend,
         operator_assembler=settings.operator_assembler,
-        direct_solve_max_dofs=settings.direct_solve_max_dofs)
+        direct_solve_max_dofs=settings.direct_solve_max_dofs,
+        fmm_min_order=settings.fmm_min_order,
+        fmm_order_factor=settings.fmm_order_factor,
+        fmm_separation=settings.fmm_separation,
+        fmm_max_direct=settings.fmm_max_direct)
     assert isinstance(result, FrequencyResult)
     _save_frequency(artifact, result)
     return str(artifact)
@@ -751,6 +826,9 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
     if pending and (plan.workers == 1 or used_parallel_workers == 1):
         import numba
         numba.set_num_threads(plan.cpu_count)
+        if settings.solver_backend == "ngsolve-fmm":
+            from ngsolve import SetNumThreads
+            SetNumThreads(plan.cpu_count)
         grid = (bempp.Grid(mesh.surface.vertices.T, mesh.surface.faces.T,
                            domain_indices=mesh.domain_indices)
                 if settings.solver_backend == "bempp-dense" else None)
@@ -761,7 +839,11 @@ def run_pipeline(yaml_path: Path, settings: PipelineSettings, output_dir: Path =
                 formulation=settings.formulation,
                 solver_backend=settings.solver_backend,
                 operator_assembler=settings.operator_assembler,
-                direct_solve_max_dofs=settings.direct_solve_max_dofs)
+                direct_solve_max_dofs=settings.direct_solve_max_dofs,
+                fmm_min_order=settings.fmm_min_order,
+                fmm_order_factor=settings.fmm_order_factor,
+                fmm_separation=settings.fmm_separation,
+                fmm_max_direct=settings.fmm_max_direct)
             assert isinstance(result, FrequencyResult)
             _save_frequency(artifact, result)
     results: list[FrequencyResult] = []
@@ -924,8 +1006,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--angles", type=int, default=91); parser.add_argument("--floor-db", type=float, default=-40)
     parser.add_argument("--mesh-tier", choices=MESH_TIERS, default="production")
     parser.add_argument("--elements-per-wavelength", type=float); parser.add_argument("--maximum-frequency-hz", type=float)
+    parser.add_argument("--surface-mesher", choices=("netgen", "subdivide"), default="netgen")
+    parser.add_argument("--netgen-maxh-factor", type=float, default=0.5)
     parser.add_argument("--sound-speed", type=float, default=343.21); parser.add_argument("--density", type=float, default=1.2041)
-    parser.add_argument("--gmres-tolerance", type=float, default=1e-5); parser.add_argument("--gmres-max-iterations", type=int, default=300)
+    parser.add_argument("--gmres-tolerance", type=float, default=1e-4); parser.add_argument("--gmres-max-iterations", type=int, default=300)
     parser.add_argument("--formulation", choices=("single-layer-preview", "combined-field"),
                         default="combined-field")
     parser.add_argument("--solver-backend", choices=("bempp-dense", "ngsolve-fmm"),
@@ -941,6 +1025,10 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                         help="optional geometry seed; wavelength refinement still applies")
     parser.add_argument("--geometry-axial-stations", type=int,
                         help="optional geometry seed; wavelength refinement still applies")
+    parser.add_argument("--fmm-min-order", type=int, default=6)
+    parser.add_argument("--fmm-order-factor", type=float, default=0.8)
+    parser.add_argument("--fmm-separation", type=float, default=1.5)
+    parser.add_argument("--fmm-max-direct", type=int, default=100)
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     return parser.parse_args(argv)
 
@@ -953,7 +1041,8 @@ def main() -> None:
         raise SystemExit("--maximum-frequency-hz must equal the highest requested frequency")
     epw = args.elements_per_wavelength or MESH_TIERS[args.mesh_tier]
     settings = PipelineSettings(tuple(frequencies), tuple(np.linspace(0, 90, args.angles)),
-        MeshSettings(maximum, epw), AcousticMedium(args.density, args.sound_speed),
+        MeshSettings(maximum, epw, surface_mesher=args.surface_mesher,
+                     netgen_maxh_factor=args.netgen_maxh_factor),
         observer_offset_m=args.observer_offset_mm * 1e-3,
         gmres_tolerance=args.gmres_tolerance, gmres_max_iterations=args.gmres_max_iterations,
         formulation=args.formulation,
@@ -962,7 +1051,11 @@ def main() -> None:
         direct_solve_max_dofs=args.direct_solve_max_dofs,
         maximum_workers=args.maximum_workers, memory_limit_gib=args.memory_limit_gib,
         geometry_side_samples=args.geometry_side_samples,
-        geometry_axial_stations=args.geometry_axial_stations)
+        geometry_axial_stations=args.geometry_axial_stations,
+        fmm_min_order=args.fmm_min_order,
+        fmm_order_factor=args.fmm_order_factor,
+        fmm_separation=args.fmm_separation,
+        fmm_max_direct=args.fmm_max_direct)
     result = run_pipeline(args.yaml, settings, args.output_dir, not args.no_resume)
     print(result["manifest_path"])
 
