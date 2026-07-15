@@ -1,0 +1,7 @@
+{
+  "nodes": 468962,
+  "tetrahedra": 2643047,
+  "maximum_requested_edge_m": 0.004290125,
+  "maximum_tetrahedron_edge_m": 0.004061462216378842,
+  "maximum_surface_deviation_m": 0.00020575088774002978
+}
