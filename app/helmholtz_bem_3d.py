@@ -649,7 +649,10 @@ def _solve_frequency_ngsolve(acoustic_mesh: AcousticMesh,
                              fmm_separation: float,
                              fmm_max_direct: int) -> FrequencyResult:
     """Run the same throat-driven problem with native matrix-free operators."""
-    from .ngsolve_bem_backend import make_point_evaluator, solve_neumann
+    try:
+        from .ngsolve_bem_backend import make_point_evaluator, solve_neumann
+    except ImportError:
+        from ngsolve_bem_backend import make_point_evaluator, solve_neumann
 
     observer = observer or make_aperture_observer(acoustic_mesh)
     velocity, neumann = piston_boundary_values(acoustic_mesh, source, frequency_hz, medium)
