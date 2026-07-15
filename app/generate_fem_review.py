@@ -102,12 +102,12 @@ def generate_review(fields: Path, output_dir: Path, title: str) -> None:
 
     figure, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True, constrained_layout=True)
     image = None
-    for axis, values, title in zip(axes, (horizontal, vertical), ("Horizontal", "Vertical")):
+    for axis, values, plane_title in zip(axes, (horizontal, vertical), ("Horizontal", "Vertical")):
         image = axis.pcolormesh(frequencies, ANGLES, values.T, shading="nearest",
                                 vmin=-30.0, vmax=0.0, cmap="turbo")
         axis.contour(frequencies, ANGLES, values.T, levels=[-6.0],
                      colors="white", linewidths=1.5)
-        axis.set_title(title)
+        axis.set_title(plane_title)
         axis.set_xlabel("Frequency (Hz, log scale)")
         axis.set_yticks(np.arange(-90, 91, 15))
         log_axis(axis)
