@@ -1,0 +1,264 @@
+{
+  "angles": 91,
+  "backend": "numcalc-native-symmetry",
+  "elapsed_s": 12.627431124914438,
+  "elements_per_wavelength": 6.0,
+  "frequencies_hz": [
+    500.0,
+    535.0344778465873,
+    572.5237849691405,
+    612.6399286914325,
+    655.5669687107821,
+    701.5018615952866,
+    750.6553644540862,
+    803.2530019268643,
+    859.5361009292872,
+    919.7628979019854,
+    984.2097236433056,
+    1053.172271162061,
+    1126.9669523673954,
+    1205.9323498204985,
+    1290.4307702090368,
+    1380.8499066719244,
+    1477.6046176014438,
+    1581.1388300841895,
+    1691.9275767141164,
+    1810.4791751229582,
+    1937.3375602280657,
+    2073.084779898409,
+    2218.3436654893053,
+    2373.7806894987125,
+    2540.109023456511,
+    2718.091810076918,
+    2908.5456646871785,
+    3112.3444219977196,
+    3330.4231454045766,
+    3563.7824172194564,
+    3813.4929295117213,
+    4080.7003966259126,
+    4366.630811914218,
+    4672.596072802687,
+    5000.0
+  ],
+  "memory_limit_gib": 48.0,
+  "mesh_maximum_frequency_hz": 5000.0,
+  "mesh_quadrant_panels": 7897,
+  "numcalc": "/private/tmp/Mesh2HRTF/mesh2hrtf/NumCalc/bin/NumCalc",
+  "peak_estimated_ram_gib": 0.4498156,
+  "results": [
+    {
+      "case": "frequencies/500.000000000",
+      "estimated_ram_gib": 0.383089,
+      "frequency_hz": 500.0,
+      "run": null
+    },
+    {
+      "case": "frequencies/535.034477847",
+      "estimated_ram_gib": 0.383089,
+      "frequency_hz": 535.0344778465873,
+      "run": null
+    },
+    {
+      "case": "frequencies/572.523784969",
+      "estimated_ram_gib": 0.383089,
+      "frequency_hz": 572.5237849691405,
+      "run": null
+    },
+    {
+      "case": "frequencies/612.639928691",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 612.6399286914325,
+      "run": null
+    },
+    {
+      "case": "frequencies/655.566968711",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 655.5669687107821,
+      "run": null
+    },
+    {
+      "case": "frequencies/701.501861595",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 701.5018615952866,
+      "run": null
+    },
+    {
+      "case": "frequencies/750.655364454",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 750.6553644540862,
+      "run": null
+    },
+    {
+      "case": "frequencies/803.253001927",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 803.2530019268643,
+      "run": null
+    },
+    {
+      "case": "frequencies/859.536100929",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 859.5361009292872,
+      "run": null
+    },
+    {
+      "case": "frequencies/919.762897902",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 919.7628979019854,
+      "run": null
+    },
+    {
+      "case": "frequencies/984.209723643",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 984.2097236433056,
+      "run": null
+    },
+    {
+      "case": "frequencies/1053.172271162",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 1053.172271162061,
+      "run": null
+    },
+    {
+      "case": "frequencies/1126.966952367",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 1126.9669523673954,
+      "run": null
+    },
+    {
+      "case": "frequencies/1205.932349820",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 1205.9323498204985,
+      "run": null
+    },
+    {
+      "case": "frequencies/1290.430770209",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 1290.4307702090368,
+      "run": null
+    },
+    {
+      "case": "frequencies/1380.849906672",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 1380.8499066719244,
+      "run": null
+    },
+    {
+      "case": "frequencies/1477.604617601",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 1477.6046176014438,
+      "run": null
+    },
+    {
+      "case": "frequencies/1581.138830084",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 1581.1388300841895,
+      "run": null
+    },
+    {
+      "case": "frequencies/1691.927576714",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 1691.9275767141164,
+      "run": null
+    },
+    {
+      "case": "frequencies/1810.479175123",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 1810.4791751229582,
+      "run": null
+    },
+    {
+      "case": "frequencies/1937.337560228",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 1937.3375602280657,
+      "run": null
+    },
+    {
+      "case": "frequencies/2073.084779898",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 2073.084779898409,
+      "run": null
+    },
+    {
+      "case": "frequencies/2218.343665489",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 2218.3436654893053,
+      "run": null
+    },
+    {
+      "case": "frequencies/2373.780689499",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 2373.7806894987125,
+      "run": null
+    },
+    {
+      "case": "frequencies/2540.109023457",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 2540.109023456511,
+      "run": null
+    },
+    {
+      "case": "frequencies/2718.091810077",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 2718.091810076918,
+      "run": null
+    },
+    {
+      "case": "frequencies/2908.545664687",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 2908.5456646871785,
+      "run": null
+    },
+    {
+      "case": "frequencies/3112.344421998",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 3112.3444219977196,
+      "run": null
+    },
+    {
+      "case": "frequencies/3330.423145405",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 3330.4231454045766,
+      "run": null
+    },
+    {
+      "case": "frequencies/3563.782417219",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 3563.7824172194564,
+      "run": null
+    },
+    {
+      "case": "frequencies/3813.492929512",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 3813.4929295117213,
+      "run": null
+    },
+    {
+      "case": "frequencies/4080.700396626",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 4080.7003966259126,
+      "run": null
+    },
+    {
+      "case": "frequencies/4366.630811914",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 4366.630811914218,
+      "run": null
+    },
+    {
+      "case": "frequencies/4672.596072803",
+      "estimated_ram_gib": 0.355024,
+      "frequency_hz": 4672.596072802687,
+      "run": null
+    },
+    {
+      "case": "frequencies/5000.000000000",
+      "estimated_ram_gib": 0.391144,
+      "frequency_hz": 5000.0,
+      "run": null
+    }
+  ],
+  "schema_version": 1,
+  "status": "planned",
+  "workers": 20,
+  "yaml": "analysis/test4/HornCAD-Body-400x280x300.YAML"
+}

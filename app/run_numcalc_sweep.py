@@ -34,7 +34,7 @@ except ImportError:
     )
 
 
-NUMCALC_PRODUCTION_EPW = 8.0
+NUMCALC_PRODUCTION_EPW = 6.0
 
 
 def ppo_frequency_grid(start_hz: float, stop_hz: float,

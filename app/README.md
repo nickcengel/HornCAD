@@ -230,7 +230,7 @@ python app/run_numcalc_sweep.py config.YAML \
 ```
 
 Its accepted defaults are 500--5,000 Hz, ten points per octave (35 frequencies),
-one shared maximum-frequency 8-EPW quadrant mesh, 91 angles per cut, ML-FMM,
+one shared maximum-frequency 6-EPW quadrant mesh, 91 angles per cut, ML-FMM,
 and automatic CPU/RAM scheduling. NumCalc is single-threaded within a
 frequency, so the scheduler fills the machine with independent native solver
 processes. Use `--dry-run` to build the shared mesh, export every case, obtain
