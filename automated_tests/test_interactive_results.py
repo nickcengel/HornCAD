@@ -71,6 +71,9 @@ class InteractiveResultsTests(unittest.TestCase):
             single_text = single.read_text()
             self.assertIn("Horn acoustic parameters", single_text)
             self.assertIn("Coverage diagnostics", single_text)
+            self.assertIn("--bg:#0c1014", single_text)
+            self.assertIn('"template":', single_text)
+            self.assertIn('"paper_bgcolor":"#121820"', single_text)
             # Plotly JSON escapes the Unicode minus sign in the trace names.
             self.assertIn("Horizontal \\u22126 dB", single_text)
             self.assertIn("Vertical \\u22126 dB", single_text)
@@ -82,6 +85,7 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn('"x0":600.0', single_text)
             self.assertGreaterEqual(single_text.count('"hoverinfo":"skip"'), 4)
             text = compare.read_text()
+            self.assertIn("color-scheme:dark", text)
             self.assertIn("Normalized throat impedance magnitude", text)
             self.assertIn("Conical extension", text)
             self.assertIn("Common evaluated band", text)

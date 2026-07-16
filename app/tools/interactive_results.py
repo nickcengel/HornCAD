@@ -391,18 +391,21 @@ def _write_html(path: Path, title: str, figure: go.Figure,
         "The automatic passband starts after both planes sustain genuine −6 dB "
         "crossings for one-third octave."
     )
+    figure.update_layout(template="plotly_dark", paper_bgcolor="#121820",
+                         plot_bgcolor="#161f29", font={"color": "#e5edf2"})
     plot = figure.to_html(full_html=False, include_plotlyjs=True,
                           config={"displaylogo": False, "scrollZoom": True,
                                   "responsive": True})
     document = f"""<!doctype html><html><head><meta charset='utf-8'>
 <title>{html.escape(title)}</title><style>
-body{{font-family:system-ui,sans-serif;margin:0;background:#f6f7f9;color:#172033}}
+:root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
+*{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}
 main{{max-width:1500px;margin:auto;padding:18px}} h1{{margin:0 0 12px}}
-.plot,.parameters{{background:white;border:1px solid #d8dde7;border-radius:10px;padding:12px;margin-bottom:16px}}
-table{{border-collapse:collapse;width:100%}} th,td{{padding:7px 10px;border-bottom:1px solid #e4e7ed;text-align:left}}
-th{{background:#f1f3f7;position:sticky;top:0}} .hint{{color:#566176;margin:0 0 12px}}
+.plot,.parameters{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:16px}}
+table{{border-collapse:collapse;width:100%}} th,td{{padding:7px 10px;border-bottom:1px solid var(--line-soft);text-align:left}}
+th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);margin:0 0 12px}}
 .diagnostic-band{{font-size:1.05rem}} .diagnostic-grid{{display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:14px}}
-.diagnostic-card{{border:1px solid #d8dde7;border-radius:8px;padding:0 10px 10px}} .diagnostic-card h3{{margin:10px 0}}
+.diagnostic-card{{border:1px solid var(--line);border-radius:8px;padding:0 10px 10px}} .diagnostic-card h3{{margin:10px 0}}
 .score{{position:relative;min-width:85px}} .score span{{position:relative;z-index:1;font-variant-numeric:tabular-nums}}
 .score i{{position:absolute;left:0;bottom:2px;height:4px;border-radius:2px;background:#64748b}}
 .score.strong i{{background:#16856b}} .score.moderate i{{background:#b7791f}} .score.weak i{{background:#b45353}}
