@@ -12,6 +12,8 @@ This is HornCAD's maintained reference project.
   angles, and 7,897 quadrant panels. NumCalc applies two hard mirror
   symmetries. The all-inclusive mesh-to-report wall time was 58.625 seconds on
   the 20-core reference Mac. It retains `responses.npz` and `metrics.csv`.
+- `bem-fem-comparison/interactive_report.html` — interactive overlay of the
+  retained FEM and BEM −6 dB H/V coverage and normalized throat impedance.
 
 Open either `interactive_report.html` for cursor-enabled coverage and
 normalized magnitude-only throat impedance. The compact numerical files support
