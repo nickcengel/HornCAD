@@ -79,6 +79,7 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn('"orientation":"h"', single_text)
             self.assertIn('"layer":"above"', single_text)
             self.assertIn('"x0":600.0', single_text)
+            self.assertGreaterEqual(single_text.count('"hoverinfo":"skip"'), 4)
             text = compare.read_text()
             self.assertIn("Normalized throat impedance magnitude", text)
             self.assertIn("Conical extension", text)

@@ -235,7 +235,7 @@ def single_report(run_dir: Path, output: Path | None = None,
                       "showlabels": True, "labelfont": {"color": "white"}},
             line={"color": "white", "width": 3}, showscale=False,
             name=f"{key.title()} −6 dB", showlegend=True,
-            hovertemplate="%{x:.1f} Hz<br>%{y:.1f}°<br>−6 dB<extra></extra>"),
+            hoverinfo="skip"),
             row=1, col=column)
         intended = run["intended_coverages"].get(key)
         if intended:
@@ -245,8 +245,7 @@ def single_report(run_dir: Path, output: Path | None = None,
                 y=[intended, intended, None, -intended, -intended],
                 mode="lines", name=f"{key.title()} intended coverage ±{intended:g}°",
                 line={"color": "#00ffff", "width": 3, "dash": "dash"},
-                hovertemplate=("%{x:.1f} Hz<br>%{y:.1f}°<br>"
-                               "Intended coverage<extra></extra>")),
+                hoverinfo="skip"),
                 row=1, col=column)
     if run["normalized_impedance"] is not None:
         figure.add_trace(go.Scatter(
