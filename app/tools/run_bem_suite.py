@@ -9,7 +9,7 @@ from pathlib import Path
 import time
 
 
-REPOSITORY = Path(__file__).resolve().parent.parent
+REPOSITORY = Path(__file__).resolve().parents[2]
 CACHE = REPOSITORY / ".cache"
 for directory in (CACHE, CACHE / "matplotlib", CACHE / "fontconfig"):
     directory.mkdir(parents=True, exist_ok=True)

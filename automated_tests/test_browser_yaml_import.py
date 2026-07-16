@@ -6,7 +6,7 @@ import unittest
 
 
 ROOT = Path(__file__).parents[1]
-HTML = ROOT / "app" / "HornCAD.html"
+HTML = ROOT / "app" / "browser" / "HornCAD.html"
 EXAMPLE = ROOT / "examples" / "osse-400x280-reference" / "project.yaml"
 
 

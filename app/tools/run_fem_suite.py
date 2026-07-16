@@ -22,7 +22,7 @@ except ImportError:
 
 
 SOUND_SPEED_M_S = 343.21
-VALIDATED_MAXIMUM_HZ = 5_000.0
+VALIDATED_MAXIMUM_HZ = 8_000.0
 DEFAULT_BINARY_CANDIDATES = (
     Path("/private/tmp/horncad-mfem-build/horncad_mfem_interior"),
     Path("build/mfem/horncad_mfem_interior"),

@@ -4,8 +4,8 @@ import unittest
 
 import numpy as np
 
-from app.acoustic_domain import build_interior_acoustic_domain, write_gmsh_volume_mesh
-from app.interior_fem import solve_interior_frequency
+from app.tools.acoustic_domain import build_interior_acoustic_domain, write_gmsh_volume_mesh
+from app.tools.interior_fem import solve_interior_frequency
 
 
 class InteriorFEMTests(unittest.TestCase):

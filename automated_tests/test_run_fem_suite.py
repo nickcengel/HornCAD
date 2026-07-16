@@ -5,7 +5,7 @@ import unittest
 
 import numpy as np
 
-from app.run_fem_suite import frequency_grid, find_binary, parse_args, run_settings
+from app.tools.run_fem_suite import frequency_grid, find_binary, parse_args, run_settings
 
 
 class RunFEMSuiteTests(unittest.TestCase):

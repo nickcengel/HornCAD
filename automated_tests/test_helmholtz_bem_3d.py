@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import numpy as np
 
-from app.helmholtz_bem_3d import (
+from app.tools.helmholtz_bem_3d import (
     AcousticMedium,
     GEOMETRY_SEED_AXIAL_STATIONS,
     GEOMETRY_SEED_SIDE_SAMPLES,
@@ -124,7 +124,7 @@ class HelmholtzBEM3DTests(unittest.TestCase):
             axial_stations=10)
         settings = PipelineSettings(tuple(np.linspace(500, 8_000, 10)),
                                     (0.0, 90.0), memory_limit_gib=48.0)
-        with patch("app.helmholtz_bem_3d.os.cpu_count", return_value=20):
+        with patch("app.tools.helmholtz_bem_3d.os.cpu_count", return_value=20):
             plan = execution_plan(settings, mesh, 10)
         self.assertEqual(plan.workers, 10)
         self.assertEqual(plan.threads_per_worker, 1)

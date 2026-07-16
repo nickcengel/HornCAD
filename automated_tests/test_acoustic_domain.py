@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 
-from app.acoustic_domain import (
+from app.tools.acoustic_domain import (
     MOUTH_APERTURE,
     RIGID_WALL,
     THROAT_PISTON,

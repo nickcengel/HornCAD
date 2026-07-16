@@ -1,8 +1,14 @@
-# HornCAD application and analysis tools
+# HornCAD application
+
+The application is divided by responsibility:
+
+- `browser/` — the standalone interactive designer.
+- `tools/` — Python geometry and acoustic-analysis commands.
+- `native/` — C++ backend source.
 
 ## Design and geometry
 
-Open `HornCAD.html` directly in a browser. Click **Import YAML** to resume an
+Open `browser/HornCAD.html` directly in a browser. Click **Import YAML** to resume an
 existing version-2 HornCAD project; all design controls, modifier splines, and
 the preview are restored. **Export YAML** saves the acoustic profile, mouth,
 body, and mesh sampling settings.
@@ -10,8 +16,8 @@ body, and mesh sampling settings.
 Generate either acoustic-surface or printable-body STL geometry with:
 
 ```bash
-python app/export_horncad.py project.yaml --mode surface --output-dir exports
-python app/export_horncad.py project.yaml --mode body --output-dir exports
+python app/tools/export_horncad.py project.yaml --mode surface --output-dir exports
+python app/tools/export_horncad.py project.yaml --mode body --output-dir exports
 ```
 
 ## Standard acoustic analyses
@@ -19,14 +25,14 @@ python app/export_horncad.py project.yaml --mode body --output-dir exports
 Interior FEM:
 
 ```bash
-python app/run_fem_suite.py project.yaml \
+python app/tools/run_fem_suite.py project.yaml \
   --output-dir results/my-horn/fem --title "My horn — FEM"
 ```
 
 Free-air all-BEM using NumCalc and two mirror symmetries:
 
 ```bash
-python app/run_bem_suite.py project.yaml \
+python app/tools/run_bem_suite.py project.yaml \
   --output-dir results/my-horn/bem --title "My horn — BEM"
 ```
 
@@ -58,13 +64,13 @@ readout always reports the underlying heatmap frequency, angle, and dB value.
 Regenerate a report from a completed run:
 
 ```bash
-python app/interactive_results.py report results/my-horn/bem
+python app/tools/interactive_results.py report results/my-horn/bem
 ```
 
 Compare two to four completed FEM or BEM runs in one interactive window:
 
 ```bash
-python app/interactive_results.py compare \
+python app/tools/interactive_results.py compare \
   results/horn-a/bem results/horn-b/bem \
   --names "Horn A" "Horn B" --output results/comparison.html
 ```
@@ -75,13 +81,13 @@ magnitude, and the project acoustic parameters. A compact completed example is i
 
 ## Supporting tools
 
-- `webster_1d.py` — fast one-dimensional acoustic screening.
-- `aperture_directivity.py` — idealized projected-aperture estimate.
-- `helmholtz_2d.py` — independent H/V two-dimensional FEM approximation.
-- `interior_fem.py` and `generate_fem_review.py` — standard FEM backend.
-- `numcalc_bem_backend.py`, `run_numcalc_sweep.py`, and
-  `generate_numcalc_review.py` — standard BEM backend.
-- `interactive_results.py` — standard interactive reporting and comparison.
+- `tools/webster_1d.py` — fast one-dimensional acoustic screening.
+- `tools/aperture_directivity.py` — idealized projected-aperture estimate.
+- `tools/helmholtz_2d.py` — independent H/V two-dimensional FEM approximation.
+- `tools/interior_fem.py` and `tools/generate_fem_review.py` — standard FEM backend.
+- `tools/numcalc_bem_backend.py`, `tools/run_numcalc_sweep.py`, and
+  `tools/generate_numcalc_review.py` — standard BEM backend.
+- `tools/interactive_results.py` — standard interactive reporting and comparison.
 
 The lower-level backend modules are implementation details. Routine work should
-start with `run_fem_suite.py` or `run_bem_suite.py`.
+start with `tools/run_fem_suite.py` or `tools/run_bem_suite.py`.

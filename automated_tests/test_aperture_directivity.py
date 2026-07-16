@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from app.aperture_directivity import normalized_plane_directivity
+from app.tools.aperture_directivity import normalized_plane_directivity
 
 
 class ApertureDirectivityTests(unittest.TestCase):

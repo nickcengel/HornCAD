@@ -4,10 +4,10 @@ This document describes the current browser app and Python STL exporter. Both im
 
 ## Current Workflow
 
-1. Open `app/HornCAD.html` directly in a browser.
+1. Open `app/browser/HornCAD.html` directly in a browser.
 2. Adjust the acoustic profile, mouth, body, and sampling controls.
 3. Export a `HornCAD-Surface-<WxHxL>.YAML` or `HornCAD-Body-<WxHxL>.YAML` file.
-4. Convert that configuration to STL with `python app/export_horncad.py <file.YAML>`.
+4. Convert that configuration to STL with `python app/tools/export_horncad.py <file.YAML>`.
 
 The browser previews the acoustic surface. The Python exporter produces either that open surface or a printable body, according to `body.stl_export_mode` or the command-line `--mode` override.
 
@@ -104,8 +104,8 @@ Use `--output-dir` to change the destination and `--mode surface|body` to overri
 
 ## Source of Truth
 
-- `app/HornCAD.html` defines the browser controls, preview, and YAML writer.
-- `app/export_horncad.py` defines command-line YAML loading and STL generation.
+- `app/browser/HornCAD.html` defines the browser controls, preview, and YAML writer.
+- `app/tools/export_horncad.py` defines command-line YAML loading and STL generation.
 - `app/README.md` documents usage.
 - `docs/reference/research/` contains background papers; it is not an implementation specification.
 

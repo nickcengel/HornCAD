@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 from scipy.spatial import Delaunay
 
-from app.aperture_radiation import (
+from app.tools.aperture_radiation import (
     RadiationMedium,
     circular_piston_specific_impedance,
     rayleigh_impedance_matrix,

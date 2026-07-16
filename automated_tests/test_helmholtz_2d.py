@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 
-from app.helmholtz_2d import (
+from app.tools.helmholtz_2d import (
     Medium,
     gmsh_half_domain,
     horncad_plane_geometry,

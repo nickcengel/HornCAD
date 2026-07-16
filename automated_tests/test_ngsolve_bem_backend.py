@@ -5,7 +5,7 @@ import numpy as np
 from netgen.occ import Fuse, Sphere
 import trimesh
 
-from app.ngsolve_bem_backend import make_point_evaluator, solve_neumann
+from app.tools.ngsolve_bem_backend import make_point_evaluator, solve_neumann
 
 
 class NGSolveBEMBackendTests(unittest.TestCase):

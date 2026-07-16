@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 
-from app.aperture_field import (
+from app.tools.aperture_field import (
     ApertureField,
     FREE_FIELD_MODEL,
     RADIATION_MODEL,

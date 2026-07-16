@@ -4,7 +4,7 @@ import unittest
 
 import numpy as np
 
-from app.webster_1d import (
+from app.tools.webster_1d import (
     AreaProfile,
     Medium,
     frequency_grid,

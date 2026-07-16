@@ -5,7 +5,7 @@ or free-air BEM acoustics.
 
 ## Quickstart
 
-1. Open `app/HornCAD.html` in a web browser. Start a new design or click
+1. Open `app/browser/HornCAD.html` in a web browser. Start a new design or click
    **Import YAML** to resume an exported HornCAD project.
 2. Design the horn and use **Export YAML** to save its project file.
 3. Run one of the analysis commands below from the repository root.
@@ -13,7 +13,7 @@ or free-air BEM acoustics.
 Free-air BEM example with explicit sweep and mesh controls:
 
 ```bash
-python app/run_bem_suite.py path/to/project.yaml \
+python app/tools/run_bem_suite.py path/to/project.yaml \
   --output-dir results/my-horn/bem \
   --title "My horn — BEM" \
   --start-hz 500 \
@@ -25,7 +25,7 @@ python app/run_bem_suite.py path/to/project.yaml \
 Interior FEM uses the same controls:
 
 ```bash
-python app/run_fem_suite.py path/to/project.yaml \
+python app/tools/run_fem_suite.py path/to/project.yaml \
   --output-dir results/my-horn/fem \
   --title "My horn — FEM" \
   --start-hz 500 \
@@ -44,13 +44,15 @@ impedance, `ρc/Sₜ`; throat reactance is not plotted.
 To export geometry without running an acoustic analysis:
 
 ```bash
-python app/export_horncad.py path/to/project.yaml \
+python app/tools/export_horncad.py path/to/project.yaml \
   --mode surface --output-dir exports
 ```
 
 ## Repository map
 
-- `app/` — design application and command-line analysis tools.
+- `app/browser/` — standalone browser designer.
+- `app/tools/` — geometry, solver, workflow, and reporting commands.
+- `app/native/` — native backend source.
 - `examples/` — reviewable projects and compact solver results.
 - `automated_tests/` — developer regression tests, not horn projects.
 - `docs/reference/` — maintained technical reference material.

@@ -5,12 +5,12 @@ from pathlib import Path
 import numpy as np
 import trimesh
 
-from app.helmholtz_bem_3d import AcousticMesh, MeshReport
-from app.numcalc_bem_backend import (
+from app.tools.helmholtz_bem_3d import AcousticMesh, MeshReport
+from app.tools.numcalc_bem_backend import (
     export_numcalc_case, far_field_points, reflect_quadrant_mesh,
 )
-from app.run_numcalc_sweep import parse_args as parse_numcalc_args, ppo_frequency_grid
-from app.run_bem_suite import parse_args as parse_bem_args
+from app.tools.run_numcalc_sweep import parse_args as parse_numcalc_args, ppo_frequency_grid
+from app.tools.run_bem_suite import parse_args as parse_bem_args
 
 
 class NumCalcBackendTests(unittest.TestCase):
