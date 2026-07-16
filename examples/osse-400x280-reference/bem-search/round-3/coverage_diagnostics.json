@@ -1,0 +1,218 @@
+{
+  "candidate-010": {
+    "status": "available",
+    "passband_lower_hz": 500.0,
+    "passband_upper_hz": 5000.0,
+    "band_kind": "fixed optimization",
+    "confirmation_octaves": 0.3333333333333333,
+    "axis_weights": {
+      "horizontal": 0.5882352941176471,
+      "vertical": 0.4117647058823529
+    },
+    "horizontal": {
+      "trend_error_percent": 28.987310904602502,
+      "pattern_fit_percent": 71.01268909539749,
+      "waist_control_percent": 79.63715580518135,
+      "waist_max_deviation_deg": 10.181422097409325,
+      "pattern_stability_percent": 96.6581917578236,
+      "ripple_rms_deg": 1.6709041210881972,
+      "crossover_control_percent": 98.83744420384984,
+      "crossover_frequency_hz": 500.0,
+      "crossover_half_angle_deg": 50.58127789807508,
+      "narrowing_percent": 2.739328646612839,
+      "hf_retention_percent": 97.26067135338717,
+      "pre_hf_half_angle_deg": 33.49686534353147,
+      "hf_half_angle_deg": 32.57927611545878,
+      "lower_half_angle_deg": 50.58127789807508,
+      "upper_half_angle_deg": 28.886769643700394
+    },
+    "vertical": {
+      "trend_error_percent": 15.960495556557097,
+      "pattern_fit_percent": 84.03950444344291,
+      "waist_control_percent": 79.01185638888639,
+      "waist_max_deviation_deg": 7.345850263889766,
+      "pattern_stability_percent": 95.73081488032385,
+      "ripple_rms_deg": 1.4942147918866553,
+      "crossover_control_percent": 52.66908710573247,
+      "crossover_frequency_hz": 500.0,
+      "crossover_half_angle_deg": 51.565819512993635,
+      "narrowing_percent": 21.099695456570522,
+      "hf_retention_percent": 78.90030454342948,
+      "pre_hf_half_angle_deg": 31.439571715302883,
+      "hf_half_angle_deg": 24.80591783052389,
+      "lower_half_angle_deg": 51.565819512993635,
+      "upper_half_angle_deg": 20.511643811992485
+    },
+    "combined": {
+      "trend_error_percent": 24.477845762188142,
+      "pattern_fit_percent": 75.52215423781186,
+      "waist_control_percent": 79.37967957494226,
+      "pattern_stability_percent": 96.27633069061783,
+      "crossover_control_percent": 79.8269442222721,
+      "narrowing_percent": 10.299479686007178,
+      "hf_retention_percent": 89.70052031399283
+    }
+  },
+  "candidate-011": {
+    "status": "available",
+    "passband_lower_hz": 500.0,
+    "passband_upper_hz": 5000.0,
+    "band_kind": "fixed optimization",
+    "confirmation_octaves": 0.3333333333333333,
+    "axis_weights": {
+      "horizontal": 0.5882352941176471,
+      "vertical": 0.4117647058823529
+    },
+    "horizontal": {
+      "trend_error_percent": 21.092871371795713,
+      "pattern_fit_percent": 78.90712862820429,
+      "waist_control_percent": 81.83654275535716,
+      "waist_max_deviation_deg": 9.081728622321421,
+      "pattern_stability_percent": 96.3094442059654,
+      "ripple_rms_deg": 1.8452778970172943,
+      "crossover_control_percent": 89.89251562736098,
+      "crossover_frequency_hz": 500.0,
+      "crossover_half_angle_deg": 55.05374218631951,
+      "narrowing_percent": 13.171815991163811,
+      "hf_retention_percent": 86.82818400883619,
+      "pre_hf_half_angle_deg": 39.46105113799179,
+      "hf_half_angle_deg": 34.263314093916456,
+      "lower_half_angle_deg": 55.05374218631951,
+      "upper_half_angle_deg": 31.377094408450812
+    },
+    "vertical": {
+      "trend_error_percent": 25.03227546805223,
+      "pattern_fit_percent": 74.96772453194777,
+      "waist_control_percent": 81.20542586017407,
+      "waist_max_deviation_deg": 6.578100948939074,
+      "pattern_stability_percent": 95.6506691329927,
+      "ripple_rms_deg": 1.522265803452555,
+      "crossover_control_percent": 31.70906897206791,
+      "crossover_frequency_hz": 500.0,
+      "crossover_half_angle_deg": 58.90182585977623,
+      "narrowing_percent": 15.165203377483133,
+      "hf_retention_percent": 84.83479662251686,
+      "pre_hf_half_angle_deg": 33.63612602420696,
+      "hf_half_angle_deg": 28.535139104329442,
+      "lower_half_angle_deg": 58.90182585977623,
+      "upper_half_angle_deg": 26.291225083218798
+    },
+    "combined": {
+      "trend_error_percent": 22.797569443241787,
+      "pattern_fit_percent": 77.20243055675822,
+      "waist_control_percent": 81.57667109263471,
+      "pattern_stability_percent": 96.03818388180017,
+      "crossover_control_percent": 65.93462582812266,
+      "narrowing_percent": 13.992622562001179,
+      "hf_retention_percent": 86.00737743799883
+    }
+  },
+  "candidate-001": {
+    "status": "available",
+    "passband_lower_hz": 500.0,
+    "passband_upper_hz": 5000.0,
+    "band_kind": "fixed optimization",
+    "confirmation_octaves": 0.3333333333333333,
+    "axis_weights": {
+      "horizontal": 0.5882352941176471,
+      "vertical": 0.4117647058823529
+    },
+    "horizontal": {
+      "trend_error_percent": 25.144593699263883,
+      "pattern_fit_percent": 74.85540630073612,
+      "waist_control_percent": 80.02363912709016,
+      "waist_max_deviation_deg": 9.988180436454918,
+      "pattern_stability_percent": 97.10640793662938,
+      "ripple_rms_deg": 1.44679603168531,
+      "crossover_control_percent": 80.4054073680743,
+      "crossover_frequency_hz": 500.0,
+      "crossover_half_angle_deg": 59.79729631596285,
+      "narrowing_percent": 17.201446379210534,
+      "hf_retention_percent": 82.79855362078946,
+      "pre_hf_half_angle_deg": 36.91907132433142,
+      "hf_half_angle_deg": 30.56845706677406,
+      "lower_half_angle_deg": 59.79729631596285,
+      "upper_half_angle_deg": 29.152873008599435
+    },
+    "vertical": {
+      "trend_error_percent": 44.39786373638538,
+      "pattern_fit_percent": 55.60213626361462,
+      "waist_control_percent": 76.24109726136956,
+      "waist_max_deviation_deg": 8.315615958520652,
+      "pattern_stability_percent": 95.31590570517444,
+      "ripple_rms_deg": 1.6394330031889452,
+      "crossover_control_percent": 0.0,
+      "crossover_frequency_hz": 500.0,
+      "crossover_half_angle_deg": 73.5726168773786,
+      "narrowing_percent": 31.58091424714438,
+      "hf_retention_percent": 68.41908575285561,
+      "pre_hf_half_angle_deg": 40.06231956350875,
+      "hf_half_angle_deg": 27.410272776740104,
+      "lower_half_angle_deg": 73.5726168773786,
+      "upper_half_angle_deg": 24.186212190382953
+    },
+    "combined": {
+      "trend_error_percent": 34.40305907524633,
+      "pattern_fit_percent": 65.59694092475367,
+      "waist_control_percent": 78.46612188826403,
+      "pattern_stability_percent": 96.36914231191264,
+      "crossover_control_percent": 47.29729845180841,
+      "narrowing_percent": 23.12240373659506,
+      "hf_retention_percent": 76.87759626340494
+    }
+  },
+  "candidate-007": {
+    "status": "available",
+    "passband_lower_hz": 500.0,
+    "passband_upper_hz": 5000.0,
+    "band_kind": "fixed optimization",
+    "confirmation_octaves": 0.3333333333333333,
+    "axis_weights": {
+      "horizontal": 0.5882352941176471,
+      "vertical": 0.4117647058823529
+    },
+    "horizontal": {
+      "trend_error_percent": 23.92778476623824,
+      "pattern_fit_percent": 76.07221523376177,
+      "waist_control_percent": 74.04256646975996,
+      "waist_max_deviation_deg": 12.97871676512002,
+      "pattern_stability_percent": 97.16821975960099,
+      "ripple_rms_deg": 1.4158901201995024,
+      "crossover_control_percent": 77.78827090390216,
+      "crossover_frequency_hz": 500.0,
+      "crossover_half_angle_deg": 61.10586454804892,
+      "narrowing_percent": 1.9388103532855483,
+      "hf_retention_percent": 98.06118964671445,
+      "pre_hf_half_angle_deg": 35.15674377299747,
+      "hf_half_angle_deg": 34.475121184848526,
+      "lower_half_angle_deg": 61.10586454804892,
+      "upper_half_angle_deg": 31.897749577372913
+    },
+    "vertical": {
+      "trend_error_percent": 49.258458506592014,
+      "pattern_fit_percent": 50.741541493407986,
+      "waist_control_percent": 69.1940745531742,
+      "waist_max_deviation_deg": 10.78207390638903,
+      "pattern_stability_percent": 96.34890295160245,
+      "ripple_rms_deg": 1.2778839669391406,
+      "crossover_control_percent": 0.0,
+      "crossover_frequency_hz": 500.0,
+      "crossover_half_angle_deg": 79.7588978504193,
+      "narrowing_percent": 32.822405609276075,
+      "hf_retention_percent": 67.17759439072393,
+      "pre_hf_half_angle_deg": 38.02063961979191,
+      "hf_half_angle_deg": 25.541351068542685,
+      "lower_half_angle_deg": 79.7588978504193,
+      "upper_half_angle_deg": 22.476265442454427
+    },
+    "combined": {
+      "trend_error_percent": 36.54985232070733,
+      "pattern_fit_percent": 63.45014767929267,
+      "waist_control_percent": 72.04612862175406,
+      "pattern_stability_percent": 96.830854015131,
+      "crossover_control_percent": 45.7578064140601,
+      "narrowing_percent": 14.655584870458117,
+      "hf_retention_percent": 85.34441512954189
+    }
+  }
+}
