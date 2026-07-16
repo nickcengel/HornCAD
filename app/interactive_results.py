@@ -167,6 +167,22 @@ def _frequency_axis(frequencies: np.ndarray) -> dict[str, Any]:
     }
 
 
+def _frequency_grid_values(frequencies: np.ndarray) -> tuple[list[float], list[float]]:
+    axis = _frequency_axis(frequencies)
+    major = [float(value) for value in axis["tickvals"]]
+    minimum = float(np.min(frequencies))
+    maximum = float(np.max(frequencies))
+    fine = []
+    for exponent in range(int(np.floor(np.log10(minimum))) - 1,
+                          int(np.ceil(np.log10(maximum))) + 1):
+        for multiplier in range(1, 10):
+            value = multiplier * 10.0 ** exponent
+            if (minimum < value < maximum and
+                    not any(np.isclose(value, tick, rtol=1e-12) for tick in major)):
+                fine.append(value)
+    return major, fine
+
+
 def _parameter_table(runs: list[dict[str, Any]]) -> str:
     keys = list(dict.fromkeys(key for run in runs for key in run["parameters"]))
     header = "<tr><th>Parameter</th>" + "".join(
@@ -238,6 +254,22 @@ def single_report(run_dir: Path, output: Path | None = None,
             name="|Z throat| / (ρc/Sₜ)", line={"width": 2.5},
             hovertemplate="%{x:.1f} Hz<br>%{y:.4g}<extra></extra>"),
             row=2, col=1)
+    major_frequencies, fine_frequencies = _frequency_grid_values(run["frequencies"])
+    for column in (1, 2):
+        for frequency in fine_frequencies:
+            figure.add_vline(
+                x=frequency, row=1, col=column, layer="above",
+                line={"color": "rgba(255,255,255,0.30)", "width": .8,
+                      "dash": "dot"})
+        for frequency in major_frequencies:
+            figure.add_vline(
+                x=frequency, row=1, col=column, layer="above",
+                line={"color": "rgba(255,255,255,0.52)", "width": 1.2})
+        for angle in (-90, -60, -30, 0, 30, 60, 90):
+            figure.add_hline(
+                y=angle, row=1, col=column, layer="above",
+                line={"color": "rgba(255,255,255,0.48)",
+                      "width": 1.4 if angle == 0 else 1.0})
     figure.update_xaxes(**_frequency_axis(run["frequencies"]))
     figure.update_yaxes(
         title_text="Off-axis angle (degrees)", row=1,

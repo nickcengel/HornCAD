@@ -47,8 +47,9 @@ the effective circular throat area. Solver directories also contain machine-read
 `responses.npz` and `metrics.csv`.
 
 Frequency axes use labeled 1/2/5 logarithmic ticks with fine decade subdivisions;
-coverage angles use 30-degree major grid lines. The H/V heatmaps share one dB
-color scale so the legend, scale, and Plotly toolbar do not overlap.
+coverage angles use 30-degree major grid lines. These grids are rendered above
+the opaque heatmap rather than behind it. The H/V heatmaps share one dB color
+scale so the legend, scale, and Plotly toolbar do not overlap.
 
 ## Reports and comparisons
 

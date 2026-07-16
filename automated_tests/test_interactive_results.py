@@ -8,8 +8,9 @@ import unittest
 import numpy as np
 
 from app.interactive_results import (
-    AIR_DENSITY_KG_M3, SOUND_SPEED_M_S, _frequency_axis, _positive_half_angle,
-    comparison_report, load_run, single_report,
+    AIR_DENSITY_KG_M3, SOUND_SPEED_M_S, _frequency_axis,
+    _frequency_grid_values, _positive_half_angle, comparison_report, load_run,
+    single_report,
 )
 
 
@@ -20,6 +21,10 @@ class InteractiveResultsTests(unittest.TestCase):
                          [500.0, 1000.0, 2000.0, 5000.0, 8000.0])
         self.assertEqual(axis["ticktext"], ["500", "1k", "2k", "5k", "8k"])
         self.assertTrue(axis["minor"]["showgrid"])
+        major, fine = _frequency_grid_values(np.array([500.0, 8000.0]))
+        self.assertEqual(major, [500.0, 1000.0, 2000.0, 5000.0, 8000.0])
+        self.assertIn(600.0, fine)
+        self.assertIn(7000.0, fine)
 
     def make_run(self, root: Path, name: str) -> Path:
         run = root / name
@@ -72,6 +77,8 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn(r"Vertical intended coverage \u00b135\u00b0", single_text)
             self.assertIn('"coloraxis":"coloraxis"', single_text)
             self.assertIn('"orientation":"h"', single_text)
+            self.assertIn('"layer":"above"', single_text)
+            self.assertIn('"x0":600.0', single_text)
             text = compare.read_text()
             self.assertIn("Normalized throat impedance magnitude", text)
             self.assertIn("Conical extension", text)
