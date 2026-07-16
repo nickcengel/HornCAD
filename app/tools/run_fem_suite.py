@@ -48,7 +48,7 @@ def find_binary(requested: Path | None) -> Path:
     checked = ", ".join(str(path) for path in candidates if path is not None)
     raise FileNotFoundError(
         f"MFEM executable not found or executable; checked: {checked}. "
-        "Build it using the app/README.md instructions or pass --binary.")
+        "Build the source in app/native/mfem or pass --binary.")
 
 
 def yaml_sha256(path: Path) -> str:

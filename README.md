@@ -48,6 +48,42 @@ python app/tools/export_horncad.py path/to/project.yaml \
   --mode surface --output-dir exports
 ```
 
+## Reports and comparisons
+
+Both solver suites generate `interactive_report.html`, `responses.npz`, and
+`metrics.csv`. Rebuild the interactive report from a completed run with:
+
+```bash
+python app/tools/interactive_results.py report results/my-horn/bem
+```
+
+Compare two to four completed FEM or BEM runs in one interactive report:
+
+```bash
+python app/tools/interactive_results.py compare \
+  results/horn-a/bem results/horn-b/bem \
+  --names "Horn A" "Horn B" --output results/comparison.html
+```
+
+Single-run coverage heatmaps include the simulated −6 dB contours, intended
+±H/V coverage guides, readable logarithmic frequency grids, and cursor readout
+of frequency, angle, and dB. Comparison reports show −6 dB half-angle and
+normalized throat-impedance magnitude.
+
+## Tool groups
+
+Routine work starts with these commands:
+
+- `run_bem_suite.py` — complete free-air NumCalc BEM analysis.
+- `run_fem_suite.py` — complete interior FEM analysis.
+- `export_horncad.py` — acoustic-surface or printable-body STL export.
+- `interactive_results.py` — report regeneration and multi-horn comparison.
+
+Supporting tools in `app/tools/` include the Webster screening model, idealized
+aperture directivity, two-dimensional Helmholtz FEM, and lower-level FEM/BEM
+adapters. They are implementation and validation tools rather than the normal
+entry points.
+
 ## Repository map
 
 - `app/browser/` — standalone browser designer.
@@ -56,7 +92,6 @@ python app/tools/export_horncad.py path/to/project.yaml \
 - `examples/` — reviewable projects and compact solver results.
 - `automated_tests/` — developer regression tests, not horn projects.
 - `docs/reference/` — maintained technical reference material.
-- `docs/plans/` — current work plans only.
 
 The maintained example is
 `examples/osse-400x280-reference/`. It contains the project YAML, acoustic STL,
@@ -67,6 +102,9 @@ Developers and automated validation use `make validate` to run
 symmetry, solver adapters, numerical conventions, and report generation. They
 are not part of running a normal horn project.
 
-See `app/README.md` for command details and `docs/README.md` for documentation.
+See `docs/reference/horncad_geometry.md` for geometry equations, coordinates,
+the YAML schema, and STL behavior. The example project documents the provenance
+of its retained FEM and BEM results in its own README.
+
 `pyproject.toml` and `Makefile` remain at the root because Python packaging and
 standard build tools expect project metadata there.

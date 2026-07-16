@@ -106,8 +106,7 @@ Use `--output-dir` to change the destination and `--mode surface|body` to overri
 
 - `app/browser/HornCAD.html` defines the browser controls, preview, and YAML writer.
 - `app/tools/export_horncad.py` defines command-line YAML loading and STL generation.
-- `app/README.md` documents usage.
 - `docs/reference/research/` contains background papers; it is not an implementation specification.
 
 When behavior or schema changes, update both implementations, the project in
-`examples/osse-400x280-reference/`, and the two READMEs together.
+`examples/osse-400x280-reference/`, the root usage guide, and this reference.
