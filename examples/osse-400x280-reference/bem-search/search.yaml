@@ -11,7 +11,7 @@ bem_candidate_search:
   minimum_candidate_distance: 0.08
   inferior_screen_probability: 0.97
   sampling_stability_points: 2.0
-  confirmation_points_per_octave: 20
+  confirmation_points_per_octave: 16
   bounds:
     length_mm: [255, 345]
     extension_mm: [0, 45]

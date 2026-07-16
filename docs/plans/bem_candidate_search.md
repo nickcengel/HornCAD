@@ -243,7 +243,7 @@ that run is marked sampling-unstable and excluded from surrogate learning.
 
 Decimation is a warning, not proof of convergence. Before learned lever
 directions or final rankings are trusted, the seed and representative sensitivity
-probes must be checked at 20 PPO. Finalists also require 20-PPO confirmation. If
+probes must be checked at 16 PPO. Finalists also require 16-PPO confirmation. If
 that confirmation materially changes rankings or learned effect directions, the
 12-PPO model is invalidated and the search continues at the higher fidelity.
 Results from different PPO levels must not be mixed in one surrogate unless

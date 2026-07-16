@@ -275,7 +275,7 @@
       }
     }
   ],
-  "configuration_hash": "892abfcd7117d378be1ec6b0f597fb8b72138fb7dd34d202e18c6f3cfce5f49f",
+  "configuration_hash": "91e3b4c687542b412299dda80cb00f4d58c67a18ac8608256734eb2c56d864df",
   "crossover_hz": 500.0,
   "max_evaluations": 16,
   "phase": "initial candidates materialized",
@@ -309,7 +309,7 @@
         55.0
       ]
     },
-    "confirmation_points_per_octave": 20.0,
+    "confirmation_points_per_octave": 16.0,
     "crossover_hz": 500.0,
     "fixed_parameters": {
       "n_h": 10.0,
@@ -344,7 +344,7 @@
   },
   "search_yaml": "/Users/nickengel/Documents/GitHub/HornCAD/examples/osse-400x280-reference/bem-search/search.yaml",
   "seed_yaml": "/Users/nickengel/Documents/GitHub/HornCAD/examples/osse-400x280-reference/project.yaml",
-  "started_at_unix": 1784177537.4421701,
+  "started_at_unix": 1784177759.298341,
   "status": "preflight",
   "surrogate_screened_count": 0,
   "upper_frequency_hz": 8000.0

@@ -100,7 +100,7 @@ def load_search(path: Path) -> tuple[dict[str, Any], Path, dict[str, Any]]:
     search["sampling_stability_points"] = float(search.get(
         "sampling_stability_points", DEFAULT_SAMPLING_STABILITY_POINTS))
     search["confirmation_points_per_octave"] = float(search.get(
-        "confirmation_points_per_octave", 20))
+        "confirmation_points_per_octave", 16))
     if not 0.5 < search["inferior_screen_probability"] < 1:
         raise ValueError("inferior_screen_probability must be between 0.5 and 1")
     if search["sampling_stability_points"] <= 0:
@@ -742,7 +742,7 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                       DEFAULT_MINIMUM_CANDIDATE_DISTANCE)
     search.setdefault("inferior_screen_probability", DEFAULT_INFERIOR_PROBABILITY)
     search.setdefault("sampling_stability_points", DEFAULT_SAMPLING_STABILITY_POINTS)
-    search.setdefault("confirmation_points_per_octave", 20.0)
+    search.setdefault("confirmation_points_per_octave", 16.0)
     search.setdefault("fixed_parameters", {
         "n_h": float(seed["horncad_config"]["horizontal_basis"]["n"]),
         "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
