@@ -8,7 +8,7 @@ from unittest.mock import patch
 import numpy as np
 
 from app.tools.run_bem_search import (
-    candidate_distance, geometry_feasibility, length_cost_percent, load_search,
+    candidate_distance, candidate_trait, geometry_feasibility, length_cost_percent, load_search,
     materialize_candidate, pareto_indices, propose_vector, repair_k_for_positive_s,
     run_search, seed_values,
 )
@@ -84,6 +84,14 @@ class BEMSearchTests(unittest.TestCase):
         changed = dict(values, length_mm=values["length_mm"] + 9)
         self.assertGreater(candidate_distance(changed, records, search["bounds"]), 0)
 
+    def test_candidate_trait_reports_largest_departure_from_seed(self) -> None:
+        search, _, seed = load_search(SEARCH)
+        values = seed_values(seed)
+        self.assertEqual(candidate_trait(values, values, search["bounds"]), "Seed design")
+        changed = dict(values, k_h=60)
+        self.assertEqual(candidate_trait(changed, values, search["bounds"]),
+                         "High horizontal K")
+
     @patch("app.tools.run_bem_search.export_candidate_stl")
     def test_dry_run_materializes_feasible_initial_candidates(self, export_stl) -> None:
         def fake_export(_project: Path, candidate_dir: Path) -> Path:
@@ -95,6 +103,10 @@ class BEMSearchTests(unittest.TestCase):
             state = run_search(SEARCH, Path(temp), None, dry_run=True)
             self.assertEqual(state["status"], "preflight")
             self.assertTrue((Path(temp) / "search_report.html").is_file())
+            report = (Path(temp) / "search_report.html").read_text()
+            self.assertIn("Configured range", report)
+            self.assertIn("N is not varied in this search", report)
+            self.assertNotIn("geometry feasible", report)
             self.assertGreaterEqual(len(state["candidates"]), 1)
             self.assertFalse(any(record["status"] == "rejected"
                                  for record in state["candidates"]))

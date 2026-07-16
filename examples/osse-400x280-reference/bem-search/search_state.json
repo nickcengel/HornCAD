@@ -12,7 +12,6 @@
       "pareto": false,
       "proposal_index": 0,
       "proposal_source": "seed",
-      "reason": "geometry feasible; BEM not run",
       "status": "preflight",
       "stl_file": "HornCAD-Surface-400x280x300.STL",
       "values": {
@@ -43,7 +42,6 @@
       "pareto": false,
       "proposal_index": 1,
       "proposal_source": "initial-space-filling",
-      "reason": "geometry feasible; BEM not run",
       "status": "preflight",
       "stl_file": "HornCAD-Surface-400x280x339.STL",
       "values": {
@@ -74,7 +72,6 @@
       "pareto": false,
       "proposal_index": 2,
       "proposal_source": "initial-space-filling",
-      "reason": "geometry feasible; BEM not run",
       "status": "preflight",
       "stl_file": "HornCAD-Surface-400x280x312.STL",
       "values": {
@@ -98,7 +95,6 @@
       "pareto": false,
       "proposal_index": 3,
       "proposal_source": "initial-space-filling",
-      "reason": "geometry feasible; BEM not run",
       "status": "preflight",
       "stl_file": "HornCAD-Surface-400x280x284.STL",
       "values": {
@@ -135,7 +131,6 @@
       "pareto": false,
       "proposal_index": 4,
       "proposal_source": "initial-space-filling",
-      "reason": "geometry feasible; BEM not run",
       "status": "preflight",
       "stl_file": "HornCAD-Surface-400x280x270.STL",
       "values": {
@@ -166,7 +161,6 @@
       "pareto": false,
       "proposal_index": 5,
       "proposal_source": "initial-space-filling",
-      "reason": "geometry feasible; BEM not run",
       "status": "preflight",
       "stl_file": "HornCAD-Surface-400x280x293.STL",
       "values": {
@@ -190,7 +184,6 @@
       "pareto": false,
       "proposal_index": 7,
       "proposal_source": "initial-space-filling",
-      "reason": "geometry feasible; BEM not run",
       "status": "preflight",
       "stl_file": "HornCAD-Surface-400x280x326.STL",
       "values": {
@@ -221,7 +214,6 @@
       "pareto": false,
       "proposal_index": 10,
       "proposal_source": "initial-space-filling",
-      "reason": "geometry feasible; BEM not run",
       "status": "preflight",
       "stl_file": "HornCAD-Surface-400x280x273.STL",
       "values": {
@@ -245,7 +237,6 @@
       "pareto": false,
       "proposal_index": 12,
       "proposal_source": "initial-space-filling",
-      "reason": "geometry feasible; BEM not run",
       "status": "preflight",
       "stl_file": "HornCAD-Surface-400x280x258.STL",
       "values": {
@@ -293,6 +284,10 @@
       ]
     },
     "crossover_hz": 500.0,
+    "fixed_parameters": {
+      "n_h": 10.0,
+      "n_v": 10.0
+    },
     "initial_candidates": 12,
     "intended_coverage_h_deg": 50.0,
     "intended_coverage_v_deg": 35.0,

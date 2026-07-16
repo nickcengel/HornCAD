@@ -39,6 +39,12 @@ OBJECTIVES = ("coverage_match_percent", "smoothness_percent",
               "non_narrowing_percent")
 PRESET_BUDGETS = {"quick": 16, "normal": 36, "thorough": 60}
 DEFAULT_MINIMUM_CANDIDATE_DISTANCE = 0.08
+VARIABLE_LABELS = {
+    "length_mm": "length", "extension_mm": "extension",
+    "osse_coverage_h_deg": "horizontal OS-SE coverage",
+    "osse_coverage_v_deg": "vertical OS-SE coverage",
+    "k_h": "horizontal K", "k_v": "vertical K",
+}
 
 
 def _read_yaml(path: Path) -> dict[str, Any]:
@@ -226,6 +232,17 @@ def candidate_distance(values: dict[str, float], records: list[dict[str, Any]],
     return float(np.min(np.linalg.norm(existing - vector, axis=1)))
 
 
+def candidate_trait(values: dict[str, float], seed: dict[str, float],
+                    bounds: dict[str, list[float]]) -> str:
+    """Describe the candidate's largest normalized departure from the seed."""
+    offsets = {name: (values[name] - seed[name]) /
+               (bounds[name][1] - bounds[name][0]) for name in VARIABLES}
+    name = max(VARIABLES, key=lambda item: abs(offsets[item]))
+    if abs(offsets[name]) < 1e-9:
+        return "Seed design"
+    return f"{'High' if offsets[name] > 0 else 'Low'} {VARIABLE_LABELS[name]}"
+
+
 def length_cost_percent(values: dict[str, float], seed_length_mm: float) -> float:
     """Selection cost: gentle through 10% length change, steep beyond it."""
     deviation = abs(values["length_mm"] / seed_length_mm - 1.0)
@@ -337,6 +354,8 @@ def crossover_loading(run: dict[str, Any], crossover_hz: float) -> tuple[float, 
 
 def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     records = state["candidates"]
+    search = state["search"]
+    seed = search["seed_values"]
     pareto = pareto_indices(records)
     for index, record in enumerate(records):
         record["pareto"] = index in pareto
@@ -364,8 +383,19 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td>{record['values']['osse_coverage_h_deg']:.1f} / "
             f"{record['values']['osse_coverage_v_deg']:.1f}</td>",
             f"<td>{record['values']['k_h']:.2f} / {record['values']['k_v']:.2f}</td>",
-            f"<td>{record.get('reason', '')}</td>",
+            f"<td>{html.escape(candidate_trait(record['values'], seed, search['bounds']))}</td>",
         )) + "</tr>")
+    range_rows = []
+    for name in VARIABLES:
+        lower, upper = search["bounds"][name]
+        retained = [record["values"][name] for record in records]
+        actual = f"{min(retained):g}–{max(retained):g}" if retained else "—"
+        range_rows.append(
+            f"<tr><td>{html.escape(VARIABLE_LABELS[name].title())}</td>"
+            f"<td>{lower:g}–{upper:g}</td><td>{seed[name]:g}</td><td>{actual}</td></tr>")
+    fixed = search.get("fixed_parameters", {})
+    fixed_n_h = float(fixed.get("n_h", float("nan")))
+    fixed_n_v = float(fixed.get("n_v", float("nan")))
     refresh = "<meta http-equiv='refresh' content='10'>" if state["status"] == "running" else ""
     finalist_link = (f"<p><a href='{html.escape(state['finalist_comparison'])}'>"
                      "Open finalist comparison</a></p>"
@@ -381,8 +411,10 @@ th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}th{{backgrou
 <p><strong>Rejected proposals</strong><br>{state.get('rejected_count', 0)}</p>
 <p><strong>Fixed band</strong><br>{state['crossover_hz']:g}–{state['upper_frequency_hz']:g} Hz</p></section>
 {finalist_link}
+<section><h2>Search range</h2><table><tr><th>Parameter</th><th>Configured range</th><th>Seed</th><th>Retained candidates</th></tr>
+{''.join(range_rows)}</table><p><strong>Fixed termination exponent:</strong> N H/V = {fixed_n_h:g} / {fixed_n_v:g}. N is not varied in this search.</p></section>
 <section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Coverage match</th><th>Smoothness</th>
-<th>Non-narrowing</th><th>Crossover loading</th><th>Length cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Note</th></tr>{''.join(rows)}</table></section>
+<th>Non-narrowing</th><th>Crossover loading</th><th>Length cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
 <section><p>100% is best for all physical diagnostics. Crossover loading is feasible at 100% and receives no additional credit above the 0.7 threshold. Pareto selection subtracts the displayed length cost from each coverage objective: the cost reaches 4 points at ±10% and rises steeply to 20 points at ±15%. After K repair, proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data.</p></section>
 </main></body></html>"""
     path = output_dir / "search_report.html"
@@ -469,6 +501,10 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             "intended_coverage_v_deg", intent.get("vertical_coverage_deg",
             seed["horncad_config"]["vertical_basis"]["coverage_deg"])))
         search["seed_values"] = values
+        search["fixed_parameters"] = {
+            "n_h": float(seed["horncad_config"]["horizontal_basis"]["n"]),
+            "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
+        }
         state = {
             "schema_version": 1, "status": "running", "phase": "initializing",
             "configuration_hash": config_hash, "search_yaml": str(search_path.resolve()),
@@ -495,6 +531,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                                if record.get("status") != "rejected"]
     for record in state["candidates"]:
         update_selection_scores(record, state["search"])
+        if record.get("status") == "preflight" and record.get("reason") == "geometry feasible; BEM not run":
+            record.pop("reason")
     for record in state["candidates"]:
         if record["status"] == "running":
             record["status"] = "queued"
@@ -505,6 +543,10 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
     search = state["search"]
     search.setdefault("minimum_candidate_distance",
                       DEFAULT_MINIMUM_CANDIDATE_DISTANCE)
+    search.setdefault("fixed_parameters", {
+        "n_h": float(seed["horncad_config"]["horizontal_basis"]["n"]),
+        "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
+    })
     executable = None if dry_run else find_numcalc(binary)
     solver = search.get("solver", {})
     ppo = float(solver.get("points_per_octave", 10))
@@ -565,7 +607,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             stl = export_candidate_stl(project_path, candidate_dir)
             record["stl_file"] = stl.name
         if dry_run:
-            record.update(status="preflight", reason="geometry feasible; BEM not run")
+            record.update(status="preflight")
+            record.pop("reason", None)
             save_state(output_dir, state)
             if proposal_index + 1 >= min(search["max_evaluations"],
                                          search["initial_candidates"] + 1):

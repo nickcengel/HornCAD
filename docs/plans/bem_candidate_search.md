@@ -91,6 +91,20 @@ chosen. They should be expressed relative to the seed where sensible, reject
 invalid geometry before meshing, and be user-overridable without requiring the
 user to understand the optimizer.
 
+The search report records the configured range, seed value, and actual retained-
+candidate span for every movable parameter. It also lists fixed `n_h` and `n_v`
+explicitly so a search that did not explore termination exponent cannot be
+mistaken for one that did. Each retained candidate receives a short label based
+on its largest normalized departure from the seed (for example, “High
+horizontal K”) instead of a generic geometry-feasibility note.
+
+`N` should initially be explored as a structured second-stage termination study
+around the strongest first-stage candidates. This avoids multiplying every
+expensive BEM evaluation by an additional dimension before the main geometry
+space has been screened, while still testing N before a final design is chosen.
+Because N may interact with K and OS-SE coverage, the second stage must allow a
+small local re-optimization rather than changing N only on one frozen geometry.
+
 ## Fixed evaluation band
 
 Every candidate in one search is evaluated over the same band:
