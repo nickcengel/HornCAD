@@ -36,10 +36,10 @@ horncad_config:
     n: 10
     solved_s: 0.1818970227244554
   vertical_basis:
-    coverage_deg: 42.0
-    k: 26.775370194065868
+    coverage_deg: 35.0
+    k: 29.000000000000004
     n: 10
-    solved_s: 0.01957598437767943
+    solved_s: 0.5101721803981561
   section_modifier:
     mouth_squareness: 0.72
     squareness_morph_spline:

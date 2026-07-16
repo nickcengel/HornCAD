@@ -32,14 +32,14 @@ horncad_config:
     stl_export_mode: body
   horizontal_basis:
     coverage_deg: 50.0
-    k: 30.0
+    k: 41.0
     n: 10
-    solved_s: 0.1818970227244554
+    solved_s: 0.5708535376944583
   vertical_basis:
-    coverage_deg: 42.0
-    k: 26.775370194065868
+    coverage_deg: 35.0
+    k: 18.0
     n: 10
-    solved_s: 0.01957598437767943
+    solved_s: 0.17709266734220605
   section_modifier:
     mouth_squareness: 0.72
     squareness_morph_spline:

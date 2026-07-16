@@ -9,8 +9,9 @@ import numpy as np
 
 from app.tools.run_bem_search import (
     candidate_distance, candidate_trait, candidate_traits, geometry_feasibility,
-    length_cost_percent, load_search,
+    inferior_to_seed_probability, learned_lever_effects, length_cost_percent, load_search,
     materialize_candidate, pareto_indices, propose_vector, repair_k_for_positive_s,
+    sampling_stability,
     run_search, seed_values,
 )
 
@@ -44,8 +45,49 @@ class BEMSearchTests(unittest.TestCase):
         self.assertEqual(source, "seed")
         self.assertTrue(np.all((seed_vector >= 0) & (seed_vector <= 1)))
         sample, source = propose_vector(search, [], 1)
-        self.assertEqual(source, "initial-space-filling")
+        self.assertEqual(source, "sensitivity-length_mm-low")
         self.assertTrue(np.all((sample >= 0) & (sample <= 1)))
+        paired, source = propose_vector(search, [], 2)
+        self.assertEqual(source, "sensitivity-length_mm-high")
+        self.assertNotEqual(sample[0], paired[0])
+
+    def test_inferior_screen_waits_for_seed_and_sufficient_learning(self) -> None:
+        search, _, seed = load_search(SEARCH)
+        search["seed_values"] = seed_values(seed)
+        self.assertEqual(inferior_to_seed_probability(search, [], np.full(6, 0.5)), 0)
+
+    def test_lever_effects_recover_direction_from_completed_probes(self) -> None:
+        search, _, seed = load_search(SEARCH)
+        search["seed_values"] = seed_values(seed)
+        records = []
+        for index, length in enumerate((270, 300, 330, 315)):
+            values = dict(search["seed_values"], length_mm=length)
+            score = 80 + (length - 300) / 10
+            records.append({"status": "complete", "values": values,
+                            "proposal_source": "seed" if index == 1 else "probe",
+                            "crossover_loading_percent": score,
+                            "diagnostics": {"combined": {
+                                "coverage_match_percent": score,
+                                "smoothness_percent": score,
+                                "non_narrowing_percent": score}}})
+            from app.tools.run_bem_search import update_selection_scores
+            update_selection_scores(records[-1], search)
+        effects = learned_lever_effects(search, records)
+        self.assertGreater(effects["length_mm"]["coverage_match_percent"], 0)
+
+    def test_sampling_stability_accepts_frequency_invariant_patterns(self) -> None:
+        frequencies = np.geomspace(450, 8000, 49)
+        angles = np.linspace(-90, 90, 181)
+        horizontal = np.tile(-6 * np.abs(angles) / 50, (len(frequencies), 1))
+        vertical = np.tile(-6 * np.abs(angles) / 35, (len(frequencies), 1))
+        run = {"frequencies": frequencies, "angles": angles,
+               "horizontal": horizontal, "vertical": vertical,
+               "impedance": np.ones(len(frequencies), dtype=complex),
+               "normalized_impedance": np.ones(len(frequencies), dtype=complex),
+               "intended_coverages": {"horizontal": 50, "vertical": 35}}
+        stability = sampling_stability(run, np.geomspace(500, 8000, 193), 500, 2)
+        self.assertEqual(stability["status"], "stable")
+        self.assertLess(stability["maximum_delta_points"], 0.01)
 
     def test_k_repair_moves_repairable_candidate_into_positive_s_region(self) -> None:
         search, _, seed = load_search(SEARCH)

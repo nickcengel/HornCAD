@@ -9,6 +9,9 @@ bem_candidate_search:
   initial_candidates: 12
   random_seed: 17
   minimum_candidate_distance: 0.08
+  inferior_screen_probability: 0.97
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 20
   bounds:
     length_mm: [255, 345]
     extension_mm: [0, 45]
@@ -17,7 +20,7 @@ bem_candidate_search:
     k_h: [5, 60]
     k_v: [5, 60]
   solver:
-    points_per_octave: 10
+    points_per_octave: 12
     elements_per_wavelength: 6
     angles: 91
     workers: 0

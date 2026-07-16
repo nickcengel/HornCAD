@@ -196,25 +196,58 @@ evaluations remain visible because they may require diagnosis or resumption.
 ## Search strategy
 
 The BEM solver is an expensive deterministic black box with multiple competing
-objectives and feasibility constraints. The provisional strategy is constrained
-multi-objective Bayesian optimization:
+objectives and feasibility constraints. The optimizer should learn changes
+relative to the user's seed, not treat every horn as an unrelated sample. Its
+first evaluations deliberately perturb each movable lever up and down around
+the seed. This makes the initial expense teach which parameters control coverage
+match, smoothness, non-narrowing, and crossover loading.
+
+The implemented strategy is constrained multi-objective Bayesian optimization:
 
 1. Evaluate the user's seed at production resolution.
-2. Generate an initial space-filling set of approximately 12 candidates within
-   the allowed bounds.
+2. Generate paired low/high sensitivity probes for length, extension, horizontal
+   and vertical OS-SE coverage, and horizontal and vertical K.
    After K repair, reject any proposal within normalized distance 0.08 of a
    retained candidate so different proposals cannot collapse into effectively
    duplicate evaluated horns.
-3. Fit surrogate models to objectives and constraints.
-4. Propose hardware-appropriate batches that balance predicted Pareto
+3. Fit separate surrogate models to diagnostic changes relative to the seed and
+   to the crossover-loading constraint. Retain prediction uncertainty rather
+   than treating the surrogate mean as truth.
+4. Screen an adaptive proposal only when the model assigns at least 97%
+   probability that it is worse than the seed on all three selection objectives.
+   Screening never applies to the structured sensitivity round. An uncertain
+   candidate remains useful because it may improve the result or teach the
+   model. Screened proposals retain no individual data; only an aggregate count
+   is reported.
+5. Propose hardware-appropriate batches that balance predicted Pareto
    improvement with exploration of uncertain regions.
-5. Continue updating the models and Pareto set after each completed batch.
-6. Confirm the leading candidates at production resolution.
+6. Continue updating the models, learned lever-effect summary, and Pareto set
+   after each completed batch.
+7. Confirm the leading candidates at production resolution.
 
-A reduced points-per-octave setting may be useful during exploration, but it
-must first be demonstrated that it does not materially reorder candidates. The
-implemented default therefore remains 6 elements per wavelength and 10 points
-per octave for every candidate.
+The learned lever summary expresses the estimated change in each diagnostic for
+a positive 10% step across that parameter's configured range. These values are
+evidence from the current search, not universal horn-design rules. Important
+interactions—especially N×K, N×coverage, length×extension, and horizontal×vertical
+coupling—must subsequently receive deliberate probes. A proposal should earn an
+expensive solve either by having credible improvement potential or by materially
+reducing uncertainty about such an important effect.
+
+Training uses 6 elements per wavelength and 12 points per octave for every
+candidate. Frequency sampling and spatial mesh density are separate convergence
+questions: 6 EPW does not protect a diagnostic from missing a narrow feature
+between solved frequencies. Every completed training run is therefore rescored
+after factor-two frequency decimation. If coverage match, smoothness,
+non-narrowing, or crossover loading moves by more than two diagnostic points,
+that run is marked sampling-unstable and excluded from surrogate learning.
+
+Decimation is a warning, not proof of convergence. Before learned lever
+directions or final rankings are trusted, the seed and representative sensitivity
+probes must be checked at 20 PPO. Finalists also require 20-PPO confirmation. If
+that confirmation materially changes rankings or learned effect directions, the
+12-PPO model is invalidated and the search continues at the higher fidelity.
+Results from different PPO levels must not be mixed in one surrogate unless
+fidelity is explicitly modeled.
 
 ## Termination
 

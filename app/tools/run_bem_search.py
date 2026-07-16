@@ -16,7 +16,7 @@ import time
 from typing import Any
 
 import numpy as np
-from scipy.stats import qmc
+from scipy.stats import norm, qmc
 import yaml
 
 try:
@@ -39,6 +39,8 @@ OBJECTIVES = ("coverage_match_percent", "smoothness_percent",
               "non_narrowing_percent")
 PRESET_BUDGETS = {"quick": 16, "normal": 36, "thorough": 60}
 DEFAULT_MINIMUM_CANDIDATE_DISTANCE = 0.08
+DEFAULT_INFERIOR_PROBABILITY = 0.97
+DEFAULT_SAMPLING_STABILITY_POINTS = 2.0
 VARIABLE_LABELS = {
     "length_mm": "length", "extension_mm": "extension",
     "osse_coverage_h_deg": "horizontal OS-SE coverage",
@@ -93,6 +95,16 @@ def load_search(path: Path) -> tuple[dict[str, Any], Path, dict[str, Any]]:
         int(search.get("initial_candidates", 12)), search["max_evaluations"] - 1)
     search["minimum_candidate_distance"] = float(search.get(
         "minimum_candidate_distance", DEFAULT_MINIMUM_CANDIDATE_DISTANCE))
+    search["inferior_screen_probability"] = float(search.get(
+        "inferior_screen_probability", DEFAULT_INFERIOR_PROBABILITY))
+    search["sampling_stability_points"] = float(search.get(
+        "sampling_stability_points", DEFAULT_SAMPLING_STABILITY_POINTS))
+    search["confirmation_points_per_octave"] = float(search.get(
+        "confirmation_points_per_octave", 20))
+    if not 0.5 < search["inferior_screen_probability"] < 1:
+        raise ValueError("inferior_screen_probability must be between 0.5 and 1")
+    if search["sampling_stability_points"] <= 0:
+        raise ValueError("sampling_stability_points must be positive")
     if search["max_evaluations"] < 2 or search["initial_candidates"] < 1:
         raise ValueError("search requires at least two evaluations")
     return search, seed_path, seed
@@ -317,10 +329,16 @@ def _objective_values(record: dict[str, Any]) -> np.ndarray:
     return np.asarray([values[key] for key in OBJECTIVES])
 
 
+def _training_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return [record for record in records if record.get("status") == "complete" and
+            record.get("sampling_stability", {}).get("status", "stable") == "stable"]
+
+
 def pareto_indices(records: list[dict[str, Any]]) -> set[int]:
     feasible = [(index, record) for index, record in enumerate(records)
                 if record.get("status") == "complete" and
-                record.get("crossover_loading_percent", 0) >= 100]
+                record.get("crossover_loading_percent", 0) >= 100 and
+                record.get("sampling_stability", {}).get("status", "stable") == "stable"]
     output: set[int] = set()
     for index, record in feasible:
         values = _objective_values(record)
@@ -353,6 +371,76 @@ def _gp_predict(x: np.ndarray, y: np.ndarray,
     return mean, np.sqrt(variance)
 
 
+def structured_probe(search: dict[str, Any], probe_index: int) -> tuple[np.ndarray, str]:
+    """Return one of two seed-centered sensitivity probes for each lever."""
+    seed = np.clip(normalized_vector(search["seed_values"], search["bounds"]), 0, 1)
+    variable_index = probe_index // 2
+    side = probe_index % 2
+    center = seed[variable_index]
+    if center <= 0.20:
+        targets = (min(1.0, center + 0.20), min(1.0, center + 0.40))
+    elif center >= 0.80:
+        targets = (max(0.0, center - 0.20), max(0.0, center - 0.40))
+    else:
+        targets = (center - 0.20, center + 0.20)
+    vector = seed.copy()
+    vector[variable_index] = targets[side]
+    direction = "low" if targets[side] < center else "high"
+    return vector, f"sensitivity-{VARIABLES[variable_index]}-{direction}"
+
+
+def inferior_to_seed_probability(search: dict[str, Any],
+                                 records: list[dict[str, Any]],
+                                 vector: np.ndarray) -> float:
+    """Probability that a proposal is worse than the seed on every objective."""
+    completed = _training_records(records)
+    seed_record = next((record for record in completed
+                        if record.get("proposal_source") == "seed"), None)
+    if seed_record is None or len(completed) < 7:
+        return 0.0
+    x = np.asarray([normalized_vector(record["values"], search["bounds"])
+                    for record in completed])
+    probabilities = []
+    for column in range(len(OBJECTIVES)):
+        seed_score = _objective_values(seed_record)[column] / 100
+        deltas = np.asarray([(_objective_values(record)[column] / 100) - seed_score
+                             for record in completed])
+        mean, std = _gp_predict(x, deltas, vector[None, :])
+        probabilities.append(float(norm.cdf(-mean[0] / max(std[0], 1e-6))))
+    return float(np.prod(probabilities))
+
+
+def learned_lever_effects(search: dict[str, Any],
+                          records: list[dict[str, Any]]) -> dict[str, dict[str, float]]:
+    """Estimate diagnostic-point changes for +10% of each configured range."""
+    completed = _training_records(records)
+    seed_record = next((record for record in completed
+                        if record.get("proposal_source") == "seed"), None)
+    if seed_record is None or len(completed) < 4:
+        return {}
+    seed_vector = normalized_vector(search["seed_values"], search["bounds"])
+    x = np.asarray([normalized_vector(record["values"], search["bounds"])
+                    - seed_vector for record in completed])
+    design = np.column_stack((np.ones(len(x)), x))
+    regularizer = np.eye(design.shape[1]) * 0.05
+    regularizer[0, 0] = 0
+    outputs = list(OBJECTIVES) + ["crossover_loading_percent"]
+    effects = {name: {} for name in VARIABLES}
+    for output in outputs:
+        if output == "crossover_loading_percent":
+            y = np.asarray([record.get(output, 0) - seed_record.get(output, 0)
+                            for record in completed])
+        else:
+            seed_score = seed_record["diagnostics"]["combined"][output]
+            y = np.asarray([record["diagnostics"]["combined"][output] - seed_score
+                            for record in completed])
+        coefficients = np.linalg.solve(design.T @ design + regularizer,
+                                       design.T @ y)[1:]
+        for index, name in enumerate(VARIABLES):
+            effects[name][output] = float(coefficients[index] * 0.10)
+    return effects
+
+
 def propose_vector(search: dict[str, Any], records: list[dict[str, Any]],
                    proposal_index: int) -> tuple[np.ndarray, str]:
     bounds = search["bounds"]
@@ -360,11 +448,15 @@ def propose_vector(search: dict[str, Any], records: list[dict[str, Any]],
         return np.clip(normalized_vector(search["seed_values"], bounds), 0, 1), "seed"
     initial = int(search["initial_candidates"])
     if proposal_index <= initial:
-        sampler = qmc.LatinHypercube(d=len(VARIABLES), seed=int(search.get("random_seed", 17)))
-        samples = sampler.random(initial)
-        return samples[proposal_index - 1], "initial-space-filling"
+        structured_count = min(initial, 2 * len(VARIABLES))
+        if proposal_index <= structured_count:
+            return structured_probe(search, proposal_index - 1)
+        sampler = qmc.LatinHypercube(d=len(VARIABLES),
+                                    seed=int(search.get("random_seed", 17)))
+        samples = sampler.random(initial - structured_count)
+        return samples[proposal_index - structured_count - 1], "initial-space-filling"
 
-    completed = [record for record in records if record.get("status") == "complete"]
+    completed = _training_records(records)
     if len(completed) < 3:
         rng = np.random.default_rng(int(search.get("random_seed", 17)) + proposal_index)
         return rng.random(len(VARIABLES)), "fallback-exploration"
@@ -403,6 +495,33 @@ def crossover_loading(run: dict[str, Any], crossover_hz: float) -> tuple[float, 
     return min(100.0, 100.0 * minimum / 0.7), minimum
 
 
+def sampling_stability(run: dict[str, Any], fixed_grid: np.ndarray,
+                       crossover_hz: float, threshold_points: float) -> dict[str, Any]:
+    """Compare full diagnostics with a factor-two decimation of solved frequencies."""
+    count = len(run["frequencies"])
+    indices = np.arange(0, count, 2)
+    if indices[-1] != count - 1:
+        indices = np.append(indices, count - 1)
+    decimated = dict(run)
+    for key in ("frequencies", "horizontal", "vertical", "impedance",
+                "normalized_impedance"):
+        if run.get(key) is not None:
+            decimated[key] = np.asarray(run[key])[indices]
+    full = coverage_diagnostics(run, fixed_grid, fixed_band=True)
+    coarse = coverage_diagnostics(decimated, fixed_grid, fixed_band=True)
+    if full.get("status") != "available" or coarse.get("status") != "available":
+        return {"status": "unstable", "reason": "diagnostics unavailable after decimation"}
+    deltas = {key: float(coarse["combined"][key] - full["combined"][key])
+              for key in OBJECTIVES}
+    full_loading = crossover_loading(run, crossover_hz)[0]
+    coarse_loading = crossover_loading(decimated, crossover_hz)[0]
+    deltas["crossover_loading_percent"] = coarse_loading - full_loading
+    maximum = max(abs(value) for value in deltas.values())
+    return {"status": "stable" if maximum <= threshold_points else "unstable",
+            "maximum_delta_points": maximum, "decimated_ppo_fraction": 0.5,
+            "deltas": deltas, "threshold_points": threshold_points}
+
+
 def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     records = state["candidates"]
     search = state["search"]
@@ -421,6 +540,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
                        "interactive_report.html'>report</a>"
                        if record.get("run_dir") else "")
         status = "Pareto" if record.get("pareto") else record["status"].title()
+        stability = record.get("sampling_stability")
+        stability_text = (f"{stability['status'].title()} ({stability.get('maximum_delta_points', float('nan')):.1f} pt)"
+                          if stability else "—")
         rows.append("<tr>" + "".join((
             f"<td><a href='{candidate_dir}/project.yaml'>{record['id']}</a>"
             f"{stl_link}{report_link}</td>",
@@ -430,6 +552,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td>{diagnostic.get('non_narrowing_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
             f"<td>{record.get('crossover_loading_percent', float('nan')):.1f}%</td>" if "crossover_loading_percent" in record else "<td>—</td>",
             f"<td>{record.get('length_cost_percent', 0):.1f}%</td>",
+            f"<td>{html.escape(stability_text)}</td>",
             f"<td>{record['values']['length_mm']:.1f}</td>",
             f"<td>{record['values']['extension_mm']:.1f}</td>",
             f"<td>{record['values']['osse_coverage_h_deg']:.1f} / "
@@ -448,6 +571,19 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     fixed = search.get("fixed_parameters", {})
     fixed_n_h = float(fixed.get("n_h", float("nan")))
     fixed_n_v = float(fixed.get("n_v", float("nan")))
+    effects = learned_lever_effects(search, records)
+    effect_rows = []
+    for name in VARIABLES:
+        values = effects.get(name)
+        if not values:
+            continue
+        effect_rows.append(
+            f"<tr><td>{html.escape(VARIABLE_LABELS[name].title())}</td>" +
+            "".join(f"<td>{values[key]:+.1f}</td>" for key in OBJECTIVES) +
+            f"<td>{values['crossover_loading_percent']:+.1f}</td></tr>")
+    effects_section = ("<section><h2>Learned lever effects</h2><p>Estimated diagnostic-point change for a +10% step across each configured parameter range. These are local evidence from this search, not universal design rules.</p><table><tr><th>Lever</th><th>Coverage match</th><th>Smoothness</th><th>Non-narrowing</th><th>Crossover loading</th></tr>" +
+                       "".join(effect_rows) + "</table></section>" if effect_rows else
+                       "<section><h2>Learned lever effects</h2><p>Waiting for the seed and sensitivity probes to complete.</p></section>")
     refresh = "<meta http-equiv='refresh' content='10'>" if state["status"] == "running" else ""
     finalist_link = (f"<p><a href='{html.escape(state['finalist_comparison'])}'>"
                      "Open finalist comparison</a></p>"
@@ -461,13 +597,16 @@ th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}th{{backgrou
 <p><strong>Status</strong><br>{html.escape(state['status'])}</p><p><strong>Phase</strong><br>{html.escape(state.get('phase', ''))}</p>
 <p><strong>Progress</strong><br>{sum(r['status']=='complete' for r in records)} / {state['max_evaluations']} evaluated</p>
 <p><strong>Rejected proposals</strong><br>{state.get('rejected_count', 0)}</p>
+<p><strong>Confidently inferior</strong><br>{state.get('surrogate_screened_count', 0)}</p>
 <p><strong>Fixed band</strong><br>{state['crossover_hz']:g}–{state['upper_frequency_hz']:g} Hz</p></section>
+<section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Each completed run is compared with a factor-two decimation and excluded from surrogate training when any headline diagnostic moves by more than {search.get('sampling_stability_points', DEFAULT_SAMPLING_STABILITY_POINTS):g} points. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
 {finalist_link}
 <section><h2>Search range</h2><table><tr><th>Parameter</th><th>Configured range</th><th>Seed</th><th>Retained candidates</th></tr>
 {''.join(range_rows)}</table><p><strong>Fixed termination exponent:</strong> N H/V = {fixed_n_h:g} / {fixed_n_v:g}. N is not varied in this search.</p></section>
+{effects_section}
 <section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Coverage match</th><th>Smoothness</th>
-<th>Non-narrowing</th><th>Crossover loading</th><th>Length cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
-<section><p>100% is best for all physical diagnostics. Crossover loading is feasible at 100% and receives no additional credit above the 0.7 threshold. Pareto selection subtracts the displayed length cost from each coverage objective: the cost reaches 4 points at ±10% and rises steeply to 20 points at ±15%. After K repair, proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data.</p></section>
+<th>Non-narrowing</th><th>Crossover loading</th><th>Length cost</th><th>Sampling stability</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
+<section><p>100% is best for all physical diagnostics. Crossover loading is feasible at 100% and receives no additional credit above the 0.7 threshold. Pareto selection subtracts the displayed length cost from each coverage objective: the cost reaches 4 points at ±10% and rises steeply to 20 points at ±15%. After K repair, proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the structured sensitivity round, proposals modeled as worse than the seed on all three objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
 </main></body></html>"""
     path = output_dir / "search_report.html"
     temporary = path.with_suffix(".html.tmp")
@@ -518,11 +657,15 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
         generate_review(run_dir, title=f"BEM search {record['id']}")
         run = load_run(run_dir, record["id"])
         diagnostics = coverage_diagnostics(run, fixed_grid, fixed_band=True)
+        stability = sampling_stability(
+            run, fixed_grid, search["crossover_hz"],
+            search.get("sampling_stability_points", DEFAULT_SAMPLING_STABILITY_POINTS))
         loading_percent, loading_minimum = crossover_loading(
             run, search["crossover_hz"])
         record.update(
             status="complete", run_dir=str(run_dir.relative_to(output_dir)),
             diagnostics=diagnostics,
+            sampling_stability=stability,
             crossover_loading_percent=loading_percent,
             crossover_minimum_normalized_impedance=loading_minimum,
             elapsed_s=record.get("elapsed_s", 0) + time.perf_counter() - started,
@@ -564,6 +707,7 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             "upper_frequency_hz": search["upper_frequency_hz"],
             "max_evaluations": search["max_evaluations"], "search": search,
             "candidates": [], "proposal_count": 0, "rejected_count": 0,
+            "surrogate_screened_count": 0,
             "started_at_unix": time.time(),
         }
         save_state(output_dir, state)
@@ -576,6 +720,7 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                        for record in state["candidates"]]
         state["proposal_count"] = max(identifiers, default=-1) + 1
     state["rejected_count"] = int(state.get("rejected_count", 0)) + len(previous_rejected)
+    state.setdefault("surrogate_screened_count", 0)
     if previous_rejected:
         for record in previous_rejected:
             shutil.rmtree(output_dir / "candidates" / record["id"], ignore_errors=True)
@@ -595,13 +740,16 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
     search = state["search"]
     search.setdefault("minimum_candidate_distance",
                       DEFAULT_MINIMUM_CANDIDATE_DISTANCE)
+    search.setdefault("inferior_screen_probability", DEFAULT_INFERIOR_PROBABILITY)
+    search.setdefault("sampling_stability_points", DEFAULT_SAMPLING_STABILITY_POINTS)
+    search.setdefault("confirmation_points_per_octave", 20.0)
     search.setdefault("fixed_parameters", {
         "n_h": float(seed["horncad_config"]["horizontal_basis"]["n"]),
         "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
     })
     executable = None if dry_run else find_numcalc(binary)
     solver = search.get("solver", {})
-    ppo = float(solver.get("points_per_octave", 10))
+    ppo = float(solver.get("points_per_octave", 12))
     epw = float(solver.get("elements_per_wavelength", 6))
     angles = int(solver.get("angles", 91))
     solve_start = search["crossover_hz"] / 2 ** (1 / 6)
@@ -643,6 +791,14 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                 state["rejected_count"] += 1
                 save_state(output_dir, state)
                 continue
+            if proposal_index > search["initial_candidates"]:
+                inferior_probability = inferior_to_seed_probability(
+                    search, state["candidates"], normalized_vector(values, search["bounds"]))
+                if inferior_probability >= search["inferior_screen_probability"]:
+                    state["rejected_count"] += 1
+                    state["surrogate_screened_count"] += 1
+                    save_state(output_dir, state)
+                    continue
             candidate_id = f"candidate-{len(state['candidates']):03d}"
             record = {"id": candidate_id, "status": "queued",
                       "proposal_index": proposal_index,
