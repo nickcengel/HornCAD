@@ -8,7 +8,9 @@ import hashlib
 import html
 import json
 import math
+import multiprocessing
 from pathlib import Path
+import queue
 import shutil
 import subprocess
 import sys
@@ -640,6 +642,44 @@ def write_finalist_comparison(output_dir: Path, state: dict[str, Any],
         evaluation_frequencies=fixed_grid, fixed_band=True)
 
 
+def _isolated_sweep(result_queue: Any, project_path: Path, executable: Path,
+                    run_root: Path, frequencies: np.ndarray,
+                    solver: dict[str, Any]) -> None:
+    """Run mesh generation and NumCalc where a native abort cannot kill search."""
+    try:
+        manifest = run_sweep(
+            project_path, executable, run_root, frequencies,
+            elements_per_wavelength=float(solver.get("elements_per_wavelength", 6)),
+            angles=int(solver.get("angles", 91)),
+            maximum_workers=int(solver.get("workers", 0)),
+            memory_limit_gib=solver.get("memory_limit_gib"), resume=True)
+        result_queue.put(("ok", manifest))
+    except Exception as error:
+        result_queue.put(("error", f"{type(error).__name__}: {error}"))
+
+
+def isolated_sweep(project_path: Path, executable: Path, run_root: Path,
+                   frequencies: np.ndarray, solver: dict[str, Any]) -> dict[str, Any]:
+    context = multiprocessing.get_context("spawn")
+    result_queue = context.Queue()
+    process = context.Process(target=_isolated_sweep,
+                              args=(result_queue, project_path, executable, run_root,
+                                    frequencies, solver))
+    process.start()
+    process.join()
+    if process.exitcode != 0:
+        raise RuntimeError(f"mesh/sweep worker exited abnormally ({process.exitcode})")
+    try:
+        status, payload = result_queue.get(timeout=2)
+    except queue.Empty as error:
+        raise RuntimeError("mesh/sweep worker returned no result") from error
+    finally:
+        result_queue.close()
+    if status != "ok":
+        raise RuntimeError(payload)
+    return payload
+
+
 def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
                        executable: Path, frequencies: np.ndarray,
                        fixed_grid: np.ndarray, search: dict[str, Any],
@@ -647,12 +687,8 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
     """Run or resume one candidate and update its ledger record in place."""
     started = time.perf_counter()
     try:
-        manifest = run_sweep(
-            candidate_dir / "project.yaml", executable, candidate_dir / "bem", frequencies,
-            elements_per_wavelength=float(solver.get("elements_per_wavelength", 6)),
-            angles=int(solver.get("angles", 91)),
-            maximum_workers=int(solver.get("workers", 0)),
-            memory_limit_gib=solver.get("memory_limit_gib"), resume=True)
+        manifest = isolated_sweep(candidate_dir / "project.yaml", executable,
+                                  candidate_dir / "bem", frequencies, solver)
         run_dir = Path(manifest["run_dir"])
         generate_review(run_dir, title=f"BEM search {record['id']}")
         run = load_run(run_dir, record["id"])
