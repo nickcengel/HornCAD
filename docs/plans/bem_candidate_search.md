@@ -85,21 +85,14 @@ Length uses an explicit exploration envelope. The maintained example uses:
 The user may override the bounds. The initial experiment spans the full envelope
 evenly; it does not impose a soft ±10% admission cap around the seed.
 
-The implemented packaging policy is asymmetric and separates acoustics from
-packaging:
+The implemented coverage-stage policy separates acoustics from packaging.
+Coverage Match, Coverage Smoothness, Waist Stability, and Window Uniformity
+remain unmodified acoustic objectives. Length can be varied as an experimental
+input, but it is not penalized or rewarded by a hidden packaging adjustment.
 
-- Coverage Match, Coverage Smoothness, Waist Stability, and Window Uniformity
-  remain unmodified acoustic objectives;
-- a candidate shorter than the authored reference receives no departure cost;
-- added axial depth may be penalized, but must not be hidden inside the reported
-  acoustic diagnostics; and
-- once extension is released, packaging size is measured using total axial depth
-  `length_mm + extension_mm`, not horn length alone.
-
-Prefer eventually representing total axial depth as an explicit minimization objective in
-the Pareto set. This makes compactness visible and prevents either extra loading
-or shorter packaging from silently rewriting the meaning of the acoustic
-scores.
+If compactness becomes an optimization goal, represent total axial depth as an
+explicit minimization objective in the Pareto set. That keeps packaging visible
+without silently rewriting the meaning of the acoustic scores.
 
 Extension should use explicit minimum and maximum lengths rather than only a
 percentage of its seed value, because a seed extension may be zero. A provisional

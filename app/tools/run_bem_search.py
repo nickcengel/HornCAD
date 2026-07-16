@@ -331,34 +331,13 @@ def candidate_traits(records: list[dict[str, Any]], seed: dict[str, float],
             return detailed
 
 
-def length_cost_percent(values: dict[str, float], seed_total_depth_mm: float) -> float:
-    """One-sided packaging cost; compact candidates are never penalized."""
-    total_depth = values["length_mm"] + values.get("extension_mm", 0.0)
-    deviation = max(0.0, total_depth / seed_total_depth_mm - 1.0)
-    if deviation <= 0.10:
-        return 4.0 * (deviation / 0.10) ** 2
-    return 4.0 + 16.0 * ((deviation - 0.10) / 0.05) ** 2
-
-
 def objective_score(values: dict[str, Any], key: str) -> float:
     """Read a current headline objective."""
     return float(values[key])
 
 
-def update_selection_scores(record: dict[str, Any], search: dict[str, Any]) -> None:
-    seed = search["seed_values"]
-    seed_depth = seed["length_mm"] + seed.get("extension_mm", 0.0)
-    cost = length_cost_percent(record["values"], seed_depth)
-    record["length_cost_percent"] = cost
-    if record.get("diagnostics"):
-        record["selection_scores"] = {
-            key: max(0.0, objective_score(record["diagnostics"]["combined"], key) - cost)
-            for key in OBJECTIVES
-        }
-
-
 def _objective_values(record: dict[str, Any]) -> np.ndarray:
-    values = record.get("selection_scores", record["diagnostics"]["combined"])
+    values = record["diagnostics"]["combined"]
     return np.asarray([objective_score(values, key) for key in OBJECTIVES])
 
 
@@ -710,7 +689,6 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td>{html.escape(status)}</td>",
             "".join(diagnostic_cell(diagnostic, key) for key in OBJECTIVES),
             f"<td>{record.get('crossover_minimum_normalized_impedance', float('nan')):.3f}</td>" if "crossover_minimum_normalized_impedance" in record else "<td>—</td>",
-            f"<td>{record.get('length_cost_percent', 0):.1f}%</td>",
             f"<td>{record['values']['length_mm']:.1f}</td>",
             f"<td>{record['values']['extension_mm']:.1f}</td>",
             f"<td>{record['values']['osse_coverage_h_deg']:.1f} / "
@@ -768,8 +746,8 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left}}td{
 <section><h2>Search range</h2><table><tr><th>Parameter</th><th>Configured range</th><th>Seed</th><th>Retained candidates</th></tr>
 {''.join(range_rows)}</table><p><strong>Realized S range (both axes):</strong> {search['derived_s_bounds'][0]:g}–{search['derived_s_bounds'][1]:g}. <strong>Coverage-stage extension:</strong> fixed at the seed value; N is varied explicitly in matched length families.</p></section>
 {effects_section}
-<section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th>{objective_headers}<th>Impedance (information only)</th><th>Added-depth cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>S H/V</th><th>N H/V</th><th>Curvature radius H/V mm</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
-<section><p>100% is best for all acoustic diagnostics. Combined H/V scores are weighted in proportion to mouth width and height. The sweep band controls solved frequencies; the fixed diagnostic band starts at crossover and ends at the upper operating frequency. Throat impedance is recorded but does not affect feasibility, Pareto selection, surrogate acquisition, or sampling stability during coverage search. Shorter total depth receives no cost; added depth above the seed is the only packaging departure cost. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
+<section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th>{objective_headers}<th>Impedance (information only)</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>S H/V</th><th>N H/V</th><th>Curvature radius H/V mm</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
+<section><p>100% is best for all acoustic diagnostics. Combined H/V scores are weighted in proportion to mouth width and height. The sweep band controls solved frequencies; the fixed diagnostic band starts at crossover and ends at the upper operating frequency. Throat impedance is recorded but does not affect feasibility, Pareto selection, surrogate acquisition, or sampling stability during coverage search. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
 </main></body></html>"""
     path = output_dir / "search_report.html"
     temporary = path.with_suffix(".html.tmp")
@@ -884,7 +862,6 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
             crossover_minimum_normalized_impedance=loading_minimum,
             elapsed_s=record.get("elapsed_s", 0) + time.perf_counter() - started,
             mesh_quadrant_panels=manifest["mesh_quadrant_panels"])
-        update_selection_scores(record, search)
     except Exception as error:  # retain failure and continue the search
         record.update(status="failed", reason=f"{type(error).__name__}: {error}",
                       elapsed_s=record.get("elapsed_s", 0) + time.perf_counter() - started)
@@ -952,7 +929,6 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
         state["candidates"] = [record for record in state["candidates"]
                                if record.get("status") != "rejected"]
     for record in state["candidates"]:
-        update_selection_scores(record, state["search"])
         if record.get("status") == "preflight" and record.get("reason") == "geometry feasible; BEM not run":
             record.pop("reason")
     for record in state["candidates"]:
@@ -1046,7 +1022,6 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             if source == "initial-curated":
                 record["experiment_label"] = search["initial_pool"][
                     proposal_index - 1]["label"]
-            update_selection_scores(record, search)
             state["candidates"].append(record)
             candidate_dir = output_dir / "candidates" / candidate_id
             candidate_dir.mkdir(parents=True, exist_ok=True)

@@ -152,7 +152,6 @@
       },
       "elapsed_s": 180.46538924984634,
       "id": "candidate-000",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15398,
       "nearest_candidate_distance": Infinity,
       "pareto": false,
@@ -170,12 +169,6 @@
         "maximum_delta_points": 1.4989852101154781,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 86.97523219282448,
-        "coverage_smoothness_percent": 85.30577532296408,
-        "waist_stability_percent": 72.00592694752754,
-        "window_uniformity_percent": 84.99106659172915
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -343,7 +336,6 @@
       "elapsed_s": 171.49648491712287,
       "experiment_label": "K=1 N=2 axisymmetric",
       "id": "candidate-001",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15784,
       "nearest_candidate_distance": 0.8838834764831844,
       "pareto": false,
@@ -361,12 +353,6 @@
         "maximum_delta_points": 0.6241945235279474,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 77.36448381381824,
-        "coverage_smoothness_percent": 63.14348523361403,
-        "waist_stability_percent": 62.684685260840055,
-        "window_uniformity_percent": 64.42322224355424
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -534,7 +520,6 @@
       "elapsed_s": 168.16491862526163,
       "experiment_label": "K=1 N=3 axisymmetric",
       "id": "candidate-002",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15598,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -552,12 +537,6 @@
         "maximum_delta_points": 1.6027644401464727,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 78.87154007206657,
-        "coverage_smoothness_percent": 70.30613155811379,
-        "waist_stability_percent": 63.10280990388353,
-        "window_uniformity_percent": 68.32607692537822
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -725,7 +704,6 @@
       "elapsed_s": 163.63234650017694,
       "experiment_label": "K=1 N=4 axisymmetric",
       "id": "candidate-003",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15548,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -743,12 +721,6 @@
         "maximum_delta_points": 1.6730116254726966,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 79.32035032624788,
-        "coverage_smoothness_percent": 73.21494496321978,
-        "waist_stability_percent": 63.09761509684589,
-        "window_uniformity_percent": 69.8316158449159
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -916,7 +888,6 @@
       "elapsed_s": 163.10326441703364,
       "experiment_label": "K=1 N=5 axisymmetric",
       "id": "candidate-004",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15336,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -934,12 +905,6 @@
         "maximum_delta_points": 1.641999894960577,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 79.42484064204015,
-        "coverage_smoothness_percent": 74.64653857226065,
-        "waist_stability_percent": 62.98531847839906,
-        "window_uniformity_percent": 70.48084527204487
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -1107,7 +1072,6 @@
       "elapsed_s": 164.33202483411878,
       "experiment_label": "K=1 N=6 axisymmetric",
       "id": "candidate-005",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15618,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -1125,12 +1089,6 @@
         "maximum_delta_points": 1.6347048021766284,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 79.4275966347555,
-        "coverage_smoothness_percent": 75.58958498725251,
-        "waist_stability_percent": 62.81697233402818,
-        "window_uniformity_percent": 70.78066573505944
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -1298,7 +1256,6 @@
       "elapsed_s": 162.92573833372444,
       "experiment_label": "K=1 N=7 axisymmetric",
       "id": "candidate-006",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15504,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -1316,12 +1273,6 @@
         "maximum_delta_points": 1.6378891125771275,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 79.38194334816154,
-        "coverage_smoothness_percent": 76.17222736361379,
-        "waist_stability_percent": 62.65211078613778,
-        "window_uniformity_percent": 70.86960383855887
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -1489,7 +1440,6 @@
       "elapsed_s": 164.85819916566834,
       "experiment_label": "K=1 N=8 axisymmetric",
       "id": "candidate-007",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15632,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -1507,12 +1457,6 @@
         "maximum_delta_points": 1.6657618709503055,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 79.31419448927029,
-        "coverage_smoothness_percent": 76.55721697123884,
-        "waist_stability_percent": 62.48810981912521,
-        "window_uniformity_percent": 70.85334714878005
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -1680,7 +1624,6 @@
       "elapsed_s": 163.06072437530383,
       "experiment_label": "K=1 N=9 axisymmetric",
       "id": "candidate-008",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15464,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -1698,12 +1641,6 @@
         "maximum_delta_points": 1.6676015861258406,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 79.25109188348357,
-        "coverage_smoothness_percent": 76.81704619047034,
-        "waist_stability_percent": 62.33957362691892,
-        "window_uniformity_percent": 70.78207356561175
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -1871,7 +1808,6 @@
       "elapsed_s": 163.62381004169583,
       "experiment_label": "K=1 N=10 axisymmetric",
       "id": "candidate-009",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15554,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -1889,12 +1825,6 @@
         "maximum_delta_points": 1.6781849980742152,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 79.18973928564589,
-        "coverage_smoothness_percent": 77.04238623295569,
-        "waist_stability_percent": 62.21203718030988,
-        "window_uniformity_percent": 70.69086989396348
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -2062,7 +1992,6 @@
       "elapsed_s": 163.50954316696152,
       "experiment_label": "K=2 N=2 axisymmetric",
       "id": "candidate-010",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15426,
       "nearest_candidate_distance": 0.3535533905932738,
       "pareto": false,
@@ -2080,12 +2009,6 @@
         "maximum_delta_points": 0.6727622545078873,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 81.19768818932506,
-        "coverage_smoothness_percent": 72.00695939760244,
-        "waist_stability_percent": 66.00512132259915,
-        "window_uniformity_percent": 70.93220146905357
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -2253,7 +2176,6 @@
       "elapsed_s": 162.29272658377886,
       "experiment_label": "K=2 N=3 axisymmetric",
       "id": "candidate-011",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15506,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -2271,12 +2193,6 @@
         "maximum_delta_points": 1.152455200519512,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 83.11999738030318,
-        "coverage_smoothness_percent": 78.71233519961584,
-        "waist_stability_percent": 67.05569571085832,
-        "window_uniformity_percent": 75.93002421542043
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -2444,7 +2360,6 @@
       "elapsed_s": 161.9555392502807,
       "experiment_label": "K=2 N=4 axisymmetric",
       "id": "candidate-012",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15354,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -2462,12 +2377,6 @@
         "maximum_delta_points": 1.399802941157219,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 83.66468007842056,
-        "coverage_smoothness_percent": 81.1634881341422,
-        "waist_stability_percent": 67.46523225662744,
-        "window_uniformity_percent": 78.14238905040685
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -2635,7 +2544,6 @@
       "elapsed_s": 165.01976216724142,
       "experiment_label": "K=2 N=5 axisymmetric",
       "id": "candidate-013",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15424,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -2653,12 +2561,6 @@
         "maximum_delta_points": 1.522374191510579,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 83.80338532462106,
-        "coverage_smoothness_percent": 82.48379844241424,
-        "waist_stability_percent": 67.60522140474647,
-        "window_uniformity_percent": 79.18525210268211
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -2826,7 +2728,6 @@
       "elapsed_s": 169.76388704124838,
       "experiment_label": "K=2 N=6 axisymmetric",
       "id": "candidate-014",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15568,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -2844,12 +2745,6 @@
         "maximum_delta_points": 1.6035479446005354,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 83.78093324436122,
-        "coverage_smoothness_percent": 83.28815634131288,
-        "waist_stability_percent": 67.60086430775223,
-        "window_uniformity_percent": 79.65205282675525
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3017,7 +2912,6 @@
       "elapsed_s": 163.58224979089573,
       "experiment_label": "K=2 N=7 axisymmetric",
       "id": "candidate-015",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15318,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -3035,12 +2929,6 @@
         "maximum_delta_points": 1.658769551584328,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 83.70613185181945,
-        "coverage_smoothness_percent": 83.83448635102373,
-        "waist_stability_percent": 67.54534988674982,
-        "window_uniformity_percent": 79.83393203751525
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3208,7 +3096,6 @@
       "elapsed_s": 164.8594638747163,
       "experiment_label": "K=2 N=8 axisymmetric",
       "id": "candidate-016",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15454,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -3226,12 +3113,6 @@
         "maximum_delta_points": 1.688720736524317,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 83.60450333919523,
-        "coverage_smoothness_percent": 84.18785888398763,
-        "waist_stability_percent": 67.4528998019909,
-        "window_uniformity_percent": 79.84357350359136
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3399,7 +3280,6 @@
       "elapsed_s": 159.45929041691124,
       "experiment_label": "K=2 N=9 axisymmetric",
       "id": "candidate-017",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15352,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -3417,12 +3297,6 @@
         "maximum_delta_points": 1.6851301207854021,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 83.49628253938563,
-        "coverage_smoothness_percent": 84.44189350578019,
-        "waist_stability_percent": 67.34504482228505,
-        "window_uniformity_percent": 79.76265129188198
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3590,7 +3464,6 @@
       "elapsed_s": 158.243360332679,
       "experiment_label": "K=2 N=10 axisymmetric",
       "id": "candidate-018",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15400,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -3608,12 +3481,6 @@
         "maximum_delta_points": 1.6723841558558092,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 83.38930306697182,
-        "coverage_smoothness_percent": 84.62813456568934,
-        "waist_stability_percent": 67.23354015092988,
-        "window_uniformity_percent": 79.64029273342103
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3781,7 +3648,6 @@
       "elapsed_s": 160.68630587495863,
       "experiment_label": "K=3 N=2 axisymmetric",
       "id": "candidate-019",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15138,
       "nearest_candidate_distance": 0.3535533905932738,
       "pareto": false,
@@ -3799,12 +3665,6 @@
         "maximum_delta_points": 1.000732443373721,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 83.92781988269464,
-        "coverage_smoothness_percent": 76.68434351260746,
-        "waist_stability_percent": 68.69890321091769,
-        "window_uniformity_percent": 75.12523568650222
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3972,7 +3832,6 @@
       "elapsed_s": 161.19658150011674,
       "experiment_label": "K=3 N=3 axisymmetric",
       "id": "candidate-020",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15352,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -3990,12 +3849,6 @@
         "maximum_delta_points": 1.346018823411626,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 85.9915126121445,
-        "coverage_smoothness_percent": 81.93616236617596,
-        "waist_stability_percent": 70.56692513600285,
-        "window_uniformity_percent": 80.85928810767805
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -4163,7 +4016,6 @@
       "elapsed_s": 165.52739708404988,
       "experiment_label": "K=3 N=4 axisymmetric",
       "id": "candidate-021",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15600,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -4181,12 +4033,6 @@
         "maximum_delta_points": 1.4172228911273237,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 86.692953547814,
-        "coverage_smoothness_percent": 84.15311451093243,
-        "waist_stability_percent": 71.46060402231153,
-        "window_uniformity_percent": 83.57508813803952
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -4354,7 +4200,6 @@
       "elapsed_s": 165.13293987512589,
       "experiment_label": "K=3 N=6 axisymmetric",
       "id": "candidate-022",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15402,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -4372,12 +4217,6 @@
         "maximum_delta_points": 1.5701545690126721,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 87.03120015196286,
-        "coverage_smoothness_percent": 85.96916983864678,
-        "waist_stability_percent": 72.3488760744975,
-        "window_uniformity_percent": 85.64792360433023
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -4545,7 +4384,6 @@
       "elapsed_s": 163.62078629201278,
       "experiment_label": "K=3 N=7 axisymmetric",
       "id": "candidate-023",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15402,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -4563,12 +4401,6 @@
         "maximum_delta_points": 1.631877277230771,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 86.99188713715398,
-        "coverage_smoothness_percent": 86.32754592531408,
-        "waist_stability_percent": 72.5142661201401,
-        "window_uniformity_percent": 85.88454183496611
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -4736,7 +4568,6 @@
       "elapsed_s": 165.13966470817104,
       "experiment_label": "K=3 N=8 axisymmetric",
       "id": "candidate-024",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15522,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -4754,12 +4585,6 @@
         "maximum_delta_points": 1.6689682508969383,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 86.90359837311844,
-        "coverage_smoothness_percent": 86.48428515570811,
-        "waist_stability_percent": 72.63565378575348,
-        "window_uniformity_percent": 85.87692691902531
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -4927,7 +4752,6 @@
       "elapsed_s": 164.12350466568023,
       "experiment_label": "K=3 N=9 axisymmetric",
       "id": "candidate-025",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15366,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -4945,12 +4769,6 @@
         "maximum_delta_points": 1.689963561852295,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 86.78137961238643,
-        "coverage_smoothness_percent": 86.55655627392824,
-        "waist_stability_percent": 72.65978595201241,
-        "window_uniformity_percent": 85.72170487619078
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -5118,7 +4936,6 @@
       "elapsed_s": 164.24447050038725,
       "experiment_label": "K=3 N=10 axisymmetric",
       "id": "candidate-026",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15402,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -5136,12 +4953,6 @@
         "maximum_delta_points": 1.69108418976667,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 86.66274252344755,
-        "coverage_smoothness_percent": 86.53629184004944,
-        "waist_stability_percent": 72.6951238125987,
-        "window_uniformity_percent": 85.4937675920454
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -5309,7 +5120,6 @@
       "elapsed_s": 157.78109316714108,
       "experiment_label": "K=4 N=2 axisymmetric",
       "id": "candidate-027",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15188,
       "nearest_candidate_distance": 0.3535533905932738,
       "pareto": false,
@@ -5327,12 +5137,6 @@
         "maximum_delta_points": 1.4874428876699426,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 85.57263508283869,
-        "coverage_smoothness_percent": 78.38565024711252,
-        "waist_stability_percent": 70.88318048441964,
-        "window_uniformity_percent": 77.95426573922235
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -5500,7 +5304,6 @@
       "elapsed_s": 156.17829987499863,
       "experiment_label": "K=4 N=3 axisymmetric",
       "id": "candidate-028",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15150,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -5518,12 +5321,6 @@
         "maximum_delta_points": 1.428802716750127,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 87.73092349452325,
-        "coverage_smoothness_percent": 83.07225274483403,
-        "waist_stability_percent": 73.58186088655192,
-        "window_uniformity_percent": 84.01787393622939
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -5691,7 +5488,6 @@
       "elapsed_s": 155.87978858267888,
       "experiment_label": "K=4 N=4 axisymmetric",
       "id": "candidate-029",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15072,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -5709,12 +5505,6 @@
         "maximum_delta_points": 1.4443219561927378,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.5287445563682,
-        "coverage_smoothness_percent": 85.02338451981818,
-        "waist_stability_percent": 75.04251420993562,
-        "window_uniformity_percent": 86.99233914515
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -5882,7 +5672,6 @@
       "elapsed_s": 157.51376825012267,
       "experiment_label": "K=4 N=5 axisymmetric",
       "id": "candidate-030",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15164,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -5900,12 +5689,6 @@
         "maximum_delta_points": 1.500416633621171,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.87881755796649,
-        "coverage_smoothness_percent": 85.99053921860201,
-        "waist_stability_percent": 76.03938931263049,
-        "window_uniformity_percent": 88.64755600361332
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -6073,7 +5856,6 @@
       "elapsed_s": 156.13748995773494,
       "experiment_label": "K=4 N=6 axisymmetric",
       "id": "candidate-031",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15238,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -6091,12 +5873,6 @@
         "maximum_delta_points": 1.5634535963316694,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.96488830834393,
-        "coverage_smoothness_percent": 86.53098246970764,
-        "waist_stability_percent": 76.6567019750085,
-        "window_uniformity_percent": 89.47680787817828
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -6264,7 +6040,6 @@
       "elapsed_s": 152.21284187491983,
       "experiment_label": "K=4 N=7 axisymmetric",
       "id": "candidate-032",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15100,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -6282,12 +6057,6 @@
         "maximum_delta_points": 1.621235768787983,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.9870337801112,
-        "coverage_smoothness_percent": 86.80921574376075,
-        "waist_stability_percent": 77.12966971719055,
-        "window_uniformity_percent": 89.79322629564871
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -6455,7 +6224,6 @@
       "elapsed_s": 154.95665870793164,
       "experiment_label": "K=4 N=8 axisymmetric",
       "id": "candidate-033",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15124,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -6473,12 +6241,6 @@
         "maximum_delta_points": 1.6510882815216519,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.92505857050944,
-        "coverage_smoothness_percent": 86.93752703214722,
-        "waist_stability_percent": 77.45520971489643,
-        "window_uniformity_percent": 89.78143242637364
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -6646,7 +6408,6 @@
       "elapsed_s": 154.35537704220042,
       "experiment_label": "K=4 N=9 axisymmetric",
       "id": "candidate-034",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15160,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -6664,12 +6425,6 @@
         "maximum_delta_points": 1.685613608702269,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.84650191441106,
-        "coverage_smoothness_percent": 86.95417250404238,
-        "waist_stability_percent": 77.71406648108263,
-        "window_uniformity_percent": 89.56948962724479
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -6837,7 +6592,6 @@
       "elapsed_s": 154.67963075032458,
       "experiment_label": "K=4 N=10 axisymmetric",
       "id": "candidate-035",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15122,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -6855,12 +6609,6 @@
         "maximum_delta_points": 1.7152863021048148,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.7371688238098,
-        "coverage_smoothness_percent": 86.92031672659571,
-        "waist_stability_percent": 77.89494470872833,
-        "window_uniformity_percent": 89.26152917940473
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7028,7 +6776,6 @@
       "elapsed_s": 155.13472183374688,
       "experiment_label": "K=5 N=2 axisymmetric",
       "id": "candidate-036",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15084,
       "nearest_candidate_distance": 0.3535533905932738,
       "pareto": false,
@@ -7046,12 +6793,6 @@
         "maximum_delta_points": 1.6598608033964553,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 86.56016693317473,
-        "coverage_smoothness_percent": 79.11278971199782,
-        "waist_stability_percent": 72.70662668773768,
-        "window_uniformity_percent": 79.94428705792593
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7219,7 +6960,6 @@
       "elapsed_s": 155.45279791671783,
       "experiment_label": "K=5 N=3 axisymmetric",
       "id": "candidate-037",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15128,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -7237,12 +6977,6 @@
         "maximum_delta_points": 1.5924656478768355,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.5947997596159,
-        "coverage_smoothness_percent": 83.2121132468805,
-        "waist_stability_percent": 76.22173287025386,
-        "window_uniformity_percent": 85.92203689026367
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7410,7 +7144,6 @@
       "elapsed_s": 158.25998299987987,
       "experiment_label": "K=5 N=4 axisymmetric",
       "id": "candidate-038",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15270,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -7428,12 +7161,6 @@
         "maximum_delta_points": 1.6433965219523827,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 89.183313763868,
-        "coverage_smoothness_percent": 84.72211939841299,
-        "waist_stability_percent": 78.26636067559102,
-        "window_uniformity_percent": 88.84888932521827
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7601,7 +7328,6 @@
       "elapsed_s": 154.20887770783156,
       "experiment_label": "K=5 N=5 axisymmetric",
       "id": "candidate-039",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15134,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": true,
@@ -7619,12 +7345,6 @@
         "maximum_delta_points": 1.704418674564053,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 89.34138135238182,
-        "coverage_smoothness_percent": 85.48981672001253,
-        "waist_stability_percent": 79.61331495360332,
-        "window_uniformity_percent": 90.45442865678774
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7792,7 +7512,6 @@
       "elapsed_s": 155.5245062499307,
       "experiment_label": "K=5 N=6 axisymmetric",
       "id": "candidate-040",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15198,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": true,
@@ -7810,12 +7529,6 @@
         "maximum_delta_points": 1.7464034016005314,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 89.33852458272652,
-        "coverage_smoothness_percent": 85.98107104322555,
-        "waist_stability_percent": 80.53404572793431,
-        "window_uniformity_percent": 91.28615858700641
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7983,7 +7696,6 @@
       "elapsed_s": 155.62775970902294,
       "experiment_label": "K=5 N=7 axisymmetric",
       "id": "candidate-041",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15232,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": true,
@@ -8001,12 +7713,6 @@
         "maximum_delta_points": 1.785412834298981,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 89.28515074820349,
-        "coverage_smoothness_percent": 86.31346847081672,
-        "waist_stability_percent": 81.25523955596859,
-        "window_uniformity_percent": 91.60027654392005
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8174,7 +7880,6 @@
       "elapsed_s": 153.68024345766753,
       "experiment_label": "K=5 N=8 axisymmetric",
       "id": "candidate-042",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15134,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": true,
@@ -8192,12 +7897,6 @@
         "maximum_delta_points": 1.8120990639149852,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 89.20064416080082,
-        "coverage_smoothness_percent": 86.55168496600847,
-        "waist_stability_percent": 81.80715938240424,
-        "window_uniformity_percent": 91.59341612005483
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8365,7 +8064,6 @@
       "elapsed_s": 157.94962304225191,
       "experiment_label": "K=5 N=9 axisymmetric",
       "id": "candidate-043",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15238,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": true,
@@ -8383,12 +8081,6 @@
         "maximum_delta_points": 1.8293342031680737,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 89.10941000268205,
-        "coverage_smoothness_percent": 86.72616779169695,
-        "waist_stability_percent": 82.26314074185937,
-        "window_uniformity_percent": 91.36545186014145
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8556,7 +8248,6 @@
       "elapsed_s": 157.1625917921774,
       "experiment_label": "K=5 N=10 axisymmetric",
       "id": "candidate-044",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15250,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": true,
@@ -8574,12 +8265,6 @@
         "maximum_delta_points": 1.8386382114653799,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.99997935088173,
-        "coverage_smoothness_percent": 86.87633610287038,
-        "waist_stability_percent": 82.62099333822079,
-        "window_uniformity_percent": 91.03347463258667
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8747,7 +8432,6 @@
       "elapsed_s": 157.97000845801085,
       "experiment_label": "K=4 N=15 axisymmetric",
       "id": "candidate-045",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15112,
       "nearest_candidate_distance": 0.3074377309506728,
       "pareto": false,
@@ -8765,12 +8449,6 @@
         "maximum_delta_points": 1.7330377104734254,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.18098759832414,
-        "coverage_smoothness_percent": 86.16628100862417,
-        "waist_stability_percent": 78.35593287992019,
-        "window_uniformity_percent": 87.40546682642142
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8938,7 +8616,6 @@
       "elapsed_s": 158.8822553330101,
       "experiment_label": "K=4 N=20 axisymmetric",
       "id": "candidate-046",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15336,
       "nearest_candidate_distance": 0.30743773095067295,
       "pareto": false,
@@ -8956,12 +8633,6 @@
         "maximum_delta_points": 1.6755900268410215,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 87.69228375689868,
-        "coverage_smoothness_percent": 85.24504841598518,
-        "waist_stability_percent": 78.44260467872651,
-        "window_uniformity_percent": 85.91816003196638
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -9129,7 +8800,6 @@
       "elapsed_s": 153.79978666687384,
       "experiment_label": "K=4 N=25 axisymmetric",
       "id": "candidate-047",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15082,
       "nearest_candidate_distance": 0.3074377309506728,
       "pareto": false,
@@ -9147,12 +8817,6 @@
         "maximum_delta_points": 1.6174908310074443,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 87.3168171945218,
-        "coverage_smoothness_percent": 84.40053542912327,
-        "waist_stability_percent": 78.40280439612559,
-        "window_uniformity_percent": 84.86760737828314
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -9320,7 +8984,6 @@
       "elapsed_s": 154.11174841690809,
       "experiment_label": "K=4.5 N=6 axisymmetric",
       "id": "candidate-048",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15196,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": true,
@@ -9338,12 +9001,6 @@
         "maximum_delta_points": 1.6407464753317527,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 89.36455865981588,
-        "coverage_smoothness_percent": 86.35595089504098,
-        "waist_stability_percent": 78.65679327689634,
-        "window_uniformity_percent": 90.6241742254339
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -9511,7 +9168,6 @@
       "elapsed_s": 154.63367608422413,
       "experiment_label": "K=4.5 N=10 axisymmetric",
       "id": "candidate-049",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15166,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": true,
@@ -9529,12 +9185,6 @@
         "maximum_delta_points": 1.7474660001994522,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 89.15000028482358,
-        "coverage_smoothness_percent": 87.01488802804872,
-        "waist_stability_percent": 80.32485192923278,
-        "window_uniformity_percent": 90.40449245222356
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -9702,7 +9352,6 @@
       "elapsed_s": 159.2205369998701,
       "experiment_label": "K=4.5 N=15 axisymmetric",
       "id": "candidate-050",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15266,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -9720,12 +9369,6 @@
         "maximum_delta_points": 1.8032363928835764,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.6404852798483,
-        "coverage_smoothness_percent": 86.69305151065043,
-        "waist_stability_percent": 81.10769131303779,
-        "window_uniformity_percent": 88.39579024367798
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -9893,7 +9536,6 @@
       "elapsed_s": 159.09177483338863,
       "experiment_label": "K=4.5 N=20 axisymmetric",
       "id": "candidate-051",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15266,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -9911,12 +9553,6 @@
         "maximum_delta_points": 1.7959814499864848,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.18685176840326,
-        "coverage_smoothness_percent": 86.10221494082701,
-        "waist_stability_percent": 81.41127720450258,
-        "window_uniformity_percent": 86.82632773827714
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -10084,7 +9720,6 @@
       "elapsed_s": 156.3746038749814,
       "experiment_label": "K=4.5 N=25 axisymmetric",
       "id": "candidate-052",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15278,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -10102,12 +9737,6 @@
         "maximum_delta_points": 1.78887563559978,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 87.81247913875819,
-        "coverage_smoothness_percent": 85.4635782309282,
-        "waist_stability_percent": 81.5144070854379,
-        "window_uniformity_percent": 85.67303039973775
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -10275,7 +9904,6 @@
       "elapsed_s": 156.8122455831617,
       "experiment_label": "K=5 N=15 axisymmetric",
       "id": "candidate-053",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15198,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": true,
@@ -10293,12 +9921,6 @@
         "maximum_delta_points": 1.857420765319489,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.48111686623318,
-        "coverage_smoothness_percent": 87.07904886221665,
-        "waist_stability_percent": 81.91611694473292,
-        "window_uniformity_percent": 88.99570549706024
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -10466,7 +10088,6 @@
       "elapsed_s": 154.30436441628262,
       "experiment_label": "K=5 N=20 axisymmetric",
       "id": "candidate-054",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15168,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -10484,12 +10105,6 @@
         "maximum_delta_points": 1.8541646588336391,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 88.03377295104546,
-        "coverage_smoothness_percent": 86.94812206996701,
-        "waist_stability_percent": 80.9482219159902,
-        "window_uniformity_percent": 87.36731559040042
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -10657,7 +10272,6 @@
       "elapsed_s": 152.81296837469563,
       "experiment_label": "K=5 N=25 axisymmetric",
       "id": "candidate-055",
-      "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15060,
       "nearest_candidate_distance": 0.1767766952966369,
       "pareto": false,
@@ -10675,12 +10289,6 @@
         "maximum_delta_points": 1.8237009628509497,
         "status": "stable",
         "threshold_points": 2.0
-      },
-      "selection_scores": {
-        "coverage_match_percent": 87.68073393629305,
-        "coverage_smoothness_percent": 86.66871745300617,
-        "waist_stability_percent": 80.35697218986965,
-        "window_uniformity_percent": 86.21542500980718
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",

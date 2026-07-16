@@ -11,10 +11,8 @@ from app.tools.run_bem_search import (
     VARIABLES,
     candidate_distance, candidate_trait, candidate_traits, geometry_feasibility,
     geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
-    length_cost_percent, load_search,
-    materialize_candidate, pareto_indices, propose_vector,
-    sampling_stability,
-    run_search, seed_values, update_selection_scores, write_report,
+    load_search, materialize_candidate, pareto_indices, propose_vector,
+    sampling_stability, run_search, seed_values, write_report,
 )
 
 
@@ -105,8 +103,6 @@ class BEMSearchTests(unittest.TestCase):
                                 "coverage_smoothness_percent": score,
                                 "waist_stability_percent": score,
                                 "window_uniformity_percent": score}}})
-            from app.tools.run_bem_search import update_selection_scores
-            update_selection_scores(records[-1], search)
         effects = learned_lever_effects(search, records)
         self.assertGreater(effects["length_mm"]["coverage_match_percent"], 0)
 
@@ -137,12 +133,6 @@ class BEMSearchTests(unittest.TestCase):
                    record((70, 70, 70, 70), 100),
                    record((95, 95, 95, 95), 90)]
         self.assertEqual(pareto_indices(records), {2})
-
-    def test_length_cost_is_steep_beyond_ten_percent(self) -> None:
-        self.assertAlmostEqual(length_cost_percent({"length_mm": 300}, 300), 0)
-        self.assertAlmostEqual(length_cost_percent({"length_mm": 255}, 300), 0)
-        self.assertAlmostEqual(length_cost_percent({"length_mm": 330}, 300), 4)
-        self.assertAlmostEqual(length_cost_percent({"length_mm": 345}, 300), 20)
 
     def test_candidate_distance_uses_normalized_authored_parameters(self) -> None:
         search, _, seed = load_search(SEARCH)
@@ -227,7 +217,6 @@ class BEMSearchTests(unittest.TestCase):
                     "waist_stability_percent": score,
                     "window_uniformity_percent": score}}
                 record["sampling_stability"] = {"status": "stable"}
-                update_selection_scores(record, state["search"])
             state["status"] = "complete"
             highlighted = write_report(Path(temp), state).read_text()
             self.assertEqual(highlighted.count("class='best'"), 4)
@@ -236,6 +225,7 @@ class BEMSearchTests(unittest.TestCase):
             self.assertIn("Coverage Smoothness", highlighted)
             self.assertIn("Waist Stability", highlighted)
             self.assertIn("Window Uniformity", highlighted)
+            self.assertNotIn("Added-depth cost", highlighted)
 
 
 if __name__ == "__main__":
