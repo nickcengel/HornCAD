@@ -110,10 +110,10 @@ class InteractiveResultsTests(unittest.TestCase):
         result = coverage_diagnostics(run)
         self.assertEqual(result["status"], "available")
         self.assertEqual(result["passband_lower_hz"], 500.0)
-        self.assertGreater(result["combined"]["smoothness_percent"], 99.0)
-        self.assertAlmostEqual(result["horizontal"]["non_narrowing_percent"], 80.0,
+        self.assertGreater(result["combined"]["pattern_stability_percent"], 99.0)
+        self.assertAlmostEqual(result["horizontal"]["hf_retention_percent"], 80.0,
                                delta=0.2)
-        self.assertAlmostEqual(result["horizontal"]["coverage_match_percent"],
+        self.assertAlmostEqual(result["horizontal"]["pattern_fit_percent"],
                                88.4, delta=0.5)
         self.assertAlmostEqual(result["horizontal"]["narrowing_percent"], 20.0,
                                delta=0.2)
@@ -130,7 +130,7 @@ class InteractiveResultsTests(unittest.TestCase):
         result = coverage_diagnostics(run, frequencies, fixed_band=True)
         self.assertEqual(result["status"], "available")
         self.assertEqual(result["band_kind"], "fixed optimization")
-        self.assertLess(result["combined"]["coverage_match_percent"], 20.0)
+        self.assertLess(result["combined"]["pattern_fit_percent"], 20.0)
 
     def test_comparison_diagnostics_use_one_grid_and_common_band(self) -> None:
         frequencies_a = 500.0 * 2 ** (np.arange(25) / 12)

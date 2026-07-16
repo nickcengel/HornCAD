@@ -229,11 +229,11 @@ def coverage_diagnostics(
         narrowing = 100 * float((values[0] - values[-1]) / values[0])
         plane_results[key] = {
             "coverage_error_percent": coverage_error,
-            "coverage_match_percent": max(0.0, 100.0 - coverage_error),
-            "smoothness_percent": max(0.0, 100.0 * (1.0 - ripple_rms / target)),
+            "pattern_fit_percent": max(0.0, 100.0 - coverage_error),
+            "pattern_stability_percent": max(0.0, 100.0 * (1.0 - ripple_rms / target)),
             "trend_ripple_rms_deg": ripple_rms,
             "narrowing_percent": narrowing,
-            "non_narrowing_percent": min(100.0, 100.0 * values[-1] / values[0]),
+            "hf_retention_percent": min(100.0, 100.0 * values[-1] / values[0]),
             "lower_half_angle_deg": float(values[0]),
             "upper_half_angle_deg": float(values[-1]),
         }
@@ -248,15 +248,15 @@ def coverage_diagnostics(
         "combined": {
             "coverage_error_percent": float(np.sqrt(np.mean([
                 plane_results[key]["coverage_error_percent"] ** 2 for key in plane_results]))),
-            "coverage_match_percent": max(0.0, 100.0 - float(np.sqrt(np.mean([
+            "pattern_fit_percent": max(0.0, 100.0 - float(np.sqrt(np.mean([
                 plane_results[key]["coverage_error_percent"] ** 2
                 for key in plane_results])))),
-            "smoothness_percent": float(np.mean([
-                plane_results[key]["smoothness_percent"] for key in plane_results])),
+            "pattern_stability_percent": float(np.mean([
+                plane_results[key]["pattern_stability_percent"] for key in plane_results])),
             "narrowing_percent": float(np.mean([
                 plane_results[key]["narrowing_percent"] for key in plane_results])),
-            "non_narrowing_percent": float(np.mean([
-                plane_results[key]["non_narrowing_percent"] for key in plane_results])),
+            "hf_retention_percent": float(np.mean([
+                plane_results[key]["hf_retention_percent"] for key in plane_results])),
         },
     }
 
@@ -335,9 +335,9 @@ def _parameter_table(runs: list[dict[str, Any]]) -> str:
     return f"<table>{header}{rows}</table>"
 
 
-DIAGNOSTIC_ROWS = (("Coverage match", "coverage_match_percent"),
-                   ("Smoothness", "smoothness_percent"),
-                   ("Non-narrowing", "non_narrowing_percent"))
+DIAGNOSTIC_ROWS = (("Pattern Fit", "pattern_fit_percent"),
+                   ("Pattern Stability", "pattern_stability_percent"),
+                   ("HF Retention", "hf_retention_percent"))
 
 
 def _score_cell(value: float) -> str:
@@ -412,7 +412,7 @@ th{{background:#f1f3f7;position:sticky;top:0}} .hint{{color:#566176;margin:0 0 1
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Coverage diagnostics</h2>
 {_diagnostic_tables(runs, diagnostics, comparison)}
-<p class='hint'>All three diagnostics are percentages where 100% is ideal. Coverage match is 100% minus the log-frequency-weighted RMS percentage error from the intended −6 dB half-angle. Smoothness is 100% minus RMS deviation from the best-fit straight line versus log frequency, normalized by intended coverage. Non-narrowing is the upper-bound half-angle divided by the lower-bound half-angle, capped at 100%. {band_explanation}</p>
+<p class='hint'>All three diagnostics are percentages where 100% is ideal. Pattern Fit is 100% minus the log-frequency-weighted RMS percentage error from the intended −6 dB half-angle. Pattern Stability is 100% minus RMS deviation from the best-fit straight line versus log frequency, normalized by intended coverage. HF Retention is the upper-bound half-angle divided by the lower-bound half-angle, capped at 100%. {band_explanation}</p>
 </section></main></body></html>"""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(document)

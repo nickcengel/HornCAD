@@ -58,11 +58,11 @@ impedance, `ρc/Sₜ`; throat reactance is not plotted.
 The report also writes `coverage_diagnostics.json` and displays three coverage
 diagnostics for horizontal, vertical, and combined behavior:
 
-- **Coverage match** is 100% minus the log-frequency-weighted RMS percentage
+- **Pattern Fit** is 100% minus the log-frequency-weighted RMS percentage
   error from the intended −6 dB half-angle.
-- **Smoothness** is 100% minus the RMS deviation from a best-fit straight line
+- **Pattern Stability** is 100% minus the RMS deviation from a best-fit straight line
   versus log frequency, normalized by intended coverage.
-- **Non-narrowing** is the upper-passband half-angle divided by the
+- **HF Retention** is the upper-passband half-angle divided by the
   lower-passband half-angle, capped at 100% so widening is not rewarded.
 
 All three headline diagnostics use 100% for ideal and lower values for worse

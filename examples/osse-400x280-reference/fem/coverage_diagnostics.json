@@ -7,30 +7,30 @@
     "confirmation_octaves": 0.3333333333333333,
     "horizontal": {
       "coverage_error_percent": 26.076432898503533,
-      "coverage_match_percent": 73.92356710149647,
-      "smoothness_percent": 95.30131624172412,
+      "pattern_fit_percent": 73.92356710149647,
+      "pattern_stability_percent": 95.30131624172412,
       "trend_ripple_rms_deg": 2.34934187913794,
       "narrowing_percent": 24.502640716113326,
-      "non_narrowing_percent": 75.49735928388668,
+      "hf_retention_percent": 75.49735928388668,
       "lower_half_angle_deg": 46.70878408183335,
       "upper_half_angle_deg": 35.26389853539659
     },
     "vertical": {
       "coverage_error_percent": 38.75444206850615,
-      "coverage_match_percent": 61.24555793149385,
-      "smoothness_percent": 82.50443652470267,
+      "pattern_fit_percent": 61.24555793149385,
+      "pattern_stability_percent": 82.50443652470267,
       "trend_ripple_rms_deg": 6.123447216354064,
       "narrowing_percent": 69.31808625248993,
-      "non_narrowing_percent": 30.681913747510077,
+      "hf_retention_percent": 30.681913747510077,
       "lower_half_angle_deg": 76.9632877280634,
       "upper_half_angle_deg": 23.61380955797242
     },
     "combined": {
       "coverage_error_percent": 33.029434847960665,
-      "coverage_match_percent": 66.97056515203934,
-      "smoothness_percent": 88.9028763832134,
+      "pattern_fit_percent": 66.97056515203934,
+      "pattern_stability_percent": 88.9028763832134,
       "narrowing_percent": 46.91036348430163,
-      "non_narrowing_percent": 53.08963651569838
+      "hf_retention_percent": 53.08963651569838
     }
   }
 }

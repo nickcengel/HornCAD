@@ -35,8 +35,8 @@ except ImportError:
 
 VARIABLES = ("length_mm", "extension_mm", "osse_coverage_h_deg",
              "osse_coverage_v_deg", "k_h", "k_v")
-OBJECTIVES = ("coverage_match_percent", "smoothness_percent",
-              "non_narrowing_percent")
+OBJECTIVES = ("pattern_fit_percent", "pattern_stability_percent",
+              "hf_retention_percent")
 PRESET_BUDGETS = {"quick": 16, "normal": 36, "thorough": 60}
 DEFAULT_MINIMUM_CANDIDATE_DISTANCE = 0.08
 DEFAULT_INFERIOR_PROBABILITY = 0.97
@@ -547,9 +547,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td><a href='{candidate_dir}/project.yaml'>{record['id']}</a>"
             f"{stl_link}{report_link}</td>",
             f"<td>{html.escape(status)}</td>",
-            f"<td>{diagnostic.get('coverage_match_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
-            f"<td>{diagnostic.get('smoothness_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
-            f"<td>{diagnostic.get('non_narrowing_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
+            f"<td>{diagnostic.get('pattern_fit_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
+            f"<td>{diagnostic.get('pattern_stability_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
+            f"<td>{diagnostic.get('hf_retention_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
             f"<td>{record.get('crossover_loading_percent', float('nan')):.1f}%</td>" if "crossover_loading_percent" in record else "<td>—</td>",
             f"<td>{record.get('length_cost_percent', 0):.1f}%</td>",
             f"<td>{html.escape(stability_text)}</td>",
@@ -581,7 +581,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<tr><td>{html.escape(VARIABLE_LABELS[name].title())}</td>" +
             "".join(f"<td>{values[key]:+.1f}</td>" for key in OBJECTIVES) +
             f"<td>{values['crossover_loading_percent']:+.1f}</td></tr>")
-    effects_section = ("<section><h2>Learned lever effects</h2><p>Estimated diagnostic-point change for a +10% step across each configured parameter range. These are local evidence from this search, not universal design rules.</p><table><tr><th>Lever</th><th>Coverage match</th><th>Smoothness</th><th>Non-narrowing</th><th>Crossover loading</th></tr>" +
+    effects_section = ("<section><h2>Learned lever effects</h2><p>Estimated diagnostic-point change for a +10% step across each configured parameter range. These are local evidence from this search, not universal design rules.</p><table><tr><th>Lever</th><th>Pattern Fit</th><th>Pattern Stability</th><th>HF Retention</th><th>Crossover loading</th></tr>" +
                        "".join(effect_rows) + "</table></section>" if effect_rows else
                        "<section><h2>Learned lever effects</h2><p>Waiting for the seed and sensitivity probes to complete.</p></section>")
     refresh = "<meta http-equiv='refresh' content='10'>" if state["status"] == "running" else ""
@@ -604,8 +604,8 @@ th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}th{{backgrou
 <section><h2>Search range</h2><table><tr><th>Parameter</th><th>Configured range</th><th>Seed</th><th>Retained candidates</th></tr>
 {''.join(range_rows)}</table><p><strong>Fixed termination exponent:</strong> N H/V = {fixed_n_h:g} / {fixed_n_v:g}. N is not varied in this search.</p></section>
 {effects_section}
-<section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Coverage match</th><th>Smoothness</th>
-<th>Non-narrowing</th><th>Crossover loading</th><th>Length cost</th><th>Sampling stability</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
+<section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Pattern Fit</th><th>Pattern Stability</th>
+<th>HF Retention</th><th>Crossover loading</th><th>Length cost</th><th>Sampling stability</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
 <section><p>100% is best for all physical diagnostics. Crossover loading is feasible at 100% and receives no additional credit above the 0.7 threshold. Pareto selection subtracts the displayed length cost from each coverage objective: the cost reaches 4 points at ±10% and rises steeply to 20 points at ±15%. After K repair, proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the structured sensitivity round, proposals modeled as worse than the seed on all three objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
 </main></body></html>"""
     path = output_dir / "search_report.html"

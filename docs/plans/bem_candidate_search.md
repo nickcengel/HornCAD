@@ -129,9 +129,9 @@ endpoint frequencies.
 
 The search maximizes the existing three 0-100% diagnostics:
 
-- coverage match;
-- smoothness; and
-- non-narrowing.
+- Pattern Fit;
+- Pattern Stability; and
+- HF Retention.
 
 All are oriented so 100% is ideal. Horizontal, vertical, and combined values
 remain available. The initial search should use the combined values as its
@@ -200,7 +200,7 @@ objectives and feasibility constraints. The optimizer should learn changes
 relative to the user's seed, not treat every horn as an unrelated sample. Its
 first evaluations deliberately perturb each movable lever up and down around
 the seed. This makes the initial expense teach which parameters control coverage
-match, smoothness, non-narrowing, and crossover loading.
+Pattern Fit, Pattern Stability, HF Retention, and crossover loading.
 
 The implemented strategy is constrained multi-objective Bayesian optimization:
 
@@ -237,8 +237,8 @@ Training uses 6 elements per wavelength and 12 points per octave for every
 candidate. Frequency sampling and spatial mesh density are separate convergence
 questions: 6 EPW does not protect a diagnostic from missing a narrow feature
 between solved frequencies. Every completed training run is therefore rescored
-after factor-two frequency decimation. If coverage match, smoothness,
-non-narrowing, or crossover loading moves by more than two diagnostic points,
+after factor-two frequency decimation. If Pattern Fit, Pattern Stability,
+HF Retention, or crossover loading moves by more than two diagnostic points,
 that run is marked sampling-unstable and excluded from surrogate learning.
 
 Decimation is a warning, not proof of convergence. Before learned lever
