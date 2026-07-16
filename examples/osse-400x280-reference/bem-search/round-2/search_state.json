@@ -1,6 +1,8 @@
 {
   "candidates": [
     {
+      "crossover_loading_percent": 55.57639077838959,
+      "crossover_minimum_normalized_impedance": 0.38903473544872713,
       "derived": {
         "mouth_curvature_radius_h_mm": 31.11471569361397,
         "mouth_curvature_radius_v_mm": 22.78195347746667,
@@ -11,13 +13,70 @@
         "s_h": 0.1818970227244554,
         "s_v": 0.17709266734220605
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 40.47535980741164,
+          "hf_retention_percent": 45.09448768416895,
+          "narrowing_percent": 54.90551231583105,
+          "pattern_fit_percent": 59.52464019258836,
+          "pattern_stability_percent": 83.59802551213528
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 26.35149628284329,
+          "hf_retention_percent": 56.462525661817544,
+          "lower_half_angle_deg": 63.925828761210624,
+          "narrowing_percent": 43.537474338182456,
+          "pattern_fit_percent": 73.64850371715671,
+          "pattern_stability_percent": 86.68726849442794,
+          "trend_ripple_rms_deg": 6.656365752786032,
+          "upper_half_angle_deg": 36.09413746882809
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 54.64994734375105,
+          "hf_retention_percent": 28.85443343038524,
+          "lower_half_angle_deg": 83.79703105407448,
+          "narrowing_percent": 71.14556656961476,
+          "pattern_fit_percent": 45.35005265624895,
+          "pattern_stability_percent": 79.18482125171718,
+          "trend_ripple_rms_deg": 7.2853125618989845,
+          "upper_half_angle_deg": 24.179158542137166
+        }
+      },
+      "elapsed_s": 77.68951966706663,
       "id": "candidate-000",
       "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7897,
       "nearest_candidate_distance": Infinity,
       "pareto": false,
       "proposal_index": 0,
       "proposal_source": "seed",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-000/bem/project-NumCalc-8212856934ad",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": -0.00045773272150739786,
+          "pattern_fit_percent": -0.04355136649683544,
+          "pattern_stability_percent": 0.13814668698543642
+        },
+        "maximum_delta_points": 0.13814668698543642,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 45.09448768416895,
+        "pattern_fit_percent": 59.52464019258836,
+        "pattern_stability_percent": 83.59802551213528
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x300.STL",
       "values": {
         "extension_mm": 0.0,
@@ -31,6 +90,8 @@
       }
     },
     {
+      "crossover_loading_percent": 59.587167467921645,
+      "crossover_minimum_normalized_impedance": 0.4171101722754515,
       "derived": {
         "mouth_curvature_radius_h_mm": 41.71752179054851,
         "mouth_curvature_radius_v_mm": 25.98146101410091,
@@ -41,14 +102,71 @@
         "s_h": 0.17251421473817063,
         "s_v": 0.2075023946080009
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 39.25562608160055,
+          "hf_retention_percent": 44.29163600285264,
+          "narrowing_percent": 55.70836399714736,
+          "pattern_fit_percent": 60.74437391839945,
+          "pattern_stability_percent": 84.48233083084187
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 24.782424368951858,
+          "hf_retention_percent": 54.527148881058935,
+          "lower_half_angle_deg": 64.55156476400265,
+          "narrowing_percent": 45.47285111894106,
+          "pattern_fit_percent": 75.21757563104813,
+          "pattern_stability_percent": 87.78438440262036,
+          "trend_ripple_rms_deg": 6.107807798689817,
+          "upper_half_angle_deg": 35.198127823920906
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 53.526209158244896,
+          "hf_retention_percent": 29.66947474827222,
+          "lower_half_angle_deg": 83.8053977496681,
+          "narrowing_percent": 70.33052525172778,
+          "pattern_fit_percent": 46.473790841755104,
+          "pattern_stability_percent": 79.76511144258687,
+          "trend_ripple_rms_deg": 7.082210995094592,
+          "upper_half_angle_deg": 24.86462132302687
+        }
+      },
+      "elapsed_s": 73.34235029201955,
       "experiment_label": "Moderate-S N low",
       "id": "candidate-001",
       "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7683,
       "nearest_candidate_distance": 0.5291379482873141,
       "pareto": false,
       "proposal_index": 1,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-001/bem/project-NumCalc-d48f502f87a0",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": -0.000492105960411493,
+          "pattern_fit_percent": 0.05798908360767996,
+          "pattern_stability_percent": 0.04130897234369968
+        },
+        "maximum_delta_points": 0.05798908360767996,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 44.29163600285264,
+        "pattern_fit_percent": 60.74437391839945,
+        "pattern_stability_percent": 84.48233083084187
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x293.STL",
       "values": {
         "extension_mm": 0.0,
@@ -62,6 +180,8 @@
       }
     },
     {
+      "crossover_loading_percent": 23.385481962737096,
+      "crossover_minimum_normalized_impedance": 0.16369837373915966,
       "derived": {
         "mouth_curvature_radius_h_mm": 106.55351087228148,
         "mouth_curvature_radius_v_mm": 119.82785125966336,
@@ -72,14 +192,71 @@
         "s_h": 0.429220662996113,
         "s_v": 0.4143443680680643
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 32.31892308154544,
+          "hf_retention_percent": 48.669601486797305,
+          "narrowing_percent": 51.330398513202695,
+          "pattern_fit_percent": 67.68107691845455,
+          "pattern_stability_percent": 88.4916812546011
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 27.766417364891478,
+          "hf_retention_percent": 59.456740312791965,
+          "lower_half_angle_deg": 56.27803815839612,
+          "narrowing_percent": 40.543259687208035,
+          "pattern_fit_percent": 72.23358263510852,
+          "pattern_stability_percent": 89.5314761887637,
+          "trend_ripple_rms_deg": 5.2342619056181485,
+          "upper_half_angle_deg": 33.46108700097155
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 37.88512350844513,
+          "hf_retention_percent": 33.259403163947795,
+          "lower_half_angle_deg": 66.38916776193548,
+          "narrowing_percent": 66.74059683605222,
+          "pattern_fit_percent": 62.11487649155487,
+          "pattern_stability_percent": 87.00625992008311,
+          "trend_ripple_rms_deg": 4.547809027970911,
+          "upper_half_angle_deg": 22.080640963131778
+        }
+      },
+      "elapsed_s": 72.24694208381698,
       "experiment_label": "Moderate-S N middle",
       "id": "candidate-002",
       "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7572,
       "nearest_candidate_distance": 0.3013608078100601,
       "pareto": false,
       "proposal_index": 2,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-002/bem/project-NumCalc-756e0a980af6",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": 0.0004999651253925208,
+          "pattern_fit_percent": 0.05169399148267928,
+          "pattern_stability_percent": 0.08621725833131677
+        },
+        "maximum_delta_points": 0.08621725833131677,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 48.669601486797305,
+        "pattern_fit_percent": 67.68107691845455,
+        "pattern_stability_percent": 88.4916812546011
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x293.STL",
       "values": {
         "extension_mm": 0.0,
@@ -93,6 +270,8 @@
       }
     },
     {
+      "crossover_loading_percent": 51.91605535485919,
+      "crossover_minimum_normalized_impedance": 0.3634123874840143,
       "derived": {
         "mouth_curvature_radius_h_mm": 161.50501362399737,
         "mouth_curvature_radius_v_mm": 208.47216263563368,
@@ -103,14 +282,71 @@
         "s_h": 0.8785325588581452,
         "s_v": 0.7998506839697662
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 37.95594144145435,
+          "hf_retention_percent": 43.8304852899065,
+          "narrowing_percent": 56.1695147100935,
+          "pattern_fit_percent": 62.04405855854565,
+          "pattern_stability_percent": 87.96516356974519
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 27.48065780986768,
+          "hf_retention_percent": 55.81665844456472,
+          "lower_half_angle_deg": 59.81127283550975,
+          "narrowing_percent": 44.18334155543528,
+          "pattern_fit_percent": 72.51934219013232,
+          "pattern_stability_percent": 88.8232023586924,
+          "trend_ripple_rms_deg": 5.5883988206538024,
+          "upper_half_angle_deg": 33.3846538699432
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 49.19239750407212,
+          "hf_retention_percent": 26.707380783251896,
+          "lower_half_angle_deg": 76.13980446525377,
+          "narrowing_percent": 73.29261921674811,
+          "pattern_fit_percent": 50.80760249592788,
+          "pattern_stability_percent": 86.73939387124918,
+          "trend_ripple_rms_deg": 4.6412121450627914,
+          "upper_half_angle_deg": 20.334947506158755
+        }
+      },
+      "elapsed_s": 71.64706295868382,
       "experiment_label": "Moderate-S N high",
       "id": "candidate-003",
       "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7510,
       "nearest_candidate_distance": 0.3692149394747169,
       "pareto": false,
       "proposal_index": 3,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-003/bem/project-NumCalc-fda674e6bcdc",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": 0.00034393821865563723,
+          "pattern_fit_percent": 0.03937305928561585,
+          "pattern_stability_percent": 0.11424376019679983
+        },
+        "maximum_delta_points": 0.11424376019679983,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 43.8304852899065,
+        "pattern_fit_percent": 62.04405855854565,
+        "pattern_stability_percent": 87.96516356974519
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x293.STL",
       "values": {
         "extension_mm": 0.0,
@@ -124,6 +360,8 @@
       }
     },
     {
+      "crossover_loading_percent": 55.0134501843646,
+      "crossover_minimum_normalized_impedance": 0.3850941512905522,
       "derived": {
         "mouth_curvature_radius_h_mm": 104.3825529857298,
         "mouth_curvature_radius_v_mm": 124.41292627717968,
@@ -134,14 +372,71 @@
         "s_h": 0.45001298535814505,
         "s_v": 0.45000875909604665
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 38.674608883716196,
+          "hf_retention_percent": 45.87086617669556,
+          "narrowing_percent": 54.12913382330444,
+          "pattern_fit_percent": 61.325391116283804,
+          "pattern_stability_percent": 85.95729954234477
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 20.435571812441523,
+          "hf_retention_percent": 56.98541201455624,
+          "lower_half_angle_deg": 64.83185925854607,
+          "narrowing_percent": 43.01458798544376,
+          "pattern_fit_percent": 79.56442818755848,
+          "pattern_stability_percent": 87.74501513686492,
+          "trend_ripple_rms_deg": 6.1274924315675365,
+          "upper_half_angle_deg": 36.94470211517971
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 55.098879138494006,
+          "hf_retention_percent": 29.9929435511803,
+          "lower_half_angle_deg": 85.55032423704552,
+          "narrowing_percent": 70.00705644881971,
+          "pattern_fit_percent": 44.901120861505994,
+          "pattern_stability_percent": 83.4034201216017,
+          "trend_ripple_rms_deg": 5.808802957439403,
+          "upper_half_angle_deg": 25.65906045626878
+        }
+      },
+      "elapsed_s": 68.43248454201967,
       "experiment_label": "Matched-S length 255",
       "id": "candidate-004",
       "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7070,
       "nearest_candidate_distance": 0.5163444879434351,
       "pareto": false,
       "proposal_index": 4,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-004/bem/project-NumCalc-86dc96d26109",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": -0.0005246077597362842,
+          "pattern_fit_percent": 0.023465868585091698,
+          "pattern_stability_percent": 0.16571629793273246
+        },
+        "maximum_delta_points": 0.16571629793273246,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 45.87086617669556,
+        "pattern_fit_percent": 61.325391116283804,
+        "pattern_stability_percent": 85.95729954234477
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x255.STL",
       "values": {
         "extension_mm": 0.0,
@@ -155,6 +450,8 @@
       }
     },
     {
+      "crossover_loading_percent": 32.780790985367275,
+      "crossover_minimum_normalized_impedance": 0.22946553689757093,
       "derived": {
         "mouth_curvature_radius_h_mm": 109.87317829112021,
         "mouth_curvature_radius_v_mm": 131.54530534533083,
@@ -165,14 +462,71 @@
         "s_h": 0.44998605620257087,
         "s_v": 0.449999807658549
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 28.154096169422544,
+          "hf_retention_percent": 45.15897407752304,
+          "narrowing_percent": 54.84102592247696,
+          "pattern_fit_percent": 71.84590383057746,
+          "pattern_stability_percent": 86.33503028527855
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 23.861469108731022,
+          "hf_retention_percent": 53.696849601019785,
+          "lower_half_angle_deg": 65.07742269854685,
+          "narrowing_percent": 46.303150398980215,
+          "pattern_fit_percent": 76.13853089126897,
+          "pattern_stability_percent": 87.89615585429831,
+          "trend_ripple_rms_deg": 6.051922072850841,
+          "upper_half_angle_deg": 34.944525790658616
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 33.34110750735994,
+          "hf_retention_percent": 32.962009043956265,
+          "lower_half_angle_deg": 70.08382535224588,
+          "narrowing_percent": 67.03799095604374,
+          "pattern_fit_percent": 66.65889249264006,
+          "pattern_stability_percent": 84.1048509009646,
+          "trend_ripple_rms_deg": 5.563302184662385,
+          "upper_half_angle_deg": 23.101036850957797
+        }
+      },
+      "elapsed_s": 69.20669162506238,
       "experiment_label": "Matched-S length 275",
       "id": "candidate-005",
       "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7254,
       "nearest_candidate_distance": 0.24048217876219846,
-      "pareto": false,
+      "pareto": true,
       "proposal_index": 5,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-005/bem/project-NumCalc-035f9721b514",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": -0.0006224509636254538,
+          "pattern_fit_percent": 0.076892058331552,
+          "pattern_stability_percent": 0.059417606642028886
+        },
+        "maximum_delta_points": 0.076892058331552,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 45.15897407752304,
+        "pattern_fit_percent": 71.84590383057746,
+        "pattern_stability_percent": 86.33503028527855
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x275.STL",
       "values": {
         "extension_mm": 0.0,
@@ -186,6 +540,8 @@
       }
     },
     {
+      "crossover_loading_percent": 30.63094603834673,
+      "crossover_minimum_normalized_impedance": 0.2144166222684271,
       "derived": {
         "mouth_curvature_radius_h_mm": 120.28412727291935,
         "mouth_curvature_radius_v_mm": 145.38260303047858,
@@ -196,14 +552,71 @@
         "s_h": 0.4499985465460208,
         "s_v": 0.4500000364062214
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 29.861054784090456,
+          "hf_retention_percent": 51.01546698715705,
+          "narrowing_percent": 48.98453301284296,
+          "pattern_fit_percent": 70.13894521590954,
+          "pattern_stability_percent": 88.81151656596336
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 30.25035929994323,
+          "hf_retention_percent": 62.48638936847754,
+          "lower_half_angle_deg": 57.18927696318423,
+          "narrowing_percent": 37.51361063152246,
+          "pattern_fit_percent": 69.74964070005677,
+          "pattern_stability_percent": 89.70264520023431,
+          "trend_ripple_rms_deg": 5.148677399882838,
+          "upper_half_angle_deg": 35.73551428023232
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 29.295932677609155,
+          "hf_retention_percent": 34.62843501384205,
+          "lower_half_angle_deg": 62.894880431366225,
+          "narrowing_percent": 65.37156498615795,
+          "pattern_fit_percent": 70.70406732239084,
+          "pattern_stability_percent": 87.53847565986202,
+          "trend_ripple_rms_deg": 4.361533519048296,
+          "upper_half_angle_deg": 21.779512797209314
+        }
+      },
+      "elapsed_s": 76.39788958290592,
       "experiment_label": "Matched-S length 315",
       "id": "candidate-006",
       "length_cost_percent": 1.0000000000000018,
+      "mesh_quadrant_panels": 7765,
       "nearest_candidate_distance": 0.4544811976399734,
       "pareto": false,
       "proposal_index": 6,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-006/bem/project-NumCalc-1167a687a26c",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": -0.0004493652040196139,
+          "pattern_fit_percent": 0.01699266258673049,
+          "pattern_stability_percent": 0.05670051996821712
+        },
+        "maximum_delta_points": 0.05670051996821712,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 50.01546698715705,
+        "pattern_fit_percent": 69.13894521590954,
+        "pattern_stability_percent": 87.81151656596336
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x315.STL",
       "values": {
         "extension_mm": 0.0,
@@ -217,6 +630,8 @@
       }
     },
     {
+      "crossover_loading_percent": 58.73674288273322,
+      "crossover_minimum_normalized_impedance": 0.4111572001791325,
       "derived": {
         "mouth_curvature_radius_h_mm": 127.75469277435204,
         "mouth_curvature_radius_v_mm": 121.90010724596928,
@@ -227,14 +642,71 @@
         "s_h": 0.4500022132591565,
         "s_v": 0.39067251333081987
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 43.623919989152036,
+          "hf_retention_percent": 35.356390550397904,
+          "narrowing_percent": 64.6436094496021,
+          "pattern_fit_percent": 56.376080010847964,
+          "pattern_stability_percent": 86.7481687872797
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 32.709143479751475,
+          "hf_retention_percent": 43.09921743317016,
+          "lower_half_angle_deg": 63.48818753674211,
+          "narrowing_percent": 56.90078256682985,
+          "pattern_fit_percent": 67.29085652024852,
+          "pattern_stability_percent": 89.15224376809996,
+          "trend_ripple_rms_deg": 5.423878115950017,
+          "upper_half_angle_deg": 27.36291199083932
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 55.61719678422862,
+          "hf_retention_percent": 24.295209289294693,
+          "lower_half_angle_deg": 84.8998059194847,
+          "narrowing_percent": 75.70479071070531,
+          "pattern_fit_percent": 44.38280321577138,
+          "pattern_stability_percent": 83.31377595753644,
+          "trend_ripple_rms_deg": 5.840178414862245,
+          "upper_half_angle_deg": 20.626585534343814
+        }
+      },
+      "elapsed_s": 79.12823637528345,
       "experiment_label": "Matched-S length 345",
       "id": "candidate-007",
       "length_cost_percent": 19.99999999999994,
+      "mesh_quadrant_panels": 8168,
       "nearest_candidate_distance": 0.4491610942988855,
       "pareto": false,
       "proposal_index": 7,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-007/bem/project-NumCalc-1475adc90170",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": -0.00039353300186917295,
+          "pattern_fit_percent": 0.15002296060126952,
+          "pattern_stability_percent": 0.002469424534808695
+        },
+        "maximum_delta_points": 0.15002296060126952,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 15.356390550397965,
+        "pattern_fit_percent": 36.37608001084803,
+        "pattern_stability_percent": 66.74816878727975
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x345.STL",
       "values": {
         "extension_mm": 0.0,
@@ -248,6 +720,8 @@
       }
     },
     {
+      "crossover_loading_percent": 18.90409764743914,
+      "crossover_minimum_normalized_impedance": 0.13232868353207397,
       "derived": {
         "mouth_curvature_radius_h_mm": 113.85136681533032,
         "mouth_curvature_radius_v_mm": 137.8009547551108,
@@ -258,14 +732,71 @@
         "s_h": 0.45000770036536286,
         "s_v": 0.45000206704498
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 32.54997573400756,
+          "hf_retention_percent": 48.66653472016467,
+          "narrowing_percent": 51.33346527983533,
+          "pattern_fit_percent": 67.45002426599244,
+          "pattern_stability_percent": 89.02913166445124
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 28.32413975531589,
+          "hf_retention_percent": 59.21775820773502,
+          "lower_half_angle_deg": 55.91440139814143,
+          "narrowing_percent": 40.78224179226499,
+          "pattern_fit_percent": 71.67586024468412,
+          "pattern_stability_percent": 89.74225573311777,
+          "trend_ripple_rms_deg": 5.128872133441115,
+          "upper_half_angle_deg": 33.1112550232538
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 37.77555278228333,
+          "hf_retention_percent": 33.593358309349895,
+          "lower_half_angle_deg": 66.1868541217295,
+          "narrowing_percent": 66.4066416906501,
+          "pattern_fit_percent": 62.22444721771667,
+          "pattern_stability_percent": 88.01038299492762,
+          "trend_ripple_rms_deg": 4.196365951775329,
+          "upper_half_angle_deg": 22.234387058799314
+        }
+      },
+      "elapsed_s": 71.92766916705295,
       "experiment_label": "Matched-S narrow construction coverage",
       "id": "candidate-008",
       "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7538,
       "nearest_candidate_distance": 0.22509723947761306,
       "pareto": false,
       "proposal_index": 8,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-008/bem/project-NumCalc-a6880f747fb6",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": 0.0005645315252849059,
+          "pattern_fit_percent": 0.03604195809437272,
+          "pattern_stability_percent": 0.11552673356980847
+        },
+        "maximum_delta_points": 0.11552673356980847,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 48.66653472016467,
+        "pattern_fit_percent": 67.45002426599244,
+        "pattern_stability_percent": 89.02913166445124
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x293.STL",
       "values": {
         "extension_mm": 0.0,
@@ -279,6 +810,8 @@
       }
     },
     {
+      "crossover_loading_percent": 61.58656657734027,
+      "crossover_minimum_normalized_impedance": 0.4311059660413819,
       "derived": {
         "mouth_curvature_radius_h_mm": 114.73567399414293,
         "mouth_curvature_radius_v_mm": 137.96157761747136,
@@ -289,14 +822,71 @@
         "s_h": 0.44999663667090944,
         "s_v": 0.4499981129500655
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 37.98384873809378,
+          "hf_retention_percent": 43.89131580009273,
+          "narrowing_percent": 56.10868419990727,
+          "pattern_fit_percent": 62.01615126190622,
+          "pattern_stability_percent": 87.3147089038664
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 26.65031276223772,
+          "hf_retention_percent": 54.684387416011525,
+          "lower_half_angle_deg": 60.755771551049314,
+          "narrowing_percent": 45.31561258398847,
+          "pattern_fit_percent": 73.34968723776228,
+          "pattern_stability_percent": 88.88329972695172,
+          "trend_ripple_rms_deg": 5.5583501365241395,
+          "upper_half_angle_deg": 33.223921492562724
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 49.89237746109363,
+          "hf_retention_percent": 28.472642063065866,
+          "lower_half_angle_deg": 78.06472187999279,
+          "narrowing_percent": 71.52735793693414,
+          "pattern_fit_percent": 50.10762253890637,
+          "pattern_stability_percent": 85.07386487088735,
+          "trend_ripple_rms_deg": 5.224147295189425,
+          "upper_half_angle_deg": 22.227088838418208
+        }
+      },
+      "elapsed_s": 72.21289312513545,
       "experiment_label": "Matched-S middle construction coverage",
       "id": "candidate-009",
       "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7536,
       "nearest_candidate_distance": 0.07788586998592444,
       "pareto": false,
       "proposal_index": 9,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-009/bem/project-NumCalc-40faf281d019",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": 0.00023019737297858,
+          "pattern_fit_percent": 0.02468541675213487,
+          "pattern_stability_percent": 0.1020342882919465
+        },
+        "maximum_delta_points": 0.1020342882919465,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 43.89131580009273,
+        "pattern_fit_percent": 62.01615126190622,
+        "pattern_stability_percent": 87.3147089038664
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x293.STL",
       "values": {
         "extension_mm": 0.0,
@@ -310,6 +900,8 @@
       }
     },
     {
+      "crossover_loading_percent": 65.97545343537888,
+      "crossover_minimum_normalized_impedance": 0.46182817404765214,
       "derived": {
         "mouth_curvature_radius_h_mm": 115.47998856921384,
         "mouth_curvature_radius_v_mm": 138.0756988915479,
@@ -320,14 +912,71 @@
         "s_h": 0.44998905581963433,
         "s_v": 0.44999847760508765
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 40.45876772113242,
+          "hf_retention_percent": 41.2324194974694,
+          "narrowing_percent": 58.767580502530606,
+          "pattern_fit_percent": 59.54123227886758,
+          "pattern_stability_percent": 86.53662109303794
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 26.099037552552502,
+          "hf_retention_percent": 51.590436309165455,
+          "lower_half_angle_deg": 63.863416502497444,
+          "narrowing_percent": 48.409563690834545,
+          "pattern_fit_percent": 73.9009624474475,
+          "pattern_stability_percent": 88.4686853588421,
+          "trend_ripple_rms_deg": 5.765657320578953,
+          "upper_half_angle_deg": 32.947415215578005
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 54.79299282887735,
+          "hf_retention_percent": 26.435252623617888,
+          "lower_half_angle_deg": 84.53051465120254,
+          "narrowing_percent": 73.56474737638212,
+          "pattern_fit_percent": 45.20700717112265,
+          "pattern_stability_percent": 83.77652928474629,
+          "trend_ripple_rms_deg": 5.678214750338799,
+          "upper_half_angle_deg": 22.345855092089725
+        }
+      },
+      "elapsed_s": 71.7975768330507,
       "experiment_label": "Matched-S wide construction coverage",
       "id": "candidate-010",
       "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7522,
       "nearest_candidate_distance": 0.28629365997511447,
       "pareto": false,
       "proposal_index": 10,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-010/bem/project-NumCalc-d81dd4b53355",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": -0.00034110841029644234,
+          "pattern_fit_percent": -0.014795385333172817,
+          "pattern_stability_percent": 0.07201485916267814
+        },
+        "maximum_delta_points": 0.07201485916267814,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 41.2324194974694,
+        "pattern_fit_percent": 59.54123227886758,
+        "pattern_stability_percent": 86.53662109303794
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x293.STL",
       "values": {
         "extension_mm": 0.0,
@@ -341,6 +990,8 @@
       }
     },
     {
+      "crossover_loading_percent": 59.63335714284889,
+      "crossover_minimum_normalized_impedance": 0.41743349999994217,
       "derived": {
         "mouth_curvature_radius_h_mm": 209.66776243733761,
         "mouth_curvature_radius_v_mm": 90.53944830400341,
@@ -351,14 +1002,71 @@
         "s_h": 0.6200117954864292,
         "s_v": 0.34999759020878574
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 38.11038061660404,
+          "hf_retention_percent": 42.94958754705409,
+          "narrowing_percent": 57.05041245294592,
+          "pattern_fit_percent": 61.88961938339596,
+          "pattern_stability_percent": 86.83818231441279
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 21.70447356688791,
+          "hf_retention_percent": 51.095924325991035,
+          "lower_half_angle_deg": 66.53787202493544,
+          "narrowing_percent": 48.904075674008965,
+          "pattern_fit_percent": 78.29552643311209,
+          "pattern_stability_percent": 89.76843414141439,
+          "trend_ripple_rms_deg": 5.115782929292805,
+          "upper_half_angle_deg": 33.99814073798577
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 53.42548502950352,
+          "hf_retention_percent": 31.311963577144162,
+          "lower_half_angle_deg": 84.04693865308397,
+          "narrowing_percent": 68.68803642285584,
+          "pattern_fit_percent": 46.57451497049648,
+          "pattern_stability_percent": 82.65210827583908,
+          "trend_ripple_rms_deg": 6.071762103456318,
+          "upper_half_angle_deg": 26.31674681875835
+        }
+      },
+      "elapsed_s": 68.78128937492147,
       "experiment_label": "Compact branch narrow vertical coverage",
       "id": "candidate-011",
       "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7184,
       "nearest_candidate_distance": 0.2005678633413836,
       "pareto": false,
       "proposal_index": 11,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-011/bem/project-NumCalc-0389ba70a518",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": -0.0005330956550579913,
+          "pattern_fit_percent": 0.017592160492121423,
+          "pattern_stability_percent": 0.10500856798537939
+        },
+        "maximum_delta_points": 0.10500856798537939,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 42.94958754705409,
+        "pattern_fit_percent": 61.88961938339596,
+        "pattern_stability_percent": 86.83818231441279
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x265.STL",
       "values": {
         "extension_mm": 0.0,
@@ -372,6 +1080,8 @@
       }
     },
     {
+      "crossover_loading_percent": 59.561040332370986,
+      "crossover_minimum_normalized_impedance": 0.4169272823265969,
       "derived": {
         "mouth_curvature_radius_h_mm": 209.66776243733761,
         "mouth_curvature_radius_v_mm": 90.87914637946447,
@@ -382,14 +1092,71 @@
         "s_h": 0.6200117954864292,
         "s_v": 0.35000035937389373
       },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 38.033923666861156,
+          "hf_retention_percent": 43.13174244046372,
+          "narrowing_percent": 56.86825755953628,
+          "pattern_fit_percent": 61.966076333138844,
+          "pattern_stability_percent": 86.88320444778344
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 21.68579603372302,
+          "hf_retention_percent": 51.338442917556804,
+          "lower_half_angle_deg": 66.44521508313125,
+          "narrowing_percent": 48.66155708244319,
+          "pattern_fit_percent": 78.31420396627698,
+          "pattern_stability_percent": 89.78665102366368,
+          "trend_ripple_rms_deg": 5.1066744881681645,
+          "upper_half_angle_deg": 34.11193881690118
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 53.30386135206368,
+          "hf_retention_percent": 31.407884616045017,
+          "lower_half_angle_deg": 83.91462321084356,
+          "narrowing_percent": 68.59211538395499,
+          "pattern_fit_percent": 46.69613864793632,
+          "pattern_stability_percent": 82.73542362509737,
+          "trend_ripple_rms_deg": 6.042601731215919,
+          "upper_half_angle_deg": 26.355808034050675
+        }
+      },
+      "elapsed_s": 68.33438766561449,
       "experiment_label": "Compact branch wide vertical coverage",
       "id": "candidate-012",
       "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7106,
       "nearest_candidate_distance": 0.1576484760470727,
       "pareto": false,
       "proposal_index": 12,
       "proposal_source": "initial-curated",
-      "status": "preflight",
+      "run_dir": "candidates/candidate-012/bem/project-NumCalc-8527919b9836",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": -0.0005213195643420931,
+          "pattern_fit_percent": 0.022647456942976874,
+          "pattern_stability_percent": 0.10400646251238754
+        },
+        "maximum_delta_points": 0.10400646251238754,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 43.13174244046372,
+        "pattern_fit_percent": 61.966076333138844,
+        "pattern_stability_percent": 86.88320444778344
+      },
+      "status": "complete",
       "stl_file": "HornCAD-Surface-400x280x265.STL",
       "values": {
         "extension_mm": 0.0,
@@ -401,13 +1168,282 @@
         "osse_coverage_h_deg": 47.16,
         "osse_coverage_v_deg": 34.0
       }
+    },
+    {
+      "crossover_loading_percent": 57.30611411742475,
+      "crossover_minimum_normalized_impedance": 0.40114279882197323,
+      "derived": {
+        "mouth_curvature_radius_h_mm": 18.19723445586146,
+        "mouth_curvature_radius_v_mm": 64.26618358722638,
+        "mouth_exit_angle_h_deg": 66.20285150363107,
+        "mouth_exit_angle_v_deg": 80.01418736810894,
+        "normalized_mouth_curvature_h": 0.09098617227930729,
+        "normalized_mouth_curvature_v": 0.4590441684801884,
+        "s_h": 0.09232682736088733,
+        "s_v": 0.27875602883978706
+      },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 40.5229992025191,
+          "hf_retention_percent": 45.80133266441655,
+          "narrowing_percent": 54.19866733558345,
+          "pattern_fit_percent": 59.4770007974809,
+          "pattern_stability_percent": 84.33874674233263
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 24.450567269693003,
+          "hf_retention_percent": 58.86235819741422,
+          "lower_half_angle_deg": 62.863822164931165,
+          "narrowing_percent": 41.13764180258578,
+          "pattern_fit_percent": 75.54943273030699,
+          "pattern_stability_percent": 86.38588051335525,
+          "trend_ripple_rms_deg": 6.807059743322372,
+          "upper_half_angle_deg": 37.003128179307254
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 55.98166344712138,
+          "hf_retention_percent": 27.14272476013416,
+          "lower_half_angle_deg": 86.49477003733675,
+          "narrowing_percent": 72.85727523986584,
+          "pattern_fit_percent": 44.01833655287862,
+          "pattern_stability_percent": 81.41426992658604,
+          "trend_ripple_rms_deg": 6.505005525694883,
+          "upper_half_angle_deg": 23.477037363145307
+        }
+      },
+      "elapsed_s": 72.4722600420937,
+      "id": "candidate-013",
+      "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7602,
+      "nearest_candidate_distance": 0.20147460950944218,
+      "pareto": false,
+      "proposal_index": 13,
+      "proposal_source": "pareto-surrogate",
+      "run_dir": "candidates/candidate-013/bem/project-NumCalc-ab191a76d833",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": -0.0004916436880932906,
+          "pattern_fit_percent": 0.061778044479076755,
+          "pattern_stability_percent": 0.06512804963844587
+        },
+        "maximum_delta_points": 0.06512804963844587,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 45.80133266441655,
+        "pattern_fit_percent": 59.4770007974809,
+        "pattern_stability_percent": 84.33874674233263
+      },
+      "status": "complete",
+      "stl_file": "HornCAD-Surface-400x280x288.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 21.801433680414355,
+        "k_v": 18.796909041031718,
+        "length_mm": 287.9922957149146,
+        "n_h": 10.396086678349445,
+        "n_v": 5.448653992483395,
+        "osse_coverage_h_deg": 48.48911720574672,
+        "osse_coverage_v_deg": 31.441442315694626
+      }
+    },
+    {
+      "crossover_loading_percent": 33.812797048106006,
+      "crossover_minimum_normalized_impedance": 0.23668957933674203,
+      "derived": {
+        "mouth_curvature_radius_h_mm": 111.15545071685847,
+        "mouth_curvature_radius_v_mm": 68.85063543902143,
+        "mouth_exit_angle_h_deg": 82.11079022491155,
+        "mouth_exit_angle_v_deg": 79.57449854560946,
+        "normalized_mouth_curvature_h": 0.5557772535842923,
+        "normalized_mouth_curvature_v": 0.4917902531358674,
+        "s_h": 0.34314301380890816,
+        "s_v": 0.2879157136296699
+      },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 30.127060827203312,
+          "hf_retention_percent": 53.20883030270166,
+          "narrowing_percent": 46.79116969729836,
+          "pattern_fit_percent": 69.87293917279669,
+          "pattern_stability_percent": 90.07877194526468
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 29.278033398720837,
+          "hf_retention_percent": 62.85776187814145,
+          "lower_half_angle_deg": 53.38359156674968,
+          "narrowing_percent": 37.14223812185855,
+          "pattern_fit_percent": 70.72196660127916,
+          "pattern_stability_percent": 91.65711944167305,
+          "trend_ripple_rms_deg": 4.171440279163474,
+          "upper_half_angle_deg": 33.555730869027116
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 31.300032182767602,
+          "hf_retention_percent": 39.42464233778765,
+          "lower_half_angle_deg": 60.82414707499629,
+          "narrowing_percent": 60.57535766221236,
+          "pattern_fit_percent": 68.69996781723239,
+          "pattern_stability_percent": 87.82398980753842,
+          "trend_ripple_rms_deg": 4.261603567361551,
+          "upper_half_angle_deg": 23.979702439327216
+        }
+      },
+      "elapsed_s": 70.42786666564643,
+      "id": "candidate-014",
+      "length_cost_percent": 0.0,
+      "mesh_quadrant_panels": 7465,
+      "nearest_candidate_distance": 0.20539559638390675,
+      "pareto": true,
+      "proposal_index": 14,
+      "proposal_source": "pareto-surrogate",
+      "run_dir": "candidates/candidate-014/bem/project-NumCalc-9bda266a014b",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": 0.0004616741205012431,
+          "pattern_fit_percent": 0.09511439134325883,
+          "pattern_stability_percent": 0.09545383436635291
+        },
+        "maximum_delta_points": 0.09545383436635291,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 53.20883030270166,
+        "pattern_fit_percent": 69.87293917279669,
+        "pattern_stability_percent": 90.07877194526468
+      },
+      "status": "complete",
+      "stl_file": "HornCAD-Surface-400x280x296.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 35.41082301669138,
+        "k_v": 39.22681287224419,
+        "length_mm": 295.6623723255465,
+        "n_h": 4.652055249838261,
+        "n_v": 3.4294561287403043,
+        "osse_coverage_h_deg": 46.85399216837317,
+        "osse_coverage_v_deg": 33.392476929931874
+      }
+    },
+    {
+      "crossover_loading_percent": 66.45752143572189,
+      "crossover_minimum_normalized_impedance": 0.4652026500500532,
+      "derived": {
+        "mouth_curvature_radius_h_mm": 189.776583837067,
+        "mouth_curvature_radius_v_mm": 76.49958867586632,
+        "mouth_exit_angle_h_deg": 84.28206500255583,
+        "mouth_exit_angle_v_deg": 80.92893023870944,
+        "normalized_mouth_curvature_h": 0.948882919185335,
+        "normalized_mouth_curvature_v": 0.5464256333990452,
+        "s_h": 0.5636053875598455,
+        "s_v": 0.3560568336751194
+      },
+      "diagnostics": {
+        "axis_weights": {
+          "horizontal": 0.5882352941176471,
+          "vertical": 0.4117647058823529
+        },
+        "band_kind": "fixed optimization",
+        "combined": {
+          "coverage_error_percent": 41.508849461993115,
+          "hf_retention_percent": 37.29606076224407,
+          "narrowing_percent": 62.70393923775593,
+          "pattern_fit_percent": 58.491150538006885,
+          "pattern_stability_percent": 87.00961643042108
+        },
+        "confirmation_octaves": 0.3333333333333333,
+        "horizontal": {
+          "coverage_error_percent": 28.216646900844456,
+          "hf_retention_percent": 45.03655276735548,
+          "lower_half_angle_deg": 66.25006458846754,
+          "narrowing_percent": 54.96344723264451,
+          "pattern_fit_percent": 71.78335309915555,
+          "pattern_stability_percent": 90.09625392120019,
+          "trend_ripple_rms_deg": 4.9518730393999055,
+          "upper_half_angle_deg": 29.83674529679227
+        },
+        "passband_lower_hz": 500.0,
+        "passband_upper_hz": 5000.0,
+        "status": "available",
+        "vertical": {
+          "coverage_error_percent": 55.199568190499924,
+          "hf_retention_percent": 26.238215040656325,
+          "lower_half_angle_deg": 84.12175349421206,
+          "narrowing_percent": 73.76178495934367,
+          "pattern_fit_percent": 44.800431809500076,
+          "pattern_stability_percent": 82.60013430073664,
+          "trend_ripple_rms_deg": 6.089952994742178,
+          "upper_half_angle_deg": 22.072046577782185
+        }
+      },
+      "elapsed_s": 74.88189366692677,
+      "id": "candidate-015",
+      "length_cost_percent": 0.44437779589204396,
+      "mesh_quadrant_panels": 7752,
+      "nearest_candidate_distance": 0.3224855107510391,
+      "pareto": false,
+      "proposal_index": 15,
+      "proposal_source": "pareto-surrogate",
+      "run_dir": "candidates/candidate-015/bem/project-NumCalc-e1e8744739e5",
+      "sampling_stability": {
+        "decimated_ppo_fraction": 0.5,
+        "deltas": {
+          "hf_retention_percent": -0.0005134684727039485,
+          "pattern_fit_percent": -0.03197620431795656,
+          "pattern_stability_percent": 0.04909891040639991
+        },
+        "maximum_delta_points": 0.04909891040639991,
+        "status": "stable",
+        "threshold_points": 2.0
+      },
+      "selection_scores": {
+        "hf_retention_percent": 36.85168296635202,
+        "pattern_fit_percent": 58.04677274211484,
+        "pattern_stability_percent": 86.56523863452904
+      },
+      "status": "complete",
+      "stl_file": "HornCAD-Surface-400x280x310.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 42.94690041974908,
+        "k_v": 35.57827572471676,
+        "length_mm": 309.9992501756737,
+        "n_h": 7.864478440730404,
+        "n_v": 8.085289539506272,
+        "osse_coverage_h_deg": 47.31212440684609,
+        "osse_coverage_v_deg": 37.35767136903117
+      }
     }
   ],
+  "completed_at_unix": 1784187928.665281,
   "configuration_hash": "66136cb5a1b1f8902b795e08a5966ad857a038b73a1574df06b5799c9d0a1452",
   "crossover_hz": 500.0,
+  "finalist_comparison": "finalist_comparison.html",
   "max_evaluations": 16,
-  "phase": "initial candidates materialized",
-  "proposal_count": 13,
+  "phase": "candidate evaluation complete",
+  "proposal_count": 16,
   "rejected_count": 0,
   "schema_version": 1,
   "search": {
@@ -653,7 +1689,7 @@
   "search_yaml": "/Users/nickengel/Documents/GitHub/HornCAD/examples/osse-400x280-reference/bem-search/round-2/search.yaml",
   "seed_yaml": "/Users/nickengel/Documents/GitHub/HornCAD/examples/osse-400x280-reference/project.yaml",
   "started_at_unix": 1784186144.986287,
-  "status": "preflight",
+  "status": "complete",
   "surrogate_screened_count": 0,
   "upper_frequency_hz": 5000.0
 }
