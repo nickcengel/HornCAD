@@ -3,6 +3,7 @@
 This is HornCAD's maintained reference project.
 
 - `project.yaml` — source project.
+- `bem-search.yaml` — example quick candidate-search configuration.
 - `acoustic-surface.stl` — open acoustic surface exported from the project.
 - `fem/` — interior FEM result: 500–5000 Hz, 12 points per octave, 6 elements
   per wavelength. It retains `responses.npz`, `metrics.csv`, and

@@ -14,6 +14,11 @@ horncad_config:
     mouth_sag: 60
     mouth_sag_h_enabled: true
     mouth_sag_v_enabled: true
+  operating_intent:
+    horizontal_coverage_deg: 50
+    vertical_coverage_deg: 35
+    crossover_hz: 500
+    upper_frequency_hz: 8000
   body:
     mouth_rear_offset: 6
     mount_diameter: 140

@@ -8,8 +8,8 @@ the free-air BEM backend. The search must preserve the user's physical and
 acoustic intent, expose tradeoffs instead of hiding them in one opaque score,
 and retain enough provenance to reproduce every result.
 
-This document records the decisions made so far and identifies the choices that
-remain open. It describes planned behavior, not a currently implemented command.
+This document records the design of the implemented first search workflow and
+identifies the refinements that remain open.
 
 ## Authored design intent
 
@@ -49,6 +49,12 @@ Horizontal and vertical `s` are derived geometry values, not independent search
 variables. After proposing length, extension, OS-SE coverage, and `k`, HornCAD
 solves the geometry and derives `s_h` and `s_v`. A candidate is feasible only
 when both values are strictly positive.
+
+Because `k` is the principal feasibility control when length and OS-SE coverage
+move, the implemented proposer repairs a negative-`s` proposal by raising the
+corresponding `k` to the nearest positive-`s` region within its authored bounds.
+It rejects the geometry only when the maximum allowed `k` cannot make `s`
+positive. Repairs are retained in the candidate ledger.
 
 Parameters such as `n`, `q`, and mouth squareness remain fixed in the initial
 implementation. They may be added later if the six-variable search proves too
@@ -178,8 +184,8 @@ multi-objective Bayesian optimization:
 
 A reduced points-per-octave setting may be useful during exploration, but it
 must first be demonstrated that it does not materially reorder candidates. The
-standard production confirmation remains 6 elements per wavelength and 10
-points per octave.
+implemented default therefore remains 6 elements per wavelength and 10 points
+per octave for every candidate.
 
 ## Termination
 
@@ -201,18 +207,18 @@ finished.
 
 ## UX questions to resolve
 
-The following decisions should be made before implementing the search UI:
+The first implementation uses the browser to author operating intent and export
+a separate search YAML. `run_bem_search.py` executes or resumes that request,
+updates `search_report.html` throughout the run, retains candidate YAML and
+standard reports, identifies impedance-feasible Pareto candidates, and creates
+an automatic comparison of up to four finalists. Quick, normal, and thorough
+presets correspond to 16, 36, and 60 completed BEM evaluations.
 
-- Does search configuration live in the browser designer, a generated search
-  YAML, the command line, or a combination of these?
-- How should immutable intent be visually distinguished from searchable seed
-  values?
-- Should basic users see only a search-size control while advanced users can
-  edit every parameter bound?
-- How are crossover and upper operating frequency authored and persisted?
-- How should progress expose queued, meshing, solving, failed, dominated, and
-  Pareto candidates?
-- Can a user pause, resume, extend, or tighten an existing search without losing
-  evaluated candidates?
-- How should the final candidate comparison and selection flow work?
-- What result is copied back into the browser as the next editable design?
+The following refinements remain open:
+
+- support importing an existing search YAML back into the browser;
+- add an optional wall-time limit and a tested stagnation threshold;
+- validate whether reduced-PPO exploration preserves candidate ordering;
+- allow selecting a different set of candidates for comparison from the search
+  report; and
+- make “use as new seed” more direct than importing the retained candidate YAML.

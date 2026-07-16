@@ -34,6 +34,20 @@ python app/tools/run_fem_suite.py path/to/project.yaml \
   --elements-per-wavelength 6
 ```
 
+To search for improved free-air BEM candidates, export both the project YAML
+and **BEM Search YAML** from the browser, keep them in the same directory, then
+run:
+
+```bash
+python app/tools/run_bem_search.py path/to/my-horn-BEM-search.YAML \
+  --output-dir results/my-horn-search
+```
+
+Open `search_report.html` in the output directory. Running the same command
+again resumes interrupted candidates and completed NumCalc frequencies. Use
+`--dry-run` first to materialize and geometry-check the initial candidate set
+without running BEM.
+
 Open `interactive_report.html` in the output directory. The standard report has
 cursor readout, H/V coverage heatmaps with explicit −6 dB contour lines and
 horizontal guides at the project’s intended ±H/V coverage angles, normalized
@@ -99,6 +113,7 @@ normalized throat-impedance magnitude.
 Routine work starts with these commands:
 
 - `run_bem_suite.py` — complete free-air NumCalc BEM analysis.
+- `run_bem_search.py` — resumable constrained search for improved BEM candidates.
 - `run_fem_suite.py` — complete interior FEM analysis.
 - `export_horncad.py` — acoustic-surface or printable-body STL export.
 - `interactive_results.py` — report regeneration and multi-horn comparison.

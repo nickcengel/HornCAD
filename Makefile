@@ -16,7 +16,7 @@ bootstrap:
 	$(VENV_PYTHON) -m pip install -e '.[dev]'
 
 validate:
-	$(VENV_PYTHON) -m py_compile app/tools/export_horncad.py app/tools/webster_1d.py app/tools/aperture_directivity.py app/tools/helmholtz_2d.py app/tools/helmholtz_bem_3d.py
+	$(VENV_PYTHON) -m py_compile app/tools/export_horncad.py app/tools/webster_1d.py app/tools/aperture_directivity.py app/tools/helmholtz_2d.py app/tools/helmholtz_bem_3d.py app/tools/run_bem_search.py
 	$(VENV_PYTHON) -m unittest discover -s automated_tests -v
 	node -e "const fs=require('fs'); const html=fs.readFileSync('app/browser/HornCAD.html','utf8'); const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n'); new Function(scripts); console.log('js_parse_ok');"
 

@@ -35,6 +35,13 @@ class BrowserYamlImportTests(unittest.TestCase):
         self.assertIn("data-import-yaml-file", html)
         self.assertIn("applyHorncadConfig(parseHorncadYaml(await file.text()))", html)
 
+    def test_operating_intent_and_search_export_are_present(self) -> None:
+        html = HTML.read_text()
+        self.assertIn("Operating Intent &amp; BEM Search", html)
+        self.assertIn("data-export-search-yaml", html)
+        self.assertIn('"  operating_intent:"', html)
+        self.assertIn('"bem_candidate_search:"', html)
+
 
 if __name__ == "__main__":
     unittest.main()

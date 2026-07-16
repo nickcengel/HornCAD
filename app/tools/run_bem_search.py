@@ -1,0 +1,523 @@
+#!/usr/bin/env python3
+"""Run a resumable, constrained BEM candidate search from a search YAML."""
+from __future__ import annotations
+
+import argparse
+import copy
+import hashlib
+import html
+import json
+import math
+from pathlib import Path
+import time
+from typing import Any
+
+import numpy as np
+from scipy.stats import qmc
+import yaml
+
+try:
+    from .export_horncad import solved_s
+    from .generate_numcalc_review import generate_review
+    from .interactive_results import comparison_report, coverage_diagnostics, load_run
+    from .run_bem_suite import find_numcalc
+    from .run_numcalc_sweep import ppo_frequency_grid, run_sweep
+except ImportError:
+    from export_horncad import solved_s
+    from generate_numcalc_review import generate_review
+    from interactive_results import comparison_report, coverage_diagnostics, load_run
+    from run_bem_suite import find_numcalc
+    from run_numcalc_sweep import ppo_frequency_grid, run_sweep
+
+
+VARIABLES = ("length_mm", "extension_mm", "osse_coverage_h_deg",
+             "osse_coverage_v_deg", "k_h", "k_v")
+OBJECTIVES = ("coverage_match_percent", "smoothness_percent",
+              "non_narrowing_percent")
+PRESET_BUDGETS = {"quick": 16, "normal": 36, "thorough": 60}
+
+
+def _read_yaml(path: Path) -> dict[str, Any]:
+    data = yaml.safe_load(path.read_text(encoding="utf-8"))
+    if not isinstance(data, dict):
+        raise ValueError(f"expected a YAML mapping in {path}")
+    return data
+
+
+def load_search(path: Path) -> tuple[dict[str, Any], Path, dict[str, Any]]:
+    document = _read_yaml(path)
+    search = document.get("bem_candidate_search")
+    if not isinstance(search, dict) or int(search.get("version", 0)) != 1:
+        raise ValueError("expected bem_candidate_search version 1")
+    seed_path = Path(str(search.get("seed_yaml", "")))
+    if not seed_path.is_absolute():
+        seed_path = path.parent / seed_path
+    seed_path = seed_path.resolve()
+    seed = _read_yaml(seed_path)
+    if not isinstance(seed.get("horncad_config"), dict):
+        raise ValueError(f"seed is not a HornCAD project: {seed_path}")
+    config = seed["horncad_config"]
+    intent = config.get("operating_intent", {})
+    crossover = float(search.get("crossover_hz", intent.get("crossover_hz", 0)))
+    upper = float(search.get("upper_frequency_hz",
+                             intent.get("upper_frequency_hz", 0)))
+    if not 0 < crossover < upper:
+        raise ValueError("search requires 0 < crossover_hz < upper_frequency_hz")
+    if upper < crossover * 2 ** (1 / 6):
+        raise ValueError("upper frequency must include the crossover-centered "
+                         "one-third-octave impedance window")
+    bounds = search.get("bounds", {})
+    for name in VARIABLES:
+        values = bounds.get(name)
+        if not (isinstance(values, list) and len(values) == 2
+                and float(values[0]) < float(values[1])):
+            raise ValueError(f"bounds.{name} must be [minimum, maximum]")
+        bounds[name] = [float(values[0]), float(values[1])]
+    search["bounds"] = bounds
+    search["crossover_hz"] = crossover
+    search["upper_frequency_hz"] = upper
+    preset = str(search.get("search_size", "normal"))
+    search["max_evaluations"] = int(
+        search.get("max_evaluations", PRESET_BUDGETS.get(preset, 36)))
+    search["initial_candidates"] = min(
+        int(search.get("initial_candidates", 12)), search["max_evaluations"] - 1)
+    if search["max_evaluations"] < 2 or search["initial_candidates"] < 1:
+        raise ValueError("search requires at least two evaluations")
+    return search, seed_path, seed
+
+
+def seed_values(seed: dict[str, Any]) -> dict[str, float]:
+    config = seed["horncad_config"]
+    global_config = config["global"]
+    h = config["horizontal_basis"]
+    v = config["vertical_basis"]
+    return {
+        "length_mm": float(global_config["length"]),
+        "extension_mm": float(global_config.get("conical_extension_length", 0)),
+        "osse_coverage_h_deg": float(h["coverage_deg"]),
+        "osse_coverage_v_deg": float(v["coverage_deg"]),
+        "k_h": float(h["k"]), "k_v": float(v["k"]),
+    }
+
+
+def normalized_vector(values: dict[str, float], bounds: dict[str, list[float]]) -> np.ndarray:
+    return np.asarray([(values[name] - bounds[name][0]) /
+                       (bounds[name][1] - bounds[name][0]) for name in VARIABLES])
+
+
+def values_from_vector(vector: np.ndarray,
+                       bounds: dict[str, list[float]]) -> dict[str, float]:
+    return {name: float(bounds[name][0] + vector[index] *
+                        (bounds[name][1] - bounds[name][0]))
+            for index, name in enumerate(VARIABLES)}
+
+
+def materialize_candidate(seed: dict[str, Any], values: dict[str, float],
+                          search: dict[str, Any]) -> tuple[dict[str, Any], dict[str, float]]:
+    document = copy.deepcopy(seed)
+    config = document["horncad_config"]
+    g = config["global"]
+    h = config["horizontal_basis"]
+    v = config["vertical_basis"]
+    g["length"] = values["length_mm"]
+    g["conical_extension_length"] = values["extension_mm"]
+    effective_radius = (float(g["throat_radius"]) + values["extension_mm"] *
+                        math.tan(math.radians(float(g["throat_angle_deg"]))))
+    g["effective_throat_radius"] = effective_radius
+    g["measured_total_length"] = values["length_mm"] + values["extension_mm"]
+    h["coverage_deg"] = values["osse_coverage_h_deg"]
+    v["coverage_deg"] = values["osse_coverage_v_deg"]
+    h["k"] = values["k_h"]
+    v["k"] = values["k_v"]
+    s_h = solved_s(values["length_mm"], effective_radius, h["coverage_deg"],
+                   h["k"], float(h["n"]), float(g["mouth_width"]) / 2,
+                   float(g["throat_angle_deg"]))
+    s_v = solved_s(values["length_mm"], effective_radius, v["coverage_deg"],
+                   v["k"], float(v["n"]), float(g["mouth_height"]) / 2,
+                   float(g["throat_angle_deg"]))
+    h["solved_s"] = s_h
+    v["solved_s"] = s_v
+    intent = config.setdefault("operating_intent", {})
+    intent["horizontal_coverage_deg"] = float(search["intended_coverage_h_deg"])
+    intent["vertical_coverage_deg"] = float(search["intended_coverage_v_deg"])
+    intent["crossover_hz"] = float(search["crossover_hz"])
+    intent["upper_frequency_hz"] = float(search["upper_frequency_hz"])
+    return document, {"s_h": float(s_h), "s_v": float(s_v)}
+
+
+def repair_k_for_positive_s(seed: dict[str, Any], values: dict[str, float],
+                            search: dict[str, Any]) -> tuple[dict[str, float], dict[str, Any]]:
+    """Raise K to the nearest feasible positive-s region when bounds permit."""
+    repaired = dict(values)
+    changes: dict[str, Any] = {}
+    config = seed["horncad_config"]
+    g = config["global"]
+    effective_radius = (float(g["throat_radius"]) + values["extension_mm"] *
+                        math.tan(math.radians(float(g["throat_angle_deg"]))))
+    for axis, coverage_key, k_key, mouth_key, basis_name in (
+            ("h", "osse_coverage_h_deg", "k_h", "mouth_width", "horizontal_basis"),
+            ("v", "osse_coverage_v_deg", "k_v", "mouth_height", "vertical_basis")):
+        basis = config[basis_name]
+
+        def derived_s(k_value: float) -> float:
+            return solved_s(values["length_mm"], effective_radius,
+                            values[coverage_key], k_value, float(basis["n"]),
+                            float(g[mouth_key]) / 2, float(g["throat_angle_deg"]))
+
+        if derived_s(repaired[k_key]) > 1e-6:
+            continue
+        lower, upper = search["bounds"][k_key]
+        if derived_s(upper) <= 1e-6:
+            changes[k_key] = {"status": "unrepairable", "attempted_max": upper}
+            continue
+        low = max(lower, repaired[k_key])
+        high = upper
+        for _ in range(48):
+            middle = (low + high) / 2
+            if derived_s(middle) > 1e-6:
+                high = middle
+            else:
+                low = middle
+        margin = 0.01 * (upper - lower)
+        new_value = min(upper, high + margin)
+        changes[k_key] = {"status": "repaired", "from": repaired[k_key],
+                          "to": new_value, "axis": axis}
+        repaired[k_key] = new_value
+    return repaired, changes
+
+
+def geometry_feasibility(derived: dict[str, float]) -> tuple[bool, str | None]:
+    if not all(math.isfinite(value) for value in derived.values()):
+        return False, "derived geometry is not finite"
+    if derived["s_h"] <= 0:
+        return False, "horizontal s is not positive"
+    if derived["s_v"] <= 0:
+        return False, "vertical s is not positive"
+    return True, None
+
+
+def pareto_indices(records: list[dict[str, Any]]) -> set[int]:
+    feasible = [(index, record) for index, record in enumerate(records)
+                if record.get("status") == "complete" and
+                record.get("crossover_loading_percent", 0) >= 100]
+    output: set[int] = set()
+    for index, record in feasible:
+        values = np.asarray([record["diagnostics"]["combined"][key]
+                             for key in OBJECTIVES])
+        dominated = False
+        for other_index, other in feasible:
+            if other_index == index:
+                continue
+            other_values = np.asarray([other["diagnostics"]["combined"][key]
+                                       for key in OBJECTIVES])
+            if np.all(other_values >= values) and np.any(other_values > values):
+                dominated = True
+                break
+        if not dominated:
+            output.add(index)
+    return output
+
+
+def _gp_predict(x: np.ndarray, y: np.ndarray,
+                candidates: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    length_scale = 0.28
+    delta = x[:, None, :] - x[None, :, :]
+    kernel = np.exp(-np.sum(delta * delta, axis=2) / (2 * length_scale ** 2))
+    kernel.flat[::len(x) + 1] += 1e-6
+    inverse_y = np.linalg.solve(kernel, y)
+    cross_delta = candidates[:, None, :] - x[None, :, :]
+    cross = np.exp(-np.sum(cross_delta * cross_delta, axis=2) /
+                   (2 * length_scale ** 2))
+    mean = cross @ inverse_y
+    solved = np.linalg.solve(kernel, cross.T)
+    variance = np.maximum(1e-9, 1 - np.sum(cross * solved.T, axis=1))
+    return mean, np.sqrt(variance)
+
+
+def propose_vector(search: dict[str, Any], records: list[dict[str, Any]],
+                   proposal_index: int) -> tuple[np.ndarray, str]:
+    bounds = search["bounds"]
+    if proposal_index == 0:
+        return np.clip(normalized_vector(search["seed_values"], bounds), 0, 1), "seed"
+    initial = int(search["initial_candidates"])
+    if proposal_index <= initial:
+        sampler = qmc.LatinHypercube(d=len(VARIABLES), seed=int(search.get("random_seed", 17)))
+        samples = sampler.random(initial)
+        return samples[proposal_index - 1], "initial-space-filling"
+
+    completed = [record for record in records if record.get("status") == "complete"]
+    if len(completed) < 3:
+        rng = np.random.default_rng(int(search.get("random_seed", 17)) + proposal_index)
+        return rng.random(len(VARIABLES)), "fallback-exploration"
+    x = np.asarray([normalized_vector(record["values"], bounds) for record in completed])
+    y = np.asarray([[record["diagnostics"]["combined"][key] / 100
+                     for key in OBJECTIVES] for record in completed])
+    loading = np.asarray([min(1, record["crossover_loading_percent"] / 100)
+                          for record in completed])
+    rng = np.random.default_rng(int(search.get("random_seed", 17)) + proposal_index)
+    pool = rng.random((4096, len(VARIABLES)))
+    distance = np.min(np.linalg.norm(pool[:, None, :] - x[None, :, :], axis=2), axis=1)
+    pool = pool[distance > 0.025]
+    weights = rng.dirichlet(np.ones(len(OBJECTIVES)))
+    objective = np.zeros(len(pool))
+    uncertainty = np.zeros(len(pool))
+    for column in range(len(OBJECTIVES)):
+        mean, std = _gp_predict(x, y[:, column], pool)
+        objective += weights[column] * mean
+        uncertainty += weights[column] * std
+    loading_mean, loading_std = _gp_predict(x, loading, pool)
+    feasibility = np.clip((loading_mean - 0.75) / np.maximum(loading_std, .08), -3, 3)
+    acquisition = objective + 0.35 * uncertainty + 0.08 * feasibility
+    return pool[int(np.argmax(acquisition))], "pareto-surrogate"
+
+
+def crossover_loading(run: dict[str, Any], crossover_hz: float) -> tuple[float, float]:
+    impedance = run.get("normalized_impedance")
+    if impedance is None:
+        return 0.0, 0.0
+    lower = crossover_hz / 2 ** (1 / 6)
+    upper = crossover_hz * 2 ** (1 / 6)
+    grid = np.geomspace(lower, upper, 17)
+    frequencies = np.asarray(run["frequencies"])
+    magnitude = np.abs(impedance)
+    interpolated = np.interp(np.log(grid), np.log(frequencies), magnitude)
+    minimum = float(np.min(interpolated))
+    return min(100.0, 100.0 * minimum / 0.7), minimum
+
+
+def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
+    records = state["candidates"]
+    pareto = pareto_indices(records)
+    for index, record in enumerate(records):
+        record["pareto"] = index in pareto
+    rows = []
+    for record in records:
+        diagnostic = record.get("diagnostics", {}).get("combined", {})
+        candidate_dir = f"candidates/{record['id']}"
+        report_link = (f" · <a href='{html.escape(record['run_dir'])}/"
+                       "interactive_report.html'>report</a>"
+                       if record.get("run_dir") else "")
+        status = "Pareto" if record.get("pareto") else record["status"].title()
+        rows.append("<tr>" + "".join((
+            f"<td><a href='{candidate_dir}/project.yaml'>{record['id']}</a>"
+            f"{report_link}</td>",
+            f"<td>{html.escape(status)}</td>",
+            f"<td>{diagnostic.get('coverage_match_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
+            f"<td>{diagnostic.get('smoothness_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
+            f"<td>{diagnostic.get('non_narrowing_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
+            f"<td>{record.get('crossover_loading_percent', float('nan')):.1f}%</td>" if "crossover_loading_percent" in record else "<td>—</td>",
+            f"<td>{record['values']['length_mm']:.1f}</td>",
+            f"<td>{record['values']['extension_mm']:.1f}</td>",
+            f"<td>{record['values']['osse_coverage_h_deg']:.1f} / "
+            f"{record['values']['osse_coverage_v_deg']:.1f}</td>",
+            f"<td>{record['values']['k_h']:.2f} / {record['values']['k_v']:.2f}</td>",
+            f"<td>{record.get('reason', '')}</td>",
+        )) + "</tr>")
+    refresh = "<meta http-equiv='refresh' content='10'>" if state["status"] == "running" else ""
+    finalist_link = (f"<p><a href='{html.escape(state['finalist_comparison'])}'>"
+                     "Open finalist comparison</a></p>"
+                     if state.get("finalist_comparison") else "")
+    document = f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}
+<title>BEM candidate search</title><style>
+body{{font-family:system-ui,sans-serif;margin:0;background:#f6f7f9;color:#172033}}main{{max-width:1400px;margin:auto;padding:20px}}
+section{{background:white;border:1px solid #d8dde7;border-radius:10px;padding:14px;margin:14px 0}}table{{border-collapse:collapse;width:100%}}
+th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}th{{background:#f1f3f7}}.summary{{display:flex;gap:30px;flex-wrap:wrap}}
+</style></head><body><main><h1>BEM candidate search</h1><section class='summary'>
+<p><strong>Status</strong><br>{html.escape(state['status'])}</p><p><strong>Phase</strong><br>{html.escape(state.get('phase', ''))}</p>
+<p><strong>Progress</strong><br>{sum(r['status']=='complete' for r in records)} / {state['max_evaluations']} evaluated</p>
+<p><strong>Fixed band</strong><br>{state['crossover_hz']:g}–{state['upper_frequency_hz']:g} Hz</p></section>
+{finalist_link}
+<section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Coverage match</th><th>Smoothness</th>
+<th>Non-narrowing</th><th>Crossover loading</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Note</th></tr>{''.join(rows)}</table></section>
+<section><p>100% is best for all diagnostics. Crossover loading is feasible at 100%. Pareto candidates are not dominated on the three coverage objectives among impedance-feasible candidates.</p></section>
+</main></body></html>"""
+    path = output_dir / "search_report.html"
+    temporary = path.with_suffix(".html.tmp")
+    temporary.write_text(document, encoding="utf-8")
+    temporary.replace(path)
+    return path
+
+
+def save_state(output_dir: Path, state: dict[str, Any]) -> None:
+    # Report generation refreshes the Pareto flags; persist that same snapshot.
+    write_report(output_dir, state)
+    state_path = output_dir / "search_state.json"
+    temporary = state_path.with_suffix(".json.tmp")
+    temporary.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
+    temporary.replace(state_path)
+
+
+def write_finalist_comparison(output_dir: Path, state: dict[str, Any],
+                              fixed_grid: np.ndarray) -> Path | None:
+    pareto = pareto_indices(state["candidates"])
+    finalists = [state["candidates"][index] for index in sorted(pareto)]
+    finalists.sort(key=lambda record: sum(
+        record["diagnostics"]["combined"][key] for key in OBJECTIVES), reverse=True)
+    finalists = finalists[:4]
+    if len(finalists) < 2:
+        return None
+    run_dirs = [output_dir / record["run_dir"] for record in finalists]
+    return comparison_report(
+        run_dirs, output_dir / "finalist_comparison.html",
+        [record["id"] for record in finalists], "BEM search finalists",
+        evaluation_frequencies=fixed_grid, fixed_band=True)
+
+
+def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
+                       executable: Path, frequencies: np.ndarray,
+                       fixed_grid: np.ndarray, search: dict[str, Any],
+                       solver: dict[str, Any], output_dir: Path) -> None:
+    """Run or resume one candidate and update its ledger record in place."""
+    started = time.perf_counter()
+    try:
+        manifest = run_sweep(
+            candidate_dir / "project.yaml", executable, candidate_dir / "bem", frequencies,
+            elements_per_wavelength=float(solver.get("elements_per_wavelength", 6)),
+            angles=int(solver.get("angles", 91)),
+            maximum_workers=int(solver.get("workers", 0)),
+            memory_limit_gib=solver.get("memory_limit_gib"), resume=True)
+        run_dir = Path(manifest["run_dir"])
+        generate_review(run_dir, title=f"BEM search {record['id']}")
+        run = load_run(run_dir, record["id"])
+        diagnostics = coverage_diagnostics(run, fixed_grid, fixed_band=True)
+        loading_percent, loading_minimum = crossover_loading(
+            run, search["crossover_hz"])
+        record.update(
+            status="complete", run_dir=str(run_dir.relative_to(output_dir)),
+            diagnostics=diagnostics,
+            crossover_loading_percent=loading_percent,
+            crossover_minimum_normalized_impedance=loading_minimum,
+            elapsed_s=record.get("elapsed_s", 0) + time.perf_counter() - started,
+            mesh_quadrant_panels=manifest["mesh_quadrant_panels"])
+    except Exception as error:  # retain failure and continue the search
+        record.update(status="failed", reason=f"{type(error).__name__}: {error}",
+                      elapsed_s=record.get("elapsed_s", 0) + time.perf_counter() - started)
+
+
+def run_search(search_path: Path, output_dir: Path, binary: Path | None,
+               dry_run: bool = False) -> dict[str, Any]:
+    search, seed_path, seed = load_search(search_path)
+    config_hash = hashlib.sha256(search_path.read_bytes() + seed_path.read_bytes()).hexdigest()
+    output_dir.mkdir(parents=True, exist_ok=True)
+    state_path = output_dir / "search_state.json"
+    if state_path.exists():
+        state = json.loads(state_path.read_text())
+        if state["configuration_hash"] != config_hash:
+            raise ValueError("search or seed changed; use a new output directory")
+    else:
+        values = seed_values(seed)
+        intent = seed["horncad_config"].get("operating_intent", {})
+        search["intended_coverage_h_deg"] = float(search.get(
+            "intended_coverage_h_deg", intent.get("horizontal_coverage_deg",
+            seed["horncad_config"]["horizontal_basis"]["coverage_deg"])))
+        search["intended_coverage_v_deg"] = float(search.get(
+            "intended_coverage_v_deg", intent.get("vertical_coverage_deg",
+            seed["horncad_config"]["vertical_basis"]["coverage_deg"])))
+        search["seed_values"] = values
+        state = {
+            "schema_version": 1, "status": "running", "phase": "initializing",
+            "configuration_hash": config_hash, "search_yaml": str(search_path.resolve()),
+            "seed_yaml": str(seed_path), "crossover_hz": search["crossover_hz"],
+            "upper_frequency_hz": search["upper_frequency_hz"],
+            "max_evaluations": search["max_evaluations"], "search": search,
+            "candidates": [], "started_at_unix": time.time(),
+        }
+        save_state(output_dir, state)
+    for record in state["candidates"]:
+        if record["status"] == "running":
+            record["status"] = "queued"
+            record["reason"] = "resuming interrupted BEM evaluation"
+        elif record["status"] == "preflight" and not dry_run:
+            record["status"] = "queued"
+            record.pop("reason", None)
+    search = state["search"]
+    executable = None if dry_run else find_numcalc(binary)
+    solver = search.get("solver", {})
+    ppo = float(solver.get("points_per_octave", 10))
+    epw = float(solver.get("elements_per_wavelength", 6))
+    angles = int(solver.get("angles", 91))
+    solve_start = search["crossover_hz"] / 2 ** (1 / 6)
+    frequencies = ppo_frequency_grid(solve_start, search["upper_frequency_hz"], ppo)
+    fixed_grid = np.geomspace(search["crossover_hz"], search["upper_frequency_hz"],
+                              int(np.ceil(np.log2(search["upper_frequency_hz"] /
+                                                   search["crossover_hz"]) * 48)) + 1)
+    max_proposals = search["max_evaluations"] * 10
+    while (sum(record["status"] == "complete" for record in state["candidates"])
+           < search["max_evaluations"] and len(state["candidates"]) < max_proposals):
+        queued = next((item for item in state["candidates"]
+                       if item["status"] == "queued"), None)
+        if queued is not None:
+            record = queued
+            candidate_id = record["id"]
+            candidate_dir = output_dir / "candidates" / candidate_id
+            proposal_index = int(candidate_id.rsplit("-", 1)[1])
+        else:
+            proposal_index = len(state["candidates"])
+            vector, source = propose_vector(search, state["candidates"], proposal_index)
+            values = values_from_vector(vector, search["bounds"])
+            if proposal_index == 0:
+                values = search["seed_values"]
+            candidate_id = f"candidate-{proposal_index:03d}"
+            values, repairs = repair_k_for_positive_s(seed, values, search)
+            document, derived = materialize_candidate(seed, values, search)
+            feasible, reason = geometry_feasibility(derived)
+            record = {"id": candidate_id, "status": "queued",
+                      "proposal_source": source, "values": values,
+                      "derived": derived, "k_repairs": repairs}
+            state["candidates"].append(record)
+            candidate_dir = output_dir / "candidates" / candidate_id
+            candidate_dir.mkdir(parents=True, exist_ok=True)
+            project_path = candidate_dir / "project.yaml"
+            project_path.write_text(
+                yaml.safe_dump(document, sort_keys=False), encoding="utf-8")
+            if not feasible:
+                record.update(status="rejected", reason=reason)
+                save_state(output_dir, state)
+                continue
+        if dry_run:
+            record.update(status="preflight", reason="geometry feasible; BEM not run")
+            save_state(output_dir, state)
+            if proposal_index + 1 >= min(search["max_evaluations"],
+                                         search["initial_candidates"] + 1):
+                break
+            continue
+        state["phase"] = f"BEM evaluation {candidate_id}"
+        record["status"] = "running"
+        save_state(output_dir, state)
+        evaluate_candidate(record, candidate_dir, executable, frequencies, fixed_grid,
+                           search, solver, output_dir)
+        save_state(output_dir, state)
+    complete = sum(record["status"] == "complete" for record in state["candidates"])
+    if dry_run:
+        state.update(status="preflight", phase="initial candidates materialized")
+    elif complete >= search["max_evaluations"]:
+        state.update(status="complete", phase="candidate evaluation complete",
+                     completed_at_unix=time.time())
+        comparison = write_finalist_comparison(output_dir, state, fixed_grid)
+        if comparison is not None:
+            state["finalist_comparison"] = str(comparison.relative_to(output_dir))
+    else:
+        state.update(status="stopped", phase="proposal limit reached")
+    save_state(output_dir, state)
+    return state
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("search_yaml", type=Path)
+    parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--binary", type=Path)
+    parser.add_argument("--dry-run", action="store_true",
+                        help="materialize and geometry-check the initial design set")
+    return parser.parse_args(argv)
+
+
+def main() -> None:
+    args = parse_args()
+    state = run_search(args.search_yaml, args.output_dir, args.binary, args.dry_run)
+    print(f"search report: {args.output_dir / 'search_report.html'}")
+    print(f"status: {state['status']}")
+
+
+if __name__ == "__main__":
+    main()

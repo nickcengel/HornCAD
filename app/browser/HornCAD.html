@@ -425,6 +425,61 @@
     </fieldset>
 
     <fieldset>
+      <legend>Operating Intent &amp; BEM Search</legend>
+      <p class="lede">Intent is fixed during search. OS-SE coverage, K, length, and extension may move.</p>
+      <label>Intended horizontal coverage deg
+        <input data-control="intentHCoverage" type="number" min="1" max="85" step="0.1" value="45">
+      </label>
+      <label>Intended vertical coverage deg
+        <input data-control="intentVCoverage" type="number" min="1" max="85" step="0.1" value="30">
+      </label>
+      <label>Crossover Hz
+        <input data-control="crossoverHz" type="number" min="100" max="10000" step="10" value="500">
+      </label>
+      <label>Upper operating frequency Hz
+        <input data-control="upperFrequencyHz" type="number" min="500" max="30000" step="100" value="8000">
+      </label>
+      <label>Search size
+        <select data-control="searchSize">
+          <option value="quick">Quick — 16 evaluations</option>
+          <option value="normal" selected>Normal — 36 evaluations</option>
+          <option value="thorough">Thorough — 60 evaluations</option>
+        </select>
+      </label>
+      <label>Length variation ±%
+        <input data-control="searchLengthPercent" type="number" min="1" max="50" step="1" value="15">
+      </label>
+      <label>Extension minimum mm
+        <input data-control="searchExtensionMin" type="number" min="0" max="250" step="1" value="0">
+      </label>
+      <label>Extension maximum mm
+        <input data-control="searchExtensionMax" type="number" min="1" max="250" step="1" value="45">
+      </label>
+      <details class="modifier-panel">
+        <summary>Advanced search bounds</summary>
+        <label>Horizontal OS-SE coverage min / max deg
+          <input data-control="searchHCoverageMin" type="number" min="1" max="85" step="0.1" value="30">
+          <input data-control="searchHCoverageMax" type="number" min="1" max="85" step="0.1" value="70">
+        </label>
+        <label>Vertical OS-SE coverage min / max deg
+          <input data-control="searchVCoverageMin" type="number" min="1" max="85" step="0.1" value="20">
+          <input data-control="searchVCoverageMax" type="number" min="1" max="85" step="0.1" value="55">
+        </label>
+        <label>Horizontal K min / max
+          <input data-control="searchHKMin" type="number" min="0.01" max="200" step="0.1" value="5">
+          <input data-control="searchHKMax" type="number" min="0.01" max="200" step="0.1" value="60">
+        </label>
+        <label>Vertical K min / max
+          <input data-control="searchVKMin" type="number" min="0.01" max="200" step="0.1" value="5">
+          <input data-control="searchVKMax" type="number" min="0.01" max="200" step="0.1" value="60">
+        </label>
+      </details>
+      <div class="action-row">
+        <button type="button" class="primary-action" data-export-search-yaml>Export BEM Search YAML</button>
+      </div>
+    </fieldset>
+
+    <fieldset>
       <legend>Body & Mount</legend>
       <label>
         Mouth rear offset mm
@@ -727,6 +782,7 @@
   mouthSagVEnabledInput.addEventListener("change", scheduleRender);
 
   document.querySelector("[data-export-yaml]").addEventListener("click", exportYaml);
+  document.querySelector("[data-export-search-yaml]").addEventListener("click", exportSearchYaml);
   const importYamlFileInput = document.querySelector("[data-import-yaml-file]");
   document.querySelector("[data-import-yaml]").addEventListener("click", () => importYamlFileInput.click());
   importYamlFileInput.addEventListener("change", importYamlFile);
@@ -962,6 +1018,20 @@
       density: Math.max(8, Math.round(value("density"))),
       stlStations: Math.max(8, Math.round(value("stlStations"))),
       stlSideSamples: Math.max(96, Math.round(value("stlSideSamples"))),
+      intentHCoverage: value("intentHCoverage"),
+      intentVCoverage: value("intentVCoverage"),
+      crossoverHz: value("crossoverHz"),
+      upperFrequencyHz: value("upperFrequencyHz"),
+      searchSize: value("searchSize"),
+      searchLengthPercent: value("searchLengthPercent"),
+      searchExtensionMin: value("searchExtensionMin"),
+      searchExtensionMax: value("searchExtensionMax"),
+      searchHCoverageMin: value("searchHCoverageMin"),
+      searchHCoverageMax: value("searchHCoverageMax"),
+      searchVCoverageMin: value("searchVCoverageMin"),
+      searchVCoverageMax: value("searchVCoverageMax"),
+      searchHKMin: value("searchHKMin"), searchHKMax: value("searchHKMax"),
+      searchVKMin: value("searchVKMin"), searchVKMax: value("searchVKMax"),
     };
   }
 
@@ -2718,6 +2788,7 @@
     const modifier = config.section_modifier || {};
     const view = config.view || {};
     const exportSettings = config.export || {};
+    const intent = config.operating_intent || {};
     const controlValues = {
       length: global.length, r0: global.throat_radius,
       throatAngle: global.throat_angle_deg,
@@ -2737,6 +2808,10 @@
       sectionShape1: modifier.mouth_squareness, density: view.wire_density,
       stlStations: exportSettings.stl_z_stations,
       stlSideSamples: exportSettings.stl_side_samples,
+      intentHCoverage: intent.horizontal_coverage_deg ?? horizontal.coverage_deg,
+      intentVCoverage: intent.vertical_coverage_deg ?? vertical.coverage_deg,
+      crossoverHz: intent.crossover_hz,
+      upperFrequencyHz: intent.upper_frequency_hz,
     };
     for (const [name, importedValue] of Object.entries(controlValues)) {
       setImportedControl(name, importedValue);
@@ -2805,6 +2880,11 @@
       `    mouth_sag: ${yamlNumber(p.mouthSag)}`,
       `    mouth_sag_h_enabled: ${p.mouthSagHEnabled}`,
       `    mouth_sag_v_enabled: ${p.mouthSagVEnabled}`,
+      "  operating_intent:",
+      `    horizontal_coverage_deg: ${yamlNumber(p.intentHCoverage)}`,
+      `    vertical_coverage_deg: ${yamlNumber(p.intentVCoverage)}`,
+      `    crossover_hz: ${yamlNumber(p.crossoverHz)}`,
+      `    upper_frequency_hz: ${yamlNumber(p.upperFrequencyHz)}`,
       "  body:",
       `    mouth_rear_offset: ${yamlNumber(p.mouthRearOffset)}`,
       `    mount_diameter: ${yamlNumber(p.mountDiameter)}`,
@@ -2856,6 +2936,45 @@
     const filename = `${configBasename(p)}.YAML`;
     const blob = new Blob([horncadYaml(p)], { type: "text/yaml" });
     downloadBlob(blob, filename);
+  }
+
+  function bemSearchYaml(p) {
+    const lengthFraction = p.searchLengthPercent / 100;
+    return [
+      "bem_candidate_search:",
+      "  version: 1",
+      `  seed_yaml: ${configBasename(p)}.YAML`,
+      `  intended_coverage_h_deg: ${yamlNumber(p.intentHCoverage)}`,
+      `  intended_coverage_v_deg: ${yamlNumber(p.intentVCoverage)}`,
+      `  crossover_hz: ${yamlNumber(p.crossoverHz)}`,
+      `  upper_frequency_hz: ${yamlNumber(p.upperFrequencyHz)}`,
+      `  search_size: ${p.searchSize}`,
+      "  initial_candidates: 12",
+      "  random_seed: 17",
+      "  bounds:",
+      `    length_mm: [${yamlNumber(p.length * (1 - lengthFraction))}, ${yamlNumber(p.length * (1 + lengthFraction))}]`,
+      `    extension_mm: [${yamlNumber(p.searchExtensionMin)}, ${yamlNumber(p.searchExtensionMax)}]`,
+      `    osse_coverage_h_deg: [${yamlNumber(p.searchHCoverageMin)}, ${yamlNumber(p.searchHCoverageMax)}]`,
+      `    osse_coverage_v_deg: [${yamlNumber(p.searchVCoverageMin)}, ${yamlNumber(p.searchVCoverageMax)}]`,
+      `    k_h: [${yamlNumber(p.searchHKMin)}, ${yamlNumber(p.searchHKMax)}]`,
+      `    k_v: [${yamlNumber(p.searchVKMin)}, ${yamlNumber(p.searchVKMax)}]`,
+      "  solver:",
+      "    points_per_octave: 10",
+      "    elements_per_wavelength: 6",
+      "    angles: 91",
+      "    workers: 0",
+      "",
+    ].join("\n");
+  }
+
+  function exportSearchYaml() {
+    const p = params();
+    if (!(p.crossoverHz > 0 && p.upperFrequencyHz > p.crossoverHz)) {
+      window.alert("Upper operating frequency must be greater than crossover.");
+      return;
+    }
+    const filename = `${configBasename(p)}-BEM-search.YAML`;
+    downloadBlob(new Blob([bemSearchYaml(p)], { type: "text/yaml" }), filename);
   }
 
   function resizeCanvas() {

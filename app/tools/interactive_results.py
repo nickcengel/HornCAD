@@ -89,9 +89,12 @@ def intended_coverages(yaml_path: Path | None) -> dict[str, float]:
     if yaml_path is None:
         return {}
     config = yaml.safe_load(yaml_path.read_text())["horncad_config"]
+    intent = config.get("operating_intent", {})
     return {
-        "horizontal": float(config.get("horizontal_basis", {}).get("coverage_deg", 0)),
-        "vertical": float(config.get("vertical_basis", {}).get("coverage_deg", 0)),
+        "horizontal": float(intent.get("horizontal_coverage_deg",
+                           config.get("horizontal_basis", {}).get("coverage_deg", 0))),
+        "vertical": float(intent.get("vertical_coverage_deg",
+                         config.get("vertical_basis", {}).get("coverage_deg", 0))),
     }
 
 
@@ -158,7 +161,8 @@ def _measured_half_angle(angles: np.ndarray, levels: np.ndarray) -> np.ndarray:
 
 
 def coverage_diagnostics(
-        run: dict[str, Any], evaluation_frequencies: np.ndarray | None = None
+        run: dict[str, Any], evaluation_frequencies: np.ndarray | None = None,
+        fixed_band: bool = False,
 ) -> dict[str, Any]:
     """Summarize coverage fidelity over an automatic or explicit common grid."""
     order = np.argsort(run["frequencies"])
@@ -176,15 +180,16 @@ def coverage_diagnostics(
                 and np.all(valid_both[index:end_index + 1])):
             start_index = int(index)
             break
-    if start_index is None:
+    if start_index is None and not fixed_band:
         return {"status": "unavailable",
                 "reason": "no sustained horizontal and vertical -6 dB crossings"}
 
     # A missing crossing after the passband is established means coverage exceeded
     # the measured hemisphere. Treat it as 90 degrees instead of discarding it.
-    source_frequencies = frequencies[start_index:]
+    source_start = 0 if fixed_band else start_index
+    source_frequencies = frequencies[source_start:]
     source_angles = {
-        key: np.where(np.isfinite(values[start_index:]), values[start_index:], 90.0)
+        key: np.where(np.isfinite(values[source_start:]), values[source_start:], 90.0)
         for key, values in measured.items()
     }
     if evaluation_frequencies is None:
@@ -205,7 +210,7 @@ def coverage_diagnostics(
             key: np.interp(np.log(evaluated_frequencies), np.log(source_frequencies), values)
             for key, values in source_angles.items()
         }
-        band_kind = "common comparison"
+        band_kind = "fixed optimization" if fixed_band else "common comparison"
     targets = run["intended_coverages"]
     if any(targets.get(key, 0) <= 0 for key in angles):
         return {"status": "unavailable", "reason": "intended coverage is missing"}
@@ -492,7 +497,9 @@ def single_report(run_dir: Path, output: Path | None = None,
 
 def comparison_report(run_dirs: list[Path], output: Path,
                       names: list[str] | None = None,
-                      title: str = "Horn comparison") -> Path:
+                      title: str = "Horn comparison",
+                      evaluation_frequencies: np.ndarray | None = None,
+                      fixed_band: bool = False) -> Path:
     if not 2 <= len(run_dirs) <= 4:
         raise ValueError("comparison requires two to four runs")
     if names is not None and len(names) != len(run_dirs):
@@ -526,7 +533,11 @@ def comparison_report(run_dirs: list[Path], output: Path,
     figure.update_yaxes(title_text="Half-angle (degrees)", range=[0, 90], row=1, col=2)
     figure.update_yaxes(title_text="|Z| / (ρc/Sₜ)", row=1, col=3)
     figure.update_layout(height=620, hovermode="closest", legend={"orientation": "h"})
-    diagnostics, _ = comparison_diagnostics(runs)
+    if evaluation_frequencies is None:
+        diagnostics, _ = comparison_diagnostics(runs)
+    else:
+        diagnostics = {run["name"]: coverage_diagnostics(
+            run, evaluation_frequencies, fixed_band=fixed_band) for run in runs}
     return _write_html(output, title, figure, runs, diagnostics, comparison=True)
 
 

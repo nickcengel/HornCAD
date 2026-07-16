@@ -1,0 +1,22 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 50
+  intended_coverage_v_deg: 35
+  crossover_hz: 500
+  upper_frequency_hz: 8000
+  search_size: quick
+  initial_candidates: 12
+  random_seed: 17
+  bounds:
+    length_mm: [255, 345]
+    extension_mm: [0, 45]
+    osse_coverage_h_deg: [30, 70]
+    osse_coverage_v_deg: [20, 55]
+    k_h: [5, 60]
+    k_v: [5, 60]
+  solver:
+    points_per_octave: 10
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 0

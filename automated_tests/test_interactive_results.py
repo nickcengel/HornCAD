@@ -120,6 +120,18 @@ class InteractiveResultsTests(unittest.TestCase):
         self.assertAlmostEqual(result["vertical"]["narrowing_percent"], 20.0,
                                delta=0.2)
 
+    def test_fixed_band_penalizes_missing_crossings(self) -> None:
+        frequencies = np.array([500.0, 1000.0, 2000.0])
+        angles = np.arange(-90.0, 91.0)
+        levels = np.zeros((len(frequencies), len(angles)))
+        run = {"frequencies": frequencies, "angles": angles,
+               "horizontal": levels, "vertical": levels,
+               "intended_coverages": {"horizontal": 50.0, "vertical": 35.0}}
+        result = coverage_diagnostics(run, frequencies, fixed_band=True)
+        self.assertEqual(result["status"], "available")
+        self.assertEqual(result["band_kind"], "fixed optimization")
+        self.assertLess(result["combined"]["coverage_match_percent"], 20.0)
+
     def test_comparison_diagnostics_use_one_grid_and_common_band(self) -> None:
         frequencies_a = 500.0 * 2 ** (np.arange(25) / 12)
         frequencies_b = 700.0 * 2 ** (np.arange(18) / 10)
