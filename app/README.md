@@ -111,7 +111,7 @@ This is substantially more informative than the uniform-aperture estimate, but i
 
 ## All-BEM Free-Air Suite
 
-The supported user workflow mirrors the FEM suite:
+Run the complete free-air all-BEM analysis with one command:
 
 ```bash
 python app/run_bem_suite.py path/to/config.YAML \

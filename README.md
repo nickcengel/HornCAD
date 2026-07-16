@@ -46,7 +46,7 @@ python app/run_fem_suite.py path/to/config.YAML \
   --output-dir analysis/my-study --title "My horn"
 ```
 
-Run the equivalent free-air all-BEM suite with the same command shape:
+To run a complete free-air all-BEM analysis directly from YAML:
 
 ```bash
 python app/run_bem_suite.py path/to/config.YAML \

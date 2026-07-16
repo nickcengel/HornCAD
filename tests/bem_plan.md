@@ -276,7 +276,7 @@ power, and symmetry error.
 
 ### First comparison artifact
 
-Produce FEM-style logarithmic-frequency heatmaps on a common signed angle grid
+Produce logarithmic-frequency coverage heatmaps on a common signed angle grid
 from -90 to +90 degrees, with a common dB floor and -6 dB contours. The first
 review figure has four rows (or four clearly matched panels) for both horizontal
 and vertical planes:
