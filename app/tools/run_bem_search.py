@@ -36,7 +36,7 @@ except ImportError:
 
 
 VARIABLES = ("length_mm", "extension_mm", "osse_coverage_h_deg",
-             "osse_coverage_v_deg", "k_h", "k_v")
+             "osse_coverage_v_deg", "k_h", "k_v", "n_h", "n_v")
 OBJECTIVES = ("pattern_fit_percent", "pattern_stability_percent",
               "hf_retention_percent")
 PRESET_BUDGETS = {"quick": 16, "normal": 36, "thorough": 60}
@@ -48,6 +48,7 @@ VARIABLE_LABELS = {
     "osse_coverage_h_deg": "horizontal OS-SE coverage",
     "osse_coverage_v_deg": "vertical OS-SE coverage",
     "k_h": "horizontal K", "k_v": "vertical K",
+    "n_h": "horizontal N", "n_v": "vertical N",
 }
 
 
@@ -128,6 +129,7 @@ def seed_values(seed: dict[str, Any]) -> dict[str, float]:
         "osse_coverage_h_deg": float(h["coverage_deg"]),
         "osse_coverage_v_deg": float(v["coverage_deg"]),
         "k_h": float(h["k"]), "k_v": float(v["k"]),
+        "n_h": float(h["n"]), "n_v": float(v["n"]),
     }
 
 
@@ -160,6 +162,8 @@ def materialize_candidate(seed: dict[str, Any], values: dict[str, float],
     v["coverage_deg"] = values["osse_coverage_v_deg"]
     h["k"] = values["k_h"]
     v["k"] = values["k_v"]
+    h["n"] = values["n_h"]
+    v["n"] = values["n_v"]
     s_h = solved_s(values["length_mm"], effective_radius, h["coverage_deg"],
                    h["k"], float(h["n"]), float(g["mouth_width"]) / 2,
                    float(g["throat_angle_deg"]))
@@ -369,7 +373,7 @@ def geometry_feature_vector(search: dict[str, Any], values: dict[str, float]) ->
         end_radius = context[mouth_key] / 2
         metrics = termination_metrics(
             values["length_mm"], effective_radius, values[coverage_key], values[k_key],
-            context[n_key], end_radius, context["throat_angle_deg"])
+            values[n_key], end_radius, context["throat_angle_deg"])
         s_lower, s_upper = search["derived_s_bounds"]
         if (not s_lower <= metrics["s"] <= s_upper or
                 not all(math.isfinite(item) for item in metrics.values())):
@@ -390,9 +394,6 @@ def geometry_space_filling_probe(search: dict[str, Any],
     feasible_features = []
     for vector in pool:
         values = values_from_vector(vector, search["bounds"])
-        seed_length = search["seed_values"]["length_mm"]
-        if abs(values["length_mm"] / seed_length - 1) > 0.10:
-            continue
         features = geometry_feature_vector(search, values)
         if features is not None:
             feasible_vectors.append(vector)
@@ -467,6 +468,71 @@ def learned_lever_effects(search: dict[str, Any],
     return effects
 
 
+def _coupled_axis_controls(search: dict[str, Any], length_mm: float,
+                           axis: str, target_s: float, family: int) -> tuple[float, float]:
+    """Select one coverage/K pair shared by a matched low/mid/high-N family."""
+    context = search["geometry_context"]
+    coverage_key = f"osse_coverage_{axis}_deg"
+    k_key = f"k_{axis}"
+    n_key = f"n_{axis}"
+    mouth_key = "mouth_width_mm" if axis == "h" else "mouth_height_mm"
+    sampler = qmc.LatinHypercube(d=2, seed=1000 + family * 2 + (axis == "v"))
+    pool = sampler.random(4096)
+    coverage_bounds = search["bounds"][coverage_key]
+    k_bounds = search["bounds"][k_key]
+    n_bounds = search["bounds"][n_key]
+    seed_n = search["seed_values"][n_key]
+    n_levels = (n_bounds[0], min(max(seed_n, n_bounds[0]), n_bounds[1]), n_bounds[1])
+    effective_radius = context["throat_radius_mm"] + search["seed_values"]["extension_mm"] * math.tan(
+        math.radians(context["throat_angle_deg"]))
+    best: tuple[float, float, float] | None = None
+    intended = search[f"intended_coverage_{axis}_deg"]
+    for unit_coverage, unit_k in pool:
+        coverage = coverage_bounds[0] + unit_coverage * (coverage_bounds[1] - coverage_bounds[0])
+        k = k_bounds[0] + unit_k * (k_bounds[1] - k_bounds[0])
+        metrics = [termination_metrics(
+            length_mm, effective_radius, coverage, k, n,
+            context[mouth_key] / 2, context["throat_angle_deg"])
+            for n in n_levels]
+        s_values = [item["s"] for item in metrics]
+        if not all(search["derived_s_bounds"][0] <= s <= search["derived_s_bounds"][1]
+                   for s in s_values):
+            continue
+        # Target the middle-N geometry while mildly preferring authored coverage;
+        # K is selected jointly rather than repaired after proposal.
+        score = abs(s_values[1] - target_s) + 0.08 * abs(coverage - intended) / (
+            coverage_bounds[1] - coverage_bounds[0])
+        if best is None or score < best[0]:
+            best = (score, coverage, k)
+    if best is None:
+        raise RuntimeError(f"no feasible matched N family for {axis} at {length_mm:g} mm")
+    return best[1], best[2]
+
+
+def structured_initial_values(search: dict[str, Any], proposal_index: int) -> dict[str, float]:
+    """Return one member of four length families crossed with three N levels."""
+    family = (proposal_index - 1) // 3
+    n_level = (proposal_index - 1) % 3
+    if not 0 <= family < 4:
+        raise ValueError("structured initial proposal index exceeds 12 candidates")
+    length_bounds = search["bounds"]["length_mm"]
+    length = float(np.linspace(length_bounds[0], length_bounds[1], 4)[family])
+    target_s = (0.05, 0.30, 0.80, 1.50)[family]
+    h_coverage, h_k = _coupled_axis_controls(search, length, "h", target_s, family)
+    v_coverage, v_k = _coupled_axis_controls(search, length, "v", target_s, family)
+    values = dict(search["seed_values"])
+    values.update(length_mm=length,
+                  extension_mm=search["seed_values"]["extension_mm"],
+                  osse_coverage_h_deg=h_coverage,
+                  osse_coverage_v_deg=v_coverage,
+                  k_h=h_k, k_v=v_k)
+    for axis in ("h", "v"):
+        lower, upper = search["bounds"][f"n_{axis}"]
+        seed_n = search["seed_values"][f"n_{axis}"]
+        values[f"n_{axis}"] = (lower, min(max(seed_n, lower), upper), upper)[n_level]
+    return values
+
+
 def propose_vector(search: dict[str, Any], records: list[dict[str, Any]],
                    proposal_index: int) -> tuple[np.ndarray, str]:
     bounds = search["bounds"]
@@ -474,7 +540,8 @@ def propose_vector(search: dict[str, Any], records: list[dict[str, Any]],
         return np.clip(normalized_vector(search["seed_values"], bounds), 0, 1), "seed"
     initial = int(search["initial_candidates"])
     if proposal_index <= initial:
-        return geometry_space_filling_probe(search, records), "initial-geometry-space-filling"
+        values = structured_initial_values(search, proposal_index)
+        return normalized_vector(values, bounds), "initial-length-N-family"
 
     completed = _training_records(records)
     if len(completed) < 3:
@@ -546,9 +613,6 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     records = state["candidates"]
     search = state["search"]
     seed = search["seed_values"]
-    fixed = search.get("fixed_parameters", {})
-    fixed_n_h = float(fixed.get("n_h", float("nan")))
-    fixed_n_v = float(fixed.get("n_v", float("nan")))
     pareto = pareto_indices(records)
     for index, record in enumerate(records):
         record["pareto"] = index in pareto
@@ -579,7 +643,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td>{record['values']['k_h']:.2f} / {record['values']['k_v']:.2f}</td>",
             f"<td>{record['derived'].get('s_h', float('nan')):.3f} / "
             f"{record['derived'].get('s_v', float('nan')):.3f}</td>",
-            f"<td>{fixed_n_h:g} / {fixed_n_v:g}</td>",
+            f"<td>{record['values']['n_h']:g} / {record['values']['n_v']:g}</td>",
             f"<td>{record['derived'].get('mouth_curvature_radius_h_mm', float('nan')):.1f} / "
             f"{record['derived'].get('mouth_curvature_radius_v_mm', float('nan')):.1f}</td>",
             f"<td>{html.escape(trait)}</td>",
@@ -623,7 +687,7 @@ th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}td{{white-sp
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Each completed run is compared with a factor-two decimation and excluded from surrogate training when any headline diagnostic moves by more than {search.get('sampling_stability_points', DEFAULT_SAMPLING_STABILITY_POINTS):g} points. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
 {finalist_link}
 <section><h2>Search range</h2><table><tr><th>Parameter</th><th>Configured range</th><th>Seed</th><th>Retained candidates</th></tr>
-{''.join(range_rows)}</table><p><strong>Realized S range (both axes):</strong> {search['derived_s_bounds'][0]:g}–{search['derived_s_bounds'][1]:g}. <strong>Fixed termination exponent:</strong> N H/V = {fixed_n_h:g} / {fixed_n_v:g}. N is not varied in this search.</p></section>
+{''.join(range_rows)}</table><p><strong>Realized S range (both axes):</strong> {search['derived_s_bounds'][0]:g}–{search['derived_s_bounds'][1]:g}. <strong>Initial extension:</strong> fixed at the seed value; N is varied explicitly in matched length families.</p></section>
 {effects_section}
 <section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Pattern Fit</th><th>Pattern Stability</th>
 <th>HF Retention</th><th>Crossover loading</th><th>Length cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>S H/V</th><th>N H/V</th><th>Curvature radius H/V mm</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>

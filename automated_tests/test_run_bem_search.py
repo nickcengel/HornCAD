@@ -8,6 +8,7 @@ from unittest.mock import patch
 import numpy as np
 
 from app.tools.run_bem_search import (
+    VARIABLES,
     candidate_distance, candidate_trait, candidate_traits, geometry_feasibility,
     geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
     length_cost_percent, load_search,
@@ -63,19 +64,19 @@ class BEMSearchTests(unittest.TestCase):
         self.assertEqual(source, "seed")
         self.assertTrue(np.all((seed_vector >= 0) & (seed_vector <= 1)))
         sample, source = propose_vector(search, [], 1)
-        self.assertEqual(source, "initial-geometry-space-filling")
+        self.assertEqual(source, "initial-length-N-family")
         self.assertTrue(np.all((sample >= 0) & (sample <= 1)))
         values = {name: search["bounds"][name][0] + sample[index] *
                   (search["bounds"][name][1] - search["bounds"][name][0])
-                  for index, name in enumerate(("length_mm", "extension_mm",
-                                                "osse_coverage_h_deg", "osse_coverage_v_deg",
-                                                "k_h", "k_v"))}
+                  for index, name in enumerate(VARIABLES)}
         self.assertIsNotNone(geometry_feature_vector(search, values))
+        self.assertEqual(values["extension_mm"], search["seed_values"]["extension_mm"])
 
     def test_inferior_screen_waits_for_seed_and_sufficient_learning(self) -> None:
         search, _, seed = load_search(SEARCH)
         search["seed_values"] = seed_values(seed)
-        self.assertEqual(inferior_to_seed_probability(search, [], np.full(6, 0.5)), 0)
+        self.assertEqual(inferior_to_seed_probability(
+            search, [], np.full(len(VARIABLES), 0.5)), 0)
 
     def test_lever_effects_recover_direction_from_completed_probes(self) -> None:
         search, _, seed = load_search(SEARCH)
@@ -165,15 +166,30 @@ class BEMSearchTests(unittest.TestCase):
             self.assertTrue((Path(temp) / "search_report.html").is_file())
             report = (Path(temp) / "search_report.html").read_text()
             self.assertIn("Configured range", report)
-            self.assertIn("N is not varied in this search", report)
+            self.assertIn("N is varied explicitly", report)
             self.assertNotIn("geometry feasible", report)
             self.assertGreaterEqual(len(state["candidates"]), 1)
             self.assertFalse(any(record["status"] == "rejected"
                                  for record in state["candidates"]))
             self.assertGreaterEqual(state["rejected_count"], 0)
             self.assertTrue(all(record["proposal_source"] in
-                                {"seed", "initial-geometry-space-filling"}
+                                {"seed", "initial-length-N-family"}
                                 for record in state["candidates"]))
+            families = [record for record in state["candidates"]
+                        if record["proposal_source"] == "initial-length-N-family"]
+            self.assertEqual(sorted({record["values"]["length_mm"] for record in families}),
+                             [255.0, 285.0, 315.0, 345.0])
+            self.assertEqual({record["values"]["extension_mm"] for record in families},
+                             {0.0})
+            for length in (255.0, 285.0, 315.0, 345.0):
+                matched = [record for record in families
+                           if record["values"]["length_mm"] == length]
+                self.assertEqual([record["values"]["n_h"] for record in matched],
+                                 [2.0, 10.0, 25.0])
+                self.assertEqual(len({(record["values"]["osse_coverage_h_deg"],
+                                       record["values"]["osse_coverage_v_deg"],
+                                       record["values"]["k_h"], record["values"]["k_v"])
+                                      for record in matched}), 1)
             self.assertTrue((Path(temp) / "candidates" / "candidate-000" /
                              "project.yaml").is_file())
             self.assertEqual(len(list((Path(temp) / "candidates" / "candidate-000").

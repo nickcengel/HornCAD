@@ -20,6 +20,8 @@ bem_candidate_search:
     osse_coverage_v_deg: [20, 55]
     k_h: [5, 60]
     k_v: [5, 60]
+    n_h: [2, 25]
+    n_v: [2, 25]
   solver:
     points_per_octave: 12
     elements_per_wavelength: 6

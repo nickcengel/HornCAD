@@ -3,12 +3,12 @@ horncad_config:
   version: 2
   units: mm
   global:
-    length: 315.6858016345398
+    length: 345.0
     throat_radius: 12.7
     throat_angle_deg: 6
-    conical_extension_length: 5.502349065841085
-    effective_throat_radius: 13.278320190730035
-    measured_total_length: 321.1881507003809
+    conical_extension_length: 0.0
+    effective_throat_radius: 12.7
+    measured_total_length: 345.0
     mouth_width: 400
     mouth_height: 280
     mouth_sag: 60
@@ -31,21 +31,21 @@ horncad_config:
     mount_fillet: 12
     stl_export_mode: body
   horizontal_basis:
-    coverage_deg: 33.19865970319001
-    k: 28.851292588172655
-    n: 10
-    solved_s: 1.2267234693558542
-    mouth_exit_angle_deg: 86.84601395712046
-    mouth_curvature_radius_mm: 581.5507454160303
-    normalized_mouth_curvature_radius: 2.9077537270801512
+    coverage_deg: 41.73957653541109
+    k: 53.914184259672275
+    n: 10.0
+    solved_s: 0.9413121562251114
+    mouth_exit_angle_deg: 85.93679369113502
+    mouth_curvature_radius_mm: 387.74904448924815
+    normalized_mouth_curvature_radius: 1.9387452224462407
   vertical_basis:
-    coverage_deg: 42.45085781366632
-    k: 43.619960213701205
-    n: 10
-    solved_s: 0.309043488248619
-    mouth_exit_angle_deg: 78.646814974565
-    mouth_curvature_radius_mm: 50.38243174709089
-    normalized_mouth_curvature_radius: 0.35987451247922064
+    coverage_deg: 20.030837906056984
+    k: 59.03457587025933
+    n: 10.0
+    solved_s: 0.8918207040711226
+    mouth_exit_angle_deg: 85.62028200291208
+    mouth_curvature_radius_mm: 326.95949381240507
+    normalized_mouth_curvature_radius: 2.3354249558028934
   section_modifier:
     mouth_squareness: 0.72
     squareness_morph_spline:

@@ -33,7 +33,7 @@ horncad_config:
   horizontal_basis:
     coverage_deg: 50.0
     k: 30.0
-    n: 10
+    n: 10.0
     solved_s: 0.1818970227244554
     mouth_exit_angle_deg: 74.26758620235819
     mouth_curvature_radius_mm: 31.11471569361397
@@ -41,7 +41,7 @@ horncad_config:
   vertical_basis:
     coverage_deg: 35.0
     k: 18.0
-    n: 10
+    n: 10.0
     solved_s: 0.17709266734220605
     mouth_exit_angle_deg: 72.32811741707607
     mouth_curvature_radius_mm: 22.78195347746667

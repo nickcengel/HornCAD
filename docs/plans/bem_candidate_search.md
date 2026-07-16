@@ -35,12 +35,13 @@ Length and conical extension are deliberately not immutable authored values.
 
 ## Initial search space
 
-The first implementation should search only these six variables:
+The active search model includes these eight variables:
 
 - `k_h` and `k_v`;
 - `osse_coverage_h_deg` and `osse_coverage_v_deg`;
 - `length_mm`; and
-- `extension_mm`.
+- `extension_mm`; and
+- `n_h` and `n_v`.
 
 The explicit names above should be used in search records so intended coverage
 cannot be confused with OS-SE construction parameters.
@@ -48,17 +49,16 @@ cannot be confused with OS-SE construction parameters.
 Horizontal and vertical `s` are derived geometry values, not independent search
 variables. After proposing length, extension, OS-SE coverage, and `k`, HornCAD
 solves the geometry and derives `s_h` and `s_v`. A candidate is feasible only
-when both values are strictly positive.
+when both values are nonnegative and within the configured realized-S bounds.
 
 K, OS-SE coverage, length, and extension are proposed together. Negative-S
 geometry is rejected; K is never silently repaired afterward because that would
 change the meaning of the proposed experiment.
 
-Parameters such as `n`, `q`, and mouth squareness remain fixed in the initial
-implementation. They may be added later if the six-variable search proves too
-restrictive. Releasing all coupled geometry parameters at once would needlessly
-increase the number of expensive BEM evaluations required to understand the
-space.
+The first round fixes extension at the seed value and varies N explicitly.
+Parameters such as `q` and mouth squareness remain fixed. Extension may be
+released in a later round, where authored `length + extension` is treated as
+the axial-depth reference so the two lengths cannot independently buy depth.
 
 The independent-lever interpretation is no longer adequate for candidate
 generation. With mouth size fixed, increasing length or OS-SE coverage can make
@@ -75,14 +75,14 @@ computed from the analytic profile before meshing.
 
 ## Search bounds
 
-Length is bounded relative to the seed. The initial default is:
+Length uses an explicit exploration envelope. The maintained example uses:
 
 ```text
-0.85 * seed length <= candidate length <= 1.15 * seed length
+255 mm <= candidate length <= 345 mm
 ```
 
-The user may override that percentage. Search metadata must record both the
-seed value and effective bounds.
+The user may override the bounds. The initial experiment spans the full envelope
+evenly; it does not impose a soft ±10% admission cap around the seed.
 
 Length is not a free path to improved low-frequency loading. Selection subtracts
 a symmetric cost from all three optimization objectives while retaining the raw
@@ -103,20 +103,16 @@ invalid geometry before meshing, and be user-overridable without requiring the
 user to understand the optimizer.
 
 The search report records the configured range, seed value, and actual retained-
-candidate span for every movable parameter. It also lists fixed `n_h` and `n_v`
-explicitly so a search that did not explore termination exponent cannot be
-mistaken for one that did. Each retained candidate receives a short label based
+candidate span for every movable parameter, including `n_h` and `n_v`.
+Each retained candidate receives a short label based
 on its largest normalized departure from the seed (for example, “High
 horizontal K”) instead of a generic geometry-feasibility note. When primary
 traits repeat, every candidate in that group gains secondary (and, if needed,
 additional) traits until its report label is distinct.
 
-`N` should initially be explored as a structured second-stage termination study
-around the strongest first-stage candidates. This avoids multiplying every
-expensive BEM evaluation by an additional dimension before the main geometry
-space has been screened, while still testing N before a final design is chosen.
-Because N may interact with K and OS-SE coverage, the second stage must allow a
-small local re-optimization rather than changing N only on one frozen geometry.
+`N` is explored in the structured first round because it directly controls the
+termination geometry of interest. This avoids confounding it with independently
+randomized extension.
 
 ## Fixed evaluation band
 
@@ -214,19 +210,18 @@ are coupled.
 The implemented strategy is constrained multi-objective Bayesian optimization:
 
 1. Evaluate the user's seed at production resolution.
-2. Generate a large deterministic pool of coupled length, extension, horizontal
-   and vertical OS-SE coverage, and horizontal and vertical K proposals. Reject
-   negative-S geometry without repair, then retain candidates that cover
-   realized H/V S, exit-angle, and normalized-curvature space while preserving
-   some authored-parameter diversity. Reject any proposal within normalized
-   distance 0.08 of a retained candidate.
+2. Build four matched length families evenly spanning the full configured
+   length envelope. Extension remains fixed at the seed. Within each family,
+   keep the coupled H/V coverage-K controls fixed and evaluate low, seed, and
+   high N. Coverage and K are selected jointly to place the middle-N member in
+   a deliberate realized-S regime while keeping all three N members feasible.
+   This yields direct N comparisons at short, intermediate, and long lengths.
    The initial realized-S window is configurable and defaults to 0–3.0 in
    both axes. This includes the zero-S boundary, the observed 0.2–0.5
    transition region, and strong high-S termination geometries. Negative S
    remains geometrically infeasible.
-   Initial candidates are also limited to ±10% seed length. Only later
-   evidence-guided proposals may enter the wider authored length bounds and pay
-   the steep length cost.
+   The initial candidates span the full length bounds. Length cost is retained
+   only as a ranking preference and does not define the exploration envelope.
 3. Fit separate surrogate models to diagnostic changes relative to the seed and
    to the crossover-loading constraint. Retain prediction uncertainty rather
    than treating the surrogate mean as truth.
