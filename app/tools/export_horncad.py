@@ -163,6 +163,27 @@ def osse_radius(z: float, length: float, r0: float, coverage: float, k: float, n
     return osse_base_radius(z, length, r0, coverage, k, throat_angle) + s * termination_unit(z, length, 0.995, n)
 
 
+def termination_metrics(length: float, r0: float, coverage: float, k: float,
+                        n: float, end_radius: float,
+                        throat_angle: float = 0.0) -> dict[str, float]:
+    """Measure the realized wall termination at the mouth without meshing."""
+    s = solved_s(length, r0, coverage, k, n, end_radius, throat_angle)
+    step = max(0.01, length * 1e-4)
+    samples = [osse_radius(max(0.0, length - index * step), length, r0,
+                           coverage, k, n, s, throat_angle) for index in range(4)]
+    slope = (3 * samples[0] - 4 * samples[1] + samples[2]) / (2 * step)
+    second = (2 * samples[0] - 5 * samples[1] +
+              4 * samples[2] - samples[3]) / (step * step)
+    curvature = abs(second) / max((1 + slope * slope) ** 1.5, 1e-12)
+    radius = math.inf if curvature < 1e-12 else 1.0 / curvature
+    return {
+        "s": float(s),
+        "exit_angle_deg": math.degrees(math.atan(slope)),
+        "curvature_radius_mm": float(radius),
+        "normalized_curvature_radius": float(radius / max(end_radius, 1e-9)),
+    }
+
+
 def effective_throat_radius() -> float:
     return PARAMS["r0"] + max(0.0, PARAMS["throat_extension"]) * math.tan(math.radians(PARAMS["throat_angle"]))
 

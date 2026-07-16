@@ -9,8 +9,9 @@ import numpy as np
 
 from app.tools.run_bem_search import (
     candidate_distance, candidate_trait, candidate_traits, geometry_feasibility,
-    inferior_to_seed_probability, learned_lever_effects, length_cost_percent, load_search,
-    materialize_candidate, pareto_indices, propose_vector, repair_k_for_positive_s,
+    geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
+    length_cost_percent, load_search,
+    materialize_candidate, pareto_indices, propose_vector,
     sampling_stability,
     run_search, seed_values,
 )
@@ -41,15 +42,27 @@ class BEMSearchTests(unittest.TestCase):
     def test_seed_then_space_filling_proposals_are_bounded(self) -> None:
         search, _, seed = load_search(SEARCH)
         search["seed_values"] = seed_values(seed)
+        config = seed["horncad_config"]
+        search["geometry_context"] = {
+            "throat_radius_mm": config["global"]["throat_radius"],
+            "throat_angle_deg": config["global"]["throat_angle_deg"],
+            "mouth_width_mm": config["global"]["mouth_width"],
+            "mouth_height_mm": config["global"]["mouth_height"],
+            "n_h": config["horizontal_basis"]["n"],
+            "n_v": config["vertical_basis"]["n"],
+        }
         seed_vector, source = propose_vector(search, [], 0)
         self.assertEqual(source, "seed")
         self.assertTrue(np.all((seed_vector >= 0) & (seed_vector <= 1)))
         sample, source = propose_vector(search, [], 1)
-        self.assertEqual(source, "sensitivity-length_mm-low")
+        self.assertEqual(source, "initial-geometry-space-filling")
         self.assertTrue(np.all((sample >= 0) & (sample <= 1)))
-        paired, source = propose_vector(search, [], 2)
-        self.assertEqual(source, "sensitivity-length_mm-high")
-        self.assertNotEqual(sample[0], paired[0])
+        values = {name: search["bounds"][name][0] + sample[index] *
+                  (search["bounds"][name][1] - search["bounds"][name][0])
+                  for index, name in enumerate(("length_mm", "extension_mm",
+                                                "osse_coverage_h_deg", "osse_coverage_v_deg",
+                                                "k_h", "k_v"))}
+        self.assertIsNotNone(geometry_feature_vector(search, values))
 
     def test_inferior_screen_waits_for_seed_and_sufficient_learning(self) -> None:
         search, _, seed = load_search(SEARCH)
@@ -89,21 +102,6 @@ class BEMSearchTests(unittest.TestCase):
         self.assertEqual(stability["status"], "stable")
         self.assertLess(stability["maximum_delta_points"], 0.01)
 
-    def test_k_repair_moves_repairable_candidate_into_positive_s_region(self) -> None:
-        search, _, seed = load_search(SEARCH)
-        search["intended_coverage_h_deg"] = 50.0
-        search["intended_coverage_v_deg"] = 35.0
-        values = {"length_mm": 300.0, "extension_mm": 20.0,
-                  "osse_coverage_h_deg": 50.0, "osse_coverage_v_deg": 35.0,
-                  "k_h": 5.0, "k_v": 5.0}
-        before, before_derived = materialize_candidate(seed, values, search)
-        self.assertFalse(geometry_feasibility(before_derived)[0])
-        repaired, changes = repair_k_for_positive_s(seed, values, search)
-        _, derived = materialize_candidate(seed, repaired, search)
-        self.assertTrue(geometry_feasibility(derived)[0])
-        self.assertTrue(changes)
-        self.assertGreater(repaired["k_h"], values["k_h"])
-
     def test_pareto_set_uses_only_loading_feasible_candidates(self) -> None:
         def record(scores: tuple[float, float, float], loading: float) -> dict:
             combined = dict(zip(("pattern_fit_percent", "pattern_stability_percent",
@@ -119,7 +117,7 @@ class BEMSearchTests(unittest.TestCase):
         self.assertAlmostEqual(length_cost_percent({"length_mm": 330}, 300), 4)
         self.assertAlmostEqual(length_cost_percent({"length_mm": 345}, 300), 20)
 
-    def test_candidate_distance_uses_post_repair_normalized_parameters(self) -> None:
+    def test_candidate_distance_uses_normalized_authored_parameters(self) -> None:
         search, _, seed = load_search(SEARCH)
         values = seed_values(seed)
         records = [{"values": values}]
@@ -164,7 +162,10 @@ class BEMSearchTests(unittest.TestCase):
             self.assertGreaterEqual(len(state["candidates"]), 1)
             self.assertFalse(any(record["status"] == "rejected"
                                  for record in state["candidates"]))
-            self.assertGreater(state["rejected_count"], 0)
+            self.assertGreaterEqual(state["rejected_count"], 0)
+            self.assertTrue(all(record["proposal_source"] in
+                                {"seed", "initial-geometry-space-filling"}
+                                for record in state["candidates"]))
             self.assertTrue((Path(temp) / "candidates" / "candidate-000" /
                              "project.yaml").is_file())
             self.assertEqual(len(list((Path(temp) / "candidates" / "candidate-000").

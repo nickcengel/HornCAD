@@ -33,6 +33,8 @@ class BrowserYamlImportTests(unittest.TestCase):
     def test_import_ui_and_apply_hook_are_present(self) -> None:
         html = HTML.read_text()
         self.assertIn("data-import-yaml-file", html)
+        self.assertIn("mouth_curvature_radius_mm", html)
+        self.assertIn("normalized_mouth_curvature_radius", html)
         self.assertIn("applyHorncadConfig(parseHorncadYaml(await file.text()))", html)
 
     def test_operating_intent_and_search_export_are_present(self) -> None:

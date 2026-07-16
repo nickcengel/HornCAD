@@ -91,6 +91,15 @@ horncad_config:
 
 Derived values such as `effective_throat_radius`, `measured_total_length`, and `solved_s` are included for inspection. The exporter recomputes geometry from the authored inputs.
 
+Each horizontal and vertical basis also reports realized mouth-termination
+geometry. `mouth_exit_angle_deg` is the wall tangent angle at the mouth.
+`mouth_curvature_radius_mm` is the local radius of curvature of the analytic
+axis profile at the mouth, and `normalized_mouth_curvature_radius` divides that
+radius by the corresponding mouth half-dimension. These inexpensive derived
+measurements describe the geometry produced jointly by S, N, K, coverage, and
+length; they are preferable to interpreting N as an independent amount of
+roundover.
+
 ## Sampling and Output
 
 The exporter adaptively distributes axial samples according to basis-profile curvature. Each ring uses the configured side-sample budget, with additional attention around squared-mouth corners. Output names are derived from mode and nominal dimensions:

@@ -50,17 +50,28 @@ variables. After proposing length, extension, OS-SE coverage, and `k`, HornCAD
 solves the geometry and derives `s_h` and `s_v`. A candidate is feasible only
 when both values are strictly positive.
 
-Because `k` is the principal feasibility control when length and OS-SE coverage
-move, the implemented proposer repairs a negative-`s` proposal by raising the
-corresponding `k` to the nearest positive-`s` region within its authored bounds.
-It rejects the geometry only when the maximum allowed `k` cannot make `s`
-positive. Repairs are retained in the candidate ledger.
+K, OS-SE coverage, length, and extension are proposed together. Negative-S
+geometry is rejected; K is never silently repaired afterward because that would
+change the meaning of the proposed experiment.
 
 Parameters such as `n`, `q`, and mouth squareness remain fixed in the initial
 implementation. They may be added later if the six-variable search proves too
 restrictive. Releasing all coupled geometry parameters at once would needlessly
 increase the number of expensive BEM evaluations required to understand the
 space.
+
+The independent-lever interpretation is no longer adequate for candidate
+generation. With mouth size fixed, increasing length or OS-SE coverage can make
+derived S negative; increasing K or decreasing OS-SE coverage can restore
+positive S. N also changes solved S, and its geometric influence grows with
+positive S. Candidate families must therefore move along explicitly described
+coupled directions rather than silently repairing one proposed parameter after
+another moves.
+
+N is treated as an internal construction parameter. Search and review use the
+realized mouth exit angle and local mouth curvature radius (also normalized by
+axis mouth half-dimension) to describe termination geometry. These values are
+computed from the analytic profile before meshing.
 
 ## Search bounds
 
@@ -197,25 +208,24 @@ evaluations remain visible because they may require diagnosis or resumption.
 
 The BEM solver is an expensive deterministic black box with multiple competing
 objectives and feasibility constraints. The optimizer should learn changes
-relative to the user's seed, not treat every horn as an unrelated sample. Its
-first evaluations deliberately perturb each movable lever up and down around
-the seed. This makes the initial expense teach which parameters control coverage
-Pattern Fit, Pattern Stability, HF Retention, and crossover loading.
+relative to the user's seed while respecting that useful geometric directions
+are coupled.
 
 The implemented strategy is constrained multi-objective Bayesian optimization:
 
 1. Evaluate the user's seed at production resolution.
-2. Generate paired low/high sensitivity probes for length, extension, horizontal
-   and vertical OS-SE coverage, and horizontal and vertical K.
-   After K repair, reject any proposal within normalized distance 0.08 of a
-   retained candidate so different proposals cannot collapse into effectively
-   duplicate evaluated horns.
+2. Generate a large deterministic pool of coupled length, extension, horizontal
+   and vertical OS-SE coverage, and horizontal and vertical K proposals. Reject
+   negative-S geometry without repair, then retain candidates that cover
+   realized H/V S, exit-angle, and normalized-curvature space while preserving
+   some authored-parameter diversity. Reject any proposal within normalized
+   distance 0.08 of a retained candidate.
 3. Fit separate surrogate models to diagnostic changes relative to the seed and
    to the crossover-loading constraint. Retain prediction uncertainty rather
    than treating the surrogate mean as truth.
 4. Screen an adaptive proposal only when the model assigns at least 97%
    probability that it is worse than the seed on all three selection objectives.
-   Screening never applies to the structured sensitivity round. An uncertain
+   Screening never applies to the initial coupled-geometry round. An uncertain
    candidate remains useful because it may improve the result or teach the
    model. Screened proposals retain no individual data; only an aggregate count
    is reported.
@@ -242,8 +252,8 @@ HF Retention, or crossover loading moves by more than two diagnostic points,
 that run is marked sampling-unstable and excluded from surrogate learning.
 
 Decimation is a warning, not proof of convergence. Before learned lever
-directions or final rankings are trusted, the seed and representative sensitivity
-probes must be checked at 16 PPO. Finalists also require 16-PPO confirmation. If
+directions or final rankings are trusted, the seed and representative initial
+candidates must be checked at 16 PPO. Finalists also require 16-PPO confirmation. If
 that confirmation materially changes rankings or learned effect directions, the
 12-PPO model is invalidated and the search continues at the higher fidelity.
 Results from different PPO levels must not be mixed in one surrogate unless

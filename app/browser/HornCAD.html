@@ -634,6 +634,9 @@
       <div class="metric"><span>H endpoint</span><strong id="metric-h-end">291.50 mm</strong></div>
       <div class="metric"><span>V endpoint</span><strong id="metric-v-end">140.00 mm</strong></div>
       <div class="metric"><span>Derived S (H/V)</span><strong id="metric-derived-s">0.0000 / 0.0000</strong></div>
+      <div class="metric"><span>Exit angle (H/V)</span><strong id="metric-exit-angle">0.00° / 0.00°</strong></div>
+      <div class="metric"><span>Mouth curvature radius (H/V)</span><strong id="metric-curvature-radius">0.00 / 0.00 mm</strong></div>
+      <div class="metric"><span>Normalized curvature radius (H/V)</span><strong id="metric-normalized-curvature">0.000 / 0.000</strong></div>
       <div class="metric"><span>Mouth squareness</span><strong id="metric-section-n">0.7200</strong></div>
       <div class="metric"><span>Modifier peak</span><strong id="metric-cap">0.000 mm</strong></div>
     </div>
@@ -738,6 +741,9 @@
     hEnd: document.getElementById("metric-h-end"),
     vEnd: document.getElementById("metric-v-end"),
     derivedS: document.getElementById("metric-derived-s"),
+    exitAngle: document.getElementById("metric-exit-angle"),
+    curvatureRadius: document.getElementById("metric-curvature-radius"),
+    normalizedCurvature: document.getElementById("metric-normalized-curvature"),
     sectionShape: document.getElementById("metric-section-n"),
     bow: document.getElementById("metric-cap"),
   };
@@ -1057,6 +1063,23 @@
     const base = osseBaseRadius(length, length, r0, coverage, k, throatAngle);
     const unit = terminationUnit(length, length, 0.995, n);
     return Math.abs(unit) < 1e-9 ? 0 : (endRadius - base) / unit;
+  }
+
+  function terminationMetrics(length, r0, coverage, k, n, endRadius, throatAngle = 0) {
+    const s = solvedS(length, r0, coverage, k, n, endRadius, throatAngle);
+    const step = Math.max(0.01, length * 1e-4);
+    const samples = [0, 1, 2, 3].map((index) => osseRadius(
+      Math.max(0, length - index * step), length, r0, coverage, k, n, s, throatAngle));
+    const slope = (3 * samples[0] - 4 * samples[1] + samples[2]) / (2 * step);
+    const second = (2 * samples[0] - 5 * samples[1] + 4 * samples[2] - samples[3]) / (step * step);
+    const curvature = Math.abs(second) / Math.max(Math.pow(1 + slope * slope, 1.5), 1e-12);
+    const radius = curvature < 1e-12 ? Infinity : 1 / curvature;
+    return {
+      s,
+      exitAngleDeg: Math.atan(slope) * 180 / Math.PI,
+      curvatureRadiusMm: radius,
+      normalizedCurvatureRadius: radius / Math.max(endRadius, 1e-9),
+    };
   }
 
   function makeProfile(p, axis) {
@@ -2863,6 +2886,8 @@
     const effectiveR0 = effectiveThroatRadius(p);
     const hS = solvedS(p.length, effectiveR0, p.hCoverage, p.hK, p.hN, p.mouthWidth / 2, p.throatAngle);
     const vS = solvedS(p.length, effectiveR0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2, p.throatAngle);
+    const hTermination = terminationMetrics(p.length, effectiveR0, p.hCoverage, p.hK, p.hN, p.mouthWidth / 2, p.throatAngle);
+    const vTermination = terminationMetrics(p.length, effectiveR0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2, p.throatAngle);
     return [
       "horncad_config:",
       "  type: HornCAD",
@@ -2901,11 +2926,17 @@
       `    k: ${yamlNumber(p.hK)}`,
       `    n: ${yamlNumber(p.hN)}`,
       `    solved_s: ${yamlNumber(hS)}`,
+      `    mouth_exit_angle_deg: ${yamlNumber(hTermination.exitAngleDeg)}`,
+      `    mouth_curvature_radius_mm: ${yamlNumber(hTermination.curvatureRadiusMm)}`,
+      `    normalized_mouth_curvature_radius: ${yamlNumber(hTermination.normalizedCurvatureRadius)}`,
       "  vertical_basis:",
       `    coverage_deg: ${yamlNumber(p.vCoverage)}`,
       `    k: ${yamlNumber(p.vK)}`,
       `    n: ${yamlNumber(p.vN)}`,
       `    solved_s: ${yamlNumber(vS)}`,
+      `    mouth_exit_angle_deg: ${yamlNumber(vTermination.exitAngleDeg)}`,
+      `    mouth_curvature_radius_mm: ${yamlNumber(vTermination.curvatureRadiusMm)}`,
+      `    normalized_mouth_curvature_radius: ${yamlNumber(vTermination.normalizedCurvatureRadius)}`,
       "  section_modifier:",
       `    mouth_squareness: ${yamlNumber(p.sectionShape1)}`,
       "    squareness_morph_spline:",
@@ -3436,6 +3467,11 @@
     const hS = solvedS(p.length, effectiveR0, p.hCoverage, p.hK, p.hN, p.mouthWidth / 2, p.throatAngle);
     const vS = solvedS(p.length, effectiveR0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2, p.throatAngle);
     metrics.derivedS.textContent = `${format(hS, 5)} / ${format(vS, 5)}`;
+    const hTermination = terminationMetrics(p.length, effectiveR0, p.hCoverage, p.hK, p.hN, p.mouthWidth / 2, p.throatAngle);
+    const vTermination = terminationMetrics(p.length, effectiveR0, p.vCoverage, p.vK, p.vN, p.mouthHeight / 2, p.throatAngle);
+    metrics.exitAngle.textContent = `${format(hTermination.exitAngleDeg, 3)}° / ${format(vTermination.exitAngleDeg, 3)}°`;
+    metrics.curvatureRadius.textContent = `${format(hTermination.curvatureRadiusMm, 5)} / ${format(vTermination.curvatureRadiusMm, 5)} mm`;
+    metrics.normalizedCurvature.textContent = `${format(hTermination.normalizedCurvatureRadius, 4)} / ${format(vTermination.normalizedCurvatureRadius, 4)}`;
     metrics.sectionShape.textContent = format(sectionShape(p, measuredLength(p)), 4);
     metrics.bow.textContent = `${format(peakHModifier, 4)} / ${format(peakVModifier, 4)} mm`;
   }

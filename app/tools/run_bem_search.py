@@ -22,13 +22,13 @@ from scipy.stats import norm, qmc
 import yaml
 
 try:
-    from .export_horncad import solved_s
+    from .export_horncad import solved_s, termination_metrics
     from .generate_numcalc_review import generate_review
     from .interactive_results import comparison_report, coverage_diagnostics, load_run
     from .run_bem_suite import find_numcalc
     from .run_numcalc_sweep import ppo_frequency_grid, run_sweep
 except ImportError:
-    from export_horncad import solved_s
+    from export_horncad import solved_s, termination_metrics
     from generate_numcalc_review import generate_review
     from interactive_results import comparison_report, coverage_diagnostics, load_run
     from run_bem_suite import find_numcalc
@@ -168,48 +168,27 @@ def materialize_candidate(seed: dict[str, Any], values: dict[str, float],
     intent["vertical_coverage_deg"] = float(search["intended_coverage_v_deg"])
     intent["crossover_hz"] = float(search["crossover_hz"])
     intent["upper_frequency_hz"] = float(search["upper_frequency_hz"])
-    return document, {"s_h": float(s_h), "s_v": float(s_v)}
-
-
-def repair_k_for_positive_s(seed: dict[str, Any], values: dict[str, float],
-                            search: dict[str, Any]) -> tuple[dict[str, float], dict[str, Any]]:
-    """Raise K to the nearest feasible positive-s region when bounds permit."""
-    repaired = dict(values)
-    changes: dict[str, Any] = {}
-    config = seed["horncad_config"]
-    g = config["global"]
-    effective_radius = (float(g["throat_radius"]) + values["extension_mm"] *
-                        math.tan(math.radians(float(g["throat_angle_deg"]))))
-    for axis, coverage_key, k_key, mouth_key, basis_name in (
-            ("h", "osse_coverage_h_deg", "k_h", "mouth_width", "horizontal_basis"),
-            ("v", "osse_coverage_v_deg", "k_v", "mouth_height", "vertical_basis")):
-        basis = config[basis_name]
-
-        def derived_s(k_value: float) -> float:
-            return solved_s(values["length_mm"], effective_radius,
-                            values[coverage_key], k_value, float(basis["n"]),
-                            float(g[mouth_key]) / 2, float(g["throat_angle_deg"]))
-
-        if derived_s(repaired[k_key]) > 1e-6:
-            continue
-        lower, upper = search["bounds"][k_key]
-        if derived_s(upper) <= 1e-6:
-            changes[k_key] = {"status": "unrepairable", "attempted_max": upper}
-            continue
-        low = max(lower, repaired[k_key])
-        high = upper
-        for _ in range(48):
-            middle = (low + high) / 2
-            if derived_s(middle) > 1e-6:
-                high = middle
-            else:
-                low = middle
-        margin = 0.01 * (upper - lower)
-        new_value = min(upper, high + margin)
-        changes[k_key] = {"status": "repaired", "from": repaired[k_key],
-                          "to": new_value, "axis": axis}
-        repaired[k_key] = new_value
-    return repaired, changes
+    h_termination = termination_metrics(
+        values["length_mm"], effective_radius, h["coverage_deg"], h["k"],
+        float(h["n"]), float(g["mouth_width"]) / 2, float(g["throat_angle_deg"]))
+    v_termination = termination_metrics(
+        values["length_mm"], effective_radius, v["coverage_deg"], v["k"],
+        float(v["n"]), float(g["mouth_height"]) / 2, float(g["throat_angle_deg"]))
+    h["mouth_exit_angle_deg"] = h_termination["exit_angle_deg"]
+    h["mouth_curvature_radius_mm"] = h_termination["curvature_radius_mm"]
+    h["normalized_mouth_curvature_radius"] = h_termination["normalized_curvature_radius"]
+    v["mouth_exit_angle_deg"] = v_termination["exit_angle_deg"]
+    v["mouth_curvature_radius_mm"] = v_termination["curvature_radius_mm"]
+    v["normalized_mouth_curvature_radius"] = v_termination["normalized_curvature_radius"]
+    return document, {
+        "s_h": float(s_h), "s_v": float(s_v),
+        "mouth_exit_angle_h_deg": h_termination["exit_angle_deg"],
+        "mouth_exit_angle_v_deg": v_termination["exit_angle_deg"],
+        "mouth_curvature_radius_h_mm": h_termination["curvature_radius_mm"],
+        "mouth_curvature_radius_v_mm": v_termination["curvature_radius_mm"],
+        "normalized_mouth_curvature_h": h_termination["normalized_curvature_radius"],
+        "normalized_mouth_curvature_v": v_termination["normalized_curvature_radius"],
+    }
 
 
 def geometry_feasibility(derived: dict[str, float]) -> tuple[bool, str | None]:
@@ -373,22 +352,57 @@ def _gp_predict(x: np.ndarray, y: np.ndarray,
     return mean, np.sqrt(variance)
 
 
-def structured_probe(search: dict[str, Any], probe_index: int) -> tuple[np.ndarray, str]:
-    """Return one of two seed-centered sensitivity probes for each lever."""
-    seed = np.clip(normalized_vector(search["seed_values"], search["bounds"]), 0, 1)
-    variable_index = probe_index // 2
-    side = probe_index % 2
-    center = seed[variable_index]
-    if center <= 0.20:
-        targets = (min(1.0, center + 0.20), min(1.0, center + 0.40))
-    elif center >= 0.80:
-        targets = (max(0.0, center - 0.20), max(0.0, center - 0.40))
-    else:
-        targets = (center - 0.20, center + 0.20)
-    vector = seed.copy()
-    vector[variable_index] = targets[side]
-    direction = "low" if targets[side] < center else "high"
-    return vector, f"sensitivity-{VARIABLES[variable_index]}-{direction}"
+def geometry_feature_vector(search: dict[str, Any], values: dict[str, float]) -> np.ndarray | None:
+    """Map authored inputs to realized, symmetric H/V termination geometry."""
+    context = search["geometry_context"]
+    effective_radius = (context["throat_radius_mm"] + values["extension_mm"] *
+                        math.tan(math.radians(context["throat_angle_deg"])))
+    features = []
+    for axis, coverage_key, k_key, mouth_key, n_key in (
+            ("h", "osse_coverage_h_deg", "k_h", "mouth_width_mm", "n_h"),
+            ("v", "osse_coverage_v_deg", "k_v", "mouth_height_mm", "n_v")):
+        end_radius = context[mouth_key] / 2
+        metrics = termination_metrics(
+            values["length_mm"], effective_radius, values[coverage_key], values[k_key],
+            context[n_key], end_radius, context["throat_angle_deg"])
+        if metrics["s"] <= 1e-6 or not all(math.isfinite(item) for item in metrics.values()):
+            return None
+        features.extend((metrics["s"] / (1 + metrics["s"]),
+                         metrics["exit_angle_deg"] / 90,
+                         math.log1p(metrics["normalized_curvature_radius"])))
+    return np.asarray(features)
+
+
+def geometry_space_filling_probe(search: dict[str, Any],
+                                 records: list[dict[str, Any]]) -> np.ndarray:
+    """Choose a feasible coupled proposal farthest apart in realized geometry."""
+    sampler = qmc.LatinHypercube(d=len(VARIABLES),
+                                 seed=int(search.get("random_seed", 17)))
+    pool = sampler.random(4096)
+    feasible_vectors = []
+    feasible_features = []
+    for vector in pool:
+        values = values_from_vector(vector, search["bounds"])
+        features = geometry_feature_vector(search, values)
+        if features is not None:
+            feasible_vectors.append(vector)
+            feasible_features.append(features)
+    if not feasible_vectors:
+        raise RuntimeError("initial candidate pool contains no positive-S geometry")
+    vectors = np.asarray(feasible_vectors)
+    features = np.asarray(feasible_features)
+    existing_values = [search["seed_values"]] + [record["values"] for record in records]
+    existing_features = np.asarray([
+        geometry_feature_vector(search, values) for values in existing_values])
+    feature_distance = np.min(np.linalg.norm(
+        features[:, None, :] - existing_features[None, :, :], axis=2), axis=1)
+    raw_existing = np.asarray([normalized_vector(values, search["bounds"])
+                               for values in existing_values])
+    raw_distance = np.min(np.linalg.norm(
+        vectors[:, None, :] - raw_existing[None, :, :], axis=2), axis=1)
+    score = feature_distance + 0.25 * raw_distance
+    score[raw_distance < search["minimum_candidate_distance"]] = -math.inf
+    return vectors[int(np.argmax(score))]
 
 
 def inferior_to_seed_probability(search: dict[str, Any],
@@ -450,13 +464,7 @@ def propose_vector(search: dict[str, Any], records: list[dict[str, Any]],
         return np.clip(normalized_vector(search["seed_values"], bounds), 0, 1), "seed"
     initial = int(search["initial_candidates"])
     if proposal_index <= initial:
-        structured_count = min(initial, 2 * len(VARIABLES))
-        if proposal_index <= structured_count:
-            return structured_probe(search, proposal_index - 1)
-        sampler = qmc.LatinHypercube(d=len(VARIABLES),
-                                    seed=int(search.get("random_seed", 17)))
-        samples = sampler.random(initial - structured_count)
-        return samples[proposal_index - structured_count - 1], "initial-space-filling"
+        return geometry_space_filling_probe(search, records), "initial-geometry-space-filling"
 
     completed = _training_records(records)
     if len(completed) < 3:
@@ -560,6 +568,10 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td>{record['values']['osse_coverage_h_deg']:.1f} / "
             f"{record['values']['osse_coverage_v_deg']:.1f}</td>",
             f"<td>{record['values']['k_h']:.2f} / {record['values']['k_v']:.2f}</td>",
+            f"<td>{record['derived'].get('mouth_curvature_radius_h_mm', float('nan')):.1f} / "
+            f"{record['derived'].get('mouth_curvature_radius_v_mm', float('nan')):.1f}</td>",
+            f"<td>{record['derived'].get('mouth_exit_angle_h_deg', float('nan')):.1f}° / "
+            f"{record['derived'].get('mouth_exit_angle_v_deg', float('nan')):.1f}°</td>",
             f"<td>{html.escape(trait)}</td>",
         )) + "</tr>")
     range_rows = []
@@ -585,7 +597,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td>{values['crossover_loading_percent']:+.1f}</td></tr>")
     effects_section = ("<section><h2>Learned lever effects</h2><p>Estimated diagnostic-point change for a +10% step across each configured parameter range. These are local evidence from this search, not universal design rules.</p><table><tr><th>Lever</th><th>Pattern Fit</th><th>Pattern Stability</th><th>HF Retention</th><th>Crossover loading</th></tr>" +
                        "".join(effect_rows) + "</table></section>" if effect_rows else
-                       "<section><h2>Learned lever effects</h2><p>Waiting for the seed and sensitivity probes to complete.</p></section>")
+                       "<section><h2>Learned lever effects</h2><p>Waiting for the seed and initial coupled candidates to complete.</p></section>")
     refresh = "<meta http-equiv='refresh' content='10'>" if state["status"] == "running" else ""
     finalist_link = (f"<p><a href='{html.escape(state['finalist_comparison'])}'>"
                      "Open finalist comparison</a></p>"
@@ -607,8 +619,8 @@ th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}th{{backgrou
 {''.join(range_rows)}</table><p><strong>Fixed termination exponent:</strong> N H/V = {fixed_n_h:g} / {fixed_n_v:g}. N is not varied in this search.</p></section>
 {effects_section}
 <section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Pattern Fit</th><th>Pattern Stability</th>
-<th>HF Retention</th><th>Crossover loading</th><th>Length cost</th><th>Sampling stability</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
-<section><p>100% is best for all physical diagnostics. Crossover loading is feasible at 100% and receives no additional credit above the 0.7 threshold. Pareto selection subtracts the displayed length cost from each coverage objective: the cost reaches 4 points at ±10% and rises steeply to 20 points at ±15%. After K repair, proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the structured sensitivity round, proposals modeled as worse than the seed on all three objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
+<th>HF Retention</th><th>Crossover loading</th><th>Length cost</th><th>Sampling stability</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Curvature radius H/V mm</th><th>Exit angle H/V</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
+<section><p>100% is best for all physical diagnostics. Crossover loading is feasible at 100% and receives no additional credit above the 0.7 threshold. Pareto selection subtracts the displayed length cost from each coverage objective: the cost reaches 4 points at ±10% and rises steeply to 20 points at ±15%. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all three objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
 </main></body></html>"""
     path = output_dir / "search_report.html"
     temporary = path.with_suffix(".html.tmp")
@@ -749,6 +761,15 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             "n_h": float(seed["horncad_config"]["horizontal_basis"]["n"]),
             "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
         }
+        global_config = seed["horncad_config"]["global"]
+        search["geometry_context"] = {
+            "throat_radius_mm": float(global_config["throat_radius"]),
+            "throat_angle_deg": float(global_config["throat_angle_deg"]),
+            "mouth_width_mm": float(global_config["mouth_width"]),
+            "mouth_height_mm": float(global_config["mouth_height"]),
+            "n_h": float(seed["horncad_config"]["horizontal_basis"]["n"]),
+            "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
+        }
         state = {
             "schema_version": 1, "status": "running", "phase": "initializing",
             "configuration_hash": config_hash, "search_yaml": str(search_path.resolve()),
@@ -796,6 +817,15 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
         "n_h": float(seed["horncad_config"]["horizontal_basis"]["n"]),
         "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
     })
+    global_config = seed["horncad_config"]["global"]
+    search.setdefault("geometry_context", {
+        "throat_radius_mm": float(global_config["throat_radius"]),
+        "throat_angle_deg": float(global_config["throat_angle_deg"]),
+        "mouth_width_mm": float(global_config["mouth_width"]),
+        "mouth_height_mm": float(global_config["mouth_height"]),
+        "n_h": float(seed["horncad_config"]["horizontal_basis"]["n"]),
+        "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
+    })
     executable = None if dry_run else find_numcalc(binary)
     solver = search.get("solver", {})
     ppo = float(solver.get("points_per_octave", 12))
@@ -831,7 +861,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             values = values_from_vector(vector, search["bounds"])
             if proposal_index == 0:
                 values = search["seed_values"]
-            values, repairs = repair_k_for_positive_s(seed, values, search)
+            # Coupled proposals are evaluated as authored. Silent K repair would
+            # change the experiment and corrupt learned parameter effects.
             document, derived = materialize_candidate(seed, values, search)
             feasible, reason = geometry_feasibility(derived)
             distance = candidate_distance(values, state["candidates"], search["bounds"])
@@ -852,7 +883,7 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             record = {"id": candidate_id, "status": "queued",
                       "proposal_index": proposal_index,
                       "proposal_source": source, "values": values,
-                      "derived": derived, "k_repairs": repairs,
+                      "derived": derived,
                       "nearest_candidate_distance": distance}
             update_selection_scores(record, search)
             state["candidates"].append(record)

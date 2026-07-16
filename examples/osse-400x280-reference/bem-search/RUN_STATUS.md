@@ -23,8 +23,8 @@ frequency work from `search_state.json` and each candidate's BEM run directory.
 ## Expected phases
 
 1. Evaluate the seed.
-2. Evaluate retained paired sensitivity probes for length, extension, OS-SE
-   coverage, and K.
+2. Evaluate retained coupled candidates distributed across positive-S, mouth
+   exit-angle, and curvature-radius geometry.
 3. Learn lever effects from sampling-stable completed candidates.
 4. Propose adaptive candidates, screening only confidently inferior or duplicate
    proposals.

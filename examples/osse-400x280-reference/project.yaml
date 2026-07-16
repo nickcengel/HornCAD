@@ -35,11 +35,17 @@ horncad_config:
     k: 30
     n: 10
     solved_s: 0.181897
+    mouth_exit_angle_deg: 74.267586
+    mouth_curvature_radius_mm: 31.114716
+    normalized_mouth_curvature_radius: 0.155574
   vertical_basis:
     coverage_deg: 35
     k: 18
     n: 10
     solved_s: 0.177093
+    mouth_exit_angle_deg: 72.328117
+    mouth_curvature_radius_mm: 22.781953
+    normalized_mouth_curvature_radius: 0.162728
   section_modifier:
     mouth_squareness: 0.72
     squareness_morph_spline:
