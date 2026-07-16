@@ -1,0 +1,60 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: ../../project.yaml
+  intended_coverage_h_deg: 50
+  intended_coverage_v_deg: 35
+  crossover_hz: 500
+  upper_frequency_hz: 5000
+  search_size: quick
+  max_evaluations: 13
+  initial_candidates: 12
+  random_seed: 53
+  minimum_candidate_distance: 0.08
+  derived_s_bounds: [0.0, 3.0]
+  inferior_screen_probability: 0.97
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16
+  bounds:
+    length_mm: [255, 335]
+    extension_mm: [0, 45]
+    osse_coverage_h_deg: [28, 48]
+    osse_coverage_v_deg: [8, 35]
+    k_h: [5, 60]
+    k_v: [5, 60]
+    n_h: [2, 25]
+    n_v: [2, 25]
+  initial_pool:
+    # Candidate 014's length and vertical plane remain fixed throughout.
+    - label: H coverage 28 K5 N2
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 28, osse_coverage_v_deg: 17.284010, k_h: 5, k_v: 8.395855, n_h: 2, n_v: 4.551983}
+    - label: H coverage 32 K5 N2
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 32, osse_coverage_v_deg: 17.284010, k_h: 5, k_v: 8.395855, n_h: 2, n_v: 4.551983}
+    - label: H coverage 36 K5 N2
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 36, osse_coverage_v_deg: 17.284010, k_h: 5, k_v: 8.395855, n_h: 2, n_v: 4.551983}
+    - label: H coverage 38 K10 N2
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 38, osse_coverage_v_deg: 17.284010, k_h: 10, k_v: 8.395855, n_h: 2, n_v: 4.551983}
+    - label: H coverage 40 K10 N2
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 40, osse_coverage_v_deg: 17.284010, k_h: 10, k_v: 8.395855, n_h: 2, n_v: 4.551983}
+    - label: H coverage 42 K10 N2
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 42, osse_coverage_v_deg: 17.284010, k_h: 10, k_v: 8.395855, n_h: 2, n_v: 4.551983}
+    - label: H coverage 44 K20 N2
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 44, osse_coverage_v_deg: 17.284010, k_h: 20, k_v: 8.395855, n_h: 2, n_v: 4.551983}
+
+    # K sensitivity at the most promising round-three construction angle.
+    - label: H coverage 40 K20 N2
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 40, osse_coverage_v_deg: 17.284010, k_h: 20, k_v: 8.395855, n_h: 2, n_v: 4.551983}
+    - label: H coverage 40 K35 N2
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 40, osse_coverage_v_deg: 17.284010, k_h: 35, k_v: 8.395855, n_h: 2, n_v: 4.551983}
+    - label: H coverage 40 K50 N2
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 40, osse_coverage_v_deg: 17.284010, k_h: 50, k_v: 8.395855, n_h: 2, n_v: 4.551983}
+
+    # N sensitivity at the same coverage/K point.
+    - label: H coverage 40 K10 N5
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 40, osse_coverage_v_deg: 17.284010, k_h: 10, k_v: 8.395855, n_h: 5, n_v: 4.551983}
+    - label: H coverage 40 K10 N10
+      values: {length_mm: 277.614469, extension_mm: 0, osse_coverage_h_deg: 40, osse_coverage_v_deg: 17.284010, k_h: 10, k_v: 8.395855, n_h: 10, n_v: 4.551983}
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 0

@@ -1,0 +1,104 @@
+horncad_config:
+  type: HornCAD
+  version: 2
+  units: mm
+  global:
+    length: 277.614469
+    throat_radius: 12.7
+    throat_angle_deg: 6
+    conical_extension_length: 0.0
+    effective_throat_radius: 12.7
+    measured_total_length: 277.614469
+    mouth_width: 400
+    mouth_height: 280
+    mouth_sag: 60
+    mouth_sag_h_enabled: true
+    mouth_sag_v_enabled: true
+  operating_intent:
+    horizontal_coverage_deg: 50.0
+    vertical_coverage_deg: 35.0
+    crossover_hz: 500.0
+    upper_frequency_hz: 5000.0
+  body:
+    mouth_rear_offset: 6
+    mount_diameter: 140
+    mount_flange_thickness: 12
+    throat_start_wall_thickness: 6
+    minimum_wall_thickness: 6
+    screw_hole_count: 3
+    screw_hole_diameter: 5
+    screw_pattern_diameter: 110
+    mount_fillet: 12
+    stl_export_mode: body
+  horizontal_basis:
+    coverage_deg: 40.0
+    k: 50.0
+    n: 2.0
+    solved_s: 0.4648429285333437
+    mouth_exit_angle_deg: 78.74408172290057
+    mouth_curvature_radius_mm: 80.46510554935301
+    normalized_mouth_curvature_radius: 0.40232552774676505
+  vertical_basis:
+    coverage_deg: 17.28401
+    k: 8.395855
+    n: 4.551983
+    solved_s: 0.42814502339514526
+    mouth_exit_angle_deg: 83.21525627680435
+    mouth_curvature_radius_mm: 132.12463060486922
+    normalized_mouth_curvature_radius: 0.9437473614633516
+  section_modifier:
+    mouth_squareness: 0.72
+    squareness_morph_spline:
+    - x: 0
+      y: 0
+      angle_deg: 0
+      tension: 0.35
+    - x: 1
+      y: 1
+      angle_deg: 0
+      tension: 0.35
+    horizontal_modifier:
+      enabled: false
+      profile_delta_spline:
+      - x: 0
+        y_mm: 0
+        angle_deg: 6.003169
+        tension: 0.35
+      - x: 1
+        y_mm: 0
+        angle_deg: 74.168651
+        tension: 0.35
+      thickness_spline:
+      - x: 0
+        y: 1
+        angle_deg: 0
+        tension: 0.35
+      - x: 1
+        y: 0
+        angle_deg: 0
+        tension: 0.35
+    vertical_modifier:
+      enabled: false
+      profile_delta_spline:
+      - x: 0
+        y_mm: 0
+        angle_deg: 6.001823
+        tension: 0.35
+      - x: 1
+        y_mm: 0
+        angle_deg: 72.20737
+        tension: 0.35
+      thickness_spline:
+      - x: 0
+        y: 1
+        angle_deg: 0
+        tension: 0.35
+      - x: 1
+        y: 0
+        angle_deg: 0
+        tension: 0.35
+  view:
+    wire_density: 64
+  export:
+    stl_z_stations: 44
+    stl_side_samples: 160
