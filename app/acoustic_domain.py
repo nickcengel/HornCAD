@@ -344,8 +344,17 @@ def write_tetwild_volume_mesh(domain: InteriorAcousticDomain, path: Path,
         skip_simplify=True, coarsen=False)
     tetrahedralizer.set_log_level(6)
     tetrahedralizer.set_mesh(vertices, faces)
+    # wildmeshing currently emits this undocumented debug surface in the
+    # process working directory. Do not let a backend implementation detail
+    # become a repository artifact.
+    tracked_surface = Path("__tracked_surface.stl")
+    tracked_surface_existed = tracked_surface.exists()
     tetrahedralizer.tetrahedralize()
-    output_vertices, tetrahedra, _ = tetrahedralizer.get_tet_mesh()
+    try:
+        output_vertices, tetrahedra, _ = tetrahedralizer.get_tet_mesh()
+    finally:
+        if not tracked_surface_existed:
+            tracked_surface.unlink(missing_ok=True)
     output_vertices = np.asarray(output_vertices, dtype=np.float64)
     tetrahedra = np.asarray(tetrahedra, dtype=np.int64)
     if not len(tetrahedra):

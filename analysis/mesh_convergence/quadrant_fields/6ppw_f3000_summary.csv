@@ -1,2 +1,0 @@
-frequency_hz,input_impedance_real_pa_s_m3,input_impedance_imag_pa_s_m3,radiated_power_w,gmres_iterations,solve_seconds,relative_residual
-3000,799386.78899672243,55641.586706489594,399693.39449838543,67,2.6617830420000002,1.1349153056878417e-10

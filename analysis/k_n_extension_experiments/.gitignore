@@ -1,5 +1,0 @@
-candidate_*/fields/
-candidate_*/mesh/*.msh
-__pycache__/
-.DS_Store
-candidate_*/.DS_Store

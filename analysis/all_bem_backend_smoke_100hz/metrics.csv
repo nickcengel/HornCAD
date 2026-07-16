@@ -1,2 +1,0 @@
-frequency_hz,gmres_iterations,dofs,diagonal_beamwidth_deg,diffraction_penalty_rms,far_field_evaluation_radius_m,horizontal_beamwidth_deg,mouth_acoustic_power_w,mouth_active_area_fraction,mouth_active_area_m2,mouth_magnitude_cv,mouth_modal_asymmetry,mouth_phase_spread_deg,solver_relative_residual,source_velocity_m_s,vertical_beamwidth_deg
-100.0,42,466,180.0,0.5113268997971441,343.21,180.0,-742.030261097033,1.0,0.10802279976176377,0.059381062484407186,0.00046664436816681984,1.05693416775001,1.5094223909573468e-10,2043.784456808597,180.0

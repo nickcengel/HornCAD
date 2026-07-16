@@ -29,10 +29,18 @@ def _source_yaml(run_dir: Path) -> Path | None:
         path = run_dir / filename
         if path.is_file():
             candidate = Path(json.loads(path.read_text()).get(key, ""))
+            if not candidate.is_absolute():
+                candidate = run_dir / candidate
             if candidate.is_file():
                 return candidate
     candidates = list(run_dir.glob("*.yaml")) + list(run_dir.glob("*.YAML"))
-    return candidates[0] if candidates else None
+    if candidates:
+        return candidates[0]
+    for parent in run_dir.parents:
+        candidate = parent / "project.yaml"
+        if candidate.is_file():
+            return candidate
+    return None
 
 
 def acoustic_parameters(yaml_path: Path | None) -> dict[str, str]:

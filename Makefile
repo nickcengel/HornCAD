@@ -17,7 +17,7 @@ bootstrap:
 
 validate:
 	$(VENV_PYTHON) -m py_compile app/export_horncad.py app/webster_1d.py app/aperture_directivity.py app/helmholtz_2d.py app/helmholtz_bem_3d.py
-	$(VENV_PYTHON) -m unittest discover -s tests -v
+	$(VENV_PYTHON) -m unittest discover -s automated_tests -v
 	node -e "const fs=require('fs'); const html=fs.readFileSync('app/HornCAD.html','utf8'); const scripts=[...html.matchAll(/<script>([\s\S]*?)<\/script>/g)].map(m=>m[1]).join('\n'); new Function(scripts); console.log('js_parse_ok');"
 
 clean-venv:

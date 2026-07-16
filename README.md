@@ -1,79 +1,34 @@
 # HornCAD
 
-HornCAD is currently a standalone browser app for designing and exporting horn and waveguide geometry.
+HornCAD designs horn and waveguide geometry and evaluates it with FEM or
+free-air BEM acoustics.
 
-Open the app directly:
+## Start here
 
-```text
-app/HornCAD.html
-```
+- Open `app/HornCAD.html` to design a horn and export its YAML project file.
+- Run `python app/export_horncad.py project.yaml` to generate an STL.
+- Run `python app/run_fem_suite.py project.yaml --output-dir results/my-fem-run`
+  for the interior FEM workflow.
+- Run `python app/run_bem_suite.py project.yaml --output-dir results/my-bem-run`
+  for the free-air, symmetry-reduced NumCalc BEM workflow.
 
-The app can export:
+Both solver suites generate `interactive_report.html` with cursor readout,
+coverage, magnitude-only throat impedance, and acoustic design parameters.
+Custom sweep bounds use `--start-hz`, `--stop-hz`, `--points-per-octave`, and
+`--elements-per-wavelength`.
 
-- `HornCAD-Surface-<WxHxL>.YAML` or `HornCAD-Body-<WxHxL>.YAML` - design configuration.
+## Repository map
 
-Use the Python exporter to convert YAML to STL:
+- `app/` — design application and command-line analysis tools.
+- `examples/` — reviewable projects and compact solver results.
+- `automated_tests/` — software regression tests, not horn projects.
+- `docs/reference/` — maintained technical reference material.
+- `docs/plans/` — current work plans only.
 
-- `HornCAD-Surface-<WxHxL>.STL` - open acoustic surface.
-- `HornCAD-Body-<WxHxL>.STL` - thickened printable body.
+The maintained example is
+`examples/osse-400x280-reference/`. It contains the project YAML, acoustic STL,
+and separate FEM and BEM results with interactive reports.
 
-Historical experiments and superseded designs live in `archive/` and are not part of the current workflow.
-
-Kept live documentation:
-
-- `docs/horncad_context.md`
-- `docs/candidate_matrix.md`
-- `docs/Research/`
-
-For app-specific notes, see `app/README.md`.
-
-To regenerate an STL from a YAML file exported by the app:
-
-```bash
-python app/export_horncad.py path/to/config.YAML
-```
-
-To run the one-dimensional Webster acoustic screening model:
-
-```bash
-python app/webster_1d.py path/to/config.YAML
-```
-
-To generate the complete reduced 3D FEM review directly from YAML:
-
-```bash
-python app/run_fem_suite.py path/to/config.YAML \
-  --output-dir analysis/my-study --title "My horn"
-```
-
-To run a complete free-air all-BEM analysis directly from YAML:
-
-```bash
-python app/run_bem_suite.py path/to/config.YAML \
-  --output-dir analysis/my-bem-study --title "My horn"
-```
-
-Both analysis suites write `interactive_report.html` with cursor coordinates,
-zoom, coverage, magnitude-only throat impedance, and the horn's acoustic
-parameters.
-
-For a new single-horn BEM analysis:
-
-```bash
-python app/run_bem_suite.py path/to/horn.YAML \
-  --output-dir analysis/my-horn --title "My horn"
-```
-
-Open the resulting `interactive_report.html` in the run directory. To create
-or recreate the interactive report from any existing completed FEM or BEM run:
-
-```bash
-python app/interactive_results.py report analysis/path-to-completed-run
-```
-
-To compare two to four completed runs:
-
-```bash
-python app/interactive_results.py compare analysis/run-a analysis/run-b \
-  --names "Horn A" "Horn B" --output analysis/comparison.html
-```
+See `app/README.md` for command details and `docs/README.md` for documentation.
+`pyproject.toml` and `Makefile` remain at the root because Python packaging and
+standard build tools expect project metadata there.
