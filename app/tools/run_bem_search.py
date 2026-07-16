@@ -243,6 +243,57 @@ def candidate_trait(values: dict[str, float], seed: dict[str, float],
     return f"{'High' if offsets[name] > 0 else 'Low'} {VARIABLE_LABELS[name]}"
 
 
+def candidate_traits(records: list[dict[str, Any]], seed: dict[str, float],
+                     bounds: dict[str, list[float]]) -> list[str]:
+    """Return progressively detailed trait labels that are unique in the report."""
+    ranked: list[list[str]] = []
+    for record in records:
+        values = record["values"]
+        offsets = {name: (values[name] - seed[name]) /
+                   (bounds[name][1] - bounds[name][0]) for name in VARIABLES}
+        if max(abs(value) for value in offsets.values()) < 1e-9:
+            ranked.append(["Seed design"])
+            continue
+        names = sorted(VARIABLES, key=lambda name: abs(offsets[name]), reverse=True)
+        ranked.append([
+            f"{'High' if offsets[name] > 0 else 'Low'} {VARIABLE_LABELS[name]}"
+            for name in names if abs(offsets[name]) >= 1e-9
+        ])
+    depths = [1] * len(records)
+    while True:
+        labels = [" · ".join(traits[:depths[index]])
+                  for index, traits in enumerate(ranked)]
+        groups: dict[str, list[int]] = {}
+        for index, label in enumerate(labels):
+            groups.setdefault(label, []).append(index)
+        collisions = [indices for indices in groups.values() if len(indices) > 1]
+        if not collisions:
+            return labels
+        advanced = False
+        for indices in collisions:
+            for index in indices:
+                if depths[index] < len(ranked[index]):
+                    depths[index] += 1
+                    advanced = True
+        if not advanced:
+            # If every high/low direction is identical, include parameter values;
+            # the minimum-distance filter prevents identical retained profiles.
+            detailed = []
+            for index, label in enumerate(labels):
+                if len(groups[label]) == 1:
+                    detailed.append(label)
+                    continue
+                values = records[index]["values"]
+                details = [f"{trait} ({values[name]:g})"
+                           for trait, name in zip(ranked[index],
+                                                  sorted(VARIABLES, key=lambda item: abs(
+                                                      (values[item] - seed[item]) /
+                                                      (bounds[item][1] - bounds[item][0])),
+                                                         reverse=True))]
+                detailed.append(" · ".join(details))
+            return detailed
+
+
 def length_cost_percent(values: dict[str, float], seed_length_mm: float) -> float:
     """Selection cost: gentle through 10% length change, steep beyond it."""
     deviation = abs(values["length_mm"] / seed_length_mm - 1.0)
@@ -359,8 +410,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     pareto = pareto_indices(records)
     for index, record in enumerate(records):
         record["pareto"] = index in pareto
+    traits = candidate_traits(records, seed, search["bounds"])
     rows = []
-    for record in records:
+    for record, trait in zip(records, traits):
         diagnostic = record.get("diagnostics", {}).get("combined", {})
         candidate_dir = f"candidates/{record['id']}"
         stl_link = (f" · <a href='{candidate_dir}/{html.escape(record['stl_file'])}'>STL</a>"
@@ -383,7 +435,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td>{record['values']['osse_coverage_h_deg']:.1f} / "
             f"{record['values']['osse_coverage_v_deg']:.1f}</td>",
             f"<td>{record['values']['k_h']:.2f} / {record['values']['k_v']:.2f}</td>",
-            f"<td>{html.escape(candidate_trait(record['values'], seed, search['bounds']))}</td>",
+            f"<td>{html.escape(trait)}</td>",
         )) + "</tr>")
     range_rows = []
     for name in VARIABLES:

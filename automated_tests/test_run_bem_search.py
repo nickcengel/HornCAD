@@ -8,7 +8,8 @@ from unittest.mock import patch
 import numpy as np
 
 from app.tools.run_bem_search import (
-    candidate_distance, candidate_trait, geometry_feasibility, length_cost_percent, load_search,
+    candidate_distance, candidate_trait, candidate_traits, geometry_feasibility,
+    length_cost_percent, load_search,
     materialize_candidate, pareto_indices, propose_vector, repair_k_for_positive_s,
     run_search, seed_values,
 )
@@ -91,6 +92,17 @@ class BEMSearchTests(unittest.TestCase):
         changed = dict(values, k_h=60)
         self.assertEqual(candidate_trait(changed, values, search["bounds"]),
                          "High horizontal K")
+
+    def test_duplicate_primary_traits_gain_secondary_traits(self) -> None:
+        search, _, seed = load_search(SEARCH)
+        values = seed_values(seed)
+        first = dict(values, k_h=60, extension_mm=10)
+        second = dict(values, k_h=60, extension_mm=0,
+                      osse_coverage_v_deg=20)
+        labels = candidate_traits([{"values": first}, {"values": second}],
+                                  values, search["bounds"])
+        self.assertEqual(len(set(labels)), 2)
+        self.assertTrue(all(" · " in label for label in labels))
 
     @patch("app.tools.run_bem_search.export_candidate_stl")
     def test_dry_run_materializes_feasible_initial_candidates(self, export_stl) -> None:

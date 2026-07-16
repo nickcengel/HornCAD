@@ -96,7 +96,9 @@ candidate span for every movable parameter. It also lists fixed `n_h` and `n_v`
 explicitly so a search that did not explore termination exponent cannot be
 mistaken for one that did. Each retained candidate receives a short label based
 on its largest normalized departure from the seed (for example, “High
-horizontal K”) instead of a generic geometry-feasibility note.
+horizontal K”) instead of a generic geometry-feasibility note. When primary
+traits repeat, every candidate in that group gains secondary (and, if needed,
+additional) traits until its report label is distinct.
 
 `N` should initially be explored as a structured second-stage termination study
 around the strongest first-stage candidates. This avoids multiplying every
