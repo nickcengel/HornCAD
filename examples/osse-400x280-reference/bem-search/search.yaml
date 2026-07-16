@@ -4,7 +4,7 @@ bem_candidate_search:
   intended_coverage_h_deg: 50
   intended_coverage_v_deg: 35
   crossover_hz: 500
-  upper_frequency_hz: 8000
+  upper_frequency_hz: 5000
   search_size: quick
   initial_candidates: 12
   random_seed: 17
