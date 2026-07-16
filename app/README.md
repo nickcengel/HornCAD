@@ -46,6 +46,10 @@ reactance is intentionally omitted. Impedance is normalized by `ρc/Sₜ`, using
 the effective circular throat area. Solver directories also contain machine-readable
 `responses.npz` and `metrics.csv`.
 
+Frequency axes use labeled 1/2/5 logarithmic ticks with fine decade subdivisions;
+coverage angles use 30-degree major grid lines. The H/V heatmaps share one dB
+color scale so the legend, scale, and Plotly toolbar do not overlap.
+
 ## Reports and comparisons
 
 Regenerate a report from a completed run:

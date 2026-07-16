@@ -8,12 +8,19 @@ import unittest
 import numpy as np
 
 from app.interactive_results import (
-    AIR_DENSITY_KG_M3, SOUND_SPEED_M_S, _positive_half_angle,
+    AIR_DENSITY_KG_M3, SOUND_SPEED_M_S, _frequency_axis, _positive_half_angle,
     comparison_report, load_run, single_report,
 )
 
 
 class InteractiveResultsTests(unittest.TestCase):
+    def test_frequency_axis_uses_readable_major_ticks_and_minor_grid(self) -> None:
+        axis = _frequency_axis(np.array([500.0, 8000.0]))
+        self.assertEqual(axis["tickvals"],
+                         [500.0, 1000.0, 2000.0, 5000.0, 8000.0])
+        self.assertEqual(axis["ticktext"], ["500", "1k", "2k", "5k", "8k"])
+        self.assertTrue(axis["minor"]["showgrid"])
+
     def make_run(self, root: Path, name: str) -> Path:
         run = root / name
         run.mkdir()
@@ -63,6 +70,8 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("Vertical \\u22126 dB", single_text)
             self.assertIn(r"Horizontal intended coverage \u00b150\u00b0", single_text)
             self.assertIn(r"Vertical intended coverage \u00b135\u00b0", single_text)
+            self.assertIn('"coloraxis":"coloraxis"', single_text)
+            self.assertIn('"orientation":"h"', single_text)
             text = compare.read_text()
             self.assertIn("Normalized throat impedance magnitude", text)
             self.assertIn("Conical extension", text)

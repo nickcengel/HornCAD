@@ -139,6 +139,34 @@ def _positive_half_angle(angles: np.ndarray, levels: np.ndarray) -> np.ndarray:
     return np.asarray(output)
 
 
+def _frequency_axis(frequencies: np.ndarray) -> dict[str, Any]:
+    minimum = float(np.min(frequencies))
+    maximum = float(np.max(frequencies))
+    tick_values = []
+    for exponent in range(int(np.floor(np.log10(minimum))) - 1,
+                          int(np.ceil(np.log10(maximum))) + 1):
+        for multiplier in (1, 2, 5):
+            value = multiplier * 10.0 ** exponent
+            if minimum * (1 - 1e-12) <= value <= maximum * (1 + 1e-12):
+                tick_values.append(value)
+    for endpoint in (minimum, maximum):
+        if not any(np.isclose(endpoint, value, rtol=1e-12) for value in tick_values):
+            tick_values.append(endpoint)
+    tick_values.sort()
+    tick_text = [f"{value / 1000:g}k" if value >= 1000 else f"{value:g}"
+                 for value in tick_values]
+    return {
+        "type": "log", "title_text": "Frequency (Hz)",
+        "tickmode": "array", "tickvals": tick_values, "ticktext": tick_text,
+        "ticks": "outside", "ticklen": 6,
+        "showgrid": True, "gridcolor": "rgba(70,85,110,0.34)",
+        "gridwidth": 1.2, "zeroline": False,
+        "minor": {"dtick": "D1", "ticks": "inside", "ticklen": 3,
+                  "showgrid": True, "gridcolor": "rgba(70,85,110,0.14)",
+                  "griddash": "dot"},
+    }
+
+
 def _parameter_table(runs: list[dict[str, Any]]) -> str:
     keys = list(dict.fromkeys(key for run in runs for key in run["parameters"]))
     header = "<tr><th>Parameter</th>" + "".join(
@@ -182,7 +210,7 @@ def single_report(run_dir: Path, output: Path | None = None,
     for column, key in enumerate(("horizontal", "vertical"), 1):
         figure.add_trace(go.Heatmap(
             x=run["frequencies"], y=run["angles"], z=run[key].T,
-            zmin=-30, zmax=0, colorscale="Turbo", colorbar={"title": "dB"},
+            coloraxis="coloraxis",
             hovertemplate="%{x:.1f} Hz<br>%{y:.1f}°<br>%{z:.2f} dB<extra></extra>"),
             row=1, col=column)
         figure.add_trace(go.Contour(
@@ -210,10 +238,22 @@ def single_report(run_dir: Path, output: Path | None = None,
             name="|Z throat| / (ρc/Sₜ)", line={"width": 2.5},
             hovertemplate="%{x:.1f} Hz<br>%{y:.4g}<extra></extra>"),
             row=2, col=1)
-    figure.update_xaxes(type="log", title_text="Frequency (Hz)")
-    figure.update_yaxes(title_text="Off-axis angle (degrees)", row=1)
+    figure.update_xaxes(**_frequency_axis(run["frequencies"]))
+    figure.update_yaxes(
+        title_text="Off-axis angle (degrees)", row=1,
+        tickmode="array", tickvals=[-90, -60, -30, 0, 30, 60, 90],
+        ticks="outside", ticklen=6, showgrid=True,
+        gridcolor="rgba(70,85,110,0.30)", gridwidth=1.2, zeroline=True,
+        zerolinecolor="rgba(30,45,70,0.55)", zerolinewidth=1.5)
     figure.update_yaxes(title_text="|Z| / (ρc/Sₜ)", row=2, col=1)
-    figure.update_layout(height=950, hovermode="closest", margin={"t": 70})
+    figure.update_layout(
+        height=1000, hovermode="closest",
+        coloraxis={"cmin": -30, "cmax": 0, "colorscale": "Turbo",
+                   "colorbar": {"title": "dB", "x": 1.015, "y": .78,
+                                "len": .42, "thickness": 16}},
+        legend={"orientation": "h", "x": 0, "xanchor": "left",
+                "y": 1.12, "yanchor": "bottom"},
+        margin={"t": 145, "r": 95, "b": 75, "l": 80})
     return _write_html(output or run_dir / "interactive_report.html",
                        title or run["name"], figure, [run])
 
@@ -248,7 +288,8 @@ def comparison_report(run_dirs: list[Path], output: Path,
                 line={"color": color, "width": 2.5},
                 hovertemplate="%{x:.1f} Hz<br>%{y:.4g}<extra>" +
                               html.escape(run["name"]) + "</extra>"), row=1, col=3)
-    figure.update_xaxes(type="log", title_text="Frequency (Hz)")
+    all_frequencies = np.concatenate([run["frequencies"] for run in runs])
+    figure.update_xaxes(**_frequency_axis(all_frequencies))
     figure.update_yaxes(title_text="Half-angle (degrees)", range=[0, 90], row=1, col=1)
     figure.update_yaxes(title_text="Half-angle (degrees)", range=[0, 90], row=1, col=2)
     figure.update_yaxes(title_text="|Z| / (ρc/Sₜ)", row=1, col=3)
