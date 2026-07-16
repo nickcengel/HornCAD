@@ -6,27 +6,30 @@
     "confirmation_octaves": 0.3333333333333333,
     "horizontal": {
       "coverage_error_percent": 26.438192911552406,
-      "within_10_percent_of_intent": 11.764705882352928,
-      "smoothness_score": 14.53554207376008,
-      "trend_ripple_rms_deg": 6.943654222195133,
+      "coverage_match_percent": 73.5618070884476,
+      "smoothness_percent": 86.53802241880673,
+      "trend_ripple_rms_deg": 6.73098879059663,
       "narrowing_percent": 43.536844723621556,
+      "non_narrowing_percent": 56.463155276378444,
       "lower_half_angle_deg": 63.92511593118176,
       "upper_half_angle_deg": 36.09413746882809
     },
     "vertical": {
       "coverage_error_percent": 54.73472508653939,
-      "within_10_percent_of_intent": 8.82352941176472,
-      "smoothness_score": 0.9115256264993621,
-      "trend_ripple_rms_deg": 7.5860477534988595,
+      "coverage_match_percent": 45.26527491346061,
+      "smoothness_percent": 79.0649801123684,
+      "trend_ripple_rms_deg": 7.32725696067106,
       "narrowing_percent": 71.14515822191002,
+      "non_narrowing_percent": 28.854841778089973,
       "lower_half_angle_deg": 83.79584517596231,
       "upper_half_angle_deg": 24.179158542137166
     },
     "combined": {
       "coverage_error_percent": 42.981787856762686,
-      "within_10_percent_of_intent": 10.294117647058824,
-      "smoothness_score": 7.723533850129721,
-      "narrowing_percent": 57.34100147276579
+      "coverage_match_percent": 57.018212143237314,
+      "smoothness_percent": 82.80150126558758,
+      "narrowing_percent": 57.34100147276579,
+      "non_narrowing_percent": 42.65899852723421
     }
   }
 }

@@ -18,7 +18,6 @@ COLORS = ("#2563eb", "#dc2626", "#16a34a", "#9333ea")
 AIR_DENSITY_KG_M3 = 1.2041
 SOUND_SPEED_M_S = 343.21
 PASSBAND_CONFIRMATION_OCTAVES = 1.0 / 3.0
-SMOOTHNESS_REFERENCE_FRACTION = 0.10
 
 
 def _scalar(value: Any) -> Any:
@@ -196,20 +195,18 @@ def coverage_diagnostics(run: dict[str, Any]) -> dict[str, Any]:
         coverage_error = 100 * float(np.sqrt(
             np.trapezoid(fractional_error ** 2, log_frequency) /
             (log_frequency[-1] - log_frequency[0])))
-        within_tolerance = 100 * float(
-            np.trapezoid((np.abs(fractional_error) <= 0.10).astype(float), log_frequency) /
-            (log_frequency[-1] - log_frequency[0]))
         trend = np.polyval(np.polyfit(log_frequency, values, 1), log_frequency)
-        ripple_rms = float(np.sqrt(np.mean((values - trend) ** 2)))
-        smoothness = 100 * float(np.exp(
-            -(ripple_rms / (SMOOTHNESS_REFERENCE_FRACTION * target)) ** 2))
+        ripple_rms = float(np.sqrt(
+            np.trapezoid((values - trend) ** 2, log_frequency) /
+            (log_frequency[-1] - log_frequency[0])))
         narrowing = 100 * float((values[0] - values[-1]) / values[0])
         plane_results[key] = {
             "coverage_error_percent": coverage_error,
-            "within_10_percent_of_intent": within_tolerance,
-            "smoothness_score": smoothness,
+            "coverage_match_percent": max(0.0, 100.0 - coverage_error),
+            "smoothness_percent": max(0.0, 100.0 * (1.0 - ripple_rms / target)),
             "trend_ripple_rms_deg": ripple_rms,
             "narrowing_percent": narrowing,
+            "non_narrowing_percent": min(100.0, 100.0 * values[-1] / values[0]),
             "lower_half_angle_deg": float(values[0]),
             "upper_half_angle_deg": float(values[-1]),
         }
@@ -223,13 +220,15 @@ def coverage_diagnostics(run: dict[str, Any]) -> dict[str, Any]:
         "combined": {
             "coverage_error_percent": float(np.sqrt(np.mean([
                 plane_results[key]["coverage_error_percent"] ** 2 for key in plane_results]))),
-            "within_10_percent_of_intent": float(np.mean([
-                plane_results[key]["within_10_percent_of_intent"]
-                for key in plane_results])),
-            "smoothness_score": float(np.mean([
-                plane_results[key]["smoothness_score"] for key in plane_results])),
+            "coverage_match_percent": max(0.0, 100.0 - float(np.sqrt(np.mean([
+                plane_results[key]["coverage_error_percent"] ** 2
+                for key in plane_results])))),
+            "smoothness_percent": float(np.mean([
+                plane_results[key]["smoothness_percent"] for key in plane_results])),
             "narrowing_percent": float(np.mean([
                 plane_results[key]["narrowing_percent"] for key in plane_results])),
+            "non_narrowing_percent": float(np.mean([
+                plane_results[key]["non_narrowing_percent"] for key in plane_results])),
         },
     }
 
@@ -304,13 +303,11 @@ def _diagnostic_table(runs: list[dict[str, Any]]) -> str:
                     f"{diagnostic['passband_upper_hz']:g} Hz")
             rows.append(
                 f"<tr><td>{html.escape(run['name'])}</td><td>{label}</td><td>{band}</td>"
-                f"<td>{values['coverage_error_percent']:.1f}%</td>"
-                f"<td>{values['within_10_percent_of_intent']:.1f}%</td>"
-                f"<td>{values['smoothness_score']:.1f}/100</td>"
-                f"<td>{values['narrowing_percent']:+.1f}%</td></tr>")
+                f"<td>{values['coverage_match_percent']:.1f}%</td>"
+                f"<td>{values['smoothness_percent']:.1f}%</td>"
+                f"<td>{values['non_narrowing_percent']:.1f}%</td></tr>")
     return ("<table><tr><th>Run</th><th>Plane</th><th>Evaluated passband</th>"
-            "<th>Coverage error</th><th>Within ±10%</th><th>Smoothness</th>"
-            "<th>Narrowing</th></tr>" +
+            "<th>Coverage match</th><th>Smoothness</th><th>Non-narrowing</th></tr>" +
             "".join(rows) + "</table>")
 
 
@@ -331,7 +328,7 @@ th{{background:#f1f3f7;position:sticky;top:0}} .hint{{color:#566176;margin:0 0 1
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Coverage diagnostics</h2>
 {_diagnostic_table(runs)}
-<p class='hint'>Coverage error is log-frequency-weighted RMS error from the intended −6 dB half-angle (lower is better). Smoothness is 0–100 and measures RMS ripple after removing the best-fit log-frequency trend; 10% of the intended angle gives a score of 36.8. Narrowing is the signed change from the lower to upper passband endpoint; positive means narrower. The automatic passband starts after both planes sustain genuine −6 dB crossings for one-third octave.</p>
+<p class='hint'>All three diagnostics are percentages where 100% is ideal. Coverage match is 100% minus the log-frequency-weighted RMS percentage error from the intended −6 dB half-angle. Smoothness is 100% minus RMS deviation from the best-fit straight line versus log frequency, normalized by intended coverage. Non-narrowing is the upper-bound half-angle divided by the lower-bound half-angle, capped at 100%. The automatic passband starts after both planes sustain genuine −6 dB crossings for one-third octave.</p>
 </section></main></body></html>"""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(document)

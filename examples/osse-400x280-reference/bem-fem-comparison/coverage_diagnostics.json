@@ -6,27 +6,30 @@
     "confirmation_octaves": 0.3333333333333333,
     "horizontal": {
       "coverage_error_percent": 26.076432898503533,
-      "within_10_percent_of_intent": 1.6129032258064442,
-      "smoothness_score": 78.20002758485234,
-      "trend_ripple_rms_deg": 2.479416189798598,
+      "coverage_match_percent": 73.92356710149647,
+      "smoothness_percent": 95.30131624172412,
+      "trend_ripple_rms_deg": 2.34934187913794,
       "narrowing_percent": 24.502640716113326,
+      "non_narrowing_percent": 75.49735928388668,
       "lower_half_angle_deg": 46.70878408183335,
       "upper_half_angle_deg": 35.26389853539659
     },
     "vertical": {
       "coverage_error_percent": 38.75444206850615,
-      "within_10_percent_of_intent": 12.90322580645158,
-      "smoothness_score": 2.7816192012218655,
-      "trend_ripple_rms_deg": 6.624286982132301,
+      "coverage_match_percent": 61.24555793149385,
+      "smoothness_percent": 82.50443652470267,
+      "trend_ripple_rms_deg": 6.123447216354064,
       "narrowing_percent": 69.31808625248993,
+      "non_narrowing_percent": 30.681913747510077,
       "lower_half_angle_deg": 76.9632877280634,
       "upper_half_angle_deg": 23.61380955797242
     },
     "combined": {
       "coverage_error_percent": 33.029434847960665,
-      "within_10_percent_of_intent": 7.2580645161290125,
-      "smoothness_score": 40.490823393037104,
-      "narrowing_percent": 46.91036348430163
+      "coverage_match_percent": 66.97056515203934,
+      "smoothness_percent": 88.9028763832134,
+      "narrowing_percent": 46.91036348430163,
+      "non_narrowing_percent": 53.08963651569838
     }
   },
   "BEM": {
@@ -36,27 +39,30 @@
     "confirmation_octaves": 0.3333333333333333,
     "horizontal": {
       "coverage_error_percent": 26.438192911552406,
-      "within_10_percent_of_intent": 11.764705882352928,
-      "smoothness_score": 14.53554207376008,
-      "trend_ripple_rms_deg": 6.943654222195133,
+      "coverage_match_percent": 73.5618070884476,
+      "smoothness_percent": 86.53802241880673,
+      "trend_ripple_rms_deg": 6.73098879059663,
       "narrowing_percent": 43.536844723621556,
+      "non_narrowing_percent": 56.463155276378444,
       "lower_half_angle_deg": 63.92511593118176,
       "upper_half_angle_deg": 36.09413746882809
     },
     "vertical": {
       "coverage_error_percent": 54.73472508653939,
-      "within_10_percent_of_intent": 8.82352941176472,
-      "smoothness_score": 0.9115256264993621,
-      "trend_ripple_rms_deg": 7.5860477534988595,
+      "coverage_match_percent": 45.26527491346061,
+      "smoothness_percent": 79.0649801123684,
+      "trend_ripple_rms_deg": 7.32725696067106,
       "narrowing_percent": 71.14515822191002,
+      "non_narrowing_percent": 28.854841778089973,
       "lower_half_angle_deg": 83.79584517596231,
       "upper_half_angle_deg": 24.179158542137166
     },
     "combined": {
       "coverage_error_percent": 42.981787856762686,
-      "within_10_percent_of_intent": 10.294117647058824,
-      "smoothness_score": 7.723533850129721,
-      "narrowing_percent": 57.34100147276579
+      "coverage_match_percent": 57.018212143237314,
+      "smoothness_percent": 82.80150126558758,
+      "narrowing_percent": 57.34100147276579,
+      "non_narrowing_percent": 42.65899852723421
     }
   }
 }

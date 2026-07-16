@@ -104,8 +104,11 @@ class InteractiveResultsTests(unittest.TestCase):
         result = coverage_diagnostics(run)
         self.assertEqual(result["status"], "available")
         self.assertEqual(result["passband_lower_hz"], 500.0)
-        self.assertGreater(result["combined"]["smoothness_score"], 99.0)
-        self.assertGreater(result["horizontal"]["within_10_percent_of_intent"], 40.0)
+        self.assertGreater(result["combined"]["smoothness_percent"], 99.0)
+        self.assertAlmostEqual(result["horizontal"]["non_narrowing_percent"], 80.0,
+                               delta=0.2)
+        self.assertAlmostEqual(result["horizontal"]["coverage_match_percent"],
+                               88.4, delta=0.5)
         self.assertAlmostEqual(result["horizontal"]["narrowing_percent"], 20.0,
                                delta=0.2)
         self.assertAlmostEqual(result["vertical"]["narrowing_percent"], 20.0,
