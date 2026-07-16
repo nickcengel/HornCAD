@@ -84,13 +84,28 @@ Length uses an explicit exploration envelope. The maintained example uses:
 The user may override the bounds. The initial experiment spans the full envelope
 evenly; it does not impose a soft ±10% admission cap around the seed.
 
-Length is not a free path to improved low-frequency loading. Selection subtracts
-a symmetric cost from all three optimization objectives while retaining the raw
-physical diagnostics for review. The cost rises quadratically to 4 percentage
-points at a 10% length change, then steeply to 20 points at 15%. Consequently a
-candidate outside ±10% must deliver a substantial coverage improvement to
-remain Pareto-competitive. Crossover loading is capped at 100% once the 0.7
-constraint is satisfied, so additional impedance cannot offset this cost.
+The currently running first-round implementation still subtracts a symmetric
+length cost from its selection scores. Replace that rule after the active search
+finishes; do not change scoring partway through a search ledger.
+
+The replacement policy is asymmetric and separates acoustics from packaging:
+
+- normalized throat-impedance magnitude at crossover remains a hard feasibility
+  constraint (minimum 0.7 over the crossover-centered evaluation window);
+- Pattern Fit, Pattern Stability, and HF Retention remain unmodified acoustic
+  objectives;
+- a candidate shorter than the authored reference receives no departure cost if
+  it satisfies loading and the other feasibility checks;
+- added axial depth may be penalized, but must not be hidden inside the reported
+  acoustic diagnostics; and
+- once extension is released, packaging size is measured using total axial depth
+  `length_mm + extension_mm`, not horn length alone.
+
+Prefer representing total axial depth as an explicit minimization objective in
+the Pareto set. This makes compactness visible and prevents either extra loading
+or shorter packaging from silently rewriting the meaning of the acoustic
+scores. Additional impedance above the 0.7 feasibility threshold receives no
+extra credit.
 
 Extension should use explicit minimum and maximum lengths rather than only a
 percentage of its seed value, because a seed extension may be zero. A provisional
