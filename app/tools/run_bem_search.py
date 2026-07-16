@@ -88,6 +88,11 @@ def load_search(path: Path) -> tuple[dict[str, Any], Path, dict[str, Any]]:
             raise ValueError(f"bounds.{name} must be [minimum, maximum]")
         bounds[name] = [float(values[0]), float(values[1])]
     search["bounds"] = bounds
+    s_bounds = search.get("derived_s_bounds", [0.15, 3.0])
+    if not (isinstance(s_bounds, list) and len(s_bounds) == 2 and
+            0 < float(s_bounds[0]) < float(s_bounds[1])):
+        raise ValueError("derived_s_bounds must be [positive minimum, maximum]")
+    search["derived_s_bounds"] = [float(s_bounds[0]), float(s_bounds[1])]
     search["crossover_hz"] = crossover
     search["upper_frequency_hz"] = upper
     preset = str(search.get("search_size", "normal"))
@@ -365,7 +370,9 @@ def geometry_feature_vector(search: dict[str, Any], values: dict[str, float]) ->
         metrics = termination_metrics(
             values["length_mm"], effective_radius, values[coverage_key], values[k_key],
             context[n_key], end_radius, context["throat_angle_deg"])
-        if metrics["s"] <= 1e-6 or not all(math.isfinite(item) for item in metrics.values()):
+        s_lower, s_upper = search["derived_s_bounds"]
+        if (not s_lower <= metrics["s"] <= s_upper or
+                not all(math.isfinite(item) for item in metrics.values())):
             return None
         features.extend((metrics["s"] / (1 + metrics["s"]),
                          metrics["exit_angle_deg"] / 90,
@@ -383,6 +390,9 @@ def geometry_space_filling_probe(search: dict[str, Any],
     feasible_features = []
     for vector in pool:
         values = values_from_vector(vector, search["bounds"])
+        seed_length = search["seed_values"]["length_mm"]
+        if abs(values["length_mm"] / seed_length - 1) > 0.10:
+            continue
         features = geometry_feature_vector(search, values)
         if features is not None:
             feasible_vectors.append(vector)
@@ -616,7 +626,7 @@ th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}th{{backgrou
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Each completed run is compared with a factor-two decimation and excluded from surrogate training when any headline diagnostic moves by more than {search.get('sampling_stability_points', DEFAULT_SAMPLING_STABILITY_POINTS):g} points. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
 {finalist_link}
 <section><h2>Search range</h2><table><tr><th>Parameter</th><th>Configured range</th><th>Seed</th><th>Retained candidates</th></tr>
-{''.join(range_rows)}</table><p><strong>Fixed termination exponent:</strong> N H/V = {fixed_n_h:g} / {fixed_n_v:g}. N is not varied in this search.</p></section>
+{''.join(range_rows)}</table><p><strong>Realized S range (both axes):</strong> {search['derived_s_bounds'][0]:g}–{search['derived_s_bounds'][1]:g}. <strong>Fixed termination exponent:</strong> N H/V = {fixed_n_h:g} / {fixed_n_v:g}. N is not varied in this search.</p></section>
 {effects_section}
 <section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Pattern Fit</th><th>Pattern Stability</th>
 <th>HF Retention</th><th>Crossover loading</th><th>Length cost</th><th>Sampling stability</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Curvature radius H/V mm</th><th>Exit angle H/V</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
