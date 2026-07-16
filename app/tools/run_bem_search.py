@@ -666,15 +666,28 @@ def isolated_sweep(project_path: Path, executable: Path, run_root: Path,
                               args=(result_queue, project_path, executable, run_root,
                                     frequencies, solver))
     process.start()
-    process.join()
+    result = None
+    while process.is_alive() and result is None:
+        try:
+            result = result_queue.get(timeout=0.25)
+        except queue.Empty:
+            pass
+    if result is None:
+        try:
+            result = result_queue.get(timeout=2)
+        except queue.Empty:
+            result = None
+    process.join(timeout=5)
+    if process.is_alive():
+        process.terminate()
+        process.join()
+        raise RuntimeError("mesh/sweep worker did not exit after returning its result")
     if process.exitcode != 0:
         raise RuntimeError(f"mesh/sweep worker exited abnormally ({process.exitcode})")
-    try:
-        status, payload = result_queue.get(timeout=2)
-    except queue.Empty as error:
-        raise RuntimeError("mesh/sweep worker returned no result") from error
-    finally:
-        result_queue.close()
+    result_queue.close()
+    if result is None:
+        raise RuntimeError("mesh/sweep worker returned no result")
+    status, payload = result
     if status != "ok":
         raise RuntimeError(payload)
     return payload
