@@ -1,6 +1,6 @@
 bem_candidate_search:
   version: 1
-  seed_yaml: project.yaml
+  seed_yaml: ../project.yaml
   intended_coverage_h_deg: 50
   intended_coverage_v_deg: 35
   crossover_hz: 500

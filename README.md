@@ -40,10 +40,10 @@ run:
 
 ```bash
 python app/tools/run_bem_search.py path/to/my-horn-BEM-search.YAML \
-  --output-dir results/my-horn-search
+  --output-dir path/to/my-horn-search
 ```
 
-Open `search_report.html` in the output directory. Running the same command
+Open `search_report.html` in that output directory. Running the same command
 again resumes interrupted candidates and completed NumCalc frequencies. Use
 `--dry-run` first to materialize and geometry-check the initial candidate set
 without running BEM.

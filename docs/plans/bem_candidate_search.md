@@ -157,6 +157,7 @@ For each proposal HornCAD should:
 Every evaluated candidate retains:
 
 - a complete YAML project;
+- an inspectable acoustic-surface STL, including for preflight-rejected designs;
 - proposed and derived parameter values;
 - effective search bounds;
 - geometry-feasibility result;

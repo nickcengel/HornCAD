@@ -9,6 +9,8 @@ import html
 import json
 import math
 from pathlib import Path
+import subprocess
+import sys
 import time
 from typing import Any
 
@@ -196,6 +198,19 @@ def geometry_feasibility(derived: dict[str, float]) -> tuple[bool, str | None]:
     return True, None
 
 
+def export_candidate_stl(project_path: Path, candidate_dir: Path) -> Path:
+    """Retain an inspectable acoustic-surface STL for every proposed candidate."""
+    existing = list(candidate_dir.glob("*.STL"))
+    if existing:
+        return existing[0]
+    result = subprocess.run(
+        [sys.executable, str(Path(__file__).with_name("export_horncad.py")),
+         str(project_path), "--mode", "acoustic_surface", "--output-dir",
+         str(candidate_dir)], check=True, capture_output=True, text=True)
+    path = Path(result.stdout.splitlines()[0])
+    return path
+
+
 def pareto_indices(records: list[dict[str, Any]]) -> set[int]:
     feasible = [(index, record) for index, record in enumerate(records)
                 if record.get("status") == "complete" and
@@ -294,13 +309,15 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     for record in records:
         diagnostic = record.get("diagnostics", {}).get("combined", {})
         candidate_dir = f"candidates/{record['id']}"
+        stl_link = (f" · <a href='{candidate_dir}/{html.escape(record['stl_file'])}'>STL</a>"
+                    if record.get("stl_file") else "")
         report_link = (f" · <a href='{html.escape(record['run_dir'])}/"
                        "interactive_report.html'>report</a>"
                        if record.get("run_dir") else "")
         status = "Pareto" if record.get("pareto") else record["status"].title()
         rows.append("<tr>" + "".join((
             f"<td><a href='{candidate_dir}/project.yaml'>{record['id']}</a>"
-            f"{report_link}</td>",
+            f"{stl_link}{report_link}</td>",
             f"<td>{html.escape(status)}</td>",
             f"<td>{diagnostic.get('coverage_match_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
             f"<td>{diagnostic.get('smoothness_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
@@ -441,6 +458,14 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
     fixed_grid = np.geomspace(search["crossover_hz"], search["upper_frequency_hz"],
                               int(np.ceil(np.log2(search["upper_frequency_hz"] /
                                                    search["crossover_hz"]) * 48)) + 1)
+    for record in state["candidates"]:
+        candidate_dir = output_dir / "candidates" / record["id"]
+        stl = export_candidate_stl(candidate_dir / "project.yaml", candidate_dir)
+        record["stl_file"] = stl.name
+    if dry_run and len(state["candidates"]) >= search["initial_candidates"] + 1:
+        state.update(status="preflight", phase="initial candidates materialized")
+        save_state(output_dir, state)
+        return state
     max_proposals = search["max_evaluations"] * 10
     while (sum(record["status"] == "complete" for record in state["candidates"])
            < search["max_evaluations"] and len(state["candidates"]) < max_proposals):
@@ -470,6 +495,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             project_path = candidate_dir / "project.yaml"
             project_path.write_text(
                 yaml.safe_dump(document, sort_keys=False), encoding="utf-8")
+            stl = export_candidate_stl(project_path, candidate_dir)
+            record["stl_file"] = stl.name
             if not feasible:
                 record.update(status="rejected", reason=reason)
                 save_state(output_dir, state)

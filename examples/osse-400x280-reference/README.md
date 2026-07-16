@@ -3,7 +3,8 @@
 This is HornCAD's maintained reference project.
 
 - `project.yaml` — source project.
-- `bem-search.yaml` — example quick candidate-search configuration.
+- `bem-search/` — example quick-search configuration, dry-run report and
+  ledger, and inspectable candidate YAML/STL pairs.
 - `acoustic-surface.stl` — open acoustic surface exported from the project.
 - `fem/` — interior FEM result: 500–5000 Hz, 12 points per octave, 6 elements
   per wavelength. It retains `responses.npz`, `metrics.csv`, and
@@ -20,6 +21,14 @@ Open either `interactive_report.html` for cursor-enabled coverage and
 normalized magnitude-only throat impedance. The compact numerical files support
 report regeneration and comparison; bulky meshes and per-frequency working
 directories are deliberately excluded.
+
+Regenerate the candidate preflight in place without running BEM:
+
+```bash
+python app/tools/run_bem_search.py \
+  examples/osse-400x280-reference/bem-search/search.yaml \
+  --output-dir examples/osse-400x280-reference/bem-search --dry-run
+```
 
 Each report is accompanied by `coverage_diagnostics.json`, containing the
 automatic evaluated passband plus horizontal, vertical, and combined coverage

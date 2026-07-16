@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
@@ -13,7 +14,8 @@ from app.tools.run_bem_search import (
 
 
 ROOT = Path(__file__).parents[1]
-SEARCH = ROOT / "examples" / "osse-400x280-reference" / "bem-search.yaml"
+SEARCH = (ROOT / "examples" / "osse-400x280-reference" / "bem-search" /
+          "search.yaml")
 
 
 class BEMSearchTests(unittest.TestCase):
@@ -68,7 +70,13 @@ class BEMSearchTests(unittest.TestCase):
                    record((95, 95, 95), 90)]
         self.assertEqual(pareto_indices(records), {0})
 
-    def test_dry_run_materializes_feasible_initial_candidates(self) -> None:
+    @patch("app.tools.run_bem_search.export_candidate_stl")
+    def test_dry_run_materializes_feasible_initial_candidates(self, export_stl) -> None:
+        def fake_export(_project: Path, candidate_dir: Path) -> Path:
+            path = candidate_dir / "candidate-surface.STL"
+            path.write_bytes(b"test stl")
+            return path
+        export_stl.side_effect = fake_export
         with tempfile.TemporaryDirectory() as temp:
             state = run_search(SEARCH, Path(temp), None, dry_run=True)
             self.assertEqual(state["status"], "preflight")
@@ -76,6 +84,11 @@ class BEMSearchTests(unittest.TestCase):
             self.assertGreaterEqual(len(state["candidates"]), 1)
             self.assertTrue((Path(temp) / "candidates" / "candidate-000" /
                              "project.yaml").is_file())
+            self.assertEqual(len(list((Path(temp) / "candidates" / "candidate-000").
+                                      glob("*.STL"))), 1)
+            candidate_count = len(state["candidates"])
+            resumed = run_search(SEARCH, Path(temp), None, dry_run=True)
+            self.assertEqual(len(resumed["candidates"]), candidate_count)
 
 
 if __name__ == "__main__":
