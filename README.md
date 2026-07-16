@@ -85,6 +85,10 @@ python app/tools/interactive_results.py compare \
   --names "Horn A" "Horn B" --output results/comparison.html
 ```
 
+Comparison diagnostics are recomputed for every run on the same 48-point-per-
+octave logarithmic grid over their shared valid passband. Runs are displayed as
+columns in separate Combined, Horizontal, and Vertical diagnostic tables.
+
 Single-run coverage heatmaps include the simulated −6 dB contours, intended
 ±H/V coverage guides, readable logarithmic frequency grids, and cursor readout
 of frequency, angle, and dB. Comparison reports show −6 dB half-angle and

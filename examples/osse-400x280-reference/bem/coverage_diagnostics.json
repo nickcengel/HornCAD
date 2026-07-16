@@ -3,6 +3,7 @@
     "status": "available",
     "passband_lower_hz": 500.0,
     "passband_upper_hz": 5000.0,
+    "band_kind": "automatic",
     "confirmation_octaves": 0.3333333333333333,
     "horizontal": {
       "coverage_error_percent": 26.438192911552406,

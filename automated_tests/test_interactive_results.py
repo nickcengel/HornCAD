@@ -10,7 +10,7 @@ import numpy as np
 from app.tools.interactive_results import (
     AIR_DENSITY_KG_M3, SOUND_SPEED_M_S, _frequency_axis,
     _frequency_grid_values, _positive_half_angle, comparison_report,
-    coverage_diagnostics, load_run, single_report,
+    comparison_diagnostics, coverage_diagnostics, load_run, single_report,
 )
 
 
@@ -84,6 +84,12 @@ class InteractiveResultsTests(unittest.TestCase):
             text = compare.read_text()
             self.assertIn("Normalized throat impedance magnitude", text)
             self.assertIn("Conical extension", text)
+            self.assertIn("Common evaluated band", text)
+            self.assertIn("<h3>Combined</h3>", text)
+            self.assertIn("<h3>Horizontal</h3>", text)
+            self.assertIn("<h3>Vertical</h3>", text)
+            self.assertLess(text.index("<th style='color:#2563eb'>A</th>"),
+                            text.index("<th style='color:#dc2626'>B</th>"))
 
     def test_coverage_diagnostics_detects_passband_and_scores_planes(self) -> None:
         frequencies = 500.0 * 2 ** (np.arange(17) / 12)
@@ -113,6 +119,26 @@ class InteractiveResultsTests(unittest.TestCase):
                                delta=0.2)
         self.assertAlmostEqual(result["vertical"]["narrowing_percent"], 20.0,
                                delta=0.2)
+
+    def test_comparison_diagnostics_use_one_grid_and_common_band(self) -> None:
+        frequencies_a = 500.0 * 2 ** (np.arange(25) / 12)
+        frequencies_b = 700.0 * 2 ** (np.arange(18) / 10)
+        angles = np.arange(-90.0, 91.0)
+
+        def run(frequencies: np.ndarray, name: str) -> dict[str, object]:
+            half = 50 - 5 * np.log2(frequencies / frequencies[0])
+            levels = np.asarray([-6 * (np.abs(angles) / value) ** 2 for value in half])
+            return {"name": name, "frequencies": frequencies, "angles": angles,
+                    "horizontal": levels, "vertical": levels,
+                    "intended_coverages": {"horizontal": 50.0, "vertical": 50.0}}
+
+        diagnostics, grid = comparison_diagnostics(
+            [run(frequencies_a, "A"), run(frequencies_b, "B")])
+        self.assertEqual(diagnostics["A"]["passband_lower_hz"], grid[0])
+        self.assertEqual(diagnostics["B"]["passband_lower_hz"], grid[0])
+        self.assertEqual(diagnostics["A"]["passband_upper_hz"], grid[-1])
+        self.assertEqual(diagnostics["B"]["passband_upper_hz"], grid[-1])
+        self.assertEqual(diagnostics["A"]["band_kind"], "common comparison")
 
 
 if __name__ == "__main__":

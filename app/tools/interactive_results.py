@@ -157,8 +157,10 @@ def _measured_half_angle(angles: np.ndarray, levels: np.ndarray) -> np.ndarray:
     return np.asarray(output)
 
 
-def coverage_diagnostics(run: dict[str, Any]) -> dict[str, Any]:
-    """Summarize coverage fidelity over the automatically detected passband."""
+def coverage_diagnostics(
+        run: dict[str, Any], evaluation_frequencies: np.ndarray | None = None
+) -> dict[str, Any]:
+    """Summarize coverage fidelity over an automatic or explicit common grid."""
     order = np.argsort(run["frequencies"])
     frequencies = np.asarray(run["frequencies"], dtype=float)[order]
     measured = {
@@ -178,16 +180,36 @@ def coverage_diagnostics(run: dict[str, Any]) -> dict[str, Any]:
         return {"status": "unavailable",
                 "reason": "no sustained horizontal and vertical -6 dB crossings"}
 
-    band = np.arange(start_index, len(frequencies))
     # A missing crossing after the passband is established means coverage exceeded
     # the measured hemisphere. Treat it as 90 degrees instead of discarding it.
-    angles = {key: np.where(np.isfinite(measured[key][band]),
-                            measured[key][band], 90.0)
-              for key in measured}
+    source_frequencies = frequencies[start_index:]
+    source_angles = {
+        key: np.where(np.isfinite(values[start_index:]), values[start_index:], 90.0)
+        for key, values in measured.items()
+    }
+    if evaluation_frequencies is None:
+        evaluated_frequencies = source_frequencies
+        angles = source_angles
+        band_kind = "automatic"
+    else:
+        evaluated_frequencies = np.asarray(evaluation_frequencies, dtype=float)
+        if (evaluated_frequencies.ndim != 1 or len(evaluated_frequencies) < 2
+                or np.any(np.diff(evaluated_frequencies) <= 0)):
+            raise ValueError("evaluation frequencies must be an increasing 1-D grid")
+        tolerance = 1e-10
+        if (evaluated_frequencies[0] < source_frequencies[0] * (1 - tolerance)
+                or evaluated_frequencies[-1] > source_frequencies[-1] * (1 + tolerance)):
+            return {"status": "unavailable",
+                    "reason": "common comparison band is outside the valid passband"}
+        angles = {
+            key: np.interp(np.log(evaluated_frequencies), np.log(source_frequencies), values)
+            for key, values in source_angles.items()
+        }
+        band_kind = "common comparison"
     targets = run["intended_coverages"]
     if any(targets.get(key, 0) <= 0 for key in angles):
         return {"status": "unavailable", "reason": "intended coverage is missing"}
-    log_frequency = np.log(frequencies[band])
+    log_frequency = np.log(evaluated_frequencies)
     plane_results = {}
     for key, values in angles.items():
         target = float(targets[key])
@@ -212,8 +234,9 @@ def coverage_diagnostics(run: dict[str, Any]) -> dict[str, Any]:
         }
     return {
         "status": "available",
-        "passband_lower_hz": float(frequencies[band][0]),
-        "passband_upper_hz": float(frequencies[band][-1]),
+        "passband_lower_hz": float(evaluated_frequencies[0]),
+        "passband_upper_hz": float(evaluated_frequencies[-1]),
+        "band_kind": band_kind,
         "confirmation_octaves": PASSBAND_CONFIRMATION_OCTAVES,
         "horizontal": plane_results["horizontal"],
         "vertical": plane_results["vertical"],
@@ -231,6 +254,25 @@ def coverage_diagnostics(run: dict[str, Any]) -> dict[str, Any]:
                 plane_results[key]["non_narrowing_percent"] for key in plane_results])),
         },
     }
+
+
+def comparison_diagnostics(runs: list[dict[str, Any]]) -> tuple[dict[str, Any], np.ndarray]:
+    """Recompute all run diagnostics on one shared logarithmic frequency grid."""
+    automatic = [coverage_diagnostics(run) for run in runs]
+    unavailable = [item for item in automatic if item["status"] != "available"]
+    if unavailable:
+        raise ValueError("cannot establish comparison passband: " +
+                         "; ".join(item["reason"] for item in unavailable))
+    lower = max(item["passband_lower_hz"] for item in automatic)
+    upper = min(item["passband_upper_hz"] for item in automatic)
+    if upper <= lower:
+        raise ValueError("compared runs have no overlapping valid passband")
+    intervals = max(2, int(np.ceil(np.log2(upper / lower) * 48)))
+    grid = np.geomspace(lower, upper, intervals + 1)
+    diagnostics = {
+        run["name"]: coverage_diagnostics(run, grid) for run in runs
+    }
+    return diagnostics, grid
 
 
 def _frequency_axis(frequencies: np.ndarray) -> dict[str, Any]:
@@ -288,31 +330,62 @@ def _parameter_table(runs: list[dict[str, Any]]) -> str:
     return f"<table>{header}{rows}</table>"
 
 
-def _diagnostic_table(runs: list[dict[str, Any]]) -> str:
-    rows = []
-    for run in runs:
-        diagnostic = coverage_diagnostics(run)
-        if diagnostic["status"] != "available":
-            rows.append(f"<tr><td>{html.escape(run['name'])}</td>"
-                        f"<td colspan='6'>{html.escape(diagnostic['reason'])}</td></tr>")
-            continue
-        for label, key in (("Combined", "combined"), ("Horizontal", "horizontal"),
-                           ("Vertical", "vertical")):
-            values = diagnostic[key]
-            band = (f"{diagnostic['passband_lower_hz']:g}–"
-                    f"{diagnostic['passband_upper_hz']:g} Hz")
-            rows.append(
-                f"<tr><td>{html.escape(run['name'])}</td><td>{label}</td><td>{band}</td>"
-                f"<td>{values['coverage_match_percent']:.1f}%</td>"
-                f"<td>{values['smoothness_percent']:.1f}%</td>"
-                f"<td>{values['non_narrowing_percent']:.1f}%</td></tr>")
-    return ("<table><tr><th>Run</th><th>Plane</th><th>Evaluated passband</th>"
-            "<th>Coverage match</th><th>Smoothness</th><th>Non-narrowing</th></tr>" +
-            "".join(rows) + "</table>")
+DIAGNOSTIC_ROWS = (("Coverage match", "coverage_match_percent"),
+                   ("Smoothness", "smoothness_percent"),
+                   ("Non-narrowing", "non_narrowing_percent"))
+
+
+def _score_cell(value: float) -> str:
+    strength = "strong" if value >= 80 else "moderate" if value >= 60 else "weak"
+    return (f"<td class='score {strength}'><span>{value:.1f}%</span>"
+            f"<i style='width:{value:.1f}%'></i></td>")
+
+
+def _diagnostic_tables(runs: list[dict[str, Any]],
+                       diagnostics: dict[str, Any], comparison: bool) -> str:
+    first = diagnostics[runs[0]["name"]]
+    if first["status"] != "available":
+        return f"<p>{html.escape(first['reason'])}</p>"
+    band = f"{first['passband_lower_hz']:g}–{first['passband_upper_hz']:g} Hz"
+    if comparison:
+        sections = []
+        header = "<th>Diagnostic</th>" + "".join(
+            f"<th style='color:{COLORS[index]}'>{html.escape(run['name'])}</th>"
+            for index, run in enumerate(runs))
+        for label, plane in (("Combined", "combined"), ("Horizontal", "horizontal"),
+                             ("Vertical", "vertical")):
+            rows = "".join(
+                f"<tr><th>{name}</th>" + "".join(
+                    _score_cell(diagnostics[run["name"]][plane][key]) for run in runs) +
+                "</tr>" for name, key in DIAGNOSTIC_ROWS)
+            sections.append(f"<div class='diagnostic-card'><h3>{label}</h3>"
+                            f"<table><tr>{header}</tr>{rows}</table></div>")
+        return (f"<p class='diagnostic-band'><strong>Common evaluated band:</strong> "
+                f"{band}</p><div class='diagnostic-grid'>{''.join(sections)}</div>")
+
+    diagnostic = first
+    header = "<th>Diagnostic</th><th>Combined</th><th>Horizontal</th><th>Vertical</th>"
+    rows = "".join(
+        f"<tr><th>{name}</th>" + "".join(
+            _score_cell(diagnostic[plane][key])
+            for plane in ("combined", "horizontal", "vertical")) + "</tr>"
+        for name, key in DIAGNOSTIC_ROWS)
+    return (f"<p class='diagnostic-band'><strong>Evaluated band:</strong> {band}</p>"
+            f"<table><tr>{header}</tr>{rows}</table>")
 
 
 def _write_html(path: Path, title: str, figure: go.Figure,
-                runs: list[dict[str, Any]]) -> Path:
+                runs: list[dict[str, Any]], diagnostics: dict[str, Any] | None = None,
+                comparison: bool = False) -> Path:
+    if diagnostics is None:
+        diagnostics = {run["name"]: coverage_diagnostics(run) for run in runs}
+    band_explanation = (
+        "Comparison values are recomputed on one shared 48-point-per-octave "
+        "log-frequency grid over the overlapping valid passband."
+        if comparison else
+        "The automatic passband starts after both planes sustain genuine −6 dB "
+        "crossings for one-third octave."
+    )
     plot = figure.to_html(full_html=False, include_plotlyjs=True,
                           config={"displaylogo": False, "scrollZoom": True,
                                   "responsive": True})
@@ -323,16 +396,21 @@ main{{max-width:1500px;margin:auto;padding:18px}} h1{{margin:0 0 12px}}
 .plot,.parameters{{background:white;border:1px solid #d8dde7;border-radius:10px;padding:12px;margin-bottom:16px}}
 table{{border-collapse:collapse;width:100%}} th,td{{padding:7px 10px;border-bottom:1px solid #e4e7ed;text-align:left}}
 th{{background:#f1f3f7;position:sticky;top:0}} .hint{{color:#566176;margin:0 0 12px}}
+.diagnostic-band{{font-size:1.05rem}} .diagnostic-grid{{display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:14px}}
+.diagnostic-card{{border:1px solid #d8dde7;border-radius:8px;padding:0 10px 10px}} .diagnostic-card h3{{margin:10px 0}}
+.score{{position:relative;min-width:85px}} .score span{{position:relative;z-index:1;font-variant-numeric:tabular-nums}}
+.score i{{position:absolute;left:0;bottom:2px;height:4px;border-radius:2px;background:#64748b}}
+.score.strong i{{background:#16856b}} .score.moderate i{{background:#b7791f}} .score.weak i{{background:#b45353}}
+@media(max-width:950px){{.diagnostic-grid{{grid-template-columns:1fr}}}}
 </style></head><body><main><h1>{html.escape(title)}</h1>
 <p class='hint'>Hover for exact coordinates. Drag to zoom; double-click to reset; use the legend to hide traces.</p>
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Coverage diagnostics</h2>
-{_diagnostic_table(runs)}
-<p class='hint'>All three diagnostics are percentages where 100% is ideal. Coverage match is 100% minus the log-frequency-weighted RMS percentage error from the intended −6 dB half-angle. Smoothness is 100% minus RMS deviation from the best-fit straight line versus log frequency, normalized by intended coverage. Non-narrowing is the upper-bound half-angle divided by the lower-bound half-angle, capped at 100%. The automatic passband starts after both planes sustain genuine −6 dB crossings for one-third octave.</p>
+{_diagnostic_tables(runs, diagnostics, comparison)}
+<p class='hint'>All three diagnostics are percentages where 100% is ideal. Coverage match is 100% minus the log-frequency-weighted RMS percentage error from the intended −6 dB half-angle. Smoothness is 100% minus RMS deviation from the best-fit straight line versus log frequency, normalized by intended coverage. Non-narrowing is the upper-bound half-angle divided by the lower-bound half-angle, capped at 100%. {band_explanation}</p>
 </section></main></body></html>"""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(document)
-    diagnostics = {run["name"]: coverage_diagnostics(run) for run in runs}
     diagnostics_path = path.with_name("coverage_diagnostics.json")
     diagnostics_path.write_text(json.dumps(diagnostics, indent=2) + "\n")
     return path
@@ -448,7 +526,8 @@ def comparison_report(run_dirs: list[Path], output: Path,
     figure.update_yaxes(title_text="Half-angle (degrees)", range=[0, 90], row=1, col=2)
     figure.update_yaxes(title_text="|Z| / (ρc/Sₜ)", row=1, col=3)
     figure.update_layout(height=620, hovermode="closest", legend={"orientation": "h"})
-    return _write_html(output, title, figure, runs)
+    diagnostics, _ = comparison_diagnostics(runs)
+    return _write_html(output, title, figure, runs, diagnostics, comparison=True)
 
 
 def main() -> None:

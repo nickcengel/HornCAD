@@ -22,4 +22,6 @@ directories are deliberately excluded.
 
 Each report is accompanied by `coverage_diagnostics.json`, containing the
 automatic evaluated passband plus horizontal, vertical, and combined coverage
-error, smoothness, within-tolerance, and narrowing values.
+match, smoothness, and non-narrowing values. The FEM/BEM comparison recomputes
+both runs over their shared 839–5000 Hz band rather than comparing scores from
+different automatic passbands.
