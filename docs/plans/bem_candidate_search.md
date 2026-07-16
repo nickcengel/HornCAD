@@ -1,0 +1,218 @@
+# BEM candidate search
+
+## Purpose
+
+HornCAD should help a user move from a plausible hand-designed seed horn to a
+small, reviewable set of better-performing candidates. Candidate evaluation uses
+the free-air BEM backend. The search must preserve the user's physical and
+acoustic intent, expose tradeoffs instead of hiding them in one opaque score,
+and retain enough provenance to reproduce every result.
+
+This document records the decisions made so far and identifies the choices that
+remain open. It describes planned behavior, not a currently implemented command.
+
+## Authored design intent
+
+The user begins by designing and exporting a normal HornCAD YAML project. The
+seed is both an initial search point and the reference for relative search
+bounds.
+
+The following values are immutable during a search:
+
+- mouth width and height;
+- intended horizontal and vertical coverage;
+- throat radius or diameter;
+- throat angle;
+- mouth sag;
+- crossover frequency;
+- upper operating frequency; and
+- any explicit manufacturing limits supplied by the user.
+
+The intended coverage values describe the desired acoustic result. They are not
+the same as the movable OS-SE coverage parameters used to construct a horn.
+
+Length and conical extension are deliberately not immutable authored values.
+
+## Initial search space
+
+The first implementation should search only these six variables:
+
+- `k_h` and `k_v`;
+- `osse_coverage_h_deg` and `osse_coverage_v_deg`;
+- `length_mm`; and
+- `extension_mm`.
+
+The explicit names above should be used in search records so intended coverage
+cannot be confused with OS-SE construction parameters.
+
+Horizontal and vertical `s` are derived geometry values, not independent search
+variables. After proposing length, extension, OS-SE coverage, and `k`, HornCAD
+solves the geometry and derives `s_h` and `s_v`. A candidate is feasible only
+when both values are strictly positive.
+
+Parameters such as `n`, `q`, and mouth squareness remain fixed in the initial
+implementation. They may be added later if the six-variable search proves too
+restrictive. Releasing all coupled geometry parameters at once would needlessly
+increase the number of expensive BEM evaluations required to understand the
+space.
+
+## Search bounds
+
+Length is bounded relative to the seed. The initial default is:
+
+```text
+0.85 * seed length <= candidate length <= 1.15 * seed length
+```
+
+The user may override that percentage. Search metadata must record both the
+seed value and effective bounds.
+
+Extension should use explicit minimum and maximum lengths rather than only a
+percentage of its seed value, because a seed extension may be zero. A provisional
+default is zero through 15% of seed horn length. This default still needs to be
+checked against the exact geometry convention and exposed clearly in the UX.
+
+Bounds for `k_h`, `k_v`, and both OS-SE coverage parameters still need to be
+chosen. They should be expressed relative to the seed where sensible, reject
+invalid geometry before meshing, and be user-overridable without requiring the
+user to understand the optimizer.
+
+## Fixed evaluation band
+
+Every candidate in one search is evaluated over the same band:
+
+```text
+user crossover frequency <= frequency <= user upper operating frequency
+```
+
+The automatic sustained -6 dB crossing remains useful diagnostic information,
+but it must not move a candidate's optimization band. Otherwise a candidate
+could appear better simply because a geometry change excluded its poor
+low-frequency behavior.
+
+If a genuine -6 dB crossing is absent within the fixed band, that frequency is
+penalized as 90-degree half-angle using the established diagnostic convention.
+All candidate comparisons use the same logarithmic evaluation grid and exact
+endpoint frequencies.
+
+## Objectives
+
+The search maximizes the existing three 0-100% diagnostics:
+
+- coverage match;
+- smoothness; and
+- non-narrowing.
+
+All are oriented so 100% is ideal. Horizontal, vertical, and combined values
+remain available. The initial search should use the combined values as its
+three objectives while retaining plane-specific values for review.
+
+The objectives should not initially be collapsed into one weighted score.
+HornCAD should retain a Pareto set: candidates for which no other evaluated
+candidate is at least as good in every objective and better in one. This keeps
+real tradeoffs visible. Preference weighting can be added later if users need a
+single automatic selection.
+
+## Crossover loading constraint
+
+The normalized throat-impedance magnitude must be at least 0.7 at crossover:
+
+```text
+|Z throat| / (rho*c/S_t) >= 0.7
+```
+
+This is a feasibility constraint, not an objective to maximize. Values above
+the threshold are not increasingly rewarded.
+
+The displayed crossover-loading diagnostic is:
+
+```text
+100% * min(1, minimum normalized impedance / 0.7)
+```
+
+Rather than use a potentially fragile single sample, the provisional plan is to
+take the minimum normalized magnitude across a one-third-octave region centered
+on crossover. The exact band and interpolation behavior should be confirmed
+before implementation.
+
+## Candidate evaluation
+
+For each proposal HornCAD should:
+
+1. Materialize a complete candidate configuration from the seed and proposed
+   variables.
+2. Solve all derived geometry values, including `s_h` and `s_v`.
+3. Reject infeasible or invalid geometry before generating a mesh.
+4. Run the free-air BEM sweep over the fixed search band.
+5. Generate the standard interactive report, impedance magnitude, coverage
+   data, and diagnostics.
+6. Record the candidate in the search history and update the Pareto set.
+
+Every evaluated candidate retains:
+
+- a complete YAML project;
+- proposed and derived parameter values;
+- effective search bounds;
+- geometry-feasibility result;
+- solver resolution, mesh statistics, timing, and completion status;
+- standard report and `coverage_diagnostics.json`; and
+- search iteration, batch, and selection provenance.
+
+Failed and rejected candidates should remain in a compact search ledger, but
+need not retain bulky solver working files.
+
+## Search strategy
+
+The BEM solver is an expensive deterministic black box with multiple competing
+objectives and feasibility constraints. The provisional strategy is constrained
+multi-objective Bayesian optimization:
+
+1. Evaluate the user's seed at production resolution.
+2. Generate an initial space-filling set of approximately 12 candidates within
+   the allowed bounds.
+3. Fit surrogate models to objectives and constraints.
+4. Propose hardware-appropriate batches that balance predicted Pareto
+   improvement with exploration of uncertain regions.
+5. Continue updating the models and Pareto set after each completed batch.
+6. Confirm the leading candidates at production resolution.
+
+A reduced points-per-octave setting may be useful during exploration, but it
+must first be demonstrated that it does not materially reorder candidates. The
+standard production confirmation remains 6 elements per wavelength and 10
+points per octave.
+
+## Termination
+
+Termination should be explicit and understandable. The initial defaults under
+consideration are:
+
+- a hard maximum of approximately 36-40 completed BEM candidates;
+- an optional wall-time limit;
+- stop after three consecutive batches produce less than one percentage point
+  of meaningful Pareto improvement;
+- stop proposing candidates that are effectively duplicates of evaluated
+  designs; and
+- always production-confirm the best three to five feasible candidates before
+  declaring the search complete.
+
+The evaluation or wall-time budget is the authoritative limit. Surrogate-model
+confidence alone is not sufficient evidence that the engineering search is
+finished.
+
+## UX questions to resolve
+
+The following decisions should be made before implementing the search UI:
+
+- Does search configuration live in the browser designer, a generated search
+  YAML, the command line, or a combination of these?
+- How should immutable intent be visually distinguished from searchable seed
+  values?
+- Should basic users see only a search-size control while advanced users can
+  edit every parameter bound?
+- How are crossover and upper operating frequency authored and persisted?
+- How should progress expose queued, meshing, solving, failed, dominated, and
+  Pareto candidates?
+- Can a user pause, resume, extend, or tighten an existing search without losing
+  evaluated candidates?
+- How should the final candidate comparison and selection flow work?
+- What result is copied back into the browser as the next editable design?
