@@ -40,8 +40,9 @@ except ImportError:
 VARIABLES = ("length_mm", "extension_mm", "osse_coverage_h_deg",
              "osse_coverage_v_deg", "k_h", "k_v", "n_h", "n_v")
 OBJECTIVES = ("coverage_match_percent", "coverage_smoothness_percent",
-              "waist_stability_percent")
-OBJECTIVE_LABELS = ("Coverage Match", "Coverage Smoothness", "Waist Stability")
+              "waist_stability_percent", "window_uniformity_percent")
+OBJECTIVE_LABELS = ("Coverage Match", "Coverage Smoothness", "Waist Stability",
+                    "Window Uniformity")
 PRESET_BUDGETS = {"quick": 16, "normal": 36, "thorough": 60}
 DEFAULT_MINIMUM_CANDIDATE_DISTANCE = 0.08
 DEFAULT_INFERIOR_PROBABILITY = 0.97

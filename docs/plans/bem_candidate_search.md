@@ -88,8 +88,8 @@ evenly; it does not impose a soft ±10% admission cap around the seed.
 The implemented packaging policy is asymmetric and separates acoustics from
 packaging:
 
-- Coverage Match, Coverage Smoothness, and Waist Stability remain unmodified
-  acoustic objectives;
+- Coverage Match, Coverage Smoothness, Waist Stability, and Window Uniformity
+  remain unmodified acoustic objectives;
 - a candidate shorter than the authored reference receives no departure cost;
 - added axial depth may be penalized, but must not be hidden inside the reported
   acoustic diagnostics; and
@@ -154,15 +154,16 @@ endpoint frequencies.
 
 ## Objectives
 
-The search maximizes three 0-100% diagnostics:
+The search maximizes four 0-100% diagnostics:
 
 - Coverage Match;
-- Coverage Smoothness; and
-- Waist Stability.
+- Coverage Smoothness;
+- Waist Stability; and
+- Window Uniformity.
 
 All are oriented so 100% is ideal. Horizontal, vertical, and combined values
-remain available. The initial search should use the combined values as its
-three objectives while retaining plane-specific values for review. Combined
+remain available. The initial search should use the combined values as its four
+objectives while retaining plane-specific values for review. Combined
 values weight horizontal and vertical results in proportion to mouth width and
 height respectively; a wider mouth therefore gives horizontal performance more
 influence.
@@ -185,10 +186,16 @@ half-angle against the intended half-angle, so a waist at zero degrees is 0%, a
 waist at half the intended angle is 50%, and no interior lower-band narrowing
 trough is treated as well behaved and scores 100%.
 
-Coverage Match and Coverage Smoothness use the crossover transition as a weight
-rather than as a separate target envelope. The assumed acoustic transition is
-12 dB/oct with -6 dB, or about 50%, at crossover; errors near crossover
-contribute less and reach full weight one half-octave above crossover.
+Window Uniformity samples the normalized response at half the intended coverage
+angle, such as 22.5 degrees for a 45-degree target, and scores weighted RMS dB
+deviation from that trace's average level. This catches broad in-window level
+instability even when the -6 dB boundary is close to target.
+
+Coverage Match, Coverage Smoothness, and Window Uniformity use the crossover
+transition as a weight rather than as a separate target envelope. The assumed
+acoustic transition is 12 dB/oct with -6 dB, or about 50%, at crossover; errors
+near crossover contribute less and reach full weight one half-octave above
+crossover.
 
 The objectives should not initially be collapsed into one weighted score.
 HornCAD should retain a Pareto set: candidates for which no other evaluated
@@ -303,8 +310,9 @@ candidate. Frequency sampling and spatial mesh density are separate convergence
 questions: 6 EPW does not protect a diagnostic from missing a narrow feature
 between solved frequencies. Every completed training run is therefore rescored
 after factor-two frequency decimation. If Coverage Match, Coverage Smoothness,
-Waist Stability, or crossover loading moves by more than two diagnostic points,
-that run is marked sampling-unstable and excluded from surrogate learning.
+Waist Stability, Window Uniformity, or crossover loading moves by more than two
+diagnostic points, that run is marked sampling-unstable and excluded from
+surrogate learning.
 
 Decimation is a warning, not proof of convergence. Before learned lever
 directions or final rankings are trusted, the seed and representative initial

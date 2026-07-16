@@ -55,7 +55,7 @@ throat-impedance magnitude, and the horn acoustic parameters.
 Impedance is normalized by the effective circular throat's characteristic
 impedance, `ρc/Sₜ`; throat reactance is not plotted.
 
-The report also writes `coverage_diagnostics.json` and displays three coverage
+The report also writes `coverage_diagnostics.json` and displays four coverage
 diagnostics for horizontal, vertical, and combined behavior:
 
 - **Coverage Match** integrates the smoothed −6 dB half-angle error over the
@@ -69,8 +69,11 @@ diagnostics for horizontal, vertical, and combined behavior:
   over the first two octaves after the crossover transition. A waist at zero
   degrees is 0%, a waist at half the intended half-angle is 50%, and no
   detected interior waist is 100%.
+- **Window Uniformity** samples the normalized response at half the intended
+  coverage angle, such as 22.5° for a 45° target, and scores the weighted RMS
+  dB deviation from that trace's average level across the diagnostic band.
 
-Both headline diagnostics use 100% for ideal and lower values for worse
+All headline diagnostics use 100% for ideal and lower values for worse
 behavior. Combined H/V diagnostics are weighted in proportion to physical mouth
 width and height, so the larger mouth dimension contributes more to the combined
 score. The crossover weighting assumes a 12 dB/oct acoustic amplitude slope
@@ -78,8 +81,9 @@ with −6 dB, or about 50%, at crossover; error near crossover contributes less
 than error after the transition reaches full weight one half-octave above
 crossover. The JSON records those weights and also retains weighted total,
 under-coverage, over-coverage, raw smoothness, fine-ripple, and broad-wiggle
-errors, the smoothness score gain, waist frequency/depth when detected, ripple
-RMS, crossover angle, and highest-frequency endpoint error for diagnosis.
+errors, the smoothness score gain, waist frequency/depth when detected, window
+probe angle and deviation statistics, ripple RMS, crossover angle, and
+highest-frequency endpoint error for diagnosis.
 
 The automatic diagnostic passband begins only when both planes sustain genuine
 −6 dB crossings for at least one-third octave. A missing crossing after that

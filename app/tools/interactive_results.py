@@ -25,6 +25,8 @@ COVERAGE_SMOOTHNESS_TREND_OCTAVES = 1.0 / 3.0
 COVERAGE_SMOOTHNESS_SCORE_GAIN = 3.4
 COVERAGE_WAIST_REGION_OCTAVES = 2.0
 COVERAGE_WAIST_MIN_UNDERSHOOT_PERCENT = 1.0
+COVERAGE_WINDOW_PROBE_FRACTION = 0.5
+COVERAGE_WINDOW_UNIFORMITY_SCORE_PER_DB = 10.0
 
 
 def _scalar(value: Any) -> Any:
@@ -213,6 +215,10 @@ def coverage_diagnostics(
         key: _measured_half_angle(run["angles"], run[key])[order]
         for key in ("horizontal", "vertical")
     }
+    sorted_levels = {
+        key: np.asarray(run[key], dtype=float)[order]
+        for key in ("horizontal", "vertical")
+    }
     valid_both = np.isfinite(measured["horizontal"]) & np.isfinite(measured["vertical"])
     start_index = None
     for index in np.flatnonzero(valid_both):
@@ -233,6 +239,10 @@ def coverage_diagnostics(
     source_angles = {
         key: np.where(np.isfinite(values[source_start:]), values[source_start:], 90.0)
         for key, values in measured.items()
+    }
+    source_levels = {
+        key: values[source_start:]
+        for key, values in sorted_levels.items()
     }
     if evaluation_frequencies is None:
         evaluated_frequencies = source_frequencies
@@ -306,6 +316,65 @@ def coverage_diagnostics(
             smoothed[index] = coefficients[0]
         return smoothed
 
+    def weighted_mean(values: np.ndarray, weights: np.ndarray) -> float:
+        selected = np.asarray(values, dtype=float)
+        w = np.asarray(weights, dtype=float) ** 2
+        if len(selected) < 2 or log_frequency[-1] <= log_frequency[0]:
+            denominator = float(np.sum(w))
+            return float(np.sum(selected * w) / denominator) if denominator > 0 else float(np.mean(selected))
+        denominator = float(np.trapezoid(w, log_frequency))
+        if denominator <= 0:
+            return float(np.mean(selected))
+        return float(np.trapezoid(selected * w, log_frequency) / denominator)
+
+    angle_order = np.argsort(np.asarray(run["angles"], dtype=float))
+    sorted_response_angles = np.asarray(run["angles"], dtype=float)[angle_order]
+
+    def probe_trace(levels: np.ndarray, probe_angle: float) -> np.ndarray:
+        if (probe_angle < sorted_response_angles[0] or
+                probe_angle > sorted_response_angles[-1]):
+            return np.full_like(evaluated_frequencies, np.nan, dtype=float)
+        source_trace = np.asarray([
+            np.interp(probe_angle, sorted_response_angles, row[angle_order])
+            for row in levels
+        ], dtype=float)
+        if evaluation_frequencies is None:
+            return source_trace
+        return np.interp(np.log(evaluated_frequencies),
+                         np.log(source_frequencies), source_trace)
+
+    def window_metrics(levels: np.ndarray, target: float) -> dict[str, Any]:
+        probe_angle = target * COVERAGE_WINDOW_PROBE_FRACTION
+        trace = probe_trace(levels, probe_angle)
+        if not np.all(np.isfinite(trace)):
+            rms_deviation = 10.0
+            return {
+                "window_uniformity_percent": 0.0,
+                "window_probe_fraction": COVERAGE_WINDOW_PROBE_FRACTION,
+                "window_probe_angle_deg": probe_angle,
+                "window_probe_mean_db": None,
+                "window_rms_deviation_db": rms_deviation,
+                "window_peak_deviation_db": None,
+                "window_p90_deviation_db": None,
+                "window_uniformity_score_per_db": COVERAGE_WINDOW_UNIFORMITY_SCORE_PER_DB,
+            }
+        mean = weighted_mean(trace, transition_weights)
+        deviation = trace - mean
+        rms_deviation = rms(deviation, transition_weights)
+        peak_deviation = float(np.max(np.abs(deviation)))
+        p90_deviation = float(np.percentile(np.abs(deviation), 90))
+        return {
+            "window_uniformity_percent": max(
+                0.0, 100.0 - COVERAGE_WINDOW_UNIFORMITY_SCORE_PER_DB * rms_deviation),
+            "window_probe_fraction": COVERAGE_WINDOW_PROBE_FRACTION,
+            "window_probe_angle_deg": probe_angle,
+            "window_probe_mean_db": mean,
+            "window_rms_deviation_db": rms_deviation,
+            "window_peak_deviation_db": peak_deviation,
+            "window_p90_deviation_db": p90_deviation,
+            "window_uniformity_score_per_db": COVERAGE_WINDOW_UNIFORMITY_SCORE_PER_DB,
+        }
+
     def waist_metrics(smooth: np.ndarray, target: float) -> dict[str, Any]:
         """Find a broad lower-band narrowing trough and score its depth."""
         mask = ((evaluated_frequencies >= waist_region_lower_hz) &
@@ -357,6 +426,7 @@ def coverage_diagnostics(
         ripple_rms = rms(values - smooth, transition_weights)
         broad_wiggle_rms = rms(smooth - smooth_trend, transition_weights)
         waist = waist_metrics(smooth, target)
+        window = window_metrics(source_levels[key], target)
         crossover_frequency = clipped_crossover_hz or float(evaluated_frequencies[0])
         crossover_angle = float(np.interp(np.log(crossover_frequency),
                                           log_frequency, values))
@@ -367,6 +437,7 @@ def coverage_diagnostics(
             "coverage_match_percent": max(0.0, 100.0 - weighted_total_error),
             "coverage_smoothness_percent": max(0.0, 100.0 - smoothness_error),
             **waist,
+            **window,
             "weighted_total_error_percent": weighted_total_error,
             "weighted_undershoot_error_percent": weighted_undershoot_error,
             "weighted_overshoot_error_percent": weighted_overshoot_error,
@@ -409,6 +480,7 @@ def coverage_diagnostics(
     combined_total_error = combined_error("weighted_total_error_percent")
     combined_smoothness_error = combined_error("smoothness_error_percent")
     combined_waistbanding_error = combined_error("waistbanding_error_percent")
+    combined_window_rms_deviation = combined_error("window_rms_deviation_db")
     return {
         "status": "available",
         "passband_lower_hz": float(evaluated_frequencies[0]),
@@ -423,6 +495,9 @@ def coverage_diagnostics(
             "coverage_match_percent": max(0.0, 100.0 - combined_total_error),
             "coverage_smoothness_percent": max(0.0, 100.0 - combined_smoothness_error),
             "waist_stability_percent": max(0.0, 100.0 - combined_waistbanding_error),
+            "window_uniformity_percent": max(
+                0.0, 100.0 - COVERAGE_WINDOW_UNIFORMITY_SCORE_PER_DB *
+                combined_window_rms_deviation),
             "waistbanding_error_percent": combined_waistbanding_error,
             "waist_detected": (plane_results["horizontal"]["waist_detected"] or
                                plane_results["vertical"]["waist_detected"]),
@@ -444,6 +519,13 @@ def coverage_diagnostics(
             "smoothness_score_gain": COVERAGE_SMOOTHNESS_SCORE_GAIN,
             "ripple_rms_deg": combined_error("ripple_rms_deg"),
             "broad_wiggle_rms_deg": combined_error("broad_wiggle_rms_deg"),
+            "window_probe_fraction": COVERAGE_WINDOW_PROBE_FRACTION,
+            "window_probe_angle_deg": weighted("window_probe_angle_deg"),
+            "window_probe_mean_db": weighted("window_probe_mean_db"),
+            "window_rms_deviation_db": combined_window_rms_deviation,
+            "window_peak_deviation_db": combined_error("window_peak_deviation_db"),
+            "window_p90_deviation_db": combined_error("window_p90_deviation_db"),
+            "window_uniformity_score_per_db": COVERAGE_WINDOW_UNIFORMITY_SCORE_PER_DB,
             "worst_broad_undershoot_deg": weighted("worst_broad_undershoot_deg"),
             "worst_broad_overshoot_deg": weighted("worst_broad_overshoot_deg"),
             "highest_frequency_error_deg": weighted("highest_frequency_error_deg"),
@@ -529,7 +611,8 @@ def _parameter_table(runs: list[dict[str, Any]]) -> str:
 
 DIAGNOSTIC_ROWS = (("Coverage Match", "coverage_match_percent"),
                    ("Coverage Smoothness", "coverage_smoothness_percent"),
-                   ("Waist Stability", "waist_stability_percent"))
+                   ("Waist Stability", "waist_stability_percent"),
+                   ("Window Uniformity", "window_uniformity_percent"))
 
 
 def _score_cell(value: float) -> str:
@@ -612,7 +695,7 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Coverage diagnostics</h2>
 {_diagnostic_tables(runs, diagnostics, comparison)}
-<p class='hint'>All diagnostics are percentages where 100% is ideal. Coverage Match integrates the smoothed −6 dB half-angle error over the diagnostic band, recording under-coverage and over-coverage separately while applying the assumed 12 dB/oct crossover weight near crossover. Coverage Smoothness combines fine ripple after local smoothing with broader wiggle away from a one-third-octave trend, then applies a calibrated score gain so visibly chaotic, peaky, or bumpy traces lose score quickly. Waist Stability scores the depth of the broad lower-band narrowing trough; if no interior trough is found after the crossover transition, it scores 100%. {band_explanation}</p>
+<p class='hint'>All diagnostics are percentages where 100% is ideal. Coverage Match integrates the smoothed −6 dB half-angle error over the diagnostic band, recording under-coverage and over-coverage separately while applying the assumed 12 dB/oct crossover weight near crossover. Coverage Smoothness combines fine ripple after local smoothing with broader wiggle away from a one-third-octave trend, then applies a calibrated score gain so visibly chaotic, peaky, or bumpy traces lose score quickly. Waist Stability scores the depth of the broad lower-band narrowing trough; if no interior trough is found after the crossover transition, it scores 100%. Window Uniformity samples response at half the intended coverage angle and scores weighted RMS dB deviation from that trace's average level. {band_explanation}</p>
 </section></main><script>
 (() => {{
   let armed = null;

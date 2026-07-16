@@ -255,6 +255,41 @@ class InteractiveResultsTests(unittest.TestCase):
         self.assertGreater(narrowing_result["horizontal"]["highest_frequency_undershoot_deg"],
                            0)
 
+    def test_window_uniformity_scores_in_window_level_variation(self) -> None:
+        frequencies = np.geomspace(750.0, 8000.0, 129)
+        angles = np.arange(-90.0, 91.0)
+        target = 45.0
+        probe = target * 0.5
+        x = np.log2(frequencies / frequencies[0])
+        angle_window = np.exp(-0.5 * ((np.abs(angles) - probe) / 3.0) ** 2)
+        base_pattern = -6 * (np.abs(angles) / target) ** 2
+
+        def patterns(amplitude: np.ndarray) -> np.ndarray:
+            return base_pattern[None, :] + amplitude[:, None] * angle_window[None, :]
+
+        flat = np.zeros(len(frequencies))
+        broad = 3.0 * np.exp(-0.5 * ((x - 2.0) / 0.45) ** 2)
+        narrow = 3.0 * np.exp(-0.5 * ((x - 2.0) / 0.05) ** 2)
+        base = {"frequencies": frequencies, "angles": angles,
+                "intended_coverages": {"horizontal": target, "vertical": target},
+                "crossover_hz": frequencies[0]}
+        flat_result = coverage_diagnostics(
+            dict(base, horizontal=patterns(flat), vertical=patterns(flat)))
+        broad_result = coverage_diagnostics(
+            dict(base, horizontal=patterns(broad), vertical=patterns(broad)))
+        narrow_result = coverage_diagnostics(
+            dict(base, horizontal=patterns(narrow), vertical=patterns(narrow)))
+        broad_rms = broad_result["horizontal"]["window_rms_deviation_db"]
+        self.assertAlmostEqual(
+            flat_result["horizontal"]["window_probe_angle_deg"], probe)
+        self.assertGreater(flat_result["combined"]["window_uniformity_percent"], 99.0)
+        self.assertGreater(broad_rms, narrow_result["horizontal"]["window_rms_deviation_db"])
+        self.assertLess(broad_result["horizontal"]["window_uniformity_percent"],
+                        narrow_result["horizontal"]["window_uniformity_percent"])
+        self.assertAlmostEqual(
+            broad_result["horizontal"]["window_uniformity_percent"],
+            100.0 - 10.0 * broad_rms, places=6)
+
     def test_combined_scores_follow_mouth_dimension_weights(self) -> None:
         frequencies = np.array([500.0, 1000.0])
         angles = np.arange(-90.0, 91.0)

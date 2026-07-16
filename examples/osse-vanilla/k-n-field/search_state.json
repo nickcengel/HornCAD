@@ -42,6 +42,14 @@
           "weighted_overshoot_error_percent": 3.0136195055228736,
           "weighted_total_error_percent": 13.024767807175515,
           "weighted_undershoot_error_percent": 12.671332759689005,
+          "window_p90_deviation_db": 2.203627103525205,
+          "window_peak_deviation_db": 3.31603254829771,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3789616325401663,
+          "window_rms_deviation_db": 1.5008933408270853,
+          "window_uniformity_percent": 84.99106659172915,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.080180024698141,
           "worst_broad_undershoot_deg": 12.597331540797043
         },
@@ -81,6 +89,14 @@
           "weighted_overshoot_error_percent": 3.014280499442573,
           "weighted_total_error_percent": 13.026810574218073,
           "weighted_undershoot_error_percent": 12.67327529911822,
+          "window_p90_deviation_db": 2.204582900257148,
+          "window_peak_deviation_db": 3.3141968761147953,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.378848831826002,
+          "window_rms_deviation_db": 1.5010667472173524,
+          "window_uniformity_percent": 84.98933252782648,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.090460609674238,
           "worst_broad_undershoot_deg": 12.603126352351524
         },
@@ -122,6 +138,14 @@
           "weighted_overshoot_error_percent": 3.0129583665918935,
           "weighted_total_error_percent": 13.022724719701003,
           "weighted_undershoot_error_percent": 12.669389922419134,
+          "window_p90_deviation_db": 2.202670892048004,
+          "window_peak_deviation_db": 3.317867204860759,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3790744332543308,
+          "window_rms_deviation_db": 1.5007199143999175,
+          "window_uniformity_percent": 84.99280085600083,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.069899439722043,
           "worst_broad_undershoot_deg": 12.591536729242563
         }
@@ -138,19 +162,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.717913721153522,
-          "pattern_fit_percent": 0.07075795746732183,
-          "pattern_stability_percent": 0.5268653946365447,
-          "waist_control_percent": 0.16811692604517248
+          "coverage_match_percent": 0.13500684338642088,
+          "coverage_smoothness_percent": 1.4989852101154781,
+          "waist_stability_percent": 0.33485343398385226,
+          "window_uniformity_percent": 0.8456469094018786
         },
-        "maximum_delta_points": 0.717913721153522,
+        "maximum_delta_points": 1.4989852101154781,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 86.97523219282448,
         "coverage_smoothness_percent": 85.30577532296408,
-        "waist_stability_percent": 72.00592694752754
+        "waist_stability_percent": 72.00592694752754,
+        "window_uniformity_percent": 84.99106659172915
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -207,6 +232,14 @@
           "weighted_overshoot_error_percent": 14.24398990001386,
           "weighted_total_error_percent": 22.635516186181764,
           "weighted_undershoot_error_percent": 17.591911344228624,
+          "window_p90_deviation_db": 5.813542750711656,
+          "window_peak_deviation_db": 10.741135910384171,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.7854970796400869,
+          "window_rms_deviation_db": 3.557677775644576,
+          "window_uniformity_percent": 64.42322224355424,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 18.45128901570198,
           "worst_broad_undershoot_deg": 16.791891555279744
         },
@@ -246,6 +279,14 @@
           "weighted_overshoot_error_percent": 14.260841202605812,
           "weighted_total_error_percent": 22.64687417720685,
           "weighted_undershoot_error_percent": 17.59287691630618,
+          "window_p90_deviation_db": 5.8135129291023215,
+          "window_peak_deviation_db": 10.7401340502693,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.7860400141362492,
+          "window_rms_deviation_db": 3.557018164302991,
+          "window_uniformity_percent": 64.42981835697009,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 18.473736646323367,
           "worst_broad_undershoot_deg": 16.790279896294322
         },
@@ -287,6 +328,14 @@
           "weighted_overshoot_error_percent": 14.227118637920121,
           "weighted_total_error_percent": 22.62415249311131,
           "weighted_undershoot_error_percent": 17.590945719150536,
+          "window_p90_deviation_db": 5.813572572168016,
+          "window_peak_deviation_db": 10.742137677061061,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.7849541451439244,
+          "window_rms_deviation_db": 3.558337264713571,
+          "window_uniformity_percent": 64.41662735286428,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 18.428841385080595,
           "worst_broad_undershoot_deg": 16.793503214265165
         }
@@ -304,19 +353,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -1.5834230645674268,
-          "pattern_fit_percent": -0.25453782189195806,
-          "pattern_stability_percent": 0.2801880535514414,
-          "waist_control_percent": 0.1601901223768749
+          "coverage_match_percent": -0.5022618426091441,
+          "coverage_smoothness_percent": 0.6241945235279474,
+          "waist_stability_percent": 0.2366559224916216,
+          "window_uniformity_percent": 0.2668542158579186
         },
-        "maximum_delta_points": 1.5834230645674268,
+        "maximum_delta_points": 0.6241945235279474,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 77.36448381381824,
         "coverage_smoothness_percent": 63.14348523361403,
-        "waist_stability_percent": 62.684685260840055
+        "waist_stability_percent": 62.684685260840055,
+        "window_uniformity_percent": 64.42322224355424
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -373,6 +423,14 @@
           "weighted_overshoot_error_percent": 11.784276453844331,
           "weighted_total_error_percent": 21.128459927933438,
           "weighted_undershoot_error_percent": 17.536893892182256,
+          "window_p90_deviation_db": 5.387503888436294,
+          "window_peak_deviation_db": 8.3083342642085,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8329635016727222,
+          "window_rms_deviation_db": 3.1673923074621784,
+          "window_uniformity_percent": 68.32607692537822,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 14.992806412336492,
           "worst_broad_undershoot_deg": 16.603735526967682
         },
@@ -412,6 +470,14 @@
           "weighted_overshoot_error_percent": 11.798627615496876,
           "weighted_total_error_percent": 21.137408822360378,
           "weighted_undershoot_error_percent": 17.538028341704575,
+          "window_p90_deviation_db": 5.385487113130118,
+          "window_peak_deviation_db": 8.306579270020576,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.833757658850812,
+          "window_rms_deviation_db": 3.166684999327589,
+          "window_uniformity_percent": 68.33315000672411,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 15.013826693555131,
           "worst_broad_undershoot_deg": 16.60447090080331
         },
@@ -453,6 +519,14 @@
           "weighted_overshoot_error_percent": 11.769907793695511,
           "weighted_total_error_percent": 21.11950724162332,
           "weighted_undershoot_error_percent": 17.535759369268433,
+          "window_p90_deviation_db": 5.389519909058859,
+          "window_peak_deviation_db": 8.31008888776206,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8321693444946323,
+          "window_rms_deviation_db": 3.1680994576835477,
+          "window_uniformity_percent": 68.31900542316453,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 14.971786131117852,
           "worst_broad_undershoot_deg": 16.603000153132054
         }
@@ -470,19 +544,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.6177750117893623,
-          "pattern_fit_percent": 0.11096656722322962,
-          "pattern_stability_percent": 0.6537611081619445,
-          "waist_control_percent": 0.1654780438710901
+          "coverage_match_percent": 0.09488315680580683,
+          "coverage_smoothness_percent": 1.6027644401464727,
+          "waist_stability_percent": 0.21379371046923978,
+          "window_uniformity_percent": 0.9821240683213404
         },
-        "maximum_delta_points": 0.6537611081619445,
+        "maximum_delta_points": 1.6027644401464727,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 78.87154007206657,
         "coverage_smoothness_percent": 70.30613155811379,
-        "waist_stability_percent": 63.10280990388353
+        "waist_stability_percent": 63.10280990388353,
+        "window_uniformity_percent": 68.32607692537822
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -539,6 +614,14 @@
           "weighted_overshoot_error_percent": 10.748193863601312,
           "weighted_total_error_percent": 20.679649673752117,
           "weighted_undershoot_error_percent": 17.667038215262888,
+          "window_p90_deviation_db": 5.030812672804542,
+          "window_peak_deviation_db": 7.315206924966733,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8450989084992326,
+          "window_rms_deviation_db": 3.0168384155084103,
+          "window_uniformity_percent": 69.8316158449159,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 13.571197070493643,
           "worst_broad_undershoot_deg": 16.606072868261812
         },
@@ -578,6 +661,14 @@
           "weighted_overshoot_error_percent": 10.75713796200845,
           "weighted_total_error_percent": 20.682427099098945,
           "weighted_undershoot_error_percent": 17.6648456991806,
+          "window_p90_deviation_db": 5.028272434593218,
+          "window_peak_deviation_db": 7.3130643451557855,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8459057534348875,
+          "window_rms_deviation_db": 3.0158117451279356,
+          "window_uniformity_percent": 69.84188254872065,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 13.592092715893408,
           "worst_broad_undershoot_deg": 16.602721609171876
         },
@@ -619,6 +710,14 @@
           "weighted_overshoot_error_percent": 10.739242316170657,
           "weighted_total_error_percent": 20.676871875327024,
           "weighted_undershoot_error_percent": 17.66923045928315,
+          "window_p90_deviation_db": 5.033351629005424,
+          "window_peak_deviation_db": 7.317348877412752,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8442920635635778,
+          "window_rms_deviation_db": 3.0178647366180926,
+          "window_uniformity_percent": 69.82135263381907,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 13.550301425093878,
           "worst_broad_undershoot_deg": 16.609424127351744
         }
@@ -636,19 +735,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.1498335454254658,
-          "pattern_fit_percent": 0.1609691950912122,
-          "pattern_stability_percent": 0.654918528679076,
-          "waist_control_percent": 0.1732388459351739
+          "coverage_match_percent": 0.20327264224769692,
+          "coverage_smoothness_percent": 1.6730116254726966,
+          "waist_stability_percent": 0.19478441589121331,
+          "window_uniformity_percent": 1.1310693416441069
         },
-        "maximum_delta_points": 0.654918528679076,
+        "maximum_delta_points": 1.6730116254726966,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 79.32035032624788,
         "coverage_smoothness_percent": 73.21494496321978,
-        "waist_stability_percent": 63.09761509684589
+        "waist_stability_percent": 63.09761509684589,
+        "window_uniformity_percent": 69.8316158449159
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -705,6 +805,14 @@
           "weighted_overshoot_error_percent": 10.309326714845339,
           "weighted_total_error_percent": 20.57515935795985,
           "weighted_undershoot_error_percent": 17.80603732704217,
+          "window_p90_deviation_db": 4.932803622414517,
+          "window_peak_deviation_db": 7.4050852716215,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8472667519116559,
+          "window_rms_deviation_db": 2.9519154727955126,
+          "window_uniformity_percent": 70.48084527204487,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.955289117352866,
           "worst_broad_undershoot_deg": 16.656606401594782
         },
@@ -744,6 +852,14 @@
           "weighted_overshoot_error_percent": 10.317678459165352,
           "weighted_total_error_percent": 20.577541631651584,
           "weighted_undershoot_error_percent": 17.803952673932535,
+          "window_p90_deviation_db": 4.931086266587674,
+          "window_peak_deviation_db": 7.402975615041657,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8477857182692611,
+          "window_rms_deviation_db": 2.951201912915021,
+          "window_uniformity_percent": 70.48798087084978,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.975190870850007,
           "worst_broad_undershoot_deg": 16.653535273973574
         },
@@ -785,6 +901,14 @@
           "weighted_overshoot_error_percent": 10.300968199160836,
           "weighted_total_error_percent": 20.572776808407063,
           "weighted_undershoot_error_percent": 17.808121736118288,
+          "window_p90_deviation_db": 4.934520380551893,
+          "window_peak_deviation_db": 7.407194327346215,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8467477855540506,
+          "window_rms_deviation_db": 2.9526288602304605,
+          "window_uniformity_percent": 70.4737113976954,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.935387363855725,
           "worst_broad_undershoot_deg": 16.65967752921599
         }
@@ -802,19 +926,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.017731040638508944,
-          "pattern_fit_percent": 0.16787920752096852,
-          "pattern_stability_percent": 0.6247570552102246,
-          "waist_control_percent": 0.18144558656473464
+          "coverage_match_percent": 0.22723600235822516,
+          "coverage_smoothness_percent": 1.641999894960577,
+          "waist_stability_percent": 0.18181958405557452,
+          "window_uniformity_percent": 1.1746963638015302
         },
-        "maximum_delta_points": 0.6247570552102246,
+        "maximum_delta_points": 1.641999894960577,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 79.42484064204015,
         "coverage_smoothness_percent": 74.64653857226065,
-        "waist_stability_percent": 62.98531847839906
+        "waist_stability_percent": 62.98531847839906,
+        "window_uniformity_percent": 70.48084527204487
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -871,6 +996,14 @@
           "weighted_overshoot_error_percent": 10.062631365047046,
           "weighted_total_error_percent": 20.572403365244497,
           "weighted_undershoot_error_percent": 17.94344532784868,
+          "window_p90_deviation_db": 4.72588538098957,
+          "window_peak_deviation_db": 7.489238900706629,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8494302833246536,
+          "window_rms_deviation_db": 2.9219334264940557,
+          "window_uniformity_percent": 70.78066573505944,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.601797631590607,
           "worst_broad_undershoot_deg": 16.732362448440178
         },
@@ -910,6 +1043,14 @@
           "weighted_overshoot_error_percent": 10.066791826044204,
           "weighted_total_error_percent": 20.574851239980806,
           "weighted_undershoot_error_percent": 17.94391835353776,
+          "window_p90_deviation_db": 4.723956419581257,
+          "window_peak_deviation_db": 7.487730193233556,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8500200372201073,
+          "window_rms_deviation_db": 2.9212598127112117,
+          "window_uniformity_percent": 70.78740187288788,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.616206631430998,
           "worst_broad_undershoot_deg": 16.732566740487275
         },
@@ -951,6 +1092,14 @@
           "weighted_overshoot_error_percent": 10.058469183168322,
           "weighted_total_error_percent": 20.569955199205143,
           "weighted_undershoot_error_percent": 17.942972289689347,
+          "window_p90_deviation_db": 4.727813555376195,
+          "window_peak_deviation_db": 7.4907473043117285,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8488405294292001,
+          "window_rms_deviation_db": 2.922606885019784,
+          "window_uniformity_percent": 70.77393114980217,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.587388631750215,
           "worst_broad_undershoot_deg": 16.73215815639308
         }
@@ -968,19 +1117,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.07220004049490569,
-          "pattern_fit_percent": 0.16969191516598414,
-          "pattern_stability_percent": 0.6089979146912867,
-          "waist_control_percent": 0.1934670208306386
+          "coverage_match_percent": 0.2362934498498106,
+          "coverage_smoothness_percent": 1.6347048021766284,
+          "waist_stability_percent": 0.1653679417293361,
+          "window_uniformity_percent": 1.1727507841067677
         },
-        "maximum_delta_points": 0.6089979146912867,
+        "maximum_delta_points": 1.6347048021766284,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 79.4275966347555,
         "coverage_smoothness_percent": 75.58958498725251,
-        "waist_stability_percent": 62.81697233402818
+        "waist_stability_percent": 62.81697233402818,
+        "window_uniformity_percent": 70.78066573505944
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -1037,6 +1187,14 @@
           "weighted_overshoot_error_percent": 9.951382956411704,
           "weighted_total_error_percent": 20.618056651838465,
           "weighted_undershoot_error_percent": 18.057525781603058,
+          "window_p90_deviation_db": 4.702519706002138,
+          "window_peak_deviation_db": 7.584621963785963,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8505319623365917,
+          "window_rms_deviation_db": 2.913039616144112,
+          "window_uniformity_percent": 70.86960383855887,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.430201524034409,
           "worst_broad_undershoot_deg": 16.80655014558606
         },
@@ -1076,6 +1234,14 @@
           "weighted_overshoot_error_percent": 9.956658821028048,
           "weighted_total_error_percent": 20.62078794016553,
           "weighted_undershoot_error_percent": 18.057736303172682,
+          "window_p90_deviation_db": 4.700537586560361,
+          "window_peak_deviation_db": 7.583701325381815,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8511640923142195,
+          "window_rms_deviation_db": 2.912391879997811,
+          "window_uniformity_percent": 70.87608120002189,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.440918264146212,
           "worst_broad_undershoot_deg": 16.806402112714725
         },
@@ -1117,6 +1283,14 @@
           "weighted_overshoot_error_percent": 9.946104293237983,
           "weighted_total_error_percent": 20.615325001647793,
           "weighted_undershoot_error_percent": 18.057315257579063,
+          "window_p90_deviation_db": 4.704500990329385,
+          "window_peak_deviation_db": 7.585542490454523,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8498998323589639,
+          "window_rms_deviation_db": 2.9136872082934513,
+          "window_uniformity_percent": 70.86312791706548,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.419484783922606,
           "worst_broad_undershoot_deg": 16.80669817845739
         }
@@ -1134,19 +1308,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.07247679339663193,
-          "pattern_fit_percent": 0.17246928206388645,
-          "pattern_stability_percent": 0.6029780895512289,
-          "waist_control_percent": 0.20483045470560057
+          "coverage_match_percent": 0.24343286267622943,
+          "coverage_smoothness_percent": 1.6378891125771275,
+          "waist_stability_percent": 0.16482710469810513,
+          "window_uniformity_percent": 1.166415493265319
         },
-        "maximum_delta_points": 0.6029780895512289,
+        "maximum_delta_points": 1.6378891125771275,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 79.38194334816154,
         "coverage_smoothness_percent": 76.17222736361379,
-        "waist_stability_percent": 62.65211078613778
+        "waist_stability_percent": 62.65211078613778,
+        "window_uniformity_percent": 70.86960383855887
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -1203,6 +1378,14 @@
           "weighted_overshoot_error_percent": 9.907670868628673,
           "weighted_total_error_percent": 20.68580551072971,
           "weighted_undershoot_error_percent": 18.15876117984546,
+          "window_p90_deviation_db": 4.739243575076009,
+          "window_peak_deviation_db": 7.696146995834685,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8521847861385357,
+          "window_rms_deviation_db": 2.914665285121996,
+          "window_uniformity_percent": 70.85334714878005,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.365969130082835,
           "worst_broad_undershoot_deg": 16.880350408782725
         },
@@ -1242,6 +1425,14 @@
           "weighted_overshoot_error_percent": 9.908681651375518,
           "weighted_total_error_percent": 20.688368384119908,
           "weighted_undershoot_error_percent": 18.161129214031444,
+          "window_p90_deviation_db": 4.7384295754054495,
+          "window_peak_deviation_db": 7.69618583175961,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8529922735547242,
+          "window_rms_deviation_db": 2.9144230099652844,
+          "window_uniformity_percent": 70.85576990034716,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.375076138566676,
           "worst_broad_undershoot_deg": 16.882764423282875
         },
@@ -1283,6 +1474,14 @@
           "weighted_overshoot_error_percent": 9.906659982751028,
           "weighted_total_error_percent": 20.683242319772283,
           "weighted_undershoot_error_percent": 18.156392836810358,
+          "window_p90_deviation_db": 4.740057434960192,
+          "window_peak_deviation_db": 7.696108159713786,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8513772987223472,
+          "window_rms_deviation_db": 2.914907540141791,
+          "window_uniformity_percent": 70.85092459858208,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.356862121598994,
           "worst_broad_undershoot_deg": 16.877936394282578
         }
@@ -1300,19 +1499,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.009396540305942835,
-          "pattern_fit_percent": 0.1773820950615459,
-          "pattern_stability_percent": 0.60856931996328,
-          "waist_control_percent": 0.21909445199122501
+          "coverage_match_percent": 0.2518275549079476,
+          "coverage_smoothness_percent": 1.6657618709503055,
+          "waist_stability_percent": 0.16410121262465793,
+          "window_uniformity_percent": 1.167790816062535
         },
-        "maximum_delta_points": 0.60856931996328,
+        "maximum_delta_points": 1.6657618709503055,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 79.31419448927029,
         "coverage_smoothness_percent": 76.55721697123884,
-        "waist_stability_percent": 62.48810981912521
+        "waist_stability_percent": 62.48810981912521,
+        "window_uniformity_percent": 70.85334714878005
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -1369,6 +1569,14 @@
           "weighted_overshoot_error_percent": 9.892018509124235,
           "weighted_total_error_percent": 20.74890811651643,
           "weighted_undershoot_error_percent": 18.239110664799007,
+          "window_p90_deviation_db": 4.598568298156231,
+          "window_peak_deviation_db": 7.796456544055034,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8563072295082388,
+          "window_rms_deviation_db": 2.921792643438825,
+          "window_uniformity_percent": 70.78207356561175,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.354778559980137,
           "worst_broad_undershoot_deg": 16.94719051943845
         },
@@ -1408,6 +1616,14 @@
           "weighted_overshoot_error_percent": 9.90269218150432,
           "weighted_total_error_percent": 20.75842214542403,
           "weighted_undershoot_error_percent": 18.244143650114253,
+          "window_p90_deviation_db": 4.597846121530387,
+          "window_peak_deviation_db": 7.797236205862064,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8564757578040378,
+          "window_rms_deviation_db": 2.922325912010453,
+          "window_uniformity_percent": 70.77674087989547,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.378344903209317,
           "worst_broad_undershoot_deg": 16.953951052945865
         },
@@ -1449,6 +1665,14 @@
           "weighted_overshoot_error_percent": 9.881333307205367,
           "weighted_total_error_percent": 20.73938972312473,
           "weighted_undershoot_error_percent": 18.234076290274906,
+          "window_p90_deviation_db": 4.599290361386522,
+          "window_peak_deviation_db": 7.79567680427241,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8561387012124398,
+          "window_rms_deviation_db": 2.9212592775203543,
+          "window_uniformity_percent": 70.78740722479645,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.331212216750956,
           "worst_broad_undershoot_deg": 16.940429985931036
         }
@@ -1466,19 +1690,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.05400219820324992,
-          "pattern_fit_percent": 0.17847831336486308,
-          "pattern_stability_percent": 0.6057760826383429,
-          "waist_control_percent": 0.22671587789449177
+          "coverage_match_percent": 0.25530255145127967,
+          "coverage_smoothness_percent": 1.6676015861258406,
+          "waist_stability_percent": 0.16772440968813385,
+          "window_uniformity_percent": 1.1603949620152463
         },
-        "maximum_delta_points": 0.6057760826383429,
+        "maximum_delta_points": 1.6676015861258406,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 79.25109188348357,
         "coverage_smoothness_percent": 76.81704619047034,
-        "waist_stability_percent": 62.33957362691892
+        "waist_stability_percent": 62.33957362691892,
+        "window_uniformity_percent": 70.78207356561175
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -1535,6 +1760,14 @@
           "weighted_overshoot_error_percent": 9.889994331719173,
           "weighted_total_error_percent": 20.81026071435411,
           "weighted_undershoot_error_percent": 18.309968954587355,
+          "window_p90_deviation_db": 4.584400137735249,
+          "window_peak_deviation_db": 7.891505775500529,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.858887771661546,
+          "window_rms_deviation_db": 2.9309130106036525,
+          "window_uniformity_percent": 70.69086989396348,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.330215147345243,
           "worst_broad_undershoot_deg": 17.004583014552136
         },
@@ -1574,6 +1807,14 @@
           "weighted_overshoot_error_percent": 9.896462883324185,
           "weighted_total_error_percent": 20.816470164966415,
           "weighted_undershoot_error_percent": 18.313531951208205,
+          "window_p90_deviation_db": 4.583732816359188,
+          "window_peak_deviation_db": 7.890347117258174,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8592021870137089,
+          "window_rms_deviation_db": 2.9309527617352487,
+          "window_uniformity_percent": 70.69047238264751,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.346438811374355,
           "worst_broad_undershoot_deg": 17.007523901718496
         },
@@ -1615,6 +1856,14 @@
           "weighted_overshoot_error_percent": 9.883521546587609,
           "weighted_total_error_percent": 20.804049410387474,
           "weighted_undershoot_error_percent": 18.30640526449641,
+          "window_p90_deviation_db": 4.585067361987804,
+          "window_peak_deviation_db": 7.892664263649635,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -0.8585733563093831,
+          "window_rms_deviation_db": 2.930873258932916,
+          "window_uniformity_percent": 70.69126741067083,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 12.31399148331613,
           "worst_broad_undershoot_deg": 17.001642127385775
         }
@@ -1632,19 +1881,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.060070802169860826,
-          "pattern_fit_percent": 0.17833568975568426,
-          "pattern_stability_percent": 0.6070295539596202,
-          "waist_control_percent": 0.23273866563158663
+          "coverage_match_percent": 0.25724467841982346,
+          "coverage_smoothness_percent": 1.6781849980742152,
+          "waist_stability_percent": 0.16644641412653982,
+          "window_uniformity_percent": 1.1565281525253681
         },
-        "maximum_delta_points": 0.6070295539596202,
+        "maximum_delta_points": 1.6781849980742152,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 79.18973928564589,
         "coverage_smoothness_percent": 77.04238623295569,
-        "waist_stability_percent": 62.21203718030988
+        "waist_stability_percent": 62.21203718030988,
+        "window_uniformity_percent": 70.69086989396348
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -1701,6 +1951,14 @@
           "weighted_overshoot_error_percent": 11.08161198741995,
           "weighted_total_error_percent": 18.802311810674937,
           "weighted_undershoot_error_percent": 15.189628210924603,
+          "window_p90_deviation_db": 4.746705686932543,
+          "window_peak_deviation_db": 8.964204644943356,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.018344963686088,
+          "window_rms_deviation_db": 2.906779853094643,
+          "window_uniformity_percent": 70.93220146905357,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 14.40491309022697,
           "worst_broad_undershoot_deg": 15.297694476523152
         },
@@ -1740,6 +1998,14 @@
           "weighted_overshoot_error_percent": 11.119345097112037,
           "weighted_total_error_percent": 18.821430265531014,
           "weighted_undershoot_error_percent": 15.185730204753977,
+          "window_p90_deviation_db": 4.744839008547951,
+          "window_peak_deviation_db": 8.962338301212203,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.0186357477237942,
+          "window_rms_deviation_db": 2.905794643654295,
+          "window_uniformity_percent": 70.94205356345705,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 14.462913549529155,
           "worst_broad_undershoot_deg": 15.292365131189666
         },
@@ -1781,6 +2047,14 @@
           "weighted_overshoot_error_percent": 11.043749956006321,
           "weighted_total_error_percent": 18.783173896108334,
           "weighted_undershoot_error_percent": 15.193525217034257,
+          "window_p90_deviation_db": 4.748571631520073,
+          "window_peak_deviation_db": 8.966070600183386,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.0180541796483817,
+          "window_rms_deviation_db": 2.9077647287261468,
+          "window_uniformity_percent": 70.92235271273853,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 14.346912630924784,
           "worst_broad_undershoot_deg": 15.303023821856637
         }
@@ -1798,19 +2072,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.881151176189519,
-          "pattern_fit_percent": -0.10837277927618061,
-          "pattern_stability_percent": 0.07358052458192788,
-          "waist_control_percent": 0.21728027603204225
+          "coverage_match_percent": -0.27106602086946907,
+          "coverage_smoothness_percent": 0.17262401187149123,
+          "waist_stability_percent": 0.3630130035653423,
+          "window_uniformity_percent": 0.6727622545078873
         },
-        "maximum_delta_points": 0.881151176189519,
+        "maximum_delta_points": 0.6727622545078873,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 81.19768818932506,
         "coverage_smoothness_percent": 72.00695939760244,
-        "waist_stability_percent": 66.00512132259915
+        "waist_stability_percent": 66.00512132259915,
+        "window_uniformity_percent": 70.93220146905357
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -1867,6 +2142,14 @@
           "weighted_overshoot_error_percent": 7.862543922042459,
           "weighted_total_error_percent": 16.88000261969682,
           "weighted_undershoot_error_percent": 14.937030880162387,
+          "window_p90_deviation_db": 4.057169646219609,
+          "window_peak_deviation_db": 6.528170878783071,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1028768856389481,
+          "window_rms_deviation_db": 2.4069975784579567,
+          "window_uniformity_percent": 75.93002421542043,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 10.103293112107668,
           "worst_broad_undershoot_deg": 14.82493654964512
         },
@@ -1906,6 +2189,14 @@
           "weighted_overshoot_error_percent": 7.882724934433674,
           "weighted_total_error_percent": 16.891508002117288,
           "weighted_undershoot_error_percent": 14.939400596866331,
+          "window_p90_deviation_db": 4.056466054646565,
+          "window_peak_deviation_db": 6.527495776594726,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1029165855057927,
+          "window_rms_deviation_db": 2.4069191771532497,
+          "window_uniformity_percent": 75.9308082284675,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 10.132665251501429,
           "worst_broad_undershoot_deg": 14.828295246842742
         },
@@ -1947,6 +2238,14 @@
           "weighted_overshoot_error_percent": 7.842310977011257,
           "weighted_total_error_percent": 16.868489389875748,
           "weighted_undershoot_error_percent": 14.93466078745009,
+          "window_p90_deviation_db": 4.057873115797443,
+          "window_peak_deviation_db": 6.528845911163831,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1028371857721038,
+          "window_rms_deviation_db": 2.4070759772090407,
+          "window_uniformity_percent": 75.92924022790959,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 10.073920972713907,
           "worst_broad_undershoot_deg": 14.821577852447497
         }
@@ -1964,19 +2263,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.5046907722237961,
-          "pattern_fit_percent": 0.12894477044572739,
-          "pattern_stability_percent": 0.426391631082609,
-          "waist_control_percent": 0.19672138277738327
+          "coverage_match_percent": 0.11463603882947382,
+          "coverage_smoothness_percent": 1.152455200519512,
+          "waist_stability_percent": 0.3353032074595461,
+          "window_uniformity_percent": 0.8299454876026431
         },
-        "maximum_delta_points": 0.5046907722237961,
+        "maximum_delta_points": 1.152455200519512,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 83.11999738030318,
         "coverage_smoothness_percent": 78.71233519961584,
-        "waist_stability_percent": 67.05569571085832
+        "waist_stability_percent": 67.05569571085832,
+        "window_uniformity_percent": 75.93002421542043
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -2033,6 +2333,14 @@
           "weighted_overshoot_error_percent": 6.544842299206455,
           "weighted_total_error_percent": 16.33531992157944,
           "weighted_undershoot_error_percent": 14.966887325655529,
+          "window_p90_deviation_db": 3.8236634025159995,
+          "window_peak_deviation_db": 5.343970381975701,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1324063964904303,
+          "window_rms_deviation_db": 2.185761094959316,
+          "window_uniformity_percent": 78.14238905040685,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.303796971371256,
           "worst_broad_undershoot_deg": 14.640644881086573
         },
@@ -2072,6 +2380,14 @@
           "weighted_overshoot_error_percent": 6.559521113047509,
           "weighted_total_error_percent": 16.344634966853093,
           "weighted_undershoot_error_percent": 14.970630413150973,
+          "window_p90_deviation_db": 3.8233118449312387,
+          "window_peak_deviation_db": 5.343218489986081,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1326878895437726,
+          "window_rms_deviation_db": 2.1859535477200365,
+          "window_uniformity_percent": 78.14046452279963,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.32905317393626,
           "worst_broad_undershoot_deg": 14.644848360651835
         },
@@ -2113,6 +2429,14 @@
           "weighted_overshoot_error_percent": 6.530130489542153,
           "weighted_total_error_percent": 16.325999561467082,
           "weighted_undershoot_error_percent": 14.963143301812467,
+          "window_p90_deviation_db": 3.8240149277806106,
+          "window_peak_deviation_db": 5.344722168189653,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1321249034370882,
+          "window_rms_deviation_db": 2.1855686252519457,
+          "window_uniformity_percent": 78.14431374748054,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.278540768806252,
           "worst_broad_undershoot_deg": 14.63644140152131
         }
@@ -2130,19 +2454,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.3566897247420826,
-          "pattern_fit_percent": 0.15647454926053683,
-          "pattern_stability_percent": 0.506461720459157,
-          "waist_control_percent": 0.18583316465296207
+          "coverage_match_percent": 0.176703539017808,
+          "coverage_smoothness_percent": 1.399802941157219,
+          "waist_stability_percent": 0.3000730480520417,
+          "window_uniformity_percent": 0.8379949533974127
         },
-        "maximum_delta_points": 0.506461720459157,
+        "maximum_delta_points": 1.399802941157219,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 83.66468007842056,
         "coverage_smoothness_percent": 81.1634881341422,
-        "waist_stability_percent": 67.46523225662744
+        "waist_stability_percent": 67.46523225662744,
+        "window_uniformity_percent": 78.14238905040685
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -2199,6 +2524,14 @@
           "weighted_overshoot_error_percent": 5.902623072145262,
           "weighted_total_error_percent": 16.19661467537894,
           "weighted_undershoot_error_percent": 15.082750671242923,
+          "window_p90_deviation_db": 3.558603682052092,
+          "window_peak_deviation_db": 4.646863653220628,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.141795273713632,
+          "window_rms_deviation_db": 2.081474789731788,
+          "window_uniformity_percent": 79.18525210268211,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.3199638859573675,
           "worst_broad_undershoot_deg": 14.577649689705888
         },
@@ -2238,6 +2571,14 @@
           "weighted_overshoot_error_percent": 5.918056425978533,
           "weighted_total_error_percent": 16.206912678304125,
           "weighted_undershoot_error_percent": 15.087764138569678,
+          "window_p90_deviation_db": 3.5579622173252323,
+          "window_peak_deviation_db": 4.646331759924365,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1420855564903727,
+          "window_rms_deviation_db": 2.081747322140611,
+          "window_uniformity_percent": 79.18252677859388,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.34676551181839,
           "worst_broad_undershoot_deg": 14.582096250832922
         },
@@ -2279,6 +2620,14 @@
           "weighted_overshoot_error_percent": 5.887149259410478,
           "weighted_total_error_percent": 16.186310120692294,
           "weighted_undershoot_error_percent": 15.077735536898384,
+          "window_p90_deviation_db": 3.559245031171011,
+          "window_peak_deviation_db": 4.647395485641832,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1415049909368915,
+          "window_rms_deviation_db": 2.0812022216349795,
+          "window_uniformity_percent": 79.18797778365021,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.293162260096345,
           "worst_broad_undershoot_deg": 14.573203128578854
         }
@@ -2296,19 +2645,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.2676504280410228,
-          "pattern_fit_percent": 0.15664874231183035,
-          "pattern_stability_percent": 0.5453337989358431,
-          "waist_control_percent": 0.1783346349998567
+          "coverage_match_percent": 0.19123498430431596,
+          "coverage_smoothness_percent": 1.522374191510579,
+          "waist_stability_percent": 0.26710632159326053,
+          "window_uniformity_percent": 0.8303443482642621
         },
-        "maximum_delta_points": 0.5453337989358431,
+        "maximum_delta_points": 1.522374191510579,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 83.80338532462106,
         "coverage_smoothness_percent": 82.48379844241424,
-        "waist_stability_percent": 67.60522140474647
+        "waist_stability_percent": 67.60522140474647,
+        "window_uniformity_percent": 79.18525210268211
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -2365,6 +2715,14 @@
           "weighted_overshoot_error_percent": 5.592085960194547,
           "weighted_total_error_percent": 16.21906675563877,
           "weighted_undershoot_error_percent": 15.22454272014965,
+          "window_p90_deviation_db": 3.366895331808616,
+          "window_peak_deviation_db": 4.182161167384053,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1428103870911115,
+          "window_rms_deviation_db": 2.034794717324475,
+          "window_uniformity_percent": 79.65205282675525,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.73831169495233,
           "worst_broad_undershoot_deg": 14.579610908460891
         },
@@ -2404,6 +2762,14 @@
           "weighted_overshoot_error_percent": 5.601042739770002,
           "weighted_total_error_percent": 16.22006057453902,
           "weighted_undershoot_error_percent": 15.222308802181908,
+          "window_p90_deviation_db": 3.366302051842036,
+          "window_peak_deviation_db": 4.181300850464991,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1431066165738806,
+          "window_rms_deviation_db": 2.034664950089557,
+          "window_uniformity_percent": 79.65335049910443,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.749846860373715,
           "worst_broad_undershoot_deg": 14.577498365758732
         },
@@ -2445,6 +2811,14 @@
           "weighted_overshoot_error_percent": 5.583114811615438,
           "weighted_total_error_percent": 16.218072875838804,
           "weighted_undershoot_error_percent": 15.226776310379641,
+          "window_p90_deviation_db": 3.3674885072518657,
+          "window_peak_deviation_db": 4.183021307362781,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1425141576083426,
+          "window_rms_deviation_db": 2.03492447628413,
+          "window_uniformity_percent": 79.6507552371587,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.7267765295309445,
           "worst_broad_undershoot_deg": 14.58172345116305
         }
@@ -2462,19 +2836,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.2504212727487527,
-          "pattern_fit_percent": 0.15244695975864886,
-          "pattern_stability_percent": 0.5719607004347154,
-          "waist_control_percent": 0.17412970590163468
+          "coverage_match_percent": 0.19405766751428644,
+          "coverage_smoothness_percent": 1.6035479446005354,
+          "waist_stability_percent": 0.2416868459373802,
+          "window_uniformity_percent": 0.8205703370672097
         },
-        "maximum_delta_points": 0.5719607004347154,
+        "maximum_delta_points": 1.6035479446005354,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 83.78093324436122,
         "coverage_smoothness_percent": 83.28815634131288,
-        "waist_stability_percent": 67.60086430775223
+        "waist_stability_percent": 67.60086430775223,
+        "window_uniformity_percent": 79.65205282675525
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -2531,6 +2906,14 @@
           "weighted_overshoot_error_percent": 5.449568102995114,
           "weighted_total_error_percent": 16.293868148180547,
           "weighted_undershoot_error_percent": 15.355531469835578,
+          "window_p90_deviation_db": 3.240376692047173,
+          "window_peak_deviation_db": 3.847593705848102,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1413076488374099,
+          "window_rms_deviation_db": 2.016606796248474,
+          "window_uniformity_percent": 79.83393203751525,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.7891048854213345,
           "worst_broad_undershoot_deg": 14.604592088505175
         },
@@ -2570,6 +2953,14 @@
           "weighted_overshoot_error_percent": 5.454091557407835,
           "weighted_total_error_percent": 16.296762171391432,
           "weighted_undershoot_error_percent": 15.356996534293657,
+          "window_p90_deviation_db": 3.2392093207261126,
+          "window_peak_deviation_db": 3.8476254938706536,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1416261563609509,
+          "window_rms_deviation_db": 2.0165955018247215,
+          "window_uniformity_percent": 79.83404498175278,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.795086549061637,
           "worst_broad_undershoot_deg": 14.608267412142183
         },
@@ -2611,6 +3002,14 @@
           "weighted_overshoot_error_percent": 5.445040890734991,
           "weighted_total_error_percent": 16.290973610858572,
           "weighted_undershoot_error_percent": 15.354066265583011,
+          "window_p90_deviation_db": 3.241543642964912,
+          "window_peak_deviation_db": 3.8475619175629223,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1409891413138686,
+          "window_rms_deviation_db": 2.016618090608971,
+          "window_uniformity_percent": 79.8338190939103,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.783123221781032,
           "worst_broad_undershoot_deg": 14.600916764868167
         }
@@ -2628,19 +3027,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.1710228889223231,
-          "pattern_fit_percent": 0.14662487777354727,
-          "pattern_stability_percent": 0.5896102115584654,
-          "waist_control_percent": 0.17043724703891883
+          "coverage_match_percent": 0.19266062684313567,
+          "coverage_smoothness_percent": 1.658769551584328,
+          "waist_stability_percent": 0.23049086214115277,
+          "window_uniformity_percent": 0.810244060495549
         },
-        "maximum_delta_points": 0.5896102115584654,
+        "maximum_delta_points": 1.658769551584328,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 83.70613185181945,
         "coverage_smoothness_percent": 83.83448635102373,
-        "waist_stability_percent": 67.54534988674982
+        "waist_stability_percent": 67.54534988674982,
+        "window_uniformity_percent": 79.83393203751525
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -2697,6 +3097,14 @@
           "weighted_overshoot_error_percent": 5.40474983681387,
           "weighted_total_error_percent": 16.395496660804763,
           "weighted_undershoot_error_percent": 15.479050034027301,
+          "window_p90_deviation_db": 3.0779949394145385,
+          "window_peak_deviation_db": 3.6447385858333443,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1398438824240267,
+          "window_rms_deviation_db": 2.0156426496408635,
+          "window_uniformity_percent": 79.84357350359136,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.831787087489982,
           "worst_broad_undershoot_deg": 14.646195086791725
         },
@@ -2736,6 +3144,14 @@
           "weighted_overshoot_error_percent": 5.407861087249474,
           "weighted_total_error_percent": 16.39605962964163,
           "weighted_undershoot_error_percent": 15.478559682340501,
+          "window_p90_deviation_db": 3.077790247462763,
+          "window_peak_deviation_db": 3.643154432962067,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1400649147099893,
+          "window_rms_deviation_db": 2.015321767682481,
+          "window_uniformity_percent": 79.84678232317519,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.836862204598958,
           "worst_broad_undershoot_deg": 14.646455346186944
         },
@@ -2777,6 +3193,14 @@
           "weighted_overshoot_error_percent": 5.401636794351507,
           "weighted_total_error_percent": 16.394933672636686,
           "weighted_undershoot_error_percent": 15.47954037018103,
+          "window_p90_deviation_db": 3.0781996177548527,
+          "window_peak_deviation_db": 3.646322050465885,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.139622850138064,
+          "window_rms_deviation_db": 2.0159634805242983,
+          "window_uniformity_percent": 79.84036519475701,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.826711970381005,
           "worst_broad_undershoot_deg": 14.645934827396506
         }
@@ -2794,19 +3218,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.08475561524053887,
-          "pattern_fit_percent": 0.1414459262454102,
-          "pattern_stability_percent": 0.5976151990696081,
-          "waist_control_percent": 0.16806269486997394
+          "coverage_match_percent": 0.1904210703306859,
+          "coverage_smoothness_percent": 1.688720736524317,
+          "waist_stability_percent": 0.20654854081044505,
+          "window_uniformity_percent": 0.7962462303082276
         },
-        "maximum_delta_points": 0.5976151990696081,
+        "maximum_delta_points": 1.688720736524317,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 83.60450333919523,
         "coverage_smoothness_percent": 84.18785888398763,
-        "waist_stability_percent": 67.4528998019909
+        "waist_stability_percent": 67.4528998019909,
+        "window_uniformity_percent": 79.84357350359136
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -2863,6 +3288,14 @@
           "weighted_overshoot_error_percent": 5.410650250179235,
           "weighted_total_error_percent": 16.503717460614368,
           "weighted_undershoot_error_percent": 15.591585996620836,
+          "window_p90_deviation_db": 3.0433256742323436,
+          "window_peak_deviation_db": 3.6572153348667786,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1391495008523562,
+          "window_rms_deviation_db": 2.023734870811803,
+          "window_uniformity_percent": 79.76265129188198,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.879779646577866,
           "worst_broad_undershoot_deg": 14.694729112805458
         },
@@ -2902,6 +3335,14 @@
           "weighted_overshoot_error_percent": 5.41520126065219,
           "weighted_total_error_percent": 16.508753369519226,
           "weighted_undershoot_error_percent": 15.595336903133683,
+          "window_p90_deviation_db": 3.04346336403613,
+          "window_peak_deviation_db": 3.6554838225259134,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1391311594737685,
+          "window_rms_deviation_db": 2.0240461453381706,
+          "window_uniformity_percent": 79.7595385466183,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.885122118533857,
           "worst_broad_undershoot_deg": 14.699320096204954
         },
@@ -2943,6 +3384,14 @@
           "weighted_overshoot_error_percent": 5.406095408532869,
           "weighted_total_error_percent": 16.498680014593976,
           "weighted_undershoot_error_percent": 15.587834187525942,
+          "window_p90_deviation_db": 3.043187978198747,
+          "window_peak_deviation_db": 3.6589460278092085,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1391678422309437,
+          "window_rms_deviation_db": 2.0234235484003396,
+          "window_uniformity_percent": 79.76576451599661,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.874437174621875,
           "worst_broad_undershoot_deg": 14.690138129405963
         }
@@ -2960,19 +3409,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.04975989115887103,
-          "pattern_fit_percent": 0.1368798325419931,
-          "pattern_stability_percent": 0.5929432628585118,
-          "waist_control_percent": 0.16532856881863722
+          "coverage_match_percent": 0.18689567878024604,
+          "coverage_smoothness_percent": 1.6851301207854021,
+          "waist_stability_percent": 0.20040381581122801,
+          "window_uniformity_percent": 0.7762875383048424
         },
-        "maximum_delta_points": 0.5929432628585118,
+        "maximum_delta_points": 1.6851301207854021,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 83.49628253938563,
         "coverage_smoothness_percent": 84.44189350578019,
-        "waist_stability_percent": 67.34504482228505
+        "waist_stability_percent": 67.34504482228505,
+        "window_uniformity_percent": 79.76265129188198
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3029,6 +3479,14 @@
           "weighted_overshoot_error_percent": 5.4456125419443735,
           "weighted_total_error_percent": 16.610696933028176,
           "weighted_undershoot_error_percent": 15.69269118551467,
+          "window_p90_deviation_db": 3.0296495326604855,
+          "window_peak_deviation_db": 3.6735443340451797,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1382902739669207,
+          "window_rms_deviation_db": 2.0359707266578972,
+          "window_uniformity_percent": 79.64029273342103,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.91783938706936,
           "worst_broad_undershoot_deg": 14.744906903855242
         },
@@ -3068,6 +3526,14 @@
           "weighted_overshoot_error_percent": 5.447905752241051,
           "weighted_total_error_percent": 16.61088972097189,
           "weighted_undershoot_error_percent": 15.692099293497622,
+          "window_p90_deviation_db": 3.029189833867747,
+          "window_peak_deviation_db": 3.672054453339606,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1387169083709239,
+          "window_rms_deviation_db": 2.035963559569799,
+          "window_uniformity_percent": 79.640364404302,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.922751860684421,
           "worst_broad_undershoot_deg": 14.745819257167526
         },
@@ -3109,6 +3575,14 @@
           "weighted_overshoot_error_percent": 5.443318365543448,
           "weighted_total_error_percent": 16.610504142846892,
           "weighted_undershoot_error_percent": 15.693283055207763,
+          "window_p90_deviation_db": 3.03010916171218,
+          "window_peak_deviation_db": 3.6750336107442134,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1378636395629174,
+          "window_rms_deviation_db": 2.035977893720766,
+          "window_uniformity_percent": 79.64022106279234,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.912926913454299,
           "worst_broad_undershoot_deg": 14.743994550542958
         }
@@ -3126,19 +3600,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.009547296410033823,
-          "pattern_fit_percent": 0.1340924173200193,
-          "pattern_stability_percent": 0.5841627375105531,
-          "waist_control_percent": 0.1648320262870442
+          "coverage_match_percent": 0.1846796914492188,
+          "coverage_smoothness_percent": 1.6723841558558092,
+          "waist_stability_percent": 0.18371748956593592,
+          "window_uniformity_percent": 0.7549362866695759
         },
-        "maximum_delta_points": 0.5841627375105531,
+        "maximum_delta_points": 1.6723841558558092,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 83.38930306697182,
         "coverage_smoothness_percent": 84.62813456568934,
-        "waist_stability_percent": 67.23354015092988
+        "waist_stability_percent": 67.23354015092988,
+        "window_uniformity_percent": 79.64029273342103
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3195,6 +3670,14 @@
           "weighted_overshoot_error_percent": 8.81965157149696,
           "weighted_total_error_percent": 16.07218011730537,
           "weighted_undershoot_error_percent": 13.436097643307646,
+          "window_p90_deviation_db": 3.5945889096575514,
+          "window_peak_deviation_db": 7.1339139317320415,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1806980548571322,
+          "window_rms_deviation_db": 2.4874764313497777,
+          "window_uniformity_percent": 75.12523568650222,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 11.302548453082121,
           "worst_broad_undershoot_deg": 14.085493370564858
         },
@@ -3234,6 +3717,14 @@
           "weighted_overshoot_error_percent": 8.849942445356197,
           "weighted_total_error_percent": 16.086661742395986,
           "weighted_undershoot_error_percent": 13.43351051394048,
+          "window_p90_deviation_db": 3.5921482121492074,
+          "window_peak_deviation_db": 7.1338537432719065,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.181029858997402,
+          "window_rms_deviation_db": 2.4868589085405257,
+          "window_uniformity_percent": 75.13141091459474,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 11.346525482361685,
           "worst_broad_undershoot_deg": 14.083213420589964
         },
@@ -3275,6 +3766,14 @@
           "weighted_overshoot_error_percent": 8.78925630523427,
           "weighted_total_error_percent": 16.057685431965137,
           "weighted_undershoot_error_percent": 13.438684274617255,
+          "window_p90_deviation_db": 3.597027951075635,
+          "window_peak_deviation_db": 7.133974119684374,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.1803662507168626,
+          "window_rms_deviation_db": 2.4880938008953515,
+          "window_uniformity_percent": 75.1190619910465,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 11.258571423802557,
           "worst_broad_undershoot_deg": 14.087773320539753
         }
@@ -3292,19 +3791,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": -0.05271819585442472,
-          "pattern_fit_percent": 0.0434965330398569,
-          "pattern_stability_percent": 0.3606634342071118,
-          "waist_control_percent": 0.1743312326715909
+          "coverage_match_percent": 0.02254460208068565,
+          "coverage_smoothness_percent": 1.000732443373721,
+          "waist_stability_percent": 0.3830567242514178,
+          "window_uniformity_percent": 0.9996239016685564
         },
-        "maximum_delta_points": 0.3606634342071118,
+        "maximum_delta_points": 1.000732443373721,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 83.92781988269464,
         "coverage_smoothness_percent": 76.68434351260746,
-        "waist_stability_percent": 68.69890321091769
+        "waist_stability_percent": 68.69890321091769,
+        "window_uniformity_percent": 75.12523568650222
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3361,6 +3861,14 @@
           "weighted_overshoot_error_percent": 5.6169869421452985,
           "weighted_total_error_percent": 14.008487387855498,
           "weighted_undershoot_error_percent": 12.833050166950791,
+          "window_p90_deviation_db": 2.7337591242527033,
+          "window_peak_deviation_db": 5.0299043311443725,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3027672603164704,
+          "window_rms_deviation_db": 1.9140711892321942,
+          "window_uniformity_percent": 80.85928810767805,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.297059006195795,
           "worst_broad_undershoot_deg": 13.24488320825743
         },
@@ -3400,6 +3908,14 @@
           "weighted_overshoot_error_percent": 5.630659394224143,
           "weighted_total_error_percent": 14.015406782666329,
           "weighted_undershoot_error_percent": 12.834613436712642,
+          "window_p90_deviation_db": 2.7316132605238077,
+          "window_peak_deviation_db": 5.026281169086149,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3022600352446372,
+          "window_rms_deviation_db": 1.9134720878922469,
+          "window_uniformity_percent": 80.86527912107753,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.314381689705577,
           "worst_broad_undershoot_deg": 13.248451040454825
         },
@@ -3441,6 +3957,14 @@
           "weighted_overshoot_error_percent": 5.603281128294117,
           "weighted_total_error_percent": 14.001564573568334,
           "weighted_undershoot_error_percent": 12.831486706734601,
+          "window_p90_deviation_db": 2.7359033049068655,
+          "window_peak_deviation_db": 5.033524885229021,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3032744853883034,
+          "window_rms_deviation_db": 1.9146701031130082,
+          "window_uniformity_percent": 80.85329896886992,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.279736322686013,
           "worst_broad_undershoot_deg": 13.241315376060037
         }
@@ -3458,19 +3982,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.4654680402035041,
-          "pattern_fit_percent": 0.09736552125644948,
-          "pattern_stability_percent": 0.48250031691659956,
-          "waist_control_percent": 0.17315007893101608
+          "coverage_match_percent": 0.14853580931890065,
+          "coverage_smoothness_percent": 1.346018823411626,
+          "waist_stability_percent": 0.3810310497019316,
+          "window_uniformity_percent": 0.8508857033247921
         },
-        "maximum_delta_points": 0.48250031691659956,
+        "maximum_delta_points": 1.346018823411626,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 85.9915126121445,
         "coverage_smoothness_percent": 81.93616236617596,
-        "waist_stability_percent": 70.56692513600285
+        "waist_stability_percent": 70.56692513600285,
+        "window_uniformity_percent": 80.85928810767805
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3527,6 +4052,14 @@
           "weighted_overshoot_error_percent": 3.980656711996295,
           "weighted_total_error_percent": 13.307046452186,
           "weighted_undershoot_error_percent": 12.697710715789475,
+          "window_p90_deviation_db": 2.351750964047431,
+          "window_peak_deviation_db": 3.987623101385563,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3569101480443742,
+          "window_rms_deviation_db": 1.6424911861960474,
+          "window_uniformity_percent": 83.57508813803952,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.896745605858786,
           "worst_broad_undershoot_deg": 12.84272720476018
         },
@@ -3566,6 +4099,14 @@
           "weighted_overshoot_error_percent": 3.988122128731923,
           "weighted_total_error_percent": 13.306199386500865,
           "weighted_undershoot_error_percent": 12.69448006023227,
+          "window_p90_deviation_db": 2.3506864233257128,
+          "window_peak_deviation_db": 3.983567702690694,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3566921244755101,
+          "window_rms_deviation_db": 1.6413522464670214,
+          "window_uniformity_percent": 83.58647753532978,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.901984577767749,
           "worst_broad_undershoot_deg": 12.837696767285856
         },
@@ -3607,6 +4148,14 @@
           "weighted_overshoot_error_percent": 3.97317726811189,
           "weighted_total_error_percent": 13.307893463954246,
           "weighted_undershoot_error_percent": 12.700940549585885,
+          "window_p90_deviation_db": 2.352815023113421,
+          "window_peak_deviation_db": 3.9916743799422347,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3571281716132382,
+          "window_rms_deviation_db": 1.6436293367061383,
+          "window_uniformity_percent": 83.56370663293862,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.891506633949824,
           "worst_broad_undershoot_deg": 12.847757642234505
         }
@@ -3624,19 +4173,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.6159877190669363,
-          "pattern_fit_percent": 0.07947565620658281,
-          "pattern_stability_percent": 0.5009500208666964,
-          "waist_control_percent": 0.1707114813969639
+          "coverage_match_percent": 0.1394436312389189,
+          "coverage_smoothness_percent": 1.4172228911273237,
+          "waist_stability_percent": 0.3574984808403485,
+          "window_uniformity_percent": 0.8210423607446842
         },
-        "maximum_delta_points": 0.6159877190669363,
+        "maximum_delta_points": 1.4172228911273237,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 86.692953547814,
         "coverage_smoothness_percent": 84.15311451093243,
-        "waist_stability_percent": 71.46060402231153
+        "waist_stability_percent": 71.46060402231153,
+        "window_uniformity_percent": 83.57508813803952
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3693,6 +4243,14 @@
           "weighted_overshoot_error_percent": 2.4744642318838075,
           "weighted_total_error_percent": 12.968799848037136,
           "weighted_undershoot_error_percent": 12.730545795981245,
+          "window_p90_deviation_db": 2.155200108124535,
+          "window_peak_deviation_db": 2.8514465096548616,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3853523103796483,
+          "window_rms_deviation_db": 1.4352076395669766,
+          "window_uniformity_percent": 85.64792360433023,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.211013354125672,
           "worst_broad_undershoot_deg": 12.443005088985363
         },
@@ -3732,6 +4290,14 @@
           "weighted_overshoot_error_percent": 2.480812481937834,
           "weighted_total_error_percent": 12.969445748788786,
           "weighted_undershoot_error_percent": 12.729968281980792,
+          "window_p90_deviation_db": 2.1554236825396935,
+          "window_peak_deviation_db": 2.8514996180852172,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3846555110573655,
+          "window_rms_deviation_db": 1.4357422244594984,
+          "window_uniformity_percent": 85.64257775540501,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.209350007479863,
           "worst_broad_undershoot_deg": 12.447111187200406
         },
@@ -3773,6 +4339,14 @@
           "weighted_overshoot_error_percent": 2.468099653418818,
           "weighted_total_error_percent": 12.96815391511531,
           "weighted_undershoot_error_percent": 12.73112328378429,
+          "window_p90_deviation_db": 2.154976510513987,
+          "window_peak_deviation_db": 2.851393400235339,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3860491097019314,
+          "window_rms_deviation_db": 1.434672855478529,
+          "window_uniformity_percent": 85.65327144521471,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.212676700771482,
           "worst_broad_undershoot_deg": 12.43889899077032
         }
@@ -3790,19 +4364,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.704778190597608,
-          "pattern_fit_percent": 0.06476105188679071,
-          "pattern_stability_percent": 0.5497699904022113,
-          "waist_control_percent": 0.16560965408314132
+          "coverage_match_percent": 0.13179320019946772,
+          "coverage_smoothness_percent": 1.5701545690126721,
+          "waist_stability_percent": 0.3096617073209984,
+          "window_uniformity_percent": 0.8900376158148049
         },
-        "maximum_delta_points": 0.704778190597608,
+        "maximum_delta_points": 1.5701545690126721,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 87.03120015196286,
         "coverage_smoothness_percent": 85.96916983864678,
-        "waist_stability_percent": 72.3488760744975
+        "waist_stability_percent": 72.3488760744975,
+        "window_uniformity_percent": 85.64792360433023
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -3859,6 +4434,14 @@
           "weighted_overshoot_error_percent": 2.191619207639067,
           "weighted_total_error_percent": 13.008112862846012,
           "weighted_undershoot_error_percent": 12.822160718897866,
+          "window_p90_deviation_db": 2.15868987634195,
+          "window_peak_deviation_db": 2.8877498835254576,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3839851887818506,
+          "window_rms_deviation_db": 1.411545816503389,
+          "window_uniformity_percent": 85.88454183496611,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.272195412696654,
           "worst_broad_undershoot_deg": 12.36857986006984
         },
@@ -3898,6 +4481,14 @@
           "weighted_overshoot_error_percent": 2.196659768031064,
           "weighted_total_error_percent": 13.014078309585381,
           "weighted_undershoot_error_percent": 12.82735047122103,
+          "window_p90_deviation_db": 2.1624550660911543,
+          "window_peak_deviation_db": 2.890244964253199,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3838777073501416,
+          "window_rms_deviation_db": 1.4120655452052,
+          "window_uniformity_percent": 85.879344547948,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.282164982984085,
           "worst_broad_undershoot_deg": 12.3716693999354
         },
@@ -3939,6 +4530,14 @@
           "weighted_overshoot_error_percent": 2.1865670275796933,
           "weighted_total_error_percent": 13.002144679131172,
           "weighted_undershoot_error_percent": 12.81696886517871,
+          "window_p90_deviation_db": 2.154918107859124,
+          "window_peak_deviation_db": 2.885252645126872,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3840926702135594,
+          "window_rms_deviation_db": 1.4110258963678801,
+          "window_uniformity_percent": 85.8897410363212,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.262225842409222,
           "worst_broad_undershoot_deg": 12.36549032020428
         }
@@ -3956,19 +4555,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.6662933155714228,
-          "pattern_fit_percent": 0.06433191211000633,
-          "pattern_stability_percent": 0.5699753276265085,
-          "waist_control_percent": 0.16302780459486144
+          "coverage_match_percent": 0.1336460225356575,
+          "coverage_smoothness_percent": 1.631877277230771,
+          "waist_stability_percent": 0.2884203735823547,
+          "window_uniformity_percent": 0.9350415745832663
         },
-        "maximum_delta_points": 0.6662933155714228,
+        "maximum_delta_points": 1.631877277230771,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 86.99188713715398,
         "coverage_smoothness_percent": 86.32754592531408,
-        "waist_stability_percent": 72.5142661201401
+        "waist_stability_percent": 72.5142661201401,
+        "window_uniformity_percent": 85.88454183496611
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -4025,6 +4625,14 @@
           "weighted_overshoot_error_percent": 2.107163851147724,
           "weighted_total_error_percent": 13.096401626881558,
           "weighted_undershoot_error_percent": 12.925772552424176,
+          "window_p90_deviation_db": 2.1623635574451,
+          "window_peak_deviation_db": 3.070414980752702,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3812236827161959,
+          "window_rms_deviation_db": 1.4123073080974688,
+          "window_uniformity_percent": 85.87692691902531,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.3485731696683345,
           "worst_broad_undershoot_deg": 12.313954358217703
         },
@@ -4064,6 +4672,14 @@
           "weighted_overshoot_error_percent": 2.1110568606130795,
           "weighted_total_error_percent": 13.10342818386149,
           "weighted_undershoot_error_percent": 12.932256922164594,
+          "window_p90_deviation_db": 2.163267578836293,
+          "window_peak_deviation_db": 3.0724393018364715,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3812064889967222,
+          "window_rms_deviation_db": 1.4129434996691383,
+          "window_uniformity_percent": 85.87056500330861,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.355893876450629,
           "worst_broad_undershoot_deg": 12.319905802888236
         },
@@ -4105,6 +4721,14 @@
           "weighted_overshoot_error_percent": 2.1032636359776355,
           "weighted_total_error_percent": 13.089371297948432,
           "weighted_undershoot_error_percent": 12.91928492808833,
+          "window_p90_deviation_db": 2.1614591579507163,
+          "window_peak_deviation_db": 3.0683893241555653,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3812408764356698,
+          "window_rms_deviation_db": 1.4116708298161316,
+          "window_uniformity_percent": 85.88329170183869,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.34125246288604,
           "worst_broad_undershoot_deg": 12.30800291354717
         }
@@ -4122,19 +4746,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.6543102690308586,
-          "pattern_fit_percent": 0.06346283799666708,
-          "pattern_stability_percent": 0.5815778395015769,
-          "waist_control_percent": 0.15896563303029154
+          "coverage_match_percent": 0.13447729829259458,
+          "coverage_smoothness_percent": 1.6689682508969383,
+          "waist_stability_percent": 0.27006549375944644,
+          "window_uniformity_percent": 0.9749880822813992
         },
-        "maximum_delta_points": 0.6543102690308586,
+        "maximum_delta_points": 1.6689682508969383,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 86.90359837311844,
         "coverage_smoothness_percent": 86.48428515570811,
-        "waist_stability_percent": 72.63565378575348
+        "waist_stability_percent": 72.63565378575348,
+        "window_uniformity_percent": 85.87692691902531
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -4191,6 +4816,14 @@
           "weighted_overshoot_error_percent": 2.125572215148291,
           "weighted_total_error_percent": 13.218620387613575,
           "weighted_undershoot_error_percent": 13.04660368486844,
+          "window_p90_deviation_db": 2.1792074614581147,
+          "window_peak_deviation_db": 3.224294735319623,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3768094831544386,
+          "window_rms_deviation_db": 1.427829512380922,
+          "window_uniformity_percent": 85.72170487619078,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.373184149434447,
           "worst_broad_undershoot_deg": 12.303095872267683
         },
@@ -4230,6 +4863,14 @@
           "weighted_overshoot_error_percent": 2.126662830643044,
           "weighted_total_error_percent": 13.216856866978501,
           "weighted_undershoot_error_percent": 13.044639153574087,
+          "window_p90_deviation_db": 2.178758587336484,
+          "window_peak_deviation_db": 3.226190106863118,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3767535663666406,
+          "window_rms_deviation_db": 1.4279217000835813,
+          "window_uniformity_percent": 85.72078299916419,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.373478725607228,
           "worst_broad_undershoot_deg": 12.299770782814257
         },
@@ -4271,6 +4912,14 @@
           "weighted_overshoot_error_percent": 2.1244810397793956,
           "weighted_total_error_percent": 13.220383673005474,
           "weighted_undershoot_error_percent": 13.048567920392165,
+          "window_p90_deviation_db": 2.179656243139493,
+          "window_peak_deviation_db": 3.222398248944134,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3768653999422367,
+          "window_rms_deviation_db": 1.4277373187257862,
+          "window_uniformity_percent": 85.72262681274213,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.372889573261666,
           "worst_broad_undershoot_deg": 12.306420961721109
         }
@@ -4288,19 +4937,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.6363625735026801,
-          "pattern_fit_percent": 0.06338137292928536,
-          "pattern_stability_percent": 0.5868937334688553,
-          "waist_control_percent": 0.15757427382813205
+          "coverage_match_percent": 0.13508323708782655,
+          "coverage_smoothness_percent": 1.689963561852295,
+          "waist_stability_percent": 0.2471231662758271,
+          "window_uniformity_percent": 1.001762126191423
         },
-        "maximum_delta_points": 0.6363625735026801,
+        "maximum_delta_points": 1.689963561852295,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 86.78137961238643,
         "coverage_smoothness_percent": 86.55655627392824,
-        "waist_stability_percent": 72.65978595201241
+        "waist_stability_percent": 72.65978595201241,
+        "window_uniformity_percent": 85.72170487619078
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -4357,6 +5007,14 @@
           "weighted_overshoot_error_percent": 2.2227621392112704,
           "weighted_total_error_percent": 13.337257476552448,
           "weighted_undershoot_error_percent": 13.150732506911663,
+          "window_p90_deviation_db": 2.197790376066779,
+          "window_peak_deviation_db": 3.351340889975141,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3715144820325533,
+          "window_rms_deviation_db": 1.4506232407954591,
+          "window_uniformity_percent": 85.4937675920454,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.4308756305023955,
           "worst_broad_undershoot_deg": 12.287194282676555
         },
@@ -4396,6 +5054,14 @@
           "weighted_overshoot_error_percent": 2.222803790108349,
           "weighted_total_error_percent": 13.339743245792793,
           "weighted_undershoot_error_percent": 13.153246488010264,
+          "window_p90_deviation_db": 2.1987157048363097,
+          "window_peak_deviation_db": 3.352571379241626,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3717865369604012,
+          "window_rms_deviation_db": 1.4508342582599967,
+          "window_uniformity_percent": 85.49165741740003,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.437365247039629,
           "worst_broad_undershoot_deg": 12.28739589301572
         },
@@ -4437,6 +5103,14 @@
           "weighted_overshoot_error_percent": 2.2227204875337083,
           "weighted_total_error_percent": 13.33477124393343,
           "weighted_undershoot_error_percent": 13.148218045131888,
+          "window_p90_deviation_db": 2.196864657544856,
+          "window_peak_deviation_db": 3.3501099487522263,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3712424271047055,
+          "window_rms_deviation_db": 1.4504121926304283,
+          "window_uniformity_percent": 85.49587807369572,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.424386013965162,
           "worst_broad_undershoot_deg": 12.28699267233739
         }
@@ -4454,19 +5128,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.6343407458826249,
-          "pattern_fit_percent": 0.06477191625155854,
-          "pattern_stability_percent": 0.5854362764671208,
-          "waist_control_percent": 0.1552417278716689
+          "coverage_match_percent": 0.1370688578809478,
+          "coverage_smoothness_percent": 1.69108418976667,
+          "waist_stability_percent": 0.23310514585793385,
+          "window_uniformity_percent": 1.0243082662968135
         },
-        "maximum_delta_points": 0.6343407458826249,
+        "maximum_delta_points": 1.69108418976667,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 86.66274252344755,
         "coverage_smoothness_percent": 86.53629184004944,
-        "waist_stability_percent": 72.6951238125987
+        "waist_stability_percent": 72.6951238125987,
+        "window_uniformity_percent": 85.4937675920454
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -4523,6 +5198,14 @@
           "weighted_overshoot_error_percent": 7.6948122793141716,
           "weighted_total_error_percent": 14.427364917161318,
           "weighted_undershoot_error_percent": 12.204045330916017,
+          "window_p90_deviation_db": 3.144171422826722,
+          "window_peak_deviation_db": 6.567505549215174,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3009028869984698,
+          "window_rms_deviation_db": 2.204573426077765,
+          "window_uniformity_percent": 77.95426573922235,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 9.865163480521833,
           "worst_broad_undershoot_deg": 13.102566452939449
         },
@@ -4562,6 +5245,14 @@
           "weighted_overshoot_error_percent": 7.717288281147185,
           "weighted_total_error_percent": 14.4329673956051,
           "weighted_undershoot_error_percent": 12.196475287076517,
+          "window_p90_deviation_db": 3.1406537930264493,
+          "window_peak_deviation_db": 6.5630978459303595,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3010001828272615,
+          "window_rms_deviation_db": 2.2029741115692625,
+          "window_uniformity_percent": 77.97025888430738,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 9.893542836109184,
           "worst_broad_undershoot_deg": 13.094754050027483
         },
@@ -4603,6 +5294,14 @@
           "weighted_overshoot_error_percent": 7.672270434065568,
           "weighted_total_error_percent": 14.421760262300666,
           "weighted_undershoot_error_percent": 12.211610682045096,
+          "window_p90_deviation_db": 3.147685121575696,
+          "window_peak_deviation_db": 6.5719102963056715,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.300805591169678,
+          "window_rms_deviation_db": 2.2061715811994604,
+          "window_uniformity_percent": 77.9382841880054,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 9.836784124934482,
           "worst_broad_undershoot_deg": 13.110378855851415
         }
@@ -4620,19 +5319,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.29297211255074274,
-          "pattern_fit_percent": 0.05809103077321254,
-          "pattern_stability_percent": 0.5457229097206664,
-          "waist_control_percent": 0.14207217278666917
+          "coverage_match_percent": 0.1180748593836114,
+          "coverage_smoothness_percent": 1.4874428876699426,
+          "waist_stability_percent": 0.4283497298784056,
+          "window_uniformity_percent": 1.0489459973755402
         },
-        "maximum_delta_points": 0.5457229097206664,
+        "maximum_delta_points": 1.4874428876699426,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 85.57263508283869,
         "coverage_smoothness_percent": 78.38565024711252,
-        "waist_stability_percent": 70.88318048441964
+        "waist_stability_percent": 70.88318048441964,
+        "window_uniformity_percent": 77.95426573922235
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -4689,6 +5389,14 @@
           "weighted_overshoot_error_percent": 4.622958908601949,
           "weighted_total_error_percent": 12.269076505476743,
           "weighted_undershoot_error_percent": 11.364791649063315,
+          "window_p90_deviation_db": 2.4231646184000057,
+          "window_peak_deviation_db": 4.37140265202407,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.4526590066823841,
+          "window_rms_deviation_db": 1.5982126063770608,
+          "window_uniformity_percent": 84.01787393622939,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.9631718975912555,
           "worst_broad_undershoot_deg": 11.88816250851438
         },
@@ -4728,6 +5436,14 @@
           "weighted_overshoot_error_percent": 4.63389291473328,
           "weighted_total_error_percent": 12.272942976650183,
           "weighted_undershoot_error_percent": 11.364513441537733,
+          "window_p90_deviation_db": 2.421890952291523,
+          "window_peak_deviation_db": 4.369572483622329,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.4531126349757706,
+          "window_rms_deviation_db": 1.597605029351347,
+          "window_uniformity_percent": 84.02394970648653,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.967442908711966,
           "worst_broad_undershoot_deg": 11.886679202802398
         },
@@ -4769,6 +5485,14 @@
           "weighted_overshoot_error_percent": 4.611998980488716,
           "weighted_total_error_percent": 12.265208815441166,
           "weighted_undershoot_error_percent": 11.365069849778607,
+          "window_p90_deviation_db": 2.4244376153944964,
+          "window_peak_deviation_db": 4.373232054512628,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.4522053783889974,
+          "window_rms_deviation_db": 1.5988199525138524,
+          "window_uniformity_percent": 84.01180047486147,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 6.958900886470545,
           "worst_broad_undershoot_deg": 11.889645814226363
         }
@@ -4786,19 +5510,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.6843774190704721,
-          "pattern_fit_percent": 0.01952648658460987,
-          "pattern_stability_percent": 0.5190346179728635,
-          "waist_control_percent": 0.17310214946331826
+          "coverage_match_percent": 0.10696600273782053,
+          "coverage_smoothness_percent": 1.428802716750127,
+          "waist_stability_percent": 0.46051317923613055,
+          "window_uniformity_percent": 0.7505661370750545
         },
-        "maximum_delta_points": 0.6843774190704721,
+        "maximum_delta_points": 1.428802716750127,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 87.73092349452325,
         "coverage_smoothness_percent": 83.07225274483403,
-        "waist_stability_percent": 73.58186088655192
+        "waist_stability_percent": 73.58186088655192,
+        "window_uniformity_percent": 84.01787393622939
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -4855,6 +5580,14 @@
           "weighted_overshoot_error_percent": 2.93200331636057,
           "weighted_total_error_percent": 11.471255443631804,
           "weighted_undershoot_error_percent": 11.090223532729308,
+          "window_p90_deviation_db": 1.9351439984386423,
+          "window_peak_deviation_db": 3.270880891996828,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5339644064830131,
+          "window_rms_deviation_db": 1.3007660854849996,
+          "window_uniformity_percent": 86.99233914515,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.209843269608239,
           "worst_broad_undershoot_deg": 11.23086854074894
         },
@@ -4894,6 +5627,14 @@
           "weighted_overshoot_error_percent": 2.9347918539333233,
           "weighted_total_error_percent": 11.473053534320767,
           "weighted_undershoot_error_percent": 11.091345913615573,
+          "window_p90_deviation_db": 1.9341404495438816,
+          "window_peak_deviation_db": 3.2687671843120825,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5343362104122196,
+          "window_rms_deviation_db": 1.3001539614722575,
+          "window_uniformity_percent": 86.99846038527743,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.214010103419618,
           "worst_broad_undershoot_deg": 11.229662277058779
         },
@@ -4935,6 +5676,14 @@
           "weighted_overshoot_error_percent": 2.929212124170144,
           "weighted_total_error_percent": 11.46945707105242,
           "weighted_undershoot_error_percent": 11.08910103824151,
+          "window_p90_deviation_db": 1.9361470271713312,
+          "window_peak_deviation_db": 3.272993234643846,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5335926025538067,
+          "window_rms_deviation_db": 1.3013779215754102,
+          "window_uniformity_percent": 86.9862207842459,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.20567643579686,
           "worst_broad_undershoot_deg": 11.232074804439101
         }
@@ -4952,19 +5701,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.9964041670686328,
-          "pattern_fit_percent": 0.005668436322750381,
-          "pattern_stability_percent": 0.5207596503239245,
-          "waist_control_percent": 0.18124213408026435
+          "coverage_match_percent": 0.08767666726703283,
+          "coverage_smoothness_percent": 1.4443219561927378,
+          "waist_stability_percent": 0.4496563699643019,
+          "window_uniformity_percent": 0.7132657868391306
         },
-        "maximum_delta_points": 0.9964041670686328,
+        "maximum_delta_points": 1.4443219561927378,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 88.5287445563682,
         "coverage_smoothness_percent": 85.02338451981818,
-        "waist_stability_percent": 75.04251420993562
+        "waist_stability_percent": 75.04251420993562,
+        "window_uniformity_percent": 86.99233914515
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -5021,6 +5771,14 @@
           "weighted_overshoot_error_percent": 2.032468543217712,
           "weighted_total_error_percent": 11.121182442033515,
           "weighted_undershoot_error_percent": 10.933881768604643,
+          "window_p90_deviation_db": 1.752291632110505,
+          "window_peak_deviation_db": 2.5496733262202405,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.573639115327805,
+          "window_rms_deviation_db": 1.1352443996386687,
+          "window_uniformity_percent": 88.64755600361332,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.39869166971139,
           "worst_broad_undershoot_deg": 10.782273453017247
         },
@@ -5060,6 +5818,14 @@
           "weighted_overshoot_error_percent": 2.037094963288194,
           "weighted_total_error_percent": 11.128473935575094,
           "weighted_undershoot_error_percent": 10.94043766242101,
+          "window_p90_deviation_db": 1.7522382228060007,
+          "window_peak_deviation_db": 2.5475307813932435,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5738185845911823,
+          "window_rms_deviation_db": 1.135115705746917,
+          "window_uniformity_percent": 88.64884294253083,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.403052717823378,
           "worst_broad_undershoot_deg": 10.787681592805754
         },
@@ -5101,6 +5867,14 @@
           "weighted_overshoot_error_percent": 2.02783156817447,
           "weighted_total_error_percent": 11.113886164758698,
           "weighted_undershoot_error_percent": 10.927321941552277,
+          "window_p90_deviation_db": 1.75234503978716,
+          "window_peak_deviation_db": 2.551814072132196,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5734596460644281,
+          "window_rms_deviation_db": 1.135373078943041,
+          "window_uniformity_percent": 88.64626921056959,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.394330621599401,
           "worst_broad_undershoot_deg": 10.77686531322874
         }
@@ -5118,19 +5892,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 1.2594297636269118,
-          "pattern_fit_percent": 0.012015042999919956,
-          "pattern_stability_percent": 0.5398449705379704,
-          "waist_control_percent": 0.17979839604775805
+          "coverage_match_percent": 0.08892397827870013,
+          "coverage_smoothness_percent": 1.500416633621171,
+          "waist_stability_percent": 0.4296237627584816,
+          "window_uniformity_percent": 0.7603696426183149
         },
-        "maximum_delta_points": 1.2594297636269118,
+        "maximum_delta_points": 1.500416633621171,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 88.87881755796649,
         "coverage_smoothness_percent": 85.99053921860201,
-        "waist_stability_percent": 76.03938931263049
+        "waist_stability_percent": 76.03938931263049,
+        "window_uniformity_percent": 88.64755600361332
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -5187,6 +5962,14 @@
           "weighted_overshoot_error_percent": 1.6645378849824959,
           "weighted_total_error_percent": 11.035111691656068,
           "weighted_undershoot_error_percent": 10.908849787066577,
+          "window_p90_deviation_db": 1.6745642719586575,
+          "window_peak_deviation_db": 2.087413435377281,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5944621136782455,
+          "window_rms_deviation_db": 1.052319212182172,
+          "window_uniformity_percent": 89.47680787817828,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.525002455195288,
           "worst_broad_undershoot_deg": 10.504483747417424
         },
@@ -5226,6 +6009,14 @@
           "weighted_overshoot_error_percent": 1.6677300435794855,
           "weighted_total_error_percent": 11.039962476262428,
           "weighted_undershoot_error_percent": 10.913269353361752,
+          "window_p90_deviation_db": 1.6738099014961914,
+          "window_peak_deviation_db": 2.084163528720617,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5947452085990745,
+          "window_rms_deviation_db": 1.0516434718570948,
+          "window_uniformity_percent": 89.48356528142905,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.526163294421593,
           "worst_broad_undershoot_deg": 10.50724846557857
         },
@@ -5267,6 +6058,14 @@
           "weighted_overshoot_error_percent": 1.6613395928666632,
           "weighted_total_error_percent": 11.030258773816982,
           "weighted_undershoot_error_percent": 10.90442842952074,
+          "window_p90_deviation_db": 1.6753183027395624,
+          "window_peak_deviation_db": 2.090658290093814,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5941790187574167,
+          "window_rms_deviation_db": 1.0529945188631185,
+          "window_uniformity_percent": 89.47005481136881,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.523841615968983,
           "worst_broad_undershoot_deg": 10.501719029256279
         }
@@ -5284,19 +6083,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 1.4213605282703838,
-          "pattern_fit_percent": 0.019707461500303225,
-          "pattern_stability_percent": 0.5618317833150428,
-          "waist_control_percent": 0.17358025329014026
+          "coverage_match_percent": 0.0931570019857304,
+          "coverage_smoothness_percent": 1.5634535963316694,
+          "waist_stability_percent": 0.40206425315372485,
+          "window_uniformity_percent": 0.8277428764935166
         },
-        "maximum_delta_points": 1.4213605282703838,
+        "maximum_delta_points": 1.5634535963316694,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 88.96488830834393,
         "coverage_smoothness_percent": 86.53098246970764,
-        "waist_stability_percent": 76.6567019750085
+        "waist_stability_percent": 76.6567019750085,
+        "window_uniformity_percent": 89.47680787817828
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -5353,6 +6153,14 @@
           "weighted_overshoot_error_percent": 1.6054477599387391,
           "weighted_total_error_percent": 11.012966219888801,
           "weighted_undershoot_error_percent": 10.895318373068292,
+          "window_p90_deviation_db": 1.6071855541548805,
+          "window_peak_deviation_db": 2.2979533392471923,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6016065561029151,
+          "window_rms_deviation_db": 1.0206773704351286,
+          "window_uniformity_percent": 89.79322629564871,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.623806073762186,
           "worst_broad_undershoot_deg": 10.291644977960917
         },
@@ -5392,6 +6200,14 @@
           "weighted_overshoot_error_percent": 1.6081397096495353,
           "weighted_total_error_percent": 11.020733717434704,
           "weighted_undershoot_error_percent": 10.90277296584912,
+          "window_p90_deviation_db": 1.6069736758960498,
+          "window_peak_deviation_db": 2.2984858479875747,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6016630281329396,
+          "window_rms_deviation_db": 1.0209276090955532,
+          "window_uniformity_percent": 89.79072390904447,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.6310300873889645,
           "worst_broad_undershoot_deg": 10.30031185063661
         },
@@ -5433,6 +6249,14 @@
           "weighted_overshoot_error_percent": 1.6027512888882476,
           "weighted_total_error_percent": 11.005193240021798,
           "weighted_undershoot_error_percent": 10.887858676350854,
+          "window_p90_deviation_db": 1.607397404485088,
+          "window_peak_deviation_db": 2.2974207070790245,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.601550084072891,
+          "window_rms_deviation_db": 1.0204270704088434,
+          "window_uniformity_percent": 89.79572929591157,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.616582060135407,
           "worst_broad_undershoot_deg": 10.282978105285224
         }
@@ -5450,19 +6274,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 1.5494293881111787,
-          "pattern_fit_percent": 0.025956137927337863,
-          "pattern_stability_percent": 0.581374993202985,
-          "waist_control_percent": 0.16601933035013872
+          "coverage_match_percent": 0.09919683677331648,
+          "coverage_smoothness_percent": 1.621235768787983,
+          "waist_stability_percent": 0.38312423741118096,
+          "window_uniformity_percent": 0.890038454494217
         },
-        "maximum_delta_points": 1.5494293881111787,
+        "maximum_delta_points": 1.621235768787983,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 88.9870337801112,
         "coverage_smoothness_percent": 86.80921574376075,
-        "waist_stability_percent": 77.12966971719055
+        "waist_stability_percent": 77.12966971719055,
+        "window_uniformity_percent": 89.79322629564871
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -5519,6 +6344,14 @@
           "weighted_overshoot_error_percent": 1.630426647459651,
           "weighted_total_error_percent": 11.07494142949057,
           "weighted_undershoot_error_percent": 10.954270245611987,
+          "window_p90_deviation_db": 1.5549025668357193,
+          "window_peak_deviation_db": 2.48278849162627,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.601408008744709,
+          "window_rms_deviation_db": 1.0218567573626354,
+          "window_uniformity_percent": 89.78143242637364,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.693993525662091,
           "worst_broad_undershoot_deg": 10.145152721586122
         },
@@ -5558,6 +6391,14 @@
           "weighted_overshoot_error_percent": 1.6324287921165987,
           "weighted_total_error_percent": 11.084824236548572,
           "weighted_undershoot_error_percent": 10.963963908817075,
+          "window_p90_deviation_db": 1.555571893438102,
+          "window_peak_deviation_db": 2.482978136893608,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6018690944321998,
+          "window_rms_deviation_db": 1.0218977316298101,
+          "window_uniformity_percent": 89.7810226837019,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.699972897007548,
           "worst_broad_undershoot_deg": 10.152832438514501
         },
@@ -5599,6 +6440,14 @@
           "weighted_overshoot_error_percent": 1.6284220411680064,
           "weighted_total_error_percent": 11.06504979555531,
           "weighted_undershoot_error_percent": 10.944567996680219,
+          "window_p90_deviation_db": 1.554232951989506,
+          "window_peak_deviation_db": 2.4825988318719654,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.600946923057218,
+          "window_rms_deviation_db": 1.0218157814524143,
+          "window_uniformity_percent": 89.78184218547585,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.688014154316633,
           "worst_broad_undershoot_deg": 10.137473004657743
         }
@@ -5616,19 +6465,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 1.4183774860663618,
-          "pattern_fit_percent": 0.025584067854239834,
-          "pattern_stability_percent": 0.590760372003956,
-          "waist_control_percent": 0.15838596051231946
+          "coverage_match_percent": 0.09913402136879768,
+          "coverage_smoothness_percent": 1.6510882815216519,
+          "waist_stability_percent": 0.36571110443095733,
+          "window_uniformity_percent": 0.9384796143280596
         },
-        "maximum_delta_points": 1.4183774860663618,
+        "maximum_delta_points": 1.6510882815216519,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 88.92505857050944,
         "coverage_smoothness_percent": 86.93752703214722,
-        "waist_stability_percent": 77.45520971489643
+        "waist_stability_percent": 77.45520971489643,
+        "window_uniformity_percent": 89.78143242637364
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -5685,6 +6535,14 @@
           "weighted_overshoot_error_percent": 1.6552273592061493,
           "weighted_total_error_percent": 11.15349808558894,
           "weighted_undershoot_error_percent": 11.029992834747063,
+          "window_p90_deviation_db": 1.5444759426810462,
+          "window_peak_deviation_db": 2.6764910430882827,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5980208647293317,
+          "window_rms_deviation_db": 1.0430510372755204,
+          "window_uniformity_percent": 89.56948962724479,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.756191656350694,
           "worst_broad_undershoot_deg": 10.028665098951166
         },
@@ -5724,6 +6582,14 @@
           "weighted_overshoot_error_percent": 1.6554754753183794,
           "weighted_total_error_percent": 11.16015607490388,
           "weighted_undershoot_error_percent": 11.03668811586308,
+          "window_p90_deviation_db": 1.5460423631066256,
+          "window_peak_deviation_db": 2.6745819569179905,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5981434948075786,
+          "window_rms_deviation_db": 1.0430133714270868,
+          "window_uniformity_percent": 89.56986628572913,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.7582023000924565,
           "worst_broad_undershoot_deg": 10.03866395007509
         },
@@ -5765,6 +6631,14 @@
           "weighted_overshoot_error_percent": 1.654979205896108,
           "weighted_total_error_percent": 11.146836119467187,
           "weighted_undershoot_error_percent": 11.023293487080426,
+          "window_p90_deviation_db": 1.5429079319650585,
+          "window_peak_deviation_db": 2.6783987685168054,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.597898234651085,
+          "window_rms_deviation_db": 1.0430887017638435,
+          "window_uniformity_percent": 89.56911298236156,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.754181012608932,
           "worst_broad_undershoot_deg": 10.018666247827241
         }
@@ -5782,19 +6656,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 1.396120067444997,
-          "pattern_fit_percent": 0.028112389933156123,
-          "pattern_stability_percent": 0.6024216752166041,
-          "waist_control_percent": 0.15556364529446398
+          "coverage_match_percent": 0.10288066074285496,
+          "coverage_smoothness_percent": 1.685613608702269,
+          "waist_stability_percent": 0.3507675236848655,
+          "window_uniformity_percent": 0.9814983397282475
         },
-        "maximum_delta_points": 1.396120067444997,
+        "maximum_delta_points": 1.685613608702269,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 88.84650191441106,
         "coverage_smoothness_percent": 86.95417250404238,
-        "waist_stability_percent": 77.71406648108263
+        "waist_stability_percent": 77.71406648108263,
+        "window_uniformity_percent": 89.56948962724479
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -5851,6 +6726,14 @@
           "weighted_overshoot_error_percent": 1.6727054635845053,
           "weighted_total_error_percent": 11.26283117619021,
           "weighted_undershoot_error_percent": 11.1379272100089,
+          "window_p90_deviation_db": 1.5241483716137059,
+          "window_peak_deviation_db": 2.8376789559929168,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.592976024630211,
+          "window_rms_deviation_db": 1.0738470820595265,
+          "window_uniformity_percent": 89.26152917940473,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.789937614528611,
           "worst_broad_undershoot_deg": 9.947274795350879
         },
@@ -5890,6 +6773,14 @@
           "weighted_overshoot_error_percent": 1.6741465603586327,
           "weighted_total_error_percent": 11.2681277802633,
           "weighted_undershoot_error_percent": 11.143066766684157,
+          "window_p90_deviation_db": 1.5238749437653274,
+          "window_peak_deviation_db": 2.837220884713995,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5935342656219789,
+          "window_rms_deviation_db": 1.0737546931626314,
+          "window_uniformity_percent": 89.26245306837369,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.794792804986386,
           "worst_broad_undershoot_deg": 9.948580700415093
         },
@@ -5931,6 +6822,14 @@
           "weighted_overshoot_error_percent": 1.6712631241819074,
           "weighted_total_error_percent": 11.25753208009565,
           "weighted_undershoot_error_percent": 11.132785280608461,
+          "window_p90_deviation_db": 1.5244217504187096,
+          "window_peak_deviation_db": 2.8381369533397853,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.592417783638443,
+          "window_rms_deviation_db": 1.0739394630083867,
+          "window_uniformity_percent": 89.26060536991614,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.785082424070836,
           "worst_broad_undershoot_deg": 9.945968890286665
         }
@@ -5948,19 +6847,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 1.4092502273168606,
-          "pattern_fit_percent": 0.03160173520399212,
-          "pattern_stability_percent": 0.6118692818168512,
-          "waist_control_percent": 0.1494521156338493
+          "coverage_match_percent": 0.10789552611230135,
+          "coverage_smoothness_percent": 1.7152863021048148,
+          "waist_stability_percent": 0.32665517894295704,
+          "window_uniformity_percent": 1.0064517565806455
         },
-        "maximum_delta_points": 1.4092502273168606,
+        "maximum_delta_points": 1.7152863021048148,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 88.7371688238098,
         "coverage_smoothness_percent": 86.92031672659571,
-        "waist_stability_percent": 77.89494470872833
+        "waist_stability_percent": 77.89494470872833,
+        "window_uniformity_percent": 89.26152917940473
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -6017,6 +6917,14 @@
           "weighted_overshoot_error_percent": 7.1809414400118525,
           "weighted_total_error_percent": 13.43983306682527,
           "weighted_undershoot_error_percent": 11.360598263262832,
+          "window_p90_deviation_db": 3.188650347780023,
+          "window_peak_deviation_db": 5.9605371204291195,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3918831374475176,
+          "window_rms_deviation_db": 2.005571294207406,
+          "window_uniformity_percent": 79.94428705792593,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 9.246267490580877,
           "worst_broad_undershoot_deg": 12.28201798574322
         },
@@ -6056,6 +6964,14 @@
           "weighted_overshoot_error_percent": 7.194207052371436,
           "weighted_total_error_percent": 13.444107522906295,
           "weighted_undershoot_error_percent": 11.357262521183298,
+          "window_p90_deviation_db": 3.1856996266693223,
+          "window_peak_deviation_db": 5.959708069415208,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3917278582680863,
+          "window_rms_deviation_db": 2.0051340308080334,
+          "window_uniformity_percent": 79.94865969191966,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 9.260005570954561,
           "worst_broad_undershoot_deg": 12.28236046045452
         },
@@ -6097,6 +7013,14 @@
           "weighted_overshoot_error_percent": 7.167651276210925,
           "weighted_total_error_percent": 13.435557250847255,
           "weighted_undershoot_error_percent": 11.36393302617655,
+          "window_p90_deviation_db": 3.1915983408684525,
+          "window_peak_deviation_db": 5.961366056146375,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.3920384166269488,
+          "window_rms_deviation_db": 2.006008462293484,
+          "window_uniformity_percent": 79.93991537706516,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 9.232529410207192,
           "worst_broad_undershoot_deg": 12.28167551103192
         }
@@ -6114,19 +7038,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 0.2903599002736712,
-          "pattern_fit_percent": 0.017843562620001308,
-          "pattern_stability_percent": 0.6107646178896005,
-          "waist_control_percent": 0.1581270720654402
+          "coverage_match_percent": 0.12028789739883905,
+          "coverage_smoothness_percent": 1.6598608033964553,
+          "waist_stability_percent": 0.506004779386771,
+          "window_uniformity_percent": 0.9452853700800432
         },
-        "maximum_delta_points": 0.6107646178896005,
+        "maximum_delta_points": 1.6598608033964553,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 86.56016693317473,
         "coverage_smoothness_percent": 79.11278971199782,
-        "waist_stability_percent": 72.70662668773768
+        "waist_stability_percent": 72.70662668773768,
+        "window_uniformity_percent": 79.94428705792593
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -6183,6 +7108,14 @@
           "weighted_overshoot_error_percent": 4.279819980531551,
           "weighted_total_error_percent": 11.405200240384099,
           "weighted_undershoot_error_percent": 10.571742214862242,
+          "window_p90_deviation_db": 2.4190627731237107,
+          "window_peak_deviation_db": 3.6588992036404453,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5648292094107554,
+          "window_rms_deviation_db": 1.4077963109736336,
+          "window_uniformity_percent": 85.92203689026367,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.2152128887370495,
           "worst_broad_undershoot_deg": 10.700216016655602
         },
@@ -6222,6 +7155,14 @@
           "weighted_overshoot_error_percent": 4.275834699626683,
           "weighted_total_error_percent": 11.40438815253642,
           "weighted_undershoot_error_percent": 10.572478742243064,
+          "window_p90_deviation_db": 2.4153888516751336,
+          "window_peak_deviation_db": 3.6562568319028346,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5655733197527464,
+          "window_rms_deviation_db": 1.406409932791201,
+          "window_uniformity_percent": 85.935900672088,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.219602119464533,
           "worst_broad_undershoot_deg": 10.690744752011753
         },
@@ -6263,6 +7204,14 @@
           "weighted_overshoot_error_percent": 4.28380155387508,
           "weighted_total_error_percent": 11.406012270412562,
           "weighted_undershoot_error_percent": 10.571005636164394,
+          "window_p90_deviation_db": 2.4227311233047373,
+          "window_peak_deviation_db": 3.661539668495375,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5640850990687645,
+          "window_rms_deviation_db": 1.40918132521269,
+          "window_uniformity_percent": 85.9081867478731,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.210823658009566,
           "worst_broad_undershoot_deg": 10.709687281299452
         }
@@ -6280,19 +7229,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 1.058020328054198,
-          "pattern_fit_percent": 0.00205558603701661,
-          "pattern_stability_percent": 0.5867970448292397,
-          "waist_control_percent": 0.22105431235266337
+          "coverage_match_percent": 0.1046545112905477,
+          "coverage_smoothness_percent": 1.5924656478768355,
+          "waist_stability_percent": 0.5565369450019375,
+          "window_uniformity_percent": 0.6151728548474438
         },
-        "maximum_delta_points": 1.058020328054198,
+        "maximum_delta_points": 1.5924656478768355,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 88.5947997596159,
         "coverage_smoothness_percent": 83.2121132468805,
-        "waist_stability_percent": 76.22173287025386
+        "waist_stability_percent": 76.22173287025386,
+        "window_uniformity_percent": 85.92203689026367
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -6349,6 +7299,14 @@
           "weighted_overshoot_error_percent": 2.6747943665123737,
           "weighted_total_error_percent": 10.816686236132,
           "weighted_undershoot_error_percent": 10.480752655596884,
+          "window_p90_deviation_db": 1.9822272345705965,
+          "window_peak_deviation_db": 2.609157217429914,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6697274515392646,
+          "window_rms_deviation_db": 1.115111067478174,
+          "window_uniformity_percent": 88.84888932521827,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.51720797584403,
           "worst_broad_undershoot_deg": 9.780136587721309
         },
@@ -6388,6 +7346,14 @@
           "weighted_overshoot_error_percent": 2.682283619548965,
           "weighted_total_error_percent": 10.820725587846056,
           "weighted_undershoot_error_percent": 10.483008004946178,
+          "window_p90_deviation_db": 1.979935759566808,
+          "window_peak_deviation_db": 2.606256520463663,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6698420453942333,
+          "window_rms_deviation_db": 1.114136526420171,
+          "window_uniformity_percent": 88.85863473579829,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.517921126309453,
           "worst_broad_undershoot_deg": 9.775480632069417
         },
@@ -6429,6 +7395,14 @@
           "weighted_overshoot_error_percent": 2.667284085085795,
           "weighted_total_error_percent": 10.812645375410614,
           "weighted_undershoot_error_percent": 10.47849682081531,
+          "window_p90_deviation_db": 1.984516063662725,
+          "window_peak_deviation_db": 2.6120546931628095,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.669612857684296,
+          "window_rms_deviation_db": 1.1160847575883386,
+          "window_uniformity_percent": 88.83915242411662,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.516494825378608,
           "worst_broad_undershoot_deg": 9.7847925433732
         }
@@ -6446,19 +7420,20 @@
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 1.641419395219586,
-          "pattern_fit_percent": 0.04420163584198633,
-          "pattern_stability_percent": 0.6095494035445483,
-          "waist_control_percent": 0.2263615555276317
+          "coverage_match_percent": 0.11668574007455845,
+          "coverage_smoothness_percent": 1.6433965219523827,
+          "waist_stability_percent": 0.5187523061865846,
+          "window_uniformity_percent": 0.5684334242450149
         },
-        "maximum_delta_points": 1.641419395219586,
+        "maximum_delta_points": 1.6433965219523827,
         "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 89.183313763868,
         "coverage_smoothness_percent": 84.72211939841299,
-        "waist_stability_percent": 78.26636067559102
+        "waist_stability_percent": 78.26636067559102,
+        "window_uniformity_percent": 88.84888932521827
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -6515,6 +7490,14 @@
           "weighted_overshoot_error_percent": 1.9015538497321545,
           "weighted_total_error_percent": 10.658618647618185,
           "weighted_undershoot_error_percent": 10.48762339292954,
+          "window_p90_deviation_db": 1.7119253764614413,
+          "window_peak_deviation_db": 2.095269057068662,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.732008012222758,
+          "window_rms_deviation_db": 0.9545571343212252,
+          "window_uniformity_percent": 90.45442865678774,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.710815372684394,
           "worst_broad_undershoot_deg": 9.174007012685315
         },
@@ -6554,6 +7537,14 @@
           "weighted_overshoot_error_percent": 1.9009948361076585,
           "weighted_total_error_percent": 10.663716510181883,
           "weighted_undershoot_error_percent": 10.492905624402503,
+          "window_p90_deviation_db": 1.7105117949224622,
+          "window_peak_deviation_db": 2.0938904022325024,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7324290478652877,
+          "window_rms_deviation_db": 0.9541084168082914,
+          "window_uniformity_percent": 90.45891583191708,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.711887505618968,
           "worst_broad_undershoot_deg": 9.169202291272939
         },
@@ -6595,6 +7586,14 @@
           "weighted_overshoot_error_percent": 1.902112699067637,
           "weighted_total_error_percent": 10.653518345653822,
           "weighted_undershoot_error_percent": 10.482338499649217,
+          "window_p90_deviation_db": 1.7133377917318093,
+          "window_peak_deviation_db": 2.0966468053674197,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7315869765802279,
+          "window_rms_deviation_db": 0.9550056410004472,
+          "window_uniformity_percent": 90.44994358999553,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.70974323974982,
           "worst_broad_undershoot_deg": 9.178811734097692
         }
@@ -6605,26 +7604,27 @@
       "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15134,
       "nearest_candidate_distance": 0.1767766952966369,
-      "pareto": false,
+      "pareto": true,
       "proposal_index": 39,
       "proposal_source": "initial-curated",
       "run_dir": "candidates/candidate-039/bem/project-NumCalc-ed69dabd35fd",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 2.077034966522291,
-          "pattern_fit_percent": 0.08636021146504902,
-          "pattern_stability_percent": 0.6346460171284605,
-          "waist_control_percent": 0.21365385813834337
+          "coverage_match_percent": 0.13767275498189235,
+          "coverage_smoothness_percent": 1.704418674564053,
+          "waist_stability_percent": 0.4874647481336325,
+          "window_uniformity_percent": 0.5918132673683942
         },
-        "maximum_delta_points": 2.077034966522291,
-        "status": "unstable",
+        "maximum_delta_points": 1.704418674564053,
+        "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 89.34138135238182,
         "coverage_smoothness_percent": 85.48981672001253,
-        "waist_stability_percent": 79.61331495360332
+        "waist_stability_percent": 79.61331495360332,
+        "window_uniformity_percent": 90.45442865678774
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -6681,6 +7681,14 @@
           "weighted_overshoot_error_percent": 1.7099317766494757,
           "weighted_total_error_percent": 10.661475417273474,
           "weighted_undershoot_error_percent": 10.523459098240034,
+          "window_p90_deviation_db": 1.4463395080514614,
+          "window_peak_deviation_db": 1.7136806414982475,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7692153924705887,
+          "window_rms_deviation_db": 0.8713841412993587,
+          "window_uniformity_percent": 91.28615858700641,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.836734456769907,
           "worst_broad_undershoot_deg": 8.759679355569698
         },
@@ -6720,6 +7728,14 @@
           "weighted_overshoot_error_percent": 1.7110727607685616,
           "weighted_total_error_percent": 10.665715541482752,
           "weighted_undershoot_error_percent": 10.527569425996798,
+          "window_p90_deviation_db": 1.4456624488664964,
+          "window_peak_deviation_db": 1.7121915338468532,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7692625420884338,
+          "window_rms_deviation_db": 0.8710267204690972,
+          "window_uniformity_percent": 91.28973279530902,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.839081913784042,
           "worst_broad_undershoot_deg": 8.75859707010811
         },
@@ -6761,6 +7777,14 @@
           "weighted_overshoot_error_percent": 1.7087900306787598,
           "weighted_total_error_percent": 10.65723360607369,
           "weighted_undershoot_error_percent": 10.519347164414688,
+          "window_p90_deviation_db": 1.4470162504403365,
+          "window_peak_deviation_db": 1.7151684563082572,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7691682428527435,
+          "window_rms_deviation_db": 0.8717414155842838,
+          "window_uniformity_percent": 91.28258584415717,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.834386999755772,
           "worst_broad_undershoot_deg": 8.760761641031287
         }
@@ -6771,26 +7795,27 @@
       "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15198,
       "nearest_candidate_distance": 0.1767766952966369,
-      "pareto": false,
+      "pareto": true,
       "proposal_index": 40,
       "proposal_source": "initial-curated",
       "run_dir": "candidates/candidate-040/bem/project-NumCalc-580e7fb19684",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 2.4005465599161653,
-          "pattern_fit_percent": 0.11773786396194907,
-          "pattern_stability_percent": 0.6512413230858272,
-          "waist_control_percent": 0.19784665171003724
+          "coverage_match_percent": 0.15681728340473455,
+          "coverage_smoothness_percent": 1.7464034016005314,
+          "waist_stability_percent": 0.45750642971788125,
+          "window_uniformity_percent": 0.6295949470968765
         },
-        "maximum_delta_points": 2.4005465599161653,
-        "status": "unstable",
+        "maximum_delta_points": 1.7464034016005314,
+        "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 89.33852458272652,
         "coverage_smoothness_percent": 85.98107104322555,
-        "waist_stability_percent": 80.53404572793431
+        "waist_stability_percent": 80.53404572793431,
+        "window_uniformity_percent": 91.28615858700641
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -6847,6 +7872,14 @@
           "weighted_overshoot_error_percent": 1.7492099077408692,
           "weighted_total_error_percent": 10.714849251796506,
           "weighted_undershoot_error_percent": 10.57110491800102,
+          "window_p90_deviation_db": 1.3739897812992532,
+          "window_peak_deviation_db": 1.587990306034205,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7904471641789774,
+          "window_rms_deviation_db": 0.8399723456079959,
+          "window_uniformity_percent": 91.60027654392005,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.955779740972524,
           "worst_broad_undershoot_deg": 8.435141578918994
         },
@@ -6886,6 +7919,14 @@
           "weighted_overshoot_error_percent": 1.7492211996101465,
           "weighted_total_error_percent": 10.718630756789215,
           "weighted_undershoot_error_percent": 10.574935957026984,
+          "window_p90_deviation_db": 1.3732961529133418,
+          "window_peak_deviation_db": 1.5866604453233852,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7904863957619361,
+          "window_rms_deviation_db": 0.8397476465295604,
+          "window_uniformity_percent": 91.6025235347044,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.95550213529809,
           "worst_broad_undershoot_deg": 8.431905118307057
         },
@@ -6927,6 +7968,14 @@
           "weighted_overshoot_error_percent": 1.7491986157986976,
           "weighted_total_error_percent": 10.711066411756608,
           "weighted_undershoot_error_percent": 10.567272490077489,
+          "window_p90_deviation_db": 1.3746830596988364,
+          "window_peak_deviation_db": 1.5893190539861446,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7904079325960185,
+          "window_rms_deviation_db": 0.8401969845937689,
+          "window_uniformity_percent": 91.59803015406231,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.956057346646958,
           "worst_broad_undershoot_deg": 8.438378039530932
         }
@@ -6937,26 +7986,27 @@
       "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15232,
       "nearest_candidate_distance": 0.1767766952966369,
-      "pareto": false,
+      "pareto": true,
       "proposal_index": 41,
       "proposal_source": "initial-curated",
       "run_dir": "candidates/candidate-041/bem/project-NumCalc-b3bc3db16b8d",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 2.6135608810141377,
-          "pattern_fit_percent": 0.13450419107394396,
-          "pattern_stability_percent": 0.6658801008104973,
-          "waist_control_percent": 0.18630093096689393
+          "coverage_match_percent": 0.16753595766118679,
+          "coverage_smoothness_percent": 1.785412834298981,
+          "waist_stability_percent": 0.43299379024564644,
+          "window_uniformity_percent": 0.6620287213755347
         },
-        "maximum_delta_points": 2.6135608810141377,
-        "status": "unstable",
+        "maximum_delta_points": 1.785412834298981,
+        "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 89.28515074820349,
         "coverage_smoothness_percent": 86.31346847081672,
-        "waist_stability_percent": 81.25523955596859
+        "waist_stability_percent": 81.25523955596859,
+        "window_uniformity_percent": 91.60027654392005
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7013,6 +8063,14 @@
           "weighted_overshoot_error_percent": 1.7856205239021632,
           "weighted_total_error_percent": 10.799355839199185,
           "weighted_undershoot_error_percent": 10.650711050735762,
+          "window_p90_deviation_db": 1.2431941914538431,
+          "window_peak_deviation_db": 1.7459473924481088,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.8008478187793675,
+          "window_rms_deviation_db": 0.8406583879945174,
+          "window_uniformity_percent": 91.59341612005483,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.039113993018336,
           "worst_broad_undershoot_deg": 8.186778232053062
         },
@@ -7052,6 +8110,14 @@
           "weighted_overshoot_error_percent": 1.785025805682032,
           "weighted_total_error_percent": 10.805578723308965,
           "weighted_undershoot_error_percent": 10.657120362399807,
+          "window_p90_deviation_db": 1.242667842942069,
+          "window_peak_deviation_db": 1.7428767757625263,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.8010901379065065,
+          "window_rms_deviation_db": 0.8401025952824046,
+          "window_uniformity_percent": 91.59897404717596,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.038401151169815,
           "worst_broad_undershoot_deg": 8.187644819432727
         },
@@ -7093,6 +8159,14 @@
           "weighted_overshoot_error_percent": 1.786215044111566,
           "weighted_total_error_percent": 10.793129367225413,
           "weighted_undershoot_error_percent": 10.644297879797106,
+          "window_p90_deviation_db": 1.2437203172123767,
+          "window_peak_deviation_db": 1.7490126182793313,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.8006054996522285,
+          "window_rms_deviation_db": 0.8412138134926516,
+          "window_uniformity_percent": 91.58786186507348,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.039826834866858,
           "worst_broad_undershoot_deg": 8.185911644673396
         }
@@ -7103,26 +8177,27 @@
       "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15134,
       "nearest_candidate_distance": 0.1767766952966369,
-      "pareto": false,
+      "pareto": true,
       "proposal_index": 42,
       "proposal_source": "initial-curated",
       "run_dir": "candidates/candidate-042/bem/project-NumCalc-1f5f6e06fb68",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 2.871248235415294,
-          "pattern_fit_percent": 0.15180483607858264,
-          "pattern_stability_percent": 0.6753336269239014,
-          "waist_control_percent": 0.171617153266169
+          "coverage_match_percent": 0.18026208063997728,
+          "coverage_smoothness_percent": 1.8120990639149852,
+          "waist_stability_percent": 0.41070226964423284,
+          "window_uniformity_percent": 0.6811988782741167
         },
-        "maximum_delta_points": 2.871248235415294,
-        "status": "unstable",
+        "maximum_delta_points": 1.8120990639149852,
+        "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 89.20064416080082,
         "coverage_smoothness_percent": 86.55168496600847,
-        "waist_stability_percent": 81.80715938240424
+        "waist_stability_percent": 81.80715938240424,
+        "window_uniformity_percent": 91.59341612005483
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7179,6 +8254,14 @@
           "weighted_overshoot_error_percent": 1.8224571314957225,
           "weighted_total_error_percent": 10.89058999731794,
           "weighted_undershoot_error_percent": 10.737020093747704,
+          "window_p90_deviation_db": 1.2673236227662519,
+          "window_peak_deviation_db": 1.8883424102875872,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.804592813854526,
+          "window_rms_deviation_db": 0.8634548139858549,
+          "window_uniformity_percent": 91.36545186014145,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.12809129376242,
           "worst_broad_undershoot_deg": 7.981586483320196
         },
@@ -7218,6 +8301,14 @@
           "weighted_overshoot_error_percent": 1.8234693560407238,
           "weighted_total_error_percent": 10.902234379035347,
           "weighted_undershoot_error_percent": 10.748659170473342,
+          "window_p90_deviation_db": 1.2676072283568418,
+          "window_peak_deviation_db": 1.8896211865332684,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.8050815111065988,
+          "window_rms_deviation_db": 0.8637671711263962,
+          "window_uniformity_percent": 91.36232828873604,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.130911401462733,
           "worst_broad_undershoot_deg": 7.979878046663664
         },
@@ -7259,6 +8350,14 @@
           "weighted_overshoot_error_percent": 1.8214443444309965,
           "weighted_total_error_percent": 10.878933151919949,
           "weighted_undershoot_error_percent": 10.725368386404416,
+          "window_p90_deviation_db": 1.2670399536953205,
+          "window_peak_deviation_db": 1.8870627674738514,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.8041041166024532,
+          "window_rms_deviation_db": 0.8631423438083646,
+          "window_uniformity_percent": 91.36857656191636,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.125271186062108,
           "worst_broad_undershoot_deg": 7.9832949199767285
         }
@@ -7269,26 +8368,27 @@
       "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15238,
       "nearest_candidate_distance": 0.1767766952966369,
-      "pareto": false,
+      "pareto": true,
       "proposal_index": 43,
       "proposal_source": "initial-curated",
       "run_dir": "candidates/candidate-043/bem/project-NumCalc-b588122718f7",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 2.8695539539811534,
-          "pattern_fit_percent": 0.14904693493643606,
-          "pattern_stability_percent": 0.6811415895463284,
-          "waist_control_percent": 0.15811886965030908
+          "coverage_match_percent": 0.17769677853006272,
+          "coverage_smoothness_percent": 1.8293342031680737,
+          "waist_stability_percent": 0.39217797867326,
+          "window_uniformity_percent": 0.689417154629794
         },
-        "maximum_delta_points": 2.8695539539811534,
-        "status": "unstable",
+        "maximum_delta_points": 1.8293342031680737,
+        "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 89.10941000268205,
         "coverage_smoothness_percent": 86.72616779169695,
-        "waist_stability_percent": 82.26314074185937
+        "waist_stability_percent": 82.26314074185937,
+        "window_uniformity_percent": 91.36545186014145
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7345,6 +8445,14 @@
           "weighted_overshoot_error_percent": 1.8505786811867357,
           "weighted_total_error_percent": 11.000020649118266,
           "weighted_undershoot_error_percent": 10.843238115330928,
+          "window_p90_deviation_db": 1.4037343635093023,
+          "window_peak_deviation_db": 2.050115123843466,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.8047609355121557,
+          "window_rms_deviation_db": 0.8966525367413329,
+          "window_uniformity_percent": 91.03347463258667,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.191793290637403,
           "worst_broad_undershoot_deg": 7.820552905863341
         },
@@ -7384,6 +8492,14 @@
           "weighted_overshoot_error_percent": 1.8502330057951222,
           "weighted_total_error_percent": 10.996376210935729,
           "weighted_undershoot_error_percent": 10.839599974016549,
+          "window_p90_deviation_db": 1.4020094218935075,
+          "window_peak_deviation_db": 2.047927462424509,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.8046282939964866,
+          "window_rms_deviation_db": 0.8962698028018637,
+          "window_uniformity_percent": 91.03730197198136,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.191359446795708,
           "worst_broad_undershoot_deg": 7.821752072703653
         },
@@ -7425,6 +8541,14 @@
           "weighted_overshoot_error_percent": 1.8509242920206175,
           "weighted_total_error_percent": 11.003663880254763,
           "weighted_undershoot_error_percent": 10.846875036379432,
+          "window_p90_deviation_db": 1.4054571880763798,
+          "window_peak_deviation_db": 2.0523004533135327,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.804893577027825,
+          "window_rms_deviation_db": 0.8970351073814465,
+          "window_uniformity_percent": 91.02964892618553,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.192227134479097,
           "worst_broad_undershoot_deg": 7.819353739023029
         }
@@ -7435,26 +8559,27 @@
       "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15250,
       "nearest_candidate_distance": 0.1767766952966369,
-      "pareto": false,
+      "pareto": true,
       "proposal_index": 44,
       "proposal_source": "initial-curated",
       "run_dir": "candidates/candidate-044/bem/project-NumCalc-ef74df8d8566",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
         "deltas": {
-          "hf_retention_percent": 2.8780227599390997,
-          "pattern_fit_percent": 0.14712247800609646,
-          "pattern_stability_percent": 0.6835635233957191,
-          "waist_control_percent": 0.14819301878119973
+          "coverage_match_percent": 0.175902220533672,
+          "coverage_smoothness_percent": 1.8386382114653799,
+          "waist_stability_percent": 0.37549287319174596,
+          "window_uniformity_percent": 0.6921765721388624
         },
-        "maximum_delta_points": 2.8780227599390997,
-        "status": "unstable",
+        "maximum_delta_points": 1.8386382114653799,
+        "status": "stable",
         "threshold_points": 2.0
       },
       "selection_scores": {
         "coverage_match_percent": 88.99997935088173,
         "coverage_smoothness_percent": 86.87633610287038,
-        "waist_stability_percent": 82.62099333822079
+        "waist_stability_percent": 82.62099333822079,
+        "window_uniformity_percent": 91.03347463258667
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7511,6 +8636,14 @@
           "weighted_overshoot_error_percent": 1.887503453923961,
           "weighted_total_error_percent": 11.819012401675865,
           "weighted_undershoot_error_percent": 11.667321237644611,
+          "window_p90_deviation_db": 1.6171773342863198,
+          "window_peak_deviation_db": 3.5629218832667724,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5657206586386232,
+          "window_rms_deviation_db": 1.2594533173578575,
+          "window_uniformity_percent": 87.40546682642142,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.966925943767041,
           "worst_broad_undershoot_deg": 9.739830087644687
         },
@@ -7550,6 +8683,14 @@
           "weighted_overshoot_error_percent": 1.88762065515023,
           "weighted_total_error_percent": 11.819695910079115,
           "weighted_undershoot_error_percent": 11.667994672135878,
+          "window_p90_deviation_db": 1.618065214794702,
+          "window_peak_deviation_db": 3.562050217282006,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5658610116529852,
+          "window_rms_deviation_db": 1.2594200973494638,
+          "window_uniformity_percent": 87.40579902650536,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.9697492101365555,
           "worst_broad_undershoot_deg": 9.738324344790584
         },
@@ -7591,6 +8732,14 @@
           "weighted_overshoot_error_percent": 1.8873862454198351,
           "weighted_total_error_percent": 11.818328853742171,
           "weighted_undershoot_error_percent": 11.666647764280652,
+          "window_p90_deviation_db": 1.6162889660361448,
+          "window_peak_deviation_db": 3.563793336051307,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5655803056242612,
+          "window_rms_deviation_db": 1.2594865364900454,
+          "window_uniformity_percent": 87.40513463509954,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.964102677397527,
           "worst_broad_undershoot_deg": 9.741335830498791
         }
@@ -7610,7 +8759,8 @@
         "deltas": {
           "coverage_match_percent": 0.11997211514943729,
           "coverage_smoothness_percent": 1.7330377104734254,
-          "waist_stability_percent": 0.25347152131966766
+          "waist_stability_percent": 0.25347152131966766,
+          "window_uniformity_percent": 1.0956636611188202
         },
         "maximum_delta_points": 1.7330377104734254,
         "status": "stable",
@@ -7619,7 +8769,8 @@
       "selection_scores": {
         "coverage_match_percent": 88.18098759832414,
         "coverage_smoothness_percent": 86.16628100862417,
-        "waist_stability_percent": 78.35593287992019
+        "waist_stability_percent": 78.35593287992019,
+        "window_uniformity_percent": 87.40546682642142
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7676,6 +8827,14 @@
           "weighted_overshoot_error_percent": 2.1790475089791213,
           "weighted_total_error_percent": 12.30771624310133,
           "weighted_undershoot_error_percent": 12.11328324915719,
+          "window_p90_deviation_db": 1.955015060019046,
+          "window_peak_deviation_db": 4.13906710639294,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5469466571913195,
+          "window_rms_deviation_db": 1.4081839968033625,
+          "window_uniformity_percent": 85.91816003196638,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.079880027121533,
           "worst_broad_undershoot_deg": 9.700827004671787
         },
@@ -7715,6 +8874,14 @@
           "weighted_overshoot_error_percent": 2.1770097342008494,
           "weighted_total_error_percent": 12.30487446720043,
           "weighted_undershoot_error_percent": 12.11076233235364,
+          "window_p90_deviation_db": 1.9553952633546847,
+          "window_peak_deviation_db": 4.1372856905792545,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5469334912354382,
+          "window_rms_deviation_db": 1.4080247171989528,
+          "window_uniformity_percent": 85.91975282801047,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.083105866930332,
           "worst_broad_undershoot_deg": 9.696671820243978
         },
@@ -7756,6 +8923,14 @@
           "weighted_overshoot_error_percent": 2.1810833798759215,
           "weighted_total_error_percent": 12.310557363005122,
           "weighted_undershoot_error_percent": 12.115803641437434,
+          "window_p90_deviation_db": 1.9546347827286328,
+          "window_peak_deviation_db": 4.14084775583167,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5469598231472008,
+          "window_rms_deviation_db": 1.4083432583937032,
+          "window_uniformity_percent": 85.91656741606297,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.076654187312734,
           "worst_broad_undershoot_deg": 9.704982189099596
         }
@@ -7775,7 +8950,8 @@
         "deltas": {
           "coverage_match_percent": 0.12247078938086986,
           "coverage_smoothness_percent": 1.6755900268410215,
-          "waist_stability_percent": 0.20280336675175192
+          "waist_stability_percent": 0.20280336675175192,
+          "window_uniformity_percent": 1.146708569206254
         },
         "maximum_delta_points": 1.6755900268410215,
         "status": "stable",
@@ -7784,7 +8960,8 @@
       "selection_scores": {
         "coverage_match_percent": 87.69228375689868,
         "coverage_smoothness_percent": 85.24504841598518,
-        "waist_stability_percent": 78.44260467872651
+        "waist_stability_percent": 78.44260467872651,
+        "window_uniformity_percent": 85.91816003196638
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -7841,6 +9018,14 @@
           "weighted_overshoot_error_percent": 2.4413701031264194,
           "weighted_total_error_percent": 12.683182805478193,
           "weighted_undershoot_error_percent": 12.445996870349044,
+          "window_p90_deviation_db": 2.1966258075471647,
+          "window_peak_deviation_db": 4.564071559868933,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5366619991024641,
+          "window_rms_deviation_db": 1.513239262171686,
+          "window_uniformity_percent": 84.86760737828314,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.153035351947103,
           "worst_broad_undershoot_deg": 9.718735752653352
         },
@@ -7880,6 +9065,14 @@
           "weighted_overshoot_error_percent": 2.440226860140142,
           "weighted_total_error_percent": 12.687480667474027,
           "weighted_undershoot_error_percent": 12.450600730831335,
+          "window_p90_deviation_db": 2.19850518907119,
+          "window_peak_deviation_db": 4.563711855263014,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5366396990028128,
+          "window_rms_deviation_db": 1.5135365156603968,
+          "window_uniformity_percent": 84.86463484339603,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.1583396406849,
           "worst_broad_undershoot_deg": 9.72537694080036
         },
@@ -7921,6 +9114,14 @@
           "weighted_overshoot_error_percent": 2.4425128110062375,
           "weighted_total_error_percent": 12.678883486601974,
           "weighted_undershoot_error_percent": 12.441391306236559,
+          "window_p90_deviation_db": 2.194744816690888,
+          "window_peak_deviation_db": 4.564431236127967,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.5366842992021155,
+          "window_rms_deviation_db": 1.512941950280447,
+          "window_uniformity_percent": 84.87058049719553,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.147731063209307,
           "worst_broad_undershoot_deg": 9.712094564506344
         }
@@ -7940,7 +9141,8 @@
         "deltas": {
           "coverage_match_percent": 0.11735045896703866,
           "coverage_smoothness_percent": 1.6174908310074443,
-          "waist_stability_percent": 0.15072777538915716
+          "waist_stability_percent": 0.15072777538915716,
+          "window_uniformity_percent": 1.1890083613816813
         },
         "maximum_delta_points": 1.6174908310074443,
         "status": "stable",
@@ -7949,7 +9151,8 @@
       "selection_scores": {
         "coverage_match_percent": 87.3168171945218,
         "coverage_smoothness_percent": 84.40053542912327,
-        "waist_stability_percent": 78.40280439612559
+        "waist_stability_percent": 78.40280439612559,
+        "window_uniformity_percent": 84.86760737828314
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8006,6 +9209,14 @@
           "weighted_overshoot_error_percent": 1.6618271790611592,
           "weighted_total_error_percent": 10.635441340184116,
           "weighted_undershoot_error_percent": 10.50480570631513,
+          "window_p90_deviation_db": 1.5105942284480964,
+          "window_peak_deviation_db": 1.7907533233395567,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6852602560777963,
+          "window_rms_deviation_db": 0.9375825774566092,
+          "window_uniformity_percent": 90.6241742254339,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.68247642015945,
           "worst_broad_undershoot_deg": 9.604442704848886
         },
@@ -8045,6 +9256,14 @@
           "weighted_overshoot_error_percent": 1.6631996500682205,
           "weighted_total_error_percent": 10.644924387618827,
           "weighted_undershoot_error_percent": 10.514189561831905,
+          "window_p90_deviation_db": 1.510220607018344,
+          "window_peak_deviation_db": 1.7890249974702752,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6857167089435383,
+          "window_rms_deviation_db": 0.9372202274873538,
+          "window_uniformity_percent": 90.62779772512647,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.686026355220193,
           "worst_broad_undershoot_deg": 9.6069241087624
         },
@@ -8086,6 +9305,14 @@
           "weighted_overshoot_error_percent": 1.6604535736194759,
           "weighted_total_error_percent": 10.625949829679818,
           "weighted_undershoot_error_percent": 10.49541346078023,
+          "window_p90_deviation_db": 1.510967757491385,
+          "window_peak_deviation_db": 1.7924799827417364,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.684803803212054,
+          "window_rms_deviation_db": 0.9379447874416222,
+          "window_uniformity_percent": 90.62055212558377,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.678926485098707,
           "worst_broad_undershoot_deg": 9.601961300935372
         }
@@ -8105,7 +9332,8 @@
         "deltas": {
           "coverage_match_percent": 0.11519779268704156,
           "coverage_smoothness_percent": 1.6407464753317527,
-          "waist_stability_percent": 0.4417657357978868
+          "waist_stability_percent": 0.4417657357978868,
+          "window_uniformity_percent": 0.7380918040961006
         },
         "maximum_delta_points": 1.6407464753317527,
         "status": "stable",
@@ -8114,7 +9342,8 @@
       "selection_scores": {
         "coverage_match_percent": 89.36455865981588,
         "coverage_smoothness_percent": 86.35595089504098,
-        "waist_stability_percent": 78.65679327689634
+        "waist_stability_percent": 78.65679327689634,
+        "window_uniformity_percent": 90.6241742254339
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8171,6 +9400,14 @@
           "weighted_overshoot_error_percent": 1.7585785910716663,
           "weighted_total_error_percent": 10.849999715176429,
           "weighted_undershoot_error_percent": 10.706535161215927,
+          "window_p90_deviation_db": 1.2779685743817724,
+          "window_peak_deviation_db": 2.4068127000466095,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7002011352857695,
+          "window_rms_deviation_db": 0.9595507547776433,
+          "window_uniformity_percent": 90.40449245222356,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.989353488320766,
           "worst_broad_undershoot_deg": 8.853814222912959
         },
@@ -8210,6 +9447,14 @@
           "weighted_overshoot_error_percent": 1.7585720041436805,
           "weighted_total_error_percent": 10.857781296572638,
           "weighted_undershoot_error_percent": 10.714422018496595,
+          "window_p90_deviation_db": 1.2788151348191572,
+          "window_peak_deviation_db": 2.407561037559184,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7004426232708507,
+          "window_rms_deviation_db": 0.9599820822610388,
+          "window_uniformity_percent": 90.40017917738962,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.990354025911408,
           "worst_broad_undershoot_deg": 8.860345416046584
         },
@@ -8251,6 +9496,14 @@
           "weighted_overshoot_error_percent": 1.7585851779749802,
           "weighted_total_error_percent": 10.842212548850654,
           "weighted_undershoot_error_percent": 10.698642489879791,
+          "window_p90_deviation_db": 1.2771214527883479,
+          "window_peak_deviation_db": 2.4060641297850416,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6999596473006886,
+          "window_rms_deviation_db": 0.9591192333210977,
+          "window_uniformity_percent": 90.40880766678902,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 7.988352950730125,
           "worst_broad_undershoot_deg": 8.847283029779334
         }
@@ -8270,7 +9523,8 @@
         "deltas": {
           "coverage_match_percent": 0.12267191943244882,
           "coverage_smoothness_percent": 1.7474660001994522,
-          "waist_stability_percent": 0.36436621805967206
+          "waist_stability_percent": 0.36436621805967206,
+          "window_uniformity_percent": 0.8609278649382617
         },
         "maximum_delta_points": 1.7474660001994522,
         "status": "stable",
@@ -8279,7 +9533,8 @@
       "selection_scores": {
         "coverage_match_percent": 89.15000028482358,
         "coverage_smoothness_percent": 87.01488802804872,
-        "waist_stability_percent": 80.32485192923278
+        "waist_stability_percent": 80.32485192923278,
+        "window_uniformity_percent": 90.40449245222356
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8336,6 +9591,14 @@
           "weighted_overshoot_error_percent": 1.838733752448022,
           "weighted_total_error_percent": 11.359514720151692,
           "weighted_undershoot_error_percent": 11.209711542450654,
+          "window_p90_deviation_db": 1.5345156042861834,
+          "window_peak_deviation_db": 3.224180713279056,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6728351505545604,
+          "window_rms_deviation_db": 1.1604209756322017,
+          "window_uniformity_percent": 88.39579024367798,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.171997209465658,
           "worst_broad_undershoot_deg": 8.50153819559564
         },
@@ -8375,6 +9638,14 @@
           "weighted_overshoot_error_percent": 1.839630666344478,
           "weighted_total_error_percent": 11.370953791318925,
           "weighted_undershoot_error_percent": 11.22115631901433,
+          "window_p90_deviation_db": 1.5337417951320398,
+          "window_peak_deviation_db": 3.227444933160885,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.673330488506466,
+          "window_rms_deviation_db": 1.1610635743639122,
+          "window_uniformity_percent": 88.38936425636088,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.175040514869337,
           "worst_broad_undershoot_deg": 8.505021345125016
         },
@@ -8416,6 +9687,14 @@
           "weighted_overshoot_error_percent": 1.8378364008333659,
           "weighted_total_error_percent": 11.34806411818226,
           "weighted_undershoot_error_percent": 11.198255069168034,
+          "window_p90_deviation_db": 1.5352890234287255,
+          "window_peak_deviation_db": 3.220913185290068,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6723398126026552,
+          "window_rms_deviation_db": 1.1597780208555764,
+          "window_uniformity_percent": 88.40221979144424,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.16895390406198,
           "worst_broad_undershoot_deg": 8.498055046066263
         }
@@ -8426,7 +9705,7 @@
       "length_cost_percent": 0.0,
       "mesh_quadrant_panels": 15266,
       "nearest_candidate_distance": 0.1767766952966369,
-      "pareto": true,
+      "pareto": false,
       "proposal_index": 50,
       "proposal_source": "initial-curated",
       "run_dir": "candidates/candidate-050/bem/project-NumCalc-abde5461a2b0",
@@ -8435,7 +9714,8 @@
         "deltas": {
           "coverage_match_percent": 0.13250683282271325,
           "coverage_smoothness_percent": 1.8032363928835764,
-          "waist_stability_percent": 0.29427820263659044
+          "waist_stability_percent": 0.29427820263659044,
+          "window_uniformity_percent": 0.9038685752290263
         },
         "maximum_delta_points": 1.8032363928835764,
         "status": "stable",
@@ -8444,7 +9724,8 @@
       "selection_scores": {
         "coverage_match_percent": 88.6404852798483,
         "coverage_smoothness_percent": 86.69305151065043,
-        "waist_stability_percent": 81.10769131303779
+        "waist_stability_percent": 81.10769131303779,
+        "window_uniformity_percent": 88.39579024367798
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8501,6 +9782,14 @@
           "weighted_overshoot_error_percent": 1.9100185739801294,
           "weighted_total_error_percent": 11.813148231596736,
           "weighted_undershoot_error_percent": 11.657714192273202,
+          "window_p90_deviation_db": 1.7651810751806243,
+          "window_peak_deviation_db": 3.7751267238553776,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6509603597615867,
+          "window_rms_deviation_db": 1.3173672261722857,
+          "window_uniformity_percent": 86.82632773827714,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.285945778163434,
           "worst_broad_undershoot_deg": 8.364925119558343
         },
@@ -8540,6 +9829,14 @@
           "weighted_overshoot_error_percent": 1.9097488625385888,
           "weighted_total_error_percent": 11.817612693878097,
           "weighted_undershoot_error_percent": 11.662282326566327,
+          "window_p90_deviation_db": 1.7668080477305694,
+          "window_peak_deviation_db": 3.776298111379977,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6510680116093004,
+          "window_rms_deviation_db": 1.3179739474806942,
+          "window_uniformity_percent": 86.82026052519306,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.286106615597419,
           "worst_broad_undershoot_deg": 8.363403386817033
         },
@@ -8581,6 +9878,14 @@
           "weighted_overshoot_error_percent": 1.9102882473414164,
           "weighted_total_error_percent": 11.808682081453691,
           "weighted_undershoot_error_percent": 11.653144267231685,
+          "window_p90_deviation_db": 1.7635526016612446,
+          "window_peak_deviation_db": 3.773954972747037,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6508527079138728,
+          "window_rms_deviation_db": 1.3167602253059898,
+          "window_uniformity_percent": 86.8323977469401,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.28578494072945,
           "worst_broad_undershoot_deg": 8.366446852299653
         }
@@ -8600,7 +9905,8 @@
         "deltas": {
           "coverage_match_percent": 0.13791383080854303,
           "coverage_smoothness_percent": 1.7959814499864848,
-          "waist_stability_percent": 0.2563650296121551
+          "waist_stability_percent": 0.2563650296121551,
+          "window_uniformity_percent": 0.9266955953507505
         },
         "maximum_delta_points": 1.7959814499864848,
         "status": "stable",
@@ -8609,7 +9915,8 @@
       "selection_scores": {
         "coverage_match_percent": 88.18685176840326,
         "coverage_smoothness_percent": 86.10221494082701,
-        "waist_stability_percent": 81.41127720450258
+        "waist_stability_percent": 81.41127720450258,
+        "window_uniformity_percent": 86.82632773827714
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8666,6 +9973,14 @@
           "weighted_overshoot_error_percent": 2.0070787784878976,
           "weighted_total_error_percent": 12.187520861241804,
           "weighted_undershoot_error_percent": 12.02111889634853,
+          "window_p90_deviation_db": 1.9528396353110988,
+          "window_peak_deviation_db": 4.180801587074194,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6354897840322427,
+          "window_rms_deviation_db": 1.4326969600262243,
+          "window_uniformity_percent": 85.67303039973775,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.346825043490885,
           "worst_broad_undershoot_deg": 8.318516663465658
         },
@@ -8705,6 +10020,14 @@
           "weighted_overshoot_error_percent": 2.008989450841348,
           "weighted_total_error_percent": 12.191493850752709,
           "weighted_undershoot_error_percent": 12.024827803313828,
+          "window_p90_deviation_db": 1.9522031718108799,
+          "window_peak_deviation_db": 4.182257445159306,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.6354176806855023,
+          "window_rms_deviation_db": 1.4335650404452553,
+          "window_uniformity_percent": 85.66434959554745,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.346249255003606,
           "worst_broad_undershoot_deg": 8.31694703511932
         },
@@ -8746,6 +10069,14 @@
           "weighted_overshoot_error_percent": 2.0051662855038037,
           "weighted_total_error_percent": 12.183546576160294,
           "weighted_undershoot_error_percent": 12.017408844711332,
+          "window_p90_deviation_db": 1.9534758914446604,
+          "window_peak_deviation_db": 4.17934522184681,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.635561887378983,
+          "window_rms_deviation_db": 1.4318283533126315,
+          "window_uniformity_percent": 85.68171646687368,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.347400831978163,
           "worst_broad_undershoot_deg": 8.320086291811997
         }
@@ -8765,7 +10096,8 @@
         "deltas": {
           "coverage_match_percent": 0.14210524702365035,
           "coverage_smoothness_percent": 1.78887563559978,
-          "waist_stability_percent": 0.22039495449398316
+          "waist_stability_percent": 0.22039495449398316,
+          "window_uniformity_percent": 0.961956948403369
         },
         "maximum_delta_points": 1.78887563559978,
         "status": "stable",
@@ -8774,7 +10106,8 @@
       "selection_scores": {
         "coverage_match_percent": 87.81247913875819,
         "coverage_smoothness_percent": 85.4635782309282,
-        "waist_stability_percent": 81.5144070854379
+        "waist_stability_percent": 81.5144070854379,
+        "window_uniformity_percent": 85.67303039973775
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8831,6 +10164,14 @@
           "weighted_overshoot_error_percent": 1.9337182824128192,
           "weighted_total_error_percent": 11.518883133766826,
           "weighted_undershoot_error_percent": 11.355412905466727,
+          "window_p90_deviation_db": 1.8276830357351168,
+          "window_peak_deviation_db": 2.7488995241606267,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7850018075341842,
+          "window_rms_deviation_db": 1.1004294502939764,
+          "window_uniformity_percent": 88.99570549706024,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.364774943179505,
           "worst_broad_undershoot_deg": 8.137746107973456
         },
@@ -8870,6 +10211,14 @@
           "weighted_overshoot_error_percent": 1.934299151331419,
           "weighted_total_error_percent": 11.52394643184208,
           "weighted_undershoot_error_percent": 11.360450174052275,
+          "window_p90_deviation_db": 1.8296632952583052,
+          "window_peak_deviation_db": 2.7489657190553967,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7852904325958185,
+          "window_rms_deviation_db": 1.100849791252605,
+          "window_uniformity_percent": 88.99150208747395,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.366609272271603,
           "worst_broad_undershoot_deg": 8.142286963559386
         },
@@ -8911,6 +10260,14 @@
           "weighted_overshoot_error_percent": 1.9331372389547827,
           "weighted_total_error_percent": 11.513817609063898,
           "weighted_undershoot_error_percent": 11.35037340135364,
+          "window_p90_deviation_db": 1.8257006283102344,
+          "window_peak_deviation_db": 2.7488333276718113,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7847131824725502,
+          "window_rms_deviation_db": 1.100008948712556,
+          "window_uniformity_percent": 88.99991051287444,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.362940614087407,
           "worst_broad_undershoot_deg": 8.133205252387526
         }
@@ -8930,7 +10287,8 @@
         "deltas": {
           "coverage_match_percent": 0.16278596779574173,
           "coverage_smoothness_percent": 1.857420765319489,
-          "waist_stability_percent": 0.6109161326554613
+          "waist_stability_percent": 0.6109161326554613,
+          "window_uniformity_percent": 0.6813433058768794
         },
         "maximum_delta_points": 1.857420765319489,
         "status": "stable",
@@ -8939,7 +10297,8 @@
       "selection_scores": {
         "coverage_match_percent": 88.48111686623318,
         "coverage_smoothness_percent": 87.07904886221665,
-        "waist_stability_percent": 81.91611694473292
+        "waist_stability_percent": 81.91611694473292,
+        "window_uniformity_percent": 88.99570549706024
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -8996,6 +10355,14 @@
           "weighted_overshoot_error_percent": 1.9867744820171154,
           "weighted_total_error_percent": 11.966227048954542,
           "weighted_undershoot_error_percent": 11.800140547668784,
+          "window_p90_deviation_db": 2.106753738615063,
+          "window_peak_deviation_db": 3.263200864159069,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7618681124365159,
+          "window_rms_deviation_db": 1.2632684409599577,
+          "window_uniformity_percent": 87.36731559040042,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.474685800483716,
           "worst_broad_undershoot_deg": 8.573297163159438
         },
@@ -9035,6 +10402,14 @@
           "weighted_overshoot_error_percent": 1.988779407444135,
           "weighted_total_error_percent": 11.974130368793984,
           "weighted_undershoot_error_percent": 11.807817518805095,
+          "window_p90_deviation_db": 2.1081562151869635,
+          "window_peak_deviation_db": 3.2644977908336292,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7623293872379997,
+          "window_rms_deviation_db": 1.2638901469565518,
+          "window_uniformity_percent": 87.36109853043448,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.478993399968033,
           "worst_broad_undershoot_deg": 8.580438944407945
         },
@@ -9076,6 +10451,14 @@
           "weighted_overshoot_error_percent": 1.9847675313030766,
           "weighted_total_error_percent": 11.958318505767785,
           "weighted_undershoot_error_percent": 11.792458578772848,
+          "window_p90_deviation_db": 2.1053503277853,
+          "window_peak_deviation_db": 3.2619034218289396,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7614068376350318,
+          "window_rms_deviation_db": 1.2626464288457597,
+          "window_uniformity_percent": 87.3735357115424,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.470378200999399,
           "worst_broad_undershoot_deg": 8.566155381910932
         }
@@ -9095,7 +10478,8 @@
         "deltas": {
           "coverage_match_percent": 0.15475572242202418,
           "coverage_smoothness_percent": 1.8541646588336391,
-          "waist_stability_percent": 0.5605314179384351
+          "waist_stability_percent": 0.5605314179384351,
+          "window_uniformity_percent": 0.6862814839923317
         },
         "maximum_delta_points": 1.8541646588336391,
         "status": "stable",
@@ -9104,7 +10488,8 @@
       "selection_scores": {
         "coverage_match_percent": 88.03377295104546,
         "coverage_smoothness_percent": 86.94812206996701,
-        "waist_stability_percent": 80.9482219159902
+        "waist_stability_percent": 80.9482219159902,
+        "window_uniformity_percent": 87.36731559040042
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",
@@ -9161,6 +10546,14 @@
           "weighted_overshoot_error_percent": 2.0294305840503535,
           "weighted_total_error_percent": 12.319266063706953,
           "weighted_undershoot_error_percent": 12.150955841123068,
+          "window_p90_deviation_db": 2.3042113413954635,
+          "window_peak_deviation_db": 3.6265604699576697,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7446887418831856,
+          "window_rms_deviation_db": 1.3784574990192822,
+          "window_uniformity_percent": 86.21542500980718,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.565778092683129,
           "worst_broad_undershoot_deg": 8.839355587061348
         },
@@ -9200,6 +10593,14 @@
           "weighted_overshoot_error_percent": 2.030464494065598,
           "weighted_total_error_percent": 12.328098514825369,
           "weighted_undershoot_error_percent": 12.159737946583322,
+          "window_p90_deviation_db": 2.3041645397906874,
+          "window_peak_deviation_db": 3.624676445244889,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7449807427445687,
+          "window_rms_deviation_db": 1.3784906782628157,
+          "window_uniformity_percent": 86.21509321737184,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.56826725491797,
           "worst_broad_undershoot_deg": 8.850422170640833
         },
@@ -9241,6 +10642,14 @@
           "weighted_overshoot_error_percent": 2.0283961470326384,
           "weighted_total_error_percent": 12.310427275507706,
           "weighted_undershoot_error_percent": 12.142167383802088,
+          "window_p90_deviation_db": 2.3042581420496555,
+          "window_peak_deviation_db": 3.628443516413899,
+          "window_probe_angle_deg": 22.5,
+          "window_probe_fraction": 0.5,
+          "window_probe_mean_db": -1.7443967410218022,
+          "window_rms_deviation_db": 1.3784243189771104,
+          "window_uniformity_percent": 86.2157568102289,
+          "window_uniformity_score_per_db": 10.0,
           "worst_broad_overshoot_deg": 8.563288930448287,
           "worst_broad_undershoot_deg": 8.828289003481864
         }
@@ -9260,7 +10669,8 @@
         "deltas": {
           "coverage_match_percent": 0.148926802161796,
           "coverage_smoothness_percent": 1.8237009628509497,
-          "waist_stability_percent": 0.5109557918738403
+          "waist_stability_percent": 0.5109557918738403,
+          "window_uniformity_percent": 0.6999216624511178
         },
         "maximum_delta_points": 1.8237009628509497,
         "status": "stable",
@@ -9269,7 +10679,8 @@
       "selection_scores": {
         "coverage_match_percent": 87.68073393629305,
         "coverage_smoothness_percent": 86.66871745300617,
-        "waist_stability_percent": 80.35697218986965
+        "waist_stability_percent": 80.35697218986965,
+        "window_uniformity_percent": 86.21542500980718
       },
       "status": "complete",
       "stl_file": "HornCAD-Surface-400x400x160.STL",

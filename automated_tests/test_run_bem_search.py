@@ -103,7 +103,8 @@ class BEMSearchTests(unittest.TestCase):
                             "diagnostics": {"combined": {
                                 "coverage_match_percent": score,
                                 "coverage_smoothness_percent": score,
-                                "waist_stability_percent": score}}})
+                                "waist_stability_percent": score,
+                                "window_uniformity_percent": score}}})
             from app.tools.run_bem_search import update_selection_scores
             update_selection_scores(records[-1], search)
         effects = learned_lever_effects(search, records)
@@ -127,13 +128,14 @@ class BEMSearchTests(unittest.TestCase):
         def record(scores: tuple[float, ...], loading: float) -> dict:
             combined = dict(zip(("coverage_match_percent",
                                  "coverage_smoothness_percent",
-                                 "waist_stability_percent"),
+                                 "waist_stability_percent",
+                                 "window_uniformity_percent"),
                                 scores))
             return {"status": "complete", "crossover_loading_percent": loading,
                     "diagnostics": {"combined": combined}}
-        records = [record((80, 80, 80), 100),
-                   record((70, 70, 70), 100),
-                   record((95, 95, 95), 90)]
+        records = [record((80, 80, 80, 80), 100),
+                   record((70, 70, 70, 70), 100),
+                   record((95, 95, 95, 95), 90)]
         self.assertEqual(pareto_indices(records), {2})
 
     def test_length_cost_is_steep_beyond_ten_percent(self) -> None:
@@ -222,16 +224,18 @@ class BEMSearchTests(unittest.TestCase):
                 record["diagnostics"] = {"combined": {
                     "coverage_match_percent": score,
                     "coverage_smoothness_percent": 100 - score,
-                    "waist_stability_percent": score}}
+                    "waist_stability_percent": score,
+                    "window_uniformity_percent": score}}
                 record["sampling_stability"] = {"status": "stable"}
                 update_selection_scores(record, state["search"])
             state["status"] = "complete"
             highlighted = write_report(Path(temp), state).read_text()
-            self.assertEqual(highlighted.count("class='best'"), 3)
-            self.assertEqual(highlighted.count("class='worst'"), 3)
+            self.assertEqual(highlighted.count("class='best'"), 4)
+            self.assertEqual(highlighted.count("class='worst'"), 4)
             self.assertIn("Coverage Match", highlighted)
             self.assertIn("Coverage Smoothness", highlighted)
             self.assertIn("Waist Stability", highlighted)
+            self.assertIn("Window Uniformity", highlighted)
 
 
 if __name__ == "__main__":
