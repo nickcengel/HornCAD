@@ -102,7 +102,9 @@ class BEMSearchTests(unittest.TestCase):
                             "crossover_loading_percent": score,
                             "diagnostics": {"combined": {
                                 "pattern_fit_percent": score,
+                                "waist_control_percent": score,
                                 "pattern_stability_percent": score,
+                                "crossover_control_percent": score,
                                 "hf_retention_percent": score}}})
             from app.tools.run_bem_search import update_selection_scores
             update_selection_scores(records[-1], search)
@@ -124,13 +126,15 @@ class BEMSearchTests(unittest.TestCase):
         self.assertLess(stability["maximum_delta_points"], 0.01)
 
     def test_pareto_set_ignores_informational_loading(self) -> None:
-        def record(scores: tuple[float, float, float], loading: float) -> dict:
-            combined = dict(zip(("pattern_fit_percent", "pattern_stability_percent",
+        def record(scores: tuple[float, ...], loading: float) -> dict:
+            combined = dict(zip(("pattern_fit_percent", "waist_control_percent",
+                                 "pattern_stability_percent", "crossover_control_percent",
                                  "hf_retention_percent"), scores))
             return {"status": "complete", "crossover_loading_percent": loading,
                     "diagnostics": {"combined": combined}}
-        records = [record((80, 80, 80), 100), record((70, 70, 70), 100),
-                   record((95, 95, 95), 90)]
+        records = [record((80, 80, 80, 80, 80), 100),
+                   record((70, 70, 70, 70, 70), 100),
+                   record((95, 95, 95, 95, 95), 90)]
         self.assertEqual(pareto_indices(records), {2})
 
     def test_length_cost_is_steep_beyond_ten_percent(self) -> None:
@@ -218,14 +222,16 @@ class BEMSearchTests(unittest.TestCase):
                 score = 50.0 + index
                 record["diagnostics"] = {"combined": {
                     "pattern_fit_percent": score,
+                    "waist_control_percent": score,
                     "pattern_stability_percent": 100 - score,
+                    "crossover_control_percent": score,
                     "hf_retention_percent": score}}
                 record["sampling_stability"] = {"status": "stable"}
                 update_selection_scores(record, state["search"])
             state["status"] = "complete"
             highlighted = write_report(Path(temp), state).read_text()
-            self.assertEqual(highlighted.count("class='best'"), 3)
-            self.assertEqual(highlighted.count("class='worst'"), 3)
+            self.assertEqual(highlighted.count("class='best'"), 5)
+            self.assertEqual(highlighted.count("class='worst'"), 5)
 
 
 if __name__ == "__main__":

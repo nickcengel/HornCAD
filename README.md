@@ -55,21 +55,24 @@ throat-impedance magnitude, and the horn acoustic parameters.
 Impedance is normalized by the effective circular throat's characteristic
 impedance, `ρc/Sₜ`; throat reactance is not plotted.
 
-The report also writes `coverage_diagnostics.json` and displays three coverage
+The report also writes `coverage_diagnostics.json` and displays five coverage
 diagnostics for horizontal, vertical, and combined behavior:
 
-- **Pattern Fit** is 100% minus the log-frequency-weighted RMS percentage
-  error from the intended −6 dB half-angle.
-- **Pattern Stability** is 100% minus the RMS deviation from a best-fit straight line
-  versus log frequency, normalized by intended coverage.
-- **HF Retention** is the upper-passband half-angle divided by the
-  lower-passband half-angle, capped at 100% so widening is not rewarded.
+- **Pattern Fit** compares the best-fit linear beamwidth trend with the intended
+  −6 dB half-angle.
+- **Waist Control** measures the largest broad narrowing or widening away from
+  that trend after one-third-octave-scale smoothing.
+- **Pattern Stability** measures fine ripple remaining after broad smoothing.
+- **Crossover Control** measures beamwidth accuracy at the authored crossover.
+- **HF Retention** compares sustained coverage in the final sixth of the
+  passband with the established middle third; widening is not rewarded.
 
-All three headline diagnostics use 100% for ideal and lower values for worse
+All five headline diagnostics use 100% for ideal and lower values for worse
 behavior. Combined H/V diagnostics are weighted in proportion to physical mouth
 width and height, so the larger mouth dimension contributes more to the combined
-score. The JSON records those weights and also retains underlying RMS error, fitted-line deviation,
-endpoint angles, and signed narrowing for diagnosis.
+score. The JSON records those weights and also retains fitted-trend error,
+waist deviation, ripple RMS, crossover angle, sustained upper-band angle, and
+signed narrowing for diagnosis.
 
 The automatic diagnostic passband begins only when both planes sustain genuine
 −6 dB crossings for at least one-third octave. A missing crossing after that

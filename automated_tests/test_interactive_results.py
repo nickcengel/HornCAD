@@ -119,15 +119,40 @@ class InteractiveResultsTests(unittest.TestCase):
         result = coverage_diagnostics(run)
         self.assertEqual(result["status"], "available")
         self.assertEqual(result["passband_lower_hz"], 500.0)
+        self.assertGreater(result["combined"]["waist_control_percent"], 99.0)
         self.assertGreater(result["combined"]["pattern_stability_percent"], 99.0)
-        self.assertAlmostEqual(result["horizontal"]["hf_retention_percent"], 80.0,
+        self.assertGreater(result["horizontal"]["crossover_control_percent"], 99.0)
+        self.assertAlmostEqual(result["horizontal"]["hf_retention_percent"], 89.7,
                                delta=0.2)
         self.assertAlmostEqual(result["horizontal"]["pattern_fit_percent"],
                                88.4, delta=0.5)
-        self.assertAlmostEqual(result["horizontal"]["narrowing_percent"], 20.0,
+        self.assertAlmostEqual(result["horizontal"]["narrowing_percent"], 10.3,
                                delta=0.2)
-        self.assertAlmostEqual(result["vertical"]["narrowing_percent"], 20.0,
+        self.assertAlmostEqual(result["vertical"]["narrowing_percent"], 10.3,
                                delta=0.2)
+
+    def test_diagnostics_separate_waist_ripple_and_crossover(self) -> None:
+        frequencies = np.geomspace(500.0, 5000.0, 81)
+        angles = np.arange(-90.0, 91.0)
+        x = np.log2(frequencies / 500.0)
+
+        def patterns(half_angles: np.ndarray) -> np.ndarray:
+            return np.asarray([-6 * (np.abs(angles) / half_angle) ** 2
+                               for half_angle in half_angles])
+
+        broad_waist = 50 - 10 * np.exp(-0.5 * ((x - 1.5) / 0.25) ** 2)
+        fine_ripple = 50 + 3 * np.sin(2 * np.pi * x * 5)
+        base = {"frequencies": frequencies, "angles": angles,
+                "vertical": patterns(np.full(len(frequencies), 35.0)),
+                "intended_coverages": {"horizontal": 50.0, "vertical": 35.0},
+                "crossover_hz": 500.0}
+        waist = coverage_diagnostics(dict(base, horizontal=patterns(broad_waist)))
+        ripple = coverage_diagnostics(dict(base, horizontal=patterns(fine_ripple)))
+        self.assertLess(waist["horizontal"]["waist_control_percent"],
+                        ripple["horizontal"]["waist_control_percent"])
+        self.assertGreater(waist["horizontal"]["pattern_stability_percent"],
+                           ripple["horizontal"]["pattern_stability_percent"])
+        self.assertGreater(waist["horizontal"]["crossover_control_percent"], 99.0)
 
     def test_combined_scores_follow_mouth_dimension_weights(self) -> None:
         frequencies = np.array([500.0, 1000.0])

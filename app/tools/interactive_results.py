@@ -110,6 +110,14 @@ def mouth_dimensions(yaml_path: Path | None) -> dict[str, float]:
     }
 
 
+def crossover_frequency(yaml_path: Path | None) -> float | None:
+    if yaml_path is None:
+        return None
+    config = yaml.safe_load(yaml_path.read_text())["horncad_config"]
+    value = config.get("operating_intent", {}).get("crossover_hz")
+    return float(value) if value is not None and float(value) > 0 else None
+
+
 def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
     response_path = run_dir / "responses.npz"
     if not response_path.is_file():
@@ -136,6 +144,7 @@ def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
         "parameters": acoustic_parameters(yaml_path),
         "intended_coverages": intended_coverages(yaml_path),
         "mouth_dimensions_mm": mouth_dimensions(yaml_path),
+        "crossover_hz": crossover_frequency(yaml_path),
         "yaml": yaml_path,
     }
 
@@ -228,25 +237,60 @@ def coverage_diagnostics(
     if any(targets.get(key, 0) <= 0 for key in angles):
         return {"status": "unavailable", "reason": "intended coverage is missing"}
     log_frequency = np.log(evaluated_frequencies)
+    log_span = log_frequency[-1] - log_frequency[0]
+
+    def rms(values: np.ndarray) -> float:
+        return float(np.sqrt(np.trapezoid(values ** 2, log_frequency) / log_span))
+
+    def broad_smooth(values: np.ndarray) -> np.ndarray:
+        """Smooth roughly one-third-octave features without hiding broad waists."""
+        if len(values) < 3:
+            return values.copy()
+        sigma = np.log(2) / 3
+        smoothed = np.empty_like(values)
+        for index, center in enumerate(log_frequency):
+            offsets = log_frequency - center
+            weights = np.exp(-0.5 * (offsets / sigma) ** 2)
+            design = np.column_stack((np.ones(len(offsets)), offsets))
+            coefficients = np.linalg.lstsq(
+                design * np.sqrt(weights[:, None]), values * np.sqrt(weights),
+                rcond=None)[0]
+            smoothed[index] = coefficients[0]
+        return smoothed
+
     plane_results = {}
     for key, values in angles.items():
         target = float(targets[key])
-        fractional_error = (values - target) / target
-        coverage_error = 100 * float(np.sqrt(
-            np.trapezoid(fractional_error ** 2, log_frequency) /
-            (log_frequency[-1] - log_frequency[0])))
         trend = np.polyval(np.polyfit(log_frequency, values, 1), log_frequency)
-        ripple_rms = float(np.sqrt(
-            np.trapezoid((values - trend) ** 2, log_frequency) /
-            (log_frequency[-1] - log_frequency[0])))
-        narrowing = 100 * float((values[0] - values[-1]) / values[0])
+        smooth = broad_smooth(values)
+        trend_error = 100 * rms((trend - target) / target)
+        waist_deviation = float(np.max(np.abs(smooth - trend)))
+        ripple_rms = rms(values - smooth)
+        crossover_hz = float(run.get("crossover_hz") or evaluated_frequencies[0])
+        crossover_hz = float(np.clip(crossover_hz, evaluated_frequencies[0],
+                                     evaluated_frequencies[-1]))
+        crossover_angle = float(np.interp(np.log(crossover_hz), log_frequency, values))
+        crossover_error = 100 * abs(crossover_angle - target) / target
+        count = len(values)
+        reference_slice = slice(max(0, count // 3), max(1, 2 * count // 3))
+        hf_slice = slice(max(0, 5 * count // 6), count)
+        pre_hf_angle = float(np.median(smooth[reference_slice]))
+        hf_angle = float(np.median(smooth[hf_slice]))
+        narrowing = 100 * (pre_hf_angle - hf_angle) / pre_hf_angle
         plane_results[key] = {
-            "coverage_error_percent": coverage_error,
-            "pattern_fit_percent": max(0.0, 100.0 - coverage_error),
+            "trend_error_percent": trend_error,
+            "pattern_fit_percent": max(0.0, 100.0 - trend_error),
+            "waist_control_percent": max(0.0, 100.0 * (1.0 - waist_deviation / target)),
+            "waist_max_deviation_deg": waist_deviation,
             "pattern_stability_percent": max(0.0, 100.0 * (1.0 - ripple_rms / target)),
-            "trend_ripple_rms_deg": ripple_rms,
+            "ripple_rms_deg": ripple_rms,
+            "crossover_control_percent": max(0.0, 100.0 - crossover_error),
+            "crossover_frequency_hz": crossover_hz,
+            "crossover_half_angle_deg": crossover_angle,
             "narrowing_percent": narrowing,
-            "hf_retention_percent": min(100.0, 100.0 * values[-1] / values[0]),
+            "hf_retention_percent": min(100.0, 100.0 * hf_angle / pre_hf_angle),
+            "pre_hf_half_angle_deg": pre_hf_angle,
+            "hf_half_angle_deg": hf_angle,
             "lower_half_angle_deg": float(values[0]),
             "upper_half_angle_deg": float(values[-1]),
         }
@@ -262,8 +306,8 @@ def coverage_diagnostics(
     weighted = lambda key: (horizontal_weight * plane_results["horizontal"][key] +
                             vertical_weight * plane_results["vertical"][key])
     combined_error = float(np.sqrt(
-        horizontal_weight * plane_results["horizontal"]["coverage_error_percent"] ** 2 +
-        vertical_weight * plane_results["vertical"]["coverage_error_percent"] ** 2))
+        horizontal_weight * plane_results["horizontal"]["trend_error_percent"] ** 2 +
+        vertical_weight * plane_results["vertical"]["trend_error_percent"] ** 2))
     return {
         "status": "available",
         "passband_lower_hz": float(evaluated_frequencies[0]),
@@ -275,9 +319,11 @@ def coverage_diagnostics(
         "horizontal": plane_results["horizontal"],
         "vertical": plane_results["vertical"],
         "combined": {
-            "coverage_error_percent": combined_error,
+            "trend_error_percent": combined_error,
             "pattern_fit_percent": max(0.0, 100.0 - combined_error),
+            "waist_control_percent": weighted("waist_control_percent"),
             "pattern_stability_percent": weighted("pattern_stability_percent"),
+            "crossover_control_percent": weighted("crossover_control_percent"),
             "narrowing_percent": weighted("narrowing_percent"),
             "hf_retention_percent": weighted("hf_retention_percent"),
         },
@@ -359,7 +405,9 @@ def _parameter_table(runs: list[dict[str, Any]]) -> str:
 
 
 DIAGNOSTIC_ROWS = (("Pattern Fit", "pattern_fit_percent"),
+                   ("Waist Control", "waist_control_percent"),
                    ("Pattern Stability", "pattern_stability_percent"),
+                   ("Crossover Control", "crossover_control_percent"),
                    ("HF Retention", "hf_retention_percent"))
 
 
@@ -443,7 +491,7 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Coverage diagnostics</h2>
 {_diagnostic_tables(runs, diagnostics, comparison)}
-<p class='hint'>All three diagnostics are percentages where 100% is ideal. Pattern Fit is 100% minus the log-frequency-weighted RMS percentage error from the intended −6 dB half-angle. Pattern Stability is 100% minus RMS deviation from the best-fit straight line versus log frequency, normalized by intended coverage. HF Retention is the upper-bound half-angle divided by the lower-bound half-angle, capped at 100%. {band_explanation}</p>
+<p class='hint'>All five diagnostics are percentages where 100% is ideal. Pattern Fit compares the best-fit linear beamwidth trend with the intended −6 dB half-angle. Waist Control measures broad deviation from that trend. Pattern Stability measures fine ripple after broad smoothing. Crossover Control measures coverage accuracy at the crossover frequency. HF Retention compares sustained upper-band coverage with the established midband. {band_explanation}</p>
 </section></main><script>
 (() => {{
   let armed = null;

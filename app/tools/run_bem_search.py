@@ -37,8 +37,11 @@ except ImportError:
 
 VARIABLES = ("length_mm", "extension_mm", "osse_coverage_h_deg",
              "osse_coverage_v_deg", "k_h", "k_v", "n_h", "n_v")
-OBJECTIVES = ("pattern_fit_percent", "pattern_stability_percent",
+OBJECTIVES = ("pattern_fit_percent", "waist_control_percent",
+              "pattern_stability_percent", "crossover_control_percent",
               "hf_retention_percent")
+OBJECTIVE_LABELS = ("Pattern Fit", "Waist Control", "Pattern Stability",
+                    "Crossover Control", "HF Retention")
 PRESET_BUDGETS = {"quick": 16, "normal": 36, "thorough": 60}
 DEFAULT_MINIMUM_CANDIDATE_DISTANCE = 0.08
 DEFAULT_INFERIOR_PROBABILITY = 0.97
@@ -683,7 +686,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"{stl_link}{report_link}</td>",
             f"<td>{html.escape(status)}</td>",
             diagnostic_cell(diagnostic, "pattern_fit_percent"),
+            diagnostic_cell(diagnostic, "waist_control_percent"),
             diagnostic_cell(diagnostic, "pattern_stability_percent"),
+            diagnostic_cell(diagnostic, "crossover_control_percent"),
             diagnostic_cell(diagnostic, "hf_retention_percent"),
             f"<td>{record.get('crossover_minimum_normalized_impedance', float('nan')):.3f}</td>" if "crossover_minimum_normalized_impedance" in record else "<td>—</td>",
             f"<td>{record.get('length_cost_percent', 0):.1f}%</td>",
@@ -717,7 +722,8 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<tr><td>{html.escape(VARIABLE_LABELS[name].title())}</td>" +
             "".join(f"<td>{values[key]:+.1f}</td>" for key in OBJECTIVES) +
             "</tr>")
-    effects_section = ("<section><h2>Learned lever effects</h2><p>Estimated diagnostic-point change for a +10% step across each configured parameter range. These are local evidence from this search, not universal design rules.</p><table><tr><th>Lever</th><th>Pattern Fit</th><th>Pattern Stability</th><th>HF Retention</th></tr>" +
+    objective_headers = "".join(f"<th>{label}</th>" for label in OBJECTIVE_LABELS)
+    effects_section = ("<section><h2>Learned lever effects</h2><p>Estimated diagnostic-point change for a +10% step across each configured parameter range. These are local evidence from this search, not universal design rules.</p><table><tr><th>Lever</th>" + objective_headers + "</tr>" +
                        "".join(effect_rows) + "</table></section>" if effect_rows else
                        "<section><h2>Learned lever effects</h2><p>Waiting for the seed and initial coupled candidates to complete.</p></section>")
     refresh = "<meta http-equiv='refresh' content='10'>" if state["status"] == "running" else ""
@@ -741,9 +747,9 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left}}td{
 <section><h2>Search range</h2><table><tr><th>Parameter</th><th>Configured range</th><th>Seed</th><th>Retained candidates</th></tr>
 {''.join(range_rows)}</table><p><strong>Realized S range (both axes):</strong> {search['derived_s_bounds'][0]:g}–{search['derived_s_bounds'][1]:g}. <strong>Coverage-stage extension:</strong> fixed at the seed value; N is varied explicitly in matched length families.</p></section>
 {effects_section}
-<section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Pattern Fit</th><th>Pattern Stability</th>
+<section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Pattern Fit</th><th>Waist Control</th><th>Pattern Stability</th><th>Crossover Control</th>
 <th>HF Retention</th><th>Impedance (information only)</th><th>Added-depth cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>S H/V</th><th>N H/V</th><th>Curvature radius H/V mm</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
-<section><p>100% is best for all three acoustic diagnostics. Combined H/V scores are weighted in proportion to mouth width and height. Throat impedance is recorded but does not affect feasibility, Pareto selection, surrogate acquisition, or sampling stability during coverage search. Shorter total depth receives no cost; added depth above the seed is the only packaging departure cost. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all three objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
+<section><p>100% is best for all five acoustic diagnostics. Combined H/V scores are weighted in proportion to mouth width and height. Throat impedance is recorded but does not affect feasibility, Pareto selection, surrogate acquisition, or sampling stability during coverage search. Shorter total depth receives no cost; added depth above the seed is the only packaging departure cost. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all five objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
 </main></body></html>"""
     path = output_dir / "search_report.html"
     temporary = path.with_suffix(".html.tmp")

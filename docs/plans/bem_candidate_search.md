@@ -87,7 +87,7 @@ evenly; it does not impose a soft ±10% admission cap around the seed.
 The implemented packaging policy is asymmetric and separates acoustics from
 packaging:
 
-- Pattern Fit, Pattern Stability, and HF Retention remain unmodified acoustic
+- Pattern Fit, Waist Control, Pattern Stability, Crossover Control, and HF Retention remain unmodified acoustic
   objectives;
 - a candidate shorter than the authored reference receives no departure cost;
 - added axial depth may be penalized, but must not be hidden inside the reported
@@ -145,12 +145,14 @@ endpoint frequencies.
 The search maximizes the existing three 0-100% diagnostics:
 
 - Pattern Fit;
-- Pattern Stability; and
+- Waist Control;
+- Pattern Stability;
+- Crossover Control; and
 - HF Retention.
 
 All are oriented so 100% is ideal. Horizontal, vertical, and combined values
 remain available. The initial search should use the combined values as its
-three objectives while retaining plane-specific values for review. Combined
+five objectives while retaining plane-specific values for review. Combined
 values weight horizontal and vertical results in proportion to mouth width and
 height respectively; a wider mouth therefore gives horizontal performance more
 influence.
@@ -244,7 +246,7 @@ The implemented strategy is constrained multi-objective Bayesian optimization:
    truth. Keep extension fixed and defer impedance modeling to the extension
    study.
 4. Screen an adaptive proposal only when the model assigns at least 97%
-   probability that it is worse than the seed on all three selection objectives.
+   probability that it is worse than the seed on all five selection objectives.
    Screening never applies to the initial coupled-geometry round. An uncertain
    candidate remains useful because it may improve the result or teach the
    model. Screened proposals retain no individual data; only an aggregate count
@@ -267,8 +269,8 @@ Training uses 6 elements per wavelength and 12 points per octave for every
 candidate. Frequency sampling and spatial mesh density are separate convergence
 questions: 6 EPW does not protect a diagnostic from missing a narrow feature
 between solved frequencies. Every completed training run is therefore rescored
-after factor-two frequency decimation. If Pattern Fit, Pattern Stability,
-HF Retention, or crossover loading moves by more than two diagnostic points,
+after factor-two frequency decimation. If Pattern Fit, Waist Control, Pattern
+Stability, Crossover Control, HF Retention, or crossover loading moves by more than two diagnostic points,
 that run is marked sampling-unstable and excluded from surrogate learning.
 
 Decimation is a warning, not proof of convergence. Before learned lever

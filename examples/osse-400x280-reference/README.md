@@ -32,6 +32,6 @@ python app/tools/run_bem_search.py \
 
 Each report is accompanied by `coverage_diagnostics.json`, containing the
 automatic evaluated passband plus horizontal, vertical, and combined coverage
-Pattern Fit, Pattern Stability, and HF Retention values. The FEM/BEM comparison recomputes
+Pattern Fit, Waist Control, Pattern Stability, Crossover Control, and HF Retention values. The FEM/BEM comparison recomputes
 both runs over their shared 839–5000 Hz band rather than comparing scores from
 different automatic passbands.
