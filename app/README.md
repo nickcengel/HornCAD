@@ -109,9 +109,26 @@ The default mesh uses six linear elements per wavelength at 10 kHz. Increase con
 
 This is substantially more informative than the uniform-aperture estimate, but it remains a 2D approximation. Each plane assumes invariance in its missing dimension, and the first-order absorbing boundary leaves some exterior-domain sensitivity. It cannot reproduce H/V coupling, diagonal radiation, three-dimensional corner modes, or the loading of the complete rectangular aperture.
 
-## Helmholtz 3D BEM Directivity
+## All-BEM Free-Air Suite
 
-Run the coupled 3D boundary-element comparison pipeline at ten logarithmically spaced frequencies from 500 Hz to 8 kHz:
+The supported user workflow mirrors the FEM suite:
+
+```bash
+python app/run_bem_suite.py path/to/config.YAML \
+  --output-dir analysis/my-bem-study --title "My horn"
+```
+
+Defaults are 500--5,000 Hz, 10 points per octave, and 6 elements per
+wavelength. Override them with `--start-hz`, `--stop-hz`,
+`--points-per-octave`, and `--elements-per-wavelength`. NumCalc discovery,
+plotting caches, symmetry, resource scheduling, resumption, and standard plots
+are automatic. The standard plots are coverage and throat-impedance magnitude
+only; throat reactance is not a standard output.
+
+### Legacy NGSolve research backend
+
+`helmholtz_bem_3d.py` is retained for backend research and validation, not as
+the normal sweep command:
 
 ```bash
 python app/helmholtz_bem_3d.py path/to/config.YAML
@@ -199,12 +216,13 @@ intended for low-cost proof-of-concept sweeps. It can fail near fictitious
 interior resonances. The default `combined-field` formulation is resonance-safe,
 uses four operators, and remains the production-validation target.
 
-### Experimental native-symmetry NumCalc adapter
+### Production NumCalc backend
 
 `numcalc_bem_backend.py` exports HornCAD's actual positive-X/positive-Y mesh to
 NumCalc without reconstructing four-quadrant input geometry. NumCalc applies
 the two hard mirror planes inside its Burton--Miller BEM/FMM implementation.
-The adapter also supports an exact mirrored-full control for validation:
+The lower-level adapter also supports an exact mirrored-full control for
+validation. These commands are for backend development, not routine sweeps:
 
 ```bash
 python app/numcalc_bem_backend.py config.YAML \
@@ -222,7 +240,7 @@ boundary and evaluation fields, solver input/logs, and JSON metadata. The
 initial Test4 validation and timing results are recorded in
 `analysis/all_bem_backend_optimization/numcalc_test4_500hz/README.md`.
 
-For a resource-aware production sweep, use:
+For a production sweep, use:
 
 ```bash
 python app/run_bem_suite.py config.YAML \
@@ -246,11 +264,8 @@ Every completed sweep must provide the two standard review plots:
 `figures/coverage_heatmaps.png` and `figures/throat_impedance_magnitude.png`.
 "Standard plots" means these two plots. Show throat impedance as magnitude
 only; do not generate or present throat reactance unless explicitly requested.
-The experimental `--operator-assembler fmm` path must not be used for accepted
-results until the installed ExaFMM backend passes a dense complex-operator
-comparison on the target platform.
 
-### One-way local-lip scattering
+### Legacy one-way local-lip experiments
 
 Use a saved MFEM mouth field as a curved free-field monopole sheet and scatter
 it from a watertight mouth-end section of the authored thick body:

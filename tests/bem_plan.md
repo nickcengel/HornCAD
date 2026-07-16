@@ -2,7 +2,18 @@
 
 ## Restart Here: Free-Air Curved-Mouth and Local-Lip Model (2026-07-15)
 
-### All-BEM backend checkpoint (2026-07-15)
+### Current production status
+
+The accepted implementation is the native NumCalc all-BEM path invoked with
+`python app/run_bem_suite.py config.YAML --output-dir analysis/run`. It solves
+one positive-X/positive-Y quadrant with NumCalc's native reflection symmetry,
+uses a shared maximum-frequency mesh at 6 EPW, schedules independent frequency
+processes across available CPU and RAM, and resumes completed cases. Standard
+outputs are coverage and throat-impedance magnitude only. The NGSolve and
+one-way local-lip sections below are retained as historical validation and
+rejected-path records; they are not the production workflow.
+
+### Historical NGSolve all-BEM checkpoint (2026-07-15)
 
 #### Required quadrant symmetry backend
 
