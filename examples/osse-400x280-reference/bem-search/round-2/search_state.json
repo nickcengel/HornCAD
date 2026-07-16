@@ -1,0 +1,659 @@
+{
+  "candidates": [
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 31.11471569361397,
+        "mouth_curvature_radius_v_mm": 22.78195347746667,
+        "mouth_exit_angle_h_deg": 74.26758620235819,
+        "mouth_exit_angle_v_deg": 72.32811741707607,
+        "normalized_mouth_curvature_h": 0.15557357846806985,
+        "normalized_mouth_curvature_v": 0.16272823912476192,
+        "s_h": 0.1818970227244554,
+        "s_v": 0.17709266734220605
+      },
+      "id": "candidate-000",
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": Infinity,
+      "pareto": false,
+      "proposal_index": 0,
+      "proposal_source": "seed",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x300.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 30.0,
+        "k_v": 18.0,
+        "length_mm": 300.0,
+        "n_h": 10.0,
+        "n_v": 10.0,
+        "osse_coverage_h_deg": 50.0,
+        "osse_coverage_v_deg": 35.0
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 41.71752179054851,
+        "mouth_curvature_radius_v_mm": 25.98146101410091,
+        "mouth_exit_angle_h_deg": 74.6259734873128,
+        "mouth_exit_angle_v_deg": 67.71941403155054,
+        "normalized_mouth_curvature_h": 0.20858760895274256,
+        "normalized_mouth_curvature_v": 0.18558186438643506,
+        "s_h": 0.17251421473817063,
+        "s_v": 0.2075023946080009
+      },
+      "experiment_label": "Moderate-S N low",
+      "id": "candidate-001",
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": 0.5291379482873141,
+      "pareto": false,
+      "proposal_index": 1,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x293.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 32.11,
+        "k_v": 30.42,
+        "length_mm": 293.4,
+        "n_h": 3.0,
+        "n_v": 2.0,
+        "osse_coverage_h_deg": 48.54,
+        "osse_coverage_v_deg": 32.03
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 106.55351087228148,
+        "mouth_curvature_radius_v_mm": 119.82785125966336,
+        "mouth_exit_angle_h_deg": 82.4456258867348,
+        "mouth_exit_angle_v_deg": 82.86771834803751,
+        "normalized_mouth_curvature_h": 0.5327675543614074,
+        "normalized_mouth_curvature_v": 0.8559132232833098,
+        "s_h": 0.429220662996113,
+        "s_v": 0.4143443680680643
+      },
+      "experiment_label": "Moderate-S N middle",
+      "id": "candidate-002",
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": 0.3013608078100601,
+      "pareto": false,
+      "proposal_index": 2,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x293.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 32.11,
+        "k_v": 30.42,
+        "length_mm": 293.4,
+        "n_h": 8.73,
+        "n_v": 5.9,
+        "osse_coverage_h_deg": 48.54,
+        "osse_coverage_v_deg": 32.03
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 161.50501362399737,
+        "mouth_curvature_radius_v_mm": 208.47216263563368,
+        "mouth_exit_angle_h_deg": 84.18911218183061,
+        "mouth_exit_angle_v_deg": 84.91617886113738,
+        "normalized_mouth_curvature_h": 0.8075250681199868,
+        "normalized_mouth_curvature_v": 1.489086875968812,
+        "s_h": 0.8785325588581452,
+        "s_v": 0.7998506839697662
+      },
+      "experiment_label": "Moderate-S N high",
+      "id": "candidate-003",
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": 0.3692149394747169,
+      "pareto": false,
+      "proposal_index": 3,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x293.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 32.11,
+        "k_v": 30.42,
+        "length_mm": 293.4,
+        "n_h": 16.0,
+        "n_v": 11.0,
+        "osse_coverage_h_deg": 48.54,
+        "osse_coverage_v_deg": 32.03
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 104.3825529857298,
+        "mouth_curvature_radius_v_mm": 124.41292627717968,
+        "mouth_exit_angle_h_deg": 82.85671842422977,
+        "mouth_exit_angle_v_deg": 83.46338655302009,
+        "normalized_mouth_curvature_h": 0.521912764928649,
+        "normalized_mouth_curvature_v": 0.888663759122712,
+        "s_h": 0.45001298535814505,
+        "s_v": 0.45000875909604665
+      },
+      "experiment_label": "Matched-S length 255",
+      "id": "candidate-004",
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": 0.5163444879434351,
+      "pareto": false,
+      "proposal_index": 4,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x255.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 21.179,
+        "k_v": 18.744,
+        "length_mm": 255.0,
+        "n_h": 8.73,
+        "n_v": 5.9,
+        "osse_coverage_h_deg": 48.54,
+        "osse_coverage_v_deg": 32.03
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 109.87317829112021,
+        "mouth_curvature_radius_v_mm": 131.54530534533083,
+        "mouth_exit_angle_h_deg": 82.79836821476077,
+        "mouth_exit_angle_v_deg": 83.41993085999502,
+        "normalized_mouth_curvature_h": 0.5493658914556011,
+        "normalized_mouth_curvature_v": 0.9396093238952202,
+        "s_h": 0.44998605620257087,
+        "s_v": 0.449999807658549
+      },
+      "experiment_label": "Matched-S length 275",
+      "id": "candidate-005",
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": 0.24048217876219846,
+      "pareto": false,
+      "proposal_index": 5,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x275.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 26.846,
+        "k_v": 25.86,
+        "length_mm": 275.0,
+        "n_h": 8.73,
+        "n_v": 5.9,
+        "osse_coverage_h_deg": 48.54,
+        "osse_coverage_v_deg": 32.03
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 120.28412727291935,
+        "mouth_curvature_radius_v_mm": 145.38260303047858,
+        "mouth_exit_angle_h_deg": 82.6883788878278,
+        "mouth_exit_angle_v_deg": 83.34052629204504,
+        "normalized_mouth_curvature_h": 0.6014206363645968,
+        "normalized_mouth_curvature_v": 1.0384471645034183,
+        "s_h": 0.4499985465460208,
+        "s_v": 0.4500000364062214
+      },
+      "experiment_label": "Matched-S length 315",
+      "id": "candidate-006",
+      "length_cost_percent": 1.0000000000000018,
+      "nearest_candidate_distance": 0.4544811976399734,
+      "pareto": false,
+      "proposal_index": 6,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x315.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 40.705,
+        "k_v": 49.829,
+        "length_mm": 315.0,
+        "n_h": 8.73,
+        "n_v": 5.9,
+        "osse_coverage_h_deg": 48.54,
+        "osse_coverage_v_deg": 32.03
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 127.75469277435204,
+        "mouth_curvature_radius_v_mm": 121.90010724596928,
+        "mouth_exit_angle_h_deg": 82.61271096722393,
+        "mouth_exit_angle_v_deg": 82.36365157414292,
+        "normalized_mouth_curvature_h": 0.6387734638717601,
+        "normalized_mouth_curvature_v": 0.8707150517569234,
+        "s_h": 0.4500022132591565,
+        "s_v": 0.39067251333081987
+      },
+      "experiment_label": "Matched-S length 345",
+      "id": "candidate-007",
+      "length_cost_percent": 19.99999999999994,
+      "nearest_candidate_distance": 0.4491610942988855,
+      "pareto": false,
+      "proposal_index": 7,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x345.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 53.771,
+        "k_v": 60.0,
+        "length_mm": 345.0,
+        "n_h": 8.73,
+        "n_v": 5.9,
+        "osse_coverage_h_deg": 48.54,
+        "osse_coverage_v_deg": 32.03
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 113.85136681533032,
+        "mouth_curvature_radius_v_mm": 137.8009547551108,
+        "mouth_exit_angle_h_deg": 82.72757052115081,
+        "mouth_exit_angle_v_deg": 83.37942563346485,
+        "normalized_mouth_curvature_h": 0.5692568340766516,
+        "normalized_mouth_curvature_v": 0.9842925339650772,
+        "s_h": 0.45000770036536286,
+        "s_v": 0.45000206704498
+      },
+      "experiment_label": "Matched-S narrow construction coverage",
+      "id": "candidate-008",
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": 0.22509723947761306,
+      "pareto": false,
+      "proposal_index": 8,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x293.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 24.574,
+        "k_v": 24.703,
+        "length_mm": 293.4,
+        "n_h": 8.73,
+        "n_v": 5.9,
+        "osse_coverage_h_deg": 45.0,
+        "osse_coverage_v_deg": 28.0
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 114.73567399414293,
+        "mouth_curvature_radius_v_mm": 137.96157761747136,
+        "mouth_exit_angle_h_deg": 82.74647172863357,
+        "mouth_exit_angle_v_deg": 83.38201178239423,
+        "normalized_mouth_curvature_h": 0.5736783699707146,
+        "normalized_mouth_curvature_v": 0.9854398401247955,
+        "s_h": 0.44999663667090944,
+        "s_v": 0.4499981129500655
+      },
+      "experiment_label": "Matched-S middle construction coverage",
+      "id": "candidate-009",
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": 0.07788586998592444,
+      "pareto": false,
+      "proposal_index": 9,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x293.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 32.665,
+        "k_v": 34.667,
+        "length_mm": 293.4,
+        "n_h": 8.73,
+        "n_v": 5.9,
+        "osse_coverage_h_deg": 48.5,
+        "osse_coverage_v_deg": 32.0
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 115.47998856921384,
+        "mouth_curvature_radius_v_mm": 138.0756988915479,
+        "mouth_exit_angle_h_deg": 82.7622499716662,
+        "mouth_exit_angle_v_deg": 83.38386283441193,
+        "normalized_mouth_curvature_h": 0.5773999428460692,
+        "normalized_mouth_curvature_v": 0.9862549920824849,
+        "s_h": 0.44998905581963433,
+        "s_v": 0.44999847760508765
+      },
+      "experiment_label": "Matched-S wide construction coverage",
+      "id": "candidate-010",
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": 0.28629365997511447,
+      "pareto": false,
+      "proposal_index": 10,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x293.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 43.179,
+        "k_v": 47.374,
+        "length_mm": 293.4,
+        "n_h": 8.73,
+        "n_v": 5.9,
+        "osse_coverage_h_deg": 52.0,
+        "osse_coverage_v_deg": 36.0
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 209.66776243733761,
+        "mouth_curvature_radius_v_mm": 90.53944830400341,
+        "mouth_exit_angle_h_deg": 84.94601234149027,
+        "mouth_exit_angle_v_deg": 81.9452228953817,
+        "normalized_mouth_curvature_h": 1.0483388121866881,
+        "normalized_mouth_curvature_v": 0.6467103450285958,
+        "s_h": 0.6200117954864292,
+        "s_v": 0.34999759020878574
+      },
+      "experiment_label": "Compact branch narrow vertical coverage",
+      "id": "candidate-011",
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": 0.2005678633413836,
+      "pareto": false,
+      "proposal_index": 11,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x265.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 28.238,
+        "k_v": 16.446,
+        "length_mm": 265.0,
+        "n_h": 7.41,
+        "n_v": 4.92,
+        "osse_coverage_h_deg": 47.16,
+        "osse_coverage_v_deg": 30.0
+      }
+    },
+    {
+      "derived": {
+        "mouth_curvature_radius_h_mm": 209.66776243733761,
+        "mouth_curvature_radius_v_mm": 90.87914637946447,
+        "mouth_exit_angle_h_deg": 84.94601234149027,
+        "mouth_exit_angle_v_deg": 81.95544506001252,
+        "normalized_mouth_curvature_h": 1.0483388121866881,
+        "normalized_mouth_curvature_v": 0.6491367598533176,
+        "s_h": 0.6200117954864292,
+        "s_v": 0.35000035937389373
+      },
+      "experiment_label": "Compact branch wide vertical coverage",
+      "id": "candidate-012",
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": 0.1576484760470727,
+      "pareto": false,
+      "proposal_index": 12,
+      "proposal_source": "initial-curated",
+      "status": "preflight",
+      "stl_file": "HornCAD-Surface-400x280x265.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 28.238,
+        "k_v": 23.166,
+        "length_mm": 265.0,
+        "n_h": 7.41,
+        "n_v": 4.92,
+        "osse_coverage_h_deg": 47.16,
+        "osse_coverage_v_deg": 34.0
+      }
+    }
+  ],
+  "configuration_hash": "66136cb5a1b1f8902b795e08a5966ad857a038b73a1574df06b5799c9d0a1452",
+  "crossover_hz": 500.0,
+  "max_evaluations": 16,
+  "phase": "initial candidates materialized",
+  "proposal_count": 13,
+  "rejected_count": 0,
+  "schema_version": 1,
+  "search": {
+    "bounds": {
+      "extension_mm": [
+        0.0,
+        45.0
+      ],
+      "k_h": [
+        5.0,
+        60.0
+      ],
+      "k_v": [
+        5.0,
+        60.0
+      ],
+      "length_mm": [
+        255.0,
+        345.0
+      ],
+      "n_h": [
+        2.0,
+        25.0
+      ],
+      "n_v": [
+        2.0,
+        25.0
+      ],
+      "osse_coverage_h_deg": [
+        30.0,
+        70.0
+      ],
+      "osse_coverage_v_deg": [
+        20.0,
+        55.0
+      ]
+    },
+    "confirmation_points_per_octave": 16.0,
+    "crossover_hz": 500.0,
+    "derived_s_bounds": [
+      0.0,
+      3.0
+    ],
+    "fixed_parameters": {
+      "n_h": 10.0,
+      "n_v": 10.0
+    },
+    "geometry_context": {
+      "mouth_height_mm": 280.0,
+      "mouth_width_mm": 400.0,
+      "n_h": 10.0,
+      "n_v": 10.0,
+      "throat_angle_deg": 6.0,
+      "throat_radius_mm": 12.7
+    },
+    "inferior_screen_probability": 0.97,
+    "initial_candidates": 12,
+    "initial_pool": [
+      {
+        "label": "Moderate-S N low",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 32.11,
+          "k_v": 30.42,
+          "length_mm": 293.4,
+          "n_h": 3.0,
+          "n_v": 2.0,
+          "osse_coverage_h_deg": 48.54,
+          "osse_coverage_v_deg": 32.03
+        }
+      },
+      {
+        "label": "Moderate-S N middle",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 32.11,
+          "k_v": 30.42,
+          "length_mm": 293.4,
+          "n_h": 8.73,
+          "n_v": 5.9,
+          "osse_coverage_h_deg": 48.54,
+          "osse_coverage_v_deg": 32.03
+        }
+      },
+      {
+        "label": "Moderate-S N high",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 32.11,
+          "k_v": 30.42,
+          "length_mm": 293.4,
+          "n_h": 16.0,
+          "n_v": 11.0,
+          "osse_coverage_h_deg": 48.54,
+          "osse_coverage_v_deg": 32.03
+        }
+      },
+      {
+        "label": "Matched-S length 255",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 21.179,
+          "k_v": 18.744,
+          "length_mm": 255.0,
+          "n_h": 8.73,
+          "n_v": 5.9,
+          "osse_coverage_h_deg": 48.54,
+          "osse_coverage_v_deg": 32.03
+        }
+      },
+      {
+        "label": "Matched-S length 275",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 26.846,
+          "k_v": 25.86,
+          "length_mm": 275.0,
+          "n_h": 8.73,
+          "n_v": 5.9,
+          "osse_coverage_h_deg": 48.54,
+          "osse_coverage_v_deg": 32.03
+        }
+      },
+      {
+        "label": "Matched-S length 315",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 40.705,
+          "k_v": 49.829,
+          "length_mm": 315.0,
+          "n_h": 8.73,
+          "n_v": 5.9,
+          "osse_coverage_h_deg": 48.54,
+          "osse_coverage_v_deg": 32.03
+        }
+      },
+      {
+        "label": "Matched-S length 345",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 53.771,
+          "k_v": 60.0,
+          "length_mm": 345.0,
+          "n_h": 8.73,
+          "n_v": 5.9,
+          "osse_coverage_h_deg": 48.54,
+          "osse_coverage_v_deg": 32.03
+        }
+      },
+      {
+        "label": "Matched-S narrow construction coverage",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 24.574,
+          "k_v": 24.703,
+          "length_mm": 293.4,
+          "n_h": 8.73,
+          "n_v": 5.9,
+          "osse_coverage_h_deg": 45.0,
+          "osse_coverage_v_deg": 28.0
+        }
+      },
+      {
+        "label": "Matched-S middle construction coverage",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 32.665,
+          "k_v": 34.667,
+          "length_mm": 293.4,
+          "n_h": 8.73,
+          "n_v": 5.9,
+          "osse_coverage_h_deg": 48.5,
+          "osse_coverage_v_deg": 32.0
+        }
+      },
+      {
+        "label": "Matched-S wide construction coverage",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 43.179,
+          "k_v": 47.374,
+          "length_mm": 293.4,
+          "n_h": 8.73,
+          "n_v": 5.9,
+          "osse_coverage_h_deg": 52.0,
+          "osse_coverage_v_deg": 36.0
+        }
+      },
+      {
+        "label": "Compact branch narrow vertical coverage",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 28.238,
+          "k_v": 16.446,
+          "length_mm": 265.0,
+          "n_h": 7.41,
+          "n_v": 4.92,
+          "osse_coverage_h_deg": 47.16,
+          "osse_coverage_v_deg": 30.0
+        }
+      },
+      {
+        "label": "Compact branch wide vertical coverage",
+        "values": {
+          "extension_mm": 0.0,
+          "k_h": 28.238,
+          "k_v": 23.166,
+          "length_mm": 265.0,
+          "n_h": 7.41,
+          "n_v": 4.92,
+          "osse_coverage_h_deg": 47.16,
+          "osse_coverage_v_deg": 34.0
+        }
+      }
+    ],
+    "intended_coverage_h_deg": 50.0,
+    "intended_coverage_v_deg": 35.0,
+    "max_evaluations": 16,
+    "minimum_candidate_distance": 0.08,
+    "random_seed": 29,
+    "sampling_stability_points": 2.0,
+    "search_size": "quick",
+    "seed_values": {
+      "extension_mm": 0.0,
+      "k_h": 30.0,
+      "k_v": 18.0,
+      "length_mm": 300.0,
+      "n_h": 10.0,
+      "n_v": 10.0,
+      "osse_coverage_h_deg": 50.0,
+      "osse_coverage_v_deg": 35.0
+    },
+    "seed_yaml": "../../project.yaml",
+    "solver": {
+      "angles": 91,
+      "elements_per_wavelength": 6,
+      "points_per_octave": 12,
+      "workers": 0
+    },
+    "upper_frequency_hz": 5000.0,
+    "version": 1
+  },
+  "search_yaml": "/Users/nickengel/Documents/GitHub/HornCAD/examples/osse-400x280-reference/bem-search/round-2/search.yaml",
+  "seed_yaml": "/Users/nickengel/Documents/GitHub/HornCAD/examples/osse-400x280-reference/project.yaml",
+  "started_at_unix": 1784186144.986287,
+  "status": "preflight",
+  "surrogate_screened_count": 0,
+  "upper_frequency_hz": 5000.0
+}

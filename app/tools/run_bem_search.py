@@ -109,6 +109,32 @@ def load_search(path: Path) -> tuple[dict[str, Any], Path, dict[str, Any]]:
         "sampling_stability_points", DEFAULT_SAMPLING_STABILITY_POINTS))
     search["confirmation_points_per_octave"] = float(search.get(
         "confirmation_points_per_octave", 16))
+    initial_pool = search.get("initial_pool")
+    if initial_pool is not None:
+        if not isinstance(initial_pool, list) or not initial_pool:
+            raise ValueError("initial_pool must be a non-empty list")
+        validated_pool = []
+        for index, item in enumerate(initial_pool):
+            if not isinstance(item, dict) or not str(item.get("label", "")).strip():
+                raise ValueError(f"initial_pool[{index}] requires a label")
+            values = item.get("values")
+            if not isinstance(values, dict):
+                raise ValueError(f"initial_pool[{index}] requires values")
+            candidate = {}
+            for name in VARIABLES:
+                if name not in values:
+                    raise ValueError(f"initial_pool[{index}].values requires {name}")
+                value = float(values[name])
+                lower, upper = bounds[name]
+                if not lower <= value <= upper:
+                    raise ValueError(
+                        f"initial_pool[{index}].values.{name} is outside bounds")
+                candidate[name] = value
+            validated_pool.append({"label": str(item["label"]).strip(),
+                                   "values": candidate})
+        search["initial_pool"] = validated_pool
+        search["initial_candidates"] = min(len(validated_pool),
+                                           search["max_evaluations"] - 1)
     if not 0.5 < search["inferior_screen_probability"] < 1:
         raise ValueError("inferior_screen_probability must be between 0.5 and 1")
     if search["sampling_stability_points"] <= 0:
@@ -509,6 +535,8 @@ def _coupled_axis_controls(search: dict[str, Any], length_mm: float,
 
 def structured_initial_values(search: dict[str, Any], proposal_index: int) -> dict[str, float]:
     """Return one member of four length families crossed with three N levels."""
+    if search.get("initial_pool"):
+        return dict(search["initial_pool"][proposal_index - 1]["values"])
     family = (proposal_index - 1) // 3
     n_level = (proposal_index - 1) % 3
     if not 0 <= family < 4:
@@ -539,7 +567,8 @@ def propose_vector(search: dict[str, Any], records: list[dict[str, Any]],
     initial = int(search["initial_candidates"])
     if proposal_index <= initial:
         values = structured_initial_values(search, proposal_index)
-        return normalized_vector(values, bounds), "initial-length-N-family"
+        source = "initial-curated" if search.get("initial_pool") else "initial-length-N-family"
+        return normalized_vector(values, bounds), source
 
     completed = _training_records(records)
     if len(completed) < 3:
@@ -614,9 +643,33 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     pareto = pareto_indices(records)
     for index, record in enumerate(records):
         record["pareto"] = index in pareto
+    extrema: dict[str, tuple[float, float]] = {}
+    if state["status"] == "complete":
+        completed_diagnostics = [record.get("diagnostics", {}).get("combined", {})
+                                 for record in records
+                                 if record.get("status") == "complete"]
+        for key in OBJECTIVES:
+            values = [float(item[key]) for item in completed_diagnostics if key in item]
+            if values:
+                extrema[key] = (min(values), max(values))
+
+    def diagnostic_cell(diagnostic: dict[str, Any], key: str) -> str:
+        if not diagnostic:
+            return "<td>—</td>"
+        value = float(diagnostic[key])
+        css_class = ""
+        if key in extrema:
+            minimum, maximum = extrema[key]
+            if math.isclose(value, maximum, abs_tol=1e-9):
+                css_class = " class='best'"
+            elif math.isclose(value, minimum, abs_tol=1e-9):
+                css_class = " class='worst'"
+        return f"<td{css_class}>{value:.1f}%</td>"
+
     traits = candidate_traits(records, seed, search["bounds"])
     rows = []
-    for record, trait in zip(records, traits):
+    for record, fallback_trait in zip(records, traits):
+        trait = record.get("experiment_label", fallback_trait)
         diagnostic = record.get("diagnostics", {}).get("combined", {})
         candidate_dir = f"candidates/{record['id']}"
         stl_link = (f" · <a href='{candidate_dir}/{html.escape(record['stl_file'])}'>STL</a>"
@@ -629,9 +682,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td><a href='{candidate_dir}/project.yaml'>{record['id']}</a>"
             f"{stl_link}{report_link}</td>",
             f"<td>{html.escape(status)}</td>",
-            f"<td>{diagnostic.get('pattern_fit_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
-            f"<td>{diagnostic.get('pattern_stability_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
-            f"<td>{diagnostic.get('hf_retention_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
+            diagnostic_cell(diagnostic, "pattern_fit_percent"),
+            diagnostic_cell(diagnostic, "pattern_stability_percent"),
+            diagnostic_cell(diagnostic, "hf_retention_percent"),
             f"<td>{record.get('crossover_minimum_normalized_impedance', float('nan')):.3f}</td>" if "crossover_minimum_normalized_impedance" in record else "<td>—</td>",
             f"<td>{record.get('length_cost_percent', 0):.1f}%</td>",
             f"<td>{record['values']['length_mm']:.1f}</td>",
@@ -676,7 +729,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}main{{max-width:1400px;margin:auto;padding:20px}}
 a{{color:var(--accent-strong)}}section{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}table{{border-collapse:collapse;width:100%}}
-th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left}}td{{white-space:nowrap}}th{{background:var(--panel-2)}}.summary{{display:flex;gap:30px;flex-wrap:wrap}}.summary p{{color:var(--muted)}}.summary strong{{color:var(--ink)}}
+th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left}}td{{white-space:nowrap}}th{{background:var(--panel-2)}}td.best{{background:#173c39;color:#9af0df;font-weight:700}}td.worst{{background:#482321;color:#ffaaa3;font-weight:700}}.summary{{display:flex;gap:30px;flex-wrap:wrap}}.summary p{{color:var(--muted)}}.summary strong{{color:var(--ink)}}
 </style></head><body><main><h1>BEM candidate search</h1><section class='summary'>
 <p><strong>Status</strong><br>{html.escape(state['status'])}</p><p><strong>Phase</strong><br>{html.escape(state.get('phase', ''))}</p>
 <p><strong>Progress</strong><br>{sum(r['status']=='complete' for r in records)} / {state['max_evaluations']} evaluated</p>
@@ -937,7 +990,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             feasible, reason = geometry_feasibility(derived)
             distance = candidate_distance(values, state["candidates"], search["bounds"])
             if (not feasible or
-                    distance < search["minimum_candidate_distance"]):
+                    (source != "initial-curated" and
+                     distance < search["minimum_candidate_distance"])):
                 state["rejected_count"] += 1
                 save_state(output_dir, state)
                 continue
@@ -955,6 +1009,9 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                       "proposal_source": source, "values": values,
                       "derived": derived,
                       "nearest_candidate_distance": distance}
+            if source == "initial-curated":
+                record["experiment_label"] = search["initial_pool"][
+                    proposal_index - 1]["label"]
             update_selection_scores(record, search)
             state["candidates"].append(record)
             candidate_dir = output_dir / "candidates" / candidate_id

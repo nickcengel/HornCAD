@@ -14,13 +14,14 @@ from app.tools.run_bem_search import (
     length_cost_percent, load_search,
     materialize_candidate, pareto_indices, propose_vector,
     sampling_stability,
-    run_search, seed_values,
+    run_search, seed_values, update_selection_scores, write_report,
 )
 
 
 ROOT = Path(__file__).parents[1]
 SEARCH = (ROOT / "examples" / "osse-400x280-reference" / "bem-search" /
           "search.yaml")
+ROUND2_SEARCH = SEARCH.parent / "round-2" / "search.yaml"
 
 
 class BEMSearchTests(unittest.TestCase):
@@ -71,6 +72,17 @@ class BEMSearchTests(unittest.TestCase):
                   for index, name in enumerate(VARIABLES)}
         self.assertIsNotNone(geometry_feature_vector(search, values))
         self.assertEqual(values["extension_mm"], search["seed_values"]["extension_mm"])
+
+    def test_curated_pool_preserves_labels_and_fixed_extension(self) -> None:
+        search, _, seed = load_search(ROUND2_SEARCH)
+        search["seed_values"] = seed_values(seed)
+        vector, source = propose_vector(search, [], 1)
+        self.assertEqual(source, "initial-curated")
+        values = {name: search["bounds"][name][0] + vector[index] *
+                  (search["bounds"][name][1] - search["bounds"][name][0])
+                  for index, name in enumerate(VARIABLES)}
+        self.assertEqual(values["extension_mm"], 0)
+        self.assertEqual(search["initial_pool"][0]["label"], "Moderate-S N low")
 
     def test_inferior_screen_waits_for_seed_and_sufficient_learning(self) -> None:
         search, _, seed = load_search(SEARCH)
@@ -200,6 +212,20 @@ class BEMSearchTests(unittest.TestCase):
             candidate_count = len(state["candidates"])
             resumed = run_search(SEARCH, Path(temp), None, dry_run=True)
             self.assertEqual(len(resumed["candidates"]), candidate_count)
+
+            for index, record in enumerate(state["candidates"]):
+                record["status"] = "complete"
+                score = 50.0 + index
+                record["diagnostics"] = {"combined": {
+                    "pattern_fit_percent": score,
+                    "pattern_stability_percent": 100 - score,
+                    "hf_retention_percent": score}}
+                record["sampling_stability"] = {"status": "stable"}
+                update_selection_scores(record, state["search"])
+            state["status"] = "complete"
+            highlighted = write_report(Path(temp), state).read_text()
+            self.assertEqual(highlighted.count("class='best'"), 3)
+            self.assertEqual(highlighted.count("class='worst'"), 3)
 
 
 if __name__ == "__main__":

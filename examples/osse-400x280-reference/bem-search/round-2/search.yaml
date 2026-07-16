@@ -1,0 +1,61 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: ../../project.yaml
+  intended_coverage_h_deg: 50
+  intended_coverage_v_deg: 35
+  crossover_hz: 500
+  upper_frequency_hz: 5000
+  search_size: quick
+  initial_candidates: 12
+  random_seed: 29
+  minimum_candidate_distance: 0.08
+  derived_s_bounds: [0.0, 3.0]
+  inferior_screen_probability: 0.97
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16
+  bounds:
+    length_mm: [255, 345]
+    extension_mm: [0, 45]
+    osse_coverage_h_deg: [30, 70]
+    osse_coverage_v_deg: [20, 55]
+    k_h: [5, 60]
+    k_v: [5, 60]
+    n_h: [2, 25]
+    n_v: [2, 25]
+  initial_pool:
+    # Group A: direct N sensitivity around the best balanced-pattern neighborhood.
+    - label: Moderate-S N low
+      values: {length_mm: 293.4, extension_mm: 0, osse_coverage_h_deg: 48.54, osse_coverage_v_deg: 32.03, k_h: 32.11, k_v: 30.42, n_h: 3, n_v: 2}
+    - label: Moderate-S N middle
+      values: {length_mm: 293.4, extension_mm: 0, osse_coverage_h_deg: 48.54, osse_coverage_v_deg: 32.03, k_h: 32.11, k_v: 30.42, n_h: 8.73, n_v: 5.9}
+    - label: Moderate-S N high
+      values: {length_mm: 293.4, extension_mm: 0, osse_coverage_h_deg: 48.54, osse_coverage_v_deg: 32.03, k_h: 32.11, k_v: 30.42, n_h: 16, n_v: 11}
+
+    # Group B: length with coverage, N, extension, and realized S held near constant.
+    - label: Matched-S length 255
+      values: {length_mm: 255, extension_mm: 0, osse_coverage_h_deg: 48.54, osse_coverage_v_deg: 32.03, k_h: 21.179, k_v: 18.744, n_h: 8.73, n_v: 5.9}
+    - label: Matched-S length 275
+      values: {length_mm: 275, extension_mm: 0, osse_coverage_h_deg: 48.54, osse_coverage_v_deg: 32.03, k_h: 26.846, k_v: 25.86, n_h: 8.73, n_v: 5.9}
+    - label: Matched-S length 315
+      values: {length_mm: 315, extension_mm: 0, osse_coverage_h_deg: 48.54, osse_coverage_v_deg: 32.03, k_h: 40.705, k_v: 49.829, n_h: 8.73, n_v: 5.9}
+    - label: Matched-S length 345
+      values: {length_mm: 345, extension_mm: 0, osse_coverage_h_deg: 48.54, osse_coverage_v_deg: 32.03, k_h: 53.771, k_v: 60, n_h: 8.73, n_v: 5.9}
+
+    # Group C: construction coverage at matched moderate S.
+    - label: Matched-S narrow construction coverage
+      values: {length_mm: 293.4, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 28, k_h: 24.574, k_v: 24.703, n_h: 8.73, n_v: 5.9}
+    - label: Matched-S middle construction coverage
+      values: {length_mm: 293.4, extension_mm: 0, osse_coverage_h_deg: 48.5, osse_coverage_v_deg: 32, k_h: 32.665, k_v: 34.667, n_h: 8.73, n_v: 5.9}
+    - label: Matched-S wide construction coverage
+      values: {length_mm: 293.4, extension_mm: 0, osse_coverage_h_deg: 52, osse_coverage_v_deg: 36, k_h: 43.179, k_v: 47.374, n_h: 8.73, n_v: 5.9}
+
+    # Group D: compact branch with controlled vertical construction coverage.
+    - label: Compact branch narrow vertical coverage
+      values: {length_mm: 265, extension_mm: 0, osse_coverage_h_deg: 47.16, osse_coverage_v_deg: 30, k_h: 28.238, k_v: 16.446, n_h: 7.41, n_v: 4.92}
+    - label: Compact branch wide vertical coverage
+      values: {length_mm: 265, extension_mm: 0, osse_coverage_h_deg: 47.16, osse_coverage_v_deg: 34, k_h: 28.238, k_v: 23.166, n_h: 7.41, n_v: 4.92}
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 0

@@ -165,3 +165,21 @@ geometry failure boundary rather than an unusable acoustic region.
 The next round should not use unconstrained independent variation of all eight
 parameters. Each group should answer one named question with matched controls,
 and the report should identify that question before any BEM sweep begins.
+
+## Round-two candidate pool
+
+The implemented round-two preflight is in `round-2/`. It contains the seed plus
+12 new candidates in four controlled groups:
+
+| Group | Candidates | Question |
+|---|---:|---|
+| Moderate-S N | 3 | How does N trade Pattern Stability against HF Retention around the best balanced-pattern neighborhood? |
+| Matched-S length | 4 | What does length do when extension, construction coverage, N, and realized S are held approximately constant? |
+| Matched-S construction coverage | 3 | Which OS-SE construction coverage best matches the authored coverage when realized S is held at 0.45? |
+| Compact vertical branch | 2 | Can vertical fit/retention improve near the compact candidate-013 neighborhood without changing its horizontal construction? |
+
+Extension is zero for every candidate. The matched-S groups hold both axes near
+S=0.45; the 345 mm vertical member reaches S=0.391 because K is already at its
+configured maximum of 60. The pool deliberately does not optimize only Pattern
+Fit. Each group isolates a lever, while final selection retains Pattern Fit,
+Pattern Stability, and HF Retention as separate Pareto objectives.
