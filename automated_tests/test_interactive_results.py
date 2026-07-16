@@ -9,8 +9,8 @@ import numpy as np
 
 from app.tools.interactive_results import (
     AIR_DENSITY_KG_M3, SOUND_SPEED_M_S, _frequency_axis,
-    _frequency_grid_values, _positive_half_angle, comparison_report, load_run,
-    single_report,
+    _frequency_grid_values, _positive_half_angle, comparison_report,
+    coverage_diagnostics, load_run, single_report,
 )
 
 
@@ -70,6 +70,7 @@ class InteractiveResultsTests(unittest.TestCase):
                                         ["A", "B", "C", "D"])
             single_text = single.read_text()
             self.assertIn("Horn acoustic parameters", single_text)
+            self.assertIn("Coverage diagnostics", single_text)
             # Plotly JSON escapes the Unicode minus sign in the trace names.
             self.assertIn("Horizontal \\u22126 dB", single_text)
             self.assertIn("Vertical \\u22126 dB", single_text)
@@ -83,6 +84,32 @@ class InteractiveResultsTests(unittest.TestCase):
             text = compare.read_text()
             self.assertIn("Normalized throat impedance magnitude", text)
             self.assertIn("Conical extension", text)
+
+    def test_coverage_diagnostics_detects_passband_and_scores_planes(self) -> None:
+        frequencies = 500.0 * 2 ** (np.arange(17) / 12)
+        angles = np.arange(-90.0, 91.0)
+
+        def patterns(half_angles: np.ndarray) -> np.ndarray:
+            return np.asarray([-6 * (np.abs(angles) / half_angle) ** 2
+                               for half_angle in half_angles])
+
+        horizontal_angles = np.linspace(50, 40, len(frequencies))
+        vertical_angles = np.linspace(35, 28, len(frequencies))
+        run = {
+            "frequencies": frequencies, "angles": angles,
+            "horizontal": patterns(horizontal_angles),
+            "vertical": patterns(vertical_angles),
+            "intended_coverages": {"horizontal": 50.0, "vertical": 35.0},
+        }
+        result = coverage_diagnostics(run)
+        self.assertEqual(result["status"], "available")
+        self.assertEqual(result["passband_lower_hz"], 500.0)
+        self.assertGreater(result["combined"]["smoothness_score"], 99.0)
+        self.assertGreater(result["horizontal"]["within_10_percent_of_intent"], 40.0)
+        self.assertAlmostEqual(result["horizontal"]["narrowing_percent"], 20.0,
+                               delta=0.2)
+        self.assertAlmostEqual(result["vertical"]["narrowing_percent"], 20.0,
+                               delta=0.2)
 
 
 if __name__ == "__main__":

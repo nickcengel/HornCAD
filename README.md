@@ -41,6 +41,23 @@ throat-impedance magnitude, and the horn acoustic parameters.
 Impedance is normalized by the effective circular throat's characteristic
 impedance, `ρc/Sₜ`; throat reactance is not plotted.
 
+The report also writes `coverage_diagnostics.json` and displays three coverage
+diagnostics for horizontal, vertical, and combined behavior:
+
+- **Coverage error** is the log-frequency-weighted RMS percentage error from
+  the intended −6 dB half-angle; lower is better. The report also gives the
+  percentage of the evaluated passband within ±10% of intent.
+- **Smoothness** is a 0–100 score for ripple after removing the best-fit gradual
+  trend versus log frequency; higher is better.
+- **Narrowing** is the signed percentage change between the lower and upper
+  evaluated passband endpoints; positive means the horn became narrower.
+
+The automatic diagnostic passband begins only when both planes sustain genuine
+−6 dB crossings for at least one-third octave. A missing crossing after that
+point is counted as 90° rather than discarded. The upper bound is the final
+simulated frequency. This is a coverage-control bound, not a claim that an
+arbitrary horn has a classical length-derived cutoff frequency.
+
 To export geometry without running an acoustic analysis:
 
 ```bash

@@ -17,6 +17,8 @@ import yaml
 COLORS = ("#2563eb", "#dc2626", "#16a34a", "#9333ea")
 AIR_DENSITY_KG_M3 = 1.2041
 SOUND_SPEED_M_S = 343.21
+PASSBAND_CONFIRMATION_OCTAVES = 1.0 / 3.0
+SMOOTHNESS_REFERENCE_FRACTION = 0.10
 
 
 def _scalar(value: Any) -> Any:
@@ -139,6 +141,99 @@ def _positive_half_angle(angles: np.ndarray, levels: np.ndarray) -> np.ndarray:
     return np.asarray(output)
 
 
+def _measured_half_angle(angles: np.ndarray, levels: np.ndarray) -> np.ndarray:
+    """Return genuine positive-side -6 dB crossings; no crossing is NaN."""
+    positive = angles >= 0
+    a = angles[positive]
+    output = []
+    for row in levels[:, positive]:
+        crossing = np.nan
+        for index in range(len(a) - 1):
+            if row[index] >= -6 and row[index + 1] < -6:
+                crossing = float(a[index] + (-6 - row[index]) /
+                                 (row[index + 1] - row[index]) *
+                                 (a[index + 1] - a[index]))
+                break
+        output.append(crossing)
+    return np.asarray(output)
+
+
+def coverage_diagnostics(run: dict[str, Any]) -> dict[str, Any]:
+    """Summarize coverage fidelity over the automatically detected passband."""
+    order = np.argsort(run["frequencies"])
+    frequencies = np.asarray(run["frequencies"], dtype=float)[order]
+    measured = {
+        key: _measured_half_angle(run["angles"], run[key])[order]
+        for key in ("horizontal", "vertical")
+    }
+    valid_both = np.isfinite(measured["horizontal"]) & np.isfinite(measured["vertical"])
+    start_index = None
+    for index in np.flatnonzero(valid_both):
+        confirmation_end = frequencies[index] * 2 ** PASSBAND_CONFIRMATION_OCTAVES
+        end_index = int(np.searchsorted(frequencies, confirmation_end, side="left"))
+        if (end_index < len(frequencies) and end_index > index
+                and np.all(valid_both[index:end_index + 1])):
+            start_index = int(index)
+            break
+    if start_index is None:
+        return {"status": "unavailable",
+                "reason": "no sustained horizontal and vertical -6 dB crossings"}
+
+    band = np.arange(start_index, len(frequencies))
+    # A missing crossing after the passband is established means coverage exceeded
+    # the measured hemisphere. Treat it as 90 degrees instead of discarding it.
+    angles = {key: np.where(np.isfinite(measured[key][band]),
+                            measured[key][band], 90.0)
+              for key in measured}
+    targets = run["intended_coverages"]
+    if any(targets.get(key, 0) <= 0 for key in angles):
+        return {"status": "unavailable", "reason": "intended coverage is missing"}
+    log_frequency = np.log(frequencies[band])
+    plane_results = {}
+    for key, values in angles.items():
+        target = float(targets[key])
+        fractional_error = (values - target) / target
+        coverage_error = 100 * float(np.sqrt(
+            np.trapezoid(fractional_error ** 2, log_frequency) /
+            (log_frequency[-1] - log_frequency[0])))
+        within_tolerance = 100 * float(
+            np.trapezoid((np.abs(fractional_error) <= 0.10).astype(float), log_frequency) /
+            (log_frequency[-1] - log_frequency[0]))
+        trend = np.polyval(np.polyfit(log_frequency, values, 1), log_frequency)
+        ripple_rms = float(np.sqrt(np.mean((values - trend) ** 2)))
+        smoothness = 100 * float(np.exp(
+            -(ripple_rms / (SMOOTHNESS_REFERENCE_FRACTION * target)) ** 2))
+        narrowing = 100 * float((values[0] - values[-1]) / values[0])
+        plane_results[key] = {
+            "coverage_error_percent": coverage_error,
+            "within_10_percent_of_intent": within_tolerance,
+            "smoothness_score": smoothness,
+            "trend_ripple_rms_deg": ripple_rms,
+            "narrowing_percent": narrowing,
+            "lower_half_angle_deg": float(values[0]),
+            "upper_half_angle_deg": float(values[-1]),
+        }
+    return {
+        "status": "available",
+        "passband_lower_hz": float(frequencies[band][0]),
+        "passband_upper_hz": float(frequencies[band][-1]),
+        "confirmation_octaves": PASSBAND_CONFIRMATION_OCTAVES,
+        "horizontal": plane_results["horizontal"],
+        "vertical": plane_results["vertical"],
+        "combined": {
+            "coverage_error_percent": float(np.sqrt(np.mean([
+                plane_results[key]["coverage_error_percent"] ** 2 for key in plane_results]))),
+            "within_10_percent_of_intent": float(np.mean([
+                plane_results[key]["within_10_percent_of_intent"]
+                for key in plane_results])),
+            "smoothness_score": float(np.mean([
+                plane_results[key]["smoothness_score"] for key in plane_results])),
+            "narrowing_percent": float(np.mean([
+                plane_results[key]["narrowing_percent"] for key in plane_results])),
+        },
+    }
+
+
 def _frequency_axis(frequencies: np.ndarray) -> dict[str, Any]:
     minimum = float(np.min(frequencies))
     maximum = float(np.max(frequencies))
@@ -194,6 +289,31 @@ def _parameter_table(runs: list[dict[str, Any]]) -> str:
     return f"<table>{header}{rows}</table>"
 
 
+def _diagnostic_table(runs: list[dict[str, Any]]) -> str:
+    rows = []
+    for run in runs:
+        diagnostic = coverage_diagnostics(run)
+        if diagnostic["status"] != "available":
+            rows.append(f"<tr><td>{html.escape(run['name'])}</td>"
+                        f"<td colspan='6'>{html.escape(diagnostic['reason'])}</td></tr>")
+            continue
+        for label, key in (("Combined", "combined"), ("Horizontal", "horizontal"),
+                           ("Vertical", "vertical")):
+            values = diagnostic[key]
+            band = (f"{diagnostic['passband_lower_hz']:g}–"
+                    f"{diagnostic['passband_upper_hz']:g} Hz")
+            rows.append(
+                f"<tr><td>{html.escape(run['name'])}</td><td>{label}</td><td>{band}</td>"
+                f"<td>{values['coverage_error_percent']:.1f}%</td>"
+                f"<td>{values['within_10_percent_of_intent']:.1f}%</td>"
+                f"<td>{values['smoothness_score']:.1f}/100</td>"
+                f"<td>{values['narrowing_percent']:+.1f}%</td></tr>")
+    return ("<table><tr><th>Run</th><th>Plane</th><th>Evaluated passband</th>"
+            "<th>Coverage error</th><th>Within ±10%</th><th>Smoothness</th>"
+            "<th>Narrowing</th></tr>" +
+            "".join(rows) + "</table>")
+
+
 def _write_html(path: Path, title: str, figure: go.Figure,
                 runs: list[dict[str, Any]]) -> Path:
     plot = figure.to_html(full_html=False, include_plotlyjs=True,
@@ -209,9 +329,15 @@ th{{background:#f1f3f7;position:sticky;top:0}} .hint{{color:#566176;margin:0 0 1
 </style></head><body><main><h1>{html.escape(title)}</h1>
 <p class='hint'>Hover for exact coordinates. Drag to zoom; double-click to reset; use the legend to hide traces.</p>
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
-{_parameter_table(runs)}</section></main></body></html>"""
+{_parameter_table(runs)}</section><section class='parameters'><h2>Coverage diagnostics</h2>
+{_diagnostic_table(runs)}
+<p class='hint'>Coverage error is log-frequency-weighted RMS error from the intended −6 dB half-angle (lower is better). Smoothness is 0–100 and measures RMS ripple after removing the best-fit log-frequency trend; 10% of the intended angle gives a score of 36.8. Narrowing is the signed change from the lower to upper passband endpoint; positive means narrower. The automatic passband starts after both planes sustain genuine −6 dB crossings for one-third octave.</p>
+</section></main></body></html>"""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(document)
+    diagnostics = {run["name"]: coverage_diagnostics(run) for run in runs}
+    diagnostics_path = path.with_name("coverage_diagnostics.json")
+    diagnostics_path.write_text(json.dumps(diagnostics, indent=2) + "\n")
     return path
 
 

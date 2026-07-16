@@ -19,3 +19,7 @@ Open either `interactive_report.html` for cursor-enabled coverage and
 normalized magnitude-only throat impedance. The compact numerical files support
 report regeneration and comparison; bulky meshes and per-frequency working
 directories are deliberately excluded.
+
+Each report is accompanied by `coverage_diagnostics.json`, containing the
+automatic evaluated passband plus horizontal, vertical, and combined coverage
+error, smoothness, within-tolerance, and narrowing values.

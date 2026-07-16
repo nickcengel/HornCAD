@@ -1,0 +1,32 @@
+{
+  "project": {
+    "status": "available",
+    "passband_lower_hz": 839.4020090612802,
+    "passband_upper_hz": 5000.0,
+    "confirmation_octaves": 0.3333333333333333,
+    "horizontal": {
+      "coverage_error_percent": 26.076432898503533,
+      "within_10_percent_of_intent": 1.6129032258064442,
+      "smoothness_score": 78.20002758485234,
+      "trend_ripple_rms_deg": 2.479416189798598,
+      "narrowing_percent": 24.502640716113326,
+      "lower_half_angle_deg": 46.70878408183335,
+      "upper_half_angle_deg": 35.26389853539659
+    },
+    "vertical": {
+      "coverage_error_percent": 38.75444206850615,
+      "within_10_percent_of_intent": 12.90322580645158,
+      "smoothness_score": 2.7816192012218655,
+      "trend_ripple_rms_deg": 6.624286982132301,
+      "narrowing_percent": 69.31808625248993,
+      "lower_half_angle_deg": 76.9632877280634,
+      "upper_half_angle_deg": 23.61380955797242
+    },
+    "combined": {
+      "coverage_error_percent": 33.029434847960665,
+      "within_10_percent_of_intent": 7.2580645161290125,
+      "smoothness_score": 40.490823393037104,
+      "narrowing_percent": 46.91036348430163
+    }
+  }
+}
