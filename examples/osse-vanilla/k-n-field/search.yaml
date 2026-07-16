@@ -1,0 +1,142 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: ../HornCAD-Body-400x400x160.YAML
+  intended_coverage_h_deg: 45
+  intended_coverage_v_deg: 45
+  lower_frequency_hz: 500
+  crossover_hz: 750
+  upper_frequency_hz: 8000
+  search_size: normal
+  max_evaluations: 56
+  initial_candidates: 55
+  random_seed: 17
+  minimum_candidate_distance: 0.08
+  derived_s_bounds: [0.0, 5.0]
+  inferior_screen_probability: 0.97
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16
+  bounds:
+    length_mm: [160, 160.000001]
+    extension_mm: [0, 0.000001]
+    osse_coverage_h_deg: [45, 45.000001]
+    osse_coverage_v_deg: [45, 45.000001]
+    k_h: [1, 5]
+    k_v: [1, 5]
+    n_h: [2, 25]
+    n_v: [2, 25]
+  initial_pool:
+    - label: "K=1 N=2 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 1, k_v: 1, n_h: 2, n_v: 2}
+    - label: "K=1 N=3 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 1, k_v: 1, n_h: 3, n_v: 3}
+    - label: "K=1 N=4 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 1, k_v: 1, n_h: 4, n_v: 4}
+    - label: "K=1 N=5 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 1, k_v: 1, n_h: 5, n_v: 5}
+    - label: "K=1 N=6 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 1, k_v: 1, n_h: 6, n_v: 6}
+    - label: "K=1 N=7 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 1, k_v: 1, n_h: 7, n_v: 7}
+    - label: "K=1 N=8 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 1, k_v: 1, n_h: 8, n_v: 8}
+    - label: "K=1 N=9 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 1, k_v: 1, n_h: 9, n_v: 9}
+    - label: "K=1 N=10 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 1, k_v: 1, n_h: 10, n_v: 10}
+    - label: "K=2 N=2 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 2, k_v: 2, n_h: 2, n_v: 2}
+    - label: "K=2 N=3 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 2, k_v: 2, n_h: 3, n_v: 3}
+    - label: "K=2 N=4 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 2, k_v: 2, n_h: 4, n_v: 4}
+    - label: "K=2 N=5 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 2, k_v: 2, n_h: 5, n_v: 5}
+    - label: "K=2 N=6 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 2, k_v: 2, n_h: 6, n_v: 6}
+    - label: "K=2 N=7 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 2, k_v: 2, n_h: 7, n_v: 7}
+    - label: "K=2 N=8 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 2, k_v: 2, n_h: 8, n_v: 8}
+    - label: "K=2 N=9 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 2, k_v: 2, n_h: 9, n_v: 9}
+    - label: "K=2 N=10 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 2, k_v: 2, n_h: 10, n_v: 10}
+    - label: "K=3 N=2 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 3, k_v: 3, n_h: 2, n_v: 2}
+    - label: "K=3 N=3 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 3, k_v: 3, n_h: 3, n_v: 3}
+    - label: "K=3 N=4 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 3, k_v: 3, n_h: 4, n_v: 4}
+    - label: "K=3 N=6 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 3, k_v: 3, n_h: 6, n_v: 6}
+    - label: "K=3 N=7 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 3, k_v: 3, n_h: 7, n_v: 7}
+    - label: "K=3 N=8 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 3, k_v: 3, n_h: 8, n_v: 8}
+    - label: "K=3 N=9 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 3, k_v: 3, n_h: 9, n_v: 9}
+    - label: "K=3 N=10 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 3, k_v: 3, n_h: 10, n_v: 10}
+    - label: "K=4 N=2 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 2, n_v: 2}
+    - label: "K=4 N=3 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 3, n_v: 3}
+    - label: "K=4 N=4 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 4, n_v: 4}
+    - label: "K=4 N=5 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 5, n_v: 5}
+    - label: "K=4 N=6 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 6, n_v: 6}
+    - label: "K=4 N=7 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 7, n_v: 7}
+    - label: "K=4 N=8 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 8, n_v: 8}
+    - label: "K=4 N=9 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 9, n_v: 9}
+    - label: "K=4 N=10 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 10, n_v: 10}
+    - label: "K=5 N=2 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 2, n_v: 2}
+    - label: "K=5 N=3 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 3, n_v: 3}
+    - label: "K=5 N=4 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 4, n_v: 4}
+    - label: "K=5 N=5 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 5, n_v: 5}
+    - label: "K=5 N=6 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 6, n_v: 6}
+    - label: "K=5 N=7 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 7, n_v: 7}
+    - label: "K=5 N=8 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 8, n_v: 8}
+    - label: "K=5 N=9 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 9, n_v: 9}
+    - label: "K=5 N=10 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 10, n_v: 10}
+    - label: "K=4 N=15 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 15, n_v: 15}
+    - label: "K=4 N=20 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 20, n_v: 20}
+    - label: "K=4 N=25 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4, k_v: 4, n_h: 25, n_v: 25}
+    - label: "K=4.5 N=6 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4.5, k_v: 4.5, n_h: 6, n_v: 6}
+    - label: "K=4.5 N=10 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4.5, k_v: 4.5, n_h: 10, n_v: 10}
+    - label: "K=4.5 N=15 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4.5, k_v: 4.5, n_h: 15, n_v: 15}
+    - label: "K=4.5 N=20 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4.5, k_v: 4.5, n_h: 20, n_v: 20}
+    - label: "K=4.5 N=25 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 4.5, k_v: 4.5, n_h: 25, n_v: 25}
+    - label: "K=5 N=15 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 15, n_v: 15}
+    - label: "K=5 N=20 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 20, n_v: 20}
+    - label: "K=5 N=25 axisymmetric"
+      values: {length_mm: 160, extension_mm: 0, osse_coverage_h_deg: 45, osse_coverage_v_deg: 45, k_h: 5, k_v: 5, n_h: 25, n_v: 25}
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 0

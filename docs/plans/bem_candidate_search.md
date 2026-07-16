@@ -24,6 +24,7 @@ The following values are immutable during a search:
 - throat radius or diameter;
 - throat angle;
 - mouth sag;
+- lower sweep frequency;
 - crossover frequency;
 - upper operating frequency; and
 - any explicit manufacturing limits supplied by the user.
@@ -87,8 +88,8 @@ evenly; it does not impose a soft ±10% admission cap around the seed.
 The implemented packaging policy is asymmetric and separates acoustics from
 packaging:
 
-- Pattern Fit, Waist Control, Pattern Stability, Crossover Control, and HF Retention remain unmodified acoustic
-  objectives;
+- Coverage Match, Coverage Smoothness, and Waist Stability remain unmodified
+  acoustic objectives;
 - a candidate shorter than the authored reference receives no departure cost;
 - added axial depth may be penalized, but must not be hidden inside the reported
   acoustic diagnostics; and
@@ -124,11 +125,22 @@ randomized extension.
 
 ## Fixed evaluation band
 
-Every candidate in one search is evaluated over the same band:
+Every candidate in one search is evaluated over the same diagnostic band:
 
 ```text
 user crossover frequency <= frequency <= user upper operating frequency
 ```
+
+The BEM sweep can start below crossover:
+
+```text
+user lower sweep frequency <= solved frequency <= user upper operating frequency
+```
+
+The lower sweep frequency supplies solved data below crossover for review and
+for any crossover-centered loading checks. The crossover frequency records the
+intended acoustic transition point and remains the lower bound of the coverage
+diagnostic region.
 
 The automatic sustained -6 dB crossing remains useful diagnostic information,
 but it must not move a candidate's optimization band. Otherwise a candidate
@@ -142,20 +154,41 @@ endpoint frequencies.
 
 ## Objectives
 
-The search maximizes the existing three 0-100% diagnostics:
+The search maximizes three 0-100% diagnostics:
 
-- Pattern Fit;
-- Waist Control;
-- Pattern Stability;
-- Crossover Control; and
-- HF Retention.
+- Coverage Match;
+- Coverage Smoothness; and
+- Waist Stability.
 
 All are oriented so 100% is ideal. Horizontal, vertical, and combined values
 remain available. The initial search should use the combined values as its
-five objectives while retaining plane-specific values for review. Combined
+three objectives while retaining plane-specific values for review. Combined
 values weight horizontal and vertical results in proportion to mouth width and
 height respectively; a wider mouth therefore gives horizontal performance more
 influence.
+
+Coverage Match integrates the smoothed -6 dB half-angle error over the whole
+diagnostic band on a logarithmic frequency axis. It records under-coverage and
+over-coverage separately, then scores the total accumulated error against the
+target half-angle. Broad narrowing, broad widening, and high-frequency endpoint
+loss are therefore all expressed through the same accumulated coverage error.
+
+Coverage Smoothness combines the remaining fine ripple after local smoothing
+with broader wiggle away from a one-third-octave trend, then applies a
+calibrated score gain to the raw combined error. This keeps chaotic, peaky, or
+bumpy traces from ranking well solely because their average coverage width is
+close to target.
+
+Waist Stability finds a broad lower-band narrowing trough over the first two
+octaves after the crossover transition reaches full weight. It scores the waist
+half-angle against the intended half-angle, so a waist at zero degrees is 0%, a
+waist at half the intended angle is 50%, and no interior lower-band narrowing
+trough is treated as well behaved and scores 100%.
+
+Coverage Match and Coverage Smoothness use the crossover transition as a weight
+rather than as a separate target envelope. The assumed acoustic transition is
+12 dB/oct with -6 dB, or about 50%, at crossover; errors near crossover
+contribute less and reach full weight one half-octave above crossover.
 
 The objectives should not initially be collapsed into one weighted score.
 HornCAD should retain a Pareto set: candidates for which no other evaluated
@@ -246,7 +279,7 @@ The implemented strategy is constrained multi-objective Bayesian optimization:
    truth. Keep extension fixed and defer impedance modeling to the extension
    study.
 4. Screen an adaptive proposal only when the model assigns at least 97%
-   probability that it is worse than the seed on all five selection objectives.
+   probability that it is worse than the seed on all selection objectives.
    Screening never applies to the initial coupled-geometry round. An uncertain
    candidate remains useful because it may improve the result or teach the
    model. Screened proposals retain no individual data; only an aggregate count
@@ -269,8 +302,8 @@ Training uses 6 elements per wavelength and 12 points per octave for every
 candidate. Frequency sampling and spatial mesh density are separate convergence
 questions: 6 EPW does not protect a diagnostic from missing a narrow feature
 between solved frequencies. Every completed training run is therefore rescored
-after factor-two frequency decimation. If Pattern Fit, Waist Control, Pattern
-Stability, Crossover Control, HF Retention, or crossover loading moves by more than two diagnostic points,
+after factor-two frequency decimation. If Coverage Match, Coverage Smoothness,
+Waist Stability, or crossover loading moves by more than two diagnostic points,
 that run is marked sampling-unstable and excluded from surrogate learning.
 
 Decimation is a warning, not proof of convergence. Before learned lever

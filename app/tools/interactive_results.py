@@ -18,6 +18,13 @@ COLORS = ("#2563eb", "#dc2626", "#16a34a", "#9333ea")
 AIR_DENSITY_KG_M3 = 1.2041
 SOUND_SPEED_M_S = 343.21
 PASSBAND_CONFIRMATION_OCTAVES = 1.0 / 3.0
+COVERAGE_TRANSITION_SLOPE_DB_PER_OCTAVE = 12.0
+COVERAGE_TRANSITION_DB_AT_CROSSOVER = -6.0
+COVERAGE_LOCAL_SMOOTH_OCTAVES = 1.0 / 6.0
+COVERAGE_SMOOTHNESS_TREND_OCTAVES = 1.0 / 3.0
+COVERAGE_SMOOTHNESS_SCORE_GAIN = 3.4
+COVERAGE_WAIST_REGION_OCTAVES = 2.0
+COVERAGE_WAIST_MIN_UNDERSHOOT_PERCENT = 1.0
 
 
 def _scalar(value: Any) -> Any:
@@ -116,6 +123,19 @@ def crossover_frequency(yaml_path: Path | None) -> float | None:
     config = yaml.safe_load(yaml_path.read_text())["horncad_config"]
     value = config.get("operating_intent", {}).get("crossover_hz")
     return float(value) if value is not None and float(value) > 0 else None
+
+
+def _crossover_transition_weights(
+        frequencies: np.ndarray, crossover_hz: float | None) -> np.ndarray:
+    """Return amplitude weights for the assumed acoustic crossover transition."""
+    frequencies = np.asarray(frequencies, dtype=float)
+    weights = np.ones_like(frequencies)
+    if crossover_hz is None or not np.isfinite(crossover_hz) or crossover_hz <= 0:
+        return weights
+    ratio = np.maximum(frequencies / crossover_hz, np.finfo(float).tiny)
+    gain_db = (COVERAGE_TRANSITION_DB_AT_CROSSOVER +
+               COVERAGE_TRANSITION_SLOPE_DB_PER_OCTAVE * np.log2(ratio))
+    return np.minimum(1.0, 10 ** (gain_db / 20))
 
 
 def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
@@ -238,15 +258,43 @@ def coverage_diagnostics(
         return {"status": "unavailable", "reason": "intended coverage is missing"}
     log_frequency = np.log(evaluated_frequencies)
     log_span = log_frequency[-1] - log_frequency[0]
+    crossover_hz = run.get("crossover_hz")
+    crossover_hz = (float(crossover_hz)
+                    if crossover_hz is not None and float(crossover_hz) > 0
+                    else None)
+    clipped_crossover_hz = (float(np.clip(crossover_hz, evaluated_frequencies[0],
+                                          evaluated_frequencies[-1]))
+                            if crossover_hz is not None else None)
+    transition_weights = _crossover_transition_weights(
+        evaluated_frequencies, clipped_crossover_hz)
+    transition_full_weight_hz = (
+        clipped_crossover_hz *
+        2 ** ((0.0 - COVERAGE_TRANSITION_DB_AT_CROSSOVER) /
+              COVERAGE_TRANSITION_SLOPE_DB_PER_OCTAVE)
+        if clipped_crossover_hz is not None else float(evaluated_frequencies[0]))
+    waist_region_lower_hz = max(float(evaluated_frequencies[0]),
+                                float(transition_full_weight_hz))
+    waist_region_upper_hz = min(
+        float(evaluated_frequencies[-1]),
+        waist_region_lower_hz * 2 ** COVERAGE_WAIST_REGION_OCTAVES)
+    if waist_region_upper_hz <= waist_region_lower_hz:
+        waist_region_lower_hz = float(evaluated_frequencies[0])
+        waist_region_upper_hz = float(evaluated_frequencies[-1])
 
-    def rms(values: np.ndarray) -> float:
-        return float(np.sqrt(np.trapezoid(values ** 2, log_frequency) / log_span))
+    def rms(values: np.ndarray, weights: np.ndarray | None = None) -> float:
+        x = log_frequency
+        selected = np.asarray(values, dtype=float)
+        if weights is not None:
+            selected = selected * weights
+        if len(selected) < 2 or x[-1] <= x[0]:
+            return float(np.max(np.abs(selected)))
+        return float(np.sqrt(np.trapezoid(selected ** 2, x) / log_span))
 
-    def broad_smooth(values: np.ndarray) -> np.ndarray:
-        """Smooth roughly one-third-octave features without hiding broad waists."""
+    def local_smooth(values: np.ndarray, sigma_octaves: float) -> np.ndarray:
+        """Smooth on a logarithmic frequency axis using local linear fits."""
         if len(values) < 3:
             return values.copy()
-        sigma = np.log(2) / 3
+        sigma = np.log(2) * sigma_octaves
         smoothed = np.empty_like(values)
         for index, center in enumerate(log_frequency):
             offsets = log_frequency - center
@@ -258,39 +306,89 @@ def coverage_diagnostics(
             smoothed[index] = coefficients[0]
         return smoothed
 
+    def waist_metrics(smooth: np.ndarray, target: float) -> dict[str, Any]:
+        """Find a broad lower-band narrowing trough and score its depth."""
+        mask = ((evaluated_frequencies >= waist_region_lower_hz) &
+                (evaluated_frequencies <= waist_region_upper_hz))
+        indices = np.flatnonzero(mask)
+        if len(indices) < 3:
+            indices = np.arange(len(smooth))
+        offset = int(np.argmin(smooth[indices]))
+        waist_index = int(indices[offset])
+        minimum_undershoot = target * COVERAGE_WAIST_MIN_UNDERSHOOT_PERCENT / 100.0
+        detected = bool(0 < offset < len(indices) - 1 and
+                        smooth[waist_index] < target - minimum_undershoot)
+        undershoot = max(0.0, target - float(smooth[waist_index])) if detected else 0.0
+        error = min(100.0, 100.0 * undershoot / target)
+        frequency = float(evaluated_frequencies[waist_index]) if detected else None
+        angle = float(smooth[waist_index]) if detected else None
+        return {
+            "waist_stability_percent": max(0.0, 100.0 - error),
+            "waistbanding_error_percent": error,
+            "waist_detected": detected,
+            "waist_frequency_hz": frequency,
+            "waist_half_angle_deg": angle,
+            "waist_undershoot_deg": undershoot,
+            "waist_region_lower_hz": waist_region_lower_hz,
+            "waist_region_upper_hz": waist_region_upper_hz,
+            "waist_region_octaves": COVERAGE_WAIST_REGION_OCTAVES,
+            "waist_min_undershoot_percent": COVERAGE_WAIST_MIN_UNDERSHOOT_PERCENT,
+        }
+
     plane_results = {}
     for key, values in angles.items():
         target = float(targets[key])
-        trend = np.polyval(np.polyfit(log_frequency, values, 1), log_frequency)
-        smooth = broad_smooth(values)
-        trend_error = 100 * rms((trend - target) / target)
-        waist_deviation = float(np.max(np.abs(smooth - trend)))
-        ripple_rms = rms(values - smooth)
-        crossover_hz = float(run.get("crossover_hz") or evaluated_frequencies[0])
-        crossover_hz = float(np.clip(crossover_hz, evaluated_frequencies[0],
-                                     evaluated_frequencies[-1]))
-        crossover_angle = float(np.interp(np.log(crossover_hz), log_frequency, values))
-        crossover_error = 100 * abs(crossover_angle - target) / target
-        count = len(values)
-        reference_slice = slice(max(0, count // 3), max(1, 2 * count // 3))
-        hf_slice = slice(max(0, 5 * count // 6), count)
-        pre_hf_angle = float(np.median(smooth[reference_slice]))
-        hf_angle = float(np.median(smooth[hf_slice]))
-        narrowing = 100 * (pre_hf_angle - hf_angle) / pre_hf_angle
+        smooth = local_smooth(values, COVERAGE_LOCAL_SMOOTH_OCTAVES)
+        smooth_trend = local_smooth(smooth, COVERAGE_SMOOTHNESS_TREND_OCTAVES)
+        deviation = smooth - target
+        undershoot = np.maximum(-deviation, 0.0)
+        overshoot = np.maximum(deviation, 0.0)
+        weighted_total_error = 100 * rms(deviation / target, transition_weights)
+        weighted_undershoot_error = 100 * rms(undershoot / target,
+                                              transition_weights)
+        weighted_overshoot_error = 100 * rms(overshoot / target,
+                                             transition_weights)
+        fine_ripple_error = 100 * rms((values - smooth) / target,
+                                      transition_weights)
+        broad_wiggle_error = 100 * rms((smooth - smooth_trend) / target,
+                                       transition_weights)
+        smoothness_raw_error = float(np.hypot(fine_ripple_error, broad_wiggle_error))
+        smoothness_error = COVERAGE_SMOOTHNESS_SCORE_GAIN * smoothness_raw_error
+        ripple_rms = rms(values - smooth, transition_weights)
+        broad_wiggle_rms = rms(smooth - smooth_trend, transition_weights)
+        waist = waist_metrics(smooth, target)
+        crossover_frequency = clipped_crossover_hz or float(evaluated_frequencies[0])
+        crossover_angle = float(np.interp(np.log(crossover_frequency),
+                                          log_frequency, values))
+        transition_weight_at_crossover = float(np.interp(
+            np.log(crossover_frequency), log_frequency, transition_weights))
+        highest_frequency_error = float(smooth[-1] - target)
         plane_results[key] = {
-            "trend_error_percent": trend_error,
-            "pattern_fit_percent": max(0.0, 100.0 - trend_error),
-            "waist_control_percent": max(0.0, 100.0 * (1.0 - waist_deviation / target)),
-            "waist_max_deviation_deg": waist_deviation,
-            "pattern_stability_percent": max(0.0, 100.0 * (1.0 - ripple_rms / target)),
+            "coverage_match_percent": max(0.0, 100.0 - weighted_total_error),
+            "coverage_smoothness_percent": max(0.0, 100.0 - smoothness_error),
+            **waist,
+            "weighted_total_error_percent": weighted_total_error,
+            "weighted_undershoot_error_percent": weighted_undershoot_error,
+            "weighted_overshoot_error_percent": weighted_overshoot_error,
+            "smoothness_error_percent": smoothness_error,
+            "smoothness_raw_error_percent": smoothness_raw_error,
+            "fine_ripple_error_percent": fine_ripple_error,
+            "broad_wiggle_error_percent": broad_wiggle_error,
+            "smoothness_score_gain": COVERAGE_SMOOTHNESS_SCORE_GAIN,
             "ripple_rms_deg": ripple_rms,
-            "crossover_control_percent": max(0.0, 100.0 - crossover_error),
-            "crossover_frequency_hz": crossover_hz,
+            "broad_wiggle_rms_deg": broad_wiggle_rms,
+            "local_smooth_octaves": COVERAGE_LOCAL_SMOOTH_OCTAVES,
+            "smoothness_trend_octaves": COVERAGE_SMOOTHNESS_TREND_OCTAVES,
+            "crossover_frequency_hz": crossover_frequency,
             "crossover_half_angle_deg": crossover_angle,
-            "narrowing_percent": narrowing,
-            "hf_retention_percent": min(100.0, 100.0 * hf_angle / pre_hf_angle),
-            "pre_hf_half_angle_deg": pre_hf_angle,
-            "hf_half_angle_deg": hf_angle,
+            "transition_weight_at_crossover": transition_weight_at_crossover,
+            "transition_full_weight_hz": float(transition_full_weight_hz),
+            "worst_broad_undershoot_deg": float(np.max(undershoot)),
+            "worst_broad_overshoot_deg": float(np.max(overshoot)),
+            "highest_frequency_error_deg": highest_frequency_error,
+            "highest_frequency_half_angle_deg": float(smooth[-1]),
+            "highest_frequency_undershoot_deg": max(0.0, -highest_frequency_error),
+            "highest_frequency_overshoot_deg": max(0.0, highest_frequency_error),
             "lower_half_angle_deg": float(values[0]),
             "upper_half_angle_deg": float(values[-1]),
         }
@@ -305,9 +403,12 @@ def coverage_diagnostics(
     horizontal_weight, vertical_weight = map(float, weights)
     weighted = lambda key: (horizontal_weight * plane_results["horizontal"][key] +
                             vertical_weight * plane_results["vertical"][key])
-    combined_error = float(np.sqrt(
-        horizontal_weight * plane_results["horizontal"]["trend_error_percent"] ** 2 +
-        vertical_weight * plane_results["vertical"]["trend_error_percent"] ** 2))
+    combined_error = lambda key: float(np.sqrt(
+        horizontal_weight * plane_results["horizontal"][key] ** 2 +
+        vertical_weight * plane_results["vertical"][key] ** 2))
+    combined_total_error = combined_error("weighted_total_error_percent")
+    combined_smoothness_error = combined_error("smoothness_error_percent")
+    combined_waistbanding_error = combined_error("waistbanding_error_percent")
     return {
         "status": "available",
         "passband_lower_hz": float(evaluated_frequencies[0]),
@@ -319,13 +420,35 @@ def coverage_diagnostics(
         "horizontal": plane_results["horizontal"],
         "vertical": plane_results["vertical"],
         "combined": {
-            "trend_error_percent": combined_error,
-            "pattern_fit_percent": max(0.0, 100.0 - combined_error),
-            "waist_control_percent": weighted("waist_control_percent"),
-            "pattern_stability_percent": weighted("pattern_stability_percent"),
-            "crossover_control_percent": weighted("crossover_control_percent"),
-            "narrowing_percent": weighted("narrowing_percent"),
-            "hf_retention_percent": weighted("hf_retention_percent"),
+            "coverage_match_percent": max(0.0, 100.0 - combined_total_error),
+            "coverage_smoothness_percent": max(0.0, 100.0 - combined_smoothness_error),
+            "waist_stability_percent": max(0.0, 100.0 - combined_waistbanding_error),
+            "waistbanding_error_percent": combined_waistbanding_error,
+            "waist_detected": (plane_results["horizontal"]["waist_detected"] or
+                               plane_results["vertical"]["waist_detected"]),
+            "waist_undershoot_deg": weighted("waist_undershoot_deg"),
+            "waist_region_lower_hz": waist_region_lower_hz,
+            "waist_region_upper_hz": waist_region_upper_hz,
+            "waist_region_octaves": COVERAGE_WAIST_REGION_OCTAVES,
+            "waist_min_undershoot_percent": COVERAGE_WAIST_MIN_UNDERSHOOT_PERCENT,
+            "weighted_total_error_percent": combined_total_error,
+            "weighted_undershoot_error_percent": combined_error(
+                "weighted_undershoot_error_percent"),
+            "weighted_overshoot_error_percent": combined_error(
+                "weighted_overshoot_error_percent"),
+            "smoothness_error_percent": combined_smoothness_error,
+            "smoothness_raw_error_percent": combined_error(
+                "smoothness_raw_error_percent"),
+            "fine_ripple_error_percent": combined_error("fine_ripple_error_percent"),
+            "broad_wiggle_error_percent": combined_error("broad_wiggle_error_percent"),
+            "smoothness_score_gain": COVERAGE_SMOOTHNESS_SCORE_GAIN,
+            "ripple_rms_deg": combined_error("ripple_rms_deg"),
+            "broad_wiggle_rms_deg": combined_error("broad_wiggle_rms_deg"),
+            "worst_broad_undershoot_deg": weighted("worst_broad_undershoot_deg"),
+            "worst_broad_overshoot_deg": weighted("worst_broad_overshoot_deg"),
+            "highest_frequency_error_deg": weighted("highest_frequency_error_deg"),
+            "highest_frequency_half_angle_deg": weighted(
+                "highest_frequency_half_angle_deg"),
         },
     }
 
@@ -404,11 +527,9 @@ def _parameter_table(runs: list[dict[str, Any]]) -> str:
     return f"<table>{header}{rows}</table>"
 
 
-DIAGNOSTIC_ROWS = (("Pattern Fit", "pattern_fit_percent"),
-                   ("Waist Control", "waist_control_percent"),
-                   ("Pattern Stability", "pattern_stability_percent"),
-                   ("Crossover Control", "crossover_control_percent"),
-                   ("HF Retention", "hf_retention_percent"))
+DIAGNOSTIC_ROWS = (("Coverage Match", "coverage_match_percent"),
+                   ("Coverage Smoothness", "coverage_smoothness_percent"),
+                   ("Waist Stability", "waist_stability_percent"))
 
 
 def _score_cell(value: float) -> str:
@@ -491,7 +612,7 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Coverage diagnostics</h2>
 {_diagnostic_tables(runs, diagnostics, comparison)}
-<p class='hint'>All five diagnostics are percentages where 100% is ideal. Pattern Fit compares the best-fit linear beamwidth trend with the intended −6 dB half-angle. Waist Control measures broad deviation from that trend. Pattern Stability measures fine ripple after broad smoothing. Crossover Control measures coverage accuracy at the crossover frequency. HF Retention compares sustained upper-band coverage with the established midband. {band_explanation}</p>
+<p class='hint'>All diagnostics are percentages where 100% is ideal. Coverage Match integrates the smoothed −6 dB half-angle error over the diagnostic band, recording under-coverage and over-coverage separately while applying the assumed 12 dB/oct crossover weight near crossover. Coverage Smoothness combines fine ripple after local smoothing with broader wiggle away from a one-third-octave trend, then applies a calibrated score gain so visibly chaotic, peaky, or bumpy traces lose score quickly. Waist Stability scores the depth of the broad lower-band narrowing trough; if no interior trough is found after the crossover transition, it scores 100%. {band_explanation}</p>
 </section></main><script>
 (() => {{
   let armed = null;
@@ -525,8 +646,11 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 
 
 def single_report(run_dir: Path, output: Path | None = None,
-                  title: str | None = None) -> Path:
-    run = load_run(run_dir)
+                  title: str | None = None,
+                  evaluation_frequencies: np.ndarray | None = None,
+                  fixed_band: bool = False,
+                  name: str | None = None) -> Path:
+    run = load_run(run_dir, name)
     figure = make_subplots(rows=2, cols=2,
                            specs=[[{}, {}], [{"colspan": 2}, None]],
                            subplot_titles=("Horizontal coverage", "Vertical coverage",
@@ -594,8 +718,12 @@ def single_report(run_dir: Path, output: Path | None = None,
         legend={"orientation": "h", "x": 0, "xanchor": "left",
                 "y": 1.12, "yanchor": "bottom"},
         margin={"t": 145, "r": 95, "b": 75, "l": 80})
+    diagnostics = None
+    if evaluation_frequencies is not None:
+        diagnostics = {run["name"]: coverage_diagnostics(
+            run, evaluation_frequencies, fixed_band=fixed_band)}
     return _write_html(output or run_dir / "interactive_report.html",
-                       title or run["name"], figure, [run])
+                       title or run["name"], figure, [run], diagnostics)
 
 
 def comparison_report(run_dirs: list[Path], output: Path,

@@ -55,24 +55,31 @@ throat-impedance magnitude, and the horn acoustic parameters.
 Impedance is normalized by the effective circular throat's characteristic
 impedance, `ρc/Sₜ`; throat reactance is not plotted.
 
-The report also writes `coverage_diagnostics.json` and displays five coverage
+The report also writes `coverage_diagnostics.json` and displays three coverage
 diagnostics for horizontal, vertical, and combined behavior:
 
-- **Pattern Fit** compares the best-fit linear beamwidth trend with the intended
-  −6 dB half-angle.
-- **Waist Control** measures the largest broad narrowing or widening away from
-  that trend after one-third-octave-scale smoothing.
-- **Pattern Stability** measures fine ripple remaining after broad smoothing.
-- **Crossover Control** measures beamwidth accuracy at the authored crossover.
-- **HF Retention** compares sustained coverage in the final sixth of the
-  passband with the established middle third; widening is not rewarded.
+- **Coverage Match** integrates the smoothed −6 dB half-angle error over the
+  diagnostic band, with separate recorded under-coverage and over-coverage
+  components.
+- **Coverage Smoothness** combines fine ripple after local smoothing with
+  broader wiggle away from a one-third-octave trend, then applies a calibrated
+  score gain so chaotic, peaky, or bumpy coverage traces lose score quickly even
+  when their average width is close to target.
+- **Waist Stability** scores the depth of the broad lower-band narrowing trough
+  over the first two octaves after the crossover transition. A waist at zero
+  degrees is 0%, a waist at half the intended half-angle is 50%, and no
+  detected interior waist is 100%.
 
-All five headline diagnostics use 100% for ideal and lower values for worse
+Both headline diagnostics use 100% for ideal and lower values for worse
 behavior. Combined H/V diagnostics are weighted in proportion to physical mouth
 width and height, so the larger mouth dimension contributes more to the combined
-score. The JSON records those weights and also retains fitted-trend error,
-waist deviation, ripple RMS, crossover angle, sustained upper-band angle, and
-signed narrowing for diagnosis.
+score. The crossover weighting assumes a 12 dB/oct acoustic amplitude slope
+with −6 dB, or about 50%, at crossover; error near crossover contributes less
+than error after the transition reaches full weight one half-octave above
+crossover. The JSON records those weights and also retains weighted total,
+under-coverage, over-coverage, raw smoothness, fine-ripple, and broad-wiggle
+errors, the smoothness score gain, waist frequency/depth when detected, ripple
+RMS, crossover angle, and highest-frequency endpoint error for diagnosis.
 
 The automatic diagnostic passband begins only when both planes sustain genuine
 −6 dB crossings for at least one-third octave. A missing crossing after that

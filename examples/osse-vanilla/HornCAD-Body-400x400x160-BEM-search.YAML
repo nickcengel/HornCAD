@@ -1,0 +1,29 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: HornCAD-Body-400x400x160.YAML
+  intended_coverage_h_deg: 45
+  intended_coverage_v_deg: 45
+  crossover_hz: 750
+  upper_frequency_hz: 8000
+  search_size: normal
+  initial_candidates: 12
+  random_seed: 17
+  minimum_candidate_distance: 0.08
+  derived_s_bounds: [0.0, 3.0]
+  inferior_screen_probability: 0.97
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16
+  bounds:
+    length_mm: [160, 160]
+    extension_mm: [0, 0]
+    osse_coverage_h_deg: [45, 45]
+    osse_coverage_v_deg: [45, 45]
+    k_h: [1, 5]
+    k_v: [1, 5]
+    n_h: [2, 25]
+    n_v: [2, 25]
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 0

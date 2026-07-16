@@ -433,6 +433,9 @@
       <label>Intended vertical coverage deg
         <input data-control="intentVCoverage" type="number" min="1" max="85" step="0.1" value="30">
       </label>
+      <label>Lower sweep Hz
+        <input data-control="lowerFrequencyHz" type="number" min="100" max="10000" step="10" value="500">
+      </label>
       <label>Crossover Hz
         <input data-control="crossoverHz" type="number" min="100" max="10000" step="10" value="500">
       </label>
@@ -472,6 +475,14 @@
         <label>Vertical K min / max
           <input data-control="searchVKMin" type="number" min="0.01" max="200" step="0.1" value="5">
           <input data-control="searchVKMax" type="number" min="0.01" max="200" step="0.1" value="60">
+        </label>
+        <label>Horizontal N min / max
+          <input data-control="searchHNMin" type="number" min="2" max="50" step="0.5" value="2">
+          <input data-control="searchHNMax" type="number" min="2" max="50" step="0.5" value="25">
+        </label>
+        <label>Vertical N min / max
+          <input data-control="searchVNMin" type="number" min="2" max="50" step="0.5" value="2">
+          <input data-control="searchVNMax" type="number" min="2" max="50" step="0.5" value="25">
         </label>
       </details>
       <div class="action-row">
@@ -1026,6 +1037,7 @@
       stlSideSamples: Math.max(96, Math.round(value("stlSideSamples"))),
       intentHCoverage: value("intentHCoverage"),
       intentVCoverage: value("intentVCoverage"),
+      lowerFrequencyHz: value("lowerFrequencyHz"),
       crossoverHz: value("crossoverHz"),
       upperFrequencyHz: value("upperFrequencyHz"),
       searchSize: value("searchSize"),
@@ -1038,6 +1050,8 @@
       searchVCoverageMax: value("searchVCoverageMax"),
       searchHKMin: value("searchHKMin"), searchHKMax: value("searchHKMax"),
       searchVKMin: value("searchVKMin"), searchVKMax: value("searchVKMax"),
+      searchHNMin: value("searchHNMin"), searchHNMax: value("searchHNMax"),
+      searchVNMin: value("searchVNMin"), searchVNMax: value("searchVNMax"),
     };
   }
 
@@ -2833,6 +2847,7 @@
       stlSideSamples: exportSettings.stl_side_samples,
       intentHCoverage: intent.horizontal_coverage_deg ?? horizontal.coverage_deg,
       intentVCoverage: intent.vertical_coverage_deg ?? vertical.coverage_deg,
+      lowerFrequencyHz: intent.lower_frequency_hz ?? intent.crossover_hz,
       crossoverHz: intent.crossover_hz,
       upperFrequencyHz: intent.upper_frequency_hz,
     };
@@ -2908,6 +2923,7 @@
       "  operating_intent:",
       `    horizontal_coverage_deg: ${yamlNumber(p.intentHCoverage)}`,
       `    vertical_coverage_deg: ${yamlNumber(p.intentVCoverage)}`,
+      `    lower_frequency_hz: ${yamlNumber(p.lowerFrequencyHz)}`,
       `    crossover_hz: ${yamlNumber(p.crossoverHz)}`,
       `    upper_frequency_hz: ${yamlNumber(p.upperFrequencyHz)}`,
       "  body:",
@@ -2977,6 +2993,7 @@
       `  seed_yaml: ${configBasename(p)}.YAML`,
       `  intended_coverage_h_deg: ${yamlNumber(p.intentHCoverage)}`,
       `  intended_coverage_v_deg: ${yamlNumber(p.intentVCoverage)}`,
+      `  lower_frequency_hz: ${yamlNumber(p.lowerFrequencyHz)}`,
       `  crossover_hz: ${yamlNumber(p.crossoverHz)}`,
       `  upper_frequency_hz: ${yamlNumber(p.upperFrequencyHz)}`,
       `  search_size: ${p.searchSize}`,
@@ -2994,8 +3011,8 @@
       `    osse_coverage_v_deg: [${yamlNumber(p.searchVCoverageMin)}, ${yamlNumber(p.searchVCoverageMax)}]`,
       `    k_h: [${yamlNumber(p.searchHKMin)}, ${yamlNumber(p.searchHKMax)}]`,
       `    k_v: [${yamlNumber(p.searchVKMin)}, ${yamlNumber(p.searchVKMax)}]`,
-      "    n_h: [2, 25]",
-      "    n_v: [2, 25]",
+      `    n_h: [${yamlNumber(p.searchHNMin)}, ${yamlNumber(p.searchHNMax)}]`,
+      `    n_v: [${yamlNumber(p.searchVNMin)}, ${yamlNumber(p.searchVNMax)}]`,
       "  solver:",
       "    points_per_octave: 12",
       "    elements_per_wavelength: 6",
@@ -3007,9 +3024,27 @@
 
   function exportSearchYaml() {
     const p = params();
-    if (!(p.crossoverHz > 0 && p.upperFrequencyHz > p.crossoverHz)) {
-      window.alert("Upper operating frequency must be greater than crossover.");
+    if (!(p.lowerFrequencyHz > 0 && p.crossoverHz >= p.lowerFrequencyHz &&
+          p.upperFrequencyHz > p.crossoverHz)) {
+      window.alert("Frequencies must satisfy lower sweep <= crossover < upper operating frequency.");
       return;
+    }
+    const boundPairs = [
+      ["length", p.length * (1 - p.searchLengthPercent / 100),
+       p.length * (1 + p.searchLengthPercent / 100)],
+      ["extension", p.searchExtensionMin, p.searchExtensionMax],
+      ["horizontal OS-SE coverage", p.searchHCoverageMin, p.searchHCoverageMax],
+      ["vertical OS-SE coverage", p.searchVCoverageMin, p.searchVCoverageMax],
+      ["horizontal K", p.searchHKMin, p.searchHKMax],
+      ["vertical K", p.searchVKMin, p.searchVKMax],
+      ["horizontal N", p.searchHNMin, p.searchHNMax],
+      ["vertical N", p.searchVNMin, p.searchVNMax],
+    ];
+    for (const [name, lower, upper] of boundPairs) {
+      if (!(Number.isFinite(lower) && Number.isFinite(upper) && lower < upper)) {
+        window.alert(`${name} search bounds must be finite and ordered min < max.`);
+        return;
+      }
     }
     const filename = `${configBasename(p)}-BEM-search.YAML`;
     downloadBlob(new Blob([bemSearchYaml(p)], { type: "text/yaml" }), filename);

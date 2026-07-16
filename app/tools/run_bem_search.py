@@ -24,24 +24,24 @@ import yaml
 try:
     from .export_horncad import solved_s, termination_metrics
     from .generate_numcalc_review import generate_review
-    from .interactive_results import comparison_report, coverage_diagnostics, load_run
+    from .interactive_results import (
+        comparison_report, coverage_diagnostics, load_run, single_report)
     from .run_bem_suite import find_numcalc
     from .run_numcalc_sweep import ppo_frequency_grid, run_sweep
 except ImportError:
     from export_horncad import solved_s, termination_metrics
     from generate_numcalc_review import generate_review
-    from interactive_results import comparison_report, coverage_diagnostics, load_run
+    from interactive_results import (
+        comparison_report, coverage_diagnostics, load_run, single_report)
     from run_bem_suite import find_numcalc
     from run_numcalc_sweep import ppo_frequency_grid, run_sweep
 
 
 VARIABLES = ("length_mm", "extension_mm", "osse_coverage_h_deg",
              "osse_coverage_v_deg", "k_h", "k_v", "n_h", "n_v")
-OBJECTIVES = ("pattern_fit_percent", "waist_control_percent",
-              "pattern_stability_percent", "crossover_control_percent",
-              "hf_retention_percent")
-OBJECTIVE_LABELS = ("Pattern Fit", "Waist Control", "Pattern Stability",
-                    "Crossover Control", "HF Retention")
+OBJECTIVES = ("coverage_match_percent", "coverage_smoothness_percent",
+              "waist_stability_percent")
+OBJECTIVE_LABELS = ("Coverage Match", "Coverage Smoothness", "Waist Stability")
 PRESET_BUDGETS = {"quick": 16, "normal": 36, "thorough": 60}
 DEFAULT_MINIMUM_CANDIDATE_DISTANCE = 0.08
 DEFAULT_INFERIOR_PROBABILITY = 0.97
@@ -79,8 +79,11 @@ def load_search(path: Path) -> tuple[dict[str, Any], Path, dict[str, Any]]:
     crossover = float(search.get("crossover_hz", intent.get("crossover_hz", 0)))
     upper = float(search.get("upper_frequency_hz",
                              intent.get("upper_frequency_hz", 0)))
-    if not 0 < crossover < upper:
-        raise ValueError("search requires 0 < crossover_hz < upper_frequency_hz")
+    lower = float(search.get("lower_frequency_hz",
+                             intent.get("lower_frequency_hz", crossover)))
+    if not 0 < lower <= crossover < upper:
+        raise ValueError("search requires 0 < lower_frequency_hz <= "
+                         "crossover_hz < upper_frequency_hz")
     if upper < crossover * 2 ** (1 / 6):
         raise ValueError("upper frequency must include the crossover-centered "
                          "one-third-octave impedance window")
@@ -97,6 +100,7 @@ def load_search(path: Path) -> tuple[dict[str, Any], Path, dict[str, Any]]:
             0 <= float(s_bounds[0]) < float(s_bounds[1])):
         raise ValueError("derived_s_bounds must be [nonnegative minimum, maximum]")
     search["derived_s_bounds"] = [float(s_bounds[0]), float(s_bounds[1])]
+    search["lower_frequency_hz"] = lower
     search["crossover_hz"] = crossover
     search["upper_frequency_hz"] = upper
     preset = str(search.get("search_size", "normal"))
@@ -204,6 +208,7 @@ def materialize_candidate(seed: dict[str, Any], values: dict[str, float],
     intent = config.setdefault("operating_intent", {})
     intent["horizontal_coverage_deg"] = float(search["intended_coverage_h_deg"])
     intent["vertical_coverage_deg"] = float(search["intended_coverage_v_deg"])
+    intent["lower_frequency_hz"] = float(search["lower_frequency_hz"])
     intent["crossover_hz"] = float(search["crossover_hz"])
     intent["upper_frequency_hz"] = float(search["upper_frequency_hz"])
     h_termination = termination_metrics(
@@ -334,6 +339,11 @@ def length_cost_percent(values: dict[str, float], seed_total_depth_mm: float) ->
     return 4.0 + 16.0 * ((deviation - 0.10) / 0.05) ** 2
 
 
+def objective_score(values: dict[str, Any], key: str) -> float:
+    """Read a current headline objective."""
+    return float(values[key])
+
+
 def update_selection_scores(record: dict[str, Any], search: dict[str, Any]) -> None:
     seed = search["seed_values"]
     seed_depth = seed["length_mm"] + seed.get("extension_mm", 0.0)
@@ -341,14 +351,14 @@ def update_selection_scores(record: dict[str, Any], search: dict[str, Any]) -> N
     record["length_cost_percent"] = cost
     if record.get("diagnostics"):
         record["selection_scores"] = {
-            key: max(0.0, record["diagnostics"]["combined"][key] - cost)
+            key: max(0.0, objective_score(record["diagnostics"]["combined"], key) - cost)
             for key in OBJECTIVES
         }
 
 
 def _objective_values(record: dict[str, Any]) -> np.ndarray:
     values = record.get("selection_scores", record["diagnostics"]["combined"])
-    return np.asarray([values[key] for key in OBJECTIVES])
+    return np.asarray([objective_score(values, key) for key in OBJECTIVES])
 
 
 def _training_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -485,8 +495,9 @@ def learned_lever_effects(search: dict[str, Any],
     outputs = list(OBJECTIVES)
     effects = {name: {} for name in VARIABLES}
     for output in outputs:
-        seed_score = seed_record["diagnostics"]["combined"][output]
-        y = np.asarray([record["diagnostics"]["combined"][output] - seed_score
+        seed_score = objective_score(seed_record["diagnostics"]["combined"], output)
+        y = np.asarray([objective_score(record["diagnostics"]["combined"], output) -
+                        seed_score
                         for record in completed])
         coefficients = np.linalg.solve(design.T @ design + regularizer,
                                        design.T @ y)[1:]
@@ -643,6 +654,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     records = state["candidates"]
     search = state["search"]
     seed = search["seed_values"]
+    lower_frequency = float(search.get("lower_frequency_hz", search["crossover_hz"]))
+    crossover_frequency = float(search["crossover_hz"])
+    upper_frequency = float(search["upper_frequency_hz"])
     pareto = pareto_indices(records)
     for index, record in enumerate(records):
         record["pareto"] = index in pareto
@@ -652,14 +666,22 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
                                  for record in records
                                  if record.get("status") == "complete"]
         for key in OBJECTIVES:
-            values = [float(item[key]) for item in completed_diagnostics if key in item]
+            values = []
+            for item in completed_diagnostics:
+                try:
+                    values.append(objective_score(item, key))
+                except KeyError:
+                    pass
             if values:
                 extrema[key] = (min(values), max(values))
 
     def diagnostic_cell(diagnostic: dict[str, Any], key: str) -> str:
         if not diagnostic:
             return "<td>—</td>"
-        value = float(diagnostic[key])
+        try:
+            value = objective_score(diagnostic, key)
+        except KeyError:
+            return "<td>—</td>"
         css_class = ""
         if key in extrema:
             minimum, maximum = extrema[key]
@@ -685,11 +707,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td><a href='{candidate_dir}/project.yaml'>{record['id']}</a>"
             f"{stl_link}{report_link}</td>",
             f"<td>{html.escape(status)}</td>",
-            diagnostic_cell(diagnostic, "pattern_fit_percent"),
-            diagnostic_cell(diagnostic, "waist_control_percent"),
-            diagnostic_cell(diagnostic, "pattern_stability_percent"),
-            diagnostic_cell(diagnostic, "crossover_control_percent"),
-            diagnostic_cell(diagnostic, "hf_retention_percent"),
+            "".join(diagnostic_cell(diagnostic, key) for key in OBJECTIVES),
             f"<td>{record.get('crossover_minimum_normalized_impedance', float('nan')):.3f}</td>" if "crossover_minimum_normalized_impedance" in record else "<td>—</td>",
             f"<td>{record.get('length_cost_percent', 0):.1f}%</td>",
             f"<td>{record['values']['length_mm']:.1f}</td>",
@@ -741,15 +759,16 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left}}td{
 <p><strong>Progress</strong><br>{sum(r['status']=='complete' for r in records)} / {state['max_evaluations']} evaluated</p>
 <p><strong>Rejected proposals</strong><br>{state.get('rejected_count', 0)}</p>
 <p><strong>Confidently inferior</strong><br>{state.get('surrogate_screened_count', 0)}</p>
-<p><strong>Fixed band</strong><br>{state['crossover_hz']:g}–{state['upper_frequency_hz']:g} Hz</p></section>
+<p><strong>Sweep band</strong><br>{lower_frequency:g}–{upper_frequency:g} Hz</p>
+<p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
+<p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Each completed run is compared with a factor-two decimation and excluded from surrogate training when any headline diagnostic moves by more than {search.get('sampling_stability_points', DEFAULT_SAMPLING_STABILITY_POINTS):g} points. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
 {finalist_link}
 <section><h2>Search range</h2><table><tr><th>Parameter</th><th>Configured range</th><th>Seed</th><th>Retained candidates</th></tr>
 {''.join(range_rows)}</table><p><strong>Realized S range (both axes):</strong> {search['derived_s_bounds'][0]:g}–{search['derived_s_bounds'][1]:g}. <strong>Coverage-stage extension:</strong> fixed at the seed value; N is varied explicitly in matched length families.</p></section>
 {effects_section}
-<section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Pattern Fit</th><th>Waist Control</th><th>Pattern Stability</th><th>Crossover Control</th>
-<th>HF Retention</th><th>Impedance (information only)</th><th>Added-depth cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>S H/V</th><th>N H/V</th><th>Curvature radius H/V mm</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
-<section><p>100% is best for all five acoustic diagnostics. Combined H/V scores are weighted in proportion to mouth width and height. Throat impedance is recorded but does not affect feasibility, Pareto selection, surrogate acquisition, or sampling stability during coverage search. Shorter total depth receives no cost; added depth above the seed is the only packaging departure cost. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all five objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
+<section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th>{objective_headers}<th>Impedance (information only)</th><th>Added-depth cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>S H/V</th><th>N H/V</th><th>Curvature radius H/V mm</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
+<section><p>100% is best for all acoustic diagnostics. Combined H/V scores are weighted in proportion to mouth width and height. The sweep band controls solved frequencies; the fixed diagnostic band starts at crossover and ends at the upper operating frequency. Throat impedance is recorded but does not affect feasibility, Pareto selection, surrogate acquisition, or sampling stability during coverage search. Shorter total depth receives no cost; added depth above the seed is the only packaging departure cost. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
 </main></body></html>"""
     path = output_dir / "search_report.html"
     temporary = path.with_suffix(".html.tmp")
@@ -847,6 +866,10 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
         generate_review(run_dir, title=f"BEM search {record['id']}")
         run = load_run(run_dir, record["id"])
         diagnostics = coverage_diagnostics(run, fixed_grid, fixed_band=True)
+        single_report(run_dir, run_dir / "interactive_report.html",
+                      title=f"BEM search {record['id']}",
+                      evaluation_frequencies=fixed_grid, fixed_band=True,
+                      name=record["id"])
         stability = sampling_stability(
             run, fixed_grid, search["crossover_hz"],
             search.get("sampling_stability_points", DEFAULT_SAMPLING_STABILITY_POINTS))
@@ -902,7 +925,9 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
         state = {
             "schema_version": 1, "status": "running", "phase": "initializing",
             "configuration_hash": config_hash, "search_yaml": str(search_path.resolve()),
-            "seed_yaml": str(seed_path), "crossover_hz": search["crossover_hz"],
+            "seed_yaml": str(seed_path),
+            "lower_frequency_hz": search["lower_frequency_hz"],
+            "crossover_hz": search["crossover_hz"],
             "upper_frequency_hz": search["upper_frequency_hz"],
             "max_evaluations": search["max_evaluations"], "search": search,
             "candidates": [], "proposal_count": 0, "rejected_count": 0,
@@ -937,6 +962,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             record["status"] = "queued"
             record.pop("reason", None)
     search = state["search"]
+    search.setdefault("lower_frequency_hz", search["crossover_hz"])
+    state.setdefault("lower_frequency_hz", search["lower_frequency_hz"])
     search.setdefault("minimum_candidate_distance",
                       DEFAULT_MINIMUM_CANDIDATE_DISTANCE)
     search.setdefault("inferior_screen_probability", DEFAULT_INFERIOR_PROBABILITY)
@@ -960,7 +987,7 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
     ppo = float(solver.get("points_per_octave", 12))
     epw = float(solver.get("elements_per_wavelength", 6))
     angles = int(solver.get("angles", 91))
-    solve_start = search["crossover_hz"] / 2 ** (1 / 6)
+    solve_start = search["lower_frequency_hz"]
     frequencies = ppo_frequency_grid(solve_start, search["upper_frequency_hz"], ppo)
     fixed_grid = np.geomspace(search["crossover_hz"], search["upper_frequency_hz"],
                               int(np.ceil(np.log2(search["upper_frequency_hz"] /

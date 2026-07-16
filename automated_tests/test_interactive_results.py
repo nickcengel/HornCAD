@@ -9,8 +9,9 @@ import numpy as np
 
 from app.tools.interactive_results import (
     AIR_DENSITY_KG_M3, SOUND_SPEED_M_S, _frequency_axis,
-    _frequency_grid_values, _positive_half_angle, comparison_report,
-    comparison_diagnostics, coverage_diagnostics, load_run, single_report,
+    _frequency_grid_values, _positive_half_angle,
+    _crossover_transition_weights, comparison_report, comparison_diagnostics,
+    coverage_diagnostics, load_run, single_report,
 )
 
 
@@ -68,11 +69,22 @@ class InteractiveResultsTests(unittest.TestCase):
             root = Path(temp)
             runs = [self.make_run(root, f"run-{index}") for index in range(4)]
             single = single_report(runs[0])
+            fixed = single_report(
+                runs[0], root / "fixed" / "report.html", "Fixed band",
+                evaluation_frequencies=np.array([500.0, 1000.0]),
+                fixed_band=True, name="Candidate A")
             compare = comparison_report(runs, root / "compare.html",
                                         ["A", "B", "C", "D"])
             single_text = single.read_text()
+            fixed_text = fixed.read_text()
+            fixed_diagnostics = json.loads(
+                fixed.with_name("coverage_diagnostics.json").read_text())
             self.assertIn("Horn acoustic parameters", single_text)
             self.assertIn("Coverage diagnostics", single_text)
+            self.assertIn("<strong>Evaluated band:</strong> 500–1000 Hz",
+                          fixed_text)
+            self.assertEqual(fixed_diagnostics["Candidate A"]["band_kind"],
+                             "fixed optimization")
             self.assertIn("--bg:#0c1014", single_text)
             self.assertIn('"template":', single_text)
             self.assertIn('"paper_bgcolor":"#121820"', single_text)
@@ -119,19 +131,14 @@ class InteractiveResultsTests(unittest.TestCase):
         result = coverage_diagnostics(run)
         self.assertEqual(result["status"], "available")
         self.assertEqual(result["passband_lower_hz"], 500.0)
-        self.assertGreater(result["combined"]["waist_control_percent"], 99.0)
-        self.assertGreater(result["combined"]["pattern_stability_percent"], 99.0)
-        self.assertGreater(result["horizontal"]["crossover_control_percent"], 99.0)
-        self.assertAlmostEqual(result["horizontal"]["hf_retention_percent"], 89.7,
-                               delta=0.2)
-        self.assertAlmostEqual(result["horizontal"]["pattern_fit_percent"],
-                               88.4, delta=0.5)
-        self.assertAlmostEqual(result["horizontal"]["narrowing_percent"], 10.3,
-                               delta=0.2)
-        self.assertAlmostEqual(result["vertical"]["narrowing_percent"], 10.3,
-                               delta=0.2)
+        self.assertLess(result["combined"]["coverage_match_percent"], 90.0)
+        self.assertGreater(result["combined"]["coverage_smoothness_percent"], 99.0)
+        self.assertGreater(result["horizontal"]["weighted_undershoot_error_percent"],
+                           result["horizontal"]["weighted_overshoot_error_percent"])
+        self.assertAlmostEqual(result["horizontal"]["highest_frequency_error_deg"],
+                               -10.0, delta=0.5)
 
-    def test_diagnostics_separate_waist_ripple_and_crossover(self) -> None:
+    def test_diagnostics_separate_broad_error_and_fine_ripple(self) -> None:
         frequencies = np.geomspace(500.0, 5000.0, 81)
         angles = np.arange(-90.0, 91.0)
         x = np.log2(frequencies / 500.0)
@@ -142,17 +149,111 @@ class InteractiveResultsTests(unittest.TestCase):
 
         broad_waist = 50 - 10 * np.exp(-0.5 * ((x - 1.5) / 0.25) ** 2)
         fine_ripple = 50 + 3 * np.sin(2 * np.pi * x * 5)
+        flat = np.full(len(frequencies), 50.0)
+        bumpy = (
+            50
+            + 12 * np.exp(-0.5 * ((x - 2.2) / 0.25) ** 2)
+            - 14 * np.exp(-0.5 * ((x - 2.8) / 0.22) ** 2)
+        )
         base = {"frequencies": frequencies, "angles": angles,
                 "vertical": patterns(np.full(len(frequencies), 35.0)),
                 "intended_coverages": {"horizontal": 50.0, "vertical": 35.0},
                 "crossover_hz": 500.0}
         waist = coverage_diagnostics(dict(base, horizontal=patterns(broad_waist)))
         ripple = coverage_diagnostics(dict(base, horizontal=patterns(fine_ripple)))
-        self.assertLess(waist["horizontal"]["waist_control_percent"],
-                        ripple["horizontal"]["waist_control_percent"])
-        self.assertGreater(waist["horizontal"]["pattern_stability_percent"],
-                           ripple["horizontal"]["pattern_stability_percent"])
-        self.assertGreater(waist["horizontal"]["crossover_control_percent"], 99.0)
+        no_waist = coverage_diagnostics(dict(base, horizontal=patterns(flat)))
+        rough = coverage_diagnostics(dict(base, horizontal=patterns(bumpy)))
+        self.assertLess(waist["horizontal"]["coverage_match_percent"],
+                        ripple["horizontal"]["coverage_match_percent"])
+        self.assertGreater(waist["horizontal"]["coverage_smoothness_percent"],
+                           ripple["horizontal"]["coverage_smoothness_percent"])
+        self.assertGreater(waist["horizontal"]["worst_broad_undershoot_deg"], 8.0)
+        self.assertTrue(waist["horizontal"]["waist_detected"])
+        self.assertLess(waist["horizontal"]["waist_stability_percent"], 85.0)
+        self.assertGreater(waist["horizontal"]["waistbanding_error_percent"], 15.0)
+        self.assertAlmostEqual(waist["horizontal"]["waist_region_octaves"],
+                               2.0, places=6)
+        self.assertFalse(no_waist["horizontal"]["waist_detected"])
+        self.assertEqual(no_waist["horizontal"]["waist_stability_percent"], 100.0)
+        self.assertGreater(ripple["horizontal"]["ripple_rms_deg"], 1.5)
+        self.assertLess(rough["horizontal"]["coverage_smoothness_percent"], 85.0)
+        self.assertGreater(rough["horizontal"]["broad_wiggle_error_percent"], 4.0)
+        self.assertGreater(rough["horizontal"]["smoothness_score_gain"], 3.0)
+
+    def test_coverage_match_integrates_error_with_crossover_weighting(self) -> None:
+        crossover = 750.0
+        frequencies = np.geomspace(crossover, 8000.0, 129)
+        angles = np.arange(-90.0, 91.0)
+        x = np.log2(frequencies / crossover)
+        target = 45.0
+
+        def patterns(half_angles: np.ndarray) -> np.ndarray:
+            return np.asarray([-6 * (np.abs(angles) / half_angle) ** 2
+                               for half_angle in half_angles])
+
+        weights = _crossover_transition_weights(
+            np.array([crossover, crossover * 2 ** 0.5, crossover * 2]),
+            crossover)
+        self.assertAlmostEqual(weights[0], 10 ** (-6 / 20), places=6)
+        self.assertAlmostEqual(weights[1], 1.0, places=6)
+        self.assertAlmostEqual(weights[2], 1.0, places=6)
+
+        broad_then_lock = np.where(x < 0.5, 65.0, target)
+        narrow_then_lock = np.where(x < 0.5, 25.0, target)
+        broad_after_transition = np.where((x >= 1.0) & (x < 1.5), 65.0, target)
+        base = {"frequencies": frequencies, "angles": angles,
+                "intended_coverages": {"horizontal": target, "vertical": target},
+                "crossover_hz": crossover}
+        broad = coverage_diagnostics(
+            dict(base, horizontal=patterns(broad_then_lock),
+                 vertical=patterns(broad_then_lock)))
+        narrow = coverage_diagnostics(
+            dict(base, horizontal=patterns(narrow_then_lock),
+                 vertical=patterns(narrow_then_lock)))
+        late = coverage_diagnostics(
+            dict(base, horizontal=patterns(broad_after_transition),
+                 vertical=patterns(broad_after_transition)))
+        self.assertAlmostEqual(
+            broad["horizontal"]["weighted_overshoot_error_percent"],
+            narrow["horizontal"]["weighted_undershoot_error_percent"], delta=0.5)
+        self.assertGreater(broad["horizontal"]["coverage_match_percent"],
+                           late["horizontal"]["coverage_match_percent"])
+        self.assertGreater(narrow["horizontal"]["coverage_match_percent"],
+                           late["horizontal"]["coverage_match_percent"])
+        self.assertAlmostEqual(
+            broad["horizontal"]["transition_weight_at_crossover"],
+            10 ** (-6 / 20), places=6)
+        self.assertAlmostEqual(
+            broad["horizontal"]["transition_full_weight_hz"],
+            crossover * 2 ** 0.5, places=6)
+
+    def test_coverage_match_records_high_frequency_endpoint_loss(self) -> None:
+        frequencies = np.geomspace(750.0, 8000.0, 129)
+        angles = np.arange(-90.0, 91.0)
+        target = 45.0
+        x = np.log2(frequencies / frequencies[0])
+
+        def patterns(half_angles: np.ndarray) -> np.ndarray:
+            return np.asarray([-6 * (np.abs(angles) / half_angle) ** 2
+                               for half_angle in half_angles])
+
+        flat = np.full(len(frequencies), target)
+        late_narrowing = np.where(x < 2.0, target, target - 8.0 * (x - 2.0))
+        late_narrowing = np.maximum(late_narrowing, 30.0)
+        run = {"frequencies": frequencies, "angles": angles,
+               "intended_coverages": {"horizontal": target, "vertical": target},
+               "crossover_hz": frequencies[0]}
+        flat_result = coverage_diagnostics(
+            dict(run, horizontal=patterns(flat), vertical=patterns(flat)))
+        narrowing_result = coverage_diagnostics(
+            dict(run, horizontal=patterns(late_narrowing),
+                 vertical=patterns(late_narrowing)))
+        self.assertGreater(flat_result["horizontal"]["coverage_match_percent"], 99.0)
+        self.assertLess(narrowing_result["horizontal"]["coverage_match_percent"],
+                        flat_result["horizontal"]["coverage_match_percent"])
+        self.assertLess(narrowing_result["horizontal"]["highest_frequency_error_deg"], 0)
+        self.assertGreater(narrowing_result["horizontal"]["highest_frequency_undershoot_deg"],
+                           0)
 
     def test_combined_scores_follow_mouth_dimension_weights(self) -> None:
         frequencies = np.array([500.0, 1000.0])
@@ -166,7 +267,7 @@ class InteractiveResultsTests(unittest.TestCase):
         result = coverage_diagnostics(run)
         self.assertAlmostEqual(result["axis_weights"]["horizontal"], 400 / 680)
         expected_error = np.sqrt((280 / 680) * 50 ** 2)
-        self.assertAlmostEqual(result["combined"]["pattern_fit_percent"],
+        self.assertAlmostEqual(result["combined"]["coverage_match_percent"],
                                100 - expected_error, delta=0.5)
 
     def test_fixed_band_penalizes_missing_crossings(self) -> None:
@@ -179,7 +280,7 @@ class InteractiveResultsTests(unittest.TestCase):
         result = coverage_diagnostics(run, frequencies, fixed_band=True)
         self.assertEqual(result["status"], "available")
         self.assertEqual(result["band_kind"], "fixed optimization")
-        self.assertLess(result["combined"]["pattern_fit_percent"], 20.0)
+        self.assertLess(result["combined"]["coverage_match_percent"], 20.0)
 
     def test_comparison_diagnostics_use_one_grid_and_common_band(self) -> None:
         frequencies_a = 500.0 * 2 ** (np.arange(25) / 12)

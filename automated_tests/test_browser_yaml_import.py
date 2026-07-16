@@ -43,6 +43,11 @@ class BrowserYamlImportTests(unittest.TestCase):
         self.assertIn("data-export-search-yaml", html)
         self.assertIn('"  operating_intent:"', html)
         self.assertIn('"bem_candidate_search:"', html)
+        self.assertIn('data-control="searchHNMin"', html)
+        self.assertIn('data-control="searchVNMax"', html)
+        self.assertIn("p.searchHNMin", html)
+        self.assertIn("p.searchVNMax", html)
+        self.assertIn("horizontal N", html)
 
 
 if __name__ == "__main__":
