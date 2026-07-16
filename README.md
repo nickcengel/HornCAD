@@ -71,7 +71,9 @@ diagnostics for horizontal, vertical, and combined behavior:
   detected interior waist is 100%.
 - **Window Uniformity** samples the normalized response at half the intended
   coverage angle, such as 22.5° for a 45° target, and scores the weighted RMS
-  dB deviation from that trace's average level across the diagnostic band.
+  dB deviation from that trace's average level across the diagnostic band. It
+  also scans from 0° to the measured −6 dB half-angle and applies an extra
+  penalty for positive off-axis regions inside that window.
 
 All headline diagnostics use 100% for ideal and lower values for worse
 behavior. Combined H/V diagnostics are weighted in proportion to physical mouth
@@ -82,8 +84,8 @@ than error after the transition reaches full weight one half-octave above
 crossover. The JSON records those weights and also retains weighted total,
 under-coverage, over-coverage, raw smoothness, fine-ripple, and broad-wiggle
 errors, the smoothness score gain, waist frequency/depth when detected, window
-probe angle and deviation statistics, ripple RMS, crossover angle, and
-highest-frequency endpoint error for diagnosis.
+probe angle, deviation statistics, positive-zone statistics, ripple RMS,
+crossover angle, and highest-frequency endpoint error for diagnosis.
 
 The automatic diagnostic passband begins only when both planes sustain genuine
 −6 dB crossings for at least one-third octave. A missing crossing after that

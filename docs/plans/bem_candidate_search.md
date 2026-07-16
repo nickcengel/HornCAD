@@ -181,8 +181,11 @@ trough is treated as well behaved and scores 100%.
 
 Window Uniformity samples the normalized response at half the intended coverage
 angle, such as 22.5 degrees for a 45-degree target, and scores weighted RMS dB
-deviation from that trace's average level. This catches broad in-window level
-instability even when the -6 dB boundary is close to target.
+deviation from that trace's average level. It also scans the angular response
+from 0 degrees to the measured -6 dB half-angle at each diagnostic frequency
+and applies an extra penalty for positive off-axis regions inside that window.
+This catches broad in-window level instability even when the -6 dB boundary is
+close to target.
 
 Coverage Match, Coverage Smoothness, and Window Uniformity use the crossover
 transition as a weight rather than as a separate target envelope. The assumed

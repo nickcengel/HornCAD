@@ -268,8 +268,8 @@ class InteractiveResultsTests(unittest.TestCase):
             return base_pattern[None, :] + amplitude[:, None] * angle_window[None, :]
 
         flat = np.zeros(len(frequencies))
-        broad = 3.0 * np.exp(-0.5 * ((x - 2.0) / 0.45) ** 2)
-        narrow = 3.0 * np.exp(-0.5 * ((x - 2.0) / 0.05) ** 2)
+        broad = -3.0 * np.exp(-0.5 * ((x - 2.0) / 0.45) ** 2)
+        narrow = -3.0 * np.exp(-0.5 * ((x - 2.0) / 0.05) ** 2)
         base = {"frequencies": frequencies, "angles": angles,
                 "intended_coverages": {"horizontal": target, "vertical": target},
                 "crossover_hz": frequencies[0]}
@@ -283,12 +283,46 @@ class InteractiveResultsTests(unittest.TestCase):
         self.assertAlmostEqual(
             flat_result["horizontal"]["window_probe_angle_deg"], probe)
         self.assertGreater(flat_result["combined"]["window_uniformity_percent"], 99.0)
+        self.assertEqual(broad_result["horizontal"]["window_positive_rms_db"], 0.0)
         self.assertGreater(broad_rms, narrow_result["horizontal"]["window_rms_deviation_db"])
         self.assertLess(broad_result["horizontal"]["window_uniformity_percent"],
                         narrow_result["horizontal"]["window_uniformity_percent"])
         self.assertAlmostEqual(
             broad_result["horizontal"]["window_uniformity_percent"],
             100.0 - 10.0 * broad_rms, places=6)
+
+    def test_window_uniformity_penalizes_positive_off_axis_zones(self) -> None:
+        frequencies = np.geomspace(750.0, 8000.0, 129)
+        angles = np.arange(-90.0, 91.0)
+        target = 45.0
+        probe = target * 0.5
+        angle_window = np.exp(-0.5 * ((np.abs(angles) - probe) / 3.0) ** 2)
+        base_pattern = -6 * (np.abs(angles) / target) ** 2
+        positive_bump = np.tile(base_pattern + 2.0 * angle_window,
+                                (len(frequencies), 1))
+        clean = np.tile(base_pattern, (len(frequencies), 1))
+        base = {"frequencies": frequencies, "angles": angles,
+                "intended_coverages": {"horizontal": target, "vertical": target},
+                "crossover_hz": frequencies[0]}
+        clean_result = coverage_diagnostics(
+            dict(base, horizontal=clean, vertical=clean))
+        positive_result = coverage_diagnostics(
+            dict(base, horizontal=positive_bump, vertical=positive_bump))
+        positive_rms = positive_result["horizontal"]["window_positive_rms_db"]
+        self.assertGreater(clean_result["combined"]["window_uniformity_percent"], 99.0)
+        self.assertGreater(positive_rms, 0.4)
+        self.assertGreater(
+            positive_result["horizontal"]["window_positive_peak_db"], 0.4)
+        self.assertGreater(
+            positive_result["horizontal"]["window_positive_band_fraction"], 0.99)
+        self.assertLess(positive_result["horizontal"]["window_uniformity_percent"],
+                        clean_result["horizontal"]["window_uniformity_percent"])
+        self.assertAlmostEqual(
+            positive_result["horizontal"]["window_uniformity_percent"],
+            100.0
+            - 10.0 * positive_result["horizontal"]["window_rms_deviation_db"]
+            - 20.0 * positive_rms,
+            places=6)
 
     def test_combined_scores_follow_mouth_dimension_weights(self) -> None:
         frequencies = np.array([500.0, 1000.0])
