@@ -8,7 +8,8 @@ import unittest
 import numpy as np
 
 from app.interactive_results import (
-    _positive_half_angle, comparison_report, load_run, single_report,
+    AIR_DENSITY_KG_M3, SOUND_SPEED_M_S, _positive_half_angle,
+    comparison_report, load_run, single_report,
 )
 
 
@@ -40,6 +41,9 @@ class InteractiveResultsTests(unittest.TestCase):
             run = self.make_run(Path(temp), "one")
             data = load_run(run)
             self.assertEqual(data["parameters"]["Coverage H / V"], "50° / 35°")
+            reference = AIR_DENSITY_KG_M3 * SOUND_SPEED_M_S / (np.pi * 0.0148 ** 2)
+            np.testing.assert_allclose(
+                data["normalized_impedance"], np.array([1 + 2j, 3 + 4j]) / reference)
             values = _positive_half_angle(data["angles"], data["horizontal"])
             np.testing.assert_allclose(values, [33.75, 22.5])
 
@@ -50,9 +54,13 @@ class InteractiveResultsTests(unittest.TestCase):
             single = single_report(runs[0])
             compare = comparison_report(runs, root / "compare.html",
                                         ["A", "B", "C", "D"])
-            self.assertIn("Horn acoustic parameters", single.read_text())
+            single_text = single.read_text()
+            self.assertIn("Horn acoustic parameters", single_text)
+            # Plotly JSON escapes the Unicode minus sign in the trace names.
+            self.assertIn("Horizontal \\u22126 dB", single_text)
+            self.assertIn("Vertical \\u22126 dB", single_text)
             text = compare.read_text()
-            self.assertIn("Throat impedance magnitude", text)
+            self.assertIn("Normalized throat impedance magnitude", text)
             self.assertIn("Conical extension", text)
 
 

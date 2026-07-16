@@ -15,6 +15,8 @@ import yaml
 
 
 COLORS = ("#2563eb", "#dc2626", "#16a34a", "#9333ea")
+AIR_DENSITY_KG_M3 = 1.2041
+SOUND_SPEED_M_S = 343.21
 
 
 def _scalar(value: Any) -> Any:
@@ -68,6 +70,20 @@ def acoustic_parameters(yaml_path: Path | None) -> dict[str, str]:
     return values
 
 
+def throat_reference_impedance(yaml_path: Path | None) -> float | None:
+    """Return rho*c/S for the effective circular throat."""
+    if yaml_path is None:
+        return None
+    config = yaml.safe_load(yaml_path.read_text())["horncad_config"]
+    global_config = config.get("global", {})
+    radius_mm = global_config.get(
+        "effective_throat_radius", global_config.get("throat_radius"))
+    if radius_mm is None or float(radius_mm) <= 0.0:
+        return None
+    area_m2 = np.pi * (float(radius_mm) * 1e-3) ** 2
+    return AIR_DENSITY_KG_M3 * SOUND_SPEED_M_S / area_m2
+
+
 def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
     response_path = run_dir / "responses.npz"
     if not response_path.is_file():
@@ -80,6 +96,7 @@ def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
         impedance = (np.asarray(data["impedance"], dtype=complex)
                      if "impedance" in data else None)
     yaml_path = _source_yaml(run_dir)
+    reference_impedance = throat_reference_impedance(yaml_path)
     return {
         "name": name or (yaml_path.stem if yaml_path else run_dir.name),
         "run_dir": run_dir,
@@ -88,6 +105,8 @@ def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
         "horizontal": horizontal,
         "vertical": vertical,
         "impedance": impedance,
+        "normalized_impedance": (impedance / reference_impedance
+                                 if impedance is not None and reference_impedance else None),
         "parameters": acoustic_parameters(yaml_path),
         "yaml": yaml_path,
     }
@@ -147,7 +166,7 @@ def single_report(run_dir: Path, output: Path | None = None,
     figure = make_subplots(rows=2, cols=2,
                            specs=[[{}, {}], [{"colspan": 2}, None]],
                            subplot_titles=("Horizontal coverage", "Vertical coverage",
-                                           "Throat impedance magnitude"),
+                                           "Normalized throat impedance magnitude"),
                            vertical_spacing=.12)
     for column, key in enumerate(("horizontal", "vertical"), 1):
         figure.add_trace(go.Heatmap(
@@ -155,15 +174,23 @@ def single_report(run_dir: Path, output: Path | None = None,
             zmin=-30, zmax=0, colorscale="Turbo", colorbar={"title": "dB"},
             hovertemplate="%{x:.1f} Hz<br>%{y:.1f}°<br>%{z:.2f} dB<extra></extra>"),
             row=1, col=column)
-    if run["impedance"] is not None:
+        figure.add_trace(go.Contour(
+            x=run["frequencies"], y=run["angles"], z=run[key].T,
+            contours={"start": -6, "end": -6, "size": 1, "coloring": "lines",
+                      "showlabels": True, "labelfont": {"color": "white"}},
+            line={"color": "white", "width": 3}, showscale=False,
+            name=f"{key.title()} −6 dB", showlegend=True,
+            hovertemplate="%{x:.1f} Hz<br>%{y:.1f}°<br>−6 dB<extra></extra>"),
+            row=1, col=column)
+    if run["normalized_impedance"] is not None:
         figure.add_trace(go.Scatter(
-            x=run["frequencies"], y=np.abs(run["impedance"]), mode="lines",
-            name="|Z throat|", line={"width": 2.5},
-            hovertemplate="%{x:.1f} Hz<br>%{y:.4g} Pa·s/m³<extra></extra>"),
+            x=run["frequencies"], y=np.abs(run["normalized_impedance"]), mode="lines",
+            name="|Z throat| / (ρc/Sₜ)", line={"width": 2.5},
+            hovertemplate="%{x:.1f} Hz<br>%{y:.4g}<extra></extra>"),
             row=2, col=1)
     figure.update_xaxes(type="log", title_text="Frequency (Hz)")
     figure.update_yaxes(title_text="Off-axis angle (degrees)", row=1)
-    figure.update_yaxes(title_text="|Z| (Pa·s/m³)", row=2, col=1)
+    figure.update_yaxes(title_text="|Z| / (ρc/Sₜ)", row=2, col=1)
     figure.update_layout(height=950, hovermode="closest", margin={"t": 70})
     return _write_html(output or run_dir / "interactive_report.html",
                        title or run["name"], figure, [run])
@@ -181,7 +208,7 @@ def comparison_report(run_dirs: list[Path], output: Path,
     figure = make_subplots(rows=1, cols=3,
                            subplot_titles=("Horizontal −6 dB half-angle",
                                            "Vertical −6 dB half-angle",
-                                           "Throat impedance magnitude"))
+                                           "Normalized throat impedance magnitude"))
     for index, run in enumerate(runs):
         color = COLORS[index]
         for column, key in enumerate(("horizontal", "vertical"), 1):
@@ -192,17 +219,17 @@ def comparison_report(run_dirs: list[Path], output: Path,
                 showlegend=column == 1, line={"color": color, "width": 2.5},
                 hovertemplate="%{x:.1f} Hz<br>%{y:.2f}°<extra>" +
                               html.escape(run["name"]) + "</extra>"), row=1, col=column)
-        if run["impedance"] is not None:
+        if run["normalized_impedance"] is not None:
             figure.add_trace(go.Scatter(
-                x=run["frequencies"], y=np.abs(run["impedance"]), mode="lines",
+                x=run["frequencies"], y=np.abs(run["normalized_impedance"]), mode="lines",
                 name=run["name"], legendgroup=run["name"], showlegend=False,
                 line={"color": color, "width": 2.5},
-                hovertemplate="%{x:.1f} Hz<br>%{y:.4g} Pa·s/m³<extra>" +
+                hovertemplate="%{x:.1f} Hz<br>%{y:.4g}<extra>" +
                               html.escape(run["name"]) + "</extra>"), row=1, col=3)
     figure.update_xaxes(type="log", title_text="Frequency (Hz)")
     figure.update_yaxes(title_text="Half-angle (degrees)", range=[0, 90], row=1, col=1)
     figure.update_yaxes(title_text="Half-angle (degrees)", range=[0, 90], row=1, col=2)
-    figure.update_yaxes(title_text="|Z| (Pa·s/m³)", row=1, col=3)
+    figure.update_yaxes(title_text="|Z| / (ρc/Sₜ)", row=1, col=3)
     figure.update_layout(height=620, hovermode="closest", legend={"orientation": "h"})
     return _write_html(output, title, figure, runs)
 

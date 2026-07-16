@@ -37,8 +37,10 @@ wavelength. Both suites accept:
 ```
 
 The standard deliverable is `interactive_report.html`. It contains cursor-
-enabled H/V coverage and throat-impedance magnitude; throat reactance is
-intentionally omitted. Solver directories also contain machine-readable
+enabled H/V coverage heatmaps with explicit −6 dB contour lines and normalized
+throat-impedance magnitude; throat
+reactance is intentionally omitted. Impedance is normalized by `ρc/Sₜ`, using
+the effective circular throat area. Solver directories also contain machine-readable
 `responses.npz` and `metrics.csv`.
 
 ## Reports and comparisons
@@ -57,8 +59,8 @@ python app/interactive_results.py compare \
   --names "Horn A" "Horn B" --output results/comparison.html
 ```
 
-Comparison reports show the -6 dB H/V coverage lines, impedance magnitude, and
-the project acoustic parameters. A compact completed example is in
+Comparison reports show the -6 dB H/V coverage lines, normalized impedance
+magnitude, and the project acoustic parameters. A compact completed example is in
 `examples/osse-400x280-reference/`.
 
 ## Supporting tools

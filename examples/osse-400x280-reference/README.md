@@ -8,6 +8,6 @@ This is HornCAD's maintained reference project.
 - `bem/` — compact free-air all-BEM results.
 
 Open either `interactive_report.html` for cursor-enabled coverage and
-magnitude-only throat impedance. The NPZ and CSV files are retained for report
+normalized magnitude-only throat impedance. The NPZ and CSV files are retained for report
 regeneration and numerical comparison; bulky meshes and per-frequency working
 directories are deliberately excluded.

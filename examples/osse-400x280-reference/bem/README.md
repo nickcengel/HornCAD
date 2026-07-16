@@ -6,5 +6,6 @@ angles, and 7,897 quadrant panels. Two hard mirror symmetries are applied by
 NumCalc. The all-inclusive mesh-to-report wall time was 58.625 seconds on the
 20-core reference Mac.
 
-`interactive_report.html` is the standard human-readable result.
+`interactive_report.html` is the standard human-readable result and plots
+throat-impedance magnitude normalized by `ρc/Sₜ`.
 `responses.npz` and `metrics.csv` retain compact numerical data.
