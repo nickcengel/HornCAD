@@ -57,8 +57,8 @@ the required heatmaps and curves.
 - Throat impedance is magnitude only by default; do not plot reactance.
 - Provide zoom, pan, hover/cursor values, trace visibility, and useful scale
   controls.
-- Preserve downloadable static figures as optional reports, not the main way
-  results are explored.
+- Do not generate PNGs as standard results. A separate export action may be
+  added later if a static figure is explicitly needed.
 
 The Results and Compare pages must keep geometry and response identity visually
 connected. Each plotted design should have a clear name, matching color, key
@@ -211,7 +211,7 @@ interrupted, and resumed entirely from the app.
 - Implement interactive H/V coverage heatmaps, -6 dB coverage curves, and
   magnitude-only throat impedance.
 - Add plot controls, cursor readings, geometry metadata, and 3D preview linkage.
-- Retain generation of the current standard PNG reports.
+- Write a self-contained `interactive_report.html` as the standard report.
 
 **Complete when:** a saved run can be understood and inspected interactively
 without opening a PNG or running a plotting script.

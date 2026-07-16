@@ -122,8 +122,9 @@ Defaults are 500--5,000 Hz, 10 points per octave, and 6 elements per
 wavelength. Override them with `--start-hz`, `--stop-hz`,
 `--points-per-octave`, and `--elements-per-wavelength`. NumCalc discovery,
 plotting caches, symmetry, resource scheduling, resumption, and standard plots
-are automatic. The standard plots are coverage and throat-impedance magnitude
-only; throat reactance is not a standard output.
+are automatic. The standard result is `interactive_report.html`: cursor-enabled
+H/V coverage and throat-impedance magnitude plus the horn acoustic parameters.
+Throat reactance is not a standard output.
 
 ### Legacy NGSolve research backend
 
@@ -260,10 +261,11 @@ NumCalc's RAM estimates, and print the worker plan without solving. Completed
 frequencies resume by default. The resolution evidence and current absolute-SPL
 limitation are documented in
 `analysis/all_bem_backend_optimization/numcalc_resolution_500-5k/README.md`.
-Every completed sweep must provide the two standard review plots:
-`figures/coverage_heatmaps.png` and `figures/throat_impedance_magnitude.png`.
-"Standard plots" means these two plots. Show throat impedance as magnitude
-only; do not generate or present throat reactance unless explicitly requested.
+Every completed sweep must provide `interactive_report.html`. It contains the
+standard coverage and throat-impedance-magnitude plots; do not generate or
+present throat reactance unless explicitly requested. Use
+`interactive_results.py compare` to overlay the H/V -6 dB half-angle and
+impedance-magnitude curves from two to four run directories.
 
 ### Legacy one-way local-lip experiments
 
@@ -340,9 +342,7 @@ interior_quadrant.msh
 mesh_report.json
 run_settings.json
 fields/
-figures/coverage_heatmaps.png
-figures/throat_impedance_magnitude.png
-figures/solver_performance.png
+interactive_report.html
 metrics.csv
 responses.npz
 ```

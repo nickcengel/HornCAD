@@ -5,10 +5,6 @@ import argparse
 import csv
 from pathlib import Path
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
-from matplotlib.ticker import NullFormatter, ScalarFormatter
 import numpy as np
 
 try:
@@ -22,6 +18,7 @@ try:
         read_mfem_mouth_csv,
         rayleigh_baffle_plane_pressure,
     )
+    from .interactive_results import single_report
 except ImportError:
     from aperture_field import (
         ApertureField,
@@ -33,18 +30,11 @@ except ImportError:
         read_mfem_mouth_csv,
         rayleigh_baffle_plane_pressure,
     )
+    from interactive_results import single_report
 
 
 ANGLES = np.arange(-90.0, 91.0)
 SOUND_SPEED = 343.21
-
-
-def log_axis(axis: plt.Axes) -> None:
-    axis.set_xscale("log")
-    axis.set_xticks([500, 1000, 2000, 5000])
-    axis.xaxis.set_major_formatter(ScalarFormatter())
-    axis.xaxis.set_minor_formatter(NullFormatter())
-    axis.grid(True, which="both", alpha=0.2)
 
 
 def coverage(mouth: np.ndarray, frequency: float, plane: str) -> np.ndarray:
@@ -71,32 +61,7 @@ def positive_crossing(level: np.ndarray) -> float:
     return 90.0
 
 
-def plot_coverage_heatmaps(path: Path, frequencies: np.ndarray,
-                           horizontal: np.ndarray, vertical: np.ndarray,
-                           title: str) -> None:
-    figure, axes = plt.subplots(1, 2, figsize=(12, 6), sharey=True,
-                               constrained_layout=True)
-    image = None
-    for axis, values, plane_title in zip(
-            axes, (horizontal, vertical), ("Horizontal", "Vertical")):
-        image = axis.pcolormesh(frequencies, ANGLES, values.T, shading="nearest",
-                                vmin=-30.0, vmax=0.0, cmap="turbo")
-        axis.contour(frequencies, ANGLES, values.T, levels=[-6.0],
-                     colors="white", linewidths=1.5)
-        axis.set_title(plane_title)
-        axis.set_xlabel("Frequency (Hz, log scale)")
-        axis.set_yticks(np.arange(-90, 91, 15))
-        log_axis(axis)
-    axes[0].set_ylabel("Off-axis angle (degrees)")
-    figure.colorbar(image, ax=axes, label="Relative level (dB)")
-    figure.suptitle(title)
-    figure.savefig(path, dpi=180, bbox_inches="tight")
-    plt.close(figure)
-
-
 def generate_review(fields: Path, output_dir: Path, title: str) -> None:
-    figures = output_dir / "figures"
-    figures.mkdir(parents=True, exist_ok=True)
     frequencies, impedance, horizontal, vertical, rows = [], [], [], [], []
     rayleigh_horizontal_pressure, rayleigh_vertical_pressure = [], []
     free_horizontal_pressure, free_vertical_pressure = [], []
@@ -174,32 +139,7 @@ def generate_review(fields: Path, output_dir: Path, title: str) -> None:
         writer.writeheader()
         writer.writerows(rows)
 
-    plot_coverage_heatmaps(
-        figures / "coverage_heatmaps.png", frequencies, horizontal, vertical,
-        f"{title} — Rayleigh infinite-planar-baffle reference")
-    plot_coverage_heatmaps(
-        figures / "free_field_monopole_heatmaps.png", frequencies,
-        free_horizontal, free_vertical,
-        f"{title} — free-field curved monopole-sheet baseline")
-
-    figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
-    axis.plot(frequencies, np.abs(impedance), linewidth=1.8)
-    axis.set(xlabel="Frequency (Hz, log scale)", ylabel="Magnitude (Pa·s/m³)",
-             title="Throat acoustic impedance magnitude")
-    log_axis(axis)
-    figure.savefig(figures / "throat_impedance_magnitude.png", dpi=180)
-    plt.close(figure)
-
-    figure, axes = plt.subplots(2, 1, figsize=(8, 7), sharex=True, constrained_layout=True)
-    axes[0].plot(frequencies, [row["gmres_iterations"] for row in rows])
-    axes[0].set_ylabel("GMRES iterations")
-    axes[1].plot(frequencies, [row["solve_seconds"] for row in rows])
-    axes[1].set(xlabel="Frequency (Hz, log scale)", ylabel="Solve time (seconds)")
-    for axis in axes:
-        log_axis(axis)
-    figure.suptitle("FEM solver performance")
-    figure.savefig(figures / "solver_performance.png", dpi=180)
-    plt.close(figure)
+    single_report(output_dir, output_dir / "interactive_report.html", title)
 
 
 def parse_args() -> argparse.Namespace:

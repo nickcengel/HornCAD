@@ -1,0 +1,222 @@
+#!/usr/bin/env python3
+"""Create interactive HornCAD result and multi-project comparison reports."""
+from __future__ import annotations
+
+import argparse
+import html
+import json
+from pathlib import Path
+from typing import Any
+
+import numpy as np
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import yaml
+
+
+COLORS = ("#2563eb", "#dc2626", "#16a34a", "#9333ea")
+
+
+def _scalar(value: Any) -> Any:
+    if isinstance(value, np.ndarray) and value.ndim == 0:
+        return value.item()
+    return value
+
+
+def _source_yaml(run_dir: Path) -> Path | None:
+    for filename, key in (("run_settings.json", "yaml_path"),
+                          ("manifest.json", "yaml")):
+        path = run_dir / filename
+        if path.is_file():
+            candidate = Path(json.loads(path.read_text()).get(key, ""))
+            if candidate.is_file():
+                return candidate
+    candidates = list(run_dir.glob("*.yaml")) + list(run_dir.glob("*.YAML"))
+    return candidates[0] if candidates else None
+
+
+def acoustic_parameters(yaml_path: Path | None) -> dict[str, str]:
+    if yaml_path is None:
+        return {}
+    config = yaml.safe_load(yaml_path.read_text())["horncad_config"]
+    g = config.get("global", {})
+    h = config.get("horizontal_basis", {})
+    v = config.get("vertical_basis", {})
+    modifier = config.get("section_modifier", {})
+    values = {
+        "Length": f"{g.get('length', 0):g} mm",
+        "Mouth": f"{g.get('mouth_width', 0):g} × {g.get('mouth_height', 0):g} mm",
+        "Mouth sag": f"{g.get('mouth_sag', 0):g} mm",
+        "Throat radius": f"{g.get('throat_radius', 0):g} mm",
+        "Throat angle": f"{g.get('throat_angle_deg', 0):g}°",
+        "Conical extension": f"{g.get('conical_extension_length', 0):g} mm",
+        "Effective throat radius": f"{g.get('effective_throat_radius', 0):g} mm",
+        "Coverage H / V": f"{h.get('coverage_deg', 0):g}° / {v.get('coverage_deg', 0):g}°",
+        "K H / V": f"{h.get('k', 0):g} / {v.get('k', 0):g}",
+        "N H / V": f"{h.get('n', 0):g} / {v.get('n', 0):g}",
+        "S H / V": f"{h.get('solved_s', 0):.6g} / {v.get('solved_s', 0):.6g}",
+        "Mouth squareness": f"{modifier.get('mouth_squareness', 0):g}",
+    }
+    return values
+
+
+def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
+    response_path = run_dir / "responses.npz"
+    if not response_path.is_file():
+        raise FileNotFoundError(response_path)
+    with np.load(response_path, allow_pickle=False) as data:
+        frequencies = np.asarray(data["frequencies_hz"], dtype=float)
+        angles = np.asarray(data["angles_deg"], dtype=float)
+        horizontal = np.asarray(data["horizontal_db"], dtype=float)
+        vertical = np.asarray(data["vertical_db"], dtype=float)
+        impedance = (np.asarray(data["impedance"], dtype=complex)
+                     if "impedance" in data else None)
+    yaml_path = _source_yaml(run_dir)
+    return {
+        "name": name or (yaml_path.stem if yaml_path else run_dir.name),
+        "run_dir": run_dir,
+        "frequencies": frequencies,
+        "angles": angles,
+        "horizontal": horizontal,
+        "vertical": vertical,
+        "impedance": impedance,
+        "parameters": acoustic_parameters(yaml_path),
+        "yaml": yaml_path,
+    }
+
+
+def _positive_half_angle(angles: np.ndarray, levels: np.ndarray) -> np.ndarray:
+    positive = angles >= 0
+    a = angles[positive]
+    output = []
+    for row in levels[:, positive]:
+        crossing = 90.0
+        for index in range(len(a) - 1):
+            if row[index] >= -6 and row[index + 1] < -6:
+                crossing = float(a[index] + (-6 - row[index]) /
+                                 (row[index + 1] - row[index]) *
+                                 (a[index + 1] - a[index]))
+                break
+        output.append(crossing)
+    return np.asarray(output)
+
+
+def _parameter_table(runs: list[dict[str, Any]]) -> str:
+    keys = list(dict.fromkeys(key for run in runs for key in run["parameters"]))
+    header = "<tr><th>Parameter</th>" + "".join(
+        f"<th style='color:{COLORS[i]}'>{html.escape(run['name'])}</th>"
+        for i, run in enumerate(runs)) + "</tr>"
+    rows = "".join("<tr><td>" + html.escape(key) + "</td>" + "".join(
+        f"<td>{html.escape(run['parameters'].get(key, '—'))}</td>" for run in runs)
+        + "</tr>" for key in keys)
+    return f"<table>{header}{rows}</table>"
+
+
+def _write_html(path: Path, title: str, figure: go.Figure,
+                runs: list[dict[str, Any]]) -> Path:
+    plot = figure.to_html(full_html=False, include_plotlyjs=True,
+                          config={"displaylogo": False, "scrollZoom": True,
+                                  "responsive": True})
+    document = f"""<!doctype html><html><head><meta charset='utf-8'>
+<title>{html.escape(title)}</title><style>
+body{{font-family:system-ui,sans-serif;margin:0;background:#f6f7f9;color:#172033}}
+main{{max-width:1500px;margin:auto;padding:18px}} h1{{margin:0 0 12px}}
+.plot,.parameters{{background:white;border:1px solid #d8dde7;border-radius:10px;padding:12px;margin-bottom:16px}}
+table{{border-collapse:collapse;width:100%}} th,td{{padding:7px 10px;border-bottom:1px solid #e4e7ed;text-align:left}}
+th{{background:#f1f3f7;position:sticky;top:0}} .hint{{color:#566176;margin:0 0 12px}}
+</style></head><body><main><h1>{html.escape(title)}</h1>
+<p class='hint'>Hover for exact coordinates. Drag to zoom; double-click to reset; use the legend to hide traces.</p>
+<section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
+{_parameter_table(runs)}</section></main></body></html>"""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(document)
+    return path
+
+
+def single_report(run_dir: Path, output: Path | None = None,
+                  title: str | None = None) -> Path:
+    run = load_run(run_dir)
+    figure = make_subplots(rows=2, cols=2,
+                           specs=[[{}, {}], [{"colspan": 2}, None]],
+                           subplot_titles=("Horizontal coverage", "Vertical coverage",
+                                           "Throat impedance magnitude"),
+                           vertical_spacing=.12)
+    for column, key in enumerate(("horizontal", "vertical"), 1):
+        figure.add_trace(go.Heatmap(
+            x=run["frequencies"], y=run["angles"], z=run[key].T,
+            zmin=-30, zmax=0, colorscale="Turbo", colorbar={"title": "dB"},
+            hovertemplate="%{x:.1f} Hz<br>%{y:.1f}°<br>%{z:.2f} dB<extra></extra>"),
+            row=1, col=column)
+    if run["impedance"] is not None:
+        figure.add_trace(go.Scatter(
+            x=run["frequencies"], y=np.abs(run["impedance"]), mode="lines",
+            name="|Z throat|", line={"width": 2.5},
+            hovertemplate="%{x:.1f} Hz<br>%{y:.4g} Pa·s/m³<extra></extra>"),
+            row=2, col=1)
+    figure.update_xaxes(type="log", title_text="Frequency (Hz)")
+    figure.update_yaxes(title_text="Off-axis angle (degrees)", row=1)
+    figure.update_yaxes(title_text="|Z| (Pa·s/m³)", row=2, col=1)
+    figure.update_layout(height=950, hovermode="closest", margin={"t": 70})
+    return _write_html(output or run_dir / "interactive_report.html",
+                       title or run["name"], figure, [run])
+
+
+def comparison_report(run_dirs: list[Path], output: Path,
+                      names: list[str] | None = None,
+                      title: str = "Horn comparison") -> Path:
+    if not 2 <= len(run_dirs) <= 4:
+        raise ValueError("comparison requires two to four runs")
+    if names is not None and len(names) != len(run_dirs):
+        raise ValueError("--names must contain one name per run")
+    runs = [load_run(path, names[i] if names else None)
+            for i, path in enumerate(run_dirs)]
+    figure = make_subplots(rows=1, cols=3,
+                           subplot_titles=("Horizontal −6 dB half-angle",
+                                           "Vertical −6 dB half-angle",
+                                           "Throat impedance magnitude"))
+    for index, run in enumerate(runs):
+        color = COLORS[index]
+        for column, key in enumerate(("horizontal", "vertical"), 1):
+            figure.add_trace(go.Scatter(
+                x=run["frequencies"],
+                y=_positive_half_angle(run["angles"], run[key]),
+                mode="lines+markers", name=run["name"], legendgroup=run["name"],
+                showlegend=column == 1, line={"color": color, "width": 2.5},
+                hovertemplate="%{x:.1f} Hz<br>%{y:.2f}°<extra>" +
+                              html.escape(run["name"]) + "</extra>"), row=1, col=column)
+        if run["impedance"] is not None:
+            figure.add_trace(go.Scatter(
+                x=run["frequencies"], y=np.abs(run["impedance"]), mode="lines",
+                name=run["name"], legendgroup=run["name"], showlegend=False,
+                line={"color": color, "width": 2.5},
+                hovertemplate="%{x:.1f} Hz<br>%{y:.4g} Pa·s/m³<extra>" +
+                              html.escape(run["name"]) + "</extra>"), row=1, col=3)
+    figure.update_xaxes(type="log", title_text="Frequency (Hz)")
+    figure.update_yaxes(title_text="Half-angle (degrees)", range=[0, 90], row=1, col=1)
+    figure.update_yaxes(title_text="Half-angle (degrees)", range=[0, 90], row=1, col=2)
+    figure.update_yaxes(title_text="|Z| (Pa·s/m³)", row=1, col=3)
+    figure.update_layout(height=620, hovermode="closest", legend={"orientation": "h"})
+    return _write_html(output, title, figure, runs)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    subparsers = parser.add_subparsers(dest="command", required=True)
+    report = subparsers.add_parser("report")
+    report.add_argument("run_dir", type=Path)
+    report.add_argument("--output", type=Path)
+    report.add_argument("--title")
+    compare = subparsers.add_parser("compare")
+    compare.add_argument("run_dirs", nargs="+", type=Path)
+    compare.add_argument("--output", required=True, type=Path)
+    compare.add_argument("--names", nargs="+")
+    compare.add_argument("--title", default="Horn comparison")
+    args = parser.parse_args()
+    if args.command == "report":
+        print(single_report(args.run_dir, args.output, args.title))
+    else:
+        print(comparison_report(args.run_dirs, args.output, args.names, args.title))
+
+
+if __name__ == "__main__":
+    main()

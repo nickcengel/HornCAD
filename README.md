@@ -52,3 +52,12 @@ To run a complete free-air all-BEM analysis directly from YAML:
 python app/run_bem_suite.py path/to/config.YAML \
   --output-dir analysis/my-bem-study --title "My horn"
 ```
+
+Both analysis suites write `interactive_report.html` with cursor coordinates,
+zoom, coverage, magnitude-only throat impedance, and the horn's acoustic
+parameters. Compare two to four completed runs with:
+
+```bash
+python app/interactive_results.py compare analysis/run-a analysis/run-b \
+  --names "Horn A" "Horn B" --output analysis/comparison.html
+```
