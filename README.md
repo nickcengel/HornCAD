@@ -16,7 +16,7 @@ python app/run_bem_suite.py path/to/project.yaml \
   --output-dir results/my-horn/bem \
   --title "My horn — BEM" \
   --start-hz 500 \
-  --stop-hz 5000 \
+  --stop-hz 8000 \
   --points-per-octave 10 \
   --elements-per-wavelength 6
 ```
@@ -28,7 +28,7 @@ python app/run_fem_suite.py path/to/project.yaml \
   --output-dir results/my-horn/fem \
   --title "My horn — FEM" \
   --start-hz 500 \
-  --stop-hz 5000 \
+  --stop-hz 8000 \
   --points-per-octave 10 \
   --elements-per-wavelength 6
 ```

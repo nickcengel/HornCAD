@@ -207,13 +207,13 @@ def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
     return manifest
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("yaml", type=Path)
     parser.add_argument("--numcalc", type=Path, required=True)
     parser.add_argument("--output-dir", type=Path, required=True)
     parser.add_argument("--start-hz", type=float, default=500.0)
-    parser.add_argument("--stop-hz", type=float, default=5_000.0)
+    parser.add_argument("--stop-hz", type=float, default=8_000.0)
     parser.add_argument("--points-per-octave", type=float, default=10.0)
     parser.add_argument("--points", type=int,
                         help="explicit logarithmic point count for a smoke run")
@@ -225,7 +225,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-iterations", type=int, default=250)
     parser.add_argument("--no-resume", action="store_true")
     parser.add_argument("--dry-run", action="store_true")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def main() -> None:

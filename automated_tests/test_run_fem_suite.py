@@ -5,10 +5,15 @@ import unittest
 
 import numpy as np
 
-from app.run_fem_suite import frequency_grid, find_binary, run_settings
+from app.run_fem_suite import frequency_grid, find_binary, parse_args, run_settings
 
 
 class RunFEMSuiteTests(unittest.TestCase):
+    def test_default_sweep_ends_at_8000_hz(self) -> None:
+        args = parse_args(["horn.yaml", "--output-dir", "results"])
+        self.assertEqual(args.start_hz, 500.0)
+        self.assertEqual(args.stop_hz, 8_000.0)
+
     def test_frequency_grid_uses_requested_points_per_octave(self) -> None:
         frequencies = frequency_grid(500.0, 5_000.0, 12.0)
         self.assertEqual(len(frequencies), 41)

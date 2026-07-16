@@ -9,10 +9,18 @@ from app.helmholtz_bem_3d import AcousticMesh, MeshReport
 from app.numcalc_bem_backend import (
     export_numcalc_case, far_field_points, reflect_quadrant_mesh,
 )
-from app.run_numcalc_sweep import ppo_frequency_grid
+from app.run_numcalc_sweep import parse_args as parse_numcalc_args, ppo_frequency_grid
+from app.run_bem_suite import parse_args as parse_bem_args
 
 
 class NumCalcBackendTests(unittest.TestCase):
+    def test_standard_and_lower_level_sweeps_end_at_8000_hz(self) -> None:
+        suite = parse_bem_args(["horn.yaml", "--output-dir", "results"])
+        lower = parse_numcalc_args([
+            "horn.yaml", "--numcalc", "NumCalc", "--output-dir", "results"])
+        self.assertEqual(suite.stop_hz, 8_000.0)
+        self.assertEqual(lower.stop_hz, 8_000.0)
+
     def test_quadrant_export_uses_only_input_faces_and_native_symmetry(self) -> None:
         surface = trimesh.Trimesh(
             vertices=np.asarray([[0, 0, 0], [1, 0, 0], [0, 1, 0],

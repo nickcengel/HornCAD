@@ -28,11 +28,11 @@ python app/run_bem_suite.py project.yaml \
   --output-dir results/my-horn/bem --title "My horn — BEM"
 ```
 
-The default BEM sweep is 500–5000 Hz, 10 points per octave, and 6 elements per
+The default BEM sweep is 500–8000 Hz, 10 points per octave, and 6 elements per
 wavelength. Both suites accept:
 
 ```text
---start-hz 500 --stop-hz 5000 \
+--start-hz 500 --stop-hz 8000 \
 --points-per-octave 10 --elements-per-wavelength 6
 ```
 

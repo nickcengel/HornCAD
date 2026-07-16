@@ -17,8 +17,12 @@ os.environ.setdefault("MPLCONFIGDIR", str(CACHE / "matplotlib"))
 os.environ.setdefault("XDG_CACHE_HOME", str(CACHE))
 os.environ.setdefault("FONTCONFIG_PATH", str(CACHE / "fontconfig"))
 
-from generate_numcalc_review import generate_review  # noqa: E402
-from run_numcalc_sweep import ppo_frequency_grid, run_sweep  # noqa: E402
+try:
+    from .generate_numcalc_review import generate_review  # noqa: E402
+    from .run_numcalc_sweep import ppo_frequency_grid, run_sweep  # noqa: E402
+except ImportError:
+    from generate_numcalc_review import generate_review  # noqa: E402
+    from run_numcalc_sweep import ppo_frequency_grid, run_sweep  # noqa: E402
 
 
 DEFAULT_NUMCALC_CANDIDATES = (
@@ -37,13 +41,13 @@ def find_numcalc(requested: Path | None) -> Path:
         f"NumCalc executable not found; checked: {checked}. Pass --binary if needed.")
 
 
-def parse_args() -> argparse.Namespace:
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("yaml", type=Path)
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--title", default="All-BEM free-air exterior")
     parser.add_argument("--start-hz", type=float, default=500.0)
-    parser.add_argument("--stop-hz", type=float, default=5_000.0)
+    parser.add_argument("--stop-hz", type=float, default=8_000.0)
     parser.add_argument("--points-per-octave", type=float, default=10.0)
     parser.add_argument("--elements-per-wavelength", type=float, default=6.0)
     parser.add_argument("--workers", type=int, default=0,
@@ -53,7 +57,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--binary", type=Path,
                         help="NumCalc executable; normally detected automatically")
     parser.add_argument("--no-resume", action="store_true")
-    return parser.parse_args()
+    return parser.parse_args(argv)
 
 
 def main() -> None:
