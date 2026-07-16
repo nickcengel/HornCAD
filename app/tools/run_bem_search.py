@@ -675,9 +675,10 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
                      if state.get("finalist_comparison") else "")
     document = f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}
 <title>BEM candidate search</title><style>
-body{{font-family:system-ui,sans-serif;margin:0;background:#f6f7f9;color:#172033}}main{{max-width:1400px;margin:auto;padding:20px}}
-section{{background:white;border:1px solid #d8dde7;border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}table{{border-collapse:collapse;width:100%}}
-th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}td{{white-space:nowrap}}th{{background:#f1f3f7}}.summary{{display:flex;gap:30px;flex-wrap:wrap}}
+:root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
+*{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}main{{max-width:1400px;margin:auto;padding:20px}}
+a{{color:var(--accent-strong)}}section{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}table{{border-collapse:collapse;width:100%}}
+th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left}}td{{white-space:nowrap}}th{{background:var(--panel-2)}}.summary{{display:flex;gap:30px;flex-wrap:wrap}}.summary p{{color:var(--muted)}}.summary strong{{color:var(--ink)}}
 </style></head><body><main><h1>BEM candidate search</h1><section class='summary'>
 <p><strong>Status</strong><br>{html.escape(state['status'])}</p><p><strong>Phase</strong><br>{html.escape(state.get('phase', ''))}</p>
 <p><strong>Progress</strong><br>{sum(r['status']=='complete' for r in records)} / {state['max_evaluations']} evaluated</p>

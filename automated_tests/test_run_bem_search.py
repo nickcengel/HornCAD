@@ -167,6 +167,8 @@ class BEMSearchTests(unittest.TestCase):
             report = (Path(temp) / "search_report.html").read_text()
             self.assertIn("Configured range", report)
             self.assertIn("N is varied explicitly", report)
+            self.assertIn("--bg:#0c1014", report)
+            self.assertIn("color-scheme:dark", report)
             self.assertNotIn("geometry feasible", report)
             self.assertGreaterEqual(len(state["candidates"]), 1)
             self.assertFalse(any(record["status"] == "rejected"
