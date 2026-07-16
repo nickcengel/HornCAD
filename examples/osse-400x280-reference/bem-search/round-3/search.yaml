@@ -1,0 +1,61 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: ../../project.yaml
+  intended_coverage_h_deg: 50
+  intended_coverage_v_deg: 35
+  crossover_hz: 500
+  upper_frequency_hz: 5000
+  search_size: quick
+  initial_candidates: 12
+  random_seed: 41
+  minimum_candidate_distance: 0.08
+  derived_s_bounds: [0.0, 3.0]
+  inferior_screen_probability: 0.97
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16
+  bounds:
+    length_mm: [255, 335]
+    extension_mm: [0, 45]
+    osse_coverage_h_deg: [34, 52]
+    osse_coverage_v_deg: [8, 35]
+    k_h: [5, 60]
+    k_v: [5, 60]
+    n_h: [2, 25]
+    n_v: [2, 25]
+  initial_pool:
+    # Vertical construction-angle bracket around a target-oriented H plane.
+    - label: Vertical overshoot probe 8 degrees
+      values: {length_mm: 295, extension_mm: 0, osse_coverage_h_deg: 44, osse_coverage_v_deg: 8, k_h: 35, k_v: 5, n_h: 5, n_v: 5}
+    - label: Vertical overshoot probe 12 degrees
+      values: {length_mm: 295, extension_mm: 0, osse_coverage_h_deg: 44, osse_coverage_v_deg: 12, k_h: 35, k_v: 5, n_h: 5, n_v: 5}
+    - label: Vertical overshoot probe 16 degrees
+      values: {length_mm: 295, extension_mm: 0, osse_coverage_h_deg: 44, osse_coverage_v_deg: 16, k_h: 35, k_v: 5, n_h: 5, n_v: 5}
+    - label: Vertical overshoot probe 20 degrees
+      values: {length_mm: 295, extension_mm: 0, osse_coverage_h_deg: 44, osse_coverage_v_deg: 20, k_h: 35, k_v: 5, n_h: 5, n_v: 5}
+
+    # Horizontal construction-angle bracket with the 12-degree V plane fixed.
+    - label: Horizontal overshoot probe 36 degrees
+      values: {length_mm: 295, extension_mm: 0, osse_coverage_h_deg: 36, osse_coverage_v_deg: 12, k_h: 10, k_v: 5, n_h: 5, n_v: 5}
+    - label: Horizontal overshoot probe 40 degrees
+      values: {length_mm: 295, extension_mm: 0, osse_coverage_h_deg: 40, osse_coverage_v_deg: 12, k_h: 10, k_v: 5, n_h: 5, n_v: 5}
+    - label: Horizontal conservative bracket 48 degrees
+      values: {length_mm: 295, extension_mm: 0, osse_coverage_h_deg: 48, osse_coverage_v_deg: 12, k_h: 35, k_v: 5, n_h: 5, n_v: 5}
+
+    # Termination sensitivity at the central 44/12 construction pair.
+    - label: Vertical N low at 12 degrees
+      values: {length_mm: 295, extension_mm: 0, osse_coverage_h_deg: 44, osse_coverage_v_deg: 12, k_h: 35, k_v: 5, n_h: 5, n_v: 2}
+    - label: Vertical N middle at 12 degrees
+      values: {length_mm: 295, extension_mm: 0, osse_coverage_h_deg: 44, osse_coverage_v_deg: 12, k_h: 35, k_v: 5, n_h: 5, n_v: 10}
+    - label: Vertical N high at 12 degrees
+      values: {length_mm: 295, extension_mm: 0, osse_coverage_h_deg: 44, osse_coverage_v_deg: 12, k_h: 35, k_v: 5, n_h: 5, n_v: 20}
+
+    # Length bracket around the same H/V construction pair.
+    - label: Compact target-oriented branch
+      values: {length_mm: 255, extension_mm: 0, osse_coverage_h_deg: 44, osse_coverage_v_deg: 12, k_h: 35, k_v: 5, n_h: 5, n_v: 5}
+    - label: Long target-oriented branch
+      values: {length_mm: 335, extension_mm: 0, osse_coverage_h_deg: 44, osse_coverage_v_deg: 12, k_h: 35, k_v: 5, n_h: 5, n_v: 5}
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 0
