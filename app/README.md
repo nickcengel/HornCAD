@@ -238,6 +238,10 @@ NumCalc's RAM estimates, and print the worker plan without solving. Completed
 frequencies resume by default. The resolution evidence and current absolute-SPL
 limitation are documented in
 `analysis/all_bem_backend_optimization/numcalc_resolution_500-5k/README.md`.
+Every completed sweep must provide the two standard review plots:
+`figures/coverage_heatmaps.png` and `figures/throat_impedance_magnitude.png`.
+"Standard plots" means these two plots. Show throat impedance as magnitude
+only; do not generate or present throat reactance unless explicitly requested.
 The experimental `--operator-assembler fmm` path must not be used for accepted
 results until the installed ExaFMM backend passes a dense complex-operator
 comparison on the target platform.

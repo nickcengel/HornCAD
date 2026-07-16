@@ -6,6 +6,7 @@ import argparse
 import csv
 import json
 from pathlib import Path
+import re
 
 import matplotlib
 matplotlib.use("Agg")
@@ -65,6 +66,32 @@ def _plot_cuts(path: Path, angles: np.ndarray, frequencies: np.ndarray,
     plt.close(figure)
 
 
+def _throat_impedance(case_root: Path) -> complex:
+    """Return throat impedance in the HornCAD FEM harmonic convention."""
+    metadata = json.loads((case_root / "horncad-numcalc.json").read_text())
+    boundary = [line for line in
+                (case_root / "NumCalc/source_1/NC.inp").read_text().splitlines()
+                if " VELO " in line and "VELO 0.0 " not in line][-1]
+    match = re.search(r"ELEM (\d+) TO (\d+)", boundary)
+    if match is None:
+        raise ValueError(f"cannot identify driven throat in {case_root}")
+    first, last = map(int, match.groups())
+    nodes = np.loadtxt(case_root / "ObjectMeshes/Reference/Nodes.txt",
+                       skiprows=1)[:, 1:4]
+    triangles = np.loadtxt(case_root / "ObjectMeshes/Reference/Elements.txt",
+                           skiprows=1, dtype=int)[:, 1:4]
+    areas = .5 * np.linalg.norm(np.cross(
+        nodes[triangles[:, 1]] - nodes[triangles[:, 0]],
+        nodes[triangles[:, 2]] - nodes[triangles[:, 0]]), axis=1)
+    values = np.loadtxt(
+        case_root / "NumCalc/source_1/be.out/be.1/pBoundary", skiprows=3)
+    pressure = values[:, 1] + 1j * values[:, 2]
+    average_pressure = np.sum(pressure[first:last + 1] * areas[first:last + 1]) \
+        / np.sum(areas[first:last + 1])
+    volume_velocity = metadata["velocity_m_s"] * metadata["source_area_m2"]
+    return np.conj(average_pressure / volume_velocity)
+
+
 def generate_review(run_dir: Path) -> Path:
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text())
@@ -73,10 +100,12 @@ def generate_review(run_dir: Path) -> Path:
     frequencies = np.asarray(manifest["frequencies_hz"], dtype=float)
     positive_angles = np.linspace(0.0, 90.0, int(manifest["angles"]))
     pressures = {name: [] for name in CUT_AZIMUTHS}
+    impedance = []
     rows = []
     for result in manifest["results"]:
         case_root = run_dir / result["case"]
         pressure = read_evaluation_pressure(case_root).reshape(3, len(positive_angles))
+        impedance.append(_throat_impedance(case_root))
         run = result["run"]
         levels = {}
         for index, name in enumerate(CUT_AZIMUTHS):
@@ -87,6 +116,7 @@ def generate_review(run_dir: Path) -> Path:
             "horizontal_6db_half_angle_deg": _half_angle(positive_angles, levels["horizontal"]),
             "diagonal_6db_half_angle_deg": _half_angle(positive_angles, levels["diagonal"]),
             "vertical_6db_half_angle_deg": _half_angle(positive_angles, levels["vertical"]),
+            "impedance_magnitude_pa_s_m3": abs(impedance[-1]),
             "iterations": run["iterations"],
             "solve_seconds": run["wall_time_s"],
             "relative_residual": run["relative_error"],
@@ -103,6 +133,7 @@ def generate_review(run_dir: Path) -> Path:
         write_cut_csv(run_dir / f"numcalc-{name}.csv", positive_angles, frequencies, db[name])
 
     full_angles = np.concatenate((-positive_angles[:0:-1], positive_angles))
+    impedance = np.asarray(impedance)
     full_db = {name: np.vstack((values[:0:-1], values)) for name, values in db.items()}
     np.savez_compressed(
         run_dir / "responses.npz", frequencies_hz=frequencies,
@@ -113,6 +144,7 @@ def generate_review(run_dir: Path) -> Path:
         horizontal_pressure=complex_cuts["horizontal"].T,
         diagonal_pressure=complex_cuts["diagonal"].T,
         vertical_pressure=complex_cuts["vertical"].T,
+        impedance=impedance,
         normalization="on_axis_per_frequency", radiation_model="NumCalc exterior BEM")
     with (run_dir / "metrics.csv").open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
@@ -147,6 +179,14 @@ def generate_review(run_dir: Path) -> Path:
         _log_axis(axis)
     figure.suptitle("NumCalc solver performance")
     figure.savefig(figures / "solver_performance.png", dpi=180)
+    plt.close(figure)
+
+    figure, axis = plt.subplots(figsize=(8, 5), constrained_layout=True)
+    axis.plot(frequencies, np.abs(impedance), linewidth=2)
+    axis.set(xlabel="Frequency (Hz, log scale)", ylabel="Magnitude (Pa·s/m³)",
+             title="Throat acoustic impedance magnitude")
+    _log_axis(axis)
+    figure.savefig(figures / "throat_impedance_magnitude.png", dpi=180)
     plt.close(figure)
     return figures
 

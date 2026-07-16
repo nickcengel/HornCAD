@@ -17,6 +17,11 @@ import numpy as np
 import trimesh
 
 try:
+    from .generate_numcalc_review import generate_review
+except ImportError:
+    from generate_numcalc_review import generate_review
+
+try:
     from .helmholtz_bem_3d import (
         AcousticMesh, MeshReport, MeshSettings, build_quadrant_acoustic_mesh,
     )
@@ -186,6 +191,7 @@ def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
         })
     manifest = {
         "schema_version": 1, "backend": "numcalc-native-symmetry",
+        "run_dir": str(root),
         "yaml": str(yaml_path), "numcalc": str(executable),
         "frequencies_hz": list(map(float, frequencies_hz)),
         "elements_per_wavelength": elements_per_wavelength,
@@ -224,6 +230,7 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    workflow_started = time.perf_counter()
     frequencies = (np.geomspace(args.start_hz, args.stop_hz, args.points)
                    if args.points else
                    ppo_frequency_grid(args.start_hz, args.stop_hz,
@@ -235,8 +242,16 @@ def main() -> None:
         memory_limit_gib=args.memory_limit_gib,
         max_iterations=args.max_iterations, resume=not args.no_resume,
         dry_run=args.dry_run)
+    if not args.dry_run:
+        run_root = Path(manifest["run_dir"])
+        generate_review(run_root)
+        manifest["workflow_elapsed_s"] = time.perf_counter() - workflow_started
+        (run_root / "manifest.json").write_text(
+            json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     print(json.dumps({key: manifest[key] for key in (
         "status", "mesh_quadrant_panels", "workers", "elapsed_s")}, indent=2))
+    if not args.dry_run:
+        print(f"mesh-to-standard-plots wall time: {manifest['workflow_elapsed_s']:.3f}s")
 
 
 if __name__ == "__main__":
