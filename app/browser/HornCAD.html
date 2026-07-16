@@ -426,7 +426,7 @@
 
     <fieldset>
       <legend>Operating Intent &amp; BEM Search</legend>
-      <p class="lede">Intent is fixed during search. OS-SE coverage, K, length, and extension may move.</p>
+      <p class="lede">Intent is fixed during search. OS-SE coverage, K, length, and extension may move. Length changes carry a selection cost that becomes steep beyond ±10%.</p>
       <label>Intended horizontal coverage deg
         <input data-control="intentHCoverage" type="number" min="1" max="85" step="0.1" value="45">
       </label>
@@ -2951,6 +2951,7 @@
       `  search_size: ${p.searchSize}`,
       "  initial_candidates: 12",
       "  random_seed: 17",
+      "  minimum_candidate_distance: 0.08",
       "  bounds:",
       `    length_mm: [${yamlNumber(p.length * (1 - lengthFraction))}, ${yamlNumber(p.length * (1 + lengthFraction))}]`,
       `    extension_mm: [${yamlNumber(p.searchExtensionMin)}, ${yamlNumber(p.searchExtensionMax)}]`,

@@ -73,6 +73,14 @@ Length is bounded relative to the seed. The initial default is:
 The user may override that percentage. Search metadata must record both the
 seed value and effective bounds.
 
+Length is not a free path to improved low-frequency loading. Selection subtracts
+a symmetric cost from all three optimization objectives while retaining the raw
+physical diagnostics for review. The cost rises quadratically to 4 percentage
+points at a 10% length change, then steeply to 20 points at 15%. Consequently a
+candidate outside ±10% must deliver a substantial coverage improvement to
+remain Pareto-competitive. Crossover loading is capped at 100% once the 0.7
+constraint is satisfied, so additional impedance cannot offset this cost.
+
 Extension should use explicit minimum and maximum lengths rather than only a
 percentage of its seed value, because a seed extension may be zero. A provisional
 default is zero through 15% of seed horn length. This default still needs to be
@@ -154,10 +162,10 @@ For each proposal HornCAD should:
    data, and diagnostics.
 6. Record the candidate in the search history and update the Pareto set.
 
-Every evaluated candidate retains:
+Every feasible evaluated candidate retains:
 
 - a complete YAML project;
-- an inspectable acoustic-surface STL, including for preflight-rejected designs;
+- an inspectable acoustic-surface STL;
 - proposed and derived parameter values;
 - effective search bounds;
 - geometry-feasibility result;
@@ -165,8 +173,9 @@ Every evaluated candidate retains:
 - standard report and `coverage_diagnostics.json`; and
 - search iteration, batch, and selection provenance.
 
-Failed and rejected candidates should remain in a compact search ledger, but
-need not retain bulky solver working files.
+Rejected proposals retain no per-candidate record, YAML, STL, or rejection
+reason. The report and ledger expose only their aggregate count. Failed BEM
+evaluations remain visible because they may require diagnosis or resumption.
 
 ## Search strategy
 
@@ -177,6 +186,9 @@ multi-objective Bayesian optimization:
 1. Evaluate the user's seed at production resolution.
 2. Generate an initial space-filling set of approximately 12 candidates within
    the allowed bounds.
+   After K repair, reject any proposal within normalized distance 0.08 of a
+   retained candidate so different proposals cannot collapse into effectively
+   duplicate evaluated horns.
 3. Fit surrogate models to objectives and constraints.
 4. Propose hardware-appropriate batches that balance predicted Pareto
    improvement with exploration of uncertain regions.

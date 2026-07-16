@@ -8,6 +8,7 @@ bem_candidate_search:
   search_size: quick
   initial_candidates: 12
   random_seed: 17
+  minimum_candidate_distance: 0.08
   bounds:
     length_mm: [255, 345]
     extension_mm: [0, 45]

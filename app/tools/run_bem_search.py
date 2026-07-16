@@ -9,6 +9,7 @@ import html
 import json
 import math
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import time
@@ -37,6 +38,7 @@ VARIABLES = ("length_mm", "extension_mm", "osse_coverage_h_deg",
 OBJECTIVES = ("coverage_match_percent", "smoothness_percent",
               "non_narrowing_percent")
 PRESET_BUDGETS = {"quick": 16, "normal": 36, "thorough": 60}
+DEFAULT_MINIMUM_CANDIDATE_DISTANCE = 0.08
 
 
 def _read_yaml(path: Path) -> dict[str, Any]:
@@ -83,6 +85,8 @@ def load_search(path: Path) -> tuple[dict[str, Any], Path, dict[str, Any]]:
         search.get("max_evaluations", PRESET_BUDGETS.get(preset, 36)))
     search["initial_candidates"] = min(
         int(search.get("initial_candidates", 12)), search["max_evaluations"] - 1)
+    search["minimum_candidate_distance"] = float(search.get(
+        "minimum_candidate_distance", DEFAULT_MINIMUM_CANDIDATE_DISTANCE))
     if search["max_evaluations"] < 2 or search["initial_candidates"] < 1:
         raise ValueError("search requires at least two evaluations")
     return search, seed_path, seed
@@ -211,20 +215,52 @@ def export_candidate_stl(project_path: Path, candidate_dir: Path) -> Path:
     return path
 
 
+def candidate_distance(values: dict[str, float], records: list[dict[str, Any]],
+                       bounds: dict[str, list[float]]) -> float:
+    """Return normalized distance to the nearest retained candidate."""
+    if not records:
+        return math.inf
+    vector = normalized_vector(values, bounds)
+    existing = np.asarray([normalized_vector(record["values"], bounds)
+                           for record in records])
+    return float(np.min(np.linalg.norm(existing - vector, axis=1)))
+
+
+def length_cost_percent(values: dict[str, float], seed_length_mm: float) -> float:
+    """Selection cost: gentle through 10% length change, steep beyond it."""
+    deviation = abs(values["length_mm"] / seed_length_mm - 1.0)
+    if deviation <= 0.10:
+        return 4.0 * (deviation / 0.10) ** 2
+    return 4.0 + 16.0 * ((deviation - 0.10) / 0.05) ** 2
+
+
+def update_selection_scores(record: dict[str, Any], search: dict[str, Any]) -> None:
+    cost = length_cost_percent(record["values"], search["seed_values"]["length_mm"])
+    record["length_cost_percent"] = cost
+    if record.get("diagnostics"):
+        record["selection_scores"] = {
+            key: max(0.0, record["diagnostics"]["combined"][key] - cost)
+            for key in OBJECTIVES
+        }
+
+
+def _objective_values(record: dict[str, Any]) -> np.ndarray:
+    values = record.get("selection_scores", record["diagnostics"]["combined"])
+    return np.asarray([values[key] for key in OBJECTIVES])
+
+
 def pareto_indices(records: list[dict[str, Any]]) -> set[int]:
     feasible = [(index, record) for index, record in enumerate(records)
                 if record.get("status") == "complete" and
                 record.get("crossover_loading_percent", 0) >= 100]
     output: set[int] = set()
     for index, record in feasible:
-        values = np.asarray([record["diagnostics"]["combined"][key]
-                             for key in OBJECTIVES])
+        values = _objective_values(record)
         dominated = False
         for other_index, other in feasible:
             if other_index == index:
                 continue
-            other_values = np.asarray([other["diagnostics"]["combined"][key]
-                                       for key in OBJECTIVES])
+            other_values = _objective_values(other)
             if np.all(other_values >= values) and np.any(other_values > values):
                 dominated = True
                 break
@@ -265,14 +301,13 @@ def propose_vector(search: dict[str, Any], records: list[dict[str, Any]],
         rng = np.random.default_rng(int(search.get("random_seed", 17)) + proposal_index)
         return rng.random(len(VARIABLES)), "fallback-exploration"
     x = np.asarray([normalized_vector(record["values"], bounds) for record in completed])
-    y = np.asarray([[record["diagnostics"]["combined"][key] / 100
-                     for key in OBJECTIVES] for record in completed])
+    y = np.asarray([_objective_values(record) / 100 for record in completed])
     loading = np.asarray([min(1, record["crossover_loading_percent"] / 100)
                           for record in completed])
     rng = np.random.default_rng(int(search.get("random_seed", 17)) + proposal_index)
     pool = rng.random((4096, len(VARIABLES)))
     distance = np.min(np.linalg.norm(pool[:, None, :] - x[None, :, :], axis=2), axis=1)
-    pool = pool[distance > 0.025]
+    pool = pool[distance > search["minimum_candidate_distance"]]
     weights = rng.dirichlet(np.ones(len(OBJECTIVES)))
     objective = np.zeros(len(pool))
     uncertainty = np.zeros(len(pool))
@@ -323,6 +358,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td>{diagnostic.get('smoothness_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
             f"<td>{diagnostic.get('non_narrowing_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
             f"<td>{record.get('crossover_loading_percent', float('nan')):.1f}%</td>" if "crossover_loading_percent" in record else "<td>—</td>",
+            f"<td>{record.get('length_cost_percent', 0):.1f}%</td>",
             f"<td>{record['values']['length_mm']:.1f}</td>",
             f"<td>{record['values']['extension_mm']:.1f}</td>",
             f"<td>{record['values']['osse_coverage_h_deg']:.1f} / "
@@ -342,11 +378,12 @@ th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}th{{backgrou
 </style></head><body><main><h1>BEM candidate search</h1><section class='summary'>
 <p><strong>Status</strong><br>{html.escape(state['status'])}</p><p><strong>Phase</strong><br>{html.escape(state.get('phase', ''))}</p>
 <p><strong>Progress</strong><br>{sum(r['status']=='complete' for r in records)} / {state['max_evaluations']} evaluated</p>
+<p><strong>Rejected proposals</strong><br>{state.get('rejected_count', 0)}</p>
 <p><strong>Fixed band</strong><br>{state['crossover_hz']:g}–{state['upper_frequency_hz']:g} Hz</p></section>
 {finalist_link}
 <section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Coverage match</th><th>Smoothness</th>
-<th>Non-narrowing</th><th>Crossover loading</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Note</th></tr>{''.join(rows)}</table></section>
-<section><p>100% is best for all diagnostics. Crossover loading is feasible at 100%. Pareto candidates are not dominated on the three coverage objectives among impedance-feasible candidates.</p></section>
+<th>Non-narrowing</th><th>Crossover loading</th><th>Length cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Note</th></tr>{''.join(rows)}</table></section>
+<section><p>100% is best for all physical diagnostics. Crossover loading is feasible at 100% and receives no additional credit above the 0.7 threshold. Pareto selection subtracts the displayed length cost from each coverage objective: the cost reaches 4 points at ±10% and rises steeply to 20 points at ±15%. After K repair, proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data.</p></section>
 </main></body></html>"""
     path = output_dir / "search_report.html"
     temporary = path.with_suffix(".html.tmp")
@@ -368,8 +405,8 @@ def write_finalist_comparison(output_dir: Path, state: dict[str, Any],
                               fixed_grid: np.ndarray) -> Path | None:
     pareto = pareto_indices(state["candidates"])
     finalists = [state["candidates"][index] for index in sorted(pareto)]
-    finalists.sort(key=lambda record: sum(
-        record["diagnostics"]["combined"][key] for key in OBJECTIVES), reverse=True)
+    finalists.sort(key=lambda record: float(np.sum(_objective_values(record))),
+                   reverse=True)
     finalists = finalists[:4]
     if len(finalists) < 2:
         return None
@@ -406,6 +443,7 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
             crossover_minimum_normalized_impedance=loading_minimum,
             elapsed_s=record.get("elapsed_s", 0) + time.perf_counter() - started,
             mesh_quadrant_panels=manifest["mesh_quadrant_panels"])
+        update_selection_scores(record, search)
     except Exception as error:  # retain failure and continue the search
         record.update(status="failed", reason=f"{type(error).__name__}: {error}",
                       elapsed_s=record.get("elapsed_s", 0) + time.perf_counter() - started)
@@ -437,9 +475,26 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             "seed_yaml": str(seed_path), "crossover_hz": search["crossover_hz"],
             "upper_frequency_hz": search["upper_frequency_hz"],
             "max_evaluations": search["max_evaluations"], "search": search,
-            "candidates": [], "started_at_unix": time.time(),
+            "candidates": [], "proposal_count": 0, "rejected_count": 0,
+            "started_at_unix": time.time(),
         }
         save_state(output_dir, state)
+    # Migrate early preflight ledgers: rejected proposals leave only aggregate
+    # counts and no candidate directory, YAML, STL, or detailed rejection data.
+    previous_rejected = [record for record in state["candidates"]
+                         if record.get("status") == "rejected"]
+    if "proposal_count" not in state:
+        identifiers = [int(record["id"].rsplit("-", 1)[1])
+                       for record in state["candidates"]]
+        state["proposal_count"] = max(identifiers, default=-1) + 1
+    state["rejected_count"] = int(state.get("rejected_count", 0)) + len(previous_rejected)
+    if previous_rejected:
+        for record in previous_rejected:
+            shutil.rmtree(output_dir / "candidates" / record["id"], ignore_errors=True)
+        state["candidates"] = [record for record in state["candidates"]
+                               if record.get("status") != "rejected"]
+    for record in state["candidates"]:
+        update_selection_scores(record, state["search"])
     for record in state["candidates"]:
         if record["status"] == "running":
             record["status"] = "queued"
@@ -448,6 +503,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             record["status"] = "queued"
             record.pop("reason", None)
     search = state["search"]
+    search.setdefault("minimum_candidate_distance",
+                      DEFAULT_MINIMUM_CANDIDATE_DISTANCE)
     executable = None if dry_run else find_numcalc(binary)
     solver = search.get("solver", {})
     ppo = float(solver.get("points_per_octave", 10))
@@ -462,33 +519,43 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
         candidate_dir = output_dir / "candidates" / record["id"]
         stl = export_candidate_stl(candidate_dir / "project.yaml", candidate_dir)
         record["stl_file"] = stl.name
-    if dry_run and len(state["candidates"]) >= search["initial_candidates"] + 1:
+    if dry_run and state["proposal_count"] >= search["initial_candidates"] + 1:
         state.update(status="preflight", phase="initial candidates materialized")
         save_state(output_dir, state)
         return state
     max_proposals = search["max_evaluations"] * 10
     while (sum(record["status"] == "complete" for record in state["candidates"])
-           < search["max_evaluations"] and len(state["candidates"]) < max_proposals):
+           < search["max_evaluations"] and state["proposal_count"] < max_proposals):
         queued = next((item for item in state["candidates"]
                        if item["status"] == "queued"), None)
         if queued is not None:
             record = queued
             candidate_id = record["id"]
             candidate_dir = output_dir / "candidates" / candidate_id
-            proposal_index = int(candidate_id.rsplit("-", 1)[1])
+            proposal_index = int(record.get("proposal_index", 0))
         else:
-            proposal_index = len(state["candidates"])
+            proposal_index = state["proposal_count"]
+            state["proposal_count"] += 1
             vector, source = propose_vector(search, state["candidates"], proposal_index)
             values = values_from_vector(vector, search["bounds"])
             if proposal_index == 0:
                 values = search["seed_values"]
-            candidate_id = f"candidate-{proposal_index:03d}"
             values, repairs = repair_k_for_positive_s(seed, values, search)
             document, derived = materialize_candidate(seed, values, search)
             feasible, reason = geometry_feasibility(derived)
+            distance = candidate_distance(values, state["candidates"], search["bounds"])
+            if (not feasible or
+                    distance < search["minimum_candidate_distance"]):
+                state["rejected_count"] += 1
+                save_state(output_dir, state)
+                continue
+            candidate_id = f"candidate-{len(state['candidates']):03d}"
             record = {"id": candidate_id, "status": "queued",
+                      "proposal_index": proposal_index,
                       "proposal_source": source, "values": values,
-                      "derived": derived, "k_repairs": repairs}
+                      "derived": derived, "k_repairs": repairs,
+                      "nearest_candidate_distance": distance}
+            update_selection_scores(record, search)
             state["candidates"].append(record)
             candidate_dir = output_dir / "candidates" / candidate_id
             candidate_dir.mkdir(parents=True, exist_ok=True)
@@ -497,10 +564,6 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                 yaml.safe_dump(document, sort_keys=False), encoding="utf-8")
             stl = export_candidate_stl(project_path, candidate_dir)
             record["stl_file"] = stl.name
-            if not feasible:
-                record.update(status="rejected", reason=reason)
-                save_state(output_dir, state)
-                continue
         if dry_run:
             record.update(status="preflight", reason="geometry feasible; BEM not run")
             save_state(output_dir, state)

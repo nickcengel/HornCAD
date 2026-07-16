@@ -8,8 +8,9 @@ from unittest.mock import patch
 import numpy as np
 
 from app.tools.run_bem_search import (
-    geometry_feasibility, load_search, materialize_candidate, pareto_indices,
-    propose_vector, repair_k_for_positive_s, run_search, seed_values,
+    candidate_distance, geometry_feasibility, length_cost_percent, load_search,
+    materialize_candidate, pareto_indices, propose_vector, repair_k_for_positive_s,
+    run_search, seed_values,
 )
 
 
@@ -70,6 +71,19 @@ class BEMSearchTests(unittest.TestCase):
                    record((95, 95, 95), 90)]
         self.assertEqual(pareto_indices(records), {0})
 
+    def test_length_cost_is_steep_beyond_ten_percent(self) -> None:
+        self.assertAlmostEqual(length_cost_percent({"length_mm": 300}, 300), 0)
+        self.assertAlmostEqual(length_cost_percent({"length_mm": 330}, 300), 4)
+        self.assertAlmostEqual(length_cost_percent({"length_mm": 345}, 300), 20)
+
+    def test_candidate_distance_uses_post_repair_normalized_parameters(self) -> None:
+        search, _, seed = load_search(SEARCH)
+        values = seed_values(seed)
+        records = [{"values": values}]
+        self.assertEqual(candidate_distance(values, records, search["bounds"]), 0)
+        changed = dict(values, length_mm=values["length_mm"] + 9)
+        self.assertGreater(candidate_distance(changed, records, search["bounds"]), 0)
+
     @patch("app.tools.run_bem_search.export_candidate_stl")
     def test_dry_run_materializes_feasible_initial_candidates(self, export_stl) -> None:
         def fake_export(_project: Path, candidate_dir: Path) -> Path:
@@ -82,6 +96,9 @@ class BEMSearchTests(unittest.TestCase):
             self.assertEqual(state["status"], "preflight")
             self.assertTrue((Path(temp) / "search_report.html").is_file())
             self.assertGreaterEqual(len(state["candidates"]), 1)
+            self.assertFalse(any(record["status"] == "rejected"
+                                 for record in state["candidates"]))
+            self.assertGreater(state["rejected_count"], 0)
             self.assertTrue((Path(temp) / "candidates" / "candidate-000" /
                              "project.yaml").is_file())
             self.assertEqual(len(list((Path(temp) / "candidates" / "candidate-000").

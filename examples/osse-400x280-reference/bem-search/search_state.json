@@ -7,7 +7,10 @@
       },
       "id": "candidate-000",
       "k_repairs": {},
+      "length_cost_percent": 0.0,
+      "nearest_candidate_distance": Infinity,
       "pareto": false,
+      "proposal_index": 0,
       "proposal_source": "seed",
       "reason": "geometry feasible; BEM not run",
       "status": "preflight",
@@ -35,7 +38,10 @@
           "to": 29.408518756798028
         }
       },
+      "length_cost_percent": 9.335408936923264,
+      "nearest_candidate_distance": 0.5959063933540547,
       "pareto": false,
+      "proposal_index": 1,
       "proposal_source": "initial-space-filling",
       "reason": "geometry feasible; BEM not run",
       "status": "preflight",
@@ -63,7 +69,10 @@
           "to": 35.28828927099491
         }
       },
+      "length_cost_percent": 0.6176667104774148,
+      "nearest_candidate_distance": 0.618347666270834,
       "pareto": false,
+      "proposal_index": 2,
       "proposal_source": "initial-space-filling",
       "reason": "geometry feasible; BEM not run",
       "status": "preflight",
@@ -84,7 +93,10 @@
       },
       "id": "candidate-003",
       "k_repairs": {},
+      "length_cost_percent": 1.0854896531964235,
+      "nearest_candidate_distance": 0.6405541769489261,
       "pareto": false,
+      "proposal_index": 3,
       "proposal_source": "initial-space-filling",
       "reason": "geometry feasible; BEM not run",
       "status": "preflight",
@@ -118,7 +130,10 @@
           "to": 9.871175176475974
         }
       },
+      "length_cost_percent": 4.00019191001507,
+      "nearest_candidate_distance": 0.8436336114206484,
       "pareto": false,
+      "proposal_index": 4,
       "proposal_source": "initial-space-filling",
       "reason": "geometry feasible; BEM not run",
       "status": "preflight",
@@ -146,7 +161,10 @@
           "to": 37.352701965111194
         }
       },
+      "length_cost_percent": 0.21149682542965467,
+      "nearest_candidate_distance": 0.6241270220303484,
       "pareto": false,
+      "proposal_index": 5,
       "proposal_source": "initial-space-filling",
       "reason": "geometry feasible; BEM not run",
       "status": "preflight",
@@ -162,38 +180,15 @@
     },
     {
       "derived": {
-        "s_h": -1.8645037520788523,
-        "s_v": 0.7389196133669993
-      },
-      "id": "candidate-006",
-      "k_repairs": {
-        "k_h": {
-          "attempted_max": 60.0,
-          "status": "unrepairable"
-        }
-      },
-      "pareto": false,
-      "proposal_source": "initial-space-filling",
-      "reason": "horizontal s is not positive",
-      "status": "rejected",
-      "stl_file": "HornCAD-Surface-400x280x290.STL",
-      "values": {
-        "extension_mm": 11.283503917344758,
-        "k_h": 52.39763735184876,
-        "k_v": 20.307295158395014,
-        "length_mm": 289.8838833406281,
-        "osse_coverage_h_deg": 68.11410386830812,
-        "osse_coverage_v_deg": 28.059199594750705
-      }
-    },
-    {
-      "derived": {
         "s_h": 1.153219194164079,
         "s_v": 0.512358127514265
       },
-      "id": "candidate-007",
+      "id": "candidate-006",
       "k_repairs": {},
+      "length_cost_percent": 3.036990092174665,
+      "nearest_candidate_distance": 0.5259235607686831,
       "pareto": false,
+      "proposal_index": 7,
       "proposal_source": "initial-space-filling",
       "reason": "geometry feasible; BEM not run",
       "status": "preflight",
@@ -209,62 +204,10 @@
     },
     {
       "derived": {
-        "s_h": -1.7243637784743513,
-        "s_v": 0.9362677956107955
-      },
-      "id": "candidate-008",
-      "k_repairs": {
-        "k_h": {
-          "attempted_max": 60.0,
-          "status": "unrepairable"
-        }
-      },
-      "pareto": false,
-      "proposal_source": "initial-space-filling",
-      "reason": "horizontal s is not positive",
-      "status": "rejected",
-      "stl_file": "HornCAD-Surface-400x280x322.STL",
-      "values": {
-        "extension_mm": 4.0922324031995005,
-        "k_h": 59.214583676792564,
-        "k_v": 44.67768762585499,
-        "length_mm": 321.5909164138287,
-        "osse_coverage_h_deg": 66.60928913204148,
-        "osse_coverage_v_deg": 22.010281499060014
-      }
-    },
-    {
-      "derived": {
-        "s_h": 0.829215572162149,
-        "s_v": -2.4552701198643523
-      },
-      "id": "candidate-009",
-      "k_repairs": {
-        "k_v": {
-          "attempted_max": 60.0,
-          "status": "unrepairable"
-        }
-      },
-      "pareto": false,
-      "proposal_source": "initial-space-filling",
-      "reason": "vertical s is not positive",
-      "status": "rejected",
-      "stl_file": "HornCAD-Surface-400x280x333.STL",
-      "values": {
-        "extension_mm": 16.68436002709937,
-        "k_h": 14.893134175336114,
-        "k_v": 12.57189260378495,
-        "length_mm": 332.86863949031317,
-        "osse_coverage_h_deg": 30.946349069613,
-        "osse_coverage_v_deg": 53.57242660939185
-      }
-    },
-    {
-      "derived": {
         "s_h": 0.023817293414466204,
         "s_v": 0.35668247003933945
       },
-      "id": "candidate-010",
+      "id": "candidate-007",
       "k_repairs": {
         "k_h": {
           "axis": "h",
@@ -273,7 +216,10 @@
           "to": 40.455650295407494
         }
       },
+      "length_cost_percent": 3.1471558704372202,
+      "nearest_candidate_distance": 0.6227029763903448,
       "pareto": false,
+      "proposal_index": 10,
       "proposal_source": "initial-space-filling",
       "reason": "geometry feasible; BEM not run",
       "status": "preflight",
@@ -289,38 +235,15 @@
     },
     {
       "derived": {
-        "s_h": -0.519530136992147,
-        "s_v": 0.6708964350542607
-      },
-      "id": "candidate-011",
-      "k_repairs": {
-        "k_h": {
-          "attempted_max": 60.0,
-          "status": "unrepairable"
-        }
-      },
-      "pareto": false,
-      "proposal_source": "initial-space-filling",
-      "reason": "horizontal s is not positive",
-      "status": "rejected",
-      "stl_file": "HornCAD-Surface-400x280x307.STL",
-      "values": {
-        "extension_mm": 36.40046890185235,
-        "k_h": 46.96628059698498,
-        "k_v": 30.595670370153556,
-        "length_mm": 307.45059148361133,
-        "osse_coverage_h_deg": 62.08704249012533,
-        "osse_coverage_v_deg": 32.69676457352994
-      }
-    },
-    {
-      "derived": {
         "s_h": 1.7737077303232824,
         "s_v": 1.0176416155038988
       },
-      "id": "candidate-012",
+      "id": "candidate-008",
       "k_repairs": {},
+      "length_cost_percent": 14.649368147754956,
+      "nearest_candidate_distance": 0.6627170563942342,
       "pareto": false,
+      "proposal_index": 12,
       "proposal_source": "initial-space-filling",
       "reason": "geometry feasible; BEM not run",
       "status": "preflight",
@@ -335,10 +258,12 @@
       }
     }
   ],
-  "configuration_hash": "69570d4ed92ac697eb9bf1a37b65516ad80d5473de17209c1dcf8bfd183774d9",
+  "configuration_hash": "83dcff5bf214a9ac19278ef1d2cbedbd82f473fd2c7a478cb8a885e60e4368ea",
   "crossover_hz": 500.0,
   "max_evaluations": 16,
   "phase": "initial candidates materialized",
+  "proposal_count": 13,
+  "rejected_count": 4,
   "schema_version": 1,
   "search": {
     "bounds": {
@@ -372,6 +297,7 @@
     "intended_coverage_h_deg": 50.0,
     "intended_coverage_v_deg": 35.0,
     "max_evaluations": 16,
+    "minimum_candidate_distance": 0.08,
     "random_seed": 17,
     "search_size": "quick",
     "seed_values": {
@@ -394,7 +320,7 @@
   },
   "search_yaml": "/Users/nickengel/Documents/GitHub/HornCAD/examples/osse-400x280-reference/bem-search/search.yaml",
   "seed_yaml": "/Users/nickengel/Documents/GitHub/HornCAD/examples/osse-400x280-reference/project.yaml",
-  "started_at_unix": 1784175265.253209,
+  "started_at_unix": 1784175916.25338,
   "status": "preflight",
   "upper_frequency_hz": 8000.0
 }
