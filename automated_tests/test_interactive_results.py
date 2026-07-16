@@ -58,6 +58,8 @@ class InteractiveResultsTests(unittest.TestCase):
                 data["normalized_impedance"], np.array([1 + 2j, 3 + 4j]) / reference)
             self.assertEqual(data["intended_coverages"],
                              {"horizontal": 50.0, "vertical": 35.0})
+            self.assertEqual(data["mouth_dimensions_mm"],
+                             {"horizontal": 400.0, "vertical": 280.0})
             values = _positive_half_angle(data["angles"], data["horizontal"])
             np.testing.assert_allclose(values, [33.75, 22.5])
 
@@ -126,6 +128,21 @@ class InteractiveResultsTests(unittest.TestCase):
                                delta=0.2)
         self.assertAlmostEqual(result["vertical"]["narrowing_percent"], 20.0,
                                delta=0.2)
+
+    def test_combined_scores_follow_mouth_dimension_weights(self) -> None:
+        frequencies = np.array([500.0, 1000.0])
+        angles = np.arange(-90.0, 91.0)
+        horizontal = np.asarray([-6 * (np.abs(angles) / 50) ** 2] * 2)
+        vertical = np.asarray([-6 * (np.abs(angles) / 17.5) ** 2] * 2)
+        run = {"frequencies": frequencies, "angles": angles,
+               "horizontal": horizontal, "vertical": vertical,
+               "intended_coverages": {"horizontal": 50.0, "vertical": 35.0},
+               "mouth_dimensions_mm": {"horizontal": 400.0, "vertical": 280.0}}
+        result = coverage_diagnostics(run)
+        self.assertAlmostEqual(result["axis_weights"]["horizontal"], 400 / 680)
+        expected_error = np.sqrt((280 / 680) * 50 ** 2)
+        self.assertAlmostEqual(result["combined"]["pattern_fit_percent"],
+                               100 - expected_error, delta=0.5)
 
     def test_fixed_band_penalizes_missing_crossings(self) -> None:
         frequencies = np.array([500.0, 1000.0, 2000.0])

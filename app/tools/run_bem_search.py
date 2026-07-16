@@ -296,16 +296,19 @@ def candidate_traits(records: list[dict[str, Any]], seed: dict[str, float],
             return detailed
 
 
-def length_cost_percent(values: dict[str, float], seed_length_mm: float) -> float:
-    """Selection cost: gentle through 10% length change, steep beyond it."""
-    deviation = abs(values["length_mm"] / seed_length_mm - 1.0)
+def length_cost_percent(values: dict[str, float], seed_total_depth_mm: float) -> float:
+    """One-sided packaging cost; compact candidates are never penalized."""
+    total_depth = values["length_mm"] + values.get("extension_mm", 0.0)
+    deviation = max(0.0, total_depth / seed_total_depth_mm - 1.0)
     if deviation <= 0.10:
         return 4.0 * (deviation / 0.10) ** 2
     return 4.0 + 16.0 * ((deviation - 0.10) / 0.05) ** 2
 
 
 def update_selection_scores(record: dict[str, Any], search: dict[str, Any]) -> None:
-    cost = length_cost_percent(record["values"], search["seed_values"]["length_mm"])
+    seed = search["seed_values"]
+    seed_depth = seed["length_mm"] + seed.get("extension_mm", 0.0)
+    cost = length_cost_percent(record["values"], seed_depth)
     record["length_cost_percent"] = cost
     if record.get("diagnostics"):
         record["selection_scores"] = {
@@ -327,7 +330,6 @@ def _training_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def pareto_indices(records: list[dict[str, Any]]) -> set[int]:
     feasible = [(index, record) for index, record in enumerate(records)
                 if record.get("status") == "complete" and
-                record.get("crossover_loading_percent", 0) >= 100 and
                 record.get("sampling_stability", {}).get("status", "stable") == "stable"]
     output: set[int] = set()
     for index, record in feasible:
@@ -451,16 +453,12 @@ def learned_lever_effects(search: dict[str, Any],
     design = np.column_stack((np.ones(len(x)), x))
     regularizer = np.eye(design.shape[1]) * 0.05
     regularizer[0, 0] = 0
-    outputs = list(OBJECTIVES) + ["crossover_loading_percent"]
+    outputs = list(OBJECTIVES)
     effects = {name: {} for name in VARIABLES}
     for output in outputs:
-        if output == "crossover_loading_percent":
-            y = np.asarray([record.get(output, 0) - seed_record.get(output, 0)
-                            for record in completed])
-        else:
-            seed_score = seed_record["diagnostics"]["combined"][output]
-            y = np.asarray([record["diagnostics"]["combined"][output] - seed_score
-                            for record in completed])
+        seed_score = seed_record["diagnostics"]["combined"][output]
+        y = np.asarray([record["diagnostics"]["combined"][output] - seed_score
+                        for record in completed])
         coefficients = np.linalg.solve(design.T @ design + regularizer,
                                        design.T @ y)[1:]
         for index, name in enumerate(VARIABLES):
@@ -546,13 +544,18 @@ def propose_vector(search: dict[str, Any], records: list[dict[str, Any]],
     completed = _training_records(records)
     if len(completed) < 3:
         rng = np.random.default_rng(int(search.get("random_seed", 17)) + proposal_index)
-        return rng.random(len(VARIABLES)), "fallback-exploration"
+        vector = rng.random(len(VARIABLES))
+        vector[VARIABLES.index("extension_mm")] = normalized_vector(
+            search["seed_values"], bounds)[VARIABLES.index("extension_mm")]
+        return vector, "fallback-exploration"
     x = np.asarray([normalized_vector(record["values"], bounds) for record in completed])
     y = np.asarray([_objective_values(record) / 100 for record in completed])
-    loading = np.asarray([min(1, record["crossover_loading_percent"] / 100)
-                          for record in completed])
     rng = np.random.default_rng(int(search.get("random_seed", 17)) + proposal_index)
     pool = rng.random((4096, len(VARIABLES)))
+    # Extension and impedance/loading are reserved for a separate study.
+    extension_index = VARIABLES.index("extension_mm")
+    pool[:, extension_index] = normalized_vector(
+        search["seed_values"], bounds)[extension_index]
     distance = np.min(np.linalg.norm(pool[:, None, :] - x[None, :, :], axis=2), axis=1)
     pool = pool[distance > search["minimum_candidate_distance"]]
     weights = rng.dirichlet(np.ones(len(OBJECTIVES)))
@@ -562,9 +565,7 @@ def propose_vector(search: dict[str, Any], records: list[dict[str, Any]],
         mean, std = _gp_predict(x, y[:, column], pool)
         objective += weights[column] * mean
         uncertainty += weights[column] * std
-    loading_mean, loading_std = _gp_predict(x, loading, pool)
-    feasibility = np.clip((loading_mean - 0.75) / np.maximum(loading_std, .08), -3, 3)
-    acquisition = objective + 0.35 * uncertainty + 0.08 * feasibility
+    acquisition = objective + 0.35 * uncertainty
     return pool[int(np.argmax(acquisition))], "pareto-surrogate"
 
 
@@ -600,9 +601,6 @@ def sampling_stability(run: dict[str, Any], fixed_grid: np.ndarray,
         return {"status": "unstable", "reason": "diagnostics unavailable after decimation"}
     deltas = {key: float(coarse["combined"][key] - full["combined"][key])
               for key in OBJECTIVES}
-    full_loading = crossover_loading(run, crossover_hz)[0]
-    coarse_loading = crossover_loading(decimated, crossover_hz)[0]
-    deltas["crossover_loading_percent"] = coarse_loading - full_loading
     maximum = max(abs(value) for value in deltas.values())
     return {"status": "stable" if maximum <= threshold_points else "unstable",
             "maximum_delta_points": maximum, "decimated_ppo_fraction": 0.5,
@@ -634,7 +632,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td>{diagnostic.get('pattern_fit_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
             f"<td>{diagnostic.get('pattern_stability_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
             f"<td>{diagnostic.get('hf_retention_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
-            f"<td>{record.get('crossover_loading_percent', float('nan')):.1f}%</td>" if "crossover_loading_percent" in record else "<td>—</td>",
+            f"<td>{record.get('crossover_minimum_normalized_impedance', float('nan')):.3f}</td>" if "crossover_minimum_normalized_impedance" in record else "<td>—</td>",
             f"<td>{record.get('length_cost_percent', 0):.1f}%</td>",
             f"<td>{record['values']['length_mm']:.1f}</td>",
             f"<td>{record['values']['extension_mm']:.1f}</td>",
@@ -665,8 +663,8 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
         effect_rows.append(
             f"<tr><td>{html.escape(VARIABLE_LABELS[name].title())}</td>" +
             "".join(f"<td>{values[key]:+.1f}</td>" for key in OBJECTIVES) +
-            f"<td>{values['crossover_loading_percent']:+.1f}</td></tr>")
-    effects_section = ("<section><h2>Learned lever effects</h2><p>Estimated diagnostic-point change for a +10% step across each configured parameter range. These are local evidence from this search, not universal design rules.</p><table><tr><th>Lever</th><th>Pattern Fit</th><th>Pattern Stability</th><th>HF Retention</th><th>Crossover loading</th></tr>" +
+            "</tr>")
+    effects_section = ("<section><h2>Learned lever effects</h2><p>Estimated diagnostic-point change for a +10% step across each configured parameter range. These are local evidence from this search, not universal design rules.</p><table><tr><th>Lever</th><th>Pattern Fit</th><th>Pattern Stability</th><th>HF Retention</th></tr>" +
                        "".join(effect_rows) + "</table></section>" if effect_rows else
                        "<section><h2>Learned lever effects</h2><p>Waiting for the seed and initial coupled candidates to complete.</p></section>")
     refresh = "<meta http-equiv='refresh' content='10'>" if state["status"] == "running" else ""
@@ -688,11 +686,11 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left}}td{
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Each completed run is compared with a factor-two decimation and excluded from surrogate training when any headline diagnostic moves by more than {search.get('sampling_stability_points', DEFAULT_SAMPLING_STABILITY_POINTS):g} points. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
 {finalist_link}
 <section><h2>Search range</h2><table><tr><th>Parameter</th><th>Configured range</th><th>Seed</th><th>Retained candidates</th></tr>
-{''.join(range_rows)}</table><p><strong>Realized S range (both axes):</strong> {search['derived_s_bounds'][0]:g}–{search['derived_s_bounds'][1]:g}. <strong>Initial extension:</strong> fixed at the seed value; N is varied explicitly in matched length families.</p></section>
+{''.join(range_rows)}</table><p><strong>Realized S range (both axes):</strong> {search['derived_s_bounds'][0]:g}–{search['derived_s_bounds'][1]:g}. <strong>Coverage-stage extension:</strong> fixed at the seed value; N is varied explicitly in matched length families.</p></section>
 {effects_section}
 <section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Pattern Fit</th><th>Pattern Stability</th>
-<th>HF Retention</th><th>Crossover loading</th><th>Length cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>S H/V</th><th>N H/V</th><th>Curvature radius H/V mm</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
-<section><p>100% is best for all physical diagnostics. Crossover loading is feasible at 100% and receives no additional credit above the 0.7 threshold. Pareto selection subtracts the displayed length cost from each coverage objective: the cost reaches 4 points at ±10% and rises steeply to 20 points at ±15%. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all three objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
+<th>HF Retention</th><th>Impedance (information only)</th><th>Added-depth cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>S H/V</th><th>N H/V</th><th>Curvature radius H/V mm</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
+<section><p>100% is best for all three acoustic diagnostics. Combined H/V scores are weighted in proportion to mouth width and height. Throat impedance is recorded but does not affect feasibility, Pareto selection, surrogate acquisition, or sampling stability during coverage search. Shorter total depth receives no cost; added depth above the seed is the only packaging departure cost. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all three objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
 </main></body></html>"""
     path = output_dir / "search_report.html"
     temporary = path.with_suffix(".html.tmp")

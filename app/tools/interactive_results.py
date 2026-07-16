@@ -98,6 +98,18 @@ def intended_coverages(yaml_path: Path | None) -> dict[str, float]:
     }
 
 
+def mouth_dimensions(yaml_path: Path | None) -> dict[str, float]:
+    """Return physical dimensions used to weight H/V coverage diagnostics."""
+    if yaml_path is None:
+        return {}
+    config = yaml.safe_load(yaml_path.read_text())["horncad_config"]
+    global_config = config.get("global", {})
+    return {
+        "horizontal": float(global_config.get("mouth_width", 0)),
+        "vertical": float(global_config.get("mouth_height", 0)),
+    }
+
+
 def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
     response_path = run_dir / "responses.npz"
     if not response_path.is_file():
@@ -123,6 +135,7 @@ def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
                                  if impedance is not None and reference_impedance else None),
         "parameters": acoustic_parameters(yaml_path),
         "intended_coverages": intended_coverages(yaml_path),
+        "mouth_dimensions_mm": mouth_dimensions(yaml_path),
         "yaml": yaml_path,
     }
 
@@ -237,26 +250,36 @@ def coverage_diagnostics(
             "lower_half_angle_deg": float(values[0]),
             "upper_half_angle_deg": float(values[-1]),
         }
+    dimensions = run.get("mouth_dimensions_mm", {})
+    raw_weights = np.asarray([
+        float(dimensions.get("horizontal", 1.0)),
+        float(dimensions.get("vertical", 1.0)),
+    ])
+    if np.any(raw_weights <= 0) or not np.all(np.isfinite(raw_weights)):
+        raw_weights = np.ones(2)
+    weights = raw_weights / np.sum(raw_weights)
+    horizontal_weight, vertical_weight = map(float, weights)
+    weighted = lambda key: (horizontal_weight * plane_results["horizontal"][key] +
+                            vertical_weight * plane_results["vertical"][key])
+    combined_error = float(np.sqrt(
+        horizontal_weight * plane_results["horizontal"]["coverage_error_percent"] ** 2 +
+        vertical_weight * plane_results["vertical"]["coverage_error_percent"] ** 2))
     return {
         "status": "available",
         "passband_lower_hz": float(evaluated_frequencies[0]),
         "passband_upper_hz": float(evaluated_frequencies[-1]),
         "band_kind": band_kind,
         "confirmation_octaves": PASSBAND_CONFIRMATION_OCTAVES,
+        "axis_weights": {"horizontal": horizontal_weight,
+                         "vertical": vertical_weight},
         "horizontal": plane_results["horizontal"],
         "vertical": plane_results["vertical"],
         "combined": {
-            "coverage_error_percent": float(np.sqrt(np.mean([
-                plane_results[key]["coverage_error_percent"] ** 2 for key in plane_results]))),
-            "pattern_fit_percent": max(0.0, 100.0 - float(np.sqrt(np.mean([
-                plane_results[key]["coverage_error_percent"] ** 2
-                for key in plane_results])))),
-            "pattern_stability_percent": float(np.mean([
-                plane_results[key]["pattern_stability_percent"] for key in plane_results])),
-            "narrowing_percent": float(np.mean([
-                plane_results[key]["narrowing_percent"] for key in plane_results])),
-            "hf_retention_percent": float(np.mean([
-                plane_results[key]["hf_retention_percent"] for key in plane_results])),
+            "coverage_error_percent": combined_error,
+            "pattern_fit_percent": max(0.0, 100.0 - combined_error),
+            "pattern_stability_percent": weighted("pattern_stability_percent"),
+            "narrowing_percent": weighted("narrowing_percent"),
+            "hf_retention_percent": weighted("hf_retention_percent"),
         },
     }
 
@@ -369,13 +392,17 @@ def _diagnostic_tables(runs: list[dict[str, Any]],
                 f"{band}</p><div class='diagnostic-grid'>{''.join(sections)}</div>")
 
     diagnostic = first
+    weights = diagnostic.get("axis_weights", {"horizontal": .5, "vertical": .5})
     header = "<th>Diagnostic</th><th>Combined</th><th>Horizontal</th><th>Vertical</th>"
     rows = "".join(
         f"<tr><th>{name}</th>" + "".join(
             _score_cell(diagnostic[plane][key])
             for plane in ("combined", "horizontal", "vertical")) + "</tr>"
         for name, key in DIAGNOSTIC_ROWS)
-    return (f"<p class='diagnostic-band'><strong>Evaluated band:</strong> {band}</p>"
+    return (f"<p class='diagnostic-band'><strong>Evaluated band:</strong> {band}. "
+            f"<strong>Combined H/V weights:</strong> "
+            f"{100 * weights['horizontal']:.1f}% / {100 * weights['vertical']:.1f}% "
+            "from mouth width/height.</p>"
             f"<table><tr>{header}</tr>{rows}</table>")
 
 

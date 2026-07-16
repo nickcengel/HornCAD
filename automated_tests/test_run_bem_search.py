@@ -111,7 +111,7 @@ class BEMSearchTests(unittest.TestCase):
         self.assertEqual(stability["status"], "stable")
         self.assertLess(stability["maximum_delta_points"], 0.01)
 
-    def test_pareto_set_uses_only_loading_feasible_candidates(self) -> None:
+    def test_pareto_set_ignores_informational_loading(self) -> None:
         def record(scores: tuple[float, float, float], loading: float) -> dict:
             combined = dict(zip(("pattern_fit_percent", "pattern_stability_percent",
                                  "hf_retention_percent"), scores))
@@ -119,10 +119,11 @@ class BEMSearchTests(unittest.TestCase):
                     "diagnostics": {"combined": combined}}
         records = [record((80, 80, 80), 100), record((70, 70, 70), 100),
                    record((95, 95, 95), 90)]
-        self.assertEqual(pareto_indices(records), {0})
+        self.assertEqual(pareto_indices(records), {2})
 
     def test_length_cost_is_steep_beyond_ten_percent(self) -> None:
         self.assertAlmostEqual(length_cost_percent({"length_mm": 300}, 300), 0)
+        self.assertAlmostEqual(length_cost_percent({"length_mm": 255}, 300), 0)
         self.assertAlmostEqual(length_cost_percent({"length_mm": 330}, 300), 4)
         self.assertAlmostEqual(length_cost_percent({"length_mm": 345}, 300), 20)
 

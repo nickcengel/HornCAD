@@ -84,28 +84,21 @@ Length uses an explicit exploration envelope. The maintained example uses:
 The user may override the bounds. The initial experiment spans the full envelope
 evenly; it does not impose a soft ±10% admission cap around the seed.
 
-The currently running first-round implementation still subtracts a symmetric
-length cost from its selection scores. Replace that rule after the active search
-finishes; do not change scoring partway through a search ledger.
+The implemented packaging policy is asymmetric and separates acoustics from
+packaging:
 
-The replacement policy is asymmetric and separates acoustics from packaging:
-
-- normalized throat-impedance magnitude at crossover remains a hard feasibility
-  constraint (minimum 0.7 over the crossover-centered evaluation window);
 - Pattern Fit, Pattern Stability, and HF Retention remain unmodified acoustic
   objectives;
-- a candidate shorter than the authored reference receives no departure cost if
-  it satisfies loading and the other feasibility checks;
+- a candidate shorter than the authored reference receives no departure cost;
 - added axial depth may be penalized, but must not be hidden inside the reported
   acoustic diagnostics; and
 - once extension is released, packaging size is measured using total axial depth
   `length_mm + extension_mm`, not horn length alone.
 
-Prefer representing total axial depth as an explicit minimization objective in
+Prefer eventually representing total axial depth as an explicit minimization objective in
 the Pareto set. This makes compactness visible and prevents either extra loading
 or shorter packaging from silently rewriting the meaning of the acoustic
-scores. Additional impedance above the 0.7 feasibility threshold receives no
-extra credit.
+scores.
 
 Extension should use explicit minimum and maximum lengths rather than only a
 percentage of its seed value, because a seed extension may be zero. A provisional
@@ -157,7 +150,10 @@ The search maximizes the existing three 0-100% diagnostics:
 
 All are oriented so 100% is ideal. Horizontal, vertical, and combined values
 remain available. The initial search should use the combined values as its
-three objectives while retaining plane-specific values for review.
+three objectives while retaining plane-specific values for review. Combined
+values weight horizontal and vertical results in proportion to mouth width and
+height respectively; a wider mouth therefore gives horizontal performance more
+influence.
 
 The objectives should not initially be collapsed into one weighted score.
 HornCAD should retain a Pareto set: candidates for which no other evaluated
@@ -165,16 +161,22 @@ candidate is at least as good in every objective and better in one. This keeps
 real tradeoffs visible. Preference weighting can be added later if users need a
 single automatic selection.
 
-## Crossover loading constraint
+## Deferred crossover-loading study
 
-The normalized throat-impedance magnitude must be at least 0.7 at crossover:
+Coverage-stage searches record normalized throat impedance but do not use it for
+feasibility, Pareto selection, surrogate acquisition, sampling stability, or
+candidate screening. Extension remains fixed at the seed value during this
+stage.
+
+When extension is deliberately released in a later study, evaluate the proposed
+minimum normalized throat-impedance magnitude of 0.7 at crossover:
 
 ```text
 |Z throat| / (rho*c/S_t) >= 0.7
 ```
 
-This is a feasibility constraint, not an objective to maximize. Values above
-the threshold are not increasingly rewarded.
+That later study will determine whether loading should become a feasibility
+constraint. Values above the threshold should not be increasingly rewarded.
 
 The displayed crossover-loading diagnostic is:
 
@@ -237,9 +239,10 @@ The implemented strategy is constrained multi-objective Bayesian optimization:
    remains geometrically infeasible.
    The initial candidates span the full length bounds. Length cost is retained
    only as a ranking preference and does not define the exploration envelope.
-3. Fit separate surrogate models to diagnostic changes relative to the seed and
-   to the crossover-loading constraint. Retain prediction uncertainty rather
-   than treating the surrogate mean as truth.
+3. Fit separate surrogate models to diagnostic changes relative to the seed.
+   Retain prediction uncertainty rather than treating the surrogate mean as
+   truth. Keep extension fixed and defer impedance modeling to the extension
+   study.
 4. Screen an adaptive proposal only when the model assigns at least 97%
    probability that it is worse than the seed on all three selection objectives.
    Screening never applies to the initial coupled-geometry round. An uncertain

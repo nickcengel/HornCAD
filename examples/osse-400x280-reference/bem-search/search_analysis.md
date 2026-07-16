@@ -8,25 +8,24 @@ candidates and two mesh failures. All 16 completed candidates passed the
 sampling-stability check; the largest diagnostic change under factor-two
 frequency decimation was 0.86 percentage point against the 2-point limit.
 
-No completed candidate satisfies the crossover-loading constraint. The required
-minimum normalized throat-impedance magnitude is 0.7 over the
-crossover-centered window. The best result was candidate 017 at 0.519. There is
-therefore no loading-feasible Pareto set and no justified final winner from this
-round. Coverage results remain useful for learning geometry trends.
+Combined diagnostics were rescored after the run using mouth-dimension weights:
+58.8% horizontal and 41.2% vertical for the 400 x 280 mm mouth. Throat impedance
+is retained as information but is intentionally excluded from feasibility,
+Pareto selection, surrogate acquisition, and sampling stability until the later
+extension study. The rescored Pareto set is candidates 001, 002, 003, and 015.
 
 ## Headline results
 
 | Result | Candidate | Value | Important qualification |
 |---|---:|---:|---|
-| Best Pattern Fit | 015 | 70.4% | Minimum normalized impedance only 0.174 |
-| Best Pattern Stability | 009 | 89.4% | HF Retention 29.8%; impedance 0.435 |
-| Best HF Retention | 001 | 49.1% | Impedance 0.313 |
-| Best crossover loading | 017 | 0.519 | Only 74.2% of the required 0.7 threshold |
-| Best loading among compact adaptive candidates | 013 | 0.473 | Pattern Fit 59.6%; total axial depth 270.0 mm |
-| Best balanced H/V pattern result | 015 | H/V Fit 71.4/69.5% | H/V Retention 60.9/35.8%; loading fails badly |
+| Best Pattern Fit | 015 | 70.6% | Balanced H/V Fit of 71.4/69.5% |
+| Best Pattern Stability | 009 | 89.8% | HF Retention 31.3% |
+| Best HF Retention | 001 | 51.3% | Short 255 mm, N=2 member |
+| Best balanced H/V pattern result | 015 | H/V Fit 71.4/69.5% | H/V Retention 60.9/35.8% |
+| Compact Pareto family | 001/002/003 | Fit about 64%; Retention 51.3% | N has negligible effect at low S |
 
-The seed, candidate 000, produced Pattern Fit 57.1%, Pattern Stability 82.9%,
-HF Retention 42.7%, and minimum normalized impedance 0.389.
+The seed, candidate 000, produced weighted Pattern Fit 59.5%, Pattern Stability
+83.6%, and HF Retention 45.1%.
 
 ## Matched N-family evidence
 
@@ -35,18 +34,18 @@ N. This is the cleanest causal evidence in the search.
 
 | Length | N | S H/V | Pattern Fit | Pattern Stability | HF Retention | Min. normalized impedance |
 |---:|---:|---:|---:|---:|---:|---:|
-| 255 | 2 | 0.01 / 0.01 | 61.3% | 81.2% | 49.1% | 0.313 |
-| 255 | 10 | 0.05 / 0.05 | 61.2% | 81.4% | 49.1% | 0.314 |
-| 255 | 25 | 0.15 / 0.14 | 61.2% | 81.4% | 49.0% | 0.314 |
-| 285 | 2 | 0.09 / 0.09 | 59.2% | 82.6% | 44.4% | 0.372 |
+| 255 | 2 | 0.01 / 0.01 | 64.0% | 82.1% | 51.3% | 0.313 |
+| 255 | 10 | 0.05 / 0.05 | 63.9% | 82.2% | 51.3% | 0.314 |
+| 255 | 25 | 0.15 / 0.14 | 63.8% | 82.2% | 51.3% | 0.314 |
+| 285 | 2 | 0.09 / 0.09 | 61.7% | 83.4% | 47.0% | 0.372 |
 | 285 | 10 | 0.30 / 0.30 | — | — | — | mesh failure |
 | 285 | 25 | 0.95 / 0.95 | — | — | — | mesh failure |
-| 315 | 2 | 0.23 / 0.23 | 55.7% | 83.7% | 38.6% | 0.403 |
-| 315 | 10 | 0.80 / 0.80 | 53.1% | 88.4% | 31.3% | 0.470 |
-| 315 | 25 | 2.54 / 2.54 | 51.2% | 89.4% | 29.8% | 0.435 |
-| 345 | 2 | 0.27 / 0.26 | 58.7% | 86.3% | 39.4% | 0.366 |
-| 345 | 10 | 0.94 / 0.89 | 68.3% | 84.2% | 29.4% | 0.243 |
-| 345 | 25 | 2.99 / 2.83 | 56.9% | 84.8% | 23.2% | 0.246 |
+| 315 | 2 | 0.23 / 0.23 | 58.1% | 84.4% | 40.7% | 0.403 |
+| 315 | 10 | 0.80 / 0.80 | 55.7% | 88.9% | 32.7% | 0.470 |
+| 315 | 25 | 2.54 / 2.54 | 53.9% | 89.8% | 31.3% | 0.435 |
+| 345 | 2 | 0.27 / 0.26 | 60.2% | 86.9% | 41.4% | 0.366 |
+| 345 | 10 | 0.94 / 0.89 | 68.9% | 84.9% | 29.2% | 0.243 |
+| 345 | 25 | 2.99 / 2.83 | 58.8% | 85.4% | 22.8% | 0.246 |
 
 ### Trend 1: N is nearly inactive at very low S
 
@@ -83,27 +82,25 @@ candidate construction, not be treated as a universal length law.
 Across much of the search, horizontal Pattern Fit is approximately 70–81%, while
 vertical Pattern Fit is often only 38–52%. Candidate 015 is the clearest
 exception, with H/V Pattern Fit of 71.4/69.5% and Stability of 90.0/88.0%.
-Its vertical HF Retention is still only 35.8%, and its impedance is the worst of
-the completed set at 0.174. Candidate 014 is similar but retains less horizontal
-beamwidth. These candidates identify a useful pattern-shaping neighborhood, not
-a viable horn.
+Its vertical HF Retention is still only 35.8%. Candidate 014 is similar but
+retains less horizontal beamwidth. These candidates identify the most useful
+pattern-shaping neighborhood in this round.
 
-### Trend 5: pattern optimization and loading currently pull apart
+### Deferred observation: impedance belongs with extension
 
-The optimizer found candidate 015 with the best combined pattern diagnostics,
-but its loading is extremely poor. Candidate 017 gives the best loading but
-only middling pattern results, and still misses the constraint substantially.
-Future selection must treat loading as a hard gate before ranking pattern
-quality. Surrogate training should model normalized impedance directly and
-avoid spending most of a round refining acoustically attractive but clearly
-loading-infeasible neighborhoods.
+The current impedance values are retained for later comparison, but they do not
+affect coverage-stage ranking. Extension varied in the adaptive tail of this
+completed experiment, which makes the loading observations too confounded for a
+clean rule. Future coverage rounds keep extension fixed. A separate matched
+extension study will determine how total axial depth and the L/E allocation
+control impedance.
 
 ## Implications for future candidate groups
 
-### Group A: loading-recovery experiment
+### Group A: deferred extension/impedance experiment
 
-Run this group first. Hold one promising H/V pattern construction fixed and
-vary axial geometry deliberately until the 0.7 loading boundary is crossed.
+Do not mix this group into the next coverage round. Hold one promising H/V
+pattern construction fixed and vary axial geometry deliberately.
 
 - Use candidate 015 as the pattern reference and candidate 017 as the loading
   reference.
@@ -112,9 +109,8 @@ vary axial geometry deliberately until the 0.7 loading boundary is crossed.
   `length + extension`; do not let both independently increase depth.
 - Couple K to length as needed to retain nonnegative S, but target matched S or
   matched realized curvature so the loading trend is interpretable.
-- Terminate or redirect this group if the upper available depth still cannot
-  approach 0.7. That outcome would indicate the 500 Hz crossover constraint is
-  outside this fixed-mouth design space rather than merely poorly optimized.
+- Use the results to decide later whether a 0.7 constraint is meaningful and
+  reachable for this fixed-mouth design space.
 
 ### Group B: controlled moderate-S N study
 
@@ -130,23 +126,20 @@ Concentrate N evaluations where it demonstrated leverage.
 
 ### Group C: balanced-pattern neighborhood
 
-Explore around candidates 014 and 015 only after adding a loading-aware screen.
+Explore around candidates 014 and 015 with extension fixed.
 
 - Preserve their approximately balanced H/V Pattern Fit.
 - Apply equivalent relative experiments in both axes, while allowing the
   different authored H/V coverage targets to produce different numeric values.
 - Prioritize vertical HF Retention; it is the dominant weakness after fit is
   balanced.
-- Reject predicted loading below a conservative floor before BEM. The floor
-  should rise as the surrogate gains evidence, eventually approaching 0.7.
 
-### Group D: compact loading candidate
+### Group D: compact candidate
 
-Candidate 013 is informative because its total depth is only 270 mm, its
-minimum normalized impedance is 0.473, and its horizontal result is strong.
-Build a small matched group around it to determine whether vertical performance
-can improve without losing loading. This is more useful than broadly rewarding
-or penalizing departure from the 300 mm seed.
+Candidate 013 is informative because its total depth is only 270 mm and its
+horizontal result is strong. Build a small matched group around it to determine
+whether vertical performance can improve while retaining compactness. This is
+more useful than broadly rewarding or penalizing departure from the 300 mm seed.
 
 ### Group E: meshing-feasibility boundary
 
@@ -159,15 +152,15 @@ geometry failure boundary rather than an unusable acoustic region.
 
 ## Recommended next-round order
 
-1. Implement the post-search scoring change: loading is a hard constraint,
-   acoustic scores remain raw, and compactness is a separate total-depth
-   objective with no penalty for a shorter feasible horn.
+1. Use mouth-proportional combined scoring, keep impedance informational, fix
+   extension, and give shorter total depth no departure cost. This is now
+   implemented.
 2. Add the geometry/mesh preflight that would have rejected candidates 005 and
    006 without launching solver work.
-3. Run Group A to establish whether the loading constraint is reachable.
-4. If reachable, run Groups B and C within the loading-feasible region.
-5. Retain Group D as the compact branch and compare it on the same evaluated
+3. Run Groups B and C as the next coverage experiments.
+4. Retain Group D as the compact branch and compare it on the same evaluated
    band.
+5. Run Group A later as a separate extension/impedance experiment.
 
 The next round should not use unconstrained independent variation of all eight
 parameters. Each group should answer one named question with matched controls,

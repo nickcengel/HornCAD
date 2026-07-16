@@ -66,7 +66,9 @@ diagnostics for horizontal, vertical, and combined behavior:
   lower-passband half-angle, capped at 100% so widening is not rewarded.
 
 All three headline diagnostics use 100% for ideal and lower values for worse
-behavior. The JSON also retains underlying RMS error, fitted-line deviation,
+behavior. Combined H/V diagnostics are weighted in proportion to physical mouth
+width and height, so the larger mouth dimension contributes more to the combined
+score. The JSON records those weights and also retains underlying RMS error, fitted-line deviation,
 endpoint angles, and signed narrowing for diagnosis.
 
 The automatic diagnostic passband begins only when both planes sustain genuine
