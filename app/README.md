@@ -225,9 +225,13 @@ initial Test4 validation and timing results are recorded in
 For a resource-aware production sweep, use:
 
 ```bash
-python app/run_numcalc_sweep.py config.YAML \
-  --numcalc /path/to/native/NumCalc --output-dir analysis/numcalc-sweeps
+python app/run_bem_suite.py config.YAML \
+  --output-dir analysis/numcalc-sweeps --title "My horn"
 ```
+
+This is the normal user-facing entry point and mirrors `run_fem_suite.py`.
+It locates NumCalc and configures local plotting caches automatically.
+`run_numcalc_sweep.py` is the lower-level backend interface.
 
 Its accepted defaults are 500--5,000 Hz, ten points per octave (35 frequencies),
 one shared maximum-frequency 6-EPW quadrant mesh, 91 angles per cut, ML-FMM,

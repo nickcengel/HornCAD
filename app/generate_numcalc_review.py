@@ -92,7 +92,7 @@ def _throat_impedance(case_root: Path) -> complex:
     return np.conj(average_pressure / volume_velocity)
 
 
-def generate_review(run_dir: Path) -> Path:
+def generate_review(run_dir: Path, title: str = "All-BEM free-air exterior") -> Path:
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text())
     if manifest.get("status") != "complete":
@@ -165,7 +165,7 @@ def generate_review(run_dir: Path) -> Path:
         _log_axis(axis)
     axes[0].set_ylabel("Off-axis angle (degrees)")
     figure.colorbar(image, ax=axes, label="Relative level (dB)")
-    figure.suptitle("Test4 — NumCalc unrestricted free-field exterior BEM")
+    figure.suptitle(title)
     figure.savefig(figures / "coverage_heatmaps.png", dpi=180, bbox_inches="tight")
     plt.close(figure)
 

@@ -46,6 +46,13 @@ python app/run_fem_suite.py path/to/config.YAML \
   --output-dir analysis/my-study --title "My horn"
 ```
 
+Run the equivalent free-air all-BEM suite with the same command shape:
+
+```bash
+python app/run_bem_suite.py path/to/config.YAML \
+  --output-dir analysis/my-bem-study --title "My horn"
+```
+
 To scatter a saved FEM mouth field from a finite local lip without meshing the
 complete body:
 
