@@ -74,6 +74,9 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("--bg:#0c1014", single_text)
             self.assertIn('"template":', single_text)
             self.assertIn('"paper_bgcolor":"#121820"', single_text)
+            self.assertIn("Click a chart to enable mouse-wheel zoom", single_text)
+            self.assertIn('plot !== armed', single_text)
+            self.assertIn('stopImmediatePropagation', single_text)
             # Plotly JSON escapes the Unicode minus sign in the trace names.
             self.assertIn("Horizontal \\u22126 dB", single_text)
             self.assertIn("Vertical \\u22126 dB", single_text)

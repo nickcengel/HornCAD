@@ -409,14 +409,39 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 .score{{position:relative;min-width:85px}} .score span{{position:relative;z-index:1;font-variant-numeric:tabular-nums}}
 .score i{{position:absolute;left:0;bottom:2px;height:4px;border-radius:2px;background:#64748b}}
 .score.strong i{{background:#16856b}} .score.moderate i{{background:#b7791f}} .score.weak i{{background:#b45353}}
+.plotly-graph-div.wheel-armed{{outline:2px solid var(--accent);outline-offset:2px}}
 @media(max-width:950px){{.diagnostic-grid{{grid-template-columns:1fr}}}}
 </style></head><body><main><h1>{html.escape(title)}</h1>
-<p class='hint'>Hover for exact coordinates. Drag to zoom; double-click to reset; use the legend to hide traces.</p>
+<p class='hint'>Hover for exact coordinates. Click a chart to enable mouse-wheel zoom; click outside it to restore page scrolling. Drag to zoom; double-click to reset; use the legend to hide traces.</p>
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Coverage diagnostics</h2>
 {_diagnostic_tables(runs, diagnostics, comparison)}
 <p class='hint'>All three diagnostics are percentages where 100% is ideal. Pattern Fit is 100% minus the log-frequency-weighted RMS percentage error from the intended −6 dB half-angle. Pattern Stability is 100% minus RMS deviation from the best-fit straight line versus log frequency, normalized by intended coverage. HF Retention is the upper-bound half-angle divided by the lower-bound half-angle, capped at 100%. {band_explanation}</p>
-</section></main></body></html>"""
+</section></main><script>
+(() => {{
+  let armed = null;
+  const disarm = () => {{
+    if (armed) armed.classList.remove("wheel-armed");
+    armed = null;
+  }};
+  document.querySelectorAll(".plotly-graph-div").forEach((plot) => {{
+    plot.addEventListener("click", () => {{
+      if (armed !== plot) {{
+        disarm();
+        armed = plot;
+        armed.classList.add("wheel-armed");
+      }}
+    }}, true);
+  }});
+  document.addEventListener("click", (event) => {{
+    if (armed && !armed.contains(event.target)) disarm();
+  }}, true);
+  document.addEventListener("wheel", (event) => {{
+    const plot = event.target.closest?.(".plotly-graph-div");
+    if (plot && plot !== armed) event.stopImmediatePropagation();
+  }}, {{capture: true, passive: true}});
+}})();
+</script></body></html>"""
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(document)
     diagnostics_path = path.with_name("coverage_diagnostics.json")
