@@ -1,0 +1,240 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 45.0
+  intended_coverage_v_deg: 45.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  search_size: normal
+  max_evaluations: 20
+  initial_candidates: 19
+  random_seed: 17
+  minimum_candidate_distance: 0.08
+  derived_s_bounds:
+  - 0.0
+  - 5.0
+  inferior_screen_probability: 0.97
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16
+  bounds:
+    length_mm:
+    - 140.0
+    - 205.0
+    extension_mm:
+    - 0.0
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 45.0
+    - 45.000001
+    osse_coverage_v_deg:
+    - 45.0
+    - 45.000001
+    k_h:
+    - 4.0
+    - 4.000001
+    k_v:
+    - 4.0
+    - 4.000001
+    n_h:
+    - 6.0
+    - 20.0
+    n_v:
+    - 6.0
+    - 20.0
+  initial_pool:
+  - label: L=140 N=6 K=4 round 400mm
+    values:
+      length_mm: 140.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 6.0
+      n_v: 6.0
+  - label: L=140 N=10 K=4 round 400mm
+    values:
+      length_mm: 140.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: L=140 N=15 K=4 round 400mm
+    values:
+      length_mm: 140.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 15.0
+      n_v: 15.0
+  - label: L=140 N=20 K=4 round 400mm
+    values:
+      length_mm: 140.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 20.0
+      n_v: 20.0
+  - label: L=160 N=6 K=4 round 400mm
+    values:
+      length_mm: 160.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 6.0
+      n_v: 6.0
+  - label: L=160 N=10 K=4 round 400mm
+    values:
+      length_mm: 160.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: L=160 N=15 K=4 round 400mm
+    values:
+      length_mm: 160.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 15.0
+      n_v: 15.0
+  - label: L=160 N=20 K=4 round 400mm
+    values:
+      length_mm: 160.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 20.0
+      n_v: 20.0
+  - label: L=180 N=6 K=4 round 400mm
+    values:
+      length_mm: 180.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 6.0
+      n_v: 6.0
+  - label: L=180 N=15 K=4 round 400mm
+    values:
+      length_mm: 180.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 15.0
+      n_v: 15.0
+  - label: L=180 N=20 K=4 round 400mm
+    values:
+      length_mm: 180.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 20.0
+      n_v: 20.0
+  - label: L=200 N=6 K=4 round 400mm
+    values:
+      length_mm: 200.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 6.0
+      n_v: 6.0
+  - label: L=200 N=10 K=4 round 400mm
+    values:
+      length_mm: 200.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: L=200 N=15 K=4 round 400mm
+    values:
+      length_mm: 200.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 15.0
+      n_v: 15.0
+  - label: L=200 N=20 K=4 round 400mm
+    values:
+      length_mm: 200.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 20.0
+      n_v: 20.0
+  - label: L=205 N=6 K=4 round 400mm
+    values:
+      length_mm: 205.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 6.0
+      n_v: 6.0
+  - label: L=205 N=10 K=4 round 400mm
+    values:
+      length_mm: 205.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: L=205 N=15 K=4 round 400mm
+    values:
+      length_mm: 205.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 15.0
+      n_v: 15.0
+  - label: L=205 N=20 K=4 round 400mm
+    values:
+      length_mm: 205.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 20.0
+      n_v: 20.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 0
