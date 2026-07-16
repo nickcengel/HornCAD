@@ -9,7 +9,7 @@ bem_candidate_search:
   initial_candidates: 12
   random_seed: 17
   minimum_candidate_distance: 0.08
-  derived_s_bounds: [0.15, 3.0]
+  derived_s_bounds: [0.0, 3.0]
   inferior_screen_probability: 0.97
   sampling_stability_points: 2.0
   confirmation_points_per_octave: 16

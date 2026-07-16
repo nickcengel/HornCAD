@@ -88,10 +88,10 @@ def load_search(path: Path) -> tuple[dict[str, Any], Path, dict[str, Any]]:
             raise ValueError(f"bounds.{name} must be [minimum, maximum]")
         bounds[name] = [float(values[0]), float(values[1])]
     search["bounds"] = bounds
-    s_bounds = search.get("derived_s_bounds", [0.15, 3.0])
+    s_bounds = search.get("derived_s_bounds", [0.0, 3.0])
     if not (isinstance(s_bounds, list) and len(s_bounds) == 2 and
-            0 < float(s_bounds[0]) < float(s_bounds[1])):
-        raise ValueError("derived_s_bounds must be [positive minimum, maximum]")
+            0 <= float(s_bounds[0]) < float(s_bounds[1])):
+        raise ValueError("derived_s_bounds must be [nonnegative minimum, maximum]")
     search["derived_s_bounds"] = [float(s_bounds[0]), float(s_bounds[1])]
     search["crossover_hz"] = crossover
     search["upper_frequency_hz"] = upper
@@ -199,10 +199,10 @@ def materialize_candidate(seed: dict[str, Any], values: dict[str, float],
 def geometry_feasibility(derived: dict[str, float]) -> tuple[bool, str | None]:
     if not all(math.isfinite(value) for value in derived.values()):
         return False, "derived geometry is not finite"
-    if derived["s_h"] <= 0:
-        return False, "horizontal s is not positive"
-    if derived["s_v"] <= 0:
-        return False, "vertical s is not positive"
+    if derived["s_h"] < 0:
+        return False, "horizontal s is negative"
+    if derived["s_v"] < 0:
+        return False, "vertical s is negative"
     return True, None
 
 
@@ -398,7 +398,7 @@ def geometry_space_filling_probe(search: dict[str, Any],
             feasible_vectors.append(vector)
             feasible_features.append(features)
     if not feasible_vectors:
-        raise RuntimeError("initial candidate pool contains no positive-S geometry")
+        raise RuntimeError("initial candidate pool contains no nonnegative-S geometry")
     vectors = np.asarray(feasible_vectors)
     features = np.asarray(feasible_features)
     existing_values = [search["seed_values"]] + [record["values"] for record in records]
@@ -546,6 +546,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     records = state["candidates"]
     search = state["search"]
     seed = search["seed_values"]
+    fixed = search.get("fixed_parameters", {})
+    fixed_n_h = float(fixed.get("n_h", float("nan")))
+    fixed_n_v = float(fixed.get("n_v", float("nan")))
     pareto = pareto_indices(records)
     for index, record in enumerate(records):
         record["pareto"] = index in pareto
@@ -560,9 +563,6 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
                        "interactive_report.html'>report</a>"
                        if record.get("run_dir") else "")
         status = "Pareto" if record.get("pareto") else record["status"].title()
-        stability = record.get("sampling_stability")
-        stability_text = (f"{stability['status'].title()} ({stability.get('maximum_delta_points', float('nan')):.1f} pt)"
-                          if stability else "—")
         rows.append("<tr>" + "".join((
             f"<td><a href='{candidate_dir}/project.yaml'>{record['id']}</a>"
             f"{stl_link}{report_link}</td>",
@@ -572,16 +572,16 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td>{diagnostic.get('hf_retention_percent', float('nan')):.1f}%</td>" if diagnostic else "<td>—</td>",
             f"<td>{record.get('crossover_loading_percent', float('nan')):.1f}%</td>" if "crossover_loading_percent" in record else "<td>—</td>",
             f"<td>{record.get('length_cost_percent', 0):.1f}%</td>",
-            f"<td>{html.escape(stability_text)}</td>",
             f"<td>{record['values']['length_mm']:.1f}</td>",
             f"<td>{record['values']['extension_mm']:.1f}</td>",
             f"<td>{record['values']['osse_coverage_h_deg']:.1f} / "
             f"{record['values']['osse_coverage_v_deg']:.1f}</td>",
             f"<td>{record['values']['k_h']:.2f} / {record['values']['k_v']:.2f}</td>",
+            f"<td>{record['derived'].get('s_h', float('nan')):.3f} / "
+            f"{record['derived'].get('s_v', float('nan')):.3f}</td>",
+            f"<td>{fixed_n_h:g} / {fixed_n_v:g}</td>",
             f"<td>{record['derived'].get('mouth_curvature_radius_h_mm', float('nan')):.1f} / "
             f"{record['derived'].get('mouth_curvature_radius_v_mm', float('nan')):.1f}</td>",
-            f"<td>{record['derived'].get('mouth_exit_angle_h_deg', float('nan')):.1f}° / "
-            f"{record['derived'].get('mouth_exit_angle_v_deg', float('nan')):.1f}°</td>",
             f"<td>{html.escape(trait)}</td>",
         )) + "</tr>")
     range_rows = []
@@ -592,9 +592,6 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
         range_rows.append(
             f"<tr><td>{html.escape(VARIABLE_LABELS[name].title())}</td>"
             f"<td>{lower:g}–{upper:g}</td><td>{seed[name]:g}</td><td>{actual}</td></tr>")
-    fixed = search.get("fixed_parameters", {})
-    fixed_n_h = float(fixed.get("n_h", float("nan")))
-    fixed_n_v = float(fixed.get("n_v", float("nan")))
     effects = learned_lever_effects(search, records)
     effect_rows = []
     for name in VARIABLES:
@@ -615,8 +612,8 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     document = f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}
 <title>BEM candidate search</title><style>
 body{{font-family:system-ui,sans-serif;margin:0;background:#f6f7f9;color:#172033}}main{{max-width:1400px;margin:auto;padding:20px}}
-section{{background:white;border:1px solid #d8dde7;border-radius:10px;padding:14px;margin:14px 0}}table{{border-collapse:collapse;width:100%}}
-th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}th{{background:#f1f3f7}}.summary{{display:flex;gap:30px;flex-wrap:wrap}}
+section{{background:white;border:1px solid #d8dde7;border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}table{{border-collapse:collapse;width:100%}}
+th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}td{{white-space:nowrap}}th{{background:#f1f3f7}}.summary{{display:flex;gap:30px;flex-wrap:wrap}}
 </style></head><body><main><h1>BEM candidate search</h1><section class='summary'>
 <p><strong>Status</strong><br>{html.escape(state['status'])}</p><p><strong>Phase</strong><br>{html.escape(state.get('phase', ''))}</p>
 <p><strong>Progress</strong><br>{sum(r['status']=='complete' for r in records)} / {state['max_evaluations']} evaluated</p>
@@ -629,7 +626,7 @@ th,td{{padding:8px;border-bottom:1px solid #e4e7ed;text-align:left}}th{{backgrou
 {''.join(range_rows)}</table><p><strong>Realized S range (both axes):</strong> {search['derived_s_bounds'][0]:g}–{search['derived_s_bounds'][1]:g}. <strong>Fixed termination exponent:</strong> N H/V = {fixed_n_h:g} / {fixed_n_v:g}. N is not varied in this search.</p></section>
 {effects_section}
 <section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th><th>Pattern Fit</th><th>Pattern Stability</th>
-<th>HF Retention</th><th>Crossover loading</th><th>Length cost</th><th>Sampling stability</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>Curvature radius H/V mm</th><th>Exit angle H/V</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
+<th>HF Retention</th><th>Crossover loading</th><th>Length cost</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>S H/V</th><th>N H/V</th><th>Curvature radius H/V mm</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
 <section><p>100% is best for all physical diagnostics. Crossover loading is feasible at 100% and receives no additional credit above the 0.7 threshold. Pareto selection subtracts the displayed length cost from each coverage objective: the cost reaches 4 points at ±10% and rises steeply to 20 points at ±15%. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all three objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
 </main></body></html>"""
     path = output_dir / "search_report.html"

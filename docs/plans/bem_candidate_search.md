@@ -220,9 +220,10 @@ The implemented strategy is constrained multi-objective Bayesian optimization:
    realized H/V S, exit-angle, and normalized-curvature space while preserving
    some authored-parameter diversity. Reject any proposal within normalized
    distance 0.08 of a retained candidate.
-   The initial realized-S window is configurable and defaults to 0.15–3.0 in
-   both axes. This includes the seed, the observed 0.2–0.5 transition region,
-   and strong high-S termination geometries while excluding near-zero S.
+   The initial realized-S window is configurable and defaults to 0–3.0 in
+   both axes. This includes the zero-S boundary, the observed 0.2–0.5
+   transition region, and strong high-S termination geometries. Negative S
+   remains geometrically infeasible.
    Initial candidates are also limited to ±10% seed length. Only later
    evidence-guided proposals may enter the wider authored length bounds and pay
    the steep length cost.

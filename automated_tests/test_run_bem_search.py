@@ -37,7 +37,15 @@ class BEMSearchTests(unittest.TestCase):
         self.assertEqual(config["operating_intent"]["horizontal_coverage_deg"], 50)
         feasible, reason = geometry_feasibility(derived)
         self.assertFalse(feasible)
-        self.assertIn("not positive", reason)
+        self.assertIn("negative", reason)
+
+    def test_zero_s_is_feasible_but_negative_s_is_not(self) -> None:
+        derived = {"s_h": 0.0, "s_v": 0.0, "other": 1.0}
+        self.assertEqual(geometry_feasibility(derived), (True, None))
+        derived["s_h"] = -1e-6
+        feasible, reason = geometry_feasibility(derived)
+        self.assertFalse(feasible)
+        self.assertIn("negative", reason)
 
     def test_seed_then_space_filling_proposals_are_bounded(self) -> None:
         search, _, seed = load_search(SEARCH)
