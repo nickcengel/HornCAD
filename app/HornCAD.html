@@ -169,6 +169,12 @@
       font-weight: 700;
     }
 
+    .import-status {
+      flex-basis: 100%;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
     .plot-wrap {
       display: grid;
       grid-template-rows: minmax(0, 1fr) auto;
@@ -364,7 +370,10 @@
         </select>
       </label>
       <div class="action-row">
+        <button type="button" data-import-yaml>Import YAML</button>
+        <input data-import-yaml-file type="file" accept=".yaml,.yml,text/yaml,application/yaml" hidden>
         <button type="button" class="primary-action" data-export-yaml>Export YAML</button>
+        <span class="import-status" data-import-status aria-live="polite"></span>
       </div>
     </fieldset>
 
@@ -718,6 +727,9 @@
   mouthSagVEnabledInput.addEventListener("change", scheduleRender);
 
   document.querySelector("[data-export-yaml]").addEventListener("click", exportYaml);
+  const importYamlFileInput = document.querySelector("[data-import-yaml-file]");
+  document.querySelector("[data-import-yaml]").addEventListener("click", () => importYamlFileInput.click());
+  importYamlFileInput.addEventListener("change", importYamlFile);
   document.querySelector("[data-curve-add]").addEventListener("click", () => addSplineAnchor(morphCurve));
   document.querySelector("[data-curve-remove]").addEventListener("click", () => removeSplineAnchor(morphCurve));
   document.querySelector("[data-curve-reset]").addEventListener("click", () => resetSplineCurve(morphCurve));
@@ -2601,6 +2613,168 @@
     }
     return Number.isInteger(value) ? String(value) : String(Number(value.toFixed(6)));
   }
+
+  // BEGIN HORNCAD YAML PARSER (kept dependency-free for the standalone app)
+  function parseYamlScalar(text) {
+    const value = text.trim();
+    if (value === "true") return true;
+    if (value === "false") return false;
+    if (value === "null" || value === "~") return null;
+    if (/^[-+]?(?:\d+\.?\d*|\.\d+)(?:[eE][-+]?\d+)?$/.test(value)) return Number(value);
+    if ((value.startsWith('"') && value.endsWith('"')) ||
+        (value.startsWith("'") && value.endsWith("'"))) return value.slice(1, -1);
+    return value;
+  }
+
+  function parseYamlInlineMap(text) {
+    const trimmed = text.trim();
+    if (!trimmed.startsWith("{") || !trimmed.endsWith("}")) {
+      throw new Error(`Expected inline mapping, got: ${text}`);
+    }
+    const result = {};
+    for (const entry of trimmed.slice(1, -1).split(",")) {
+      const separator = entry.indexOf(":");
+      if (separator < 1) throw new Error(`Invalid inline mapping entry: ${entry}`);
+      result[entry.slice(0, separator).trim()] = parseYamlScalar(entry.slice(separator + 1));
+    }
+    return result;
+  }
+
+  function parseHorncadYaml(text) {
+    const lines = text.replace(/^\uFEFF/, "").split(/\r?\n/).flatMap((raw, index) => {
+      if (/^\s*($|#)/.test(raw)) return [];
+      if (/^\t/.test(raw)) throw new Error(`Tabs are not supported (line ${index + 1})`);
+      const indent = raw.match(/^ */)[0].length;
+      return [{ indent, content: raw.trim(), line: index + 1 }];
+    });
+    if (!lines.length) throw new Error("The YAML file is empty");
+
+    function parseBlock(start, indent) {
+      const arrayBlock = lines[start].content.startsWith("- ");
+      const value = arrayBlock ? [] : {};
+      let cursor = start;
+      while (cursor < lines.length && lines[cursor].indent === indent) {
+        const line = lines[cursor];
+        if (arrayBlock) {
+          if (!line.content.startsWith("- ")) throw new Error(`Mixed YAML block at line ${line.line}`);
+          value.push(parseYamlInlineMap(line.content.slice(2)));
+          cursor += 1;
+          continue;
+        }
+        const separator = line.content.indexOf(":");
+        if (separator < 1) throw new Error(`Expected key: value at line ${line.line}`);
+        const key = line.content.slice(0, separator).trim();
+        const remainder = line.content.slice(separator + 1).trim();
+        if (remainder) {
+          value[key] = parseYamlScalar(remainder);
+          cursor += 1;
+        } else if (cursor + 1 < lines.length && lines[cursor + 1].indent > indent) {
+          const child = parseBlock(cursor + 1, lines[cursor + 1].indent);
+          value[key] = child.value;
+          cursor = child.cursor;
+        } else {
+          value[key] = {};
+          cursor += 1;
+        }
+      }
+      return { value, cursor };
+    }
+
+    const parsed = parseBlock(0, lines[0].indent);
+    if (parsed.cursor !== lines.length) {
+      throw new Error(`Unexpected indentation at line ${lines[parsed.cursor].line}`);
+    }
+    return parsed.value;
+  }
+  // END HORNCAD YAML PARSER
+
+  function setImportedControl(name, importedValue) {
+    if (importedValue === undefined || importedValue === null || !controls.has(name)) return;
+    for (const input of controls.get(name)) input.value = String(importedValue);
+  }
+
+  function importedSpline(points, yKey) {
+    if (!Array.isArray(points) || points.length < 2) throw new Error("Spline must contain at least two points");
+    return points.map((point) => ({
+      x: Number(point.x),
+      y: Number(point[yKey]),
+      angle: rad(Number(point.angle_deg || 0)),
+      tension: Number(point.tension ?? 0.35),
+    }));
+  }
+
+  function replaceSpline(editor, points) {
+    editor.anchors.splice(0, editor.anchors.length, ...points);
+  }
+
+  function applyHorncadConfig(documentData) {
+    const config = documentData && documentData.horncad_config;
+    if (!config || config.type !== "HornCAD") throw new Error("Not a HornCAD YAML project");
+    if (Number(config.version) !== 2) throw new Error(`Unsupported HornCAD YAML version: ${config.version}`);
+    const global = config.global || {};
+    const body = config.body || {};
+    const horizontal = config.horizontal_basis || {};
+    const vertical = config.vertical_basis || {};
+    const modifier = config.section_modifier || {};
+    const view = config.view || {};
+    const exportSettings = config.export || {};
+    const controlValues = {
+      length: global.length, r0: global.throat_radius,
+      throatAngle: global.throat_angle_deg,
+      throatExtension: global.conical_extension_length,
+      mouthWidth: global.mouth_width, mouthHeight: global.mouth_height,
+      mouthSag: global.mouth_sag, mouthRearOffset: body.mouth_rear_offset,
+      mountDiameter: body.mount_diameter,
+      mountFlangeThickness: body.mount_flange_thickness,
+      throatStartWall: body.throat_start_wall_thickness,
+      minimumWall: body.minimum_wall_thickness,
+      screwHoleCount: body.screw_hole_count,
+      screwHoleDiameter: body.screw_hole_diameter,
+      screwPatternDiameter: body.screw_pattern_diameter,
+      mountFillet: body.mount_fillet, stlExportMode: body.stl_export_mode,
+      hCoverage: horizontal.coverage_deg, hK: horizontal.k, hN: horizontal.n,
+      vCoverage: vertical.coverage_deg, vK: vertical.k, vN: vertical.n,
+      sectionShape1: modifier.mouth_squareness, density: view.wire_density,
+      stlStations: exportSettings.stl_z_stations,
+      stlSideSamples: exportSettings.stl_side_samples,
+    };
+    for (const [name, importedValue] of Object.entries(controlValues)) {
+      setImportedControl(name, importedValue);
+    }
+    mouthSagHEnabledInput.checked = global.mouth_sag_h_enabled !== false;
+    mouthSagVEnabledInput.checked = global.mouth_sag_v_enabled !== false;
+    const horizontalModifier = modifier.horizontal_modifier || {};
+    const verticalModifier = modifier.vertical_modifier || {};
+    hModifierEnabledInput.checked = horizontalModifier.enabled === true;
+    vModifierEnabledInput.checked = verticalModifier.enabled === true;
+    replaceSpline(morphCurve, importedSpline(modifier.squareness_morph_spline, "y"));
+    replaceSpline(hProfileModifierEditor,
+                  importedSpline(horizontalModifier.profile_delta_spline, "y_mm"));
+    replaceSpline(vProfileModifierEditor,
+                  importedSpline(verticalModifier.profile_delta_spline, "y_mm"));
+    replaceSpline(hModifierCurve, importedSpline(horizontalModifier.thickness_spline, "y"));
+    replaceSpline(vModifierCurve, importedSpline(verticalModifier.thickness_spline, "y"));
+    cachedSurface = null;
+    cachedSurfaceKey = "";
+    scheduleRender();
+  }
+
+  async function importYamlFile() {
+    const file = importYamlFileInput.files && importYamlFileInput.files[0];
+    if (!file) return;
+    const status = document.querySelector("[data-import-status]");
+    try {
+      applyHorncadConfig(parseHorncadYaml(await file.text()));
+      status.textContent = `Loaded ${file.name}`;
+    } catch (error) {
+      status.textContent = `Import failed: ${error.message}`;
+      window.alert(status.textContent);
+    } finally {
+      importYamlFileInput.value = "";
+    }
+  }
+
+  window.HornCADYaml = { parse: parseHorncadYaml, apply: applyHorncadConfig };
 
   function profileModifierYamlPoints(p, axis) {
     const editor = axis === "h" ? hProfileModifierEditor : vProfileModifierEditor;

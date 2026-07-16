@@ -2,8 +2,10 @@
 
 ## Design and geometry
 
-Open `HornCAD.html` directly in a browser. It exports a YAML project containing
-the acoustic profile, mouth, body, and mesh sampling settings.
+Open `HornCAD.html` directly in a browser. Click **Import YAML** to resume an
+existing version-2 HornCAD project; all design controls, modifier splines, and
+the preview are restored. **Export YAML** saves the acoustic profile, mouth,
+body, and mesh sampling settings.
 
 Generate either acoustic-surface or printable-body STL geometry with:
 

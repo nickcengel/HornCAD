@@ -5,8 +5,9 @@ or free-air BEM acoustics.
 
 ## Quickstart
 
-1. Open `app/HornCAD.html` in a web browser.
-2. Design the horn and use the app to export its YAML project file.
+1. Open `app/HornCAD.html` in a web browser. Start a new design or click
+   **Import YAML** to resume an exported HornCAD project.
+2. Design the horn and use **Export YAML** to save its project file.
 3. Run one of the analysis commands below from the repository root.
 
 Free-air BEM example with explicit sweep and mesh controls:
