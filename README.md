@@ -34,8 +34,9 @@ python app/run_fem_suite.py path/to/project.yaml \
 ```
 
 Open `interactive_report.html` in the output directory. The standard report has
-cursor readout, H/V coverage heatmaps with explicit −6 dB contour lines,
-normalized throat-impedance magnitude, and the horn acoustic parameters.
+cursor readout, H/V coverage heatmaps with explicit −6 dB contour lines and
+horizontal guides at the project’s intended ±H/V coverage angles, normalized
+throat-impedance magnitude, and the horn acoustic parameters.
 Impedance is normalized by the effective circular throat's characteristic
 impedance, `ρc/Sₜ`; throat reactance is not plotted.
 

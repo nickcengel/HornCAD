@@ -37,8 +37,9 @@ wavelength. Both suites accept:
 ```
 
 The standard deliverable is `interactive_report.html`. It contains cursor-
-enabled H/V coverage heatmaps with explicit −6 dB contour lines and normalized
-throat-impedance magnitude; throat
+enabled H/V coverage heatmaps with explicit −6 dB contour lines and dashed
+horizontal guides at the project’s intended ±H/V coverage angles, plus
+normalized throat-impedance magnitude; throat
 reactance is intentionally omitted. Impedance is normalized by `ρc/Sₜ`, using
 the effective circular throat area. Solver directories also contain machine-readable
 `responses.npz` and `metrics.csv`.

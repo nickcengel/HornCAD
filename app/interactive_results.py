@@ -84,6 +84,16 @@ def throat_reference_impedance(yaml_path: Path | None) -> float | None:
     return AIR_DENSITY_KG_M3 * SOUND_SPEED_M_S / area_m2
 
 
+def intended_coverages(yaml_path: Path | None) -> dict[str, float]:
+    if yaml_path is None:
+        return {}
+    config = yaml.safe_load(yaml_path.read_text())["horncad_config"]
+    return {
+        "horizontal": float(config.get("horizontal_basis", {}).get("coverage_deg", 0)),
+        "vertical": float(config.get("vertical_basis", {}).get("coverage_deg", 0)),
+    }
+
+
 def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
     response_path = run_dir / "responses.npz"
     if not response_path.is_file():
@@ -108,6 +118,7 @@ def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
         "normalized_impedance": (impedance / reference_impedance
                                  if impedance is not None and reference_impedance else None),
         "parameters": acoustic_parameters(yaml_path),
+        "intended_coverages": intended_coverages(yaml_path),
         "yaml": yaml_path,
     }
 
@@ -182,6 +193,17 @@ def single_report(run_dir: Path, output: Path | None = None,
             name=f"{key.title()} −6 dB", showlegend=True,
             hovertemplate="%{x:.1f} Hz<br>%{y:.1f}°<br>−6 dB<extra></extra>"),
             row=1, col=column)
+        intended = run["intended_coverages"].get(key)
+        if intended:
+            start, stop = run["frequencies"][[0, -1]]
+            figure.add_trace(go.Scatter(
+                x=[start, stop, None, start, stop],
+                y=[intended, intended, None, -intended, -intended],
+                mode="lines", name=f"{key.title()} intended coverage ±{intended:g}°",
+                line={"color": "#00ffff", "width": 3, "dash": "dash"},
+                hovertemplate=("%{x:.1f} Hz<br>%{y:.1f}°<br>"
+                               "Intended coverage<extra></extra>")),
+                row=1, col=column)
     if run["normalized_impedance"] is not None:
         figure.add_trace(go.Scatter(
             x=run["frequencies"], y=np.abs(run["normalized_impedance"]), mode="lines",
