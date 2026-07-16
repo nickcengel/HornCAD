@@ -126,6 +126,21 @@ are automatic. The standard result is `interactive_report.html`: cursor-enabled
 H/V coverage and throat-impedance magnitude plus the horn acoustic parameters.
 Throat reactance is not a standard output.
 
+For a single horn, the suite writes `interactive_report.html` automatically.
+Open that file in a browser. Regenerate it from an existing completed run with:
+
+```bash
+python app/interactive_results.py report analysis/path-to-completed-run
+```
+
+Give a regenerated report a different title or location with `--title` and
+`--output`:
+
+```bash
+python app/interactive_results.py report analysis/path-to-completed-run \
+  --title "My horn" --output analysis/my-horn-report.html
+```
+
 ### Legacy NGSolve research backend
 
 `helmholtz_bem_3d.py` is retained for backend research and validation, not as

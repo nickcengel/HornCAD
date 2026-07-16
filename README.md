@@ -55,7 +55,23 @@ python app/run_bem_suite.py path/to/config.YAML \
 
 Both analysis suites write `interactive_report.html` with cursor coordinates,
 zoom, coverage, magnitude-only throat impedance, and the horn's acoustic
-parameters. Compare two to four completed runs with:
+parameters.
+
+For a new single-horn BEM analysis:
+
+```bash
+python app/run_bem_suite.py path/to/horn.YAML \
+  --output-dir analysis/my-horn --title "My horn"
+```
+
+Open the resulting `interactive_report.html` in the run directory. To create
+or recreate the interactive report from any existing completed FEM or BEM run:
+
+```bash
+python app/interactive_results.py report analysis/path-to-completed-run
+```
+
+To compare two to four completed runs:
 
 ```bash
 python app/interactive_results.py compare analysis/run-a analysis/run-b \
