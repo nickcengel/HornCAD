@@ -191,6 +191,59 @@ Subjective labels are valuable. For each run, collect:
 Those labels should be used to calibrate experimental field-quality metrics
 before promoting any new metric into the headline score.
 
+## Initial Subjective Labels
+
+These labels came from a rough visual pass through the mouth-size/length survey.
+They should be treated as calibration hints, not final rankings. Candidate
+numbers refer to `candidate-NNN` within each mouth-size sub-search. The notes
+explicitly tolerate slight coverage undershoot when the pattern is otherwise
+smooth; this is a useful warning that boundary fit should not dominate field
+quality.
+
+The list included two separate `400` entries. Both are preserved here until the
+duplicate is clarified.
+
+| Run | Good candidates | Bad candidates |
+| --- | --- | --- |
+| 300x300 | 7, 6, 2 | 16, 17, 18, 19, 9, 12 |
+| 350x350 | 5, 1, 24 | 17, 18, 19, 9, 12 |
+| 400x400 A | 2, 20, 1 | 14, 16, 17, 18, 19, 9 |
+| 400x400 B, ambiguous | 6, 20 | 12, 14, 16, 17, 18, 19 |
+| 450x450 | 2, 7, 1 | 12, 13, 14, 15, 16, 17, 18, 19 |
+| 500x500 | 1, 2, 3 | 16, 18, 19, 20, 15, 9 |
+
+Mapped back to geometry, the good labels cluster around shorter horns for their
+mouth size. The bad labels repeatedly hit the longest length rows, often across
+several N values:
+
+| Run | Good geometry notes | Bad geometry notes |
+| --- | --- | --- |
+| 300x300 | L110-122, N10-15, S about 1.35-2.19 | L158 across N6-20, plus L134/L146 N6; S about 0.08-0.51 |
+| 350x350 | L125-140, N6, plus surrogate L130/N13.7; S about 0.79-2.53 | L185 across N10-20, plus L155/L170 N6; S about 0.04-0.49 |
+| 400x400 A | L140, N6-10, plus surrogate L147.7/N12.9; S about 1.19-2.31 | L200/L205 and L180 N6; S about 0.06-0.40 |
+| 400x400 B | L160 N10 plus surrogate L147.7/N12.9; S about 1.27-2.31 | L200/L205 across N6-20; S about 0.06-0.33 |
+| 450x450 | L155 N6-10 and L175 N15; S about 1.21-2.21 | L215/L230 across N6-20; S about 0.03-0.82 |
+| 500x500 | L180, N6-15; S about 1.02-2.83 | L220/L235/L250 plus surrogate L229.3/N19.7; S about 0.06-1.12 |
+
+Early calibration patterns:
+
+- Overlong geometry for a given mouth size is a strong bad-looking pattern in
+  this 45 deg, K=4 survey. The longest length rows are often bad regardless of
+  N, so N does not rescue an overlong mouth/length configuration by itself.
+- Good candidates mostly live around mouth/length ratios near 2.5-2.9. Bad
+  candidates often live nearer 2.0-2.2, with the longest rows near or below 2.0.
+  This is a hypothesis to test, not yet a rule.
+- Low S has useful warning value. Many bad labels have S below about 0.5.
+  However, S is not sufficient alone: some acceptable candidates are below 1.0,
+  and at least one bad 500x500 candidate is above 1.0.
+- Low N is not automatically bad. Several good labels are N6 when the
+  mouth/length relationship is favorable. Low N appears more dangerous when the
+  geometry is already near a bad mouth/length or S region.
+- The labels expose a diagnostic blind spot: a candidate can have smooth-ish
+  coverage boundaries while still showing bad in-window peaks or poor field
+  shape. The next experimental diagnostic should look at the whole in-window
+  field, not just the -6 dB boundary or a single half-angle probe trace.
+
 ## Target Form Of The Final Rules
 
 The long-term goal is to turn the experiments into compact design guidance, for
