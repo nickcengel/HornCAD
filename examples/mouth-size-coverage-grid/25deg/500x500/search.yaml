@@ -1,8 +1,8 @@
 bem_candidate_search:
   version: 1
   seed_yaml: project.yaml
-  intended_coverage_h_deg: 75.0
-  intended_coverage_v_deg: 75.0
+  intended_coverage_h_deg: 25.0
+  intended_coverage_v_deg: 25.0
   lower_frequency_hz: 500.0
   crossover_hz: 750.0
   upper_frequency_hz: 8000.0
@@ -19,17 +19,17 @@ bem_candidate_search:
   confirmation_points_per_octave: 16
   bounds:
     length_mm:
-    - 50.0
-    - 62.0
+    - 167.0
+    - 227.0
     extension_mm:
     - 0.0
     - 1.0e-06
     osse_coverage_h_deg:
-    - 75.0
-    - 75.000001
+    - 25.0
+    - 25.000001
     osse_coverage_v_deg:
-    - 75.0
-    - 75.000001
+    - 25.0
+    - 25.000001
     k_h:
     - 4.0
     - 4.000001
@@ -43,42 +43,42 @@ bem_candidate_search:
     - 10.0
     - 10.000001
   initial_pool:
-  - label: C=75 L=62 ratio=7.2 K=4 N=10 round 450mm
+  - label: C=25 L=227 ratio=2.2 K=4 N=10 round 500mm
     values:
-      length_mm: 62.0
+      length_mm: 227.0
       extension_mm: 0.0
-      osse_coverage_h_deg: 75.0
-      osse_coverage_v_deg: 75.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
       k_h: 4.0
       k_v: 4.0
       n_h: 10.0
       n_v: 10.0
-  - label: C=75 L=59 ratio=7.6 K=4 N=10 round 450mm
+  - label: C=25 L=208 ratio=2.4 K=4 N=10 round 500mm
     values:
-      length_mm: 59.0
+      length_mm: 208.0
       extension_mm: 0.0
-      osse_coverage_h_deg: 75.0
-      osse_coverage_v_deg: 75.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
       k_h: 4.0
       k_v: 4.0
       n_h: 10.0
       n_v: 10.0
-  - label: C=75 L=53 ratio=8.5 K=4 N=10 round 450mm
+  - label: C=25 L=179 ratio=2.8 K=4 N=10 round 500mm
     values:
-      length_mm: 53.0
+      length_mm: 179.0
       extension_mm: 0.0
-      osse_coverage_h_deg: 75.0
-      osse_coverage_v_deg: 75.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
       k_h: 4.0
       k_v: 4.0
       n_h: 10.0
       n_v: 10.0
-  - label: C=75 L=50 ratio=9 K=4 N=10 round 450mm
+  - label: C=25 L=167 ratio=3 K=4 N=10 round 500mm
     values:
-      length_mm: 50.0
+      length_mm: 167.0
       extension_mm: 0.0
-      osse_coverage_h_deg: 75.0
-      osse_coverage_v_deg: 75.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
       k_h: 4.0
       k_v: 4.0
       n_h: 10.0

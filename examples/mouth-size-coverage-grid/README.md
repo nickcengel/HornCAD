@@ -23,7 +23,7 @@ need shorter horns at K=4 to keep the OS-SE solved `s` nonnegative:
 
 The experiment grid is:
 
-- coverage targets: 35, 45, 60, 75 deg
+- coverage targets: 25, 35, 45, 60 deg
 - mouth sizes: 300, 350, 400, 450, 500 mm
 - search folders: one per coverage/mouth pair
 
