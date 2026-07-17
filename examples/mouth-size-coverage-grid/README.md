@@ -13,10 +13,13 @@ Fixed variables per search:
 - round mouths only; horizontal and vertical dimensions match
 
 Each search folder fixes one coverage target and one mouth size, then compares
-five length candidates spaced by mouth/length ratio:
+five length candidates spaced by mouth/length ratio. The wider coverage cases
+need shorter horns at K=4 to keep the OS-SE solved `s` nonnegative:
 
-- ratios: 2.2, 2.4, 2.6, 2.8, 3
-- seed ratio: 2.6
+- 35 deg and 45 deg ratios: 2.2, 2.4, 2.6, 2.8, 3.0
+- 60 deg ratios: 3.3, 3.5, 3.7, 4.0, 4.3
+- 75 deg ratios: 7.2, 7.6, 8.0, 8.5, 9.0
+- seed ratio: the middle ratio in each coverage set
 
 The experiment grid is:
 

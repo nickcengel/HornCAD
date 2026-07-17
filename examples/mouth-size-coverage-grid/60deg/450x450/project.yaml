@@ -3,12 +3,12 @@ horncad_config:
   version: 2
   units: mm
   global:
-    length: 173.0
+    length: 122.0
     throat_radius: 12.7
     throat_angle_deg: 6
     conical_extension_length: 0.0
     effective_throat_radius: 12.7
-    measured_total_length: 173.0
+    measured_total_length: 122.0
     mouth_width: 450.0
     mouth_height: 450.0
     mouth_sag: 0

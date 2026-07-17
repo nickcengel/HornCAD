@@ -19,8 +19,8 @@ bem_candidate_search:
   confirmation_points_per_octave: 16
   bounds:
     length_mm:
-    - 133.0
-    - 182.0
+    - 93.0
+    - 121.0
     extension_mm:
     - 0.0
     - 1.0e-06
@@ -43,9 +43,9 @@ bem_candidate_search:
     - 10.0
     - 10.000001
   initial_pool:
-  - label: C=60 L=182 ratio=2.2 K=4 N=10 round 400mm
+  - label: C=60 L=121 ratio=3.3 K=4 N=10 round 400mm
     values:
-      length_mm: 182.0
+      length_mm: 121.0
       extension_mm: 0.0
       osse_coverage_h_deg: 60.0
       osse_coverage_v_deg: 60.0
@@ -53,9 +53,9 @@ bem_candidate_search:
       k_v: 4.0
       n_h: 10.0
       n_v: 10.0
-  - label: C=60 L=167 ratio=2.4 K=4 N=10 round 400mm
+  - label: C=60 L=114 ratio=3.5 K=4 N=10 round 400mm
     values:
-      length_mm: 167.0
+      length_mm: 114.0
       extension_mm: 0.0
       osse_coverage_h_deg: 60.0
       osse_coverage_v_deg: 60.0
@@ -63,9 +63,9 @@ bem_candidate_search:
       k_v: 4.0
       n_h: 10.0
       n_v: 10.0
-  - label: C=60 L=143 ratio=2.8 K=4 N=10 round 400mm
+  - label: C=60 L=100 ratio=4 K=4 N=10 round 400mm
     values:
-      length_mm: 143.0
+      length_mm: 100.0
       extension_mm: 0.0
       osse_coverage_h_deg: 60.0
       osse_coverage_v_deg: 60.0
@@ -73,9 +73,9 @@ bem_candidate_search:
       k_v: 4.0
       n_h: 10.0
       n_v: 10.0
-  - label: C=60 L=133 ratio=3 K=4 N=10 round 400mm
+  - label: C=60 L=93 ratio=4.3 K=4 N=10 round 400mm
     values:
-      length_mm: 133.0
+      length_mm: 93.0
       extension_mm: 0.0
       osse_coverage_h_deg: 60.0
       osse_coverage_v_deg: 60.0
