@@ -201,16 +201,17 @@ def generate_report(project_root: Path, output: Path) -> Path:
         smooth_class = "best" if smooth_best == rank - 1 else "worst" if smooth_worst == rank - 1 else ""
         waist_class = "best" if waist_best == rank - 1 else "worst" if waist_worst == rank - 1 else ""
         uniform_class = "best" if uniform_best == rank - 1 else "worst" if uniform_worst == rank - 1 else ""
-        candidate_links = [
-            f"<a href='{html.escape(str(item['project_yaml'].relative_to(project_root)))}'>project.yaml</a>"
-        ]
+        candidate_name = html.escape(candidate["id"])
+        candidate_links = []
+        if summary["report_path"] is not None:
+            candidate_links.append(
+                f"<a href='{html.escape(str(summary['report_path'].relative_to(project_root)))}'>{candidate_name}</a>"
+            )
+        else:
+            candidate_links.append(candidate_name)
         if item["stl_path"].is_file():
             candidate_links.append(
                 f"<a href='{html.escape(str(item['stl_path'].relative_to(project_root)))}'>STL</a>"
-            )
-        if item["report_path"] is not None:
-            candidate_links.append(
-                f"<a href='{html.escape(str(item['report_path'].relative_to(project_root)))}'>report</a>"
             )
         report_link = (
             f"<a href='{html.escape(str(summary['report_path'].relative_to(project_root)))}'>search report</a>"
@@ -259,10 +260,15 @@ def generate_report(project_root: Path, output: Path) -> Path:
             f"<a href='{html.escape(str(summary['report_path'].relative_to(project_root)))}'>search report</a>"
             if summary["report_path"] else "—"
         )
+        candidate_name = html.escape(candidate["id"])
+        candidate_link = (
+            f"<a href='{html.escape(str(summary['report_path'].relative_to(project_root)))}'>{candidate_name}</a>"
+            if summary["report_path"] is not None else candidate_name
+        )
         all_result_rows.append(
             "<tr>"
             f"<td data-sort='{rank}'>{rank}</td>"
-            f"<td data-sort='{html.escape(candidate['id'])}'>{html.escape(candidate['id'])}</td>"
+            f"<td data-sort='{html.escape(candidate['id'])}'>{candidate_link}</td>"
             f"<td data-sort='{html.escape(summary['label'])}'>{html.escape(summary['label'])}</td>"
             f"<td data-sort='{html.escape(candidate.get('status', 'unknown'))}'>{status_badge}</td>"
             f"<td data-sort='{item['candidate_score']:.6f}'>{item['candidate_score']:.1f}%</td>"
