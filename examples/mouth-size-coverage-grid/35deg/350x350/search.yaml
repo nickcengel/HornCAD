@@ -1,0 +1,90 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 35.0
+  intended_coverage_v_deg: 35.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  search_size: quick
+  max_evaluations: 5
+  initial_candidates: 4
+  random_seed: 17
+  minimum_candidate_distance: 0.08
+  derived_s_bounds:
+  - 0.0
+  - 5.0
+  inferior_screen_probability: 0.97
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16
+  bounds:
+    length_mm:
+    - 117.0
+    - 159.0
+    extension_mm:
+    - 0.0
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 35.0
+    - 35.000001
+    osse_coverage_v_deg:
+    - 35.0
+    - 35.000001
+    k_h:
+    - 4.0
+    - 4.000001
+    k_v:
+    - 4.0
+    - 4.000001
+    n_h:
+    - 10.0
+    - 10.000001
+    n_v:
+    - 10.0
+    - 10.000001
+  initial_pool:
+  - label: C=35 L=159 ratio=2.2 K=4 N=10 round 350mm
+    values:
+      length_mm: 159.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: C=35 L=146 ratio=2.4 K=4 N=10 round 350mm
+    values:
+      length_mm: 146.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: C=35 L=125 ratio=2.8 K=4 N=10 round 350mm
+    values:
+      length_mm: 125.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: C=35 L=117 ratio=3 K=4 N=10 round 350mm
+    values:
+      length_mm: 117.0
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 0
