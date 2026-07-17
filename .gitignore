@@ -13,6 +13,15 @@ tools/output/
 tools/widget-2-stl/output/
 .aider*
 
+# Generated BEM/search working data. Final reports and selected source artifacts
+# are unignored by project-specific rules below when they belong in Git.
+examples/**/candidates/**/bem/**/*
+examples/**/search_run.log
+examples/**/search_state.json
+examples/**/coverage_diagnostics.json
+examples/**/finalist_comparison.html
+examples/**/search_batch.*
+
 # Generated mouth-size coverage-grid outputs. Keep the reports and candidate
 # source artifacts; leave solver meshes, response arrays, logs, and state local.
 examples/mouth-size-coverage-grid/search_batch.*
