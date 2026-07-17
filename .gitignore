@@ -12,3 +12,16 @@ app/tools/output/
 tools/output/
 tools/widget-2-stl/output/
 .aider*
+
+# Generated mouth-size coverage-grid outputs. Keep the reports and candidate
+# source artifacts; leave solver meshes, response arrays, logs, and state local.
+examples/mouth-size-coverage-grid/search_batch.*
+examples/mouth-size-coverage-grid/**/search_run.log
+examples/mouth-size-coverage-grid/**/search_state.json
+examples/mouth-size-coverage-grid/**/coverage_diagnostics.json
+examples/mouth-size-coverage-grid/**/finalist_comparison.html
+examples/mouth-size-coverage-grid/**/candidates/**/*
+!examples/mouth-size-coverage-grid/**/candidates/**/
+!examples/mouth-size-coverage-grid/**/candidates/candidate-*/project.yaml
+!examples/mouth-size-coverage-grid/**/candidates/candidate-*/*.STL
+!examples/mouth-size-coverage-grid/**/candidates/candidate-*/bem/project-NumCalc-*/interactive_report.html
