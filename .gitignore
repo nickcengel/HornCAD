@@ -15,12 +15,14 @@ tools/widget-2-stl/output/
 
 # Generated BEM/search working data. Final reports and selected source artifacts
 # are unignored by project-specific rules below when they belong in Git.
-examples/**/candidates/**/bem/**/*
+examples/**/candidates/**/*
+examples/**/search_report.html
 examples/**/search_run.log
 examples/**/search_state.json
 examples/**/coverage_diagnostics.json
 examples/**/finalist_comparison.html
 examples/**/search_batch.*
+examples/**/candidate_field.csv
 
 # Generated mouth-size coverage-grid outputs. Keep the reports and candidate
 # source artifacts; leave solver meshes, response arrays, logs, and state local.
@@ -30,6 +32,7 @@ examples/mouth-size-coverage-grid/**/search_state.json
 examples/mouth-size-coverage-grid/**/coverage_diagnostics.json
 examples/mouth-size-coverage-grid/**/finalist_comparison.html
 examples/mouth-size-coverage-grid/**/candidates/**/*
+!examples/mouth-size-coverage-grid/**/search_report.html
 !examples/mouth-size-coverage-grid/**/candidates/**/
 !examples/mouth-size-coverage-grid/**/candidates/candidate-*/project.yaml
 !examples/mouth-size-coverage-grid/**/candidates/candidate-*/*.STL
