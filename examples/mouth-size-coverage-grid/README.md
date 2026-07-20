@@ -16,7 +16,10 @@ Each search folder fixes one coverage target and one mouth size, then compares
 five length candidates spaced by mouth/length ratio. The wider coverage cases
 need shorter horns at K=4 to keep the OS-SE solved `s` nonnegative:
 
-- 35 deg and 45 deg ratios: 2.2, 2.4, 2.6, 2.8, 3.0
+- 25 deg and 35 deg ratios for 200 mm and 250 mm mouths: 1.4, 1.6, 1.8,
+  2.0, 2.2
+- 25 deg, 35 deg, and 45 deg ratios for 300-500 mm mouths: 2.2, 2.4,
+  2.6, 2.8, 3.0
 - 60 deg ratios: 3.3, 3.5, 3.7, 4.0, 4.3
 - 75 deg ratios: 7.2, 7.6, 8.0, 8.5, 9.0
 - seed ratio: the middle ratio in each coverage set
@@ -24,7 +27,8 @@ need shorter horns at K=4 to keep the OS-SE solved `s` nonnegative:
 The experiment grid is:
 
 - coverage targets: 25, 35, 45, 60 deg
-- mouth sizes: 300, 350, 400, 450, 500 mm
+- mouth sizes: 200, 250, 300, 350, 400, 450, 500 mm for the 25 deg and
+  35 deg studies; 300, 350, 400, 450, 500 mm for the 45 deg and 60 deg studies
 - search folders: one per coverage/mouth pair
 
 Each search evaluates the seed candidate plus four initial-pool candidates, with
