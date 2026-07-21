@@ -13,7 +13,8 @@ from app.tools.run_bem_search import (
     geometry_feasibility,
     geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
     load_search, materialize_candidate, pareto_indices, propose_vector,
-    sampling_stability, run_search, seed_values, write_report,
+    requeue_failed_candidates, sampling_stability, run_search, seed_values,
+    write_report,
 )
 
 
@@ -24,6 +25,19 @@ ROUND2_SEARCH = SEARCH.parent / "round-2" / "search.yaml"
 
 
 class BEMSearchTests(unittest.TestCase):
+    def test_failed_candidate_retry_only_queues_failed_records(self) -> None:
+        state = {"candidates": [
+            {"id": "candidate-000", "status": "complete"},
+            {"id": "candidate-001", "status": "failed", "reason": "old"},
+            {"id": "candidate-002", "status": "queued"},
+        ]}
+
+        self.assertEqual(requeue_failed_candidates(state), 1)
+        self.assertEqual(
+            [candidate["status"] for candidate in state["candidates"]],
+            ["complete", "queued", "queued"])
+        self.assertIn("retrying", state["candidates"][1]["reason"])
+
     def test_candidate_artifact_stem_for_matching_axes(self) -> None:
         _, _, seed = load_search(SEARCH)
         config = seed["horncad_config"]

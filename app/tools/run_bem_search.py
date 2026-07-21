@@ -971,8 +971,19 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
                       elapsed_s=record.get("elapsed_s", 0) + time.perf_counter() - started)
 
 
+def requeue_failed_candidates(state: dict[str, Any]) -> int:
+    """Queue failed retained candidates without creating new proposals."""
+    count = 0
+    for record in state.get("candidates", []):
+        if record.get("status") == "failed":
+            record["status"] = "queued"
+            record["reason"] = "retrying previously failed BEM evaluation"
+            count += 1
+    return count
+
+
 def run_search(search_path: Path, output_dir: Path, binary: Path | None,
-               dry_run: bool = False) -> dict[str, Any]:
+               dry_run: bool = False, retry_failed: bool = False) -> dict[str, Any]:
     search, seed_path, seed = load_search(search_path)
     config_hash = hashlib.sha256(search_path.read_bytes() + seed_path.read_bytes()).hexdigest()
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -1017,6 +1028,7 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             "started_at_unix": time.time(),
         }
         save_state(output_dir, state)
+    retry_count = requeue_failed_candidates(state) if retry_failed else 0
     # Migrate early preflight ledgers: rejected proposals leave only aggregate
     # counts and no candidate directory, YAML, STL, or detailed rejection data.
     previous_rejected = [record for record in state["candidates"]
@@ -1085,8 +1097,16 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
         save_state(output_dir, state)
         return state
     max_proposals = search["max_evaluations"] * 10
-    while (sum(record["status"] == "complete" for record in state["candidates"])
-           < search["max_evaluations"] and state["proposal_count"] < max_proposals):
+    def work_remains() -> bool:
+        if any(record["status"] == "queued" for record in state["candidates"]):
+            return True
+        if retry_failed:
+            return False
+        return (sum(record["status"] == "complete" for record in state["candidates"])
+                < search["max_evaluations"] and
+                state["proposal_count"] < max_proposals)
+
+    while work_remains():
         queued = next((item for item in state["candidates"]
                        if item["status"] == "queued"), None)
         if queued is not None:
@@ -1154,8 +1174,15 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                            search, solver, output_dir)
         save_state(output_dir, state)
     complete = sum(record["status"] == "complete" for record in state["candidates"])
+    remaining_failed = sum(
+        record["status"] == "failed" for record in state["candidates"])
     if dry_run:
         state.update(status="preflight", phase="initial candidates materialized")
+    elif retry_failed and remaining_failed:
+        state.update(status="recovery-incomplete",
+                     phase=(f"failed candidate recovery incomplete: "
+                            f"{remaining_failed} still failed"),
+                     retry_requested=retry_count)
     elif complete >= search["max_evaluations"]:
         state.update(status="complete", phase="candidate evaluation complete",
                      completed_at_unix=time.time())
@@ -1172,12 +1199,17 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--binary", type=Path)
     parser.add_argument("--dry-run", action="store_true",
                         help="materialize and geometry-check the initial design set")
+    parser.add_argument("--retry-failed", action="store_true",
+                        help="retry retained failed candidates without new proposals")
     return parser.parse_args(argv)
 
 
 def main() -> None:
     args = parse_args()
-    state = run_search(args.search_yaml, args.output_dir, args.binary, args.dry_run)
+    if args.dry_run and args.retry_failed:
+        raise ValueError("--dry-run and --retry-failed cannot be combined")
+    state = run_search(args.search_yaml, args.output_dir, args.binary,
+                       args.dry_run, args.retry_failed)
     print(f"search report: {args.output_dir / 'search_report.html'}")
     print(f"status: {state['status']}")
 
