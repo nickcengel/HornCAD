@@ -15,17 +15,19 @@ for selecting the more expensive coupled anchors.
 
 The program runs before additional 25-degree or 60-degree follow-up work.
 
-- At 45 degrees, always study 350, 400, and 450 mm mouths. Existing K/N winners
-  seed the 350 and 450 mm anchors when available.
-- At 40 and 50 degrees, always select 400 mm as the matched cross-angle control,
-  plus the smallest mouth, largest mouth, and highest-scoring baseline mouth.
-  This preserves endpoint and peak information while guaranteeing a direct
-  40/45/50-degree K/N comparison.
+- At 40, 45, and 50 degrees, always study 400 mm as the matched cross-angle
+  control. Also study the highest-scoring baseline mouth when it is distinct
+  from 400 mm. Existing K/N winners seed a selected 45-degree anchor when
+  available.
+- Edge mouths remain conditional follow-ups. Schedule them only if the matched
+  controls show material K/N movement, the best baseline lies at an edge, or
+  interpolation uncertainty remains high. Do not automatically close every
+  edge before this evidence exists.
 - Duplicate selections are collapsed.
 
 Before coupled closure begins, add compact canonical-S extensions to the older
 45-degree 300-500 mm grids. Each extension measures missing 0.25-grid points
-within 0.55 S of the observed maximum plus matched S=0.5 and S=3.5 references.
+within 0.55 S of the observed maximum plus the matched S=0.5 turnover reference.
 Existing candidates are not rerun. These extensions make the important portion
 of each 45-degree curve directly comparable with the newer 40/50-degree grids.
 

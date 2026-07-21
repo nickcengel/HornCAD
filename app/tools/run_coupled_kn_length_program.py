@@ -41,16 +41,17 @@ def best_project(search_dir: Path) -> Path:
 
 
 def selected_baselines(root: Path) -> list[Path]:
-    """Select central anchors with a matched 400 mm control at every angle."""
-    selected = [root / "45deg" / f"{mouth}x{mouth}-s-grid"
-                for mouth in CENTRAL_45_MOUTHS]
-    for angle in (40, 50):
+    """Select matched 400 mm controls plus each angle's distinct best mouth."""
+    selected = []
+    for angle in (40, 45, 50):
         baselines = sorted((root / f"{angle}deg").glob("*x*-s-grid"))
+        if angle == 45:
+            baselines = [path for path in baselines
+                         if int(path.name.split("x", 1)[0]) in CENTRAL_45_MOUTHS]
         scored = [( _score(best_record(path / "search_state.json")), path)
                   for path in baselines]
         matched = root / f"{angle}deg" / "400x400-s-grid"
-        choices = {baselines[0], matched, baselines[-1],
-                   max(scored, key=lambda item: item[0])[1]}
+        choices = {matched, max(scored, key=lambda item: item[0])[1]}
         selected.extend(sorted(choices))
     return selected
 
@@ -81,7 +82,7 @@ def canonical_extension_targets(baseline: Path) -> tuple[float, ...]:
     missing = [s for s in CANONICAL_S
                if not any(abs(s - value) <= 0.02 for value in measured)]
     selected = {s for s in missing if abs(s - best_s) <= 0.55}
-    selected.update(s for s in (0.5, 3.5) if s in missing)
+    selected.update(s for s in (0.5,) if s in missing)
     return tuple(sorted(selected))
 
 

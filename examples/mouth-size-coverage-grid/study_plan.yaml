@@ -1,14 +1,13 @@
 planned_subsearches:
-  - label: 40 deg / 250 mm · coupled K/N ↔ local S (up to 3 rounds)
   - label: 40 deg / 400 mm · matched coupled K/N ↔ local S (up to 3 rounds)
-  - label: 40 deg / 500 mm · coupled K/N ↔ local S (up to 3 rounds)
-  - label: 40 deg / best remaining mouth · coupled K/N ↔ local S if distinct
-  - label: 45 deg / 350 mm · coupled K/N ↔ local S (up to 3 rounds)
+  - label: 40 deg / best baseline mouth · coupled K/N ↔ local S if distinct
   - label: 45 deg / 400 mm · matched coupled K/N ↔ local S (up to 3 rounds)
-  - label: 45 deg / 450 mm · coupled K/N ↔ local S (up to 3 rounds)
-  - label: 50 deg / 250 mm · coupled K/N ↔ local S (up to 3 rounds)
+  - label: 45 deg / best 350-450 mm baseline · coupled K/N ↔ local S if distinct
   - label: 50 deg / 400 mm · matched coupled K/N ↔ local S (up to 3 rounds)
-  - label: 50 deg / 500 mm · coupled K/N ↔ local S (up to 3 rounds)
-  - label: 50 deg / best remaining mouth · coupled K/N ↔ local S if distinct
-  - label: 60 deg / 450 mm · deferred adaptive K/N grid
-    prerequisite: central-angle coupled program complete
+  - label: 50 deg / best baseline mouth · coupled K/N ↔ local S if distinct
+  - label: 40/45/50 deg edge-mouth coupled closure
+    prerequisite: matched controls show material K/N movement or high edge uncertainty
+    status: conditional
+  - label: 60 deg / 450 mm K/N follow-up
+    prerequisite: central-angle program demonstrates it is still informative
+    status: conditional

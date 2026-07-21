@@ -54,7 +54,7 @@ class CoupledKNLengthProgramTests(unittest.TestCase):
     def test_canonical_extension_adds_matched_points_without_rerunning_grid(self) -> None:
         targets = canonical_extension_targets(self.baseline)
         self.assertIn(0.5, targets)
-        self.assertIn(3.5, targets)
+        self.assertNotIn(3.5, targets)
         self.assertNotIn(1.0, targets)
         self.assertLess(len(targets), 9)
         with tempfile.TemporaryDirectory() as temp:

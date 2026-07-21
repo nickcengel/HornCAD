@@ -549,13 +549,14 @@ def generate_report(project_root: Path, output: Path) -> Path:
         "planned_subsearches", []) if plan_path.is_file() else []
     for offset, item in enumerate(planned, len(summary_rows) + 1):
         prerequisite = item.get("prerequisite")
+        planned_status = str(item.get("status", "planned"))
         detail = (f"<br><span class='muted'>after {html.escape(str(prerequisite))}</span>"
                   if prerequisite else "")
         summary_rows.append(
             "<tr>"
             f"<td>{offset}</td>"
             f"<td>{html.escape(str(item['label']))}{detail}</td>"
-            "<td><span class='badge pending'>planned</span></td>"
+            f"<td><span class='badge pending'>{html.escape(planned_status)}</span></td>"
             "<td>—</td><td>—</td>"
             "</tr>"
         )
