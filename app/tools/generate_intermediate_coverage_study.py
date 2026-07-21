@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create dense 40/50-degree S sweeps for the coverage-angle study."""
+"""Create comparable intermediate-angle S sweeps for the coverage study."""
 from __future__ import annotations
 
 import argparse
@@ -15,9 +15,18 @@ except ImportError:
     from generate_coverage_s_grid import _candidate_values, length_for_s
 
 
-COVERAGES = (40.0, 50.0)
+COVERAGES = (30.0, 40.0, 50.0)
 MOUTH_SIZES_MM = (250, 300, 350, 400, 450, 500)
 S_TARGETS = tuple(round(0.5 + 0.25 * index, 2) for index in range(15))
+COMPARABLE_30_S_TARGETS = (0.7, 1.0, 1.3, 1.6, 1.9, 2.2, 2.5, 2.8, 3.0)
+
+
+def study_grid(coverage: float) -> tuple[tuple[int, ...], tuple[float, ...]]:
+    """Return the authored grid appropriate to an intermediate coverage."""
+    if coverage == 30.0:
+        return ((200, 250, 300, 350, 400, 450, 500),
+                COMPARABLE_30_S_TARGETS)
+    return (MOUTH_SIZES_MM, S_TARGETS)
 
 
 def materialize_coverage_sweep(source_project: Path, source_search: Path,
@@ -101,13 +110,17 @@ def materialize_coverage_sweep(source_project: Path, source_search: Path,
 def generate_all(project_root: Path) -> list[Path]:
     outputs = []
     for coverage in COVERAGES:
-        for mouth in MOUTH_SIZES_MM:
+        mouths, targets = study_grid(coverage)
+        for mouth in mouths:
             template_angle = 45 if (project_root / "45deg" / f"{mouth}x{mouth}").is_dir() else 35
             source_dir = project_root / f"{template_angle}deg" / f"{mouth}x{mouth}"
             output = project_root / f"{coverage:g}deg" / f"{mouth}x{mouth}-s-grid"
+            if (output / "search.yaml").exists():
+                outputs.append(output)
+                continue
             outputs.append(materialize_coverage_sweep(
                 source_dir / "project.yaml", source_dir / "search.yaml",
-                output, coverage))
+                output, coverage, targets))
     return outputs
 
 

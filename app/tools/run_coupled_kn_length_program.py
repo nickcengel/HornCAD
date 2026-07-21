@@ -57,9 +57,12 @@ def selected_baselines(root: Path) -> list[Path]:
 
 
 def prerequisites_complete(root: Path) -> bool:
-    paths = [root / f"{angle}deg" / f"{mouth}x{mouth}-s-grid" /
+    paths = [root / "30deg" / f"{mouth}x{mouth}-s-grid" /
              "search_state.json"
-             for angle in (40, 50) for mouth in (250, 300, 350, 400, 450, 500)]
+             for mouth in (200, 250, 300, 350, 400, 450, 500)]
+    paths.extend(root / f"{angle}deg" / f"{mouth}x{mouth}-s-grid" /
+             "search_state.json"
+             for angle in (40, 50) for mouth in (250, 300, 350, 400, 450, 500))
     paths.append(root / "45deg" / "450x450-kn-grid" / "search_state.json")
     return all(path.exists() and
                json.loads(path.read_text(encoding="utf-8")).get("status") == "complete"

@@ -1,4 +1,7 @@
 planned_subsearches:
+  - label: 30 deg / 200-500 mm · comparable S baselines
+    prerequisite: before coupled K/N or local refinement
+    status: planned
   - label: 40 deg / 400 mm · matched coupled K/N ↔ local S (up to 3 rounds)
   - label: 40 deg / best baseline mouth · coupled K/N ↔ local S if distinct
   - label: 45 deg / 400 mm · matched coupled K/N ↔ local S (up to 3 rounds)
