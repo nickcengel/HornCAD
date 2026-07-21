@@ -1,0 +1,195 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 40.0
+  intended_coverage_v_deg: 40.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 15
+  initial_candidates: 14
+  random_seed: 17
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.49
+  - 4.01
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: true
+    minimum_evaluations: 5
+    required_consecutive_declines: 3
+    margin_points: 3.0
+    confidence_sigma: 2.0
+    uncertainty_floor_points: 1.5
+  bounds:
+    length_mm:
+    - 126.31
+    - 238.822
+    extension_mm:
+    - 0.0
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 40.0
+    - 40.000001
+    osse_coverage_v_deg:
+    - 40.0
+    - 40.000001
+    k_h:
+    - 4.0
+    - 4.000001
+    k_v:
+    - 4.0
+    - 4.000001
+    n_h:
+    - 10.0
+    - 10.000001
+    n_v:
+    - 10.0
+    - 10.000001
+  initial_pool:
+  - label: "coverage 40\xB0, S=0.75, L=224.779 mm"
+    values:
+      length_mm: 224.779
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=1, L=212.262 mm"
+    values:
+      length_mm: 212.262
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=1.25, L=201.036 mm"
+    values:
+      length_mm: 201.036
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=1.5, L=190.909 mm"
+    values:
+      length_mm: 190.909
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=1.75, L=181.73 mm"
+    values:
+      length_mm: 181.73
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=2, L=173.37 mm"
+    values:
+      length_mm: 173.37
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=2.25, L=165.725 mm"
+    values:
+      length_mm: 165.725
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=2.5, L=158.707 mm"
+    values:
+      length_mm: 158.707
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=2.75, L=152.242 mm"
+    values:
+      length_mm: 152.242
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=3, L=146.268 mm"
+    values:
+      length_mm: 146.268
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=3.25, L=140.731 mm"
+    values:
+      length_mm: 140.731
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=3.5, L=135.585 mm"
+    values:
+      length_mm: 135.585
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=3.75, L=130.79 mm"
+    values:
+      length_mm: 130.79
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "coverage 40\xB0, S=4, L=126.311 mm"
+    values:
+      length_mm: 126.311
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
