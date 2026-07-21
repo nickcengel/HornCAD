@@ -89,6 +89,15 @@ def _completed(root: Path) -> bool:
         return False
 
 
+def _pending_cases(cases: list[tuple[float, NumCalcCase, float]],
+                   resume: bool) -> list[tuple[float, NumCalcCase, float]]:
+    """Return unfinished cases with historically slow low frequencies first."""
+    pending = [(frequency, case, estimate)
+               for frequency, case, estimate in cases
+               if not (resume and _completed(case.root))]
+    return sorted(pending, key=lambda item: item[0])
+
+
 def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
               frequencies_hz: np.ndarray, *, elements_per_wavelength: float = 8.0,
               angles: int = 91, maximum_workers: int = 0,
@@ -161,8 +170,7 @@ def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
             estimate = estimate_numcalc_ram(case, executable)
         cases.append((float(frequency), case, estimate))
 
-    pending = [(frequency, case, estimate) for frequency, case, estimate in cases
-               if not (resume and _completed(case.root))]
+    pending = _pending_cases(cases, resume)
     cpus = os.cpu_count() or 1
     memory_limit = memory_limit_gib or 0.75 * _physical_memory_gib()
     peak_estimate = max(estimate for _, _, estimate in cases) * 1.15
@@ -175,9 +183,11 @@ def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
 
     records: list[dict] = []
     if pending and not dry_run:
+        # Recorded study timings show that the low-frequency solves are
+        # consistently longest. Dispatch them first so short high-frequency
+        # solves backfill the pool instead of leaving slow stragglers.
         payloads = [(case.root, executable, max_iterations)
-                    for _, case, _ in sorted(pending, reverse=True,
-                                              key=lambda item: item[0])]
+                    for _, case, _ in pending]
         if workers == 1:
             for payload in payloads:
                 record = _run_worker(payload)
