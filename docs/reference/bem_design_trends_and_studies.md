@@ -2,10 +2,16 @@
 
 ## Scope
 
-The supported square-horn study domain is 25 through 50 degrees half-coverage.
+The supported square-horn study domain is 25 through 50 degrees half-coverage
+and 250 through 500 mm mouth size.
 Earlier 60-degree results are retained only as a compact historical summary in
 `archived_60deg_bem_summary.md`; they are excluded from active examples,
 ranking, interpolation, and proposed work.
+
+Earlier 200 mm results are likewise retained only in
+`archived_200mm_bem_summary.md`. They showed a consistent score decline below
+250 mm and are excluded from active examples, ranking, interpolation, and
+future searches.
 
 This document records the design trends found by reviewing the scored BEM
 results under `examples/` after introduction of the final surface score. The

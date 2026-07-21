@@ -24,8 +24,7 @@ COMPARABLE_30_S_TARGETS = (0.7, 1.0, 1.3, 1.6, 1.9, 2.2, 2.5, 2.8, 3.0)
 def study_grid(coverage: float) -> tuple[tuple[int, ...], tuple[float, ...]]:
     """Return the authored grid appropriate to an intermediate coverage."""
     if coverage == 30.0:
-        return ((200, 250, 300, 350, 400, 450, 500),
-                COMPARABLE_30_S_TARGETS)
+        return (MOUTH_SIZES_MM, COMPARABLE_30_S_TARGETS)
     return (MOUTH_SIZES_MM, S_TARGETS)
 
 

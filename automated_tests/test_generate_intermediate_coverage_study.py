@@ -38,7 +38,7 @@ class IntermediateCoverageStudyTests(unittest.TestCase):
     def test_30_degree_grid_matches_25_and_35_degree_coordinates(self) -> None:
         mouths, targets = study_grid(30.0)
 
-        self.assertEqual(mouths, (200, 250, 300, 350, 400, 450, 500))
+        self.assertEqual(mouths, (250, 300, 350, 400, 450, 500))
         self.assertEqual(targets, COMPARABLE_30_S_TARGETS)
         self.assertEqual(targets, (0.7, 1.0, 1.3, 1.6, 1.9,
                                    2.2, 2.5, 2.8, 3.0))

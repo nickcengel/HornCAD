@@ -1,5 +1,5 @@
 planned_subsearches:
-  - label: 30 deg / 200-500 mm · comparable S baselines
+  - label: 30 deg / 250-500 mm · comparable S baselines
     coverage_angles: [30]
     prerequisite: current broad grids complete
     status: planned

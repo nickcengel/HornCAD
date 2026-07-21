@@ -16,7 +16,7 @@ from app.tools.generate_coverage_s_grid import (
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = ROOT / "examples" / "mouth-size-coverage-grid" / "25deg" / "200x200"
+SOURCE = ROOT / "examples" / "mouth-size-coverage-grid" / "25deg" / "250x250"
 
 
 class CoverageSGridTests(unittest.TestCase):
@@ -42,7 +42,7 @@ class CoverageSGridTests(unittest.TestCase):
 
     def test_materialized_search_contains_the_uniform_nine_point_grid(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
-            source = Path(temp) / "25deg" / "200x200"
+            source = Path(temp) / "25deg" / "250x250"
             source.mkdir(parents=True)
             shutil.copy2(SOURCE / "project.yaml", source / "project.yaml")
             shutil.copy2(SOURCE / "search.yaml", source / "search.yaml")

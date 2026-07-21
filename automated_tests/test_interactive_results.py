@@ -153,7 +153,7 @@ class InteractiveResultsTests(unittest.TestCase):
                 bytes(80) + struct.pack("<I", 1) + triangle)
             shutil.copy2(
                 ROOT / "examples" / "mouth-size-coverage-grid" / "25deg" /
-                "200x200" / "project.yaml",
+                "250x250" / "project.yaml",
                 candidate / "project.yaml")
 
             report = single_report(run, bem / "test_Report.html")

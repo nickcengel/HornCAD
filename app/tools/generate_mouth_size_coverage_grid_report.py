@@ -22,6 +22,8 @@ except ImportError:
 
 SUPPORTED_COVERAGE_MIN_DEG = 25.0
 SUPPORTED_COVERAGE_MAX_DEG = 50.0
+SUPPORTED_MOUTH_MIN_MM = 250.0
+SUPPORTED_MOUTH_MAX_MM = 500.0
 
 
 LEGACY_RANKING_KEYS = (
@@ -288,7 +290,9 @@ def generate_report(project_root: Path, output: Path) -> Path:
         path for path in sorted(project_root.glob("*deg/*x*/search.yaml"))
         if SUPPORTED_COVERAGE_MIN_DEG <=
         float(path.parent.parent.name.removesuffix("deg")) <=
-        SUPPORTED_COVERAGE_MAX_DEG
+        SUPPORTED_COVERAGE_MAX_DEG and
+        SUPPORTED_MOUTH_MIN_MM <= float(path.parent.name.split("x", 1)[0]) <=
+        SUPPORTED_MOUTH_MAX_MM
     ]
     summaries = [_search_summary(path) for path in search_paths]
     summaries.sort(key=lambda item: (item["coverage"], item["mouth"]))
@@ -664,7 +668,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 @media(max-width:900px){{.plot-grid-layout{{grid-template-columns:1fr}}}}@media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
 </style></head><body><main>
 <h1>Mouth-size / coverage grid</h1>
-<p>Supported half-coverage domain: 25°–50°.</p>
+<p>Supported domain: 25°–50° half-coverage and 250–500 mm mouth size.</p>
 <p class='muted'>Candidates are ranked by the final surface score. Previous rank and previous diagnostic score are shown beside it for direct comparison. The final score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%.</p>
 <section class='summary'>
 <div class='card'><strong>{started}&nbsp;/<wbr> {total}</strong> started</div>

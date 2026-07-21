@@ -76,7 +76,11 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("data-angle-filter='35'", report)
         self.assertIn("data-angle-filter='45'", report)
         self.assertNotIn("data-angle-filter='60'", report)
-        self.assertIn("Supported half-coverage domain: 25°–50°", report)
+        self.assertIn(
+            "Supported domain: 25°–50° half-coverage and 250–500 mm mouth size",
+            report,
+        )
+        self.assertNotIn("data-sort='200.000000'", report)
         self.assertIn("data-coverage-angle='25'", report)
         self.assertIn("id='candidate-filter-count'", report)
         self.assertIn("row.dataset.coverageAngle !== selected", report)

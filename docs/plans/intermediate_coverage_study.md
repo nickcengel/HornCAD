@@ -5,11 +5,12 @@ The supported study domain is 25° through 50° half-coverage. The exploratory
 work.
 
 The 30° study closes the interpolation gap between 25° and 35°. It uses the
-same seven 200--500 mm square mouths and the exact S coordinates 0.7, 1.0,
+supported six 250--500 mm square mouths and the exact S coordinates 0.7, 1.0,
 1.3, 1.6, 1.9, 2.2, 2.5, 2.8, and 3.0 used by those neighboring studies.
 Adaptive pruning may omit a confidently declining intermediate tail, but the
 S=3.0 boundary sentinel is mandatory. All seven 30° searches must complete
-before coupled K/N or finer local searches begin.
+before coupled K/N or finer local searches begin. The supported active mouth
+range is 250--500 mm; earlier 200 mm results are archived boundary evidence.
 
 ## Motivation
 
