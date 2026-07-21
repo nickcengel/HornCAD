@@ -510,6 +510,84 @@ def adaptive_pruning_decision(search: dict[str, Any],
     }
 
 
+def adaptive_kn_pruning_decision(search: dict[str, Any],
+                                 records: list[dict[str, Any]],
+                                 values: dict[str, float]) -> dict[str, Any] | None:
+    """Screen K/N extremes and interactions after measuring the local cross."""
+    policy = search.get("adaptive_kn", {})
+    if not policy.get("enabled", False):
+        return None
+    k_h, k_v = float(values["k_h"]), float(values["k_v"])
+    n_h, n_v = float(values["n_h"]), float(values["n_v"])
+    if (not math.isclose(k_h, k_v, abs_tol=1e-6) or
+            not math.isclose(n_h, n_v, abs_tol=1e-6)):
+        return None
+    target = (round(k_h, 6), round(n_h, 6))
+    always_measure = {(4.0, 10.0), (3.5, 10.0), (4.5, 10.0),
+                      (4.0, 5.0), (4.0, 15.0)}
+    if target in always_measure:
+        return None
+    measured: dict[tuple[float, float], float] = {}
+    for record in records:
+        if record.get("status") != "complete":
+            continue
+        record_values = record.get("values", {})
+        key = (round(float(record_values.get("k_h", math.nan)), 6),
+               round(float(record_values.get("n_h", math.nan)), 6))
+        score = _record_surface_score(record, search)
+        if score is not None:
+            measured[key] = score
+    baseline = measured.get((4.0, 10.0))
+    if baseline is None:
+        return None
+    best = max(measured.values())
+    margin = float(policy.get("margin_points", 3.0))
+    uncertainty = float(policy.get("uncertainty_points", 1.5))
+    threshold = best - margin
+    adjacent = {
+        (3.0, 10.0): (3.5, 10.0),
+        (5.0, 10.0): (4.5, 10.0),
+        (4.0, 2.0): (4.0, 5.0),
+        (4.0, 20.0): (4.0, 15.0),
+    }
+    if target in adjacent:
+        neighbor = measured.get(adjacent[target])
+        if neighbor is None:
+            return None
+        optimistic = neighbor + uncertainty
+        if optimistic >= threshold:
+            return None
+        return {
+            "reason": "adjacent K/N trend is confidently below the useful range",
+            "target_k": target[0], "target_n": target[1],
+            "predicted_score": neighbor,
+            "optimistic_score": optimistic,
+            "best_observed_score": best, "threshold_score": threshold,
+            "evidence_point": {"k": adjacent[target][0],
+                               "n": adjacent[target][1], "score": neighbor},
+            "values": values,
+        }
+    if target[0] in (3.5, 4.5) and target[1] in (5.0, 15.0):
+        k_score = measured.get((target[0], 10.0))
+        n_score = measured.get((4.0, target[1]))
+        if k_score is None or n_score is None:
+            return None
+        predicted = baseline + (k_score - baseline) + (n_score - baseline)
+        optimistic = predicted + uncertainty * math.sqrt(2)
+        if optimistic >= threshold:
+            return None
+        return {
+            "reason": "K/N main effects predict an inferior interaction",
+            "target_k": target[0], "target_n": target[1],
+            "predicted_score": predicted,
+            "optimistic_score": optimistic,
+            "best_observed_score": best, "threshold_score": threshold,
+            "k_axis_score": k_score, "n_axis_score": n_score,
+            "values": values,
+        }
+    return None
+
+
 def pareto_indices(records: list[dict[str, Any]]) -> set[int]:
     feasible = [(index, record) for index, record in enumerate(records)
                 if record.get("status") == "complete" and
@@ -936,7 +1014,7 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vert
 <p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
 <section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='containment-mean' data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
-<section><p>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Existing completed searches retain their original selection history. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points when its uncertainty-adjusted prediction remains at least three score points below the observed best.</p></section>
+<section><p>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Existing completed searches retain their original selection history. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points. Adaptive K/N studies always measure the local cross, then skip an extreme or interaction only when its uncertainty-adjusted prediction remains at least three score points below the observed best.</p></section>
 <script>
 document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
   button.addEventListener('click', () => {{
@@ -1265,8 +1343,9 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                 state["rejected_count"] += 1
                 save_state(output_dir, state)
                 continue
-            pruning = adaptive_pruning_decision(
-                search, state["candidates"], values, derived)
+            pruning = (adaptive_pruning_decision(
+                search, state["candidates"], values, derived) or
+                adaptive_kn_pruning_decision(search, state["candidates"], values))
             if pruning is not None:
                 pruning.update(proposal_index=proposal_index,
                                proposal_source=source,

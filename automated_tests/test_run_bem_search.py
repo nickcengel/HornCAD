@@ -9,7 +9,7 @@ import numpy as np
 
 from app.tools.run_bem_search import (
     VARIABLES,
-    adaptive_pruning_decision,
+    adaptive_kn_pruning_decision, adaptive_pruning_decision,
     candidate_artifact_stem, candidate_distance, candidate_trait, candidate_traits,
     geometry_feasibility,
     geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
@@ -26,6 +26,37 @@ ROUND2_SEARCH = SEARCH.parent / "round-2" / "search.yaml"
 
 
 class BEMSearchTests(unittest.TestCase):
+    def test_kn_pruning_waits_for_local_cross_then_skips_bad_extreme(self) -> None:
+        search = {
+            "adaptive_kn": {"enabled": True},
+            "geometry_context": {"mouth_width_mm": 350, "mouth_height_mm": 350},
+        }
+        def record(k: float, n: float, score: float) -> dict:
+            return {"status": "complete", "values": {"k_h": k, "n_h": n},
+                    "surface_diagnostics": {"score": {"overall_percent": score}}}
+        records = [record(4, 10, 88), record(3.5, 10, 82)]
+        values = {"k_h": 3, "k_v": 3, "n_h": 10, "n_v": 10}
+
+        decision = adaptive_kn_pruning_decision(search, records, values)
+
+        self.assertIsNotNone(decision)
+        self.assertEqual(decision["target_k"], 3)
+        records[-1]["surface_diagnostics"]["score"]["overall_percent"] = 87
+        self.assertIsNone(adaptive_kn_pruning_decision(search, records, values))
+
+    def test_kn_pruning_uses_measured_axis_effects_for_interactions(self) -> None:
+        search = {
+            "adaptive_kn": {"enabled": True},
+            "geometry_context": {"mouth_width_mm": 350, "mouth_height_mm": 350},
+        }
+        def record(k: float, n: float, score: float) -> dict:
+            return {"status": "complete", "values": {"k_h": k, "n_h": n},
+                    "surface_diagnostics": {"score": {"overall_percent": score}}}
+        records = [record(4, 10, 88), record(4.5, 10, 82), record(4, 15, 83)]
+        values = {"k_h": 4.5, "k_v": 4.5, "n_h": 15, "n_v": 15}
+
+        self.assertIsNotNone(adaptive_kn_pruning_decision(search, records, values))
+
     def test_adaptive_pruning_skips_only_confidently_declining_s_tail(self) -> None:
         search = {
             "initial_candidates": 8,

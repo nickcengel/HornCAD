@@ -192,7 +192,12 @@ def _search_summary(path: Path) -> dict[str, Any]:
     mouth_dir = path.parent.name
     coverage = float(coverage_dir.removesuffix("deg"))
     mouth = float(mouth_dir.split("x", 1)[0])
-    study_label = "uniform S grid" if mouth_dir.endswith("-s-grid") else "original"
+    if mouth_dir.endswith("-s-grid"):
+        study_label = "uniform S grid"
+    elif mouth_dir.endswith("-kn-grid"):
+        study_label = "adaptive K/N grid"
+    else:
+        study_label = "original"
     config = yaml.safe_load(path.read_text(encoding="utf-8"))["bem_candidate_search"]
     seed_path = Path(config.get("seed_yaml", "project.yaml"))
     if not seed_path.is_absolute():
@@ -210,7 +215,9 @@ def _search_summary(path: Path) -> dict[str, Any]:
         "mouth_height": float(seed_global.get("mouth_height", mouth)),
         "label": (
             f"{coverage:g} deg\u00a0/\u200b {mouth:g} mm"
-            + (" · uniform S grid" if study_label == "uniform S grid" else "")
+            + ({"uniform S grid": " · uniform S grid",
+                "adaptive K/N grid": " · adaptive K/N grid"}.get(
+                    study_label, ""))
         ),
         "study": study_label,
         "folder": path.parent,
@@ -334,6 +341,8 @@ def generate_report(project_root: Path, output: Path) -> Path:
     score_vs_s = []
     score_vs_ratio = []
     score_vs_normalized_length = []
+    kn_score_vs_k = []
+    kn_score_vs_n = []
     best_by_pair: dict[tuple[float, float], dict[str, Any]] = {}
     for row in candidate_rows:
         score = row["surface_ranking_score"]
@@ -368,6 +377,18 @@ def generate_report(project_root: Path, output: Path) -> Path:
         common = {"y": score, "coverage": summary["coverage"],
                   "tooltip": tooltip, "candidate": row["artifact_stem"],
                   "stats": stats, "report": report_url}
+        if summary["study"] == "adaptive K/N grid":
+            values = candidate.get("values", {})
+            k_value = fmean((float(values.get("k_h", 0)),
+                             float(values.get("k_v", 0))))
+            n_value = fmean((float(values.get("n_h", 0)),
+                             float(values.get("n_v", 0))))
+            kn_common = {**common, "stats": (
+                f"{stats} · K {k_value:g} · N {n_value:g}")}
+            if math.isclose(n_value, 10.0, abs_tol=1e-6):
+                kn_score_vs_k.append({**kn_common, "x": k_value})
+            if math.isclose(k_value, 4.0, abs_tol=1e-6):
+                kn_score_vs_n.append({**kn_common, "x": n_value})
         if s_value is not None:
             score_vs_s.append({**common, "x": s_value})
         score_vs_ratio.append({**common, "x": row["length_mouth_ratio"]})
@@ -395,6 +416,12 @@ def generate_report(project_root: Path, output: Path) -> Path:
          "X = 2 × length × tan(coverage half-angle) / mouth width; curves test whether coverage families share a geometric constraint.",
          _scatter_svg(score_vs_normalized_length, "Coverage-normalized length",
                       "Final surface score (%)", trends=True)),
+        ("K behavior at N=10",
+         "Adaptive-study axis runs isolate the K trend while holding each anchor's mouth, length, coverage, and N fixed.",
+         _scatter_svg(kn_score_vs_k, "K", "Final surface score (%)", trends=True)),
+        ("N behavior at K=4",
+         "Adaptive-study axis runs isolate the N trend; outer values appear only when the measured local trend remains competitive.",
+         _scatter_svg(kn_score_vs_n, "N", "Final surface score (%)", trends=True)),
     )
     plots_html = "".join(
         f"<article class='plot-card'><h3>{html.escape(title)}</h3>"

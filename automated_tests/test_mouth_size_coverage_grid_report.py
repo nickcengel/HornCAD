@@ -112,6 +112,8 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("Final surface score vs mouth/length ratio", report)
         self.assertIn("Best score vs mouth width", report)
         self.assertIn("Final surface score vs coverage-normalized length", report)
+        self.assertIn("K behavior at N=10", report)
+        self.assertIn("N behavior at K=4", report)
         self.assertEqual(report.count("class='trend-plot'"), 4)
         self.assertIn("class='plot-trend'", report)
         self.assertIn("2 × length × tan(coverage half-angle) / mouth width", report)
