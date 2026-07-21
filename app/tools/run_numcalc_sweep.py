@@ -93,6 +93,8 @@ def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
               frequencies_hz: np.ndarray, *, elements_per_wavelength: float = 8.0,
               angles: int = 91, maximum_workers: int = 0,
               memory_limit_gib: float | None = None, max_iterations: int = 250,
+              geometry_side_samples: int | None = None,
+              geometry_axial_stations: int | None = None,
               quadrant_side_samples: int | None = None,
               quadrant_axial_stations: int | None = None,
               resume: bool = True, dry_run: bool = False) -> dict:
@@ -103,6 +105,7 @@ def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
         + Path(build_quadrant_acoustic_mesh.__code__.co_filename).read_bytes()
         + np.asarray(frequencies_hz, dtype=float).tobytes()
         + (f"{elements_per_wavelength}:{angles}:"
+           f"{geometry_side_samples}:{geometry_axial_stations}:"
            f"{quadrant_side_samples}:{quadrant_axial_stations}").encode()
     ).hexdigest()[:12]
     root = output_dir / f"{yaml_path.stem}-NumCalc-{run_hash}"
@@ -123,6 +126,8 @@ def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
     else:
         mesh = build_quadrant_acoustic_mesh(
             yaml_path, MeshSettings(maximum_frequency, elements_per_wavelength),
+            side_samples=geometry_side_samples,
+            axial_stations=geometry_axial_stations,
             quadrant_side_samples=quadrant_side_samples,
             quadrant_axial_stations=quadrant_axial_stations)
         np.savez_compressed(

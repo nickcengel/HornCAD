@@ -890,6 +890,8 @@ def _isolated_sweep(result_queue: Any, project_path: Path, executable: Path,
             angles=int(solver.get("angles", 91)),
             maximum_workers=int(solver.get("workers", 0)),
             memory_limit_gib=solver.get("memory_limit_gib"),
+            geometry_side_samples=solver.get("geometry_side_samples"),
+            geometry_axial_stations=solver.get("geometry_axial_stations"),
             quadrant_side_samples=solver.get("quadrant_side_samples"),
             quadrant_axial_stations=solver.get("quadrant_axial_stations"),
             resume=True)
@@ -1085,6 +1087,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
         # boundary geometries. Netgen still enforces the identical wavelength
         # edge limit on the final surface; only its faceted starting shell is
         # simplified for explicit recovery runs.
+        solver.setdefault("geometry_side_samples", 8)
+        solver.setdefault("geometry_axial_stations", 10)
         solver.setdefault("quadrant_side_samples", 8)
         solver.setdefault("quadrant_axial_stations", 10)
     ppo = float(solver.get("points_per_octave", 12))
