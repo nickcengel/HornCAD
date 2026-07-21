@@ -6,9 +6,28 @@ import argparse
 import html
 import json
 from pathlib import Path
+from statistics import fmean
 from typing import Any
 
 import yaml
+
+
+LEGACY_RANKING_KEYS = (
+    "coverage_match_percent",
+    "coverage_smoothness_percent",
+    "waist_stability_percent",
+    "window_uniformity_percent",
+)
+
+
+def _legacy_ranking_score(candidate: dict[str, Any]) -> float | None:
+    combined = candidate.get("diagnostics", {}).get("combined", {})
+    if not isinstance(combined, dict):
+        return None
+    values = [combined.get(key) for key in LEGACY_RANKING_KEYS]
+    if not all(isinstance(value, (int, float)) for value in values):
+        return None
+    return fmean(float(value) for value in values)
 
 
 def _search_summary(path: Path) -> dict[str, Any]:
@@ -95,9 +114,12 @@ def generate_report(project_root: Path, output: Path) -> Path:
             candidate_rows.append({
                 "search": summary,
                 "candidate": candidate,
+                "legacy_ranking_score": _legacy_ranking_score(candidate),
             })
     candidate_rows.sort(
         key=lambda item: (
+            item["legacy_ranking_score"] is None,
+            -(item["legacy_ranking_score"] or 0.0),
             item["search"]["coverage"],
             item["search"]["mouth"],
             item["candidate"]["id"],
@@ -156,6 +178,9 @@ def generate_report(project_root: Path, output: Path) -> Path:
             candidate, ("slice_energy_stability", "rms_departure_db"), " dB")
         line_sort, line_text = surface_pair(
             candidate, ("minus_six_line", "rms_coverage_error_deg"), "°")
+        legacy_score = item["legacy_ranking_score"]
+        legacy_score_sort = "" if legacy_score is None else f"{legacy_score:.6f}"
+        legacy_score_text = "—" if legacy_score is None else f"{legacy_score:.1f}%"
         candidate_name = html.escape(item["artifact_stem"])
         candidate_links = []
         if item["report_path"] is not None:
@@ -183,6 +208,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
             f"<td data-sort='{html.escape(item['artifact_stem'])}'>{' · '.join(candidate_links)}</td>"
             f"<td data-sort='{html.escape(summary['label'])}'>{html.escape(summary['label'])}</td>"
             f"<td data-sort='{html.escape(candidate.get('status', 'unknown'))}'>{status_badge}</td>"
+            f"<td data-column='legacy-score' data-sort='{legacy_score_sort}'>{legacy_score_text}</td>"
             f"<td class='axis-pair' data-column='containment-mean' data-sort='{containment_sort}'>{containment_text}</td>"
             f"<td class='axis-pair' data-column='containment-worst' hidden data-sort='{worst_sort}'>{worst_text}</td>"
             f"<td class='axis-pair' data-column='profile-rms' data-sort='{profile_sort}'>{profile_text}</td>"
@@ -241,6 +267,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
         coverage_targets = mouth_sizes = ratios = fixed_k = fixed_n = sweep_lower = sweep_upper = crossover = "—"
 
     toggle_columns = (
+        ("legacy-score", "Previous diagnostic score", True),
         ("containment-mean", "Mean containment H / V", True),
         ("containment-worst", "Worst 1/3-oct containment H / V", False),
         ("profile-rms", "Profile RMS error H / V", True),
@@ -280,7 +307,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 @media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
 </style></head><body><main>
 <h1>Mouth-size / coverage grid</h1>
-<p class='muted'>This overview combines the raw replacement surface diagnostics from every completed candidate. The measurements are intentionally unweighted while their behavior is calibrated against the heat maps; there is no final combined score or ranking yet.</p>
+<p class='muted'>Candidates are ranked using the previous diagnostic score: the average of coverage match, coverage smoothness, waist stability, and window uniformity. The new surface measurements remain unweighted while they are evaluated.</p>
 <section class='summary'>
 <div class='card'><strong>{started}&nbsp;/<wbr> {total}</strong> started</div>
 <div class='card'><strong>{running}</strong> running sub-searches</div>
@@ -296,7 +323,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <h2>Candidates</h2>
 <div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div>
 <table class='wide sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>#</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='containment-mean' data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='containment-worst' hidden data-sort='number'>Worst 1/3-oct containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead>
+<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='legacy-score' data-sort='number'>Previous diagnostic score</th><th class='sortable' data-column='containment-mean' data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='containment-worst' hidden data-sort='number'>Worst 1/3-oct containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead>
 <tbody>
 {''.join(rows)}
 </tbody>

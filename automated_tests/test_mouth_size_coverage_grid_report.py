@@ -4,13 +4,27 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from app.tools.generate_mouth_size_coverage_grid_report import generate_report
+from app.tools.generate_mouth_size_coverage_grid_report import (
+    _legacy_ranking_score,
+    generate_report,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class MouthSizeCoverageGridReportTests(unittest.TestCase):
+    def test_legacy_ranking_score_uses_the_previous_four_metrics(self) -> None:
+        candidate = {"diagnostics": {"combined": {
+            "coverage_match_percent": 80.0,
+            "coverage_smoothness_percent": 90.0,
+            "waist_stability_percent": 70.0,
+            "window_uniformity_percent": 100.0,
+        }}}
+
+        self.assertEqual(_legacy_ranking_score(candidate), 85.0)
+        self.assertIsNone(_legacy_ranking_score({}))
+
     def test_candidate_columns_are_toggleable_and_details_start_hidden(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / "index.html"
@@ -20,6 +34,9 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("<h2>Candidates</h2>", report)
         self.assertNotIn("<h2>Active ranking</h2>", report)
         self.assertNotIn("<h2>All results</h2>", report)
+        self.assertIn("data-column-toggle='legacy-score'", report)
+        self.assertIn(">Previous diagnostic score</th>", report)
+        self.assertIn("Candidates are ranked using the previous diagnostic score", report)
         self.assertIn("data-column-toggle='containment-mean'", report)
         self.assertIn("data-column-toggle='profile-rms'", report)
         self.assertIn("data-column-toggle='slice-rms'", report)
