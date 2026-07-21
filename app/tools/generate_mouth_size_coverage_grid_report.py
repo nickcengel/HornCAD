@@ -11,7 +11,6 @@ from pathlib import Path
 from statistics import fmean
 from typing import Any
 
-import numpy as np
 import yaml
 
 try:
@@ -32,7 +31,8 @@ LEGACY_RANKING_KEYS = (
     "waist_stability_percent",
     "window_uniformity_percent",
 )
-PLOT_COLORS = ("#69d6c8", "#f6bd60", "#f28482", "#8e9aef", "#90be6d")
+PLOT_COLORS = ("#69d6c8", "#f6bd60", "#f28482", "#8e9aef", "#90be6d",
+               "#c77dff")
 NEAR_DUPLICATE_LENGTH_MM = 1.0
 
 
@@ -91,7 +91,9 @@ def _nice_plot_bounds(lower: float, upper: float) -> tuple[float, float]:
 
 
 def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
-                 *, trends: bool = False, label_points: bool = False) -> str:
+                 *, trends: bool = False, label_points: bool = False,
+                 series_key: str = "coverage", series_suffix: str = "°",
+                 upper_score_window: bool = True) -> str:
     if not points:
         return "<p class='muted'>No completed candidates yet.</p>"
     width, height = 720, 390
@@ -99,16 +101,16 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
     xs = [float(point["x"]) for point in points]
     ys = [float(point["y"]) for point in points]
     x_min, x_max = min(xs), max(xs)
-    # Focus the comparison on the useful upper half of candidate performance.
-    # Values below the study mean remain part of the fitted trends but fall below
-    # the displayed score window.
-    y_min, y_max = _nice_plot_bounds(fmean(ys), max(ys))
+    # Candidate-cloud score plots focus on the useful upper half. Design-law
+    # plots use their complete Y range so selected coordinates are not hidden.
+    y_lower = fmean(ys) if upper_score_window else min(ys)
+    y_min, y_max = _nice_plot_bounds(y_lower, max(ys))
     x_pad = max((x_max - x_min) * .06, .05)
     x_min, x_max = x_min - x_pad, x_max + x_pad
     plot_width, plot_height = width - left - right, height - top - bottom
     plot_clip = "plot-" + "".join(
         character if character.isalnum() else "-"
-        for character in x_label.lower()).strip("-")
+        for character in f"{x_label}-{y_label}".lower()).strip("-")
 
     def sx(value: float) -> float:
         return left + (value - x_min) * plot_width / max(x_max - x_min, 1e-9)
@@ -116,9 +118,9 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
     def sy(value: float) -> float:
         return top + (y_max - value) * plot_height / max(y_max - y_min, 1e-9)
 
-    coverages = sorted({float(point["coverage"]) for point in points})
-    colors = {coverage: PLOT_COLORS[index % len(PLOT_COLORS)]
-              for index, coverage in enumerate(coverages)}
+    series_values = sorted({float(point[series_key]) for point in points})
+    colors = {value: PLOT_COLORS[index % len(PLOT_COLORS)]
+              for index, value in enumerate(series_values)}
     parts = [f"<svg class='trend-plot' viewBox='0 0 {width} {height}' role='img' "
              f"data-y-min='{y_min:.6f}' data-y-max='{y_max:.6f}'>",
              f"<defs><clipPath id='{html.escape(plot_clip)}'><rect x='{left}' y='{top}' "
@@ -135,25 +137,21 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
         parts.append(f"<text class='plot-tick' x='{left-9}' y='{y+4:.2f}' text-anchor='end'>{y_value:.3g}</text>")
     parts.append(f"<g clip-path='url(#{html.escape(plot_clip)})'>")
     if trends:
-        for coverage in coverages:
-            group = [point for point in points if float(point["coverage"]) == coverage]
-            unique_x = sorted({float(point["x"]) for point in group})
-            if len(unique_x) < 2:
+        for series_value in series_values:
+            group = [point for point in points
+                     if float(point[series_key]) == series_value]
+            ordered = sorted(group, key=lambda point: float(point["x"]))
+            if len({float(point["x"]) for point in ordered}) < 2:
                 continue
-            degree = min(2, len(unique_x) - 1)
-            coefficients = np.polyfit(
-                [float(point["x"]) for point in group],
-                [float(point["y"]) for point in group], degree)
-            trend_x = np.linspace(min(unique_x), max(unique_x), 48)
             coordinates = " ".join(
-                f"{sx(float(x)):.2f},{sy(float(np.polyval(coefficients, x))):.2f}"
-                for x in trend_x)
-            parts.append(f"<polyline class='plot-trend' stroke='{colors[coverage]}' points='{coordinates}'/>")
+                f"{sx(float(point['x'])):.2f},{sy(float(point['y'])):.2f}"
+                for point in ordered)
+            parts.append(f"<polyline class='plot-trend' stroke='{colors[series_value]}' points='{coordinates}'/>")
     for point in points:
         if not y_min <= float(point["y"]) <= y_max:
             continue
-        coverage = float(point["coverage"])
-        color = colors[coverage]
+        series_value = float(point[series_key])
+        color = colors[series_value]
         radius = float(point.get("radius", 4.2))
         tooltip = html.escape(str(point.get("tooltip", "candidate")))
         candidate_name = html.escape(str(point.get("candidate", "candidate")), quote=True)
@@ -175,10 +173,10 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
         f"<text class='plot-axis-label' transform='translate(17 {top + plot_height/2:.2f}) rotate(-90)' text-anchor='middle'>{html.escape(y_label)}</text>",
     ])
     legend_x = left + 8
-    for coverage in coverages:
-        parts.append(f"<circle cx='{legend_x}' cy='{top+10}' r='4' fill='{colors[coverage]}'/>")
-        parts.append(f"<text class='plot-label' x='{legend_x+7}' y='{top+14}'>{coverage:g}°</text>")
-        legend_x += 66
+    for series_value in series_values:
+        parts.append(f"<circle cx='{legend_x}' cy='{top+10}' r='4' fill='{colors[series_value]}'/>")
+        parts.append(f"<text class='plot-label' x='{legend_x+7}' y='{top+14}'>{series_value:g}{html.escape(series_suffix)}</text>")
+        legend_x += 76
     parts.append("</svg>")
     return "".join(parts)
 
@@ -363,13 +361,9 @@ def generate_report(project_root: Path, output: Path) -> Path:
         if row["label"] == "Seed":
             row["label"] = "Seed design"
 
-    score_vs_s = []
-    score_vs_ratio = []
-    score_vs_normalized_length = []
-    kn_score_vs_k = []
-    kn_score_vs_n = []
-    kn_score_vs_ratio = []
     best_by_pair: dict[tuple[float, float], dict[str, Any]] = {}
+    baseline_best: dict[tuple[float, float], float] = {}
+    refined_best: dict[tuple[float, float], float] = {}
     for row in candidate_rows:
         score = row["surface_ranking_score"]
         if score is None:
@@ -403,57 +397,66 @@ def generate_report(project_root: Path, output: Path) -> Path:
         common = {"y": score, "coverage": summary["coverage"],
                   "tooltip": tooltip, "candidate": row["artifact_stem"],
                   "stats": stats, "report": report_url}
-        if summary["study"] in {"adaptive K/N grid", "coupled K/N closure"}:
-            values = candidate.get("values", {})
-            k_value = fmean((float(values.get("k_h", 0)),
-                             float(values.get("k_v", 0))))
-            n_value = fmean((float(values.get("n_h", 0)),
-                             float(values.get("n_v", 0))))
-            kn_common = {**common, "stats": (
-                f"{stats} · K {k_value:g} · N {n_value:g} · "
-                f"K/N {k_value / n_value:.3f}")}
-            if n_value > 0:
-                kn_score_vs_ratio.append({**kn_common, "x": k_value / n_value})
-            if math.isclose(n_value, 10.0, abs_tol=1e-6):
-                kn_score_vs_k.append({**kn_common, "x": k_value})
-            if math.isclose(k_value, 4.0, abs_tol=1e-6):
-                kn_score_vs_n.append({**kn_common, "x": n_value})
-        if s_value is not None:
-            score_vs_s.append({**common, "x": s_value})
-        score_vs_ratio.append({**common, "x": row["length_mouth_ratio"]})
-        score_vs_normalized_length.append({**common, "x": normalized_length})
         pair_key = (summary["coverage"], summary["mouth"])
+        if summary["study"] in {
+                "uniform S grid", "canonical S extension", "S boundary closure"}:
+            baseline_best[pair_key] = max(score, baseline_best.get(pair_key, -math.inf))
+        elif summary["study"] in {
+                "adaptive K/N grid", "coupled K/N closure", "coupled local S"}:
+            refined_best[pair_key] = max(score, refined_best.get(pair_key, -math.inf))
         if pair_key not in best_by_pair or score > best_by_pair[pair_key]["y"]:
             best_by_pair[pair_key] = {
-                **common, "x": summary["mouth"],
-                "label": f"S={s_value:.2g}" if s_value is not None else "",
+                **common, "mouth": summary["mouth"], "s": s_value,
+                "length_ratio": row["length_mouth_ratio"],
             }
 
+    winners = list(best_by_pair.values())
+    score_envelope = [
+        {**point, "x": point["coverage"], "series": point["mouth"]}
+        for point in winners]
+    selected_s = [
+        {**point, "x": point["coverage"], "y": point["s"],
+         "series": point["mouth"]}
+        for point in winners if point["s"] is not None]
+    selected_length_ratio = [
+        {**point, "x": point["coverage"], "y": point["length_ratio"],
+         "series": point["mouth"]}
+        for point in winners]
+    refinement_gain = []
+    for pair_key, refined_score in refined_best.items():
+        if pair_key not in baseline_best or pair_key not in best_by_pair:
+            continue
+        point = best_by_pair[pair_key]
+        gain = refined_score - baseline_best[pair_key]
+        refinement_gain.append({
+            **point, "x": pair_key[0], "y": gain, "series": pair_key[1],
+            "stats": f"{point['stats']} · K/N gain {gain:+.2f} points",
+        })
+
     trend_plots = (
-        ("Final surface score vs S",
-         "The broad equal-opportunity sweep; curves are quadratic visual trends, not fitted design laws.",
-         _scatter_svg(score_vs_s, "Derived S", "Final surface score (%)", trends=True)),
-        ("Final surface score vs mouth/length ratio",
-         "Translates the S sweep into the practical relative-length constraint.",
-         _scatter_svg(score_vs_ratio, "Mouth width / length", "Final surface score (%)", trends=True)),
-        ("Best score vs mouth width",
-         "Best completed candidate for each mouth/coverage pair; labels report its S value.",
-         _scatter_svg(list(best_by_pair.values()), "Mouth width (mm)",
-                      "Best final surface score (%)", trends=True,
-                      label_points=True)),
-        ("Final surface score vs coverage-normalized length",
-         "X = 2 × length × tan(coverage half-angle) / mouth width; curves test whether coverage families share a geometric constraint.",
-         _scatter_svg(score_vs_normalized_length, "Coverage-normalized length",
-                      "Final surface score (%)", trends=True)),
-        ("K behavior at N=10",
-         "Adaptive-study axis runs isolate the K trend while holding each anchor's mouth, length, coverage, and N fixed.",
-         _scatter_svg(kn_score_vs_k, "K", "Final surface score (%)", trends=True)),
-        ("N behavior at K=4",
-         "Adaptive-study axis runs isolate the N trend; outer values appear only when the measured local trend remains competitive.",
-         _scatter_svg(kn_score_vs_n, "N", "Final surface score (%)", trends=True)),
-        ("Final surface score vs K/N ratio",
-         "Exploratory view of K divided by N across adaptive and coupled K/N candidates; identical ratios can represent different K/N pairs, so this is not an isolated causal effect.",
-         _scatter_svg(kn_score_vs_ratio, "K / N", "Final surface score (%)", trends=True)),
+        ("Achievable score by coverage",
+         "The best completed result in each mouth/coverage cell. Each line follows one mouth size, so angle dependence is no longer mixed with the S sweep.",
+         _scatter_svg(score_envelope, "Coverage half-angle (°)",
+                      "Best surface score (%)", trends=True,
+                      series_key="series", series_suffix=" mm",
+                      upper_score_window=False)),
+        ("Selected S by coverage",
+         "The S coordinate of each cell winner. Agreement between mouth-size lines indicates a reusable angle-to-S design rule; separation indicates mouth dependence.",
+         _scatter_svg(selected_s, "Coverage half-angle (°)", "Winning S",
+                      trends=True, series_key="series", series_suffix=" mm",
+                      upper_score_window=False)),
+        ("Selected mouth/length ratio by coverage",
+         "The physical proportion of each cell winner. This is the directly usable starting length after choosing mouth size and coverage.",
+         _scatter_svg(selected_length_ratio, "Coverage half-angle (°)",
+                      "Mouth width / length", trends=True,
+                      series_key="series", series_suffix=" mm",
+                      upper_score_window=False)),
+        ("Gain from K/N refinement",
+         "Best adaptive or coupled result minus the best matched S-baseline. Positive values show where K/N work added performance; only cells with both measurements appear.",
+         _scatter_svg(refinement_gain, "Coverage half-angle (°)",
+                      "Surface-score gain (points)", trends=True,
+                      series_key="series", series_suffix=" mm",
+                      upper_score_window=False)),
     )
     plots_html = "".join(
         f"<article class='plot-card'><h3>{html.escape(title)}</h3>"
