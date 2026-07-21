@@ -858,14 +858,23 @@ def _surface_diagnostic_plot(runs: list[dict[str, Any]],
                 **common, y=traces["minus_six_error_deg"], showlegend=False,
                 hovertemplate="%{x:.1f} Hz<br>%{y:.3f}°<extra>" +
                               html.escape(name) + "</extra>"), row=4, col=1)
-    figure.add_hline(y=0, row=3, col=1, line={"color": "#94a3ad", "dash": "dot"})
-    figure.add_hline(y=0, row=4, col=1, line={"color": "#94a3ad", "dash": "dot"})
+    reference_line = {"color": "#69d6c8", "dash": "dash", "width": 1.8}
+    for row, value, label in (
+        (1, 100, "Best: 100%"),
+        (2, 0, "Best: 0 dB"),
+        (3, 0, "Best: 0 dB"),
+        (4, 0, "Target: 0°"),
+    ):
+        figure.add_hline(
+            y=value, row=row, col=1, line=reference_line,
+            annotation_text=label, annotation_position="top right",
+            annotation_font={"color": "#69d6c8", "size": 11})
     all_frequencies = np.concatenate([
         np.asarray(run["frequencies"], dtype=float) for run in runs])
     figure.update_xaxes(**_frequency_axis(all_frequencies))
     figure.update_yaxes(title_text="Contained power (%)", row=1, col=1)
-    figure.update_yaxes(title_text="RMS error (dB)", row=2, col=1)
-    figure.update_yaxes(title_text="Departure (dB)", row=3, col=1)
+    figure.update_yaxes(title_text="RMS error (dB)", rangemode="tozero", row=2, col=1)
+    figure.update_yaxes(title_text="Departure (dB)", rangemode="tozero", row=3, col=1)
     figure.update_yaxes(title_text="Angle error (degrees)", row=4, col=1)
     figure.update_layout(
         height=980, hovermode="x unified", template="plotly_dark",
@@ -1010,7 +1019,7 @@ def _write_html(path: Path, title: str, figure: go.Figure,
                                   "responsive": True})
     surface_plot = _surface_diagnostic_plot(runs, surface_results)
     stl_viewer = _embedded_stl_viewer(path)
-    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v6 -->
+    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v7 -->
 <title>{html.escape(title)}</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}
