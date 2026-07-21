@@ -537,38 +537,47 @@ def generate_report(project_root: Path, output: Path) -> Path:
             "</tr>"
         )
 
-    summary_rows = []
-    for rank, summary in enumerate(summaries, 1):
+    status_order = {"running": 0, "planned": 1, "not started": 1,
+                    "conditional": 2, "complete": 3, "failed": 4}
+    summary_entries = []
+    for summary in summaries:
         report_link = (
             f"<a href='{html.escape(str(summary['report_path'].relative_to(project_root)))}'>search report</a>"
             if summary["report_path"] else "—"
         )
         status_badge = f"<span class='badge {html.escape(_ranking_class(summary))}'>{html.escape(summary['status'])}</span>"
-        summary_rows.append(
-            "<tr>"
-            f"<td>{rank}</td>"
+        summary_entries.append((
+            status_order.get(summary["status"], 2), summary["label"],
+            f"{summary['coverage']:g}",
+            "<tr data-subsearch-coverage-angle='{}'>"
+            "<td>{}</td>"
             f"<td>{html.escape(summary['label'])}</td>"
             f"<td>{status_badge}</td>"
             f"<td>{summary['completed']}&nbsp;/<wbr> {summary['proposal_count']}</td>"
             f"<td>{report_link}</td>"
             "</tr>"
-        )
+        ))
     plan_path = project_root / "study_plan.yaml"
     planned = (yaml.safe_load(plan_path.read_text(encoding="utf-8")) or {}).get(
         "planned_subsearches", []) if plan_path.is_file() else []
-    for offset, item in enumerate(planned, len(summary_rows) + 1):
+    for item in planned:
         prerequisite = item.get("prerequisite")
         planned_status = str(item.get("status", "planned"))
         detail = (f"<br><span class='muted'>after {html.escape(str(prerequisite))}</span>"
                   if prerequisite else "")
-        summary_rows.append(
-            "<tr>"
-            f"<td>{offset}</td>"
+        angles = " ".join(str(value) for value in item.get("coverage_angles", []))
+        summary_entries.append((
+            status_order.get(planned_status, 1), str(item["label"]), angles,
+            "<tr data-subsearch-coverage-angle='{}'>"
+            "<td>{}</td>"
             f"<td>{html.escape(str(item['label']))}{detail}</td>"
             f"<td><span class='badge pending'>{html.escape(planned_status)}</span></td>"
             "<td>—</td><td>—</td>"
             "</tr>"
-        )
+        ))
+    summary_entries.sort(key=lambda item: (item[0], item[1]))
+    summary_rows = [entry[3].format(html.escape(entry[2]), rank)
+                    for rank, entry in enumerate(summary_entries, 1)]
 
     project_configs = [summary["config"] for summary in summaries if summary["config"]]
     if project_configs:
@@ -625,6 +634,17 @@ def generate_report(project_root: Path, output: Path) -> Path:
             for angle in coverage_angles
         )
     )
+    subsearch_angles = sorted({summary["coverage"] for summary in summaries} |
+                              {float(angle) for item in planned
+                               for angle in item.get("coverage_angles", [])})
+    subsearch_angle_filters = (
+        "<button type='button' class='angle-filter' data-subsearch-angle-filter='all' "
+        "aria-pressed='true'>All angles</button>" + "".join(
+            f"<button type='button' class='angle-filter' "
+            f"data-subsearch-angle-filter='{angle:g}' aria-pressed='false'>{angle:g}°</button>"
+            for angle in subsearch_angles
+        )
+    )
 
     document = f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}
 <title>Mouth-size / coverage grid</title><style>
@@ -675,7 +695,8 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 </section>
 <section>
 <h2>Sub-searches</h2>
-<table class='sortable-table'>
+<div class='angle-controls' aria-label='Filter sub-searches by coverage angle'>{subsearch_angle_filters}<span id='subsearch-filter-count' class='filter-count'>{len(summary_rows)} sub-searches</span></div>
+<table id='subsearch-table' class='sortable-table'>
 <thead><tr><th class='sortable' data-sort='number'>#</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Complete&nbsp;/ Proposed</th><th>Links</th></tr></thead>
 <tbody>{''.join(summary_rows)}</tbody>
 </table>
@@ -733,6 +754,23 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
         if (!row.hidden) visible += 1;
       }});
       candidateCount.textContent = `${{visible}} candidate${{visible === 1 ? '' : 's'}}`;
+    }});
+  }});
+  const subsearchTable = document.getElementById('subsearch-table');
+  const subsearchCount = document.getElementById('subsearch-filter-count');
+  document.querySelectorAll('[data-subsearch-angle-filter]').forEach((button) => {{
+    button.addEventListener('click', () => {{
+      const selected = button.dataset.subsearchAngleFilter;
+      let visible = 0;
+      document.querySelectorAll('[data-subsearch-angle-filter]').forEach((item) => {{
+        item.setAttribute('aria-pressed', String(item === button));
+      }});
+      Array.from(subsearchTable.tBodies[0].rows).forEach((row) => {{
+        const angles = row.dataset.subsearchCoverageAngle.split(' ');
+        row.hidden = selected !== 'all' && !angles.includes(selected);
+        if (!row.hidden) visible += 1;
+      }});
+      subsearchCount.textContent = `${{visible}} sub-search${{visible === 1 ? '' : 'es'}}`;
     }});
   }});
   const compare = (a, b, type, direction) => {{

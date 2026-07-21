@@ -1,13 +1,21 @@
 planned_subsearches:
   - label: 30 deg / 200-500 mm · comparable S baselines
-    prerequisite: before coupled K/N or local refinement
+    coverage_angles: [30]
+    prerequisite: current broad grids complete
     status: planned
   - label: 40 deg / 400 mm · matched coupled K/N ↔ local S (up to 3 rounds)
+    coverage_angles: [40]
   - label: 40 deg / best baseline mouth · coupled K/N ↔ local S if distinct
+    coverage_angles: [40]
   - label: 45 deg / 400 mm · matched coupled K/N ↔ local S (up to 3 rounds)
+    coverage_angles: [45]
   - label: 45 deg / best 350-450 mm baseline · coupled K/N ↔ local S if distinct
+    coverage_angles: [45]
   - label: 50 deg / 400 mm · matched coupled K/N ↔ local S (up to 3 rounds)
+    coverage_angles: [50]
   - label: 50 deg / best baseline mouth · coupled K/N ↔ local S if distinct
+    coverage_angles: [50]
   - label: 40/45/50 deg edge-mouth coupled closure
+    coverage_angles: [40, 45, 50]
     prerequisite: matched controls show material K/N movement or high edge uncertainty
     status: conditional
