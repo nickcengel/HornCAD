@@ -1,0 +1,130 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 25.0
+  intended_coverage_v_deg: 25.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  search_size: quick
+  max_evaluations: 9
+  initial_candidates: 8
+  random_seed: 17
+  minimum_candidate_distance: 0.08
+  derived_s_bounds:
+  - 0.69
+  - 3.01
+  inferior_screen_probability: 0.97
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  bounds:
+    length_mm:
+    - 144.515
+    - 269.265
+    extension_mm:
+    - 0.0
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 25.0
+    - 25.000001
+    osse_coverage_v_deg:
+    - 25.0
+    - 25.000001
+    k_h:
+    - 4.0
+    - 4.000001
+    k_v:
+    - 4.0
+    - 4.000001
+    n_h:
+    - 10.0
+    - 10.000001
+    n_v:
+    - 10.0
+    - 10.000001
+  initial_pool:
+  - label: uniform S=1, L=242.69 mm
+    values:
+      length_mm: 242.69
+      extension_mm: 0.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: uniform S=1.3, L=220.712 mm
+    values:
+      length_mm: 220.712
+      extension_mm: 0.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: uniform S=1.6, L=202.239 mm
+    values:
+      length_mm: 202.239
+      extension_mm: 0.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: uniform S=1.9, L=186.5 mm
+    values:
+      length_mm: 186.5
+      extension_mm: 0.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: uniform S=2.2, L=172.933 mm
+    values:
+      length_mm: 172.933
+      extension_mm: 0.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: uniform S=2.5, L=161.123 mm
+    values:
+      length_mm: 161.123
+      extension_mm: 0.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: uniform S=2.8, L=150.753 mm
+    values:
+      length_mm: 150.753
+      extension_mm: 0.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: uniform S=3, L=144.516 mm
+    values:
+      length_mm: 144.516
+      extension_mm: 0.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 0
