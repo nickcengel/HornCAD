@@ -17,8 +17,6 @@ ANCHORS = (
     ("35deg/400x400-s-grid", "candidate-002"),
     ("45deg/350x350", "candidate-003"),
     ("45deg/450x450-s-grid", "candidate-005"),
-    ("60deg/300x300-s-grid", "candidate-008"),
-    ("60deg/450x450-s-grid", "candidate-008"),
 )
 KN_POINTS = (
     (3.5, 10), (4.5, 10), (4, 5), (4, 15),

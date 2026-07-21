@@ -8,6 +8,3 @@ planned_subsearches:
   - label: 40/45/50 deg edge-mouth coupled closure
     prerequisite: matched controls show material K/N movement or high edge uncertainty
     status: conditional
-  - label: 60 deg / 450 mm K/N follow-up
-    prerequisite: central-angle program demonstrates it is still informative
-    status: conditional

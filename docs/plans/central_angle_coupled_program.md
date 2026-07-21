@@ -13,7 +13,8 @@ for selecting the more expensive coupled anchors.
 
 ## Priority and anchor selection
 
-The program runs before additional 25-degree or 60-degree follow-up work.
+The program supersedes further 60-degree work. Completed 60-degree results are
+retained as historical evidence, but no new 60-degree search is scheduled.
 
 - At 40, 45, and 50 degrees, always study 400 mm as the matched cross-angle
   control. Also study the highest-scoring baseline mouth when it is distinct
@@ -63,5 +64,4 @@ siblings of the baseline searches and use names such as
 `400x400-coupled-r01-kn` and `400x400-coupled-r01-s`, so their reports and
 candidate artifacts remain discoverable by the existing index scan.
 
-The older deferred 60-degree/450 mm K/N search is lower priority and should run
-only after this central-angle coupled program completes.
+No additional 60-degree search should be generated or queued.

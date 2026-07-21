@@ -55,5 +55,6 @@ Completed fixed-grid studies remain unchanged and retain their original search
 history. A finished study whose winner is not bracketed at N=1 resolution is
 eligible for a targeted follow-on closure search seeded from that winner. This
 retrospective work is lower priority than the central 40/45/50-degree program
-and does not repeat a complete coarse grid. Active BEM processes must not be
+and does not repeat a complete coarse grid. Completed 60-degree studies are
+excluded from retrospective closure. Active BEM processes must not be
 interrupted to adopt this policy.
