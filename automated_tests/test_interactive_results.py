@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import shutil
 import struct
 import tempfile
 import unittest
@@ -14,6 +15,9 @@ from app.tools.interactive_results import (
     _crossover_transition_weights, comparison_report, comparison_diagnostics,
     coverage_diagnostics, load_run, single_report,
 )
+
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 class InteractiveResultsTests(unittest.TestCase):
@@ -84,7 +88,7 @@ class InteractiveResultsTests(unittest.TestCase):
             surface_diagnostics = json.loads(
                 fixed.with_name("surface_diagnostics.json").read_text())
             self.assertIn("Horn acoustic parameters", single_text)
-            self.assertIn("report-schema: canonical-v9", single_text)
+            self.assertIn("report-schema: canonical-v10", single_text)
             self.assertIn("Surface diagnostics", single_text)
             self.assertIn("Coverage-window containment", single_text)
             self.assertIn("Angular slice-energy departure", single_text)
@@ -147,6 +151,10 @@ class InteractiveResultsTests(unittest.TestCase):
             )
             (candidate / "test_Surface.STL").write_bytes(
                 bytes(80) + struct.pack("<I", 1) + triangle)
+            shutil.copy2(
+                ROOT / "examples" / "mouth-size-coverage-grid" / "25deg" /
+                "200x200" / "project.yaml",
+                candidate / "project.yaml")
 
             report = single_report(run, bem / "test_Report.html")
             text = report.read_text()
@@ -156,7 +164,11 @@ class InteractiveResultsTests(unittest.TestCase):
         self.assertIn("Drag to orbit · wheel to zoom", text)
         self.assertIn("../test_Surface.STL", text)
         self.assertIn("new ResizeObserver(render)", text)
-        self.assertIn("ctx.strokeStyle = 'rgba(105, 214, 200, 0.38)'", text)
+        self.assertIn("const ringCount = ", text)
+        self.assertIn("const ringSize = ", text)
+        self.assertIn("const ringStep = Math.max(1, Math.ceil(ringCount / 28))", text)
+        self.assertIn("const columnStep = Math.max(1, Math.round(ringSize / 40))", text)
+        self.assertIn("ctx.strokeStyle = 'rgba(77, 182, 168, 0.38)'", text)
         self.assertIn("ctx.stroke();", text)
         self.assertNotIn("ctx.fill();", text)
 

@@ -885,8 +885,8 @@ def _surface_diagnostic_plot(runs: list[dict[str, Any]],
         config={"displaylogo": False, "scrollZoom": True, "responsive": True})
 
 
-def _embedded_stl_viewer(path: Path, triangle_limit: int = 6000) -> str:
-    """Return a self-contained canvas preview for an adjacent candidate STL."""
+def _embedded_stl_viewer(path: Path) -> str:
+    """Return a HornCAD-style structured wireframe for a candidate report."""
     candidate_dir = path.parent.parent
     if path.parent.name != "bem" or not candidate_dir.is_dir():
         return ""
@@ -896,27 +896,40 @@ def _embedded_stl_viewer(path: Path, triangle_limit: int = 6000) -> str:
     if not stl_paths:
         return ""
     stl_path = stl_paths[0]
-    payload = stl_path.read_bytes()
-    if len(payload) < 84:
+    project_path = candidate_dir / "project.yaml"
+    if not project_path.is_file():
         return ""
-    triangle_count = int.from_bytes(payload[80:84], "little")
-    if triangle_count < 1 or len(payload) < 84 + triangle_count * 50:
+    try:
+        from . import export_horncad as geometry
+    except ImportError:
+        import export_horncad as geometry
+    geometry.apply_horncad_yaml(project_path)
+    h_profile = geometry.profile("h")
+    v_profile = geometry.profile("v")
+    length = geometry.PARAMS["length"]
+    mouth_h = h_profile(length)
+    mouth_v = v_profile(length)
+    rings = []
+    extension = max(0.0, geometry.PARAMS["throat_extension"])
+    if extension > 0.0:
+        extension_stations = max(
+            2, round(geometry.Z_STATIONS * extension / max(length, 1e-9)) + 1)
+        rings.extend(geometry.conical_extension_ring(
+            index / (extension_stations - 1)) for index in range(extension_stations))
+    horn_samples = geometry.adaptive_profile_z_samples(
+        geometry.Z_STATIONS, length, h_profile, v_profile)
+    if extension > 0.0:
+        horn_samples = horn_samples[1:]
+    for profile_z in horn_samples:
+        tau = profile_z / max(length, 1e-9)
+        rings.append(geometry.ring_at(
+            tau, h_profile(profile_z), v_profile(profile_z), mouth_h, mouth_v))
+    if not rings or not rings[0]:
         return ""
-    record_type = np.dtype({
-        "names": ["normal", "vertices", "attribute"],
-        "formats": [("<f4", 3), ("<f4", (3, 3)), "<u2"],
-        "offsets": [0, 12, 48],
-        "itemsize": 50,
-    })
-    records = np.frombuffer(payload, dtype=record_type, count=triangle_count,
-                            offset=84)
-    if triangle_count > triangle_limit:
-        indices = np.linspace(0, triangle_count - 1, triangle_limit, dtype=int)
-        vertices = records["vertices"][indices]
-    else:
-        vertices = records["vertices"]
+    ring_count = len(rings)
+    ring_size = len(rings[0])
     encoded = base64.b64encode(
-        np.asarray(vertices, dtype="<f4").tobytes()).decode("ascii")
+        np.asarray(rings, dtype="<f4").tobytes()).decode("ascii")
     stl_name = html.escape(stl_path.name)
     viewer = """
 <section class='model-viewer'><div class='model-viewer-heading'><div><h2>Horn STL</h2><p class='hint'>Drag to orbit · wheel to zoom</p></div><a href='../__STL_NAME__'>STL</a></div>
@@ -929,6 +942,8 @@ def _embedded_stl_viewer(path: Path, triangle_limit: int = 6000) -> str:
   const bytes = new Uint8Array(binary.length);
   for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
   const values = new Float32Array(bytes.buffer);
+  const ringCount = __RING_COUNT__;
+  const ringSize = __RING_SIZE__;
   const points = [];
   let minX = Infinity, minY = Infinity, minZ = Infinity;
   let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
@@ -960,19 +975,40 @@ def _embedded_stl_viewer(path: Path, triangle_limit: int = 6000) -> str:
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, width, height);
     const scale = Math.min(width, height) * 0.78 * view.zoom / span;
-    ctx.strokeStyle = 'rgba(105, 214, 200, 0.38)';
-    ctx.lineWidth = 0.45;
-    ctx.beginPath();
-    for (let i = 0; i < points.length; i += 3) {
-      const p = [rotate(points[i]), rotate(points[i + 1]), rotate(points[i + 2])];
-      p.forEach((point, index) => {
-        const x = width / 2 + point.x * scale;
-        const y = height / 2 - point.y * scale;
-        if (index === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      });
-      ctx.closePath();
+    const drawPoint = (point, first) => {
+      const rotated = rotate(point);
+      const x = width / 2 + rotated.x * scale;
+      const y = height / 2 - rotated.y * scale;
+      if (first) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    };
+    const ringStep = Math.max(1, Math.ceil(ringCount / 28));
+    ctx.strokeStyle = 'rgba(77, 182, 168, 0.38)';
+    ctx.lineWidth = 0.8;
+    for (let ring = 0; ring < ringCount; ring += ringStep) {
+      ctx.beginPath();
+      for (let column = 0; column < ringSize; column += 1) {
+        drawPoint(points[ring * ringSize + column], column === 0);
+      }
+      ctx.closePath(); ctx.stroke();
     }
-    ctx.stroke();
+    ctx.strokeStyle = 'rgba(105, 214, 200, 0.76)';
+    ctx.lineWidth = 1.4;
+    ctx.beginPath();
+    for (let column = 0; column < ringSize; column += 1) {
+      drawPoint(points[(ringCount - 1) * ringSize + column], column === 0);
+    }
+    ctx.closePath(); ctx.stroke();
+    const columnStep = Math.max(1, Math.round(ringSize / 40));
+    for (let column = 0; column < ringSize; column += columnStep) {
+      ctx.strokeStyle = column % (columnStep * 4) === 0
+        ? 'rgba(148, 163, 173, 0.46)' : 'rgba(148, 163, 173, 0.22)';
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      for (let ring = 0; ring < ringCount; ring += 1) {
+        drawPoint(points[ring * ringSize + column], ring === 0);
+      }
+      ctx.stroke();
+    }
   };
   canvas.addEventListener('pointerdown', (event) => {
     view.dragging = true; view.x = event.clientX; view.y = event.clientY;
@@ -994,7 +1030,10 @@ def _embedded_stl_viewer(path: Path, triangle_limit: int = 6000) -> str:
   new ResizeObserver(render).observe(canvas); render();
 })();
 </script>"""
-    return viewer.replace("__STL_NAME__", stl_name).replace("__STL_DATA__", encoded)
+    return (viewer.replace("__STL_NAME__", stl_name)
+            .replace("__STL_DATA__", encoded)
+            .replace("__RING_COUNT__", str(ring_count))
+            .replace("__RING_SIZE__", str(ring_size)))
 
 
 def _write_html(path: Path, title: str, figure: go.Figure,
@@ -1012,7 +1051,7 @@ def _write_html(path: Path, title: str, figure: go.Figure,
                                   "responsive": True})
     surface_plot = _surface_diagnostic_plot(runs, surface_results)
     stl_viewer = _embedded_stl_viewer(path)
-    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v9 -->
+    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v10 -->
 <title>{html.escape(title)}</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}
