@@ -135,3 +135,7 @@ Synthetic surfaces must cover:
 
 Tests must also demonstrate stability under frequency decimation and angular
 resampling before any metric controls candidate selection.
+
+Empirical trends found with this score and the studies proposed to close the
+remaining sampling gaps are recorded in
+[`bem_design_trends_and_studies.md`](bem_design_trends_and_studies.md).
