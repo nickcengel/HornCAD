@@ -84,7 +84,7 @@ class InteractiveResultsTests(unittest.TestCase):
             surface_diagnostics = json.loads(
                 fixed.with_name("surface_diagnostics.json").read_text())
             self.assertIn("Horn acoustic parameters", single_text)
-            self.assertIn("report-schema: canonical-v8", single_text)
+            self.assertIn("report-schema: canonical-v9", single_text)
             self.assertIn("Surface diagnostics", single_text)
             self.assertIn("Coverage-window containment", single_text)
             self.assertIn("Angular slice-energy departure", single_text)
@@ -156,7 +156,7 @@ class InteractiveResultsTests(unittest.TestCase):
         self.assertIn("Drag to orbit · wheel to zoom", text)
         self.assertIn("../test_Surface.STL", text)
         self.assertIn("new ResizeObserver(render)", text)
-        self.assertIn("ctx.strokeStyle = 'rgba(105, 214, 200, 0.52)'", text)
+        self.assertIn("ctx.strokeStyle = 'rgba(105, 214, 200, 0.38)'", text)
         self.assertIn("ctx.stroke();", text)
         self.assertNotIn("ctx.fill();", text)
 

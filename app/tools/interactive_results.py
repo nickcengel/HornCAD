@@ -885,7 +885,7 @@ def _surface_diagnostic_plot(runs: list[dict[str, Any]],
         config={"displaylogo": False, "scrollZoom": True, "responsive": True})
 
 
-def _embedded_stl_viewer(path: Path, triangle_limit: int = 50000) -> str:
+def _embedded_stl_viewer(path: Path, triangle_limit: int = 6000) -> str:
     """Return a self-contained canvas preview for an adjacent candidate STL."""
     candidate_dir = path.parent.parent
     if path.parent.name != "bem" or not candidate_dir.is_dir():
@@ -960,8 +960,8 @@ def _embedded_stl_viewer(path: Path, triangle_limit: int = 50000) -> str:
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, width, height);
     const scale = Math.min(width, height) * 0.78 * view.zoom / span;
-    ctx.strokeStyle = 'rgba(105, 214, 200, 0.52)';
-    ctx.lineWidth = 0.55;
+    ctx.strokeStyle = 'rgba(105, 214, 200, 0.38)';
+    ctx.lineWidth = 0.45;
     ctx.beginPath();
     for (let i = 0; i < points.length; i += 3) {
       const p = [rotate(points[i]), rotate(points[i + 1]), rotate(points[i + 2])];
@@ -1012,7 +1012,7 @@ def _write_html(path: Path, title: str, figure: go.Figure,
                                   "responsive": True})
     surface_plot = _surface_diagnostic_plot(runs, surface_results)
     stl_viewer = _embedded_stl_viewer(path)
-    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v8 -->
+    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v9 -->
 <title>{html.escape(title)}</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}
