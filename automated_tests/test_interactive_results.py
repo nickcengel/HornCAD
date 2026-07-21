@@ -80,12 +80,22 @@ class InteractiveResultsTests(unittest.TestCase):
             fixed_text = fixed.read_text()
             fixed_diagnostics = json.loads(
                 fixed.with_name("coverage_diagnostics.json").read_text())
+            surface_diagnostics = json.loads(
+                fixed.with_name("surface_diagnostics.json").read_text())
             self.assertIn("Horn acoustic parameters", single_text)
-            self.assertIn("Coverage diagnostics", single_text)
+            self.assertIn("Surface diagnostics", single_text)
+            self.assertIn("Coverage-window containment", single_text)
+            self.assertIn("Angular slice-energy departure", single_text)
+            self.assertNotIn("Coverage Match", single_text)
+            self.assertNotIn("Coverage Smoothness", single_text)
+            self.assertNotIn("Waist Stability", single_text)
+            self.assertNotIn("Window Uniformity", single_text)
             self.assertIn("<strong>Evaluated band:</strong> 500–1000 Hz",
                           fixed_text)
             self.assertEqual(fixed_diagnostics["Candidate A"]["band_kind"],
                              "fixed optimization")
+            self.assertEqual(surface_diagnostics["Candidate A"]["band_kind"],
+                             "fixed shadow evaluation")
             self.assertIn("--bg:#0c1014", single_text)
             self.assertIn('"template":', single_text)
             self.assertIn('"paper_bgcolor":"#121820"', single_text)
@@ -106,10 +116,10 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("color-scheme:dark", text)
             self.assertIn("Normalized throat impedance magnitude", text)
             self.assertIn("Conical extension", text)
-            self.assertIn("Common evaluated band", text)
-            self.assertIn("<h3>Combined</h3>", text)
-            self.assertIn("<h3>Horizontal</h3>", text)
-            self.assertIn("<h3>Vertical</h3>", text)
+            self.assertIn("Surface diagnostics", text)
+            self.assertIn("<strong>Evaluated band:</strong>", text)
+            self.assertIn("<h3>A</h3>", text)
+            self.assertIn("<h3>D</h3>", text)
             self.assertLess(text.index("<th style='color:#2563eb'>A</th>"),
                             text.index("<th style='color:#dc2626'>B</th>"))
 

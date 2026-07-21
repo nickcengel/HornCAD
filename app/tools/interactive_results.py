@@ -13,6 +13,11 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import yaml
 
+try:
+    from .surface_diagnostics import surface_diagnostics
+except ImportError:
+    from surface_diagnostics import surface_diagnostics
+
 
 COLORS = ("#2563eb", "#dc2626", "#16a34a", "#9333ea")
 AIR_DENSITY_KG_M3 = 1.2041
@@ -759,24 +764,134 @@ def _diagnostic_tables(runs: list[dict[str, Any]],
             f"<table><tr>{header}</tr>{rows}</table>")
 
 
+def _surface_diagnostic_tables(runs: list[dict[str, Any]],
+                               diagnostics: dict[str, Any]) -> str:
+    def value(number: float | None, suffix: str = "", scale: float = 1.0) -> str:
+        if number is None or not np.isfinite(number):
+            return "—"
+        return f"{number * scale:.3g}{suffix}"
+
+    sections = []
+    for run in runs:
+        result = diagnostics[run["name"]]
+        if result["status"] != "available":
+            sections.append(
+                f"<div class='diagnostic-card'><h3>{html.escape(run['name'])}</h3>"
+                f"<p>{html.escape(result['reason'])}</p></div>")
+            continue
+        rows = []
+        for label, plane_name in (("Horizontal", "horizontal"),
+                                  ("Vertical", "vertical")):
+            plane = result[plane_name]
+            containment = plane["containment"]
+            distribution = plane["distribution"]
+            stability = plane["slice_energy_stability"]
+            line = plane["minus_six_line"]
+            worst = containment["worst_windows"]
+            rows.extend((
+                (f"{label} mean containment",
+                 value(containment["mean_fraction"], "%", 100)),
+                (f"{label} worst raw containment",
+                 value(worst["raw"]["minimum"], "%", 100)),
+                (f"{label} worst 1/3-oct containment",
+                 value(worst["1/3 octave"]["minimum"], "%", 100)),
+                (f"{label} profile RMS error",
+                 value(distribution["rms_profile_error_db"], " dB")),
+                (f"{label} outward-rise violation",
+                 value(distribution["rms_outward_rise_violation_db"], " dB")),
+                (f"{label} slice-energy RMS departure",
+                 value(stability["rms_departure_db"], " dB")),
+                (f"{label} slice-energy peak-to-peak",
+                 value(stability["peak_to_peak_db"], " dB")),
+                (f"{label} −6 dB RMS coverage error",
+                 value(line["rms_coverage_error_deg"], "°")),
+                (f"{label} missing −6 dB crossings",
+                 value(line["missing_fraction"], "%", 100)),
+            ))
+        table_rows = "".join(
+            f"<tr><th>{html.escape(label)}</th><td>{measurement}</td></tr>"
+            for label, measurement in rows)
+        sections.append(
+            f"<div class='diagnostic-card'><h3>{html.escape(run['name'])}</h3>"
+            f"<p><strong>Evaluated band:</strong> {result['band_lower_hz']:g}–"
+            f"{result['band_upper_hz']:g} Hz</p><table>{table_rows}</table></div>")
+    return f"<div class='surface-summary'>{''.join(sections)}</div>"
+
+
+def _surface_diagnostic_plot(runs: list[dict[str, Any]],
+                             diagnostics: dict[str, Any]) -> str:
+    figure = make_subplots(
+        rows=4, cols=1, shared_xaxes=True,
+        subplot_titles=("Coverage-window containment",
+                        "In-window profile RMS error",
+                        "Angular slice-energy departure",
+                        "−6 dB coverage-angle error"),
+        vertical_spacing=.07)
+    dash = {"horizontal": "solid", "vertical": "dash"}
+    for run_index, run in enumerate(runs):
+        result = diagnostics[run["name"]]
+        if result["status"] != "available":
+            continue
+        for plane_name, plane_label in (("horizontal", "H"), ("vertical", "V")):
+            traces = result[plane_name]["traces"]
+            frequency = traces["frequencies_hz"]
+            name = f"{run['name']} {plane_label}"
+            common = {
+                "x": frequency, "mode": "lines", "name": name,
+                "legendgroup": name, "line": {
+                    "color": COLORS[run_index % len(COLORS)],
+                    "dash": dash[plane_name], "width": 2.2},
+            }
+            figure.add_trace(go.Scatter(
+                **common, y=np.asarray(traces["containment_fraction"]) * 100,
+                showlegend=True,
+                hovertemplate="%{x:.1f} Hz<br>%{y:.2f}%<extra>" +
+                              html.escape(name) + "</extra>"), row=1, col=1)
+            figure.add_trace(go.Scatter(
+                **common, y=traces["profile_rms_error_db"], showlegend=False,
+                hovertemplate="%{x:.1f} Hz<br>%{y:.3f} dB<extra>" +
+                              html.escape(name) + "</extra>"), row=2, col=1)
+            figure.add_trace(go.Scatter(
+                **common, y=traces["slice_energy_departure_db"], showlegend=False,
+                hovertemplate="%{x:.1f} Hz<br>%{y:.3f} dB<extra>" +
+                              html.escape(name) + "</extra>"), row=3, col=1)
+            figure.add_trace(go.Scatter(
+                **common, y=traces["minus_six_error_deg"], showlegend=False,
+                hovertemplate="%{x:.1f} Hz<br>%{y:.3f}°<extra>" +
+                              html.escape(name) + "</extra>"), row=4, col=1)
+    figure.add_hline(y=0, row=3, col=1, line={"color": "#94a3ad", "dash": "dot"})
+    figure.add_hline(y=0, row=4, col=1, line={"color": "#94a3ad", "dash": "dot"})
+    all_frequencies = np.concatenate([
+        np.asarray(run["frequencies"], dtype=float) for run in runs])
+    figure.update_xaxes(**_frequency_axis(all_frequencies))
+    figure.update_yaxes(title_text="Contained power (%)", row=1, col=1)
+    figure.update_yaxes(title_text="RMS error (dB)", row=2, col=1)
+    figure.update_yaxes(title_text="Departure (dB)", row=3, col=1)
+    figure.update_yaxes(title_text="Angle error (degrees)", row=4, col=1)
+    figure.update_layout(
+        height=980, hovermode="x unified", template="plotly_dark",
+        paper_bgcolor="#121820", plot_bgcolor="#161f29",
+        font={"color": "#e5edf2"}, legend={"orientation": "h"})
+    return figure.to_html(
+        full_html=False, include_plotlyjs=False,
+        config={"displaylogo": False, "scrollZoom": True, "responsive": True})
+
+
 def _write_html(path: Path, title: str, figure: go.Figure,
                 runs: list[dict[str, Any]], diagnostics: dict[str, Any] | None = None,
-                comparison: bool = False) -> Path:
+                comparison: bool = False,
+                surface_results: dict[str, Any] | None = None) -> Path:
     if diagnostics is None:
         diagnostics = {run["name"]: coverage_diagnostics(run) for run in runs}
-    band_explanation = (
-        "Comparison values are recomputed on one shared 48-point-per-octave "
-        "log-frequency grid over the overlapping valid passband."
-        if comparison else
-        "The automatic passband starts after both planes sustain genuine −6 dB "
-        "crossings for one-third octave."
-    )
+    if surface_results is None:
+        surface_results = {run["name"]: surface_diagnostics(run) for run in runs}
     figure.update_layout(template="plotly_dark", paper_bgcolor="#121820",
                          plot_bgcolor="#161f29", font={"color": "#e5edf2"})
     plot = figure.to_html(full_html=False, include_plotlyjs=True,
                           config={"displaylogo": False, "scrollZoom": True,
                                   "responsive": True})
-    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v2 -->
+    surface_plot = _surface_diagnostic_plot(runs, surface_results)
+    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v3 -->
 <title>{html.escape(title)}</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}
@@ -785,7 +900,7 @@ main{{width:100%;padding:18px}} h1{{margin:0 0 12px}}
 table{{border-collapse:collapse;width:100%;min-width:max-content}} th,td{{padding:7px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}
 th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);margin:0 0 12px}}
 .parameters{{overflow-x:auto}}.plotly-graph-div{{width:100%!important}}
-.diagnostic-band{{font-size:1.05rem}} .diagnostic-grid{{display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:14px}}
+.diagnostic-band{{font-size:1.05rem}} .diagnostic-grid{{display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:14px}}.surface-summary{{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:14px}}
 .diagnostic-card{{border:1px solid var(--line);border-radius:8px;padding:0 10px 10px}} .diagnostic-card h3{{margin:10px 0}}
 .score{{position:relative;min-width:85px}} .score span{{position:relative;z-index:1;font-variant-numeric:tabular-nums}}
 .score i{{position:absolute;left:0;bottom:2px;height:4px;border-radius:2px;background:#64748b}}
@@ -795,10 +910,10 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 </style></head><body><main><h1>{html.escape(title)}</h1>
 <p class='hint'>Hover for exact coordinates. Click a chart to enable mouse-wheel zoom; click outside it to restore page scrolling. Drag to zoom; double-click to reset; use the legend to hide traces.</p>
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
-{_parameter_table(runs)}</section><section class='parameters'><h2>Coverage diagnostics</h2>
-{_diagnostic_tables(runs, diagnostics, comparison)}
-<p class='hint'>All diagnostics are percentages where 100% is ideal. Coverage Match integrates the smoothed −6 dB half-angle error over the diagnostic band, recording under-coverage and over-coverage separately while applying the assumed 12 dB/oct crossover weight near crossover. Coverage Smoothness combines fine ripple after local smoothing with broader wiggle away from a one-third-octave trend, then applies a calibrated score gain so visibly chaotic, peaky, or bumpy traces lose score quickly. Waist Stability scores the depth of the broad lower-band narrowing trough; if no interior trough is found after the crossover transition, it scores 100%. Window Uniformity samples response at half the intended coverage angle, scores weighted RMS dB deviation from that trace's average level, and applies an extra penalty for positive off-axis regions inside the measured −6 dB window. {band_explanation}</p>
-</section></main><script>
+{_parameter_table(runs)}</section><section class='parameters'><h2>Surface diagnostics</h2>
+{_surface_diagnostic_tables(runs, surface_results)}
+<p class='hint'>These are raw calibration measurements, not weighted scores. Containment integrates relative power inside the intended coverage half-angle. Profile error compares the in-window surface with a straight 0 to −6 dB angular falloff. Slice-energy departure measures changes in total relative angular energy from 0° through 90° at each frequency. The −6 dB line remains a secondary measurement.</p>
+</section><section class='plot'>{surface_plot}</section></main><script>
 (() => {{
   let armed = null;
   const disarm = () => {{
@@ -827,6 +942,8 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
     path.write_text(document)
     diagnostics_path = path.with_name("coverage_diagnostics.json")
     diagnostics_path.write_text(json.dumps(diagnostics, indent=2) + "\n")
+    surface_path = path.with_name("surface_diagnostics.json")
+    surface_path.write_text(json.dumps(surface_results, indent=2) + "\n")
     return path
 
 
@@ -907,8 +1024,11 @@ def single_report(run_dir: Path, output: Path | None = None,
     if evaluation_frequencies is not None:
         diagnostics = {run["name"]: coverage_diagnostics(
             run, evaluation_frequencies, fixed_band=fixed_band)}
+    surface_results = {run["name"]: surface_diagnostics(
+        run, evaluation_frequencies, fixed_band=fixed_band)}
     return _write_html(output or run_dir / "interactive_report.html",
-                       title or run["name"], figure, [run], diagnostics)
+                       title or run["name"], figure, [run], diagnostics,
+                       surface_results=surface_results)
 
 
 def comparison_report(run_dirs: list[Path], output: Path,
@@ -954,7 +1074,10 @@ def comparison_report(run_dirs: list[Path], output: Path,
     else:
         diagnostics = {run["name"]: coverage_diagnostics(
             run, evaluation_frequencies, fixed_band=fixed_band) for run in runs}
-    return _write_html(output, title, figure, runs, diagnostics, comparison=True)
+    surface_results = {run["name"]: surface_diagnostics(
+        run, evaluation_frequencies, fixed_band=fixed_band) for run in runs}
+    return _write_html(output, title, figure, runs, diagnostics, comparison=True,
+                       surface_results=surface_results)
 
 
 def main() -> None:
