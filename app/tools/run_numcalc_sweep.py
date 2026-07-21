@@ -93,6 +93,8 @@ def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
               frequencies_hz: np.ndarray, *, elements_per_wavelength: float = 8.0,
               angles: int = 91, maximum_workers: int = 0,
               memory_limit_gib: float | None = None, max_iterations: int = 250,
+              quadrant_side_samples: int | None = None,
+              quadrant_axial_stations: int | None = None,
               resume: bool = True, dry_run: bool = False) -> dict:
     started = time.perf_counter()
     maximum_frequency = float(np.max(frequencies_hz))
@@ -100,7 +102,9 @@ def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
         yaml_path.read_bytes() + Path(__file__).read_bytes()
         + Path(build_quadrant_acoustic_mesh.__code__.co_filename).read_bytes()
         + np.asarray(frequencies_hz, dtype=float).tobytes()
-        + f"{elements_per_wavelength}:{angles}".encode()).hexdigest()[:12]
+        + (f"{elements_per_wavelength}:{angles}:"
+           f"{quadrant_side_samples}:{quadrant_axial_stations}").encode()
+    ).hexdigest()[:12]
     root = output_dir / f"{yaml_path.stem}-NumCalc-{run_hash}"
     root.mkdir(parents=True, exist_ok=True)
     mesh_npz = root / "quadrant_mesh.npz"
@@ -118,7 +122,9 @@ def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
                 symmetry_planes=("x=0", "y=0"))
     else:
         mesh = build_quadrant_acoustic_mesh(
-            yaml_path, MeshSettings(maximum_frequency, elements_per_wavelength))
+            yaml_path, MeshSettings(maximum_frequency, elements_per_wavelength),
+            quadrant_side_samples=quadrant_side_samples,
+            quadrant_axial_stations=quadrant_axial_stations)
         np.savez_compressed(
             mesh_npz, vertices=mesh.surface.vertices, faces=mesh.surface.faces,
             domain_indices=mesh.domain_indices,

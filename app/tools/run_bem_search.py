@@ -889,7 +889,10 @@ def _isolated_sweep(result_queue: Any, project_path: Path, executable: Path,
             elements_per_wavelength=float(solver.get("elements_per_wavelength", 6)),
             angles=int(solver.get("angles", 91)),
             maximum_workers=int(solver.get("workers", 0)),
-            memory_limit_gib=solver.get("memory_limit_gib"), resume=True)
+            memory_limit_gib=solver.get("memory_limit_gib"),
+            quadrant_side_samples=solver.get("quadrant_side_samples"),
+            quadrant_axial_stations=solver.get("quadrant_axial_stations"),
+            resume=True)
         result_queue.put(("ok", manifest))
     except Exception as error:
         result_queue.put(("error", f"{type(error).__name__}: {error}"))
@@ -1076,7 +1079,14 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
         "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
     })
     executable = None if dry_run else find_numcalc(binary)
-    solver = search.get("solver", {})
+    solver = dict(search.get("solver", {}))
+    if retry_failed:
+        # A lower-density authored seed avoids native Netgen aborts at extreme
+        # boundary geometries. Netgen still enforces the identical wavelength
+        # edge limit on the final surface; only its faceted starting shell is
+        # simplified for explicit recovery runs.
+        solver.setdefault("quadrant_side_samples", 8)
+        solver.setdefault("quadrant_axial_stations", 10)
     ppo = float(solver.get("points_per_octave", 12))
     epw = float(solver.get("elements_per_wavelength", 6))
     angles = int(solver.get("angles", 91))
