@@ -5,6 +5,7 @@ import tempfile
 import unittest
 
 from app.tools.generate_mouth_size_coverage_grid_report import (
+    _nice_plot_bounds,
     _scatter_svg,
     _legacy_ranking_score,
     _search_summary,
@@ -23,8 +24,12 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
             {"x": 3, "y": 90, "coverage": 25},
         ], "X", "Score")
 
-        self.assertIn("data-y-min='75.000000'", plot)
-        self.assertIn("data-y-max='90.000000'", plot)
+        self.assertIn("data-y-min='70.000000'", plot)
+        self.assertIn("data-y-max='95.000000'", plot)
+        self.assertEqual(plot.count("class='scatter-point'"), 2)
+
+    def test_plot_bounds_buffer_and_round_outward(self) -> None:
+        self.assertEqual(_nice_plot_bounds(70.063, 88.301), (65, 90))
 
     def test_legacy_ranking_score_uses_the_previous_four_metrics(self) -> None:
         candidate = {"diagnostics": {"combined": {

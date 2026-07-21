@@ -29,6 +29,20 @@ LEGACY_RANKING_KEYS = (
 PLOT_COLORS = ("#69d6c8", "#f6bd60", "#f28482", "#8e9aef", "#90be6d")
 
 
+def _nice_plot_bounds(lower: float, upper: float) -> tuple[float, float]:
+    """Add 5% breathing room and round outward to readable tick bounds."""
+    span = max(upper - lower, 1.0)
+    buffered_lower = lower - span * 0.05
+    buffered_upper = upper + span * 0.05
+    rough_step = (buffered_upper - buffered_lower) / 5
+    magnitude = 10 ** math.floor(math.log10(max(rough_step, 1e-9)))
+    normalized = rough_step / magnitude
+    nice_factor = 1 if normalized <= 1 else 2 if normalized <= 2 else 5 if normalized <= 5 else 10
+    step = nice_factor * magnitude
+    return (math.floor(buffered_lower / step) * step,
+            math.ceil(buffered_upper / step) * step)
+
+
 def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
                  *, trends: bool = False, label_points: bool = False) -> str:
     if not points:
@@ -41,7 +55,7 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
     # Focus the comparison on the useful upper half of candidate performance.
     # Values below the study mean remain part of the fitted trends but fall below
     # the displayed score window.
-    y_min, y_max = fmean(ys), max(ys)
+    y_min, y_max = _nice_plot_bounds(fmean(ys), max(ys))
     x_pad = max((x_max - x_min) * .06, .05)
     x_min, x_max = x_min - x_pad, x_max + x_pad
     plot_width, plot_height = width - left - right, height - top - bottom
@@ -89,6 +103,8 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
                 for x in trend_x)
             parts.append(f"<polyline class='plot-trend' stroke='{colors[coverage]}' points='{coordinates}'/>")
     for point in points:
+        if not y_min <= float(point["y"]) <= y_max:
+            continue
         coverage = float(point["coverage"])
         color = colors[coverage]
         radius = float(point.get("radius", 4.2))
