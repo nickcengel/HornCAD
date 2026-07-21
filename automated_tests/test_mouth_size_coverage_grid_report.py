@@ -41,12 +41,12 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn(">Final surface score</th>", report)
         self.assertIn(">Previous rank</th>", report)
         self.assertIn(">Previous diagnostic score</th>", report)
-        self.assertIn(">Newest</th>", report)
+        self.assertIn(">Date</th>", report)
         self.assertNotIn(">New rank</th>", report)
         self.assertIn(
             "<thead><tr><th class='sortable' data-sort='text'>Candidate</th>"
             "<th class='sortable' data-column='surface-score' data-sort='number'>"
-            "Final surface score</th><th class='sortable' data-sort='number'>Newest</th>",
+            "Final surface score</th><th class='sortable' data-sort='number'>Date</th>",
             report,
         )
         self.assertIn("Candidates are ranked by the final surface score", report)
