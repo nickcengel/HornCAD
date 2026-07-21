@@ -10,6 +10,7 @@ from pathlib import Path
 from statistics import fmean
 from typing import Any
 
+import numpy as np
 import yaml
 
 try:
@@ -24,6 +25,109 @@ LEGACY_RANKING_KEYS = (
     "waist_stability_percent",
     "window_uniformity_percent",
 )
+PLOT_COLORS = ("#69d6c8", "#f6bd60", "#f28482", "#8e9aef", "#90be6d")
+
+
+def _surface_mean(candidate: dict[str, Any], path: tuple[str, ...],
+                  scale: float = 1.0) -> float | None:
+    result = candidate.get("surface_diagnostics", {})
+    values = []
+    if result.get("status") != "available":
+        return None
+    for plane_name in ("horizontal", "vertical"):
+        selected: Any = result.get(plane_name, {})
+        for key in path:
+            selected = selected.get(key, {}) if isinstance(selected, dict) else None
+        if not isinstance(selected, (int, float)):
+            return None
+        values.append(float(selected) * scale)
+    return fmean(values)
+
+
+def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
+                 *, trends: bool = False, label_points: bool = False,
+                 diagnostic_colors: bool = False) -> str:
+    if not points:
+        return "<p class='muted'>No completed candidates yet.</p>"
+    width, height = 720, 390
+    left, right, top, bottom = 64, 22, 24, 52
+    xs = [float(point["x"]) for point in points]
+    ys = [float(point["y"]) for point in points]
+    x_min, x_max = min(xs), max(xs)
+    y_min, y_max = min(ys), max(ys)
+    x_pad = max((x_max - x_min) * .06, .05)
+    y_pad = max((y_max - y_min) * .08, 1.0)
+    x_min, x_max = x_min - x_pad, x_max + x_pad
+    y_min, y_max = y_min - y_pad, y_max + y_pad
+    plot_width, plot_height = width - left - right, height - top - bottom
+
+    def sx(value: float) -> float:
+        return left + (value - x_min) * plot_width / max(x_max - x_min, 1e-9)
+
+    def sy(value: float) -> float:
+        return top + (y_max - value) * plot_height / max(y_max - y_min, 1e-9)
+
+    coverages = sorted({float(point["coverage"]) for point in points})
+    colors = {coverage: PLOT_COLORS[index % len(PLOT_COLORS)]
+              for index, coverage in enumerate(coverages)}
+    parts = [f"<svg class='trend-plot' viewBox='0 0 {width} {height}' role='img'>"]
+    for index in range(6):
+        fraction = index / 5
+        x_value = x_min + fraction * (x_max - x_min)
+        y_value = y_min + fraction * (y_max - y_min)
+        x = sx(x_value)
+        y = sy(y_value)
+        parts.append(f"<line class='plot-grid' x1='{x:.2f}' x2='{x:.2f}' y1='{top}' y2='{height-bottom}'/>")
+        parts.append(f"<text class='plot-tick' x='{x:.2f}' y='{height-bottom+20}' text-anchor='middle'>{x_value:.2g}</text>")
+        parts.append(f"<line class='plot-grid' x1='{left}' x2='{width-right}' y1='{y:.2f}' y2='{y:.2f}'/>")
+        parts.append(f"<text class='plot-tick' x='{left-9}' y='{y+4:.2f}' text-anchor='end'>{y_value:.3g}</text>")
+    if trends:
+        for coverage in coverages:
+            group = [point for point in points if float(point["coverage"]) == coverage]
+            unique_x = sorted({float(point["x"]) for point in group})
+            if len(unique_x) < 2:
+                continue
+            degree = min(2, len(unique_x) - 1)
+            coefficients = np.polyfit(
+                [float(point["x"]) for point in group],
+                [float(point["y"]) for point in group], degree)
+            trend_x = np.linspace(min(unique_x), max(unique_x), 48)
+            coordinates = " ".join(
+                f"{sx(float(x)):.2f},{sy(float(np.polyval(coefficients, x))):.2f}"
+                for x in trend_x)
+            parts.append(f"<polyline class='plot-trend' stroke='{colors[coverage]}' points='{coordinates}'/>")
+    for point in points:
+        coverage = float(point["coverage"])
+        color = colors[coverage]
+        if diagnostic_colors:
+            containment = max(0.0, min(100.0, float(point.get("containment", 0))))
+            hue = 8 + containment * 1.25
+            color = f"hsl({hue:.1f} 62% 58%)"
+        radius = float(point.get("radius", 4.2))
+        tooltip = html.escape(str(point.get("tooltip", "candidate")))
+        parts.append(
+            f"<circle cx='{sx(float(point['x'])):.2f}' cy='{sy(float(point['y'])):.2f}' "
+            f"r='{radius:.2f}' fill='{color}'><title>{tooltip}</title></circle>")
+        if label_points and point.get("label"):
+            parts.append(
+                f"<text class='plot-label' x='{sx(float(point['x']))+6:.2f}' "
+                f"y='{sy(float(point['y']))-6:.2f}'>{html.escape(str(point['label']))}</text>")
+    parts.extend([
+        f"<text class='plot-axis-label' x='{left + plot_width/2:.2f}' y='{height-8}' text-anchor='middle'>{html.escape(x_label)}</text>",
+        f"<text class='plot-axis-label' transform='translate(17 {top + plot_height/2:.2f}) rotate(-90)' text-anchor='middle'>{html.escape(y_label)}</text>",
+    ])
+    if diagnostic_colors:
+        parts.append(
+            f"<text class='plot-label' x='{left+8}' y='{top+14}'>"
+            "Color: mean containment · Size: surface score</text>")
+    else:
+        legend_x = left + 8
+        for coverage in coverages:
+            parts.append(f"<circle cx='{legend_x}' cy='{top+10}' r='4' fill='{colors[coverage]}'/>")
+            parts.append(f"<text class='plot-label' x='{legend_x+7}' y='{top+14}'>{coverage:g}°</text>")
+            legend_x += 66
+    parts.append("</svg>")
+    return "".join(parts)
 
 
 def _legacy_ranking_score(candidate: dict[str, Any]) -> float | None:
@@ -178,6 +282,70 @@ def generate_report(project_root: Path, output: Path) -> Path:
         row["label"] = candidate.get("proposal_source", "").replace("_", " ").strip().title() or "Candidate"
         if row["label"] == "Seed":
             row["label"] = "Seed design"
+
+    score_vs_s = []
+    score_vs_ratio = []
+    diagnostic_tradeoff = []
+    best_by_pair: dict[tuple[float, float], dict[str, Any]] = {}
+    for row in candidate_rows:
+        score = row["surface_ranking_score"]
+        if score is None:
+            continue
+        candidate = row["candidate"]
+        summary = row["search"]
+        derived = candidate.get("derived", {})
+        s_values = [derived.get("s_h"), derived.get("s_v")]
+        s_value = (fmean(float(value) for value in s_values)
+                   if all(isinstance(value, (int, float)) for value in s_values)
+                   else None)
+        tooltip = (f"{row['artifact_stem']} · {summary['coverage']:g}° · "
+                   f"{summary['mouth']:g} mm · score {score:.1f}%")
+        common = {"y": score, "coverage": summary["coverage"],
+                  "tooltip": tooltip}
+        if s_value is not None:
+            score_vs_s.append({**common, "x": s_value})
+        score_vs_ratio.append({**common, "x": row["length_mouth_ratio"]})
+        pair_key = (summary["coverage"], summary["mouth"])
+        if pair_key not in best_by_pair or score > best_by_pair[pair_key]["y"]:
+            best_by_pair[pair_key] = {
+                **common, "x": summary["mouth"],
+                "label": f"S={s_value:.2g}" if s_value is not None else "",
+            }
+        profile = _surface_mean(
+            candidate, ("distribution", "rms_profile_error_db"))
+        slice_departure = _surface_mean(
+            candidate, ("slice_energy_stability", "rms_departure_db"))
+        containment = _surface_mean(
+            candidate, ("containment", "mean_fraction"), 100.0)
+        if profile is not None and slice_departure is not None and containment is not None:
+            diagnostic_tradeoff.append({
+                "x": profile, "y": slice_departure,
+                "coverage": summary["coverage"], "containment": containment,
+                "radius": 3.0 + score / 25.0,
+                "tooltip": f"{tooltip} · containment {containment:.1f}%",
+            })
+
+    trend_plots = (
+        ("Final surface score vs S",
+         "The broad equal-opportunity sweep; curves are quadratic visual trends, not fitted design laws.",
+         _scatter_svg(score_vs_s, "Derived S", "Final surface score (%)", trends=True)),
+        ("Final surface score vs mouth/length ratio",
+         "Translates the S sweep into the practical relative-length constraint.",
+         _scatter_svg(score_vs_ratio, "Mouth width / length", "Final surface score (%)", trends=True)),
+        ("Best score vs mouth width",
+         "Best completed candidate for each mouth/coverage pair; labels report its S value.",
+         _scatter_svg(list(best_by_pair.values()), "Mouth width (mm)",
+                      "Best final surface score (%)", trends=True,
+                      label_points=True)),
+        ("Profile error vs slice-energy departure",
+         "Point color represents mean containment; point size represents final surface score.",
+         _scatter_svg(diagnostic_tradeoff, "Profile RMS error (dB)",
+                      "Slice-energy RMS departure (dB)", diagnostic_colors=True)),
+    )
+    plots_html = "".join(
+        f"<article class='plot-card'><h3>{html.escape(title)}</h3>"
+        f"<p class='muted'>{html.escape(description)}</p>{plot}</article>"
+        for title, description, plot in trend_plots)
 
     def surface_pair(candidate: dict[str, Any], path: tuple[str, ...],
                      suffix: str = "", scale: float = 1.0) -> tuple[str, str]:
@@ -338,9 +506,10 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 .wide td:nth-child(5), .wide td:nth-child(6), .wide td:nth-child(7), .wide td:nth-child(8), .wide td:nth-child(9){{white-space:nowrap}}
 .sortable{{cursor:pointer;user-select:none}}.axis-pair{{white-space:normal}}[hidden]{{display:none!important}}
 .column-controls{{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}}.column-toggle{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}
+.plot-grid-layout{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}.plot-card{{min-width:0;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:12px}}.plot-card .muted{{margin:0 0 8px;min-height:42px}}.trend-plot{{display:block;width:100%;height:auto;background:#0d1319;border-radius:6px}}.plot-grid{{stroke:#263541;stroke-width:1}}.plot-trend{{fill:none;stroke-width:2.4;opacity:.92}}.plot-tick,.plot-label{{fill:var(--muted);font-size:11px}}.plot-axis-label{{fill:var(--ink);font-size:12px;font-weight:600}}.trend-plot circle{{stroke:#0c1014;stroke-width:1;opacity:.82}}
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
-@media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
+@media(max-width:900px){{.plot-grid-layout{{grid-template-columns:1fr}}}}@media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
 </style></head><body><main>
 <h1>Mouth-size / coverage grid</h1>
 <p class='muted'>Candidates are ranked by the final surface score. Previous rank and previous diagnostic score are shown beside it for direct comparison. The final score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%.</p>
@@ -354,6 +523,10 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <h2>Project range</h2>
 <table><tr><th>Coverage targets</th><th>Mouth sizes</th><th>Fixed K&nbsp;/ N</th><th>Sweep&nbsp;/ crossover</th><th>Length-mouth ratios</th></tr>
 <tr><td>{coverage_targets} deg</td><td>{mouth_sizes} mm</td><td>K={fixed_k}, N={fixed_n}</td><td>{sweep_lower}-{sweep_upper} Hz&nbsp;/<wbr> {crossover} Hz</td><td>{", ".join(f"{ratio:g}" for ratio in ratios) if ratios != "—" else "—"}</td></tr></table>
+</section>
+<section>
+<h2>Candidate performance trends</h2>
+<div class='plot-grid-layout'>{plots_html}</div>
 </section>
 <section>
 <h2>Candidates</h2>
