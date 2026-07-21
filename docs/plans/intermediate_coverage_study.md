@@ -1,5 +1,9 @@
 # Intermediate Coverage Study: 40° and 50°
 
+The supported study domain is 25° through 50° half-coverage. The exploratory
+60° family has been archived and is not part of active comparisons or future
+work.
+
 ## Motivation
 
 The completed square-mouth survey sampled 25°, 35°, 45°, and 60°. Its best

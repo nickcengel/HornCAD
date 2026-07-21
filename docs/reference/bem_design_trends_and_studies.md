@@ -2,6 +2,11 @@
 
 ## Scope
 
+The supported square-horn study domain is 25 through 50 degrees half-coverage.
+Earlier 60-degree results are retained only as a compact historical summary in
+`archived_60deg_bem_summary.md`; they are excluded from active examples,
+ranking, interpolation, and proposed work.
+
 This document records the design trends found by reviewing the scored BEM
 results under `examples/` after introduction of the final surface score. The
 review included 329 scored records representing 322 unique design signatures.
@@ -121,8 +126,6 @@ Use these only inside the conditions supported by the sample set:
 - choose a coverage-dependent mouth/length range before optimizing secondary
   shape variables;
 - for 45-degree square designs, begin with mouth/length from 2.5 to 3.1;
-- extend 60-degree searches beyond mouth/length 4.3 before accepting an
-  optimum;
 - start K between 4 and 7, with explicit samples above the old K = 5 boundary;
 - start N between 5 and 10 and concentrate on N = 6 to 8;
 - deprioritize very long designs even when their mean containment is high;
@@ -136,7 +139,8 @@ The existing data leave these important gaps:
 
 - 25- and 35-degree larger mouths lack the lower mouth/length ratios sampled
   for smaller mouths;
-- the 60-degree result improves to the shortest-length boundary everywhere;
+- the archived 60-degree result improved to the shortest-length boundary and
+  therefore did not establish an optimum;
 - K above 5 is absent from the controlled square study;
 - K, N, and relative length have not been studied as a controlled interaction;
 - nonzero extension is sparse and confounded with unrelated variables;
@@ -158,11 +162,11 @@ rather than consuming more study time.
 
 ### Study 1: complete the coverage / relative-length map
 
-This is the highest-priority study. Give every existing mouth-size and coverage
-pair the same nine-point S sweep: 0.7, 1.0, 1.3, 1.6, 1.9, 2.2, 2.5, 2.8, and
-3.0. Invert S to length independently for each geometry, and hold K = 4 and
-N = 10 fixed. Store these as separate `*-s-grid` searches so the original
-ledgers remain intact and both rankings can be compared.
+This is the highest-priority study. Within the supported 25--50-degree domain,
+give every selected mouth-size and coverage pair a comparable S opportunity.
+Invert S to length independently for each geometry, and hold K = 4 and N = 10
+fixed. Store these as separate `*-s-grid` searches so the original ledgers
+remain intact and both rankings can be compared.
 
 Run the complete broad pass before adding local detail around any apparent
 optimum. This avoids preferentially refining the existing 45-degree cluster
