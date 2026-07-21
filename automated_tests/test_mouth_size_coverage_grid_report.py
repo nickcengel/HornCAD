@@ -114,7 +114,8 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("Final surface score vs coverage-normalized length", report)
         self.assertIn("K behavior at N=10", report)
         self.assertIn("N behavior at K=4", report)
-        self.assertEqual(report.count("class='trend-plot'"), 4)
+        # K/N plots become SVGs as soon as the optional live study ledger exists.
+        self.assertGreaterEqual(report.count("class='trend-plot'"), 4)
         self.assertIn("class='plot-trend'", report)
         self.assertIn("2 × length × tan(coverage half-angle) / mouth width", report)
         self.assertIn("id='scatter-popup'", report)
