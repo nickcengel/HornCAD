@@ -1,0 +1,55 @@
+from __future__ import annotations
+
+from pathlib import Path
+import tempfile
+import unittest
+
+import yaml
+
+from app.tools.run_coupled_kn_length_program import (
+    materialize_kn_closure, materialize_local_s,
+)
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class CoupledKNLengthProgramTests(unittest.TestCase):
+    def setUp(self) -> None:
+        self.baseline = (ROOT / "examples" / "mouth-size-coverage-grid" /
+                         "45deg" / "350x350-s-grid")
+        self.seed = self.baseline / "candidates" / "candidate-004" / "project.yaml"
+        if not self.seed.exists():
+            self.seed = (ROOT / "examples" / "mouth-size-coverage-grid" /
+                         "45deg" / "350x350" / "project.yaml")
+
+    def test_materializes_dynamic_kn_closure(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "closure-kn"
+            materialize_kn_closure(self.seed, self.baseline, output)
+            search = yaml.safe_load((output / "search.yaml").read_text())[
+                "bem_candidate_search"]
+        self.assertEqual(search["initial_candidates"], 0)
+        self.assertTrue(search["adaptive_kn_closure"]["enabled"])
+        self.assertEqual(search["adaptive_kn_closure"]["minimum_k"], 1.0)
+        self.assertEqual(search["adaptive_kn_closure"]["minimum_n"], 2.0)
+        self.assertEqual(search["solver"]["workers"], 10)
+
+    def test_materializes_five_point_local_s_rescan_at_closed_kn(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "closure-s"
+            _, center = materialize_local_s(self.seed, self.baseline, output)
+            search = yaml.safe_load((output / "search.yaml").read_text())[
+                "bem_candidate_search"]
+            project = yaml.safe_load((output / "project.yaml").read_text())
+        self.assertEqual(search["max_evaluations"], 5)
+        self.assertEqual(len(search["initial_pool"]), 4)
+        self.assertGreater(center, 0)
+        k = project["horncad_config"]["horizontal_basis"]["k"]
+        n = project["horncad_config"]["horizontal_basis"]["n"]
+        self.assertEqual(search["bounds"]["k_h"][0], k)
+        self.assertEqual(search["bounds"]["n_h"][0], n)
+
+
+if __name__ == "__main__":
+    unittest.main()
