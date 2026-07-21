@@ -5,6 +5,7 @@ import tempfile
 import unittest
 
 from app.tools.generate_mouth_size_coverage_grid_report import (
+    _deduplicate_candidate_rows,
     _nice_plot_bounds,
     _scatter_svg,
     _legacy_ranking_score,
@@ -17,6 +18,26 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class MouthSizeCoverageGridReportTests(unittest.TestCase):
+    def test_near_duplicate_candidates_keep_the_better_score(self) -> None:
+        summary = {"mouth_width": 350, "mouth_height": 350}
+        def row(length: float, score: float) -> dict:
+            return {
+                "search": summary,
+                "candidate": {"values": {
+                    "length_mm": length, "extension_mm": 0,
+                    "osse_coverage_h_deg": 45, "osse_coverage_v_deg": 45,
+                    "k_h": 4, "k_v": 4, "n_h": 10, "n_v": 10,
+                }},
+                "surface_ranking_score": score,
+            }
+
+        retained = _deduplicate_candidate_rows([
+            row(126.545, 88.279), row(126.861, 88.282), row(130, 80)])
+
+        self.assertEqual(
+            sorted(item["candidate"]["values"]["length_mm"] for item in retained),
+            [126.861, 130])
+
     def test_scatter_y_range_runs_from_mean_to_peak(self) -> None:
         plot = _scatter_svg([
             {"x": 1, "y": 60, "coverage": 25},

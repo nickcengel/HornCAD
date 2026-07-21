@@ -27,6 +27,47 @@ LEGACY_RANKING_KEYS = (
     "window_uniformity_percent",
 )
 PLOT_COLORS = ("#69d6c8", "#f6bd60", "#f28482", "#8e9aef", "#90be6d")
+NEAR_DUPLICATE_LENGTH_MM = 1.0
+
+
+def _candidate_geometry_key(item: dict[str, Any]) -> tuple[float, ...]:
+    """Return the physical inputs that must match before lengths are compared."""
+    summary = item["search"]
+    values = item["candidate"].get("values", {})
+    return tuple(round(float(value), 6) for value in (
+        summary["mouth_width"], summary["mouth_height"],
+        values.get("extension_mm", 0),
+        values.get("osse_coverage_h_deg", 0),
+        values.get("osse_coverage_v_deg", 0),
+        values.get("k_h", 0), values.get("k_v", 0),
+        values.get("n_h", 0), values.get("n_v", 0),
+    ))
+
+
+def _deduplicate_candidate_rows(
+        rows: list[dict[str, Any]],
+        tolerance_mm: float = NEAR_DUPLICATE_LENGTH_MM) -> list[dict[str, Any]]:
+    """Keep the best-scoring representative of near-identical candidates."""
+    groups: dict[tuple[float, ...], list[dict[str, Any]]] = {}
+    for item in rows:
+        groups.setdefault(_candidate_geometry_key(item), []).append(item)
+    retained = []
+    for group in groups.values():
+        selected: list[dict[str, Any]] = []
+        ordered = sorted(group, key=lambda item: (
+            item["surface_ranking_score"] is None,
+            -(item["surface_ranking_score"] or 0),
+            float(item["candidate"].get("values", {}).get("length_mm", 0)),
+        ))
+        for item in ordered:
+            length = float(item["candidate"].get("values", {}).get("length_mm", 0))
+            if any(abs(length - float(other["candidate"].get(
+                    "values", {}).get("length_mm", 0))) <= tolerance_mm
+                   for other in selected):
+                continue
+            selected.append(item)
+        retained.extend(selected)
+    return retained
 
 
 def _nice_plot_bounds(lower: float, upper: float) -> tuple[float, float]:
@@ -245,6 +286,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
                 "surface_ranking_score": (
                     float(new_score["overall_percent"]) if new_score else None),
             })
+    candidate_rows = _deduplicate_candidate_rows(candidate_rows)
     legacy_order = sorted(candidate_rows, key=lambda item: (
         item["legacy_ranking_score"] is None,
         -(item["legacy_ranking_score"] or 0.0),
