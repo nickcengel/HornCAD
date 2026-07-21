@@ -62,6 +62,13 @@ def materialize_kn_search(source_project: Path, source_search: Path,
     pool = [{"label": f"K={k:g}, N={n:g}",
              "values": _candidate_values(config, k, n)}
             for k, n in KN_POINTS]
+    solver = copy.deepcopy(source.get("solver", {
+        "points_per_octave": 12,
+        "elements_per_wavelength": 6,
+        "angles": 91,
+        "workers": 0,
+    }))
+    solver["workers"] = 10
     length = baseline["length_mm"]
     extension = baseline["extension_mm"]
     h_coverage = baseline["osse_coverage_h_deg"]
@@ -99,12 +106,7 @@ def materialize_kn_search(source_project: Path, source_search: Path,
             "n_h": [2.0, 20.000001], "n_v": [2.0, 20.000001],
         },
         "initial_pool": pool,
-        "solver": copy.deepcopy(source.get("solver", {
-            "points_per_octave": 12,
-            "elements_per_wavelength": 6,
-            "angles": 91,
-            "workers": 0,
-        })),
+        "solver": solver,
     }
     (output_dir / "search.yaml").write_text(
         yaml.safe_dump({"bem_candidate_search": search}, sort_keys=False),

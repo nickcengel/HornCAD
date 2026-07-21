@@ -169,4 +169,4 @@ bem_candidate_search:
     points_per_octave: 12
     elements_per_wavelength: 6
     angles: 91
-    workers: 0
+    workers: 10
