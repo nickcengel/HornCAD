@@ -588,6 +588,85 @@ def adaptive_kn_pruning_decision(search: dict[str, Any],
     return None
 
 
+def next_kn_closure_candidate(search: dict[str, Any],
+                              records: list[dict[str, Any]],
+                              closure: dict[str, Any]) -> tuple[dict[str, float], str] | None:
+    """Return the next probe needed to bracket the measured K/N optimum.
+
+    A closure search follows the best measured point rather than assuming K and
+    N are additive.  It measures the full local 3x3 neighborhood, then halves
+    the spacing until the authored resolution is reached.
+    """
+    policy = search.get("adaptive_kn_closure", {})
+    if not policy.get("enabled", False):
+        return None
+    measured: dict[tuple[float, float], tuple[float, dict[str, float]]] = {}
+    for record in records:
+        if record.get("status") != "complete":
+            continue
+        values = record.get("values", {})
+        if not (math.isclose(float(values.get("k_h", math.nan)),
+                             float(values.get("k_v", math.nan)), abs_tol=1e-6) and
+                math.isclose(float(values.get("n_h", math.nan)),
+                             float(values.get("n_v", math.nan)), abs_tol=1e-6)):
+            continue
+        score = _record_surface_score(record, search)
+        if score is not None:
+            key = (round(float(values["k_h"]), 6),
+                   round(float(values["n_h"]), 6))
+            measured[key] = (score, values)
+    if not measured:
+        closure.update(status="unresolved", reason="no completed symmetric K/N points")
+        return None
+
+    best_key, (best_score, best_values) = max(
+        measured.items(), key=lambda item: item[1][0])
+    k_min = float(policy.get("minimum_k", 1.0))
+    k_max = float(policy.get("maximum_k", 7.0))
+    n_min = float(policy.get("minimum_n", 2.0))
+    n_max = float(policy.get("maximum_n", 40.0))
+    min_k_step = float(policy.get("minimum_k_step", 0.25))
+    min_n_step = float(policy.get("minimum_n_step", 1.0))
+    k_step = float(closure.setdefault(
+        "k_step", policy.get("initial_k_step", 0.5)))
+    n_step = float(closure.setdefault(
+        "n_step", policy.get("initial_n_step", 5.0)))
+    closure.update(status="running", incumbent_k=best_key[0],
+                   incumbent_n=best_key[1], incumbent_score=best_score)
+
+    offsets = ((-1, 0), (1, 0), (0, -1), (0, 1),
+               (-1, -1), (-1, 1), (1, -1), (1, 1))
+    for dk, dn in offsets:
+        k = round(best_key[0] + dk * k_step, 6)
+        n = round(best_key[1] + dn * n_step, 6)
+        if not (k_min <= k <= k_max and n_min <= n <= n_max):
+            continue
+        if (k, n) in measured:
+            continue
+        values = dict(best_values)
+        values.update(k_h=k, k_v=k, n_h=n, n_v=n)
+        return values, f"K/N closure K={k:g}, N={n:g}"
+
+    next_k_step = max(min_k_step, k_step / 2)
+    next_n_step = max(min_n_step, n_step / 2)
+    if next_k_step < k_step - 1e-9 or next_n_step < n_step - 1e-9:
+        closure.update(k_step=next_k_step, n_step=next_n_step)
+        return next_kn_closure_candidate(search, records, closure)
+
+    upper_limits = []
+    if math.isclose(best_key[0], k_max, abs_tol=1e-6):
+        upper_limits.append("K maximum")
+    if math.isclose(best_key[1], n_max, abs_tol=1e-6):
+        upper_limits.append("N maximum")
+    if upper_limits:
+        closure.update(status="boundary-limited",
+                       reason=f"best point reached {' and '.join(upper_limits)}")
+    else:
+        closure.update(status="closed", reason="all axial and diagonal neighbors measured",
+                       resolution_k=min_k_step, resolution_n=min_n_step)
+    return None
+
+
 def pareto_indices(records: list[dict[str, Any]]) -> set[int]:
     feasible = [(index, record) for index, record in enumerate(records)
                 if record.get("status") == "complete" and
@@ -1022,12 +1101,13 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vert
 <p><strong>Rejected proposals</strong><br>{state.get('rejected_count', 0)}</p>
 <p><strong>Confidently inferior</strong><br>{state.get('surrogate_screened_count', 0)}</p>
 <p><strong>Adaptive skips</strong><br>{state.get('adaptive_pruned_count', 0)}</p>
+<p><strong>K/N closure</strong><br>{html.escape(state.get('kn_closure', {}).get('status', 'not requested'))}</p>
 <p><strong>Sweep band</strong><br>{lower_frequency:g}–{upper_frequency:g} Hz</p>
 <p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
 <p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
 <section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='containment-mean'{hidden_attribute('containment-mean')} data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms'{hidden_attribute('profile-rms')} data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise'{hidden_attribute('outward-rise')} data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms'{hidden_attribute('slice-rms')} data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms'{hidden_attribute('line-rms')} data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k'{hidden_attribute('k')} data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n'{hidden_attribute('n')} data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
-<section><p>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Existing completed searches retain their original selection history. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points. Adaptive K/N studies always measure the local cross, then skip an extreme or interaction only when its uncertainty-adjusted prediction remains at least three score points below the observed best.</p></section>
+<section><p>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Existing completed searches retain their original selection history. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points. Adaptive K/N studies first measure the coarse field, then test axial and diagonal neighbors around each new winner. K/N is reported closed only after the winner is bracketed at the authored K and N resolution or reaches the accepted K=1 or N=2 lower limit.</p></section>
 <script>
 document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
   button.addEventListener('click', () => {{
@@ -1274,6 +1354,7 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
     search.setdefault("adaptive_pruning", {})
     state.setdefault("adaptive_pruned_count", 0)
     state.setdefault("adaptive_pruned_proposals", [])
+    state.setdefault("kn_closure", {})
     search.setdefault("fixed_parameters", {
         "n_h": float(seed["horncad_config"]["horizontal_basis"]["n"]),
         "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
@@ -1325,6 +1406,13 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             return True
         if retry_failed:
             return False
+        closure_policy = search.get("adaptive_kn_closure", {})
+        if (closure_policy.get("enabled", False) and
+                state["proposal_count"] >= search["initial_candidates"] + 1):
+            return (state["kn_closure"].get("status") not in
+                    {"closed", "boundary-limited", "unresolved"} and
+                    sum(record["status"] == "complete"
+                        for record in state["candidates"]) < search["max_evaluations"])
         target_reached = (
             sum(record["status"] == "complete" for record in state["candidates"]) +
             state.get("adaptive_pruned_count", 0) >= search["max_evaluations"])
@@ -1341,10 +1429,24 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
         else:
             proposal_index = state["proposal_count"]
             state["proposal_count"] += 1
-            vector, source = propose_vector(search, state["candidates"], proposal_index)
-            values = values_from_vector(vector, search["bounds"])
-            if proposal_index == 0:
-                values = search["seed_values"]
+            closure_stage = (search.get("adaptive_kn_closure", {}).get("enabled", False) and
+                             proposal_index >= search["initial_candidates"] + 1)
+            closure_label = None
+            if closure_stage:
+                closure_proposal = next_kn_closure_candidate(
+                    search, state["candidates"], state["kn_closure"])
+                if closure_proposal is None:
+                    state["proposal_count"] -= 1
+                    save_state(output_dir, state)
+                    break
+                values, closure_label = closure_proposal
+                source = "adaptive-kn-closure"
+            else:
+                vector, source = propose_vector(
+                    search, state["candidates"], proposal_index)
+                values = values_from_vector(vector, search["bounds"])
+                if proposal_index == 0:
+                    values = search["seed_values"]
             # Coupled proposals are evaluated as authored. Silent K repair would
             # change the experiment and corrupt learned parameter effects.
             document, derived = materialize_candidate(seed, values, search)
@@ -1356,7 +1458,7 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                 state["rejected_count"] += 1
                 save_state(output_dir, state)
                 continue
-            pruning = (adaptive_pruning_decision(
+            pruning = None if closure_stage else (adaptive_pruning_decision(
                 search, state["candidates"], values, derived) or
                 adaptive_kn_pruning_decision(search, state["candidates"], values))
             if pruning is not None:
@@ -1369,7 +1471,7 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                 state["adaptive_pruned_count"] += 1
                 save_state(output_dir, state)
                 continue
-            if proposal_index > search["initial_candidates"]:
+            if proposal_index > search["initial_candidates"] and not closure_stage:
                 inferior_probability = inferior_to_seed_probability(
                     search, state["candidates"], normalized_vector(values, search["bounds"]))
                 if inferior_probability >= search["inferior_screen_probability"]:
@@ -1387,6 +1489,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             if source == "initial-curated":
                 record["experiment_label"] = search["initial_pool"][
                     proposal_index - 1]["label"]
+            elif closure_label:
+                record["experiment_label"] = closure_label
             state["candidates"].append(record)
             candidate_dir = output_dir / "candidates" / candidate_id
             candidate_dir.mkdir(parents=True, exist_ok=True)
@@ -1420,6 +1524,12 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                      phase=(f"failed candidate recovery incomplete: "
                             f"{remaining_failed} still failed"),
                      retry_requested=retry_count)
+    elif (search.get("adaptive_kn_closure", {}).get("enabled", False) and
+          state["kn_closure"].get("status") in {"closed", "boundary-limited"}):
+        state.update(status="complete", phase="K/N closure complete",
+                     completed_at_unix=time.time())
+    elif search.get("adaptive_kn_closure", {}).get("enabled", False):
+        state.update(status="stopped", phase="K/N closure evaluation budget exhausted")
     elif complete + state.get("adaptive_pruned_count", 0) >= search["max_evaluations"]:
         state.update(status="complete", phase="candidate evaluation complete",
                      completed_at_unix=time.time())

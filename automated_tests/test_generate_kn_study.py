@@ -23,13 +23,14 @@ class GenerateKNStudyTests(unittest.TestCase):
             search = yaml.safe_load((output / "search.yaml").read_text())[
                 "bem_candidate_search"]
 
-        self.assertEqual(search["max_evaluations"], 13)
+        self.assertEqual(search["max_evaluations"], 80)
         self.assertTrue(search["adaptive_kn"]["enabled"])
+        self.assertTrue(search["adaptive_kn_closure"]["enabled"])
         points = [(item["values"]["k_h"], item["values"]["n_h"])
                   for item in search["initial_pool"]]
         self.assertEqual(points, [(float(k), float(n)) for k, n in KN_POINTS])
-        self.assertEqual(search["bounds"]["k_h"], [3.0, 5.000001])
-        self.assertEqual(search["bounds"]["n_h"], [2.0, 20.000001])
+        self.assertEqual(search["bounds"]["k_h"], [1.0, 7.000001])
+        self.assertEqual(search["bounds"]["n_h"], [2.0, 40.000001])
 
 
 if __name__ == "__main__":

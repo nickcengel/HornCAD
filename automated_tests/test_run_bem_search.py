@@ -14,7 +14,8 @@ from app.tools.run_bem_search import (
     geometry_feasibility,
     geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
     load_search, materialize_candidate, pareto_indices, propose_vector,
-    requeue_failed_candidates, sampling_stability, run_search, seed_values,
+    next_kn_closure_candidate, requeue_failed_candidates, sampling_stability,
+    run_search, seed_values,
     write_report,
 )
 
@@ -26,6 +27,46 @@ ROUND2_SEARCH = SEARCH.parent / "round-2" / "search.yaml"
 
 
 class BEMSearchTests(unittest.TestCase):
+    def test_kn_closure_tests_missing_diagonal_around_best(self) -> None:
+        search = {"adaptive_kn_closure": {
+            "enabled": True, "initial_k_step": 0.5, "initial_n_step": 5,
+            "minimum_k": 1, "maximum_k": 7,
+            "minimum_n": 2, "maximum_n": 40,
+        }}
+        def record(k: float, n: float, score: float) -> dict:
+            return {"status": "complete",
+                    "values": {"k_h": k, "k_v": k, "n_h": n, "n_v": n},
+                    "surface_diagnostics": {"score": {"overall_percent": score}}}
+        records = [record(3.5, 5, 77), record(3, 5, 76),
+                   record(4, 5, 76), record(3.5, 2, 70),
+                   record(3.5, 10, 75), record(3, 2, 69),
+                   record(4, 2, 68)]
+        closure: dict = {}
+
+        values, label = next_kn_closure_candidate(search, records, closure)
+
+        self.assertEqual((values["k_h"], values["n_h"]), (3.0, 10.0))
+        self.assertIn("closure", label)
+
+    def test_kn_closure_refines_spacing_then_closes(self) -> None:
+        search = {"adaptive_kn_closure": {
+            "enabled": True, "initial_k_step": 0.25, "initial_n_step": 1,
+            "minimum_k_step": 0.25, "minimum_n_step": 1,
+            "minimum_k": 1, "maximum_k": 7,
+            "minimum_n": 2, "maximum_n": 40,
+        }}
+        records = []
+        for k in (3.25, 3.5, 3.75):
+            for n in (4, 5, 6):
+                score = 80 - abs(k - 3.5) - abs(n - 5)
+                records.append({"status": "complete",
+                    "values": {"k_h": k, "k_v": k, "n_h": n, "n_v": n},
+                    "surface_diagnostics": {"score": {"overall_percent": score}}})
+        closure: dict = {}
+
+        self.assertIsNone(next_kn_closure_candidate(search, records, closure))
+        self.assertEqual(closure["status"], "closed")
+
     def test_kn_pruning_waits_for_local_cross_then_skips_bad_extreme(self) -> None:
         search = {
             "adaptive_kn": {"enabled": True},
