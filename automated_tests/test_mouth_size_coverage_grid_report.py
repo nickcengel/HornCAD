@@ -41,6 +41,7 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn(">Final surface score</th>", report)
         self.assertIn(">Previous rank</th>", report)
         self.assertIn(">Previous diagnostic score</th>", report)
+        self.assertIn(">Newest</th>", report)
         self.assertIn("Candidates are ranked by the final surface score", report)
         self.assertIn("data-column-toggle='containment-mean'", report)
         self.assertIn("data-column-toggle='profile-rms'", report)

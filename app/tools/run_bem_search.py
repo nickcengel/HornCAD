@@ -966,6 +966,7 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
         record.update(
             status="complete", run_dir=str(run_dir.relative_to(output_dir)),
             report_file=str(report_path.relative_to(output_dir)),
+            completed_at_unix=time.time(),
             diagnostics=diagnostics,
             surface_diagnostics=new_surface_diagnostics,
             sampling_stability=stability,
