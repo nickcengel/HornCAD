@@ -885,7 +885,7 @@ def _surface_diagnostic_plot(runs: list[dict[str, Any]],
         config={"displaylogo": False, "scrollZoom": True, "responsive": True})
 
 
-def _embedded_stl_viewer(path: Path, triangle_limit: int = 6000) -> str:
+def _embedded_stl_viewer(path: Path, triangle_limit: int = 50000) -> str:
     """Return a self-contained canvas preview for an adjacent candidate STL."""
     candidate_dir = path.parent.parent
     if path.parent.name != "bem" or not candidate_dir.is_dir():
@@ -960,26 +960,19 @@ def _embedded_stl_viewer(path: Path, triangle_limit: int = 6000) -> str:
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, width, height);
     const scale = Math.min(width, height) * 0.78 * view.zoom / span;
-    const triangles = [];
+    ctx.strokeStyle = 'rgba(105, 214, 200, 0.52)';
+    ctx.lineWidth = 0.55;
+    ctx.beginPath();
     for (let i = 0; i < points.length; i += 3) {
       const p = [rotate(points[i]), rotate(points[i + 1]), rotate(points[i + 2])];
-      const ax = p[1].x - p[0].x, ay = p[1].y - p[0].y;
-      const bx = p[2].x - p[0].x, by = p[2].y - p[0].y;
-      const facing = ax * by - ay * bx;
-      triangles.push({p, depth: (p[0].z + p[1].z + p[2].z) / 3, facing});
-    }
-    triangles.sort((a, b) => a.depth - b.depth);
-    for (const triangle of triangles) {
-      const shade = 0.48 + 0.42 * Math.min(1, Math.abs(triangle.facing) * scale * scale / 120);
-      ctx.fillStyle = `rgb(${Math.round(72 * shade)},${Math.round(190 * shade)},${Math.round(174 * shade)})`;
-      ctx.beginPath();
-      triangle.p.forEach((point, index) => {
+      p.forEach((point, index) => {
         const x = width / 2 + point.x * scale;
         const y = height / 2 - point.y * scale;
         if (index === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       });
-      ctx.closePath(); ctx.fill();
+      ctx.closePath();
     }
+    ctx.stroke();
   };
   canvas.addEventListener('pointerdown', (event) => {
     view.dragging = true; view.x = event.clientX; view.y = event.clientY;
@@ -1019,7 +1012,7 @@ def _write_html(path: Path, title: str, figure: go.Figure,
                                   "responsive": True})
     surface_plot = _surface_diagnostic_plot(runs, surface_results)
     stl_viewer = _embedded_stl_viewer(path)
-    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v7 -->
+    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v8 -->
 <title>{html.escape(title)}</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}
