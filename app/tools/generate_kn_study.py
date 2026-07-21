@@ -80,7 +80,7 @@ def materialize_kn_search(source_project: Path, source_search: Path,
         "initial_candidates": len(pool),
         "random_seed": int(source.get("random_seed", 17)),
         "minimum_candidate_distance": 0.001,
-        "derived_s_bounds": [0.0, 6.0],
+        "derived_s_bounds": [0.0, 8.0],
         "sampling_stability_points": float(
             source.get("sampling_stability_points", 2.0)),
         "confirmation_points_per_octave": float(

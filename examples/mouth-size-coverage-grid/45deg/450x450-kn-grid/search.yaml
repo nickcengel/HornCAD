@@ -1,0 +1,172 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 45.0
+  intended_coverage_v_deg: 45.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 13
+  initial_candidates: 12
+  random_seed: 17
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.0
+  - 8.0
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_kn:
+    enabled: true
+    margin_points: 3.0
+    uncertainty_points: 1.5
+  bounds:
+    length_mm:
+    - 151.57
+    - 151.572
+    extension_mm:
+    - 0.0
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 45.0
+    - 45.000001
+    osse_coverage_v_deg:
+    - 45.0
+    - 45.000001
+    k_h:
+    - 3.0
+    - 5.000001
+    k_v:
+    - 3.0
+    - 5.000001
+    n_h:
+    - 2.0
+    - 20.000001
+    n_v:
+    - 2.0
+    - 20.000001
+  initial_pool:
+  - label: K=3.5, N=10
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 3.5
+      k_v: 3.5
+      n_h: 10.0
+      n_v: 10.0
+  - label: K=4.5, N=10
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.5
+      k_v: 4.5
+      n_h: 10.0
+      n_v: 10.0
+  - label: K=4, N=5
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 5.0
+      n_v: 5.0
+  - label: K=4, N=15
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 15.0
+      n_v: 15.0
+  - label: K=3, N=10
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 3.0
+      k_v: 3.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: K=5, N=10
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 5.0
+      k_v: 5.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: K=4, N=2
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 2.0
+      n_v: 2.0
+  - label: K=4, N=20
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 20.0
+      n_v: 20.0
+  - label: K=3.5, N=5
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 3.5
+      k_v: 3.5
+      n_h: 5.0
+      n_v: 5.0
+  - label: K=3.5, N=15
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 3.5
+      k_v: 3.5
+      n_h: 15.0
+      n_v: 15.0
+  - label: K=4.5, N=5
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.5
+      k_v: 4.5
+      n_h: 5.0
+      n_v: 5.0
+  - label: K=4.5, N=15
+    values:
+      length_mm: 151.571
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.5
+      k_v: 4.5
+      n_h: 15.0
+      n_v: 15.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 0
