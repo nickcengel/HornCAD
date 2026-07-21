@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class GenerateKNStudyTests(unittest.TestCase):
-    def test_materializes_local_cross_extremes_and_interactions(self) -> None:
+    def test_materializes_local_cross_and_interactions(self) -> None:
         source_dir = (ROOT / "examples" / "mouth-size-coverage-grid" /
                       "45deg" / "350x350")
         source_project = source_dir / "project.yaml"
@@ -29,6 +29,8 @@ class GenerateKNStudyTests(unittest.TestCase):
         points = [(item["values"]["k_h"], item["values"]["n_h"])
                   for item in search["initial_pool"]]
         self.assertEqual(points, [(float(k), float(n)) for k, n in KN_POINTS])
+        self.assertNotIn((4.0, 2.0), points)
+        self.assertNotIn((4.0, 20.0), points)
         self.assertEqual(search["bounds"]["k_h"], [1.0, 7.000001])
         self.assertEqual(search["bounds"]["n_h"], [2.0, 40.000001])
 
