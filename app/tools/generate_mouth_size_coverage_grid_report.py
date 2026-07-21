@@ -85,8 +85,14 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
         color = colors[coverage]
         radius = float(point.get("radius", 4.2))
         tooltip = html.escape(str(point.get("tooltip", "candidate")))
+        candidate_name = html.escape(str(point.get("candidate", "candidate")), quote=True)
+        stats = html.escape(str(point.get("stats", point.get("tooltip", ""))), quote=True)
+        report = html.escape(str(point.get("report", "")), quote=True)
         parts.append(
-            f"<circle cx='{sx(float(point['x'])):.2f}' cy='{sy(float(point['y'])):.2f}' "
+            f"<circle class='scatter-point' tabindex='0' role='button' "
+            f"aria-label='Open {candidate_name} details' data-candidate='{candidate_name}' "
+            f"data-stats='{stats}' data-report='{report}' "
+            f"cx='{sx(float(point['x'])):.2f}' cy='{sy(float(point['y'])):.2f}' "
             f"r='{radius:.2f}' fill='{color}'><title>{tooltip}</title></circle>")
         if label_points and point.get("label"):
             parts.append(
@@ -273,17 +279,31 @@ def generate_report(project_root: Path, output: Path) -> Path:
         s_value = (fmean(float(value) for value in s_values)
                    if all(isinstance(value, (int, float)) for value in s_values)
                    else None)
-        tooltip = (f"{row['artifact_stem']} · {summary['coverage']:g}° · "
-                   f"{summary['mouth']:g} mm · score {score:.1f}%")
-        common = {"y": score, "coverage": summary["coverage"],
-                  "tooltip": tooltip}
-        if s_value is not None:
-            score_vs_s.append({**common, "x": s_value})
-        score_vs_ratio.append({**common, "x": row["length_mouth_ratio"]})
         length = float(candidate.get("values", {}).get("length_mm", 0))
         normalized_length = (
             2.0 * length * math.tan(math.radians(summary["coverage"])) /
             float(summary["mouth_width"]))
+        tooltip = (f"{row['artifact_stem']} · {summary['coverage']:g}° · "
+                   f"{summary['mouth']:g} mm · score {score:.1f}%")
+        report_url = (str(row["report_path"].relative_to(project_root))
+                      if row["report_path"] is not None else "")
+        stats = (
+            f"Score {score:.1f}% · Coverage {summary['coverage']:g}° · "
+            f"Mouth {summary['mouth_width']:g} × {summary['mouth_height']:g} mm · "
+            f"Length {length:g} mm · S {s_value:.3f} · "
+            f"Mouth/length {row['length_mouth_ratio']:.3f} · "
+            f"Normalized length {normalized_length:.3f}"
+            if s_value is not None else
+            f"Score {score:.1f}% · Coverage {summary['coverage']:g}° · "
+            f"Mouth {summary['mouth_width']:g} × {summary['mouth_height']:g} mm · "
+            f"Length {length:g} mm · Mouth/length {row['length_mouth_ratio']:.3f} · "
+            f"Normalized length {normalized_length:.3f}")
+        common = {"y": score, "coverage": summary["coverage"],
+                  "tooltip": tooltip, "candidate": row["artifact_stem"],
+                  "stats": stats, "report": report_url}
+        if s_value is not None:
+            score_vs_s.append({**common, "x": s_value})
+        score_vs_ratio.append({**common, "x": row["length_mouth_ratio"]})
         score_vs_normalized_length.append({**common, "x": normalized_length})
         pair_key = (summary["coverage"], summary["mouth"])
         if pair_key not in best_by_pair or score > best_by_pair[pair_key]["y"]:
@@ -473,7 +493,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 .wide td:nth-child(5), .wide td:nth-child(6), .wide td:nth-child(7), .wide td:nth-child(8), .wide td:nth-child(9){{white-space:nowrap}}
 .sortable{{cursor:pointer;user-select:none}}.axis-pair{{white-space:normal}}[hidden]{{display:none!important}}
 .column-controls{{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}}.column-toggle{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}
-.plot-grid-layout{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}.plot-card{{min-width:0;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:12px}}.plot-card .muted{{margin:0 0 8px;min-height:42px}}.trend-plot{{display:block;width:100%;height:auto;background:#0d1319;border-radius:6px}}.plot-grid{{stroke:#263541;stroke-width:1}}.plot-trend{{fill:none;stroke-width:2.4;opacity:.92}}.plot-tick,.plot-label{{fill:var(--muted);font-size:11px}}.plot-axis-label{{fill:var(--ink);font-size:12px;font-weight:600}}.trend-plot circle{{stroke:#0c1014;stroke-width:1;opacity:.82}}
+.plot-grid-layout{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}.plot-card{{min-width:0;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:12px}}.plot-card .muted{{margin:0 0 8px;min-height:42px}}.trend-plot{{display:block;width:100%;height:auto;background:#0d1319;border-radius:6px}}.plot-grid{{stroke:#263541;stroke-width:1}}.plot-trend{{fill:none;stroke-width:2.4;opacity:.92}}.plot-tick,.plot-label{{fill:var(--muted);font-size:11px}}.plot-axis-label{{fill:var(--ink);font-size:12px;font-weight:600}}.trend-plot circle{{stroke:#0c1014;stroke-width:1;opacity:.82}}.scatter-point{{cursor:pointer}}.scatter-point:hover,.scatter-point:focus{{stroke:var(--ink);stroke-width:2;opacity:1;outline:none}}.scatter-popup{{position:fixed;z-index:30;width:min(340px,calc(100vw - 24px));padding:12px;border:1px solid var(--accent);border-radius:8px;background:#101820;box-shadow:0 12px 32px rgba(0,0,0,.45)}}.scatter-popup strong{{display:block;margin-bottom:6px}}.scatter-popup p{{margin:0 0 8px;color:var(--muted);font-size:.92rem}}
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
 @media(max-width:900px){{.plot-grid-layout{{grid-template-columns:1fr}}}}@media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
@@ -494,6 +514,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <section>
 <h2>Candidate performance trends</h2>
 <div class='plot-grid-layout'>{plots_html}</div>
+<aside id='scatter-popup' class='scatter-popup' hidden><strong></strong><p></p><a href='#'>Open candidate report</a></aside>
 </section>
 <section>
 <h2>Candidates</h2>
@@ -514,6 +535,34 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 </section>
 <script>
 (() => {{
+  const scatterPopup = document.getElementById('scatter-popup');
+  const scatterTitle = scatterPopup.querySelector('strong');
+  const scatterStats = scatterPopup.querySelector('p');
+  const scatterLink = scatterPopup.querySelector('a');
+  const closeScatterPopup = () => {{ scatterPopup.hidden = true; }};
+  const openScatterPopup = (point) => {{
+    scatterTitle.textContent = point.dataset.candidate || 'Candidate';
+    scatterStats.textContent = point.dataset.stats || '';
+    const report = point.dataset.report || '';
+    scatterLink.hidden = !report;
+    if (report) scatterLink.href = report;
+    scatterPopup.hidden = false;
+    const rect = point.getBoundingClientRect();
+    const popupRect = scatterPopup.getBoundingClientRect();
+    scatterPopup.style.left = `${{Math.max(12, Math.min(window.innerWidth - popupRect.width - 12, rect.left + 10))}}px`;
+    scatterPopup.style.top = `${{Math.max(12, Math.min(window.innerHeight - popupRect.height - 12, rect.top + 14))}}px`;
+  }};
+  document.addEventListener('click', (event) => {{
+    const point = event.target.closest?.('.scatter-point');
+    if (point) {{ openScatterPopup(point); return; }}
+    if (!scatterPopup.contains(event.target)) closeScatterPopup();
+  }});
+  document.addEventListener('keydown', (event) => {{
+    if (event.key === 'Escape') closeScatterPopup();
+    if ((event.key === 'Enter' || event.key === ' ') && event.target.matches?.('.scatter-point')) {{
+      event.preventDefault(); openScatterPopup(event.target);
+    }}
+  }});
   document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
     button.addEventListener('click', () => {{
       const visible = button.getAttribute('aria-pressed') !== 'true';

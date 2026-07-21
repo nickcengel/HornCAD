@@ -69,6 +69,12 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertEqual(report.count("class='trend-plot'"), 4)
         self.assertIn("class='plot-trend'", report)
         self.assertIn("2 × length × tan(coverage half-angle) / mouth width", report)
+        self.assertIn("id='scatter-popup'", report)
+        self.assertIn("class='scatter-point'", report)
+        self.assertIn("data-report='", report)
+        self.assertIn("Open candidate report", report)
+        self.assertIn("openScatterPopup", report)
+        self.assertIn("Normalized length", report)
         self.assertNotIn("Average diagnostic score", report)
         self.assertNotIn("Coverage Match", report)
         # The selection ratio is mouth width divided by length: 250 / 179.
