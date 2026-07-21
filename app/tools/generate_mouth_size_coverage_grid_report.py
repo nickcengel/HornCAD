@@ -537,6 +537,21 @@ def generate_report(project_root: Path, output: Path) -> Path:
             f"<td>{report_link}</td>"
             "</tr>"
         )
+    plan_path = project_root / "study_plan.yaml"
+    planned = (yaml.safe_load(plan_path.read_text(encoding="utf-8")) or {}).get(
+        "planned_subsearches", []) if plan_path.is_file() else []
+    for offset, item in enumerate(planned, len(summary_rows) + 1):
+        prerequisite = item.get("prerequisite")
+        detail = (f"<br><span class='muted'>after {html.escape(str(prerequisite))}</span>"
+                  if prerequisite else "")
+        summary_rows.append(
+            "<tr>"
+            f"<td>{offset}</td>"
+            f"<td>{html.escape(str(item['label']))}{detail}</td>"
+            "<td><span class='badge pending'>planned</span></td>"
+            "<td>—</td><td>—</td>"
+            "</tr>"
+        )
 
     project_configs = [summary["config"] for summary in summaries if summary["config"]]
     if project_configs:

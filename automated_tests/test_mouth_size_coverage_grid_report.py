@@ -124,6 +124,8 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("Open candidate report", report)
         self.assertIn("openScatterPopup", report)
         self.assertIn("Normalized length", report)
+        self.assertIn("matched coupled K/N ↔ local S", report)
+        self.assertIn("<span class='badge pending'>planned</span>", report)
         self.assertNotIn("Average diagnostic score", report)
         self.assertNotIn("Coverage Match", report)
         # The selection ratio is mouth width divided by length: 250 / 179.
