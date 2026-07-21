@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import html
 import json
 from pathlib import Path
@@ -875,6 +876,125 @@ def _surface_diagnostic_plot(runs: list[dict[str, Any]],
         config={"displaylogo": False, "scrollZoom": True, "responsive": True})
 
 
+def _embedded_stl_viewer(path: Path, triangle_limit: int = 6000) -> str:
+    """Return a self-contained canvas preview for an adjacent candidate STL."""
+    candidate_dir = path.parent.parent
+    if path.parent.name != "bem" or not candidate_dir.is_dir():
+        return ""
+    stl_paths = sorted(candidate_dir.glob("*_Surface.STL"))
+    if not stl_paths:
+        stl_paths = sorted(candidate_dir.glob("*_Body.STL"))
+    if not stl_paths:
+        return ""
+    stl_path = stl_paths[0]
+    payload = stl_path.read_bytes()
+    if len(payload) < 84:
+        return ""
+    triangle_count = int.from_bytes(payload[80:84], "little")
+    if triangle_count < 1 or len(payload) < 84 + triangle_count * 50:
+        return ""
+    record_type = np.dtype({
+        "names": ["normal", "vertices", "attribute"],
+        "formats": [("<f4", 3), ("<f4", (3, 3)), "<u2"],
+        "offsets": [0, 12, 48],
+        "itemsize": 50,
+    })
+    records = np.frombuffer(payload, dtype=record_type, count=triangle_count,
+                            offset=84)
+    if triangle_count > triangle_limit:
+        indices = np.linspace(0, triangle_count - 1, triangle_limit, dtype=int)
+        vertices = records["vertices"][indices]
+    else:
+        vertices = records["vertices"]
+    encoded = base64.b64encode(
+        np.asarray(vertices, dtype="<f4").tobytes()).decode("ascii")
+    stl_name = html.escape(stl_path.name)
+    viewer = """
+<section class='model-viewer'><div class='model-viewer-heading'><div><h2>Horn STL</h2><p class='hint'>Drag to orbit · wheel to zoom</p></div><a href='../__STL_NAME__'>STL</a></div>
+<canvas class='stl-canvas' aria-label='Interactive STL preview'></canvas></section>
+<script>
+(() => {
+  const canvas = document.currentScript.previousElementSibling.querySelector('.stl-canvas');
+  const ctx = canvas.getContext('2d');
+  const binary = atob('__STL_DATA__');
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+  const values = new Float32Array(bytes.buffer);
+  const points = [];
+  let minX = Infinity, minY = Infinity, minZ = Infinity;
+  let maxX = -Infinity, maxY = -Infinity, maxZ = -Infinity;
+  for (let i = 0; i < values.length; i += 3) {
+    const point = {x: values[i], y: values[i + 1], z: values[i + 2]};
+    points.push(point);
+    minX = Math.min(minX, point.x); maxX = Math.max(maxX, point.x);
+    minY = Math.min(minY, point.y); maxY = Math.max(maxY, point.y);
+    minZ = Math.min(minZ, point.z); maxZ = Math.max(maxZ, point.z);
+  }
+  const center = {x: (minX + maxX) / 2, y: (minY + maxY) / 2, z: (minZ + maxZ) / 2};
+  const span = Math.max(maxX - minX, maxY - minY, maxZ - minZ, 1);
+  const view = {yaw: -0.7, pitch: 0.42, zoom: 1, dragging: false, x: 0, y: 0};
+  const rotate = (point) => {
+    const x = point.x - center.x, y = point.y - center.y, z = point.z - center.z;
+    const cy = Math.cos(view.yaw), sy = Math.sin(view.yaw);
+    const cp = Math.cos(view.pitch), sp = Math.sin(view.pitch);
+    const rx = x * cy + z * sy;
+    const rz = -x * sy + z * cy;
+    return {x: rx, y: y * cp - rz * sp, z: y * sp + rz * cp};
+  };
+  const render = () => {
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const width = Math.max(280, rect.width), height = Math.max(220, rect.height);
+    if (canvas.width !== Math.round(width * dpr) || canvas.height !== Math.round(height * dpr)) {
+      canvas.width = Math.round(width * dpr); canvas.height = Math.round(height * dpr);
+    }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, width, height);
+    const scale = Math.min(width, height) * 0.78 * view.zoom / span;
+    const triangles = [];
+    for (let i = 0; i < points.length; i += 3) {
+      const p = [rotate(points[i]), rotate(points[i + 1]), rotate(points[i + 2])];
+      const ax = p[1].x - p[0].x, ay = p[1].y - p[0].y;
+      const bx = p[2].x - p[0].x, by = p[2].y - p[0].y;
+      const facing = ax * by - ay * bx;
+      triangles.push({p, depth: (p[0].z + p[1].z + p[2].z) / 3, facing});
+    }
+    triangles.sort((a, b) => a.depth - b.depth);
+    for (const triangle of triangles) {
+      const shade = 0.48 + 0.42 * Math.min(1, Math.abs(triangle.facing) * scale * scale / 120);
+      ctx.fillStyle = `rgb(${Math.round(72 * shade)},${Math.round(190 * shade)},${Math.round(174 * shade)})`;
+      ctx.beginPath();
+      triangle.p.forEach((point, index) => {
+        const x = width / 2 + point.x * scale;
+        const y = height / 2 - point.y * scale;
+        if (index === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.closePath(); ctx.fill();
+    }
+  };
+  canvas.addEventListener('pointerdown', (event) => {
+    view.dragging = true; view.x = event.clientX; view.y = event.clientY;
+    canvas.setPointerCapture(event.pointerId);
+  });
+  canvas.addEventListener('pointermove', (event) => {
+    if (!view.dragging) return;
+    view.yaw += (event.clientX - view.x) * 0.009;
+    view.pitch = Math.max(-1.45, Math.min(1.45, view.pitch + (event.clientY - view.y) * 0.009));
+    view.x = event.clientX; view.y = event.clientY; render();
+  });
+  canvas.addEventListener('pointerup', () => { view.dragging = false; });
+  canvas.addEventListener('pointercancel', () => { view.dragging = false; });
+  canvas.addEventListener('wheel', (event) => {
+    event.preventDefault();
+    view.zoom = Math.max(0.35, Math.min(4, view.zoom * Math.exp(-event.deltaY * 0.001)));
+    render();
+  }, {passive: false});
+  new ResizeObserver(render).observe(canvas); render();
+})();
+</script>"""
+    return viewer.replace("__STL_NAME__", stl_name).replace("__STL_DATA__", encoded)
+
+
 def _write_html(path: Path, title: str, figure: go.Figure,
                 runs: list[dict[str, Any]], diagnostics: dict[str, Any] | None = None,
                 comparison: bool = False,
@@ -889,12 +1009,15 @@ def _write_html(path: Path, title: str, figure: go.Figure,
                           config={"displaylogo": False, "scrollZoom": True,
                                   "responsive": True})
     surface_plot = _surface_diagnostic_plot(runs, surface_results)
+    stl_viewer = _embedded_stl_viewer(path)
     document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v5 -->
 <title>{html.escape(title)}</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}
 main{{width:100%;padding:18px}} h1{{margin:0 0 12px}}
 .plot,.parameters{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:16px}}
+.model-viewer{{width:min(460px,100%);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:16px}}
+.model-viewer-heading{{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}}.model-viewer h2{{margin:0 0 3px}}.model-viewer .hint{{margin:0}}.stl-canvas{{display:block;width:100%;height:280px;margin-top:10px;border-radius:7px;background:#0a0f13;cursor:grab;touch-action:none}}.stl-canvas:active{{cursor:grabbing}}
 table{{border-collapse:collapse;width:100%;min-width:max-content}} th,td{{padding:7px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}
 th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);margin:0 0 12px}}
 .parameters{{overflow-x:auto}}.plotly-graph-div{{width:100%!important}}
@@ -907,6 +1030,7 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 @media(max-width:950px){{.diagnostic-grid{{grid-template-columns:1fr}}}}
 </style></head><body><main><h1>{html.escape(title)}</h1>
 <p class='hint'>Hover for exact coordinates. Click a chart to enable mouse-wheel zoom; click outside it to restore page scrolling. Drag to zoom; double-click to reset; use the legend to hide traces.</p>
+{stl_viewer}
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Surface diagnostics</h2>
 {_surface_diagnostic_tables(runs, surface_results)}

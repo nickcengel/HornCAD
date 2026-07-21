@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import struct
 import tempfile
 import unittest
 
@@ -124,6 +125,33 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("<h3>D</h3>", text)
             self.assertLess(text.index("<th style='color:#2563eb'>A</th>"),
                             text.index("<th style='color:#dc2626'>B</th>"))
+
+    def test_candidate_report_embeds_an_offline_stl_viewer(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            run = self.make_run(root, "run")
+            candidate = root / "candidate-001"
+            bem = candidate / "bem"
+            bem.mkdir(parents=True)
+            triangle = struct.pack(
+                "<12fH",
+                0, 0, 1,
+                0, 0, 0,
+                1, 0, 0,
+                0, 1, 0,
+                0,
+            )
+            (candidate / "test_Surface.STL").write_bytes(
+                bytes(80) + struct.pack("<I", 1) + triangle)
+
+            report = single_report(run, bem / "test_Report.html")
+            text = report.read_text()
+
+        self.assertIn("<h2>Horn STL</h2>", text)
+        self.assertIn("class='stl-canvas'", text)
+        self.assertIn("Drag to orbit · wheel to zoom", text)
+        self.assertIn("../test_Surface.STL", text)
+        self.assertIn("new ResizeObserver(render)", text)
 
     def test_coverage_diagnostics_detects_passband_and_scores_planes(self) -> None:
         frequencies = 500.0 * 2 ** (np.arange(17) / 12)
