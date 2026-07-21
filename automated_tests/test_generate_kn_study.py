@@ -6,13 +6,18 @@ import unittest
 
 import yaml
 
-from app.tools.generate_kn_study import KN_POINTS, materialize_kn_search
+from app.tools.generate_kn_study import KN_POINTS, generate_all, materialize_kn_search
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class GenerateKNStudyTests(unittest.TestCase):
+    def test_bulk_generation_requires_s_boundary_certificate(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            with self.assertRaisesRegex(RuntimeError, "must be bracketed"):
+                generate_all(Path(temp))
+
     def test_materializes_local_cross_and_interactions(self) -> None:
         source_dir = (ROOT / "examples" / "mouth-size-coverage-grid" /
                       "45deg" / "350x350")

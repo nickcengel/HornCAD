@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import copy
+import json
 from pathlib import Path
 from typing import Any
 
@@ -124,6 +125,10 @@ def materialize_kn_search(source_project: Path, source_search: Path,
 
 
 def generate_all(project_root: Path) -> list[Path]:
+    certificate = project_root / "s_boundary_closure.json"
+    if (not certificate.exists() or
+            json.loads(certificate.read_text(encoding="utf-8")).get("status") != "complete"):
+        raise RuntimeError("all uniform-S winners must be bracketed before K/N studies")
     outputs = []
     for relative_search, candidate_id in ANCHORS:
         source_dir = project_root / relative_search
