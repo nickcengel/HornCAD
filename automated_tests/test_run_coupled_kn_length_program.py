@@ -7,6 +7,7 @@ import unittest
 import yaml
 
 from app.tools.run_coupled_kn_length_program import (
+    canonical_extension_targets, materialize_canonical_s_extension,
     materialize_kn_closure, materialize_local_s,
 )
 
@@ -49,6 +50,20 @@ class CoupledKNLengthProgramTests(unittest.TestCase):
         n = project["horncad_config"]["horizontal_basis"]["n"]
         self.assertEqual(search["bounds"]["k_h"][0], k)
         self.assertEqual(search["bounds"]["n_h"][0], n)
+
+    def test_canonical_extension_adds_matched_points_without_rerunning_grid(self) -> None:
+        targets = canonical_extension_targets(self.baseline)
+        self.assertIn(0.5, targets)
+        self.assertIn(3.5, targets)
+        self.assertNotIn(1.0, targets)
+        self.assertLess(len(targets), 9)
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "canonical-s"
+            materialize_canonical_s_extension(self.baseline, output)
+            search = yaml.safe_load((output / "search.yaml").read_text())[
+                "bem_candidate_search"]
+        self.assertEqual(search["max_evaluations"], len(targets))
+        self.assertEqual(search["solver"]["workers"], 10)
 
 
 if __name__ == "__main__":

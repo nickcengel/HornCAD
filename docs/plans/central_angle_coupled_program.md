@@ -17,10 +17,17 @@ The program runs before additional 25-degree or 60-degree follow-up work.
 
 - At 45 degrees, always study 350, 400, and 450 mm mouths. Existing K/N winners
   seed the 350 and 450 mm anchors when available.
-- At 40 and 50 degrees, select the smallest mouth, largest mouth, and the
-  highest-scoring baseline mouth. This gives endpoint and peak information
-  without automatically running closure at all twelve combinations.
+- At 40 and 50 degrees, always select 400 mm as the matched cross-angle control,
+  plus the smallest mouth, largest mouth, and highest-scoring baseline mouth.
+  This preserves endpoint and peak information while guaranteeing a direct
+  40/45/50-degree K/N comparison.
 - Duplicate selections are collapsed.
+
+Before coupled closure begins, add compact canonical-S extensions to the older
+45-degree 300-500 mm grids. Each extension measures missing 0.25-grid points
+within 0.55 S of the observed maximum plus matched S=0.5 and S=3.5 references.
+Existing candidates are not rerun. These extensions make the important portion
+of each 45-degree curve directly comparable with the newer 40/50-degree grids.
 
 ## Alternating closure
 
@@ -43,10 +50,11 @@ limits.
 ## Scheduling and reporting
 
 `app.tools.run_coupled_kn_length_program` waits for all 40/50 baselines and the
-active 45-degree K/N prerequisite. It then selects anchors from measured scores
-and runs two independent anchors concurrently. Each anchor uses ten NumCalc
-workers, keeping the intended 20-core load while permitting geometry and report
-work in one stream to overlap solves in the other.
+active 45-degree K/N prerequisite. It first runs the canonical 45-degree
+extensions in two concurrent streams, then selects coupled anchors from the
+expanded evidence and runs two independent anchors concurrently. Each stream
+uses ten NumCalc workers, keeping the intended 20-core load while permitting
+geometry and report work in one stream to overlap solves in the other.
 
 Every completed local-S round regenerates the main index. Generated studies are
 siblings of the baseline searches and use names such as

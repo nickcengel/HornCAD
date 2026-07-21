@@ -192,7 +192,9 @@ def _search_summary(path: Path) -> dict[str, Any]:
     mouth_dir = path.parent.name
     coverage = float(coverage_dir.removesuffix("deg"))
     mouth = float(mouth_dir.split("x", 1)[0])
-    if "-coupled-" in mouth_dir and mouth_dir.endswith("-kn"):
+    if mouth_dir.endswith("-canonical-s"):
+        study_label = "canonical S extension"
+    elif "-coupled-" in mouth_dir and mouth_dir.endswith("-kn"):
         study_label = "coupled K/N closure"
     elif "-coupled-" in mouth_dir and mouth_dir.endswith("-s"):
         study_label = "coupled local S"
@@ -221,6 +223,7 @@ def _search_summary(path: Path) -> dict[str, Any]:
             f"{coverage:g} deg\u00a0/\u200b {mouth:g} mm"
             + ({"uniform S grid": " · uniform S grid",
                 "adaptive K/N grid": " · adaptive K/N grid",
+                "canonical S extension": " · canonical S extension",
                 "coupled K/N closure": " · coupled K/N closure",
                 "coupled local S": " · coupled local S"}.get(
                     study_label, ""))

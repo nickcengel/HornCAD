@@ -18,6 +18,7 @@ from .run_bem_search import run_search
 
 
 CENTRAL_45_MOUTHS = (350, 400, 450)
+CANONICAL_S = tuple(0.5 + 0.25 * index for index in range(13))
 
 
 def _score(record: dict[str, Any]) -> float:
@@ -40,14 +41,15 @@ def best_project(search_dir: Path) -> Path:
 
 
 def selected_baselines(root: Path) -> list[Path]:
-    """Select central anchors: 45/350-450 plus edge and best at 40/50."""
+    """Select central anchors with a matched 400 mm control at every angle."""
     selected = [root / "45deg" / f"{mouth}x{mouth}-s-grid"
                 for mouth in CENTRAL_45_MOUTHS]
     for angle in (40, 50):
         baselines = sorted((root / f"{angle}deg").glob("*x*-s-grid"))
         scored = [( _score(best_record(path / "search_state.json")), path)
                   for path in baselines]
-        choices = {baselines[0], baselines[-1],
+        matched = root / f"{angle}deg" / "400x400-s-grid"
+        choices = {baselines[0], matched, baselines[-1],
                    max(scored, key=lambda item: item[0])[1]}
         selected.extend(sorted(choices))
     return selected
@@ -66,6 +68,69 @@ def prerequisites_complete(root: Path) -> bool:
 def _source_search(baseline: Path) -> dict[str, Any]:
     return yaml.safe_load((baseline / "search.yaml").read_text(encoding="utf-8"))[
         "bem_candidate_search"]
+
+
+def canonical_extension_targets(baseline: Path) -> tuple[float, ...]:
+    """Return missing canonical points near the peak plus matched references."""
+    state = json.loads((baseline / "search_state.json").read_text(encoding="utf-8"))
+    complete = [item for item in state.get("candidates", [])
+                if item.get("status") == "complete"]
+    incumbent = max(complete, key=_score)
+    best_s = float(incumbent["derived"]["s_h"])
+    measured = [float(item["derived"]["s_h"]) for item in complete]
+    missing = [s for s in CANONICAL_S
+               if not any(abs(s - value) <= 0.02 for value in measured)]
+    selected = {s for s in missing if abs(s - best_s) <= 0.55}
+    selected.update(s for s in (0.5, 3.5) if s in missing)
+    return tuple(sorted(selected))
+
+
+def materialize_canonical_s_extension(baseline: Path, output: Path) -> Path:
+    if (output / "search.yaml").exists():
+        return output
+    targets = canonical_extension_targets(baseline)
+    if not targets:
+        raise ValueError(f"no missing canonical S targets for {baseline}")
+    source = _source_search(baseline)
+    seed = yaml.safe_load(best_project(baseline).read_text(encoding="utf-8"))
+    config = seed["horncad_config"]
+    g, h, v = config["global"], config["horizontal_basis"], config["vertical_basis"]
+    lengths = [length_for_s(config, target) for target in targets]
+    g["length"] = lengths[0]
+    g["measured_total_length"] = lengths[0] + float(g.get("conical_extension_length", 0))
+    h["solved_s"] = v["solved_s"] = targets[0]
+    output.mkdir(parents=True, exist_ok=True)
+    (output / "project.yaml").write_text(
+        yaml.safe_dump(seed, sort_keys=False), encoding="utf-8")
+    coverage, k, n = float(h["coverage_deg"]), float(h["k"]), float(h["n"])
+    pool = [{"label": f"canonical S={s:g}, L={length:g} mm",
+             "values": _candidate_values(length, coverage, k, n)}
+            for s, length in zip(targets[1:], lengths[1:])]
+    solver = copy.deepcopy(source["solver"])
+    solver["workers"] = 10
+    search = {
+        "version": 1, "seed_yaml": "project.yaml",
+        "intended_coverage_h_deg": coverage, "intended_coverage_v_deg": coverage,
+        "lower_frequency_hz": float(source["lower_frequency_hz"]),
+        "crossover_hz": float(source["crossover_hz"]),
+        "upper_frequency_hz": float(source["upper_frequency_hz"]),
+        "max_evaluations": len(targets), "initial_candidates": len(pool),
+        "minimum_candidate_distance": 0.001,
+        "derived_s_bounds": [min(targets) - 0.01, max(targets) + 0.01],
+        "sampling_stability_points": float(source.get("sampling_stability_points", 2)),
+        "confirmation_points_per_octave": float(source.get("confirmation_points_per_octave", 16)),
+        "bounds": {
+            "length_mm": [min(lengths) - 0.001, max(lengths) + 0.001],
+            "extension_mm": [0.0, 1e-6],
+            "osse_coverage_h_deg": [coverage, coverage + 1e-6],
+            "osse_coverage_v_deg": [coverage, coverage + 1e-6],
+            "k_h": [k, k + 1e-6], "k_v": [k, k + 1e-6],
+            "n_h": [n, n + 1e-6], "n_v": [n, n + 1e-6],
+        }, "initial_pool": pool, "solver": solver,
+    }
+    (output / "search.yaml").write_text(
+        yaml.safe_dump({"bem_candidate_search": search}, sort_keys=False), encoding="utf-8")
+    return output
 
 
 def materialize_kn_closure(seed_project: Path, baseline: Path,
@@ -168,10 +233,16 @@ def materialize_local_s(seed_project: Path, baseline: Path,
 def run_anchor(root: Path, baseline: Path, max_rounds: int = 3) -> str:
     angle_dir, mouth = baseline.parent, baseline.name.split("-", 1)[0]
     existing_kn = angle_dir / f"{mouth}-kn-grid"
-    seed_project = (best_project(existing_kn)
-                    if (existing_kn / "search_state.json").exists() and
-                    json.loads((existing_kn / "search_state.json").read_text()).get("status") == "complete"
-                    else best_project(baseline))
+    candidates = [baseline]
+    canonical = angle_dir / f"{mouth}-canonical-s"
+    if (canonical / "search_state.json").exists():
+        candidates.append(canonical)
+    if ((existing_kn / "search_state.json").exists() and
+            json.loads((existing_kn / "search_state.json").read_text()).get("status") == "complete"):
+        candidates.append(existing_kn)
+    seed_dir = max(candidates, key=lambda path: _score(
+        best_record(path / "search_state.json")))
+    seed_project = best_project(seed_dir)
     for round_number in range(1, max_rounds + 1):
         prefix = angle_dir / f"{mouth}-coupled-r{round_number:02d}"
         kn_dir = materialize_kn_closure(
@@ -200,6 +271,21 @@ def main() -> None:
         if not args.wait:
             raise RuntimeError("40/50 baselines and active 45-degree K/N prerequisite are incomplete")
         time.sleep(args.poll_seconds)
+    with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        extension_baselines = [args.project_root / "45deg" /
+                               f"{mouth}x{mouth}-s-grid"
+                               for mouth in (300, 350, 400, 450, 500)]
+        extension_dirs = [materialize_canonical_s_extension(
+            baseline, baseline.with_name(
+                baseline.name.removesuffix("-s-grid") + "-canonical-s"))
+            for baseline in extension_baselines]
+        extension_futures = [executor.submit(
+            run_search, path / "search.yaml", path, None)
+            for path in extension_dirs]
+        for future in as_completed(extension_futures):
+            future.result()
+            generate_report(args.project_root, args.project_root / "index.html")
+
     baselines = selected_baselines(args.project_root)
     with ThreadPoolExecutor(max_workers=args.workers) as executor:
         futures = [executor.submit(run_anchor, args.project_root, path)
