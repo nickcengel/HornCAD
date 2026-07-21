@@ -54,6 +54,7 @@ class InteractiveResultsTests(unittest.TestCase):
             run = self.make_run(Path(temp), "one")
             data = load_run(run)
             self.assertEqual(data["parameters"]["Coverage H / V"], "50° / 35°")
+            self.assertEqual(data["parameters"]["Length-mouth ratio"], "1.33")
             reference = AIR_DENSITY_KG_M3 * SOUND_SPEED_M_S / (np.pi * 0.0148 ** 2)
             np.testing.assert_allclose(
                 data["normalized_impedance"], np.array([1 + 2j, 3 + 4j]) / reference)

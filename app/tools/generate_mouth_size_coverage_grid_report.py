@@ -39,11 +39,20 @@ def _search_summary(path: Path) -> dict[str, Any]:
     coverage = float(coverage_dir.removesuffix("deg"))
     mouth = float(mouth_dir.split("x", 1)[0])
     config = yaml.safe_load(path.read_text(encoding="utf-8"))["bem_candidate_search"]
+    seed_path = Path(config.get("seed_yaml", "project.yaml"))
+    if not seed_path.is_absolute():
+        seed_path = path.parent / seed_path
+    seed_global = {}
+    if seed_path.is_file():
+        seed_document = yaml.safe_load(seed_path.read_text(encoding="utf-8"))
+        seed_global = seed_document.get("horncad_config", {}).get("global", {})
     state_path = path.parent / "search_state.json"
     report_path = path.parent / "search_report.html"
     summary: dict[str, Any] = {
         "coverage": coverage,
         "mouth": mouth,
+        "mouth_width": float(seed_global.get("mouth_width", mouth)),
+        "mouth_height": float(seed_global.get("mouth_height", mouth)),
         "label": f"{coverage:g} deg\u00a0/\u200b {mouth:g} mm",
         "folder": path.parent,
         "search_yaml": path,
@@ -169,8 +178,8 @@ def generate_report(project_root: Path, output: Path) -> Path:
         )
         row["artifact_stem"] = candidate.get("artifact_stem", candidate["id"])
         row["length_mouth_ratio"] = (
-            float(candidate.get("values", {}).get("length_mm", 0)) /
-            float(row["search"]["mouth"])
+            float(row["search"]["mouth_width"]) /
+            float(candidate.get("values", {}).get("length_mm", 0))
         )
         row["label"] = candidate.get("proposal_source", "").replace("_", " ").strip().title() or "Candidate"
         if row["label"] == "Seed":
@@ -235,60 +244,21 @@ def generate_report(project_root: Path, output: Path) -> Path:
             f"<td data-sort='{html.escape(item['artifact_stem'])}'>{' · '.join(candidate_links)}</td>"
             f"<td data-sort='{html.escape(summary['label'])}'>{html.escape(summary['label'])}</td>"
             f"<td data-sort='{html.escape(candidate.get('status', 'unknown'))}'>{status_badge}</td>"
-            f"<td class='{score_class}' data-sort='{item['candidate_score']:.6f}'>{item['candidate_score']:.1f}%</td>"
-            f"<td class='{match_class}' data-sort='{diagnostics['coverage_match_percent']:.6f}'>{diagnostics['coverage_match_percent']:.1f}%</td>"
-            f"<td class='{smooth_class}' data-sort='{diagnostics['coverage_smoothness_percent']:.6f}'>{diagnostics['coverage_smoothness_percent']:.1f}%</td>"
-            f"<td class='{waist_class}' data-sort='{diagnostics['waist_stability_percent']:.6f}'>{diagnostics['waist_stability_percent']:.1f}%</td>"
-            f"<td class='{uniform_class}' data-sort='{diagnostics['window_uniformity_percent']:.6f}'>{diagnostics['window_uniformity_percent']:.1f}%</td>"
-            f"<td data-sort='{candidate.get('values', {}).get('length_mm', 0):.6f}'>{candidate.get('values', {}).get('length_mm', 0):g}</td>"
-            f"<td data-sort='{item['length_mouth_ratio']:.6f}'>{item['length_mouth_ratio']:.3f}</td>"
-            f"<td data-sort='{candidate.get('values', {}).get('extension_mm', 0):.6f}'>{candidate.get('values', {}).get('extension_mm', 0):g}</td>"
-            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('osse_coverage_h_deg', 0):.6f}'>{candidate.get('values', {}).get('osse_coverage_h_deg', 0):g}&nbsp;/<wbr> {candidate.get('values', {}).get('osse_coverage_v_deg', 0):g}</td>"
-            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('k_h', 0):.6f}'>{candidate.get('values', {}).get('k_h', 0):.2f}&nbsp;/<wbr> {candidate.get('values', {}).get('k_v', 0):.2f}</td>"
-            f"<td class='axis-pair' data-sort='{candidate.get('derived', {}).get('s_h', 0):.6f}'>{candidate.get('derived', {}).get('s_h', 0):.3f}&nbsp;/<wbr> {candidate.get('derived', {}).get('s_v', 0):.3f}</td>"
-            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('n_h', 0):.6f}'>{candidate.get('values', {}).get('n_h', 0):g}&nbsp;/<wbr> {candidate.get('values', {}).get('n_v', 0):g}</td>"
-            f"<td data-sort='{html.escape(item['label'])}'>{html.escape(item['label'])}</td>"
-            "</tr>"
-        )
-
-    all_result_rows = []
-    all_result_order = sorted(
-        candidate_rows,
-        key=lambda item: (
-            item["search"]["coverage"],
-            item["search"]["mouth"],
-            item["candidate"]["id"],
-        ),
-    )
-    for rank, item in enumerate(all_result_order, 1):
-        summary = item["search"]
-        candidate = item["candidate"]
-        diagnostics = item["diagnostics"]
-        status_badge = f"<span class='badge {html.escape(_ranking_class(summary))}'>{html.escape(candidate.get('status', 'unknown'))}</span>"
-        candidate_name = html.escape(item["artifact_stem"])
-        candidate_link = (
-            f"<a href='{html.escape(str(item['report_path'].relative_to(project_root)))}'>{candidate_name}</a>"
-            if item["report_path"] is not None else candidate_name
-        )
-        all_result_rows.append(
-            "<tr>"
-            f"<td data-sort='{rank}'>{rank}</td>"
-            f"<td data-sort='{html.escape(item['artifact_stem'])}'>{candidate_link}</td>"
-            f"<td data-sort='{html.escape(summary['label'])}'>{html.escape(summary['label'])}</td>"
-            f"<td data-sort='{html.escape(candidate.get('status', 'unknown'))}'>{status_badge}</td>"
-            f"<td data-sort='{item['candidate_score']:.6f}'>{item['candidate_score']:.1f}%</td>"
-            f"<td data-sort='{diagnostics['coverage_match_percent']:.6f}'>{diagnostics['coverage_match_percent']:.1f}%</td>"
-            f"<td data-sort='{diagnostics['coverage_smoothness_percent']:.6f}'>{diagnostics['coverage_smoothness_percent']:.1f}%</td>"
-            f"<td data-sort='{diagnostics['waist_stability_percent']:.6f}'>{diagnostics['waist_stability_percent']:.1f}%</td>"
-            f"<td data-sort='{diagnostics['window_uniformity_percent']:.6f}'>{diagnostics['window_uniformity_percent']:.1f}%</td>"
-            f"<td data-sort='{candidate.get('values', {}).get('length_mm', 0):.6f}'>{candidate.get('values', {}).get('length_mm', 0):g}</td>"
-            f"<td data-sort='{item['length_mouth_ratio']:.6f}'>{item['length_mouth_ratio']:.3f}</td>"
-            f"<td data-sort='{candidate.get('values', {}).get('extension_mm', 0):.6f}'>{candidate.get('values', {}).get('extension_mm', 0):g}</td>"
-            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('osse_coverage_h_deg', 0):.6f}'>{candidate.get('values', {}).get('osse_coverage_h_deg', 0):g}&nbsp;/<wbr> {candidate.get('values', {}).get('osse_coverage_v_deg', 0):g}</td>"
-            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('k_h', 0):.6f}'>{candidate.get('values', {}).get('k_h', 0):.2f}&nbsp;/<wbr> {candidate.get('values', {}).get('k_v', 0):.2f}</td>"
-            f"<td class='axis-pair' data-sort='{candidate.get('derived', {}).get('s_h', 0):.6f}'>{candidate.get('derived', {}).get('s_h', 0):.3f}&nbsp;/<wbr> {candidate.get('derived', {}).get('s_v', 0):.3f}</td>"
-            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('n_h', 0):.6f}'>{candidate.get('values', {}).get('n_h', 0):g}&nbsp;/<wbr> {candidate.get('values', {}).get('n_v', 0):g}</td>"
-            f"<td data-sort='{html.escape(item['label'])}'>{html.escape(item['label'])}</td>"
+            f"<td class='{score_class}' data-column='average-score' data-sort='{item['candidate_score']:.6f}'>{item['candidate_score']:.1f}%</td>"
+            f"<td class='{match_class}' data-column='coverage-match' hidden data-sort='{diagnostics['coverage_match_percent']:.6f}'>{diagnostics['coverage_match_percent']:.1f}%</td>"
+            f"<td class='{smooth_class}' data-column='coverage-smoothness' hidden data-sort='{diagnostics['coverage_smoothness_percent']:.6f}'>{diagnostics['coverage_smoothness_percent']:.1f}%</td>"
+            f"<td class='{waist_class}' data-column='waist-stability' hidden data-sort='{diagnostics['waist_stability_percent']:.6f}'>{diagnostics['waist_stability_percent']:.1f}%</td>"
+            f"<td class='{uniform_class}' data-column='window-uniformity' hidden data-sort='{diagnostics['window_uniformity_percent']:.6f}'>{diagnostics['window_uniformity_percent']:.1f}%</td>"
+            f"<td data-column='length' hidden data-sort='{candidate.get('values', {}).get('length_mm', 0):.6f}'>{candidate.get('values', {}).get('length_mm', 0):g}</td>"
+            f"<td data-column='length-mouth-ratio' hidden data-sort='{item['length_mouth_ratio']:.6f}'>{item['length_mouth_ratio']:.3f}</td>"
+            f"<td data-column='extension' hidden data-sort='{candidate.get('values', {}).get('extension_mm', 0):.6f}'>{candidate.get('values', {}).get('extension_mm', 0):g}</td>"
+            f"<td class='axis-pair' data-column='osse' hidden data-sort='{candidate.get('values', {}).get('osse_coverage_h_deg', 0):.6f}'>{candidate.get('values', {}).get('osse_coverage_h_deg', 0):g}&nbsp;/<wbr> {candidate.get('values', {}).get('osse_coverage_v_deg', 0):g}</td>"
+            f"<td class='axis-pair' data-column='k' hidden data-sort='{candidate.get('values', {}).get('k_h', 0):.6f}'>{candidate.get('values', {}).get('k_h', 0):.2f}&nbsp;/<wbr> {candidate.get('values', {}).get('k_v', 0):.2f}</td>"
+            f"<td class='axis-pair' data-column='s' hidden data-sort='{candidate.get('derived', {}).get('s_h', 0):.6f}'>{candidate.get('derived', {}).get('s_h', 0):.3f}&nbsp;/<wbr> {candidate.get('derived', {}).get('s_v', 0):.3f}</td>"
+            f"<td class='axis-pair' data-column='n' hidden data-sort='{candidate.get('values', {}).get('n_h', 0):.6f}'>{candidate.get('values', {}).get('n_h', 0):g}&nbsp;/<wbr> {candidate.get('values', {}).get('n_v', 0):g}</td>"
+            f"<td data-column='trait' hidden data-sort='{html.escape(item['label'])}'>{html.escape(item['label'])}</td>"
+            f"<td data-column='mouth-height' hidden data-sort='{summary['mouth_height']:.6f}'>{summary['mouth_height']:g}</td>"
+            f"<td data-column='mouth-width' hidden data-sort='{summary['mouth_width']:.6f}'>{summary['mouth_width']:g}</td>"
             "</tr>"
         )
 
@@ -327,7 +297,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
         mouth_sizes = ", ".join(f"{summary['mouth']:g}" for summary in summaries)
         ratios = sorted({
             round(
-                float(candidate["values"]["length_mm"]) / float(summary["mouth"]),
+                float(summary["mouth_width"]) / float(candidate["values"]["length_mm"]),
                 3
             )
             for summary in summaries
@@ -341,6 +311,28 @@ def generate_report(project_root: Path, output: Path) -> Path:
     else:
         coverage_targets = mouth_sizes = ratios = fixed_k = fixed_n = sweep_lower = sweep_upper = crossover = "—"
 
+    toggle_columns = (
+        ("average-score", "Average diagnostic score", True),
+        ("coverage-match", "Coverage Match", False),
+        ("coverage-smoothness", "Coverage Smoothness", False),
+        ("waist-stability", "Waist Stability", False),
+        ("window-uniformity", "Window Uniformity", False),
+        ("length", "Length mm", False),
+        ("length-mouth-ratio", "Length-mouth ratio", False),
+        ("extension", "Extension mm", False),
+        ("osse", "OS-SE H / V", False),
+        ("k", "K H / V", False),
+        ("s", "S H / V", False),
+        ("n", "N H / V", False),
+        ("trait", "Distinguishing trait", False),
+        ("mouth-height", "Mouth height", False),
+        ("mouth-width", "Mouth width", False),
+    )
+    column_toggles = "".join(
+        f"<button type='button' class='column-toggle' data-column-toggle='{column}' "
+        f"aria-pressed='{'true' if visible else 'false'}'>{html.escape(label)}</button>"
+        for column, label, visible in toggle_columns)
+
     document = f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}
 <title>Mouth-size / coverage grid</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#69d6c8;--good:#16856b;--warn:#b7791f;--bad:#b45353}}
@@ -351,7 +343,8 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 .badge{{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.9rem;text-transform:uppercase;letter-spacing:.02em}}.badge.complete{{background:rgba(22,133,107,.18);color:#8de8cc}}.badge.running{{background:rgba(183,121,31,.2);color:#f6d39a}}.badge.failed{{background:rgba(180,83,83,.2);color:#ffb2b2}}.badge.pending{{background:rgba(148,163,189,.16);color:#c8d0d8}}
 .best{{background:#173c39;color:#9af0df;font-weight:700}}.worst{{background:#482321;color:#ffaaa3;font-weight:700}}
 .wide td:nth-child(5), .wide td:nth-child(6), .wide td:nth-child(7), .wide td:nth-child(8), .wide td:nth-child(9){{white-space:nowrap}}
-.sortable{{cursor:pointer;user-select:none}}.axis-pair{{white-space:normal}}
+.sortable{{cursor:pointer;user-select:none}}.axis-pair{{white-space:normal}}[hidden]{{display:none!important}}
+.column-controls{{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}}.column-toggle{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
 @media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
@@ -370,21 +363,12 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <tr><td>{coverage_targets} deg</td><td>{mouth_sizes} mm</td><td>K={fixed_k}, N={fixed_n}</td><td>{sweep_lower}-{sweep_upper} Hz&nbsp;/<wbr> {crossover} Hz</td><td>{", ".join(f"{ratio:g}" for ratio in ratios) if ratios != "—" else "—"}</td></tr></table>
 </section>
 <section>
-<h2>Active ranking</h2>
+<h2>Candidates</h2>
+<div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div>
 <table class='wide sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Average diagnostic score</th><th class='sortable' data-sort='number'>Coverage Match</th><th class='sortable' data-sort='number'>Coverage Smoothness</th><th class='sortable' data-sort='number'>Waist Stability</th><th class='sortable' data-sort='number'>Window Uniformity</th><th class='sortable' data-sort='number'>Length mm</th><th class='sortable' data-sort='number'>Length-mouth ratio</th><th class='sortable' data-sort='number'>Extension mm</th><th class='sortable' data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-sort='text'>Distinguishing trait</th></tr></thead>
+<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='average-score' data-sort='number'>Average diagnostic score</th><th class='sortable' data-column='coverage-match' hidden data-sort='number'>Coverage Match</th><th class='sortable' data-column='coverage-smoothness' hidden data-sort='number'>Coverage Smoothness</th><th class='sortable' data-column='waist-stability' hidden data-sort='number'>Waist Stability</th><th class='sortable' data-column='window-uniformity' hidden data-sort='number'>Window Uniformity</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead>
 <tbody>
 {''.join(rows)}
-</tbody>
-</table>
-</section>
-<section>
-<h2>All results</h2>
-<p class='muted'>This is the full candidate list across every sub-search. Click any column header to sort it.</p>
-<table class='wide sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Average diagnostic score</th><th class='sortable' data-sort='number'>Coverage Match</th><th class='sortable' data-sort='number'>Coverage Smoothness</th><th class='sortable' data-sort='number'>Waist Stability</th><th class='sortable' data-sort='number'>Window Uniformity</th><th class='sortable' data-sort='number'>Length mm</th><th class='sortable' data-sort='number'>Length-mouth ratio</th><th class='sortable' data-sort='number'>Extension mm</th><th class='sortable' data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-sort='text'>Distinguishing trait</th></tr></thead>
-<tbody>
-{''.join(all_result_rows)}
 </tbody>
 </table>
 </section>
@@ -400,6 +384,15 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 </section>
 <script>
 (() => {{
+  document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
+    button.addEventListener('click', () => {{
+      const visible = button.getAttribute('aria-pressed') !== 'true';
+      button.setAttribute('aria-pressed', String(visible));
+      document.querySelectorAll(`[data-column="${{button.dataset.columnToggle}}"]`).forEach((cell) => {{
+        cell.hidden = !visible;
+      }});
+    }});
+  }});
   const compare = (a, b, type, direction) => {{
     const mul = direction === 'asc' ? 1 : -1;
     if (type === 'number') {{

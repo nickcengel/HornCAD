@@ -64,9 +64,13 @@ def acoustic_parameters(yaml_path: Path | None) -> dict[str, str]:
     h = config.get("horizontal_basis", {})
     v = config.get("vertical_basis", {})
     modifier = config.get("section_modifier", {})
+    length = float(g.get("length", 0))
+    mouth_width = float(g.get("mouth_width", 0))
+    length_mouth_ratio = mouth_width / length if length else 0.0
     values = {
-        "Length": f"{g.get('length', 0):g} mm",
+        "Length": f"{length:g} mm",
         "Mouth": f"{g.get('mouth_width', 0):g} × {g.get('mouth_height', 0):g} mm",
+        "Length-mouth ratio": f"{length_mouth_ratio:.3g}",
         "Mouth sag": f"{g.get('mouth_sag', 0):g} mm",
         "Throat radius": f"{g.get('throat_radius', 0):g} mm",
         "Throat angle": f"{g.get('throat_angle_deg', 0):g}°",
@@ -772,7 +776,7 @@ def _write_html(path: Path, title: str, figure: go.Figure,
     plot = figure.to_html(full_html=False, include_plotlyjs=True,
                           config={"displaylogo": False, "scrollZoom": True,
                                   "responsive": True})
-    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v1 -->
+    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v2 -->
 <title>{html.escape(title)}</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}

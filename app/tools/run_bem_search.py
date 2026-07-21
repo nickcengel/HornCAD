@@ -693,6 +693,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     lower_frequency = float(search.get("lower_frequency_hz", search["crossover_hz"]))
     crossover_frequency = float(search["crossover_hz"])
     upper_frequency = float(search["upper_frequency_hz"])
+    geometry = search.get("geometry_context", {})
+    mouth_width = float(geometry.get("mouth_width_mm", 0))
+    mouth_height = float(geometry.get("mouth_height_mm", 0))
     pareto = pareto_indices(records)
     for index, record in enumerate(records):
         record["pareto"] = index in pareto
@@ -711,13 +714,13 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             if values:
                 extrema[key] = (min(values), max(values))
 
-    def diagnostic_cell(diagnostic: dict[str, Any], key: str) -> str:
+    def diagnostic_cell(diagnostic: dict[str, Any], key: str, column: str) -> str:
         if not diagnostic:
-            return "<td data-sort=''>—</td>"
+            return f"<td data-column='{column}' hidden data-sort=''>—</td>"
         try:
             value = objective_score(diagnostic, key)
         except KeyError:
-            return "<td data-sort=''>—</td>"
+            return f"<td data-column='{column}' hidden data-sort=''>—</td>"
         css_class = ""
         if key in extrema:
             minimum, maximum = extrema[key]
@@ -725,7 +728,8 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
                 css_class = " class='best'"
             elif math.isclose(value, minimum, abs_tol=1e-9):
                 css_class = " class='worst'"
-        return f"<td{css_class} data-sort='{value:.6f}'>{value:.1f}%</td>"
+        return (f"<td{css_class} data-column='{column}' hidden "
+                f"data-sort='{value:.6f}'>{value:.1f}%</td>")
 
     traits = candidate_traits(records, seed, search["bounds"])
     rows = []
@@ -749,26 +753,69 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"{record['derived'].get('s_v', float('nan')):.3f}")
         n_pair = _axis_pair(f"{record['values']['n_h']:g}",
                             f"{record['values']['n_v']:g}")
+        diagnostic_values = []
+        for key in OBJECTIVES:
+            try:
+                diagnostic_values.append(objective_score(diagnostic, key))
+            except KeyError:
+                pass
+        average_score = (sum(diagnostic_values) / len(diagnostic_values)
+                         if diagnostic_values else float("nan"))
+        average_score_sort = (f"{average_score:.6f}"
+                              if math.isfinite(average_score) else "")
+        average_score_text = (f"{average_score:.1f}%"
+                              if math.isfinite(average_score) else "—")
+        length = float(record["values"]["length_mm"])
+        length_mouth_ratio = mouth_width / length if length else float("nan")
         rows.append("<tr>" + "".join((
             f"<td data-sort='{html.escape(artifact_stem)}'><a href='{candidate_dir}/project.yaml'>{html.escape(artifact_stem)}</a>"
             f"{stl_link}{report_link}</td>",
             f"<td data-sort='{html.escape(status)}'>{html.escape(status)}</td>",
-            "".join(diagnostic_cell(diagnostic, key) for key in OBJECTIVES),
-            f"<td data-sort='{record['values']['length_mm']:.6f}'>{record['values']['length_mm']:.1f}</td>",
-            f"<td data-sort='{record['values']['extension_mm']:.6f}'>{record['values']['extension_mm']:.1f}</td>",
-            f"<td class='axis-pair' data-sort='{record['values']['osse_coverage_h_deg']:.6f}'>"
+            f"<td data-column='average-score' data-sort='{average_score_sort}'>{average_score_text}</td>",
+            "".join(diagnostic_cell(diagnostic, key, column) for key, column in zip(
+                OBJECTIVES, ("coverage-match", "coverage-smoothness", "waist-stability",
+                             "window-uniformity"))),
+            f"<td data-column='length' hidden data-sort='{length:.6f}'>{length:.1f}</td>",
+            f"<td data-column='length-mouth-ratio' hidden data-sort='{length_mouth_ratio:.6f}'>{length_mouth_ratio:.3f}</td>",
+            f"<td data-column='extension' hidden data-sort='{record['values']['extension_mm']:.6f}'>{record['values']['extension_mm']:.1f}</td>",
+            f"<td class='axis-pair' data-column='osse' hidden data-sort='{record['values']['osse_coverage_h_deg']:.6f}'>"
             f"{coverage_pair}</td>",
-            f"<td class='axis-pair' data-sort='{record['values']['k_h']:.6f}'>"
+            f"<td class='axis-pair' data-column='k' hidden data-sort='{record['values']['k_h']:.6f}'>"
             f"{k_pair}</td>",
-            f"<td class='axis-pair' data-sort='{record['derived'].get('s_h', float('nan')):.6f}'>"
+            f"<td class='axis-pair' data-column='s' hidden data-sort='{record['derived'].get('s_h', float('nan')):.6f}'>"
             f"{s_pair}</td>",
-            f"<td class='axis-pair' data-sort='{record['values']['n_h']:.6f}'>"
+            f"<td class='axis-pair' data-column='n' hidden data-sort='{record['values']['n_h']:.6f}'>"
             f"{n_pair}</td>",
-            f"<td data-sort='{html.escape(trait)}'>{html.escape(trait)}</td>",
+            f"<td data-column='trait' hidden data-sort='{html.escape(trait)}'>{html.escape(trait)}</td>",
+            f"<td data-column='mouth-height' hidden data-sort='{mouth_height:.6f}'>{mouth_height:g}</td>",
+            f"<td data-column='mouth-width' hidden data-sort='{mouth_width:.6f}'>{mouth_width:g}</td>",
         )) + "</tr>")
     objective_headers = "".join(
-        f"<th class='sortable' data-sort='number'>{label}</th>"
-        for label in OBJECTIVE_LABELS)
+        f"<th class='sortable' data-column='{column}' hidden data-sort='number'>{label}</th>"
+        for label, column in zip(OBJECTIVE_LABELS, (
+            "coverage-match", "coverage-smoothness", "waist-stability",
+            "window-uniformity")))
+    toggle_columns = (
+        ("average-score", "Average diagnostic score", True),
+        ("coverage-match", "Coverage Match", False),
+        ("coverage-smoothness", "Coverage Smoothness", False),
+        ("waist-stability", "Waist Stability", False),
+        ("window-uniformity", "Window Uniformity", False),
+        ("length", "Length mm", False),
+        ("length-mouth-ratio", "Length-mouth ratio", False),
+        ("extension", "Extension mm", False),
+        ("osse", "OS-SE H / V", False),
+        ("k", "K H / V", False),
+        ("s", "S H / V", False),
+        ("n", "N H / V", False),
+        ("trait", "Distinguishing trait", False),
+        ("mouth-height", "Mouth height", False),
+        ("mouth-width", "Mouth width", False),
+    )
+    column_toggles = "".join(
+        f"<button type='button' class='column-toggle' data-column-toggle='{column}' "
+        f"aria-pressed='{'true' if visible else 'false'}'>{html.escape(label)}</button>"
+        for column, label, visible in toggle_columns)
     refresh = "<meta http-equiv='refresh' content='10'>" if state["status"] == "running" else ""
     document = f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}
 <title>BEM candidate search</title><style>
@@ -776,7 +823,8 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}main{{width:100%;padding:20px}}
 a{{color:var(--accent-strong)}}section{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}table{{border-collapse:collapse;width:100%;min-width:max-content}}
 th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}th{{background:var(--panel-2);white-space:nowrap}}td.best{{background:#173c39;color:#9af0df;font-weight:700}}td.worst{{background:#482321;color:#ffaaa3;font-weight:700}}.summary{{display:flex;gap:30px;flex-wrap:wrap}}.summary p{{color:var(--muted)}}.summary strong{{color:var(--ink)}}
-.axis-pair{{white-space:normal}}.sortable{{cursor:pointer;user-select:none}}
+.axis-pair{{white-space:normal}}.sortable{{cursor:pointer;user-select:none}}[hidden]{{display:none!important}}
+.column-controls{{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}}.column-toggle{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}
 </style></head><body><main><h1>BEM candidate search</h1><section class='summary'>
 <p><strong>Status</strong><br>{html.escape(state['status'])}</p><p><strong>Phase</strong><br>{html.escape(state.get('phase', ''))}</p>
 <p><strong>Progress</strong><br>{sum(r['status']=='complete' for r in records)}&nbsp;/<wbr> {state['max_evaluations']} evaluated</p>
@@ -786,9 +834,18 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vert
 <p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
 <p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Each completed run is compared with a factor-two decimation and excluded from surrogate training when any headline diagnostic moves by more than {search.get('sampling_stability_points', DEFAULT_SAMPLING_STABILITY_POINTS):g} points. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
-<section><h2>Candidates</h2><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th>{objective_headers}<th class='sortable' data-sort='number'>Length mm</th><th class='sortable' data-sort='number'>Extension mm</th><th class='sortable' data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-sort='text'>Distinguishing trait</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
+<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='average-score' data-sort='number'>Average diagnostic score</th>{objective_headers}<th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
 <section><p>100% is best for all acoustic diagnostics. Combined H/V scores are weighted in proportion to mouth width and height. The sweep band controls solved frequencies; the fixed diagnostic band starts at crossover and ends at the upper operating frequency. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
 <script>
+document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
+  button.addEventListener('click', () => {{
+    const visible = button.getAttribute('aria-pressed') !== 'true';
+    button.setAttribute('aria-pressed', String(visible));
+    document.querySelectorAll(`[data-column="${{button.dataset.columnToggle}}"]`).forEach((cell) => {{
+      cell.hidden = !visible;
+    }});
+  }});
+}});
 document.querySelectorAll('table.sortable-table').forEach((table) => {{
   const headers = Array.from(table.querySelectorAll('th[data-sort]'));
   let active = -1;
