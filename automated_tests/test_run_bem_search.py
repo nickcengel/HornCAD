@@ -140,6 +140,29 @@ class BEMSearchTests(unittest.TestCase):
         self.assertIsNone(adaptive_pruning_decision(
             search, records, {"length_mm": 100}, {"s_h": 1.9, "s_v": 1.9}))
 
+    def test_adaptive_pruning_recognizes_intermediate_coverage_labels(self) -> None:
+        search = {
+            "initial_candidates": 7,
+            "initial_pool": [
+                {"label": f"coverage 40°, S={s:g}, L=100 mm", "values": {}}
+                for s in (0.75, 1.0, 1.25, 1.5, 1.75, 2.0, 2.25)
+            ],
+            "adaptive_pruning": {"enabled": True},
+            "geometry_context": {"mouth_width_mm": 300, "mouth_height_mm": 300},
+        }
+        records = [{
+            "status": "complete", "derived": {"s_h": s, "s_v": s},
+            "surface_diagnostics": {"score": {"overall_percent": score}},
+        } for s, score in ((0.5, 78), (0.75, 86), (1.0, 87.4),
+                           (1.25, 87.2), (1.5, 86.2), (1.75, 84.9),
+                           (2.0, 83.2))]
+
+        decision = adaptive_pruning_decision(
+            search, records, {"length_mm": 114}, {"s_h": 2.25, "s_v": 2.25})
+
+        self.assertIsNotNone(decision)
+        self.assertEqual(decision["target_s"], 2.25)
+
     def test_failed_candidate_retry_only_queues_failed_records(self) -> None:
         state = {"candidates": [
             {"id": "candidate-000", "status": "complete"},

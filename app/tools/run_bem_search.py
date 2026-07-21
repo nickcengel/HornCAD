@@ -425,7 +425,7 @@ def _uniform_s_sweep(search: dict[str, Any]) -> bool:
     pool = search.get("initial_pool", [])
     if not pool or search.get("initial_candidates") != len(pool):
         return False
-    return all(str(item.get("label", "")).startswith("uniform S=") for item in pool)
+    return all("S=" in str(item.get("label", "")) for item in pool)
 
 
 def adaptive_pruning_decision(search: dict[str, Any],
@@ -441,7 +441,9 @@ def adaptive_pruning_decision(search: dict[str, Any],
     curves from becoming overconfident.
     """
     policy = search.get("adaptive_pruning", {})
-    enabled = policy.get("enabled", _uniform_s_sweep(search))
+    # Pruning is opt-in. Short local/canonical S sets use compatible labels but
+    # intentionally require every authored comparison point.
+    enabled = policy.get("enabled", False)
     if not enabled or not _uniform_s_sweep(search):
         return None
     target_s_h = float(derived.get("s_h", math.nan))
