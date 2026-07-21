@@ -412,12 +412,13 @@ def build_quadrant_acoustic_mesh(yaml_path: Path, settings: MeshSettings,
     full-geometry reference.
     """
     full = build_acoustic_mesh(yaml_path, settings, side_samples, axial_stations)
-    side_samples = side_samples or GEOMETRY_SEED_SIDE_SAMPLES
-    axial_stations = axial_stations or GEOMETRY_SEED_AXIAL_STATIONS
-    authored, _, throat_radius_mm = _authored_mesh(
-        yaml_path, side_samples, axial_stations)
-    authored.apply_scale(1e-3)
-    capped = authored
+    # Cut the already wavelength-remeshed full surface. Remeshing the authored
+    # shell a second time after adding temporary symmetry caps was both
+    # redundant and capable of aborting inside Netgen on tight boundary
+    # geometries. Plane cuts only subdivide existing triangles, so the full
+    # mesh's wavelength limit remains valid.
+    throat_radius_mm = float(geometry.PARAMS["r0"])
+    capped = full.surface.copy()
     for normal in (np.asarray([1.0, 0.0, 0.0]),
                    np.asarray([0.0, 1.0, 0.0])):
         capped = trimesh.intersections.slice_mesh_plane(
@@ -473,15 +474,7 @@ def build_quadrant_acoustic_mesh(yaml_path: Path, settings: MeshSettings,
     if not capped.is_watertight:
         raise ValueError("temporary quadrant meshing caps are not closed")
 
-    throat_z = (-max(0.0, float(geometry.PARAMS["throat_extension"]))
-                + 0.3) * 1e-3
-    throat_points = capped.vertices[
-        np.abs(capped.vertices[:, 2] - throat_z) < 1e-8]
-    quadrant = _netgen_surface_remesh(
-        capped, settings.target_edge_m * settings.netgen_maxh_factor,
-        throat_points,
-        min(settings.target_edge_m * settings.netgen_maxh_factor,
-            2 * math.pi * throat_radius_mm * 1e-3 / 32))
+    quadrant = capped
     cap_faces = ((np.max(np.abs(quadrant.triangles[:, :, 0]), axis=1) < 1e-10)
                  | (np.max(np.abs(quadrant.triangles[:, :, 1]), axis=1) < 1e-10))
     quadrant.update_faces(~cap_faces)
