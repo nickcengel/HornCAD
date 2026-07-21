@@ -38,12 +38,16 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
     xs = [float(point["x"]) for point in points]
     ys = [float(point["y"]) for point in points]
     x_min, x_max = min(xs), max(xs)
-    y_min, y_max = min(ys), max(ys)
+    # Focus the comparison on the useful upper half of candidate performance.
+    # Values below the study mean remain part of the fitted trends but fall below
+    # the displayed score window.
+    y_min, y_max = fmean(ys), max(ys)
     x_pad = max((x_max - x_min) * .06, .05)
-    y_pad = max((y_max - y_min) * .08, 1.0)
     x_min, x_max = x_min - x_pad, x_max + x_pad
-    y_min, y_max = y_min - y_pad, y_max + y_pad
     plot_width, plot_height = width - left - right, height - top - bottom
+    plot_clip = "plot-" + "".join(
+        character if character.isalnum() else "-"
+        for character in x_label.lower()).strip("-")
 
     def sx(value: float) -> float:
         return left + (value - x_min) * plot_width / max(x_max - x_min, 1e-9)
@@ -54,7 +58,10 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
     coverages = sorted({float(point["coverage"]) for point in points})
     colors = {coverage: PLOT_COLORS[index % len(PLOT_COLORS)]
               for index, coverage in enumerate(coverages)}
-    parts = [f"<svg class='trend-plot' viewBox='0 0 {width} {height}' role='img'>"]
+    parts = [f"<svg class='trend-plot' viewBox='0 0 {width} {height}' role='img' "
+             f"data-y-min='{y_min:.6f}' data-y-max='{y_max:.6f}'>",
+             f"<defs><clipPath id='{html.escape(plot_clip)}'><rect x='{left}' y='{top}' "
+             f"width='{plot_width}' height='{plot_height}'/></clipPath></defs>"]
     for index in range(6):
         fraction = index / 5
         x_value = x_min + fraction * (x_max - x_min)
@@ -65,6 +72,7 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
         parts.append(f"<text class='plot-tick' x='{x:.2f}' y='{height-bottom+20}' text-anchor='middle'>{x_value:.2g}</text>")
         parts.append(f"<line class='plot-grid' x1='{left}' x2='{width-right}' y1='{y:.2f}' y2='{y:.2f}'/>")
         parts.append(f"<text class='plot-tick' x='{left-9}' y='{y+4:.2f}' text-anchor='end'>{y_value:.3g}</text>")
+    parts.append(f"<g clip-path='url(#{html.escape(plot_clip)})'>")
     if trends:
         for coverage in coverages:
             group = [point for point in points if float(point["coverage"]) == coverage]
@@ -98,6 +106,7 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
             parts.append(
                 f"<text class='plot-label' x='{sx(float(point['x']))+6:.2f}' "
                 f"y='{sy(float(point['y']))-6:.2f}'>{html.escape(str(point['label']))}</text>")
+    parts.append("</g>")
     parts.extend([
         f"<text class='plot-axis-label' x='{left + plot_width/2:.2f}' y='{height-8}' text-anchor='middle'>{html.escape(x_label)}</text>",
         f"<text class='plot-axis-label' transform='translate(17 {top + plot_height/2:.2f}) rotate(-90)' text-anchor='middle'>{html.escape(y_label)}</text>",

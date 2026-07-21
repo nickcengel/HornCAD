@@ -5,6 +5,7 @@ import tempfile
 import unittest
 
 from app.tools.generate_mouth_size_coverage_grid_report import (
+    _scatter_svg,
     _legacy_ranking_score,
     _search_summary,
     generate_report,
@@ -15,6 +16,16 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class MouthSizeCoverageGridReportTests(unittest.TestCase):
+    def test_scatter_y_range_runs_from_mean_to_peak(self) -> None:
+        plot = _scatter_svg([
+            {"x": 1, "y": 60, "coverage": 25},
+            {"x": 2, "y": 75, "coverage": 25},
+            {"x": 3, "y": 90, "coverage": 25},
+        ], "X", "Score")
+
+        self.assertIn("data-y-min='75.000000'", plot)
+        self.assertIn("data-y-max='90.000000'", plot)
+
     def test_legacy_ranking_score_uses_the_previous_four_metrics(self) -> None:
         candidate = {"diagnostics": {"combined": {
             "coverage_match_percent": 80.0,
