@@ -6,8 +6,6 @@ import unittest
 
 from app.tools.generate_mouth_size_coverage_grid_report import (
     _deduplicate_candidate_rows,
-    _nice_plot_bounds,
-    _scatter_svg,
     _legacy_ranking_score,
     _search_summary,
     generate_report,
@@ -37,20 +35,6 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertEqual(
             sorted(item["candidate"]["values"]["length_mm"] for item in retained),
             [126.861, 130])
-
-    def test_scatter_y_range_runs_from_mean_to_peak(self) -> None:
-        plot = _scatter_svg([
-            {"x": 1, "y": 60, "coverage": 25},
-            {"x": 2, "y": 75, "coverage": 25},
-            {"x": 3, "y": 90, "coverage": 25},
-        ], "X", "Score")
-
-        self.assertIn("data-y-min='70.000000'", plot)
-        self.assertIn("data-y-max='95.000000'", plot)
-        self.assertEqual(plot.count("class='scatter-point'"), 2)
-
-    def test_plot_bounds_buffer_and_round_outward(self) -> None:
-        self.assertEqual(_nice_plot_bounds(70.063, 88.301), (65, 90))
 
     def test_legacy_ranking_score_uses_the_previous_four_metrics(self) -> None:
         candidate = {"diagnostics": {"combined": {
@@ -117,21 +101,10 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("data-column='profile-rms' hidden", report)
         self.assertIn("data-column='slice-rms' hidden", report)
         self.assertRegex(report, r">\d{1,2}-\d{2} \d{2}:\d{2}</td>")
-        self.assertIn("<h2>Candidate performance trends</h2>", report)
-        self.assertIn("Achievable score by coverage", report)
-        self.assertIn("Selected S by coverage", report)
-        self.assertIn("Selected mouth/length ratio by coverage", report)
-        self.assertIn("Gain from K/N refinement", report)
-        self.assertEqual(report.count("class='plot-card'"), 4)
-        self.assertGreaterEqual(report.count("class='trend-plot'"), 3)
-        self.assertIn("class='plot-trend'", report)
-        self.assertIn(">250 mm</text>", report)
-        self.assertIn("id='scatter-popup'", report)
-        self.assertIn("class='scatter-point'", report)
-        self.assertIn("data-report='", report)
-        self.assertIn("Open candidate report", report)
-        self.assertIn("openScatterPopup", report)
-        self.assertIn("Normalized length", report)
+        self.assertNotIn("Candidate performance trends", report)
+        self.assertNotIn("class='plot-card'", report)
+        self.assertNotIn("class='trend-plot'", report)
+        self.assertNotIn("scatter-popup", report)
         self.assertIn("matched coupled K/N ↔ local S", report)
         self.assertIn("<span class='badge pending'>planned</span>", report)
         self.assertNotIn("Average diagnostic score", report)

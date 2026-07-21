@@ -6,7 +6,6 @@ import argparse
 from datetime import datetime
 import html
 import json
-import math
 from pathlib import Path
 from statistics import fmean
 from typing import Any
@@ -31,8 +30,6 @@ LEGACY_RANKING_KEYS = (
     "waist_stability_percent",
     "window_uniformity_percent",
 )
-PLOT_COLORS = ("#69d6c8", "#f6bd60", "#f28482", "#8e9aef", "#90be6d",
-               "#c77dff")
 NEAR_DUPLICATE_LENGTH_MM = 1.0
 
 
@@ -74,111 +71,6 @@ def _deduplicate_candidate_rows(
             selected.append(item)
         retained.extend(selected)
     return retained
-
-
-def _nice_plot_bounds(lower: float, upper: float) -> tuple[float, float]:
-    """Add 5% breathing room and round outward to readable tick bounds."""
-    span = max(upper - lower, 1.0)
-    buffered_lower = lower - span * 0.05
-    buffered_upper = upper + span * 0.05
-    rough_step = (buffered_upper - buffered_lower) / 5
-    magnitude = 10 ** math.floor(math.log10(max(rough_step, 1e-9)))
-    normalized = rough_step / magnitude
-    nice_factor = 1 if normalized <= 1 else 2 if normalized <= 2 else 5 if normalized <= 5 else 10
-    step = nice_factor * magnitude
-    return (math.floor(buffered_lower / step) * step,
-            math.ceil(buffered_upper / step) * step)
-
-
-def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
-                 *, trends: bool = False, label_points: bool = False,
-                 series_key: str = "coverage", series_suffix: str = "°",
-                 upper_score_window: bool = True) -> str:
-    if not points:
-        return "<p class='muted'>No completed candidates yet.</p>"
-    width, height = 720, 390
-    left, right, top, bottom = 64, 22, 24, 52
-    xs = [float(point["x"]) for point in points]
-    ys = [float(point["y"]) for point in points]
-    x_min, x_max = min(xs), max(xs)
-    # Candidate-cloud score plots focus on the useful upper half. Design-law
-    # plots use their complete Y range so selected coordinates are not hidden.
-    y_lower = fmean(ys) if upper_score_window else min(ys)
-    y_min, y_max = _nice_plot_bounds(y_lower, max(ys))
-    x_pad = max((x_max - x_min) * .06, .05)
-    x_min, x_max = x_min - x_pad, x_max + x_pad
-    plot_width, plot_height = width - left - right, height - top - bottom
-    plot_clip = "plot-" + "".join(
-        character if character.isalnum() else "-"
-        for character in f"{x_label}-{y_label}".lower()).strip("-")
-
-    def sx(value: float) -> float:
-        return left + (value - x_min) * plot_width / max(x_max - x_min, 1e-9)
-
-    def sy(value: float) -> float:
-        return top + (y_max - value) * plot_height / max(y_max - y_min, 1e-9)
-
-    series_values = sorted({float(point[series_key]) for point in points})
-    colors = {value: PLOT_COLORS[index % len(PLOT_COLORS)]
-              for index, value in enumerate(series_values)}
-    parts = [f"<svg class='trend-plot' viewBox='0 0 {width} {height}' role='img' "
-             f"data-y-min='{y_min:.6f}' data-y-max='{y_max:.6f}'>",
-             f"<defs><clipPath id='{html.escape(plot_clip)}'><rect x='{left}' y='{top}' "
-             f"width='{plot_width}' height='{plot_height}'/></clipPath></defs>"]
-    for index in range(6):
-        fraction = index / 5
-        x_value = x_min + fraction * (x_max - x_min)
-        y_value = y_min + fraction * (y_max - y_min)
-        x = sx(x_value)
-        y = sy(y_value)
-        parts.append(f"<line class='plot-grid' x1='{x:.2f}' x2='{x:.2f}' y1='{top}' y2='{height-bottom}'/>")
-        parts.append(f"<text class='plot-tick' x='{x:.2f}' y='{height-bottom+20}' text-anchor='middle'>{x_value:.2g}</text>")
-        parts.append(f"<line class='plot-grid' x1='{left}' x2='{width-right}' y1='{y:.2f}' y2='{y:.2f}'/>")
-        parts.append(f"<text class='plot-tick' x='{left-9}' y='{y+4:.2f}' text-anchor='end'>{y_value:.3g}</text>")
-    parts.append(f"<g clip-path='url(#{html.escape(plot_clip)})'>")
-    if trends:
-        for series_value in series_values:
-            group = [point for point in points
-                     if float(point[series_key]) == series_value]
-            ordered = sorted(group, key=lambda point: float(point["x"]))
-            if len({float(point["x"]) for point in ordered}) < 2:
-                continue
-            coordinates = " ".join(
-                f"{sx(float(point['x'])):.2f},{sy(float(point['y'])):.2f}"
-                for point in ordered)
-            parts.append(f"<polyline class='plot-trend' stroke='{colors[series_value]}' points='{coordinates}'/>")
-    for point in points:
-        if not y_min <= float(point["y"]) <= y_max:
-            continue
-        series_value = float(point[series_key])
-        color = colors[series_value]
-        radius = float(point.get("radius", 4.2))
-        tooltip = html.escape(str(point.get("tooltip", "candidate")))
-        candidate_name = html.escape(str(point.get("candidate", "candidate")), quote=True)
-        stats = html.escape(str(point.get("stats", point.get("tooltip", ""))), quote=True)
-        report = html.escape(str(point.get("report", "")), quote=True)
-        parts.append(
-            f"<circle class='scatter-point' tabindex='0' role='button' "
-            f"aria-label='Open {candidate_name} details' data-candidate='{candidate_name}' "
-            f"data-stats='{stats}' data-report='{report}' "
-            f"cx='{sx(float(point['x'])):.2f}' cy='{sy(float(point['y'])):.2f}' "
-            f"r='{radius:.2f}' fill='{color}'><title>{tooltip}</title></circle>")
-        if label_points and point.get("label"):
-            parts.append(
-                f"<text class='plot-label' x='{sx(float(point['x']))+6:.2f}' "
-                f"y='{sy(float(point['y']))-6:.2f}'>{html.escape(str(point['label']))}</text>")
-    parts.append("</g>")
-    parts.extend([
-        f"<text class='plot-axis-label' x='{left + plot_width/2:.2f}' y='{height-8}' text-anchor='middle'>{html.escape(x_label)}</text>",
-        f"<text class='plot-axis-label' transform='translate(17 {top + plot_height/2:.2f}) rotate(-90)' text-anchor='middle'>{html.escape(y_label)}</text>",
-    ])
-    legend_x = left + 8
-    for series_value in series_values:
-        parts.append(f"<circle cx='{legend_x}' cy='{top+10}' r='4' fill='{colors[series_value]}'/>")
-        parts.append(f"<text class='plot-label' x='{legend_x+7}' y='{top+14}'>{series_value:g}{html.escape(series_suffix)}</text>")
-        legend_x += 76
-    parts.append("</svg>")
-    return "".join(parts)
 
 
 def _legacy_ranking_score(candidate: dict[str, Any]) -> float | None:
@@ -360,108 +252,6 @@ def generate_report(project_root: Path, output: Path) -> Path:
         row["label"] = candidate.get("proposal_source", "").replace("_", " ").strip().title() or "Candidate"
         if row["label"] == "Seed":
             row["label"] = "Seed design"
-
-    best_by_pair: dict[tuple[float, float], dict[str, Any]] = {}
-    baseline_best: dict[tuple[float, float], float] = {}
-    refined_best: dict[tuple[float, float], float] = {}
-    for row in candidate_rows:
-        score = row["surface_ranking_score"]
-        if score is None:
-            continue
-        candidate = row["candidate"]
-        summary = row["search"]
-        derived = candidate.get("derived", {})
-        s_values = [derived.get("s_h"), derived.get("s_v")]
-        s_value = (fmean(float(value) for value in s_values)
-                   if all(isinstance(value, (int, float)) for value in s_values)
-                   else None)
-        length = float(candidate.get("values", {}).get("length_mm", 0))
-        normalized_length = (
-            2.0 * length * math.tan(math.radians(summary["coverage"])) /
-            float(summary["mouth_width"]))
-        tooltip = (f"{row['artifact_stem']} · {summary['coverage']:g}° · "
-                   f"{summary['mouth']:g} mm · score {score:.1f}%")
-        report_url = (str(row["report_path"].relative_to(project_root))
-                      if row["report_path"] is not None else "")
-        stats = (
-            f"Score {score:.1f}% · Coverage {summary['coverage']:g}° · "
-            f"Mouth {summary['mouth_width']:g} × {summary['mouth_height']:g} mm · "
-            f"Length {length:g} mm · S {s_value:.3f} · "
-            f"Mouth/length {row['length_mouth_ratio']:.3f} · "
-            f"Normalized length {normalized_length:.3f}"
-            if s_value is not None else
-            f"Score {score:.1f}% · Coverage {summary['coverage']:g}° · "
-            f"Mouth {summary['mouth_width']:g} × {summary['mouth_height']:g} mm · "
-            f"Length {length:g} mm · Mouth/length {row['length_mouth_ratio']:.3f} · "
-            f"Normalized length {normalized_length:.3f}")
-        common = {"y": score, "coverage": summary["coverage"],
-                  "tooltip": tooltip, "candidate": row["artifact_stem"],
-                  "stats": stats, "report": report_url}
-        pair_key = (summary["coverage"], summary["mouth"])
-        if summary["study"] in {
-                "uniform S grid", "canonical S extension", "S boundary closure"}:
-            baseline_best[pair_key] = max(score, baseline_best.get(pair_key, -math.inf))
-        elif summary["study"] in {
-                "adaptive K/N grid", "coupled K/N closure", "coupled local S"}:
-            refined_best[pair_key] = max(score, refined_best.get(pair_key, -math.inf))
-        if pair_key not in best_by_pair or score > best_by_pair[pair_key]["y"]:
-            best_by_pair[pair_key] = {
-                **common, "mouth": summary["mouth"], "s": s_value,
-                "length_ratio": row["length_mouth_ratio"],
-            }
-
-    winners = list(best_by_pair.values())
-    score_envelope = [
-        {**point, "x": point["coverage"], "series": point["mouth"]}
-        for point in winners]
-    selected_s = [
-        {**point, "x": point["coverage"], "y": point["s"],
-         "series": point["mouth"]}
-        for point in winners if point["s"] is not None]
-    selected_length_ratio = [
-        {**point, "x": point["coverage"], "y": point["length_ratio"],
-         "series": point["mouth"]}
-        for point in winners]
-    refinement_gain = []
-    for pair_key, refined_score in refined_best.items():
-        if pair_key not in baseline_best or pair_key not in best_by_pair:
-            continue
-        point = best_by_pair[pair_key]
-        gain = refined_score - baseline_best[pair_key]
-        refinement_gain.append({
-            **point, "x": pair_key[0], "y": gain, "series": pair_key[1],
-            "stats": f"{point['stats']} · K/N gain {gain:+.2f} points",
-        })
-
-    trend_plots = (
-        ("Achievable score by coverage",
-         "The best completed result in each mouth/coverage cell. Each line follows one mouth size, so angle dependence is no longer mixed with the S sweep.",
-         _scatter_svg(score_envelope, "Coverage half-angle (°)",
-                      "Best surface score (%)", trends=True,
-                      series_key="series", series_suffix=" mm",
-                      upper_score_window=False)),
-        ("Selected S by coverage",
-         "The S coordinate of each cell winner. Agreement between mouth-size lines indicates a reusable angle-to-S design rule; separation indicates mouth dependence.",
-         _scatter_svg(selected_s, "Coverage half-angle (°)", "Winning S",
-                      trends=True, series_key="series", series_suffix=" mm",
-                      upper_score_window=False)),
-        ("Selected mouth/length ratio by coverage",
-         "The physical proportion of each cell winner. This is the directly usable starting length after choosing mouth size and coverage.",
-         _scatter_svg(selected_length_ratio, "Coverage half-angle (°)",
-                      "Mouth width / length", trends=True,
-                      series_key="series", series_suffix=" mm",
-                      upper_score_window=False)),
-        ("Gain from K/N refinement",
-         "Best adaptive or coupled result minus the best matched S-baseline. Positive values show where K/N work added performance; only cells with both measurements appear.",
-         _scatter_svg(refinement_gain, "Coverage half-angle (°)",
-                      "Surface-score gain (points)", trends=True,
-                      series_key="series", series_suffix=" mm",
-                      upper_score_window=False)),
-    )
-    plots_html = "".join(
-        f"<article class='plot-card'><h3>{html.escape(title)}</h3>"
-        f"<p class='muted'>{html.escape(description)}</p>{plot}</article>"
-        for title, description, plot in trend_plots)
 
     def surface_pair(candidate: dict[str, Any], path: tuple[str, ...],
                      suffix: str = "", scale: float = 1.0) -> tuple[str, str]:
@@ -668,10 +458,9 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 .wide td:nth-child(5), .wide td:nth-child(6), .wide td:nth-child(7), .wide td:nth-child(8), .wide td:nth-child(9){{white-space:nowrap}}
 .sortable{{cursor:pointer;user-select:none}}.axis-pair{{white-space:normal}}[hidden]{{display:none!important}}
 .column-controls,.angle-controls{{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}}.column-toggle,.angle-filter{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true'],.angle-filter[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}.filter-count{{margin-left:5px;color:var(--muted);font-size:.9rem}}
-.plot-grid-layout{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}.plot-card{{min-width:0;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:12px}}.plot-card .muted{{margin:0 0 8px;min-height:42px}}.trend-plot{{display:block;width:100%;height:auto;background:#0d1319;border-radius:6px}}.plot-grid{{stroke:#263541;stroke-width:1}}.plot-trend{{fill:none;stroke-width:2.4;opacity:.92}}.plot-tick,.plot-label{{fill:var(--muted);font-size:11px}}.plot-axis-label{{fill:var(--ink);font-size:12px;font-weight:600}}.trend-plot circle{{stroke:#0c1014;stroke-width:1;opacity:.82}}.scatter-point{{cursor:pointer}}.scatter-point:hover,.scatter-point:focus{{stroke:var(--ink);stroke-width:2;opacity:1;outline:none}}.scatter-popup{{position:fixed;z-index:30;width:min(340px,calc(100vw - 24px));padding:12px;border:1px solid var(--accent);border-radius:8px;background:#101820;box-shadow:0 12px 32px rgba(0,0,0,.45)}}.scatter-popup strong{{display:block;margin-bottom:6px}}.scatter-popup p{{margin:0 0 8px;color:var(--muted);font-size:.92rem}}
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
-@media(max-width:900px){{.plot-grid-layout{{grid-template-columns:1fr}}}}@media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
+@media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
 </style></head><body><main>
 <h1>Mouth-size / coverage grid</h1>
 <p>Supported domain: 25°–50° half-coverage and 250–500 mm mouth size.</p>
@@ -686,11 +475,6 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <h2>Project range</h2>
 <table><tr><th>Coverage targets</th><th>Mouth sizes</th><th>Fixed K&nbsp;/ N</th><th>Sweep&nbsp;/ crossover</th><th>Length-mouth ratios</th></tr>
 <tr><td>{coverage_targets} deg</td><td>{mouth_sizes} mm</td><td>K={fixed_k}, N={fixed_n}</td><td>{sweep_lower}-{sweep_upper} Hz&nbsp;/<wbr> {crossover} Hz</td><td>{", ".join(f"{ratio:g}" for ratio in ratios) if ratios != "—" else "—"}</td></tr></table>
-</section>
-<section>
-<h2>Candidate performance trends</h2>
-<div class='plot-grid-layout'>{plots_html}</div>
-<aside id='scatter-popup' class='scatter-popup' hidden><strong></strong><p></p><a href='#'>Open candidate report</a></aside>
 </section>
 <section>
 <h2>Candidates</h2>
@@ -713,34 +497,6 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 </section>
 <script>
 (() => {{
-  const scatterPopup = document.getElementById('scatter-popup');
-  const scatterTitle = scatterPopup.querySelector('strong');
-  const scatterStats = scatterPopup.querySelector('p');
-  const scatterLink = scatterPopup.querySelector('a');
-  const closeScatterPopup = () => {{ scatterPopup.hidden = true; }};
-  const openScatterPopup = (point) => {{
-    scatterTitle.textContent = point.dataset.candidate || 'Candidate';
-    scatterStats.textContent = point.dataset.stats || '';
-    const report = point.dataset.report || '';
-    scatterLink.hidden = !report;
-    if (report) scatterLink.href = report;
-    scatterPopup.hidden = false;
-    const rect = point.getBoundingClientRect();
-    const popupRect = scatterPopup.getBoundingClientRect();
-    scatterPopup.style.left = `${{Math.max(12, Math.min(window.innerWidth - popupRect.width - 12, rect.left + 10))}}px`;
-    scatterPopup.style.top = `${{Math.max(12, Math.min(window.innerHeight - popupRect.height - 12, rect.top + 14))}}px`;
-  }};
-  document.addEventListener('click', (event) => {{
-    const point = event.target.closest?.('.scatter-point');
-    if (point) {{ openScatterPopup(point); return; }}
-    if (!scatterPopup.contains(event.target)) closeScatterPopup();
-  }});
-  document.addEventListener('keydown', (event) => {{
-    if (event.key === 'Escape') closeScatterPopup();
-    if ((event.key === 'Enter' || event.key === ' ') && event.target.matches?.('.scatter-point')) {{
-      event.preventDefault(); openScatterPopup(event.target);
-    }}
-  }});
   document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
     button.addEventListener('click', () => {{
       const visible = button.getAttribute('aria-pressed') !== 'true';
