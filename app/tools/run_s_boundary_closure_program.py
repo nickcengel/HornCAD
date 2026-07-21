@@ -1,0 +1,203 @@
+#!/usr/bin/env python3
+"""Bracket every uniform-S winner before K/N or coupled refinement begins."""
+from __future__ import annotations
+
+import argparse
+import copy
+from concurrent.futures import ThreadPoolExecutor, as_completed
+import json
+from pathlib import Path
+import re
+import time
+from typing import Any
+
+import yaml
+
+from .generate_coverage_s_grid import _candidate_values, length_for_s
+from .generate_mouth_size_coverage_grid_report import generate_report
+from .run_bem_search import run_search
+
+
+LOWER_STEP = 0.2
+UPPER_STEP = 0.25
+MINIMUM_S = 0.05
+MAXIMUM_S = 8.0
+MAXIMUM_PROBES = 32
+BASELINE_NAME = re.compile(r"^\d+x\d+-s-grid$")
+
+
+def _score(record: dict[str, Any]) -> float:
+    return float((record.get("surface_diagnostics", {}).get("score") or {})
+                 .get("overall_percent", float("-inf")))
+
+
+def baseline_searches(root: Path) -> list[Path]:
+    return sorted(path for path in root.glob("*deg/*-s-grid")
+                  if BASELINE_NAME.fullmatch(path.name))
+
+
+def baselines_complete(root: Path) -> bool:
+    paths = baseline_searches(root)
+    return bool(paths) and all(
+        (path / "search_state.json").exists() and
+        json.loads((path / "search_state.json").read_text()).get("status") == "complete"
+        for path in paths)
+
+
+def completed_points(search_dirs: list[Path]) -> list[tuple[float, float, Path]]:
+    points = []
+    for search_dir in search_dirs:
+        state_path = search_dir / "search_state.json"
+        if not state_path.exists():
+            continue
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        for record in state.get("candidates", []):
+            if (record.get("status") == "complete" and
+                    record.get("derived", {}).get("s_h") is not None):
+                points.append((float(record["derived"]["s_h"]),
+                               _score(record),
+                               search_dir / "candidates" / record["id"] /
+                               "project.yaml"))
+    return points
+
+
+def closure_status(points: list[tuple[float, float, Path]]) -> tuple[str, float]:
+    """Return closed/lower/upper and the best measured S coordinate."""
+    if not points:
+        raise ValueError("S closure requires at least one completed point")
+    best = max(points, key=lambda item: item[1])
+    values = [item[0] for item in points]
+    lower = any(value < best[0] - 1e-3 for value in values)
+    upper = any(value > best[0] + 1e-3 for value in values)
+    if lower and upper:
+        return "closed", best[0]
+    return ("lower" if not lower else "upper"), best[0]
+
+
+def next_probe_s(status: str, best_s: float) -> float | None:
+    if status == "lower":
+        if best_s <= MINIMUM_S + 1e-6:
+            return None
+        return round(max(MINIMUM_S, best_s - LOWER_STEP), 4)
+    if status == "upper":
+        if best_s >= MAXIMUM_S - 1e-6:
+            return None
+        return round(min(MAXIMUM_S, best_s + UPPER_STEP), 4)
+    return None
+
+
+def materialize_probe(seed_project: Path, baseline: Path, output: Path,
+                      target_s: float) -> Path:
+    if (output / "search.yaml").exists():
+        return output
+    seed = yaml.safe_load(seed_project.read_text(encoding="utf-8"))
+    source = yaml.safe_load((baseline / "search.yaml").read_text(encoding="utf-8"))[
+        "bem_candidate_search"]
+    config = seed["horncad_config"]
+    g, h, v = config["global"], config["horizontal_basis"], config["vertical_basis"]
+    length = length_for_s(config, target_s)
+    g["length"] = length
+    g["measured_total_length"] = length + float(g.get("conical_extension_length", 0))
+    h["solved_s"] = v["solved_s"] = target_s
+    output.mkdir(parents=True, exist_ok=True)
+    (output / "project.yaml").write_text(
+        yaml.safe_dump(seed, sort_keys=False), encoding="utf-8")
+    solver = copy.deepcopy(source["solver"])
+    solver["workers"] = 10
+    coverage = float(h["coverage_deg"])
+    values = _candidate_values(length, coverage, float(h["k"]), float(h["n"]))
+    search = {
+        "version": 1, "seed_yaml": "project.yaml",
+        "intended_coverage_h_deg": coverage,
+        "intended_coverage_v_deg": coverage,
+        "lower_frequency_hz": float(source["lower_frequency_hz"]),
+        "crossover_hz": float(source["crossover_hz"]),
+        "upper_frequency_hz": float(source["upper_frequency_hz"]),
+        "max_evaluations": 1, "initial_candidates": 0,
+        "minimum_candidate_distance": 0.001,
+        "derived_s_bounds": [target_s - 0.001, target_s + 0.001],
+        "sampling_stability_points": float(source.get("sampling_stability_points", 2)),
+        "confirmation_points_per_octave": float(source.get("confirmation_points_per_octave", 16)),
+        "bounds": {
+            "length_mm": [length - 0.001, length + 0.001],
+            "extension_mm": [values["extension_mm"], values["extension_mm"] + 1e-6],
+            "osse_coverage_h_deg": [coverage, coverage + 1e-6],
+            "osse_coverage_v_deg": [coverage, coverage + 1e-6],
+            "k_h": [values["k_h"], values["k_h"] + 1e-6],
+            "k_v": [values["k_v"], values["k_v"] + 1e-6],
+            "n_h": [values["n_h"], values["n_h"] + 1e-6],
+            "n_v": [values["n_v"], values["n_v"] + 1e-6],
+        },
+        "initial_pool": [], "solver": solver,
+    }
+    (output / "search.yaml").write_text(
+        yaml.safe_dump({"bem_candidate_search": search}, sort_keys=False),
+        encoding="utf-8")
+    return output
+
+
+def close_baseline(root: Path, baseline: Path) -> dict[str, Any]:
+    rounds = sorted(baseline.parent.glob(
+        baseline.name.removesuffix("-s-grid") + "-s-boundary-r*"))
+    for probe_number in range(1, MAXIMUM_PROBES + 1):
+        points = completed_points([baseline, *rounds])
+        status, best_s = closure_status(points)
+        if status == "closed":
+            return {"baseline": str(baseline.relative_to(root)),
+                    "status": "closed", "best_s": best_s,
+                    "probes": len(rounds)}
+        target = next_probe_s(status, best_s)
+        if target is None:
+            return {"baseline": str(baseline.relative_to(root)),
+                    "status": "boundary-limited", "best_s": best_s,
+                    "side": status, "probes": len(rounds)}
+        output = baseline.with_name(
+            baseline.name.removesuffix("-s-grid") +
+            f"-s-boundary-r{probe_number:02d}")
+        seed_project = max(points, key=lambda item: item[1])[2]
+        materialize_probe(seed_project, baseline, output, target)
+        state_path = output / "search_state.json"
+        if not state_path.exists() or json.loads(state_path.read_text()).get("status") != "complete":
+            run_search(output / "search.yaml", output, None)
+        if output not in rounds:
+            rounds.append(output)
+        generate_report(root, root / "index.html")
+    return {"baseline": str(baseline.relative_to(root)), "status": "unresolved",
+            "probes": len(rounds)}
+
+
+def run_program(root: Path, workers: int = 2) -> dict[str, Any]:
+    baselines = baseline_searches(root)
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = [executor.submit(close_baseline, root, baseline)
+                   for baseline in baselines]
+        results = [future.result() for future in as_completed(futures)]
+    results.sort(key=lambda item: item["baseline"])
+    status = "complete" if all(item["status"] == "closed" for item in results) else "blocked"
+    certificate = {"status": status, "results": results}
+    path = root / "s_boundary_closure.json"
+    temporary = path.with_suffix(".json.tmp")
+    temporary.write_text(json.dumps(certificate, indent=2) + "\n", encoding="utf-8")
+    temporary.replace(path)
+    generate_report(root, root / "index.html")
+    return certificate
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("project_root", type=Path)
+    parser.add_argument("--wait", action="store_true")
+    parser.add_argument("--poll-seconds", type=float, default=30)
+    parser.add_argument("--workers", type=int, default=2)
+    args = parser.parse_args()
+    while not baselines_complete(args.project_root):
+        if not args.wait:
+            raise RuntimeError("uniform-S baselines are incomplete")
+        time.sleep(args.poll_seconds)
+    result = run_program(args.project_root, args.workers)
+    if result["status"] != "complete":
+        raise RuntimeError("one or more S winners remain boundary-limited")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,4 +1,8 @@
 planned_subsearches:
+  - label: 25-50 deg / all mouths · S boundary closure
+    coverage_angles: [25, 30, 35, 40, 45, 50]
+    prerequisite: all uniform S baselines complete
+    status: planned
   - label: 30 deg / 250-500 mm · comparable S baselines
     coverage_angles: [30]
     prerequisite: current broad grids complete

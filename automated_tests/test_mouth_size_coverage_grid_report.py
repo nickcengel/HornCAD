@@ -189,6 +189,20 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertEqual(summary["study"], "canonical S extension")
         self.assertIn("canonical S extension", summary["label"])
 
+    def test_s_boundary_round_has_a_distinct_report_label(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            search_dir = Path(temp) / "25deg" / "400x400-s-boundary-r01"
+            search_dir.mkdir(parents=True)
+            (search_dir / "search.yaml").write_text(
+                "bem_candidate_search:\n"
+                "  seed_yaml: project.yaml\n"
+                "  crossover_hz: 750\n",
+                encoding="utf-8",
+            )
+            summary = _search_summary(search_dir / "search.yaml")
+        self.assertEqual(summary["study"], "S boundary closure")
+        self.assertIn("S boundary closure", summary["label"])
+
 
 if __name__ == "__main__":
     unittest.main()

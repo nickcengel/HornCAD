@@ -12,6 +12,21 @@ S=3.0 boundary sentinel is mandatory. All seven 30° searches must complete
 before coupled K/N or finer local searches begin. The supported active mouth
 range is 250--500 mm; earlier 200 mm results are archived boundary evidence.
 
+## S boundary closure gate
+
+Every completed uniform-S baseline must have measured points on both sides of
+its highest-scoring S before K/N or coupled refinement begins. An unbracketed
+low-side winner is probed downward by S=0.2 at a time; an unbracketed high-side
+winner is probed upward by S=0.25 at a time. Probing stops immediately after a
+worse point brackets the winner. S=0.05 and S=8 are safety limits, not evidence
+of closure: reaching either with the best score still on the boundary blocks
+later refinement and is reported as boundary-limited.
+
+The boundary probes retain the baseline mouth, coverage, K, N, extension, and
+acoustic settings. Two baselines may close concurrently at ten NumCalc workers
+each. The coupled program requires a complete `s_boundary_closure.json`
+certificate covering every active uniform-S baseline.
+
 ## Motivation
 
 The completed square-mouth survey sampled 25°, 35°, 45°, and 60°. Its best

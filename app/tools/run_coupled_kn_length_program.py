@@ -64,9 +64,11 @@ def prerequisites_complete(root: Path) -> bool:
              "search_state.json"
              for angle in (40, 50) for mouth in (250, 300, 350, 400, 450, 500))
     paths.append(root / "45deg" / "450x450-kn-grid" / "search_state.json")
+    boundary_certificate = root / "s_boundary_closure.json"
     return all(path.exists() and
                json.loads(path.read_text(encoding="utf-8")).get("status") == "complete"
-               for path in paths)
+               for path in paths) and boundary_certificate.exists() and json.loads(
+                   boundary_certificate.read_text(encoding="utf-8")).get("status") == "complete"
 
 
 def _source_search(baseline: Path) -> dict[str, Any]:

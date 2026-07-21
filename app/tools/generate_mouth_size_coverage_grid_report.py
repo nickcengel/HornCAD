@@ -200,6 +200,8 @@ def _search_summary(path: Path) -> dict[str, Any]:
     mouth = float(mouth_dir.split("x", 1)[0])
     if mouth_dir.endswith("-canonical-s"):
         study_label = "canonical S extension"
+    elif "-s-boundary-r" in mouth_dir:
+        study_label = "S boundary closure"
     elif "-coupled-" in mouth_dir and mouth_dir.endswith("-kn"):
         study_label = "coupled K/N closure"
     elif "-coupled-" in mouth_dir and mouth_dir.endswith("-s"):
@@ -230,6 +232,7 @@ def _search_summary(path: Path) -> dict[str, Any]:
             + ({"uniform S grid": " · uniform S grid",
                 "adaptive K/N grid": " · adaptive K/N grid",
                 "canonical S extension": " · canonical S extension",
+                "S boundary closure": " · S boundary closure",
                 "coupled K/N closure": " · coupled K/N closure",
                 "coupled local S": " · coupled local S"}.get(
                     study_label, ""))
