@@ -12,9 +12,11 @@ import numpy as np
 try:
     from .interactive_results import load_run, single_report
     from .run_bem_search import candidate_artifact_stem, write_report, _read_yaml
+    from .surface_diagnostics import surface_diagnostics
 except ImportError:
     from interactive_results import load_run, single_report
     from run_bem_search import candidate_artifact_stem, write_report, _read_yaml
+    from surface_diagnostics import surface_diagnostics
 
 
 def migrate_search(search_dir: Path) -> tuple[int, int]:
@@ -62,8 +64,12 @@ def migrate_search(search_dir: Path) -> tuple[int, int]:
             f"<title>BEM {stem}</title>" in report_head and
             "report-schema: canonical-v3" in report_head
         )
-        if (run_dir / "responses.npz").is_file() and not report_is_current:
+        run = None
+        if (run_dir / "responses.npz").is_file():
             run = load_run(run_dir, stem)
+            record["surface_diagnostics"] = surface_diagnostics(
+                run, fixed_grid, fixed_band=True)
+        if run is not None and not report_is_current:
             single_report(
                 run_dir, report_target, title=f"BEM {stem}",
                 evaluation_frequencies=fixed_grid, fixed_band=True, name=stem)

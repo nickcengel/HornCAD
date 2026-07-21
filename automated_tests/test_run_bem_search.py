@@ -200,7 +200,14 @@ class BEMSearchTests(unittest.TestCase):
             self.assertNotIn("Impedance (information only)", report)
             self.assertNotIn("Curvature radius H/V mm", report)
             self.assertIn("sortable-table", report)
-            self.assertIn("Average diagnostic score", report)
+            self.assertIn("Mean containment H&nbsp;/ V", report)
+            self.assertIn("Profile RMS error H&nbsp;/ V", report)
+            self.assertIn("Slice-energy RMS departure H&nbsp;/ V", report)
+            self.assertNotIn("Average diagnostic score", report)
+            self.assertNotIn("Coverage Match", report)
+            self.assertNotIn("Coverage Smoothness", report)
+            self.assertNotIn("Waist Stability", report)
+            self.assertNotIn("Window Uniformity", report)
             self.assertIn("Length-mouth ratio", report)
             self.assertIn("data-column-toggle='mouth-height'", report)
             self.assertIn("data-column='mouth-height' hidden", report)
@@ -249,14 +256,29 @@ class BEMSearchTests(unittest.TestCase):
                     "waist_stability_percent": score,
                     "window_uniformity_percent": score}}
                 record["sampling_stability"] = {"status": "stable"}
+                plane = {
+                    "containment": {
+                        "mean_fraction": score / 100,
+                        "worst_windows": {"1/3 octave": {
+                            "minimum": (score - 5) / 100}}},
+                    "distribution": {
+                        "rms_profile_error_db": 3.0,
+                        "rms_outward_rise_violation_db": 1.0},
+                    "slice_energy_stability": {"rms_departure_db": 0.5},
+                    "minus_six_line": {"rms_coverage_error_deg": 2.0},
+                }
+                record["surface_diagnostics"] = {
+                    "status": "available", "horizontal": plane,
+                    "vertical": plane}
             state["status"] = "complete"
             highlighted = write_report(Path(temp), state).read_text()
-            self.assertEqual(highlighted.count("class='best'"), 4)
-            self.assertEqual(highlighted.count("class='worst'"), 4)
-            self.assertIn("Coverage Match", highlighted)
-            self.assertIn("Coverage Smoothness", highlighted)
-            self.assertIn("Waist Stability", highlighted)
-            self.assertIn("Window Uniformity", highlighted)
+            self.assertIn("Mean containment H&nbsp;/ V", highlighted)
+            self.assertIn("Profile RMS error H&nbsp;/ V", highlighted)
+            self.assertIn("Slice-energy RMS departure H&nbsp;/ V", highlighted)
+            self.assertNotIn("Coverage Match", highlighted)
+            self.assertNotIn("Coverage Smoothness", highlighted)
+            self.assertNotIn("Waist Stability", highlighted)
+            self.assertNotIn("Window Uniformity", highlighted)
             self.assertNotIn("Added-depth cost", highlighted)
 
 

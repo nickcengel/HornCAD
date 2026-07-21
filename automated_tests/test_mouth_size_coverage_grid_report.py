@@ -20,11 +20,15 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("<h2>Candidates</h2>", report)
         self.assertNotIn("<h2>Active ranking</h2>", report)
         self.assertNotIn("<h2>All results</h2>", report)
-        self.assertIn("data-column-toggle='average-score'", report)
+        self.assertIn("data-column-toggle='containment-mean'", report)
+        self.assertIn("data-column-toggle='profile-rms'", report)
+        self.assertIn("data-column-toggle='slice-rms'", report)
         self.assertIn("data-column-toggle='mouth-height'", report)
-        self.assertIn("data-column='coverage-match' hidden", report)
+        self.assertIn("data-column='containment-worst' hidden", report)
         self.assertIn("data-column='mouth-height' hidden", report)
         self.assertIn("data-column='mouth-width' hidden", report)
+        self.assertNotIn("Average diagnostic score", report)
+        self.assertNotIn("Coverage Match", report)
         # The selection ratio is mouth width divided by length: 250 / 179.
         self.assertIn("data-sort='1.396648'", report)
 

@@ -25,12 +25,14 @@ try:
     from .export_horncad import solved_s, termination_metrics
     from .generate_numcalc_review import generate_review
     from .interactive_results import coverage_diagnostics, load_run, single_report
+    from .surface_diagnostics import surface_diagnostics
     from .run_bem_suite import find_numcalc
     from .run_numcalc_sweep import ppo_frequency_grid, run_sweep
 except ImportError:
     from export_horncad import solved_s, termination_metrics
     from generate_numcalc_review import generate_review
     from interactive_results import coverage_diagnostics, load_run, single_report
+    from surface_diagnostics import surface_diagnostics
     from run_bem_suite import find_numcalc
     from run_numcalc_sweep import ppo_frequency_grid, run_sweep
 
@@ -699,50 +701,38 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     pareto = pareto_indices(records)
     for index, record in enumerate(records):
         record["pareto"] = index in pareto
-    extrema: dict[str, tuple[float, float]] = {}
-    if state["status"] == "complete":
-        completed_diagnostics = [record.get("diagnostics", {}).get("combined", {})
-                                 for record in records
-                                 if record.get("status") == "complete"]
-        for key in OBJECTIVES:
-            values = []
-            for item in completed_diagnostics:
-                try:
-                    values.append(objective_score(item, key))
-                except KeyError:
-                    pass
-            if values:
-                extrema[key] = (min(values), max(values))
-
-    def diagnostic_cell(diagnostic: dict[str, Any], key: str, column: str) -> str:
-        if not diagnostic:
-            return f"<td data-column='{column}' hidden data-sort=''>—</td>"
-        try:
-            value = objective_score(diagnostic, key)
-        except KeyError:
-            return f"<td data-column='{column}' hidden data-sort=''>—</td>"
-        css_class = ""
-        if key in extrema:
-            minimum, maximum = extrema[key]
-            if math.isclose(value, maximum, abs_tol=1e-9):
-                css_class = " class='best'"
-            elif math.isclose(value, minimum, abs_tol=1e-9):
-                css_class = " class='worst'"
-        return (f"<td{css_class} data-column='{column}' hidden "
-                f"data-sort='{value:.6f}'>{value:.1f}%</td>")
+    def surface_cell(record: dict[str, Any], column: str,
+                     path: tuple[str, ...], suffix: str = "",
+                     scale: float = 1.0, hidden: bool = False) -> str:
+        result = record.get("surface_diagnostics", {})
+        values = []
+        if result.get("status") == "available":
+            for plane_name in ("horizontal", "vertical"):
+                selected: Any = result.get(plane_name, {})
+                for key in path:
+                    selected = selected.get(key, {}) if isinstance(selected, dict) else {}
+                if isinstance(selected, (int, float)) and math.isfinite(selected):
+                    values.append(float(selected) * scale)
+        hidden_attribute = " hidden" if hidden else ""
+        if len(values) != 2:
+            return (f"<td class='axis-pair' data-column='{column}'{hidden_attribute} "
+                    "data-sort=''>—</td>")
+        display = _axis_pair(f"{values[0]:.3g}{suffix}", f"{values[1]:.3g}{suffix}")
+        sort_value = sum(values) / 2
+        return (f"<td class='axis-pair' data-column='{column}'{hidden_attribute} "
+                f"data-sort='{sort_value:.6f}'>{display}</td>")
 
     traits = candidate_traits(records, seed, search["bounds"])
     rows = []
     for record, fallback_trait in zip(records, traits):
         trait = record.get("experiment_label", fallback_trait)
-        diagnostic = record.get("diagnostics", {}).get("combined", {})
         candidate_dir = f"candidates/{record['id']}"
         artifact_stem = record.get("artifact_stem", record["id"])
         stl_link = (f" · <a href='{candidate_dir}/{html.escape(record['stl_file'])}'>STL</a>"
                     if record.get("stl_file") else "")
         report_link = (f" · <a href='{html.escape(record['report_file'])}'>report</a>"
                        if record.get("report_file") else "")
-        status = "Pareto" if record.get("pareto") else record["status"].title()
+        status = record["status"].title()
         coverage_pair = _axis_pair(
             f"{record['values']['osse_coverage_h_deg']:.1f}",
             f"{record['values']['osse_coverage_v_deg']:.1f}")
@@ -753,28 +743,26 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"{record['derived'].get('s_v', float('nan')):.3f}")
         n_pair = _axis_pair(f"{record['values']['n_h']:g}",
                             f"{record['values']['n_v']:g}")
-        diagnostic_values = []
-        for key in OBJECTIVES:
-            try:
-                diagnostic_values.append(objective_score(diagnostic, key))
-            except KeyError:
-                pass
-        average_score = (sum(diagnostic_values) / len(diagnostic_values)
-                         if diagnostic_values else float("nan"))
-        average_score_sort = (f"{average_score:.6f}"
-                              if math.isfinite(average_score) else "")
-        average_score_text = (f"{average_score:.1f}%"
-                              if math.isfinite(average_score) else "—")
         length = float(record["values"]["length_mm"])
         length_mouth_ratio = mouth_width / length if length else float("nan")
         rows.append("<tr>" + "".join((
             f"<td data-sort='{html.escape(artifact_stem)}'><a href='{candidate_dir}/project.yaml'>{html.escape(artifact_stem)}</a>"
             f"{stl_link}{report_link}</td>",
             f"<td data-sort='{html.escape(status)}'>{html.escape(status)}</td>",
-            f"<td data-column='average-score' data-sort='{average_score_sort}'>{average_score_text}</td>",
-            "".join(diagnostic_cell(diagnostic, key, column) for key, column in zip(
-                OBJECTIVES, ("coverage-match", "coverage-smoothness", "waist-stability",
-                             "window-uniformity"))),
+            surface_cell(record, "containment-mean",
+                         ("containment", "mean_fraction"), "%", 100),
+            surface_cell(record, "containment-worst",
+                         ("containment", "worst_windows", "1/3 octave", "minimum"),
+                         "%", 100, True),
+            surface_cell(record, "profile-rms",
+                         ("distribution", "rms_profile_error_db"), " dB"),
+            surface_cell(record, "outward-rise",
+                         ("distribution", "rms_outward_rise_violation_db"),
+                         " dB", hidden=True),
+            surface_cell(record, "slice-rms",
+                         ("slice_energy_stability", "rms_departure_db"), " dB"),
+            surface_cell(record, "line-rms",
+                         ("minus_six_line", "rms_coverage_error_deg"), "°", hidden=True),
             f"<td data-column='length' hidden data-sort='{length:.6f}'>{length:.1f}</td>",
             f"<td data-column='length-mouth-ratio' hidden data-sort='{length_mouth_ratio:.6f}'>{length_mouth_ratio:.3f}</td>",
             f"<td data-column='extension' hidden data-sort='{record['values']['extension_mm']:.6f}'>{record['values']['extension_mm']:.1f}</td>",
@@ -790,17 +778,13 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td data-column='mouth-height' hidden data-sort='{mouth_height:.6f}'>{mouth_height:g}</td>",
             f"<td data-column='mouth-width' hidden data-sort='{mouth_width:.6f}'>{mouth_width:g}</td>",
         )) + "</tr>")
-    objective_headers = "".join(
-        f"<th class='sortable' data-column='{column}' hidden data-sort='number'>{label}</th>"
-        for label, column in zip(OBJECTIVE_LABELS, (
-            "coverage-match", "coverage-smoothness", "waist-stability",
-            "window-uniformity")))
     toggle_columns = (
-        ("average-score", "Average diagnostic score", True),
-        ("coverage-match", "Coverage Match", False),
-        ("coverage-smoothness", "Coverage Smoothness", False),
-        ("waist-stability", "Waist Stability", False),
-        ("window-uniformity", "Window Uniformity", False),
+        ("containment-mean", "Mean containment H / V", True),
+        ("containment-worst", "Worst 1/3-oct containment H / V", False),
+        ("profile-rms", "Profile RMS error H / V", True),
+        ("outward-rise", "Outward-rise violation H / V", False),
+        ("slice-rms", "Slice-energy RMS departure H / V", True),
+        ("line-rms", "−6 dB RMS error H / V", False),
         ("length", "Length mm", False),
         ("length-mouth-ratio", "Length-mouth ratio", False),
         ("extension", "Extension mm", False),
@@ -833,9 +817,9 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vert
 <p><strong>Sweep band</strong><br>{lower_frequency:g}–{upper_frequency:g} Hz</p>
 <p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
 <p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
-<section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Each completed run is compared with a factor-two decimation and excluded from surrogate training when any headline diagnostic moves by more than {search.get('sampling_stability_points', DEFAULT_SAMPLING_STABILITY_POINTS):g} points. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
-<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='average-score' data-sort='number'>Average diagnostic score</th>{objective_headers}<th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
-<section><p>100% is best for all acoustic diagnostics. Combined H/V scores are weighted in proportion to mouth width and height. The sweep band controls solved frequencies; the fixed diagnostic band starts at crossover and ends at the upper operating frequency. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
+<section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
+<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='containment-mean' data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='containment-worst' hidden data-sort='number'>Worst 1/3-oct containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
+<section><p>These are unweighted surface-calibration measurements from crossover through the upper sweep frequency. No final combined score has been assigned. Existing completed searches retain their original selection history while the replacement metrics are evaluated. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data.</p></section>
 <script>
 document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
   button.addEventListener('click', () => {{
@@ -953,6 +937,8 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
         generate_review(run_dir, title=title, write_report=False)
         run = load_run(run_dir, artifact_stem)
         diagnostics = coverage_diagnostics(run, fixed_grid, fixed_band=True)
+        new_surface_diagnostics = surface_diagnostics(
+            run, fixed_grid, fixed_band=True)
         report_path = candidate_dir / "bem" / f"{artifact_stem}_Report.html"
         single_report(run_dir, report_path, title=title,
                       evaluation_frequencies=fixed_grid, fixed_band=True,
@@ -966,6 +952,7 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
             status="complete", run_dir=str(run_dir.relative_to(output_dir)),
             report_file=str(report_path.relative_to(output_dir)),
             diagnostics=diagnostics,
+            surface_diagnostics=new_surface_diagnostics,
             sampling_stability=stability,
             crossover_loading_percent=loading_percent,
             crossover_minimum_normalized_impedance=loading_minimum,

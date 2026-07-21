@@ -6,31 +6,9 @@ import argparse
 import html
 import json
 from pathlib import Path
-from statistics import fmean
 from typing import Any
 
 import yaml
-
-
-DIAGNOSTIC_KEYS = (
-    "coverage_match_percent",
-    "coverage_smoothness_percent",
-    "waist_stability_percent",
-    "window_uniformity_percent",
-)
-
-
-def _candidate_score(candidate: dict[str, Any]) -> float | None:
-    diagnostics = candidate.get("diagnostics", {})
-    combined = diagnostics.get("combined", {})
-    if not isinstance(combined, dict):
-        return None
-    values = []
-    for key in DIAGNOSTIC_KEYS:
-        value = combined.get(key)
-        if isinstance(value, (int, float)):
-            values.append(float(value))
-    return fmean(values) if values else None
 
 
 def _search_summary(path: Path) -> dict[str, Any]:
@@ -67,9 +45,6 @@ def _search_summary(path: Path) -> dict[str, Any]:
         "running": 0,
         "rejected": 0,
         "proposal_count": 0,
-        "average_score": None,
-        "best_score": None,
-        "best_candidate": None,
         "candidates": [],
     }
     if not state_path.is_file():
@@ -80,42 +55,19 @@ def _search_summary(path: Path) -> dict[str, Any]:
     summary["proposal_count"] = int(state.get("proposal_count", 0))
     summary["rejected"] = int(state.get("rejected_count", 0))
     counts: dict[str, int] = {}
-    scored_candidates = []
+    completed_candidates = []
     for candidate in state.get("candidates", []):
         status = str(candidate.get("status", "unknown"))
         counts[status] = counts.get(status, 0) + 1
         if status != "complete":
             continue
-        score = _candidate_score(candidate)
-        if score is None:
-            continue
-        scored_candidates.append((score, candidate))
+        completed_candidates.append(candidate)
     summary["counts"] = counts
     summary["completed"] = counts.get("complete", 0)
     summary["failed"] = counts.get("failed", 0)
     summary["running"] = counts.get("running", 0)
-    summary["average_score"] = (
-        fmean(score for score, _ in scored_candidates) if scored_candidates else None
-    )
-    if scored_candidates:
-        scored_candidates.sort(key=lambda item: item[0], reverse=True)
-        summary["best_score"] = scored_candidates[0][0]
-        summary["best_candidate"] = scored_candidates[0][1]
-    summary["candidates"] = scored_candidates
+    summary["candidates"] = completed_candidates
     return summary
-
-
-def _format_score(value: float | None) -> str:
-    return "—" if value is None else f"{value:.1f}%"
-
-
-def _best_worst_indices(items: list[dict[str, Any]], key: str) -> tuple[int | None, int | None]:
-    values = [(index, item[key]) for index, item in enumerate(items) if item[key] is not None]
-    if not values:
-        return None, None
-    best_index = max(values, key=lambda item: item[1])[0]
-    worst_index = min(values, key=lambda item: item[1])[0]
-    return best_index, worst_index
 
 
 def _ranking_class(summary: dict[str, Any]) -> str:
@@ -131,14 +83,7 @@ def _ranking_class(summary: dict[str, Any]) -> str:
 def generate_report(project_root: Path, output: Path) -> Path:
     search_paths = sorted(project_root.glob("*deg/*x*/search.yaml"))
     summaries = [_search_summary(path) for path in search_paths]
-    summaries.sort(
-        key=lambda item: (
-            item["average_score"] is None,
-            -(item["average_score"] or 0.0),
-            item["coverage"],
-            item["mouth"],
-        )
-    )
+    summaries.sort(key=lambda item: (item["coverage"], item["mouth"]))
     total = len(summaries)
     started = sum(summary["status"] != "not started" for summary in summaries)
     running = sum(summary["status"] == "running" for summary in summaries)
@@ -146,21 +91,13 @@ def generate_report(project_root: Path, output: Path) -> Path:
     completed_candidates = sum(summary["completed"] for summary in summaries)
     candidate_rows = []
     for summary in summaries:
-        for candidate_score, candidate in summary["candidates"]:
-            diagnostics = candidate["diagnostics"]["combined"]
+        for candidate in summary["candidates"]:
             candidate_rows.append({
                 "search": summary,
                 "candidate": candidate,
-                "candidate_score": candidate_score,
-                "diagnostics": diagnostics,
-                "coverage_match_percent": diagnostics.get("coverage_match_percent"),
-                "coverage_smoothness_percent": diagnostics.get("coverage_smoothness_percent"),
-                "waist_stability_percent": diagnostics.get("waist_stability_percent"),
-                "window_uniformity_percent": diagnostics.get("window_uniformity_percent"),
             })
     candidate_rows.sort(
         key=lambda item: (
-            -item["candidate_score"],
             item["search"]["coverage"],
             item["search"]["mouth"],
             item["candidate"]["id"],
@@ -185,38 +122,40 @@ def generate_report(project_root: Path, output: Path) -> Path:
         if row["label"] == "Seed":
             row["label"] = "Seed design"
 
-    extrema = {
-        "candidate_score": _best_worst_indices(candidate_rows, "candidate_score"),
-        "coverage_match_percent": _best_worst_indices(
-            candidate_rows, "coverage_match_percent"
-        ),
-        "coverage_smoothness_percent": _best_worst_indices(
-            candidate_rows, "coverage_smoothness_percent"
-        ),
-        "waist_stability_percent": _best_worst_indices(
-            candidate_rows, "waist_stability_percent"
-        ),
-        "window_uniformity_percent": _best_worst_indices(
-            candidate_rows, "window_uniformity_percent"
-        ),
-    }
-    best = next((s for s in summaries if s["average_score"] is not None), None)
+    def surface_pair(candidate: dict[str, Any], path: tuple[str, ...],
+                     suffix: str = "", scale: float = 1.0) -> tuple[str, str]:
+        result = candidate.get("surface_diagnostics", {})
+        values = []
+        if result.get("status") == "available":
+            for plane_name in ("horizontal", "vertical"):
+                selected: Any = result.get(plane_name, {})
+                for key in path:
+                    selected = selected.get(key, {}) if isinstance(selected, dict) else {}
+                if isinstance(selected, (int, float)):
+                    values.append(float(selected) * scale)
+        if len(values) != 2:
+            return "", "—"
+        return (f"{sum(values) / 2:.6f}",
+                f"{values[0]:.3g}{suffix}&nbsp;/<wbr> {values[1]:.3g}{suffix}")
+
     refresh = "<meta http-equiv='refresh' content='30'>" if running else ""
     rows = []
     for rank, item in enumerate(candidate_rows, 1):
         summary = item["search"]
         candidate = item["candidate"]
-        diagnostics = item["diagnostics"]
-        best_score_index, worst_score_index = extrema["candidate_score"]
-        match_best, match_worst = extrema["coverage_match_percent"]
-        smooth_best, smooth_worst = extrema["coverage_smoothness_percent"]
-        waist_best, waist_worst = extrema["waist_stability_percent"]
-        uniform_best, uniform_worst = extrema["window_uniformity_percent"]
-        score_class = "best" if best_score_index == rank - 1 else "worst" if worst_score_index == rank - 1 else ""
-        match_class = "best" if match_best == rank - 1 else "worst" if match_worst == rank - 1 else ""
-        smooth_class = "best" if smooth_best == rank - 1 else "worst" if smooth_worst == rank - 1 else ""
-        waist_class = "best" if waist_best == rank - 1 else "worst" if waist_worst == rank - 1 else ""
-        uniform_class = "best" if uniform_best == rank - 1 else "worst" if uniform_worst == rank - 1 else ""
+        containment_sort, containment_text = surface_pair(
+            candidate, ("containment", "mean_fraction"), "%", 100)
+        worst_sort, worst_text = surface_pair(
+            candidate, ("containment", "worst_windows", "1/3 octave", "minimum"),
+            "%", 100)
+        profile_sort, profile_text = surface_pair(
+            candidate, ("distribution", "rms_profile_error_db"), " dB")
+        rise_sort, rise_text = surface_pair(
+            candidate, ("distribution", "rms_outward_rise_violation_db"), " dB")
+        slice_sort, slice_text = surface_pair(
+            candidate, ("slice_energy_stability", "rms_departure_db"), " dB")
+        line_sort, line_text = surface_pair(
+            candidate, ("minus_six_line", "rms_coverage_error_deg"), "°")
         candidate_name = html.escape(item["artifact_stem"])
         candidate_links = []
         if item["report_path"] is not None:
@@ -244,11 +183,12 @@ def generate_report(project_root: Path, output: Path) -> Path:
             f"<td data-sort='{html.escape(item['artifact_stem'])}'>{' · '.join(candidate_links)}</td>"
             f"<td data-sort='{html.escape(summary['label'])}'>{html.escape(summary['label'])}</td>"
             f"<td data-sort='{html.escape(candidate.get('status', 'unknown'))}'>{status_badge}</td>"
-            f"<td class='{score_class}' data-column='average-score' data-sort='{item['candidate_score']:.6f}'>{item['candidate_score']:.1f}%</td>"
-            f"<td class='{match_class}' data-column='coverage-match' hidden data-sort='{diagnostics['coverage_match_percent']:.6f}'>{diagnostics['coverage_match_percent']:.1f}%</td>"
-            f"<td class='{smooth_class}' data-column='coverage-smoothness' hidden data-sort='{diagnostics['coverage_smoothness_percent']:.6f}'>{diagnostics['coverage_smoothness_percent']:.1f}%</td>"
-            f"<td class='{waist_class}' data-column='waist-stability' hidden data-sort='{diagnostics['waist_stability_percent']:.6f}'>{diagnostics['waist_stability_percent']:.1f}%</td>"
-            f"<td class='{uniform_class}' data-column='window-uniformity' hidden data-sort='{diagnostics['window_uniformity_percent']:.6f}'>{diagnostics['window_uniformity_percent']:.1f}%</td>"
+            f"<td class='axis-pair' data-column='containment-mean' data-sort='{containment_sort}'>{containment_text}</td>"
+            f"<td class='axis-pair' data-column='containment-worst' hidden data-sort='{worst_sort}'>{worst_text}</td>"
+            f"<td class='axis-pair' data-column='profile-rms' data-sort='{profile_sort}'>{profile_text}</td>"
+            f"<td class='axis-pair' data-column='outward-rise' hidden data-sort='{rise_sort}'>{rise_text}</td>"
+            f"<td class='axis-pair' data-column='slice-rms' data-sort='{slice_sort}'>{slice_text}</td>"
+            f"<td class='axis-pair' data-column='line-rms' hidden data-sort='{line_sort}'>{line_text}</td>"
             f"<td data-column='length' hidden data-sort='{candidate.get('values', {}).get('length_mm', 0):.6f}'>{candidate.get('values', {}).get('length_mm', 0):g}</td>"
             f"<td data-column='length-mouth-ratio' hidden data-sort='{item['length_mouth_ratio']:.6f}'>{item['length_mouth_ratio']:.3f}</td>"
             f"<td data-column='extension' hidden data-sort='{candidate.get('values', {}).get('extension_mm', 0):.6f}'>{candidate.get('values', {}).get('extension_mm', 0):g}</td>"
@@ -269,23 +209,12 @@ def generate_report(project_root: Path, output: Path) -> Path:
             if summary["report_path"] else "—"
         )
         status_badge = f"<span class='badge {html.escape(_ranking_class(summary))}'>{html.escape(summary['status'])}</span>"
-        best_candidate = summary["best_candidate"]
-        best_candidate_label = "—"
-        if best_candidate is not None:
-            best_candidate_label = (
-                f"{html.escape(best_candidate['id'])} "
-                f"({best_candidate.get('values', {}).get('length_mm', 0):g} mm, "
-                f"N {best_candidate.get('values', {}).get('n_h', 0):g})"
-            )
         summary_rows.append(
             "<tr>"
             f"<td>{rank}</td>"
             f"<td>{html.escape(summary['label'])}</td>"
             f"<td>{status_badge}</td>"
             f"<td>{summary['completed']}&nbsp;/<wbr> {summary['proposal_count']}</td>"
-            f"<td>{_format_score(summary['average_score'])}</td>"
-            f"<td>{_format_score(summary['best_score'])}</td>"
-            f"<td>{best_candidate_label}</td>"
             f"<td>{report_link}</td>"
             "</tr>"
         )
@@ -301,7 +230,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
                 3
             )
             for summary in summaries
-            for _, candidate in summary["candidates"]
+            for candidate in summary["candidates"]
         })
         fixed_k = f"{first.get('bounds', {}).get('k_h', [0, 0])[0]:g}"
         fixed_n = f"{first.get('bounds', {}).get('n_h', [0, 0])[0]:g}"
@@ -312,11 +241,12 @@ def generate_report(project_root: Path, output: Path) -> Path:
         coverage_targets = mouth_sizes = ratios = fixed_k = fixed_n = sweep_lower = sweep_upper = crossover = "—"
 
     toggle_columns = (
-        ("average-score", "Average diagnostic score", True),
-        ("coverage-match", "Coverage Match", False),
-        ("coverage-smoothness", "Coverage Smoothness", False),
-        ("waist-stability", "Waist Stability", False),
-        ("window-uniformity", "Window Uniformity", False),
+        ("containment-mean", "Mean containment H / V", True),
+        ("containment-worst", "Worst 1/3-oct containment H / V", False),
+        ("profile-rms", "Profile RMS error H / V", True),
+        ("outward-rise", "Outward-rise violation H / V", False),
+        ("slice-rms", "Slice-energy RMS departure H / V", True),
+        ("line-rms", "−6 dB RMS error H / V", False),
         ("length", "Length mm", False),
         ("length-mouth-ratio", "Length-mouth ratio", False),
         ("extension", "Extension mm", False),
@@ -350,7 +280,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 @media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
 </style></head><body><main>
 <h1>Mouth-size / coverage grid</h1>
-<p class='muted'>This overview keeps the same structure as a search report, but combines the candidate entries from every sub-search into one active ranking. The combined ranking is sorted by the mean of coverage match, coverage smoothness, waist stability, and window uniformity for each completed candidate.</p>
+<p class='muted'>This overview combines the raw replacement surface diagnostics from every completed candidate. The measurements are intentionally unweighted while their behavior is calibrated against the heat maps; there is no final combined score or ranking yet.</p>
 <section class='summary'>
 <div class='card'><strong>{started}&nbsp;/<wbr> {total}</strong> started</div>
 <div class='card'><strong>{running}</strong> running sub-searches</div>
@@ -366,7 +296,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <h2>Candidates</h2>
 <div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div>
 <table class='wide sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='average-score' data-sort='number'>Average diagnostic score</th><th class='sortable' data-column='coverage-match' hidden data-sort='number'>Coverage Match</th><th class='sortable' data-column='coverage-smoothness' hidden data-sort='number'>Coverage Smoothness</th><th class='sortable' data-column='waist-stability' hidden data-sort='number'>Waist Stability</th><th class='sortable' data-column='window-uniformity' hidden data-sort='number'>Window Uniformity</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead>
+<thead><tr><th class='sortable' data-sort='number'>#</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='containment-mean' data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='containment-worst' hidden data-sort='number'>Worst 1/3-oct containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead>
 <tbody>
 {''.join(rows)}
 </tbody>
@@ -375,12 +305,9 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <section>
 <h2>Sub-searches</h2>
 <table class='sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Complete&nbsp;/ Proposed</th><th class='sortable' data-sort='number'>Average score</th><th class='sortable' data-sort='number'>Best score</th><th class='sortable' data-sort='text'>Best candidate</th><th>Links</th></tr></thead>
+<thead><tr><th class='sortable' data-sort='number'>#</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Complete&nbsp;/ Proposed</th><th>Links</th></tr></thead>
 <tbody>{''.join(summary_rows)}</tbody>
 </table>
-</section>
-<section>
-<p class='muted'>Best active sub-search: {html.escape(best['label']) if best else '—'}{f" at {best['average_score']:.1f}%" if best and best['average_score'] is not None else ''}.</p>
 </section>
 <script>
 (() => {{
@@ -430,9 +357,6 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
         sortBy(index, direction);
       }});
     }});
-    if (headers.length) {{
-      sortBy(4, 'desc');
-    }}
   }});
 }})();
 </script>
