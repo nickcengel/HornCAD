@@ -113,6 +113,14 @@ def materialize_s_grid(source_search: Path, targets: tuple[float, ...]) -> Path:
             source.get("sampling_stability_points", 2.0)),
         "confirmation_points_per_octave": float(
             source.get("confirmation_points_per_octave", 16)),
+        "adaptive_pruning": {
+            "enabled": True,
+            "minimum_evaluations": 5,
+            "required_consecutive_declines": 3,
+            "margin_points": 3.0,
+            "confidence_sigma": 2.0,
+            "uncertainty_floor_points": 1.5,
+        },
         "bounds": {
             "length_mm": [length_min - 0.001, length_max + 0.001],
             "extension_mm": [0.0, 1e-6],

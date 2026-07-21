@@ -47,6 +47,10 @@ PRESET_BUDGETS = {"quick": 16, "normal": 36, "thorough": 60}
 DEFAULT_MINIMUM_CANDIDATE_DISTANCE = 0.08
 DEFAULT_INFERIOR_PROBABILITY = 0.97
 DEFAULT_SAMPLING_STABILITY_POINTS = 2.0
+DEFAULT_ADAPTIVE_PRUNING_MIN_EVALUATIONS = 5
+DEFAULT_ADAPTIVE_PRUNING_MARGIN_POINTS = 3.0
+DEFAULT_ADAPTIVE_PRUNING_CONFIDENCE_SIGMA = 2.0
+DEFAULT_ADAPTIVE_PRUNING_UNCERTAINTY_FLOOR_POINTS = 1.5
 VARIABLE_LABELS = {
     "length_mm": "length", "extension_mm": "extension",
     "osse_coverage_h_deg": "horizontal OS-SE coverage",
@@ -400,6 +404,110 @@ def _objective_values(record: dict[str, Any]) -> np.ndarray:
 def _training_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return [record for record in records if record.get("status") == "complete" and
             record.get("sampling_stability", {}).get("status", "stable") == "stable"]
+
+
+def _record_surface_score(record: dict[str, Any],
+                          search: dict[str, Any]) -> float | None:
+    result = record.get("surface_diagnostics", {})
+    dimensions = search.get("geometry_context", {})
+    score = result.get("score") or surface_score(result, {
+        "horizontal": dimensions.get("mouth_width_mm", 0),
+        "vertical": dimensions.get("mouth_height_mm", 0),
+    })
+    if not score:
+        return None
+    value = float(score["overall_percent"])
+    return value if math.isfinite(value) else None
+
+
+def _uniform_s_sweep(search: dict[str, Any]) -> bool:
+    """Identify the fixed, symmetric S grids generated for the coverage study."""
+    pool = search.get("initial_pool", [])
+    if not pool or search.get("initial_candidates") != len(pool):
+        return False
+    return all(str(item.get("label", "")).startswith("uniform S=") for item in pool)
+
+
+def adaptive_pruning_decision(search: dict[str, Any],
+                              records: list[dict[str, Any]],
+                              values: dict[str, float],
+                              derived: dict[str, float]) -> dict[str, Any] | None:
+    """Return evidence for skipping a confidently poor tail of a fixed S sweep.
+
+    S-grid candidates arrive in ascending S order. Pruning is deliberately limited
+    to extrapolating that tail after at least five real solves and three consecutive
+    score declines. A quadratic regression supplies the trend and its prediction
+    uncertainty; a configurable uncertainty floor prevents deterministic-looking
+    curves from becoming overconfident.
+    """
+    policy = search.get("adaptive_pruning", {})
+    enabled = policy.get("enabled", _uniform_s_sweep(search))
+    if not enabled or not _uniform_s_sweep(search):
+        return None
+    target_s_h = float(derived.get("s_h", math.nan))
+    target_s_v = float(derived.get("s_v", math.nan))
+    if (not math.isfinite(target_s_h) or not math.isfinite(target_s_v) or
+            not math.isclose(target_s_h, target_s_v, rel_tol=0, abs_tol=0.01)):
+        return None
+    samples = []
+    for record in records:
+        if record.get("status") != "complete":
+            continue
+        score = _record_surface_score(record, search)
+        s_h = float(record.get("derived", {}).get("s_h", math.nan))
+        s_v = float(record.get("derived", {}).get("s_v", math.nan))
+        if (score is not None and math.isfinite(s_h) and math.isfinite(s_v) and
+                math.isclose(s_h, s_v, rel_tol=0, abs_tol=0.01)):
+            samples.append(((s_h + s_v) / 2, score))
+    samples.sort()
+    minimum = int(policy.get(
+        "minimum_evaluations", DEFAULT_ADAPTIVE_PRUNING_MIN_EVALUATIONS))
+    if len(samples) < max(5, minimum):
+        return None
+    target_s = (target_s_h + target_s_v) / 2
+    if target_s <= samples[-1][0] + 1e-6:
+        return None
+    decline_count = int(policy.get("required_consecutive_declines", 3))
+    recent_scores = np.asarray([score for _, score in samples[-(decline_count + 1):]])
+    if len(recent_scores) < decline_count + 1 or not np.all(np.diff(recent_scores) < 0):
+        return None
+
+    s_values = np.asarray([s for s, _ in samples])
+    scores = np.asarray([score for _, score in samples])
+    design = np.column_stack((np.ones(len(samples)), s_values, s_values ** 2))
+    coefficients, _, _, _ = np.linalg.lstsq(design, scores, rcond=None)
+    target = np.asarray([1.0, target_s, target_s ** 2])
+    predicted = float(target @ coefficients)
+    residuals = scores - design @ coefficients
+    degrees_of_freedom = max(1, len(samples) - design.shape[1])
+    residual_sigma = math.sqrt(float(residuals @ residuals) / degrees_of_freedom)
+    leverage = float(target @ np.linalg.pinv(design.T @ design) @ target)
+    uncertainty_floor = float(policy.get(
+        "uncertainty_floor_points",
+        DEFAULT_ADAPTIVE_PRUNING_UNCERTAINTY_FLOOR_POINTS))
+    prediction_sigma = max(uncertainty_floor,
+                           residual_sigma * math.sqrt(1 + leverage))
+    confidence_sigma = float(policy.get(
+        "confidence_sigma", DEFAULT_ADAPTIVE_PRUNING_CONFIDENCE_SIGMA))
+    optimistic_score = predicted + confidence_sigma * prediction_sigma
+    best_score = float(np.max(scores))
+    margin = float(policy.get(
+        "margin_points", DEFAULT_ADAPTIVE_PRUNING_MARGIN_POINTS))
+    threshold = best_score - margin
+    if optimistic_score >= threshold:
+        return None
+    return {
+        "reason": "optimistic predicted score is below the useful tail threshold",
+        "target_s": target_s,
+        "predicted_score": predicted,
+        "prediction_sigma": prediction_sigma,
+        "optimistic_score": optimistic_score,
+        "best_observed_score": best_score,
+        "threshold_score": threshold,
+        "confidence_sigma": confidence_sigma,
+        "observed_points": len(samples),
+        "values": values,
+    }
 
 
 def pareto_indices(records: list[dict[str, Any]]) -> set[int]:
@@ -822,12 +930,13 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vert
 <p><strong>Progress</strong><br>{sum(r['status']=='complete' for r in records)}&nbsp;/<wbr> {state['max_evaluations']} evaluated</p>
 <p><strong>Rejected proposals</strong><br>{state.get('rejected_count', 0)}</p>
 <p><strong>Confidently inferior</strong><br>{state.get('surrogate_screened_count', 0)}</p>
+<p><strong>Adaptive skips</strong><br>{state.get('adaptive_pruned_count', 0)}</p>
 <p><strong>Sweep band</strong><br>{lower_frequency:g}–{upper_frequency:g} Hz</p>
 <p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
 <p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
 <section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='containment-mean' data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
-<section><p>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Existing completed searches retain their original selection history. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data.</p></section>
+<section><p>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Existing completed searches retain their original selection history. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points when its uncertainty-adjusted prediction remains at least three score points below the observed best.</p></section>
 <script>
 document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
   button.addEventListener('click', () => {{
@@ -1032,7 +1141,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             "upper_frequency_hz": search["upper_frequency_hz"],
             "max_evaluations": search["max_evaluations"], "search": search,
             "candidates": [], "proposal_count": 0, "rejected_count": 0,
-            "surrogate_screened_count": 0,
+            "surrogate_screened_count": 0, "adaptive_pruned_count": 0,
+            "adaptive_pruned_proposals": [],
             "started_at_unix": time.time(),
         }
         save_state(output_dir, state)
@@ -1070,6 +1180,9 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
     search.setdefault("inferior_screen_probability", DEFAULT_INFERIOR_PROBABILITY)
     search.setdefault("sampling_stability_points", DEFAULT_SAMPLING_STABILITY_POINTS)
     search.setdefault("confirmation_points_per_octave", 16.0)
+    search.setdefault("adaptive_pruning", {})
+    state.setdefault("adaptive_pruned_count", 0)
+    state.setdefault("adaptive_pruned_proposals", [])
     search.setdefault("fixed_parameters", {
         "n_h": float(seed["horncad_config"]["horizontal_basis"]["n"]),
         "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
@@ -1121,9 +1234,10 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             return True
         if retry_failed:
             return False
-        return (sum(record["status"] == "complete" for record in state["candidates"])
-                < search["max_evaluations"] and
-                state["proposal_count"] < max_proposals)
+        target_reached = (
+            sum(record["status"] == "complete" for record in state["candidates"]) +
+            state.get("adaptive_pruned_count", 0) >= search["max_evaluations"])
+        return not target_reached and state["proposal_count"] < max_proposals
 
     while work_remains():
         queued = next((item for item in state["candidates"]
@@ -1149,6 +1263,18 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                     (source != "initial-curated" and
                      distance < search["minimum_candidate_distance"])):
                 state["rejected_count"] += 1
+                save_state(output_dir, state)
+                continue
+            pruning = adaptive_pruning_decision(
+                search, state["candidates"], values, derived)
+            if pruning is not None:
+                pruning.update(proposal_index=proposal_index,
+                               proposal_source=source,
+                               experiment_label=(search["initial_pool"][
+                                   proposal_index - 1]["label"]
+                                   if source == "initial-curated" else None))
+                state["adaptive_pruned_proposals"].append(pruning)
+                state["adaptive_pruned_count"] += 1
                 save_state(output_dir, state)
                 continue
             if proposal_index > search["initial_candidates"]:
@@ -1202,7 +1328,7 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                      phase=(f"failed candidate recovery incomplete: "
                             f"{remaining_failed} still failed"),
                      retry_requested=retry_count)
-    elif complete >= search["max_evaluations"]:
+    elif complete + state.get("adaptive_pruned_count", 0) >= search["max_evaluations"]:
         state.update(status="complete", phase="candidate evaluation complete",
                      completed_at_unix=time.time())
     else:

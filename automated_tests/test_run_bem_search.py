@@ -9,6 +9,7 @@ import numpy as np
 
 from app.tools.run_bem_search import (
     VARIABLES,
+    adaptive_pruning_decision,
     candidate_artifact_stem, candidate_distance, candidate_trait, candidate_traits,
     geometry_feasibility,
     geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
@@ -25,6 +26,48 @@ ROUND2_SEARCH = SEARCH.parent / "round-2" / "search.yaml"
 
 
 class BEMSearchTests(unittest.TestCase):
+    def test_adaptive_pruning_skips_only_confidently_declining_s_tail(self) -> None:
+        search = {
+            "initial_candidates": 8,
+            "initial_pool": [
+                {"label": f"uniform S={s:g}", "values": {}}
+                for s in (1.0, 1.3, 1.6, 1.9, 2.2, 2.5, 2.8, 3.0)
+            ],
+            "adaptive_pruning": {"enabled": True},
+            "geometry_context": {"mouth_width_mm": 300, "mouth_height_mm": 300},
+        }
+        records = []
+        for s, score in zip((0.7, 1.0, 1.3, 1.6, 1.9),
+                            (82.0, 80.0, 76.0, 71.0, 66.0)):
+            records.append({
+                "status": "complete", "derived": {"s_h": s, "s_v": s},
+                "surface_diagnostics": {"score": {"overall_percent": score}},
+            })
+        decision = adaptive_pruning_decision(
+            search, records, {"length_mm": 100}, {"s_h": 2.2, "s_v": 2.2})
+        self.assertIsNotNone(decision)
+        self.assertLess(decision["optimistic_score"], decision["threshold_score"])
+
+        records[-1]["surface_diagnostics"]["score"]["overall_percent"] = 79.0
+        self.assertIsNone(adaptive_pruning_decision(
+            search, records, {"length_mm": 100}, {"s_h": 2.2, "s_v": 2.2}))
+
+    def test_adaptive_pruning_waits_for_five_real_results(self) -> None:
+        search = {
+            "initial_candidates": 5,
+            "initial_pool": [
+                {"label": f"uniform S={s:g}", "values": {}}
+                for s in (1.0, 1.3, 1.6, 1.9, 2.2)
+            ],
+            "geometry_context": {"mouth_width_mm": 300, "mouth_height_mm": 300},
+        }
+        records = [{
+            "status": "complete", "derived": {"s_h": s, "s_v": s},
+            "surface_diagnostics": {"score": {"overall_percent": score}},
+        } for s, score in zip((0.7, 1.0, 1.3, 1.6), (80, 70, 60, 50))]
+        self.assertIsNone(adaptive_pruning_decision(
+            search, records, {"length_mm": 100}, {"s_h": 1.9, "s_v": 1.9}))
+
     def test_failed_candidate_retry_only_queues_failed_records(self) -> None:
         state = {"candidates": [
             {"id": "candidate-000", "status": "complete"},
