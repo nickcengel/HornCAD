@@ -86,6 +86,8 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("Surface diagnostics", single_text)
             self.assertIn("Coverage-window containment", single_text)
             self.assertIn("Angular slice-energy departure", single_text)
+            self.assertIn("Final surface score", single_text)
+            self.assertNotIn("1/3-oct", single_text)
             self.assertNotIn("Coverage Match", single_text)
             self.assertNotIn("Coverage Smoothness", single_text)
             self.assertNotIn("Waist Stability", single_text)

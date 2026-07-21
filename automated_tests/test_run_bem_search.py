@@ -272,6 +272,7 @@ class BEMSearchTests(unittest.TestCase):
                     "vertical": plane}
             state["status"] = "complete"
             highlighted = write_report(Path(temp), state).read_text()
+            self.assertIn("Final surface score", highlighted)
             self.assertIn("Mean containment H&nbsp;/ V", highlighted)
             self.assertIn("Profile RMS error H&nbsp;/ V", highlighted)
             self.assertIn("Slice-energy RMS departure H&nbsp;/ V", highlighted)
@@ -279,6 +280,7 @@ class BEMSearchTests(unittest.TestCase):
             self.assertNotIn("Coverage Smoothness", highlighted)
             self.assertNotIn("Waist Stability", highlighted)
             self.assertNotIn("Window Uniformity", highlighted)
+            self.assertNotIn("1/3-oct", highlighted)
             self.assertNotIn("Added-depth cost", highlighted)
 
 

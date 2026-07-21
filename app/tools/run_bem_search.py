@@ -25,14 +25,14 @@ try:
     from .export_horncad import solved_s, termination_metrics
     from .generate_numcalc_review import generate_review
     from .interactive_results import coverage_diagnostics, load_run, single_report
-    from .surface_diagnostics import surface_diagnostics
+    from .surface_diagnostics import surface_diagnostics, surface_score
     from .run_bem_suite import find_numcalc
     from .run_numcalc_sweep import ppo_frequency_grid, run_sweep
 except ImportError:
     from export_horncad import solved_s, termination_metrics
     from generate_numcalc_review import generate_review
     from interactive_results import coverage_diagnostics, load_run, single_report
-    from surface_diagnostics import surface_diagnostics
+    from surface_diagnostics import surface_diagnostics, surface_score
     from run_bem_suite import find_numcalc
     from run_numcalc_sweep import ppo_frequency_grid, run_sweep
 
@@ -701,6 +701,16 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     pareto = pareto_indices(records)
     for index, record in enumerate(records):
         record["pareto"] = index in pareto
+    def final_score_cell(record: dict[str, Any]) -> str:
+        result = record.get("surface_diagnostics", {})
+        score = result.get("score") or surface_score(result, {
+            "horizontal": mouth_width, "vertical": mouth_height})
+        if not score:
+            return "<td data-column='surface-score' data-sort=''>—</td>"
+        value = float(score["overall_percent"])
+        return (f"<td data-column='surface-score' data-sort='{value:.6f}'>"
+                f"{value:.1f}%</td>")
+
     def surface_cell(record: dict[str, Any], column: str,
                      path: tuple[str, ...], suffix: str = "",
                      scale: float = 1.0, hidden: bool = False) -> str:
@@ -749,11 +759,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td data-sort='{html.escape(artifact_stem)}'><a href='{candidate_dir}/project.yaml'>{html.escape(artifact_stem)}</a>"
             f"{stl_link}{report_link}</td>",
             f"<td data-sort='{html.escape(status)}'>{html.escape(status)}</td>",
+            final_score_cell(record),
             surface_cell(record, "containment-mean",
                          ("containment", "mean_fraction"), "%", 100),
-            surface_cell(record, "containment-worst",
-                         ("containment", "worst_windows", "1/3 octave", "minimum"),
-                         "%", 100, True),
             surface_cell(record, "profile-rms",
                          ("distribution", "rms_profile_error_db"), " dB"),
             surface_cell(record, "outward-rise",
@@ -779,8 +787,8 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td data-column='mouth-width' hidden data-sort='{mouth_width:.6f}'>{mouth_width:g}</td>",
         )) + "</tr>")
     toggle_columns = (
+        ("surface-score", "Final surface score", True),
         ("containment-mean", "Mean containment H / V", True),
-        ("containment-worst", "Worst 1/3-oct containment H / V", False),
         ("profile-rms", "Profile RMS error H / V", True),
         ("outward-rise", "Outward-rise violation H / V", False),
         ("slice-rms", "Slice-energy RMS departure H / V", True),
@@ -818,8 +826,8 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vert
 <p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
 <p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
-<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='containment-mean' data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='containment-worst' hidden data-sort='number'>Worst 1/3-oct containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
-<section><p>These are unweighted surface-calibration measurements from crossover through the upper sweep frequency. No final combined score has been assigned. Existing completed searches retain their original selection history while the replacement metrics are evaluated. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data.</p></section>
+<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='containment-mean' data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
+<section><p>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Existing completed searches retain their original selection history. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data.</p></section>
 <script>
 document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
   button.addEventListener('click', () => {{

@@ -14,9 +14,9 @@ from plotly.subplots import make_subplots
 import yaml
 
 try:
-    from .surface_diagnostics import surface_diagnostics
+    from .surface_diagnostics import surface_diagnostics, surface_score
 except ImportError:
-    from surface_diagnostics import surface_diagnostics
+    from surface_diagnostics import surface_diagnostics, surface_score
 
 
 COLORS = ("#2563eb", "#dc2626", "#16a34a", "#9333ea")
@@ -779,7 +779,10 @@ def _surface_diagnostic_tables(runs: list[dict[str, Any]],
                 f"<div class='diagnostic-card'><h3>{html.escape(run['name'])}</h3>"
                 f"<p>{html.escape(result['reason'])}</p></div>")
             continue
-        rows = []
+        score = result.get("score") or surface_score(
+            result, run.get("mouth_dimensions_mm"))
+        rows = [("Final surface score",
+                 value(score["overall_percent"], "%") if score else "—")]
         for label, plane_name in (("Horizontal", "horizontal"),
                                   ("Vertical", "vertical")):
             plane = result[plane_name]
@@ -787,14 +790,9 @@ def _surface_diagnostic_tables(runs: list[dict[str, Any]],
             distribution = plane["distribution"]
             stability = plane["slice_energy_stability"]
             line = plane["minus_six_line"]
-            worst = containment["worst_windows"]
             rows.extend((
                 (f"{label} mean containment",
                  value(containment["mean_fraction"], "%", 100)),
-                (f"{label} worst raw containment",
-                 value(worst["raw"]["minimum"], "%", 100)),
-                (f"{label} worst 1/3-oct containment",
-                 value(worst["1/3 octave"]["minimum"], "%", 100)),
                 (f"{label} profile RMS error",
                  value(distribution["rms_profile_error_db"], " dB")),
                 (f"{label} outward-rise violation",
@@ -912,7 +910,7 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Surface diagnostics</h2>
 {_surface_diagnostic_tables(runs, surface_results)}
-<p class='hint'>These are raw calibration measurements, not weighted scores. Containment integrates relative power inside the intended coverage half-angle. Profile error compares the in-window surface with a straight 0 to −6 dB angular falloff. Slice-energy departure measures changes in total relative angular energy from 0° through 90° at each frequency. The −6 dB line remains a secondary measurement.</p>
+<p class='hint'>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Containment integrates relative power inside the intended coverage half-angle. Profile error compares the in-window surface with a straight 0 to −6 dB angular falloff.</p>
 </section><section class='plot'>{surface_plot}</section></main><script>
 (() => {{
   let armed = null;
