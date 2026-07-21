@@ -4,7 +4,11 @@ import unittest
 
 import numpy as np
 
-from app.tools.surface_diagnostics import surface_diagnostics
+from app.tools.surface_diagnostics import (
+    SURFACE_SCORE_WEIGHTS,
+    surface_diagnostics,
+    surface_score,
+)
 
 
 class SurfaceDiagnosticsTests(unittest.TestCase):
@@ -45,6 +49,22 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
         self.assertAlmostEqual(
             plane["minus_six_line"]["rms_coverage_error_deg"], 0.0,
             places=10)
+        self.assertIsNotNone(result["score"])
+
+    def test_final_score_uses_fixed_weights_and_penalizes_surface_errors(self) -> None:
+        ideal = surface_diagnostics(self.make_run(self.ideal_surface()))
+        damaged_surface = self.ideal_surface()
+        angles = np.linspace(0.0, 90.0, damaged_surface.shape[1])
+        damaged_surface += 5.0 * np.sin(angles * np.pi / 4.0)[None, :]
+        damaged = surface_diagnostics(self.make_run(damaged_surface))
+
+        self.assertAlmostEqual(sum(SURFACE_SCORE_WEIGHTS.values()), 1.0)
+        self.assertGreater(
+            surface_score(ideal)["overall_percent"],
+            surface_score(damaged)["overall_percent"])
+        self.assertEqual(
+            surface_score(ideal, {"horizontal": 2, "vertical": 1})["axis_weights"],
+            {"horizontal": 2 / 3, "vertical": 1 / 3})
 
     def test_outside_lobe_reduces_containment(self) -> None:
         ideal = self.ideal_surface()

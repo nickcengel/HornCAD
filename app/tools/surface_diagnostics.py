@@ -8,6 +8,84 @@ import numpy as np
 
 
 OCTAVE_WINDOWS = (1 / 12, 1 / 6, 1 / 3, 2 / 3)
+SURFACE_SCORE_WEIGHTS = {
+    "profile_rms": 0.30,
+    "slice_energy": 0.25,
+    "mean_containment": 0.20,
+    "outward_rise": 0.15,
+    "minus_six_line": 0.10,
+}
+SURFACE_SCORE_ERROR_REFERENCES = {
+    "profile_rms": 3.0,
+    "slice_energy": 2.0,
+    "outward_rise": 2.0,
+    "minus_six_line": 20.0,
+}
+
+
+def _inverse_error_score(error: float | None, reference: float) -> float:
+    """Map zero error to 100 and the reference error to 50."""
+    if error is None or not np.isfinite(error) or error < 0:
+        return 0.0
+    return float(100.0 / (1.0 + (float(error) / reference) ** 2))
+
+
+def surface_score(result: dict[str, Any],
+                  mouth_dimensions_mm: dict[str, float] | None = None
+                  ) -> dict[str, Any] | None:
+    """Return the fixed, comparable score for an available surface result."""
+    if result.get("status") != "available":
+        return None
+    dimensions = mouth_dimensions_mm or {}
+    raw_axis_weights = np.asarray([
+        float(dimensions.get("horizontal", 1.0)),
+        float(dimensions.get("vertical", 1.0)),
+    ])
+    if np.any(raw_axis_weights <= 0) or not np.all(np.isfinite(raw_axis_weights)):
+        raw_axis_weights = np.ones(2)
+    axis_weights = raw_axis_weights / np.sum(raw_axis_weights)
+    planes: dict[str, Any] = {}
+    for plane_name in ("horizontal", "vertical"):
+        plane = result[plane_name]
+        line = plane["minus_six_line"]
+        line_score = _inverse_error_score(
+            line.get("rms_coverage_error_deg"),
+            SURFACE_SCORE_ERROR_REFERENCES["minus_six_line"])
+        line_score *= max(0.0, 1.0 - float(line.get("missing_fraction", 0.0)))
+        components = {
+            "profile_rms": _inverse_error_score(
+                plane["distribution"]["rms_profile_error_db"],
+                SURFACE_SCORE_ERROR_REFERENCES["profile_rms"]),
+            "slice_energy": _inverse_error_score(
+                plane["slice_energy_stability"]["rms_departure_db"],
+                SURFACE_SCORE_ERROR_REFERENCES["slice_energy"]),
+            "mean_containment": 100.0 * float(
+                plane["containment"]["mean_fraction"]),
+            "outward_rise": _inverse_error_score(
+                plane["distribution"]["rms_outward_rise_violation_db"],
+                SURFACE_SCORE_ERROR_REFERENCES["outward_rise"]),
+            "minus_six_line": line_score,
+        }
+        planes[plane_name] = {
+            "components": components,
+            "overall_percent": float(sum(
+                SURFACE_SCORE_WEIGHTS[key] * components[key]
+                for key in SURFACE_SCORE_WEIGHTS)),
+        }
+    overall = float(sum(
+        axis_weights[index] * planes[plane_name]["overall_percent"]
+        for index, plane_name in enumerate(("horizontal", "vertical"))))
+    return {
+        "overall_percent": overall,
+        "horizontal": planes["horizontal"],
+        "vertical": planes["vertical"],
+        "axis_weights": {
+            "horizontal": float(axis_weights[0]),
+            "vertical": float(axis_weights[1]),
+        },
+        "component_weights": SURFACE_SCORE_WEIGHTS,
+        "error_reference_values": SURFACE_SCORE_ERROR_REFERENCES,
+    }
 
 
 def _band_mean(x: np.ndarray, values: np.ndarray) -> float:
@@ -269,7 +347,7 @@ def surface_diagnostics(
                 frequencies, angles, evaluated_surface, coverage)
         except ValueError as error:
             return {"status": "unavailable", "reason": str(error)}
-    return {
+    result = {
         "status": "available",
         "band_kind": "fixed shadow evaluation" if fixed_band else "shadow evaluation",
         "band_lower_hz": float(frequencies[0]),
@@ -277,3 +355,5 @@ def surface_diagnostics(
         "horizontal": planes["horizontal"],
         "vertical": planes["vertical"],
     }
+    result["score"] = surface_score(result, run.get("mouth_dimensions_mm"))
+    return result

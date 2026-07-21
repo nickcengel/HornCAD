@@ -104,11 +104,22 @@ summaries use a geometric or root-mean-square combination appropriate to the
 quantity; no left/right asymmetry diagnostic exists because the negative-angle
 surface is a mirror.
 
-No final weighted score is defined in this implementation. First, the raw
-components and multiscale results will be calculated for retained candidates
-and compared with their heat maps. Component score mappings and final weights
-will be selected only after that calibration review. Until then, existing
-search selection remains unchanged and the new suite runs in shadow mode.
+The calibrated final score uses these component weights:
+
+- 30% in-window profile RMS error;
+- 25% slice-energy RMS departure;
+- 20% mean containment;
+- 15% outward-rise violation;
+- 10% secondary -6 dB line error.
+
+Mean containment contributes its percentage directly. Each error measurement
+uses `100 / (1 + (error / reference)^2)`, which gives 100 at zero error and 50
+at its reference value. Reference values are 3 dB for profile RMS, 2 dB for
+slice-energy departure, 2 dB for outward rise, and 20 degrees for the -6 dB
+line. Missing -6 dB crossings reduce that component in direct proportion to
+the missing fraction. Horizontal and vertical scores are combined using mouth
+width and height respectively. The worst one-third-octave containment summary
+remains internal and does not contribute to the score or public reports.
 
 ## Validation
 
