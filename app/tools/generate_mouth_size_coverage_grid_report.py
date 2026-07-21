@@ -197,7 +197,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
 
     refresh = "<meta http-equiv='refresh' content='30'>" if running else ""
     rows = []
-    for rank, item in enumerate(candidate_rows, 1):
+    for item in candidate_rows:
         summary = item["search"]
         candidate = item["candidate"]
         containment_sort, containment_text = surface_pair(
@@ -221,7 +221,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
         newest = item["newest_at_unix"]
         newest_sort = "" if newest is None else f"{newest:.6f}"
         newest_text = ("—" if newest is None else datetime.fromtimestamp(
-            newest).astimezone().strftime("%Y-%m-%d %H:%M"))
+            newest).astimezone().strftime("%-m-%d %H:%M"))
         candidate_name = html.escape(item["artifact_stem"])
         candidate_links = []
         if item["report_path"] is not None:
@@ -238,25 +238,17 @@ def generate_report(project_root: Path, output: Path) -> Path:
             candidate_links.append(
                 f"<a href='{html.escape(str(item['report_path'].relative_to(project_root)))}'>report</a>"
             )
-        report_link = (
-            f"<a href='{html.escape(str(summary['report_path'].relative_to(project_root)))}'>search report</a>"
-            if summary["report_path"] else "—"
-        )
-        status_badge = f"<span class='badge {html.escape(_ranking_class(summary))}'>{html.escape(candidate.get('status', 'unknown'))}</span>"
         rows.append(
             "<tr>"
-            f"<td data-sort='{rank}'>{rank}</td>"
             f"<td data-sort='{html.escape(item['artifact_stem'])}'>{' · '.join(candidate_links)}</td>"
-            f"<td data-sort='{html.escape(summary['label'])}'>{html.escape(summary['label'])}</td>"
-            f"<td data-sort='{html.escape(candidate.get('status', 'unknown'))}'>{status_badge}</td>"
-            f"<td data-sort='{newest_sort}'>{newest_text}</td>"
             f"<td data-column='surface-score' data-sort='{surface_score_sort}'>{surface_score_text}</td>"
-            f"<td data-column='legacy-rank' data-sort='{item['legacy_rank']}'>{item['legacy_rank']}</td>"
-            f"<td data-column='legacy-score' data-sort='{legacy_score_sort}'>{legacy_score_text}</td>"
-            f"<td class='axis-pair' data-column='containment-mean' data-sort='{containment_sort}'>{containment_text}</td>"
-            f"<td class='axis-pair' data-column='profile-rms' data-sort='{profile_sort}'>{profile_text}</td>"
+            f"<td data-sort='{newest_sort}'>{newest_text}</td>"
+            f"<td data-column='legacy-rank' hidden data-sort='{item['legacy_rank']}'>{item['legacy_rank']}</td>"
+            f"<td data-column='legacy-score' hidden data-sort='{legacy_score_sort}'>{legacy_score_text}</td>"
+            f"<td class='axis-pair' data-column='containment-mean' hidden data-sort='{containment_sort}'>{containment_text}</td>"
+            f"<td class='axis-pair' data-column='profile-rms' hidden data-sort='{profile_sort}'>{profile_text}</td>"
             f"<td class='axis-pair' data-column='outward-rise' hidden data-sort='{rise_sort}'>{rise_text}</td>"
-            f"<td class='axis-pair' data-column='slice-rms' data-sort='{slice_sort}'>{slice_text}</td>"
+            f"<td class='axis-pair' data-column='slice-rms' hidden data-sort='{slice_sort}'>{slice_text}</td>"
             f"<td class='axis-pair' data-column='line-rms' hidden data-sort='{line_sort}'>{line_text}</td>"
             f"<td data-column='length' hidden data-sort='{candidate.get('values', {}).get('length_mm', 0):.6f}'>{candidate.get('values', {}).get('length_mm', 0):g}</td>"
             f"<td data-column='length-mouth-ratio' hidden data-sort='{item['length_mouth_ratio']:.6f}'>{item['length_mouth_ratio']:.3f}</td>"
@@ -311,12 +303,12 @@ def generate_report(project_root: Path, output: Path) -> Path:
 
     toggle_columns = (
         ("surface-score", "Final surface score", True),
-        ("legacy-rank", "Previous rank", True),
-        ("legacy-score", "Previous diagnostic score", True),
-        ("containment-mean", "Mean containment H / V", True),
-        ("profile-rms", "Profile RMS error H / V", True),
+        ("legacy-rank", "Previous rank", False),
+        ("legacy-score", "Previous diagnostic score", False),
+        ("containment-mean", "Mean containment H / V", False),
+        ("profile-rms", "Profile RMS error H / V", False),
         ("outward-rise", "Outward-rise violation H / V", False),
-        ("slice-rms", "Slice-energy RMS departure H / V", True),
+        ("slice-rms", "Slice-energy RMS departure H / V", False),
         ("line-rms", "−6 dB RMS error H / V", False),
         ("length", "Length mm", False),
         ("length-mouth-ratio", "Length-mouth ratio", False),
@@ -367,7 +359,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <h2>Candidates</h2>
 <div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div>
 <table class='wide sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>New rank</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Newest</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='legacy-rank' data-sort='number'>Previous rank</th><th class='sortable' data-column='legacy-score' data-sort='number'>Previous diagnostic score</th><th class='sortable' data-column='containment-mean' data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead>
+<thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-sort='number'>Newest</th><th class='sortable' data-column='legacy-rank' hidden data-sort='number'>Previous rank</th><th class='sortable' data-column='legacy-score' hidden data-sort='number'>Previous diagnostic score</th><th class='sortable' data-column='containment-mean' hidden data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' hidden data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' hidden data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead>
 <tbody>
 {''.join(rows)}
 </tbody>

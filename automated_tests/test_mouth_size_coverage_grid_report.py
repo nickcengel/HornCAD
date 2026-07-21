@@ -42,6 +42,13 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn(">Previous rank</th>", report)
         self.assertIn(">Previous diagnostic score</th>", report)
         self.assertIn(">Newest</th>", report)
+        self.assertNotIn(">New rank</th>", report)
+        self.assertIn(
+            "<thead><tr><th class='sortable' data-sort='text'>Candidate</th>"
+            "<th class='sortable' data-column='surface-score' data-sort='number'>"
+            "Final surface score</th><th class='sortable' data-sort='number'>Newest</th>",
+            report,
+        )
         self.assertIn("Candidates are ranked by the final surface score", report)
         self.assertIn("data-column-toggle='containment-mean'", report)
         self.assertIn("data-column-toggle='profile-rms'", report)
@@ -50,6 +57,10 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertNotIn("1/3-oct", report)
         self.assertIn("data-column='mouth-height' hidden", report)
         self.assertIn("data-column='mouth-width' hidden", report)
+        self.assertIn("data-column='containment-mean' hidden", report)
+        self.assertIn("data-column='profile-rms' hidden", report)
+        self.assertIn("data-column='slice-rms' hidden", report)
+        self.assertRegex(report, r">\d{1,2}-\d{2} \d{2}:\d{2}</td>")
         self.assertNotIn("Average diagnostic score", report)
         self.assertNotIn("Coverage Match", report)
         # The selection ratio is mouth width divided by length: 250 / 179.
