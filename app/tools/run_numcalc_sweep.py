@@ -98,6 +98,7 @@ def run_sweep(yaml_path: Path, executable: Path, output_dir: Path,
     maximum_frequency = float(np.max(frequencies_hz))
     run_hash = hashlib.sha256(
         yaml_path.read_bytes() + Path(__file__).read_bytes()
+        + Path(build_quadrant_acoustic_mesh.__code__.co_filename).read_bytes()
         + np.asarray(frequencies_hz, dtype=float).tobytes()
         + f"{elements_per_wavelength}:{angles}".encode()).hexdigest()[:12]
     root = output_dir / f"{yaml_path.stem}-NumCalc-{run_hash}"

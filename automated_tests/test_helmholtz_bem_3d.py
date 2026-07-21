@@ -19,6 +19,7 @@ from app.tools.helmholtz_bem_3d import (
     execution_plan,
     parse_args,
     PipelineSettings,
+    _authored_mesh,
 )
 
 
@@ -31,10 +32,23 @@ class HelmholtzBEM3DTests(unittest.TestCase):
         self.assertEqual(args.mesh_tier, "production")
         self.assertEqual(MeshSettings().maximum_frequency_hz, 8_000)
         self.assertEqual(MeshSettings().elements_per_wavelength, 6)
+        self.assertEqual(MeshSettings().netgen_maxh_factor, 0.45)
         self.assertFalse(args.full_geometry)
         self.assertEqual(GEOMETRY_SEED_SIDE_SAMPLES, 12)
         self.assertEqual(GEOMETRY_SEED_AXIAL_STATIONS, 16)
         self.assertTrue(PipelineSettings((500.0,), (0.0,)).quadrant_symmetry)
+
+    def test_short_boundary_candidate_closes_before_remeshing(self) -> None:
+        yaml_path = (
+            Path(__file__).parents[1] / "examples" /
+            "mouth-size-coverage-grid" / "25deg" / "300x300" /
+            "candidates" / "candidate-003" / "project.yaml"
+        )
+
+        body, _, _ = _authored_mesh(yaml_path, 12, 16)
+
+        self.assertTrue(body.is_volume)
+        self.assertTrue(body.is_watertight)
 
     def test_acoustic_body_is_closed_and_has_driven_throat_faces(self) -> None:
         yaml_path = (

@@ -71,7 +71,7 @@ class MeshSettings:
     minimum_angle_deg: float = 0.01
     maximum_aspect_ratio: float = 3_000.0
     surface_mesher: str = "netgen"
-    netgen_maxh_factor: float = 0.5
+    netgen_maxh_factor: float = 0.45
 
     @property
     def target_edge_m(self) -> float:
@@ -314,11 +314,17 @@ def _authored_mesh(yaml_path: Path, side_samples: int, axial_stations: int) -> t
     top, bottom = throat_z + overlap, throat_z - depth
     cap = trimesh.creation.cylinder(radius=throat_radius + overlap, height=top - bottom,
         sections=max(32, side_samples * 4), transform=trimesh.transformations.translation_matrix((0, 0, (top + bottom) / 2)))
-    combined = trimesh.boolean.union((body, cap), engine="manifold")
+    # Very short profiles can leave a temporary open seam at the throat before
+    # the overlapping piston cap is joined. Manifold can close that seam, but
+    # its default precondition rejects the intentionally open intermediate.
+    combined = trimesh.boolean.union(
+        (body, cap), engine="manifold", check_volume=False)
     if isinstance(combined, list):
         combined = trimesh.util.concatenate(combined)
-    combined.process(validate=True)
+    combined.remove_unreferenced_vertices()
     trimesh.repair.fix_normals(combined, multibody=True)
+    if not combined.is_volume:
+        raise ValueError("capped acoustic body is not a closed volume")
     return combined, mouth_ring, throat_radius
 
 
