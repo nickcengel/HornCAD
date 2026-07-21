@@ -884,6 +884,13 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     geometry = search.get("geometry_context", {})
     mouth_width = float(geometry.get("mouth_width_mm", 0))
     mouth_height = float(geometry.get("mouth_height_mm", 0))
+    kn_study = bool(search.get("adaptive_kn", {}).get("enabled", False))
+    default_visible_columns = ({"surface-score", "k", "n"} if kn_study else {
+        "surface-score", "containment-mean", "profile-rms", "slice-rms"})
+
+    def hidden_attribute(column: str) -> str:
+        return "" if column in default_visible_columns else " hidden"
+
     pareto = pareto_indices(records)
     for index, record in enumerate(records):
         record["pareto"] = index in pareto
@@ -947,48 +954,54 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"<td data-sort='{html.escape(status)}'>{html.escape(status)}</td>",
             final_score_cell(record),
             surface_cell(record, "containment-mean",
-                         ("containment", "mean_fraction"), "%", 100),
+                         ("containment", "mean_fraction"), "%", 100,
+                         hidden="containment-mean" not in default_visible_columns),
             surface_cell(record, "profile-rms",
-                         ("distribution", "rms_profile_error_db"), " dB"),
+                         ("distribution", "rms_profile_error_db"), " dB",
+                         hidden="profile-rms" not in default_visible_columns),
             surface_cell(record, "outward-rise",
                          ("distribution", "rms_outward_rise_violation_db"),
-                         " dB", hidden=True),
+                         " dB", hidden="outward-rise" not in default_visible_columns),
             surface_cell(record, "slice-rms",
-                         ("slice_energy_stability", "rms_departure_db"), " dB"),
+                         ("slice_energy_stability", "rms_departure_db"), " dB",
+                         hidden="slice-rms" not in default_visible_columns),
             surface_cell(record, "line-rms",
-                         ("minus_six_line", "rms_coverage_error_deg"), "°", hidden=True),
+                         ("minus_six_line", "rms_coverage_error_deg"), "°",
+                         hidden="line-rms" not in default_visible_columns),
             f"<td data-column='length' hidden data-sort='{length:.6f}'>{length:.1f}</td>",
             f"<td data-column='length-mouth-ratio' hidden data-sort='{length_mouth_ratio:.6f}'>{length_mouth_ratio:.3f}</td>",
             f"<td data-column='extension' hidden data-sort='{record['values']['extension_mm']:.6f}'>{record['values']['extension_mm']:.1f}</td>",
             f"<td class='axis-pair' data-column='osse' hidden data-sort='{record['values']['osse_coverage_h_deg']:.6f}'>"
             f"{coverage_pair}</td>",
-            f"<td class='axis-pair' data-column='k' hidden data-sort='{record['values']['k_h']:.6f}'>"
+            f"<td class='axis-pair' data-column='k'{hidden_attribute('k')} data-sort='{record['values']['k_h']:.6f}'>"
             f"{k_pair}</td>",
             f"<td class='axis-pair' data-column='s' hidden data-sort='{record['derived'].get('s_h', float('nan')):.6f}'>"
             f"{s_pair}</td>",
-            f"<td class='axis-pair' data-column='n' hidden data-sort='{record['values']['n_h']:.6f}'>"
+            f"<td class='axis-pair' data-column='n'{hidden_attribute('n')} data-sort='{record['values']['n_h']:.6f}'>"
             f"{n_pair}</td>",
             f"<td data-column='trait' hidden data-sort='{html.escape(trait)}'>{html.escape(trait)}</td>",
             f"<td data-column='mouth-height' hidden data-sort='{mouth_height:.6f}'>{mouth_height:g}</td>",
             f"<td data-column='mouth-width' hidden data-sort='{mouth_width:.6f}'>{mouth_width:g}</td>",
         )) + "</tr>")
-    toggle_columns = (
-        ("surface-score", "Final surface score", True),
-        ("containment-mean", "Mean containment H / V", True),
-        ("profile-rms", "Profile RMS error H / V", True),
-        ("outward-rise", "Outward-rise violation H / V", False),
-        ("slice-rms", "Slice-energy RMS departure H / V", True),
-        ("line-rms", "−6 dB RMS error H / V", False),
-        ("length", "Length mm", False),
-        ("length-mouth-ratio", "Length-mouth ratio", False),
-        ("extension", "Extension mm", False),
-        ("osse", "OS-SE H / V", False),
-        ("k", "K H / V", False),
-        ("s", "S H / V", False),
-        ("n", "N H / V", False),
-        ("trait", "Distinguishing trait", False),
-        ("mouth-height", "Mouth height", False),
-        ("mouth-width", "Mouth width", False),
+    toggle_columns = tuple(
+        (column, label, column in default_visible_columns) for column, label in (
+        ("surface-score", "Final surface score"),
+        ("containment-mean", "Mean containment H / V"),
+        ("profile-rms", "Profile RMS error H / V"),
+        ("outward-rise", "Outward-rise violation H / V"),
+        ("slice-rms", "Slice-energy RMS departure H / V"),
+        ("line-rms", "−6 dB RMS error H / V"),
+        ("length", "Length mm"),
+        ("length-mouth-ratio", "Length-mouth ratio"),
+        ("extension", "Extension mm"),
+        ("osse", "OS-SE H / V"),
+        ("k", "K H / V"),
+        ("s", "S H / V"),
+        ("n", "N H / V"),
+        ("trait", "Distinguishing trait"),
+        ("mouth-height", "Mouth height"),
+        ("mouth-width", "Mouth width"),
+        )
     )
     column_toggles = "".join(
         f"<button type='button' class='column-toggle' data-column-toggle='{column}' "
@@ -1013,7 +1026,7 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vert
 <p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
 <p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
-<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='containment-mean' data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
+<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='containment-mean'{hidden_attribute('containment-mean')} data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms'{hidden_attribute('profile-rms')} data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise'{hidden_attribute('outward-rise')} data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms'{hidden_attribute('slice-rms')} data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms'{hidden_attribute('line-rms')} data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k'{hidden_attribute('k')} data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n'{hidden_attribute('n')} data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
 <section><p>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Existing completed searches retain their original selection history. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points. Adaptive K/N studies always measure the local cross, then skip an extreme or interaction only when its uncertainty-adjusted prediction remains at least three score points below the observed best.</p></section>
 <script>
 document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
