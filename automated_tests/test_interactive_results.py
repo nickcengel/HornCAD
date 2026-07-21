@@ -84,6 +84,7 @@ class InteractiveResultsTests(unittest.TestCase):
             surface_diagnostics = json.loads(
                 fixed.with_name("surface_diagnostics.json").read_text())
             self.assertIn("Horn acoustic parameters", single_text)
+            self.assertIn("report-schema: canonical-v6", single_text)
             self.assertIn("Surface diagnostics", single_text)
             self.assertIn("Coverage-window containment", single_text)
             self.assertIn("Angular slice-energy departure", single_text)
