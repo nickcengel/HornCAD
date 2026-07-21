@@ -837,6 +837,23 @@ def compact_mouth_outer_rings(
 ) -> list[list[tuple[float, float, float]]]:
     if len(outer_rings) <= 2:
         return outer_rings
+    # A strongly mouth-constrained profile can reach the rear mouth boundary
+    # before its final sampled station. Continuing past that first contact
+    # makes the outer wall leave and later return to the exact same ring,
+    # producing a self-touching (four-face) seam in STL consumers. The first
+    # contact is already the complete outer-wall endpoint.
+    def truncate_at_first_mouth_contact(
+        rings: list[list[tuple[float, float, float]]],
+    ) -> list[list[tuple[float, float, float]]]:
+        mouth_ring = rings[-1]
+        for index, ring in enumerate(rings[:-1]):
+            if max(math.dist(point, mouth) for point, mouth in zip(ring, mouth_ring)) < 1e-9:
+                return rings[: index + 1]
+        return rings
+
+    outer_rings = truncate_at_first_mouth_contact(outer_rings)
+    if len(outer_rings) <= 2:
+        return outer_rings
     min_spacing = max(1.0, max(0.0, PARAMS["minimum_wall"]) * 0.25)
     resample_span = max(min_spacing * 8.0, max(0.0, PARAMS["minimum_wall"]) * 4.0)
     segment_lengths = [
@@ -868,7 +885,8 @@ def compact_mouth_outer_rings(
                 ]
         return outer_rings[-1]
 
-    return [*outer_rings[:start], *[ring_at_distance(target) for target in targets]]
+    compacted = [*outer_rings[:start], *[ring_at_distance(target) for target in targets]]
+    return truncate_at_first_mouth_contact(compacted)
 
 
 def mount_fillet_arc_rings(

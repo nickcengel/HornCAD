@@ -308,19 +308,29 @@ def _authored_mesh(yaml_path: Path, side_samples: int, axial_stations: int) -> t
         rings.append(geometry.mouth_rear_ring(rings, mouth_h, mouth_v))
     vertices, faces = geometry.build_body_mesh(rings, mouth_index, mouth_h, mouth_v)
     throat_radius = float(geometry.PARAMS["r0"])
-    body = trimesh.Trimesh(vertices=vertices, faces=faces, process=True)
+    body = trimesh.Trimesh(vertices=vertices, faces=faces, process=False)
+    # The inner and outer mouth rings intentionally meet at the same lip. Drop
+    # their zero-area connector triangles before welding coincident vertices;
+    # otherwise the STL contains a four-face edge that Netgen cannot ingest.
+    body.update_faces(body.area_faces > 1e-10)
+    body.merge_vertices(digits_vertex=10)
+    body.remove_unreferenced_vertices()
+    trimesh.repair.fix_normals(body, multibody=True)
+    if not body.is_volume:
+        raise ValueError("authored horn body is not a closed volume")
     throat_z = -extension
     overlap, depth = 0.3, 2.0
     top, bottom = throat_z + overlap, throat_z - depth
-    cap = trimesh.creation.cylinder(radius=throat_radius + overlap, height=top - bottom,
-        sections=max(32, side_samples * 4), transform=trimesh.transformations.translation_matrix((0, 0, (top + bottom) / 2)))
-    # Very short profiles can leave a temporary open seam at the throat before
-    # the overlapping piston cap is joined. Manifold can close that seam, but
-    # its default precondition rejects the intentionally open intermediate.
-    combined = trimesh.boolean.union(
-        (body, cap), engine="manifold", check_volume=False)
+    cap = trimesh.creation.cylinder(
+        radius=throat_radius + overlap, height=top - bottom,
+        sections=max(32, side_samples * 4),
+        transform=trimesh.transformations.translation_matrix(
+            (0, 0, (top + bottom) / 2)))
+    combined = trimesh.boolean.union((body, cap), engine="manifold")
     if isinstance(combined, list):
         combined = trimesh.util.concatenate(combined)
+    combined.merge_vertices(digits_vertex=10)
+    combined.update_faces(combined.area_faces > 1e-10)
     combined.remove_unreferenced_vertices()
     trimesh.repair.fix_normals(combined, multibody=True)
     if not combined.is_volume:
