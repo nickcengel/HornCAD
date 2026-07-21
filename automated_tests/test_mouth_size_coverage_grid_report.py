@@ -144,6 +144,23 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertEqual(summary["study"], "uniform S grid")
         self.assertEqual(summary["label"], "25 deg\u00a0/\u200b 200 mm · uniform S grid")
 
+    def test_coupled_rounds_have_distinct_report_labels(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            angle = Path(temp) / "45deg"
+            for suffix, expected in (("kn", "coupled K/N closure"),
+                                     ("s", "coupled local S")):
+                search_dir = angle / f"400x400-coupled-r01-{suffix}"
+                search_dir.mkdir(parents=True)
+                (search_dir / "search.yaml").write_text(
+                    "bem_candidate_search:\n"
+                    "  seed_yaml: project.yaml\n"
+                    "  crossover_hz: 750\n",
+                    encoding="utf-8",
+                )
+                summary = _search_summary(search_dir / "search.yaml")
+                self.assertEqual(summary["study"], expected)
+                self.assertIn(expected, summary["label"])
+
 
 if __name__ == "__main__":
     unittest.main()
