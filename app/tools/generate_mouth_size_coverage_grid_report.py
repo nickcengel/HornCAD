@@ -352,6 +352,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
     score_vs_normalized_length = []
     kn_score_vs_k = []
     kn_score_vs_n = []
+    kn_score_vs_ratio = []
     best_by_pair: dict[tuple[float, float], dict[str, Any]] = {}
     for row in candidate_rows:
         score = row["surface_ranking_score"]
@@ -386,14 +387,17 @@ def generate_report(project_root: Path, output: Path) -> Path:
         common = {"y": score, "coverage": summary["coverage"],
                   "tooltip": tooltip, "candidate": row["artifact_stem"],
                   "stats": stats, "report": report_url}
-        if summary["study"] == "adaptive K/N grid":
+        if summary["study"] in {"adaptive K/N grid", "coupled K/N closure"}:
             values = candidate.get("values", {})
             k_value = fmean((float(values.get("k_h", 0)),
                              float(values.get("k_v", 0))))
             n_value = fmean((float(values.get("n_h", 0)),
                              float(values.get("n_v", 0))))
             kn_common = {**common, "stats": (
-                f"{stats} · K {k_value:g} · N {n_value:g}")}
+                f"{stats} · K {k_value:g} · N {n_value:g} · "
+                f"K/N {k_value / n_value:.3f}")}
+            if n_value > 0:
+                kn_score_vs_ratio.append({**kn_common, "x": k_value / n_value})
             if math.isclose(n_value, 10.0, abs_tol=1e-6):
                 kn_score_vs_k.append({**kn_common, "x": k_value})
             if math.isclose(k_value, 4.0, abs_tol=1e-6):
@@ -431,6 +435,9 @@ def generate_report(project_root: Path, output: Path) -> Path:
         ("N behavior at K=4",
          "Adaptive-study axis runs isolate the N trend; outer values appear only when the measured local trend remains competitive.",
          _scatter_svg(kn_score_vs_n, "N", "Final surface score (%)", trends=True)),
+        ("Final surface score vs K/N ratio",
+         "Exploratory view of K divided by N across adaptive and coupled K/N candidates; identical ratios can represent different K/N pairs, so this is not an isolated causal effect.",
+         _scatter_svg(kn_score_vs_ratio, "K / N", "Final surface score (%)", trends=True)),
     )
     plots_html = "".join(
         f"<article class='plot-card'><h3>{html.escape(title)}</h3>"
