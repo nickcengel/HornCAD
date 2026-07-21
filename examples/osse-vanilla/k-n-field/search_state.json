@@ -1766,6 +1766,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.36417123998895,
+              "minus_six_line": 90.47916736404747,
+              "outward_rise": 65.75525393244595,
+              "profile_rms": 73.88364736512521,
+              "slice_energy": 79.22131320452861
+            },
+            "overall_percent": 79.15446158493914
+          },
+          "overall_percent": 79.146055357481,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.38014158830275,
+              "minus_six_line": 90.48784826976271,
+              "outward_rise": 65.66792980896781,
+              "profile_rms": 73.8704979808688,
+              "slice_energy": 79.20598847912089
+            },
+            "overall_percent": 79.13764913002285
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -5108,6 +5148,46 @@
               -0.7110124940547359,
               -0.7389650751024489
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.20117604188297,
+              "minus_six_line": 74.07649518318946,
+              "outward_rise": 9.336649761162713,
+              "profile_rms": 40.10141040796006,
+              "slice_energy": 33.18503906407648
+            },
+            "overall_percent": 47.375065079277086
+          },
+          "overall_percent": 47.375658824389106,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.20882673760845,
+              "minus_six_line": 74.13391516234228,
+              "outward_rise": 9.343286970737914,
+              "profile_rms": 40.08394328870034,
+              "slice_energy": 33.17767869409766
+            },
+            "overall_percent": 47.37625256950112
           }
         },
         "status": "available",
@@ -8454,6 +8534,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.35867716263863,
+              "minus_six_line": 77.46768094294046,
+              "outward_rise": 13.31520665777115,
+              "profile_rms": 45.10612458717987,
+              "slice_energy": 40.15372736692684
+            },
+            "overall_percent": 51.586053743373114
+          },
+          "overall_percent": 51.58240821504674,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.3667219533772,
+              "minus_six_line": 77.506920783849,
+              "outward_rise": 13.310116398241917,
+              "profile_rms": 45.08167548211719,
+              "slice_energy": 40.13482445315433
+            },
+            "overall_percent": 51.57876268672037
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -11796,6 +11916,46 @@
               -0.0723929347204728,
               -0.13641507311514345
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.44130667566927,
+              "minus_six_line": 78.6041702348499,
+              "outward_rise": 15.879449107430235,
+              "profile_rms": 47.27029109010435,
+              "slice_energy": 43.565355230258135
+            },
+            "overall_percent": 53.60302185932922
+          },
+          "overall_percent": 53.593130893459104,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.44805774345522,
+              "minus_six_line": 78.6260320386715,
+              "outward_rise": 15.86147312378426,
+              "profile_rms": 47.2267471904728,
+              "slice_energy": 43.53512019728525
+            },
+            "overall_percent": 53.583239927588984
           }
         },
         "status": "available",
@@ -15142,6 +15302,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.4882391484962,
+              "minus_six_line": 79.01137107676857,
+              "outward_rise": 17.536651819785664,
+              "profile_rms": 48.30337986351362,
+              "slice_energy": 45.355945654423294
+            },
+            "overall_percent": 54.65928308300386
+          },
+          "overall_percent": 54.650753032600306,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.4954174986258,
+              "minus_six_line": 79.03263440233326,
+              "outward_rise": 17.526296712667403,
+              "profile_rms": 48.263187619980755,
+              "slice_energy": 45.327900997375714
+            },
+            "overall_percent": 54.64222298219675
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -18484,6 +18684,46 @@
               0.011657046299221778,
               -0.02883195545772911
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.52046087442814,
+              "minus_six_line": 79.1947155357127,
+              "outward_rise": 18.66444217467884,
+              "profile_rms": 48.8773973858031,
+              "slice_energy": 46.41116617254196
+            },
+            "overall_percent": 55.289240813535145
+          },
+          "overall_percent": 55.28254182481834,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.5278924728878,
+              "minus_six_line": 79.21464904353661,
+              "outward_rise": 18.655486134749378,
+              "profile_rms": 48.84460915954443,
+              "slice_energy": 46.38837507637832
+            },
+            "overall_percent": 55.27584283610154
           }
         },
         "status": "available",
@@ -21830,6 +22070,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.54378570113533,
+              "minus_six_line": 79.24241854305383,
+              "outward_rise": 19.37794344872464,
+              "profile_rms": 49.16054737008549,
+              "slice_energy": 46.95335928532095
+            },
+            "overall_percent": 55.626194544197034
+          },
+          "overall_percent": 55.61937465212853,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.55204037397536,
+              "minus_six_line": 79.25820324179377,
+              "outward_rise": 19.371143413018356,
+              "profile_rms": 49.1306558999714,
+              "slice_energy": 46.92583231656557
+            },
+            "overall_percent": 55.612554760060014
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -25172,6 +25452,46 @@
               0.005011957053041191,
               -0.011532422022334017
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.5624966464741,
+              "minus_six_line": 79.22002397257317,
+              "outward_rise": 19.821141448852558,
+              "profile_rms": 49.29495715312283,
+              "slice_energy": 47.2012498407901
+            },
+            "overall_percent": 55.79647255001439
+          },
+          "overall_percent": 55.7909033370717,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.56751834457394,
+              "minus_six_line": 79.23700614243648,
+              "outward_rise": 19.820641827245247,
+              "profile_rms": 49.26582420660205,
+              "slice_energy": 47.181145219612645
+            },
+            "overall_percent": 55.785334124129
           }
         },
         "status": "available",
@@ -28518,6 +28838,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.57624181602084,
+              "minus_six_line": 79.16600456084075,
+              "outward_rise": 20.068367773872108,
+              "profile_rms": 49.3645747344884,
+              "slice_energy": 47.27901433073651
+            },
+            "overall_percent": 55.871229988399705
+          },
+          "overall_percent": 55.87575454856665,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.5847091519286,
+              "minus_six_line": 79.21006122497032,
+              "outward_rise": 20.099665544127983,
+              "profile_rms": 49.356091594409115,
+              "slice_energy": 47.282215383635645
+            },
+            "overall_percent": 55.880279108733596
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -31860,6 +32220,46 @@
               -0.006074483463160292,
               -0.00158195962276108
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.58815531358528,
+              "minus_six_line": 79.128531868456,
+              "outward_rise": 20.213053480213173,
+              "profile_rms": 49.37808006965398,
+              "slice_energy": 47.2814836436936
+            },
+            "overall_percent": 55.89623720341422
+          },
+          "overall_percent": 55.89640371866501,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.59482286923344,
+              "minus_six_line": 79.15827019869216,
+              "outward_rise": 20.238176453621637,
+              "profile_rms": 49.35927582293621,
+              "slice_energy": 47.27307770110318
+            },
+            "overall_percent": 55.89657023391581
           }
         },
         "status": "available",
@@ -35206,6 +35606,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.05587557329194,
+              "minus_six_line": 80.89023293613566,
+              "outward_rise": 16.85167140062103,
+              "profile_rms": 49.865158998970436,
+              "slice_energy": 44.80904941658241
+            },
+            "overall_percent": 54.98975917220184
+          },
+          "overall_percent": 54.9859389227511,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.07583689283067,
+              "minus_six_line": 80.97253708093501,
+              "outward_rise": 16.849146503618492,
+              "profile_rms": 49.822985701120196,
+              "slice_energy": 44.78171960304757
+            },
+            "overall_percent": 54.982118673300356
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -38548,6 +38988,46 @@
               -0.8893581470788676,
               -0.9627004460447398
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.26230468537152,
+              "minus_six_line": 84.63149110051376,
+              "outward_rise": 27.880370757310775,
+              "profile_rms": 57.67117916297552,
+              "slice_energy": 56.49318974318959
+            },
+            "overall_percent": 62.322316845412345
+          },
+          "overall_percent": 62.323246507088086,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.27855132958987,
+              "minus_six_line": 84.67514380579844,
+              "outward_rise": 27.88622258048891,
+              "profile_rms": 57.65501418770232,
+              "slice_energy": 56.48605551552794
+            },
+            "overall_percent": 62.324176168763834
           }
         },
         "status": "available",
@@ -41894,6 +42374,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.37143509676592,
+              "minus_six_line": 85.7816622729035,
+              "outward_rise": 36.21664457071043,
+              "profile_rms": 61.29082536274237,
+              "slice_energy": 62.594090363466144
+            },
+            "overall_percent": 66.32072013193934
+          },
+          "overall_percent": 66.31927780268616,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.38664419814314,
+              "minus_six_line": 85.81860753313786,
+              "outward_rise": 36.22729409247781,
+              "profile_rms": 61.26233695955057,
+              "slice_energy": 62.5834027150149
+            },
+            "overall_percent": 66.31783547343298
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -45236,6 +45756,46 @@
               -0.6924932968637585,
               -0.7251359321443267
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.43757799369982,
+              "minus_six_line": 86.18782582732952,
+              "outward_rise": 42.15066115161681,
+              "profile_rms": 63.009026779487854,
+              "slice_energy": 65.77673850299738
+            },
+            "overall_percent": 68.57579001381114
+          },
+          "overall_percent": 68.57800654994831,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.45162978433132,
+              "minus_six_line": 86.22529743245687,
+              "outward_rise": 42.17110593734735,
+              "profile_rms": 62.99034608385665,
+              "slice_energy": 65.77839068085773
+            },
+            "overall_percent": 68.58022308608548
           }
         },
         "status": "available",
@@ -48582,6 +49142,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.48174014323966,
+              "minus_six_line": 86.3054450430458,
+              "outward_rise": 46.28277731055475,
+              "profile_rms": 63.80502437468015,
+              "slice_energy": 67.39579949154422
+            },
+            "overall_percent": 69.85976631482582
+          },
+          "overall_percent": 69.85055722669279,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.49662049675906,
+              "minus_six_line": 86.31740711515211,
+              "outward_rise": 46.25659620212814,
+              "profile_rms": 63.761463115583304,
+              "slice_energy": 67.37341985079404
+            },
+            "overall_percent": 69.84134813855974
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -51924,6 +52524,46 @@
               -0.7505697617794561,
               -0.7567629607289134
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.51263262079425,
+              "minus_six_line": 86.2931654690498,
+              "outward_rise": 49.02144651496374,
+              "profile_rms": 64.13111413935029,
+              "slice_energy": 68.1517764283671
+            },
+            "overall_percent": 70.56233839720525
+          },
+          "overall_percent": 70.55299410415407,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.52754167214161,
+              "minus_six_line": 86.3075620214625,
+              "outward_rise": 48.961616045783686,
+              "profile_rms": 64.09752911149229,
+              "slice_energy": 68.13553653685221
+            },
+            "overall_percent": 70.54364981110287
           }
         },
         "status": "available",
@@ -55270,6 +55910,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.53698628554244,
+              "minus_six_line": 86.22019656012807,
+              "outward_rise": 50.75472671238069,
+              "profile_rms": 64.21799819913309,
+              "slice_energy": 68.4013036266109
+            },
+            "overall_percent": 70.90835128637104
+          },
+          "overall_percent": 70.89603626667123,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.5512746887569,
+              "minus_six_line": 86.22615614661837,
+              "outward_rise": 50.70056728694153,
+              "profile_rms": 64.17529096587543,
+              "slice_energy": 68.37271324701734
+            },
+            "overall_percent": 70.88372124697142
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -58612,6 +59292,46 @@
               -0.889135073026514,
               -0.8804701186615153
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.55228903947973,
+              "minus_six_line": 86.1111258045668,
+              "outward_rise": 51.7515794771154,
+              "profile_rms": 64.14689966904903,
+              "slice_energy": 68.31451918854849
+            },
+            "overall_percent": 71.00700700777176
+          },
+          "overall_percent": 71.00488808574792,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.56791516468495,
+              "minus_six_line": 86.12833669420769,
+              "outward_rise": 51.71978120436028,
+              "profile_rms": 64.133628943365,
+              "slice_energy": 68.31318639081117
+            },
+            "overall_percent": 71.0027691637241
           }
         },
         "status": "available",
@@ -61958,6 +62678,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.56707632107656,
+              "minus_six_line": 86.00295242828732,
+              "outward_rise": 52.31618484191479,
+              "profile_rms": 64.03997493195112,
+              "slice_energy": 68.11071273784303
+            },
+            "overall_percent": 71.00080889737735
+          },
+          "overall_percent": 70.98726762779565,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.58126438050797,
+              "minus_six_line": 86.00852352386191,
+              "outward_rise": 52.24904898948543,
+              "profile_rms": 63.99556035792875,
+              "slice_energy": 68.08238269569883
+            },
+            "overall_percent": 70.97372635821394
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -65300,6 +66060,46 @@
               -1.4882947887041595,
               -1.5621080348396696
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 90.95490147913677,
+              "minus_six_line": 85.25134497557372,
+              "outward_rise": 25.568820230000483,
+              "profile_rms": 57.26636154661961,
+              "slice_energy": 53.896244601164675
+            },
+            "overall_percent": 61.20540744216185
+          },
+          "overall_percent": 61.20032720494636,
+          "vertical": {
+            "components": {
+              "mean_containment": 90.9726148264299,
+              "minus_six_line": 85.31294541271136,
+              "outward_rise": 25.541374135175722,
+              "profile_rms": 57.22645485416225,
+              "slice_energy": 53.88114753859488
+            },
+            "overall_percent": 61.19524696773087
           }
         },
         "status": "available",
@@ -68646,6 +69446,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.15313521237334,
+              "minus_six_line": 88.7562506424035,
+              "outward_rise": 45.12332421501997,
+              "profile_rms": 67.06782125256935,
+              "slice_energy": 68.45627240518823
+            },
+            "overall_percent": 71.10916521603588
+          },
+          "overall_percent": 71.10253713572966,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.16863882223166,
+              "minus_six_line": 88.78028653423286,
+              "outward_rise": 45.03246766952657,
+              "profile_rms": 67.06346825692569,
+              "slice_energy": 68.44096804018858
+            },
+            "overall_percent": 71.09590905542345
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -71988,6 +72828,46 @@
               -0.8757133156909641,
               -0.8783976279990833
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.28909694040343,
+              "minus_six_line": 89.97361871440148,
+              "outward_rise": 58.51020452821827,
+              "profile_rms": 71.67420178471593,
+              "slice_energy": 75.65034147377274
+            },
+            "overall_percent": 76.44655784261154
+          },
+          "overall_percent": 76.43089210205886,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.30967740151519,
+              "minus_six_line": 89.97789266708038,
+              "outward_rise": 58.40043606565497,
+              "profile_rms": 71.63751220563667,
+              "slice_energy": 75.61673017182353
+            },
+            "overall_percent": 76.4152263615062
           }
         },
         "status": "available",
@@ -75334,6 +76214,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.41458322987955,
+              "minus_six_line": 90.64563951699618,
+              "outward_rise": 68.51720506360034,
+              "profile_rms": 74.829022704694,
+              "slice_energy": 80.7522471043721
+            },
+            "overall_percent": 80.26182994471681
+          },
+          "overall_percent": 80.26903915456305,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.42827521132925,
+              "minus_six_line": 90.65007382606933,
+              "outward_rise": 68.51714509485714,
+              "profile_rms": 74.84776389295128,
+              "slice_energy": 80.77474002969026
+            },
+            "overall_percent": 80.2762483644093
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -78676,6 +79596,46 @@
               -0.7307120597251263,
               -0.7070572403725115
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.45637721945997,
+              "minus_six_line": 90.64833577301337,
+              "outward_rise": 68.59172041630363,
+              "profile_rms": 75.11084269847107,
+              "slice_energy": 81.19513976352597
+            },
+            "overall_percent": 80.47690483406168
+          },
+          "overall_percent": 80.47107431088705,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.4724945918669,
+              "minus_six_line": 90.66618715487581,
+              "outward_rise": 68.48508262682246,
+              "profile_rms": 75.10560704732093,
+              "slice_energy": 81.19872658252719
+            },
+            "overall_percent": 80.46524378771241
           }
         },
         "status": "available",
@@ -82022,6 +82982,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.48187311829115,
+              "minus_six_line": 90.56883342784165,
+              "outward_rise": 67.0983183523644,
+              "profile_rms": 75.04245288320037,
+              "slice_energy": 80.98517963412509
+            },
+            "overall_percent": 80.17703649278843
+          },
+          "overall_percent": 80.17810414487226,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.49782286680436,
+              "minus_six_line": 90.5898868274343,
+              "outward_rise": 67.04221782362157,
+              "profile_rms": 75.04716390592198,
+              "slice_energy": 81.00054678212784
+            },
+            "overall_percent": 80.17917179695608
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -85364,6 +86364,46 @@
               -0.7935289512553977,
               -0.7646941416901866
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.5145295552835,
+              "minus_six_line": 90.45369696451704,
+              "outward_rise": 64.86736722419768,
+              "profile_rms": 74.77537612779115,
+              "slice_energy": 80.42959128547022
+            },
+            "overall_percent": 79.61839135084296
+          },
+          "overall_percent": 79.60399760413384,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.52686238455513,
+              "minus_six_line": 90.45047372564153,
+              "outward_rise": 64.73321302859227,
+              "profile_rms": 74.75135049133671,
+              "slice_energy": 80.41518762503867
+            },
+            "overall_percent": 79.5896038574247
           }
         },
         "status": "available",
@@ -88710,6 +89750,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.52908958565504,
+              "minus_six_line": 90.30777986850728,
+              "outward_rise": 62.27559777927938,
+              "profile_rms": 74.38543866277203,
+              "slice_energy": 79.65402923754709
+            },
+            "overall_percent": 78.90707447909202
+          },
+          "overall_percent": 78.89239775049626,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.5416524943454,
+              "minus_six_line": 90.31609069950859,
+              "outward_rise": 62.132892125831404,
+              "profile_rms": 74.36118353816548,
+              "slice_energy": 79.63797029102483
+            },
+            "overall_percent": 78.8777210219005
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -92052,6 +93132,46 @@
               -1.5318779074244517,
               -1.5754130853899997
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 90.85240530344414,
+              "minus_six_line": 87.6008865524352,
+              "outward_rise": 34.21061679446837,
+              "profile_rms": 62.717588624691594,
+              "slice_energy": 60.58827383198267
+            },
+            "overall_percent": 66.02450728050574
+          },
+          "overall_percent": 66.00138149243705,
+          "vertical": {
+            "components": {
+              "mean_containment": 90.8755518336093,
+              "minus_six_line": 87.62592163209523,
+              "outward_rise": 34.07579642862579,
+              "profile_rms": 62.656830462304534,
+              "slice_energy": 60.52853828580701
+            },
+            "overall_percent": 65.97825570436837
           }
         },
         "status": "available",
@@ -95398,6 +96518,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.04705230924081,
+              "minus_six_line": 90.93366105070956,
+              "outward_rise": 59.380093865851116,
+              "profile_rms": 73.40236312239067,
+              "slice_energy": 75.845110046526
+            },
+            "overall_percent": 77.19177709514548
+          },
+          "overall_percent": 77.16992691087695,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.0575536113513,
+              "minus_six_line": 90.94679944380216,
+              "outward_rise": 59.20420477848858,
+              "profile_rms": 73.35964606754449,
+              "slice_energy": 75.81344609168526
+            },
+            "overall_percent": 77.14807672660842
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -98740,6 +99900,46 @@
               -0.8186879663855797,
               -0.76250701204504
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.17980396928644,
+              "minus_six_line": 92.11919690842502,
+              "outward_rise": 72.6659588087902,
+              "profile_rms": 78.40736244992691,
+              "slice_energy": 82.83780087643929
+            },
+            "overall_percent": 82.57943326010621
+          },
+          "overall_percent": 82.5538271182862,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.18989436430526,
+              "minus_six_line": 92.12370910754,
+              "outward_rise": 72.45731035532408,
+              "profile_rms": 78.36675678462315,
+              "slice_energy": 82.79699041666221
+            },
+            "overall_percent": 82.52822097646616
           }
         },
         "status": "available",
@@ -102086,6 +103286,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.26410873330936,
+              "minus_six_line": 92.62962007718247,
+              "outward_rise": 77.44078296630497,
+              "profile_rms": 80.90153987895015,
+              "slice_energy": 86.24681964092387
+            },
+            "overall_percent": 84.96406807324188
+          },
+          "overall_percent": 84.94747377629538,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.27606693288357,
+              "minus_six_line": 92.64817306975398,
+              "outward_rise": 77.24083885499438,
+              "profile_rms": 80.8878412952568,
+              "slice_energy": 86.23348227588234
+            },
+            "overall_percent": 84.93087947934889
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -105428,6 +106668,46 @@
               -0.5151121162341835,
               -0.4380822917923519
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.3329429504308,
+              "minus_six_line": 92.80660755678764,
+              "outward_rise": 77.7641398722602,
+              "profile_rms": 82.0942766388309,
+              "slice_energy": 87.76866102884833
+            },
+            "overall_percent": 85.78231857546531
+          },
+          "overall_percent": 85.77117614977479,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.3416357940518,
+              "minus_six_line": 92.82048779420191,
+              "outward_rise": 77.68518946890711,
+              "profile_rms": 82.07001781726545,
+              "slice_energy": 87.74349608135202
+            },
+            "overall_percent": 85.76003372408427
           }
         },
         "status": "available",
@@ -108774,6 +110054,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.37501521589964,
+              "minus_six_line": 92.86916791943419,
+              "outward_rise": 75.95064372884352,
+              "profile_rms": 82.54411258925508,
+              "slice_energy": 88.23518599060728
+            },
+            "overall_percent": 85.77654666887821
+          },
+          "overall_percent": 85.76843770571007,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.38310772353138,
+              "minus_six_line": 92.8895331134999,
+              "outward_rise": 75.82867078184077,
+              "profile_rms": 82.54175830087014,
+              "slice_energy": 88.23170311579403
+            },
+            "overall_percent": 85.76032874254193
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -112116,6 +113436,46 @@
               -0.35319087438523605,
               -0.27781228268299546
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.41104120669024,
+              "minus_six_line": 92.82603473256972,
+              "outward_rise": 73.22878623578991,
+              "profile_rms": 82.55863715384997,
+              "slice_energy": 88.09152128429764
+            },
+            "overall_percent": 85.33960111719291
+          },
+          "overall_percent": 85.32912397220255,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.41978889563502,
+              "minus_six_line": 92.85059608007258,
+              "outward_rise": 73.1234566521494,
+              "profile_rms": 82.54155949003986,
+              "slice_energy": 88.07457238097426
+            },
+            "overall_percent": 85.31864682721219
           }
         },
         "status": "available",
@@ -115462,6 +116822,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.43692880471491,
+              "minus_six_line": 92.75438509485211,
+              "outward_rise": 70.08964378288013,
+              "profile_rms": 82.3184223820149,
+              "slice_energy": 87.55458055531223
+            },
+            "overall_percent": 84.66044269129274
+          },
+          "overall_percent": 84.6535803529755,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.44352356509812,
+              "minus_six_line": 92.771607525106,
+              "outward_rise": 70.02869574355428,
+              "profile_rms": 82.30726911588692,
+              "slice_energy": 87.53746981131529
+            },
+            "overall_percent": 84.64671801465826
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -118804,6 +120204,46 @@
               -0.2894597798115787,
               -0.2183338414244386
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.46230424447361,
+              "minus_six_line": 92.64227517635328,
+              "outward_rise": 66.89383698946466,
+              "profile_rms": 81.94333678834373,
+              "slice_energy": 86.81568497066071
+            },
+            "overall_percent": 83.87768619411804
+          },
+          "overall_percent": 83.86074274555563,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.47020661301359,
+              "minus_six_line": 92.65482476303728,
+              "outward_rise": 66.76949233766274,
+              "profile_rms": 81.91232306931637,
+              "slice_energy": 86.78061890656973
+            },
+            "overall_percent": 83.84379929699321
           }
         },
         "status": "available",
@@ -122150,6 +123590,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 90.7759624479774,
+              "minus_six_line": 88.91458999255433,
+              "outward_rise": 41.919503812840624,
+              "profile_rms": 66.6792315660761,
+              "slice_energy": 65.36993824590967
+            },
+            "overall_percent": 69.68083109207726
+          },
+          "overall_percent": 69.66419164353344,
+          "vertical": {
+            "components": {
+              "mean_containment": 90.79179244899247,
+              "minus_six_line": 88.92909492213944,
+              "outward_rise": 41.7828977633804,
+              "profile_rms": 66.64967930956422,
+              "slice_energy": 65.33578302240346
+            },
+            "overall_percent": 69.64755219498963
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -125492,6 +126972,46 @@
               -0.9863556554544762,
               -0.9073945510682137
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 90.90787615744243,
+              "minus_six_line": 91.88852887690993,
+              "outward_rise": 68.91380958122488,
+              "profile_rms": 77.27374959959226,
+              "slice_energy": 79.87860998887501
+            },
+            "overall_percent": 80.85927693345965
+          },
+          "overall_percent": 80.82482571346313,
+          "vertical": {
+            "components": {
+              "mean_containment": 90.9194536272863,
+              "minus_six_line": 91.887293746348,
+              "outward_rise": 68.68007857663774,
+              "profile_rms": 77.2066559156373,
+              "slice_energy": 79.81498332875081
+            },
+            "overall_percent": 80.79037449346662
           }
         },
         "status": "available",
@@ -128838,6 +130358,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.03040350437007,
+              "minus_six_line": 92.7506217137627,
+              "outward_rise": 80.35795878268334,
+              "profile_rms": 82.07202539985455,
+              "slice_energy": 85.9722451923453
+            },
+            "overall_percent": 85.64950560769547
+          },
+          "overall_percent": 85.62269198212684,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.04407978705039,
+              "minus_six_line": 92.76214363899388,
+              "outward_rise": 80.10416182559388,
+              "profile_rms": 82.03833749151852,
+              "slice_energy": 85.93489005581644
+            },
+            "overall_percent": 85.59587835655822
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -132180,6 +133740,46 @@
               -0.49376043466756503,
               -0.368979588222542
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.11901462888471,
+              "minus_six_line": 93.04226136380076,
+              "outward_rise": 84.04846884885468,
+              "profile_rms": 84.49190986226645,
+              "slice_energy": 88.88809215179872
+            },
+            "overall_percent": 87.70489538611484
+          },
+          "overall_percent": 87.68921743798862,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.1249702561072,
+              "minus_six_line": 93.0522738810171,
+              "outward_rise": 83.91655908243668,
+              "profile_rms": 84.46515537783631,
+              "slice_energy": 88.86515029929146
+            },
+            "overall_percent": 87.6735394898624
           }
         },
         "status": "available",
@@ -135526,6 +137126,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.188257592114,
+              "minus_six_line": 93.12339360178208,
+              "outward_rise": 84.69607904376988,
+              "profile_rms": 85.72475373470877,
+              "slice_energy": 90.32550630126231
+            },
+            "overall_percent": 88.55320543089469
+          },
+          "overall_percent": 88.54005283645091,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.19616398662117,
+              "minus_six_line": 93.13361040800963,
+              "outward_rise": 84.55884811337772,
+              "profile_rms": 85.7131046828212,
+              "slice_energy": 90.30619112811571
+            },
+            "overall_percent": 88.52690024200714
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -138868,6 +140508,46 @@
               -0.1251119922504015,
               0.009310918806704926
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.23695542224719,
+              "minus_six_line": 93.12824368240801,
+              "outward_rise": 83.82257142156918,
+              "profile_rms": 86.31015223771104,
+              "slice_energy": 90.93782340162025
+            },
+            "overall_percent": 88.76110268764398
+          },
+          "overall_percent": 88.75017407097519,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.24140411895397,
+              "minus_six_line": 93.1352761855327,
+              "outward_rise": 83.72569114434127,
+              "profile_rms": 86.29517956908491,
+              "slice_energy": 90.9201178783427
+            },
+            "overall_percent": 88.7392454543064
           }
         },
         "status": "available",
@@ -142214,6 +143894,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.27358120626232,
+              "minus_six_line": 93.07807608035355,
+              "outward_rise": 82.43044590190222,
+              "profile_rms": 86.49211229631587,
+              "slice_energy": 91.08650096756791
+            },
+            "overall_percent": 88.64634966535989
+          },
+          "overall_percent": 88.63181633705244,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.27684928633781,
+              "minus_six_line": 93.09076102027285,
+              "outward_rise": 82.32655178541312,
+              "profile_rms": 86.47050333799656,
+              "slice_energy": 91.05081312095686
+            },
+            "overall_percent": 88.617283008745
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -145556,6 +147276,46 @@
               0.1582834465610154,
               0.2956512550149893
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.29617776885785,
+              "minus_six_line": 93.00998273386423,
+              "outward_rise": 80.59004515659876,
+              "profile_rms": 86.41323916307502,
+              "slice_energy": 90.87699487982559
+            },
+            "overall_percent": 88.2919610695267
+          },
+          "overall_percent": 88.2827739097666,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.30244948387532,
+              "minus_six_line": 93.03397732709222,
+              "outward_rise": 80.47057240625638,
+              "profile_rms": 86.40459343531188,
+              "slice_energy": 90.87094091596086
+            },
+            "overall_percent": 88.27358675000652
           }
         },
         "status": "available",
@@ -148902,6 +150662,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.3206551603858,
+              "minus_six_line": 92.93956748603905,
+              "outward_rise": 78.51407005241431,
+              "profile_rms": 86.19696388798623,
+              "slice_energy": 90.50368518805529
+            },
+            "overall_percent": 87.8202087519529
+          },
+          "overall_percent": 87.80520464619076,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.32381651047508,
+              "minus_six_line": 92.93057018829316,
+              "outward_rise": 78.43068795102528,
+              "profile_rms": 86.17492513467043,
+              "slice_energy": 90.46119794579745
+            },
+            "overall_percent": 87.79020054042861
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -152244,6 +154044,46 @@
               -0.3775792863246527,
               -0.3309714577347266
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.522647051323,
+              "minus_six_line": 91.96569486916925,
+              "outward_rise": 53.56976325161647,
+              "profile_rms": 79.41702945321238,
+              "slice_energy": 82.1283761415449
+            },
+            "overall_percent": 79.89376625627393
+          },
+          "overall_percent": 79.88460868792299,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.52993152841482,
+              "minus_six_line": 91.96868153650719,
+              "outward_rise": 53.52144293200557,
+              "profile_rms": 79.39377098640577,
+              "slice_energy": 82.10499569806315
+            },
+            "overall_percent": 79.87545111957203
           }
         },
         "status": "available",
@@ -155590,6 +157430,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.54931729178293,
+              "minus_six_line": 91.31440938448857,
+              "outward_rise": 45.22882206980302,
+              "profile_rms": 77.15841429118638,
+              "slice_energy": 78.01864785300812
+            },
+            "overall_percent": 76.87781395788383
+          },
+          "overall_percent": 76.8681379245205,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.55948290041871,
+              "minus_six_line": 91.30925596114712,
+              "outward_rise": 45.195893003169964,
+              "profile_rms": 77.13428327235034,
+              "slice_energy": 77.9838831311124
+            },
+            "overall_percent": 76.85846189115716
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -158932,6 +160812,46 @@
               -0.7598619279859395,
               -0.7559406029033984
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.57035899531486,
+              "minus_six_line": 90.77150405458583,
+              "outward_rise": 40.158261796853274,
+              "profile_rms": 75.47849034257868,
+              "slice_energy": 74.97599580920723
+            },
+            "overall_percent": 74.80250752912495
+          },
+          "overall_percent": 74.79959146471828,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.57644435836704,
+              "minus_six_line": 90.78281051756922,
+              "outward_rise": 40.14708824556422,
+              "profile_rms": 75.47017351235922,
+              "slice_energy": 74.95996074535549
+            },
+            "overall_percent": 74.7966754003116
           }
         },
         "status": "available",
@@ -162278,6 +164198,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.26276207861972,
+              "minus_six_line": 93.18949602379234,
+              "outward_rise": 81.28472881597511,
+              "profile_rms": 84.3373947951146,
+              "slice_energy": 89.50492919082542
+            },
+            "overall_percent": 87.44166207674019
+          },
+          "overall_percent": 87.42702071942784,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.2721571276641,
+              "minus_six_line": 93.21131144503661,
+              "outward_rise": 81.12936942760314,
+              "profile_rms": 84.31665391302036,
+              "slice_energy": 89.48966081612981
+            },
+            "overall_percent": 87.41237936211552
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -165620,6 +167580,46 @@
               0.007869078031815961,
               0.10762076940423763
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.39743455086109,
+              "minus_six_line": 93.08277555466772,
+              "outward_rise": 72.29454169609609,
+              "profile_rms": 84.55229170632167,
+              "slice_energy": 89.16914202572818
+            },
+            "overall_percent": 86.08991873838195
+          },
+          "overall_percent": 86.0728165141734,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.40494138622039,
+              "minus_six_line": 93.10055392331427,
+              "outward_rise": 72.09544366382431,
+              "profile_rms": 84.53895633529368,
+              "slice_energy": 89.15466868091033
+            },
+            "overall_percent": 86.05571428996484
           }
         },
         "status": "available",
@@ -168966,6 +170966,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.46185159164453,
+              "minus_six_line": 92.51487322558361,
+              "outward_rise": 59.70418712228691,
+              "profile_rms": 82.21339970340726,
+              "slice_energy": 85.11521686627395
+            },
+            "overall_percent": 82.44230983682097
+          },
+          "overall_percent": 82.43283539774478,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.46928618605973,
+              "minus_six_line": 92.5413508804372,
+              "outward_rise": 59.592387964213465,
+              "profile_rms": 82.2007547698637,
+              "slice_energy": 85.10513603128727
+            },
+            "overall_percent": 82.42336095866861
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -172308,6 +174348,46 @@
               -0.014256531245396114,
               0.03386022026427569
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.49470020443258,
+              "minus_six_line": 91.96565108038484,
+              "outward_rise": 51.304731715756915,
+              "profile_rms": 80.06345371703759,
+              "slice_energy": 81.43144270970899
+            },
+            "overall_percent": 79.56811169882707
+          },
+          "overall_percent": 79.55501021068932,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.50228391210035,
+              "minus_six_line": 91.9767422524404,
+              "outward_rise": 51.18139656877041,
+              "profile_rms": 80.0464469244422,
+              "slice_energy": 81.41053660895692
+            },
+            "overall_percent": 79.54190872255155
           }
         },
         "status": "available",
@@ -175654,6 +177734,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.51923636598467,
+              "minus_six_line": 91.47603309629196,
+              "outward_rise": 45.60554522056205,
+              "profile_rms": 78.32139526045226,
+              "slice_energy": 78.45387972326218
+            },
+            "overall_percent": 77.40217087486165
+          },
+          "overall_percent": 77.39470945351243,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.5263707113068,
+              "minus_six_line": 91.4891863537615,
+              "outward_rise": 45.512477757367364,
+              "profile_rms": 78.31541141660107,
+              "slice_energy": 78.44624066376115
+            },
+            "overall_percent": 77.38724803216321
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -178996,6 +181116,46 @@
               0.5440128909582116,
               0.6602636312791913
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.39372231451503,
+              "minus_six_line": 92.42050347954375,
+              "outward_rise": 68.21450261365943,
+              "profile_rms": 84.20664835745836,
+              "slice_energy": 87.32857431653059
+            },
+            "overall_percent": 84.84710828927645
+          },
+          "overall_percent": 84.84020968679664,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.39891046197776,
+              "minus_six_line": 92.43285162050626,
+              "outward_rise": 68.12150111154926,
+              "profile_rms": 84.2012289479122,
+              "slice_energy": 87.32659991505837
+            },
+            "overall_percent": 84.83331108431682
           }
         },
         "status": "available",
@@ -182342,6 +184502,46 @@
             ]
           }
         },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.42918232228692,
+              "minus_six_line": 91.92290029134251,
+              "outward_rise": 59.98546278105341,
+              "profile_rms": 82.21395644793502,
+              "slice_energy": 84.16105816928962
+            },
+            "overall_percent": 82.18039738745256
+          },
+          "overall_percent": 82.17269703643342,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.43594396895872,
+              "minus_six_line": 91.94102318509029,
+              "outward_rise": 59.89194516919952,
+              "profile_rms": 82.20384372256513,
+              "slice_energy": 84.15504272385617
+            },
+            "overall_percent": 82.16499668541428
+          }
+        },
         "status": "available",
         "vertical": {
           "containment": {
@@ -185684,6 +187884,46 @@
               0.4876628568229172,
               0.5440335595789213
             ]
+          }
+        },
+        "score": {
+          "axis_weights": {
+            "horizontal": 0.5,
+            "vertical": 0.5
+          },
+          "component_weights": {
+            "mean_containment": 0.2,
+            "minus_six_line": 0.1,
+            "outward_rise": 0.15,
+            "profile_rms": 0.3,
+            "slice_energy": 0.25
+          },
+          "error_reference_values": {
+            "minus_six_line": 20.0,
+            "outward_rise": 2.0,
+            "profile_rms": 3.0,
+            "slice_energy": 2.0
+          },
+          "horizontal": {
+            "components": {
+              "mean_containment": 91.44744247420563,
+              "minus_six_line": 91.49807185781802,
+              "outward_rise": 54.17875579749457,
+              "profile_rms": 80.62273796985993,
+              "slice_energy": 81.61754557162006
+            },
+            "overall_percent": 80.1573168341101
+          },
+          "overall_percent": 80.14914101307534,
+          "vertical": {
+            "components": {
+              "mean_containment": 91.45321606939281,
+              "minus_six_line": 91.51754098361583,
+              "outward_rise": 54.11911686512076,
+              "profile_rms": 80.60934373039917,
+              "slice_energy": 81.59158892365026
+            },
+            "overall_percent": 80.14096519204058
           }
         },
         "status": "available",
