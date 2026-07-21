@@ -148,30 +148,27 @@ The existing data leave these important gaps:
 - actual leading candidates have not all been confirmed at higher frequency,
   angular, and mesh resolution.
 
-There are also 32 failed search candidates: 17 non-volume meshes, 14 solver or
-remeshing aborts, and one mesh-resolution failure. Failures cluster around
-short or extreme geometry. This is missing-not-at-random data near several
-likely optima and must be resolved before the boundary trends are considered
-complete.
+Thirty of the original 32 failed search candidates were recovered with the
+explicit boundary-recovery path. The coverage grid now has no failed samples.
+Two extreme rectangular OSSE candidates remain invalid or numerically
+unstable after coarse-seed recovery and are retained as boundary evidence
+rather than consuming more study time.
 
 ## Proposed studies
 
 ### Study 1: complete the coverage / relative-length map
 
-This is the highest-priority study. Use common dimensionless ranges rather
-than different length sets for each mouth:
+This is the highest-priority study. Give every existing mouth-size and coverage
+pair the same nine-point S sweep: 0.7, 1.0, 1.3, 1.6, 1.9, 2.2, 2.5, 2.8, and
+3.0. Invert S to length independently for each geometry, and hold K = 4 and
+N = 10 fixed. Store these as separate `*-s-grid` searches so the original
+ledgers remain intact and both rankings can be compared.
 
-| Coverage half-angle | Proposed mouth/length range |
-| --- | ---: |
-| 25 degrees | 1.2 to 2.4 |
-| 35 degrees | 1.4 to 2.6 |
-| 45 degrees | 2.3 to 3.4 |
-| 60 degrees | 3.8 to 5.2 |
-
-Use steps of approximately 0.1 to 0.15. Begin with 250, 350, and 500 mm mouths
-to detect mouth interaction efficiently, then fill the intermediate sizes.
-Keep K and N fixed during the first pass; include existing K = 4, N = 10 points
-as anchors. Repeat the most promising ratios with N = 7.
+Run the complete broad pass before adding local detail around any apparent
+optimum. This avoids preferentially refining the existing 45-degree cluster
+and gives every mouth/angle configuration equal opportunity. Only after the
+nine-point pass should promising or boundary-limited configurations receive
+denser S sampling or the N = 7 follow-up.
 
 Primary output: an interior optimum or a justified expanded boundary for every
 coverage and mouth.

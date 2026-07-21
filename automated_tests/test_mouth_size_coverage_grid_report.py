@@ -6,6 +6,7 @@ import unittest
 
 from app.tools.generate_mouth_size_coverage_grid_report import (
     _legacy_ranking_score,
+    _search_summary,
     generate_report,
 )
 
@@ -52,6 +53,21 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertNotIn("Coverage Match", report)
         # The selection ratio is mouth width divided by length: 250 / 179.
         self.assertIn("data-sort='1.396648'", report)
+
+    def test_uniform_s_grid_has_a_distinct_report_label(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            search_dir = Path(temp) / "25deg" / "200x200-s-grid"
+            search_dir.mkdir(parents=True)
+            (search_dir / "search.yaml").write_text(
+                "bem_candidate_search:\n"
+                "  seed_yaml: project.yaml\n"
+                "  crossover_hz: 750\n",
+                encoding="utf-8",
+            )
+            summary = _search_summary(search_dir / "search.yaml")
+
+        self.assertEqual(summary["study"], "uniform S grid")
+        self.assertEqual(summary["label"], "25 deg\u00a0/\u200b 200 mm · uniform S grid")
 
 
 if __name__ == "__main__":

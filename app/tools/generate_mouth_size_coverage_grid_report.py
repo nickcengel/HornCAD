@@ -40,6 +40,7 @@ def _search_summary(path: Path) -> dict[str, Any]:
     mouth_dir = path.parent.name
     coverage = float(coverage_dir.removesuffix("deg"))
     mouth = float(mouth_dir.split("x", 1)[0])
+    study_label = "uniform S grid" if mouth_dir.endswith("-s-grid") else "original"
     config = yaml.safe_load(path.read_text(encoding="utf-8"))["bem_candidate_search"]
     seed_path = Path(config.get("seed_yaml", "project.yaml"))
     if not seed_path.is_absolute():
@@ -55,7 +56,11 @@ def _search_summary(path: Path) -> dict[str, Any]:
         "mouth": mouth,
         "mouth_width": float(seed_global.get("mouth_width", mouth)),
         "mouth_height": float(seed_global.get("mouth_height", mouth)),
-        "label": f"{coverage:g} deg\u00a0/\u200b {mouth:g} mm",
+        "label": (
+            f"{coverage:g} deg\u00a0/\u200b {mouth:g} mm"
+            + (" · uniform S grid" if study_label == "uniform S grid" else "")
+        ),
+        "study": study_label,
         "folder": path.parent,
         "search_yaml": path,
         "config": config,
