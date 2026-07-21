@@ -394,7 +394,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
                 f"<a href='{html.escape(str(item['report_path'].relative_to(project_root)))}'>report</a>"
             )
         rows.append(
-            "<tr>"
+            f"<tr data-coverage-angle='{summary['coverage']:g}'>"
             f"<td data-sort='{html.escape(item['artifact_stem'])}'>{' · '.join(candidate_links)}</td>"
             f"<td data-column='surface-score' data-sort='{surface_score_sort}'>{surface_score_text}</td>"
             f"<td data-sort='{newest_sort}'>{newest_text}</td>"
@@ -480,6 +480,16 @@ def generate_report(project_root: Path, output: Path) -> Path:
         f"<button type='button' class='column-toggle' data-column-toggle='{column}' "
         f"aria-pressed='{'true' if visible else 'false'}'>{html.escape(label)}</button>"
         for column, label, visible in toggle_columns)
+    coverage_angles = sorted({float(item["search"]["coverage"])
+                              for item in candidate_rows})
+    angle_filters = (
+        "<button type='button' class='angle-filter' data-angle-filter='all' "
+        "aria-pressed='true'>All angles</button>" + "".join(
+            f"<button type='button' class='angle-filter' "
+            f"data-angle-filter='{angle:g}' aria-pressed='false'>{angle:g}°</button>"
+            for angle in coverage_angles
+        )
+    )
 
     document = f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}
 <title>Mouth-size / coverage grid</title><style>
@@ -492,7 +502,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 .best{{background:#173c39;color:#9af0df;font-weight:700}}.worst{{background:#482321;color:#ffaaa3;font-weight:700}}
 .wide td:nth-child(5), .wide td:nth-child(6), .wide td:nth-child(7), .wide td:nth-child(8), .wide td:nth-child(9){{white-space:nowrap}}
 .sortable{{cursor:pointer;user-select:none}}.axis-pair{{white-space:normal}}[hidden]{{display:none!important}}
-.column-controls{{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}}.column-toggle{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}
+.column-controls,.angle-controls{{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}}.column-toggle,.angle-filter{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true'],.angle-filter[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}.filter-count{{margin-left:5px;color:var(--muted);font-size:.9rem}}
 .plot-grid-layout{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}}.plot-card{{min-width:0;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:12px}}.plot-card .muted{{margin:0 0 8px;min-height:42px}}.trend-plot{{display:block;width:100%;height:auto;background:#0d1319;border-radius:6px}}.plot-grid{{stroke:#263541;stroke-width:1}}.plot-trend{{fill:none;stroke-width:2.4;opacity:.92}}.plot-tick,.plot-label{{fill:var(--muted);font-size:11px}}.plot-axis-label{{fill:var(--ink);font-size:12px;font-weight:600}}.trend-plot circle{{stroke:#0c1014;stroke-width:1;opacity:.82}}.scatter-point{{cursor:pointer}}.scatter-point:hover,.scatter-point:focus{{stroke:var(--ink);stroke-width:2;opacity:1;outline:none}}.scatter-popup{{position:fixed;z-index:30;width:min(340px,calc(100vw - 24px));padding:12px;border:1px solid var(--accent);border-radius:8px;background:#101820;box-shadow:0 12px 32px rgba(0,0,0,.45)}}.scatter-popup strong{{display:block;margin-bottom:6px}}.scatter-popup p{{margin:0 0 8px;color:var(--muted);font-size:.92rem}}
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
@@ -518,8 +528,9 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 </section>
 <section>
 <h2>Candidates</h2>
+<div class='angle-controls' aria-label='Filter candidates by coverage angle'>{angle_filters}<span id='candidate-filter-count' class='filter-count'>{len(candidate_rows)} candidates</span></div>
 <div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div>
-<table class='wide sortable-table'>
+<table id='candidate-table' class='wide sortable-table'>
 <thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-sort='number'>Date</th><th class='sortable' data-column='legacy-rank' hidden data-sort='number'>Previous rank</th><th class='sortable' data-column='legacy-score' hidden data-sort='number'>Previous diagnostic score</th><th class='sortable' data-column='containment-mean' hidden data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' hidden data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' hidden data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead>
 <tbody>
 {''.join(rows)}
@@ -570,6 +581,22 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
       document.querySelectorAll(`[data-column="${{button.dataset.columnToggle}}"]`).forEach((cell) => {{
         cell.hidden = !visible;
       }});
+    }});
+  }});
+  const candidateTable = document.getElementById('candidate-table');
+  const candidateCount = document.getElementById('candidate-filter-count');
+  document.querySelectorAll('[data-angle-filter]').forEach((button) => {{
+    button.addEventListener('click', () => {{
+      const selected = button.dataset.angleFilter;
+      let visible = 0;
+      document.querySelectorAll('[data-angle-filter]').forEach((item) => {{
+        item.setAttribute('aria-pressed', String(item === button));
+      }});
+      Array.from(candidateTable.tBodies[0].rows).forEach((row) => {{
+        row.hidden = selected !== 'all' && row.dataset.coverageAngle !== selected;
+        if (!row.hidden) visible += 1;
+      }});
+      candidateCount.textContent = `${{visible}} candidate${{visible === 1 ? '' : 's'}}`;
     }});
   }});
   const compare = (a, b, type, direction) => {{
