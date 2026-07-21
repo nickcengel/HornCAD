@@ -51,6 +51,10 @@ def materialize_coverage_sweep(source_project: Path, source_search: Path,
         "label": f"coverage {coverage:g}°, S={target:g}, L={length:g} mm",
         "values": _candidate_values(length, coverage, 4.0, 10.0),
     } for target, length in zip(targets[1:], lengths[1:])]
+    # Preserve one far-boundary observation even when the declining points
+    # before it are adaptively pruned. This detects an unexpected second rise
+    # without densely filling a known-poor tail.
+    pool[-1]["required"] = True
     solver = copy.deepcopy(source.get("solver", {
         "points_per_octave": 12, "elements_per_wavelength": 6,
         "angles": 91, "workers": 0,

@@ -15,7 +15,7 @@ from app.tools.run_bem_search import (
     geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
     load_search, materialize_candidate, pareto_indices, propose_vector,
     next_kn_closure_candidate, requeue_failed_candidates, sampling_stability,
-    run_search, seed_values,
+    required_initial_probe, run_search, seed_values,
     write_report,
 )
 
@@ -27,6 +27,15 @@ ROUND2_SEARCH = SEARCH.parent / "round-2" / "search.yaml"
 
 
 class BEMSearchTests(unittest.TestCase):
+    def test_required_boundary_probe_bypasses_only_its_authored_point(self) -> None:
+        search = {"initial_pool": [
+            {"label": "coverage 50°, S=3.75"},
+            {"label": "coverage 50°, S=4", "required": True},
+        ]}
+        self.assertFalse(required_initial_probe(search, 1, "initial-curated"))
+        self.assertTrue(required_initial_probe(search, 2, "initial-curated"))
+        self.assertFalse(required_initial_probe(search, 2, "surrogate"))
+
     def test_kn_closure_tests_missing_diagonal_around_best(self) -> None:
         search = {"adaptive_kn_closure": {
             "enabled": True, "initial_k_step": 0.5, "initial_n_step": 5,

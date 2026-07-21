@@ -179,6 +179,7 @@ bem_candidate_search:
       n_h: 10.0
       n_v: 10.0
   - label: "coverage 40\xB0, S=4, L=139.36 mm"
+    required: true
     values:
       length_mm: 139.36
       extension_mm: 0.0

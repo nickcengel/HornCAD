@@ -46,6 +46,10 @@ or uncertain curves continue to S=4.0.
 
 This rule does not prune the low-S side before it is measured. A future round
 may extend below S=0.5 or above S=4.0 if a new optimum again reaches a boundary.
+The highest authored S point is a required boundary sentinel: intermediate
+tail points may be pruned, but S=4 still runs to detect an unexpected second
+rise. Canonical matched-comparison sets and short local-refinement sets are not
+adaptively pruned.
 
 ## Scheduling and reporting
 

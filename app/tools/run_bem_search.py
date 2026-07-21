@@ -428,6 +428,16 @@ def _uniform_s_sweep(search: dict[str, Any]) -> bool:
     return all("S=" in str(item.get("label", "")) for item in pool)
 
 
+def required_initial_probe(search: dict[str, Any], proposal_index: int,
+                           source: str) -> bool:
+    """Return whether an authored initial point must bypass adaptive pruning."""
+    if source != "initial-curated" or proposal_index <= 0:
+        return False
+    pool = search.get("initial_pool", [])
+    index = proposal_index - 1
+    return index < len(pool) and bool(pool[index].get("required", False))
+
+
 def adaptive_pruning_decision(search: dict[str, Any],
                               records: list[dict[str, Any]],
                               values: dict[str, float],
@@ -1460,15 +1470,18 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                 state["rejected_count"] += 1
                 save_state(output_dir, state)
                 continue
-            pruning = None if closure_stage else (adaptive_pruning_decision(
-                search, state["candidates"], values, derived) or
+            curated_item = (search["initial_pool"][proposal_index - 1]
+                            if source == "initial-curated" else None)
+            required_probe = required_initial_probe(search, proposal_index, source)
+            pruning = None if closure_stage or required_probe else (
+                adaptive_pruning_decision(
+                    search, state["candidates"], values, derived) or
                 adaptive_kn_pruning_decision(search, state["candidates"], values))
             if pruning is not None:
                 pruning.update(proposal_index=proposal_index,
                                proposal_source=source,
-                               experiment_label=(search["initial_pool"][
-                                   proposal_index - 1]["label"]
-                                   if source == "initial-curated" else None))
+                               experiment_label=(curated_item["label"]
+                                                 if curated_item else None))
                 state["adaptive_pruned_proposals"].append(pruning)
                 state["adaptive_pruned_count"] += 1
                 save_state(output_dir, state)

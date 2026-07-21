@@ -31,6 +31,7 @@ class IntermediateCoverageStudyTests(unittest.TestCase):
         self.assertEqual(search["max_evaluations"], 15)
         self.assertEqual(search["solver"]["workers"], 10)
         self.assertTrue(search["adaptive_pruning"]["enabled"])
+        self.assertTrue(search["initial_pool"][-1]["required"])
         self.assertEqual(project["horncad_config"]["horizontal_basis"]["coverage_deg"], 40)
         self.assertEqual(project["horncad_config"]["operating_intent"]["horizontal_coverage_deg"], 40)
 
