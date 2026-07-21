@@ -62,7 +62,7 @@ def migrate_search(search_dir: Path) -> tuple[int, int]:
             if report_target.is_file() else "")
         report_is_current = (
             f"<title>BEM {stem}</title>" in report_head and
-            "report-schema: canonical-v3" in report_head
+            "report-schema: canonical-v4" in report_head
         )
         run = None
         if (run_dir / "responses.npz").is_file():
