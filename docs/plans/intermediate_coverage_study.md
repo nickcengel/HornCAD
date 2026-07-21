@@ -22,6 +22,12 @@ worse point brackets the winner. S=0.05 and S=8 are safety limits, not evidence
 of closure: reaching either with the best score still on the boundary blocks
 later refinement and is reported as boundary-limited.
 
+The certificate also requires a measured point at the highest S coordinate
+authored by each baseline. If an older or active search pruned that point, the
+closure stage restores it as one isolated sentinel probe. Intermediate tail
+points remain unnecessary once the local winner is bracketed and the far-edge
+recovery check is measured.
+
 The boundary probes retain the baseline mouth, coverage, K, N, extension, and
 acoustic settings. Two baselines may close concurrently at ten NumCalc workers
 each. The coupled program requires a complete `s_boundary_closure.json`
@@ -70,6 +76,12 @@ The remaining high-S tail may be skipped only after three consecutive score
 declines and when a quadratic prediction plus twice its uncertainty remains at
 least three surface-score points below the observed best. Rising, recovering,
 or uncertain curves continue to S=4.0.
+
+Once the measured winner is interior and three successively higher-S points
+have all declined, later intermediate tail points may be skipped without the
+quadratic confidence test. The authored far-S sentinel remains mandatory. This
+gives every search a locally bracketed winner plus a sparse recovery check,
+without densely filling a tail that has already established the same result.
 
 This rule does not prune the low-S side before it is measured. A future round
 may extend below S=0.5 or above S=4.0 if a new optimum again reaches a boundary.

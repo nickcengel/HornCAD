@@ -8,7 +8,8 @@ import unittest
 import yaml
 
 from app.tools.run_s_boundary_closure_program import (
-    baseline_searches, closure_status, materialize_probe, next_probe_s,
+    authored_sentinel, baseline_searches, closure_status, materialize_probe,
+    next_probe_s,
 )
 
 
@@ -59,6 +60,11 @@ class SBoundaryClosureTests(unittest.TestCase):
         self.assertEqual(project["horncad_config"]["horizontal_basis"]["solved_s"], 0.5)
         self.assertEqual(search["max_evaluations"], 1)
         self.assertEqual(search["solver"]["workers"], 10)
+
+    def test_authored_sentinel_uses_far_edge_of_original_grid(self) -> None:
+        baseline = (ROOT / "examples" / "mouth-size-coverage-grid" /
+                    "25deg" / "250x250-s-grid")
+        self.assertEqual(authored_sentinel(baseline), 3.0)
 
 
 if __name__ == "__main__":

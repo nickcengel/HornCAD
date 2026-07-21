@@ -24,6 +24,7 @@ MINIMUM_S = 0.05
 MAXIMUM_S = 8.0
 MAXIMUM_PROBES = 32
 BASELINE_NAME = re.compile(r"^\d+x\d+-s-grid$")
+S_LABEL = re.compile(r"S=([0-9.]+)")
 
 
 def _score(record: dict[str, Any]) -> float:
@@ -59,6 +60,19 @@ def completed_points(search_dirs: list[Path]) -> list[tuple[float, float, Path]]
                                search_dir / "candidates" / record["id"] /
                                "project.yaml"))
     return points
+
+
+def authored_sentinel(baseline: Path) -> float:
+    """Return the highest S coordinate authored by a uniform baseline."""
+    search = yaml.safe_load((baseline / "search.yaml").read_text(encoding="utf-8"))[
+        "bem_candidate_search"]
+    project = yaml.safe_load((baseline / "project.yaml").read_text(encoding="utf-8"))
+    values = [float(project["horncad_config"]["horizontal_basis"]["solved_s"])]
+    for item in search.get("initial_pool", []):
+        match = S_LABEL.search(str(item.get("label", "")))
+        if match:
+            values.append(float(match.group(1)))
+    return max(values)
 
 
 def closure_status(points: list[tuple[float, float, Path]]) -> tuple[str, float]:
@@ -141,16 +155,24 @@ def close_baseline(root: Path, baseline: Path) -> dict[str, Any]:
         baseline.name.removesuffix("-s-grid") + "-s-boundary-r*"))
     for probe_number in range(1, MAXIMUM_PROBES + 1):
         points = completed_points([baseline, *rounds])
+        sentinel_s = authored_sentinel(baseline)
+        sentinel_measured = any(abs(point[0] - sentinel_s) <= 0.02
+                                for point in points)
         status, best_s = closure_status(points)
+        if not sentinel_measured:
+            target = sentinel_s
+            status = "sentinel"
+        else:
+            target = next_probe_s(status, best_s)
         if status == "closed":
             return {"baseline": str(baseline.relative_to(root)),
                     "status": "closed", "best_s": best_s,
-                    "probes": len(rounds)}
-        target = next_probe_s(status, best_s)
+                    "sentinel_s": sentinel_s, "probes": len(rounds)}
         if target is None:
             return {"baseline": str(baseline.relative_to(root)),
                     "status": "boundary-limited", "best_s": best_s,
-                    "side": status, "probes": len(rounds)}
+                    "side": status, "sentinel_s": sentinel_s,
+                    "probes": len(rounds)}
         output = baseline.with_name(
             baseline.name.removesuffix("-s-grid") +
             f"-s-boundary-r{probe_number:02d}")

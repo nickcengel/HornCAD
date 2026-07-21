@@ -486,6 +486,18 @@ def adaptive_pruning_decision(search: dict[str, Any],
 
     s_values = np.asarray([s for s, _ in samples])
     scores = np.asarray([score for _, score in samples])
+    best_index = int(np.argmax(scores))
+    if (0 < best_index < len(samples) - 1 and
+            len(samples) - best_index - 1 >= decline_count):
+        return {
+            "reason": "winner is bracketed and the measured tail keeps declining",
+            "target_s": target_s,
+            "best_observed_score": float(scores[best_index]),
+            "best_observed_s": float(s_values[best_index]),
+            "consecutive_declines": decline_count,
+            "observed_points": len(samples),
+            "values": values,
+        }
     design = np.column_stack((np.ones(len(samples)), s_values, s_values ** 2))
     coefficients, _, _, _ = np.linalg.lstsq(design, scores, rcond=None)
     target = np.asarray([1.0, target_s, target_s ** 2])

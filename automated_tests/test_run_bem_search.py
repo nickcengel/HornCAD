@@ -175,6 +175,29 @@ class BEMSearchTests(unittest.TestCase):
         self.assertIsNone(adaptive_pruning_decision(
             search, records, {"length_mm": 100}, {"s_h": 1.9, "s_v": 1.9}))
 
+    def test_bracketed_winner_prunes_after_three_measured_declines(self) -> None:
+        search = {
+            "initial_candidates": 14,
+            "initial_pool": [
+                {"label": f"coverage 50°, S={s:g}", "values": {}}
+                for s in np.arange(0.75, 4.01, 0.25)
+            ],
+            "adaptive_pruning": {"enabled": True},
+        }
+        scores = (63.3, 73.2, 79.6, 81.9, 83.2, 84.5, 85.8,
+                  86.6, 86.8, 86.2, 85.2, 83.7)
+        records = [{
+            "status": "complete", "derived": {"s_h": s, "s_v": s},
+            "surface_diagnostics": {"score": {"overall_percent": score}},
+        } for s, score in zip(np.arange(0.5, 3.26, 0.25), scores)]
+
+        decision = adaptive_pruning_decision(
+            search, records, {"length_mm": 94}, {"s_h": 3.5, "s_v": 3.5})
+
+        self.assertIsNotNone(decision)
+        self.assertEqual(decision["best_observed_s"], 2.5)
+        self.assertIn("bracketed", decision["reason"])
+
     def test_adaptive_pruning_recognizes_intermediate_coverage_labels(self) -> None:
         search = {
             "initial_candidates": 7,
