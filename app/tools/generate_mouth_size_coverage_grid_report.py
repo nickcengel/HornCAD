@@ -6,6 +6,7 @@ import argparse
 from datetime import datetime
 import html
 import json
+import math
 from pathlib import Path
 from statistics import fmean
 from typing import Any
@@ -28,25 +29,8 @@ LEGACY_RANKING_KEYS = (
 PLOT_COLORS = ("#69d6c8", "#f6bd60", "#f28482", "#8e9aef", "#90be6d")
 
 
-def _surface_mean(candidate: dict[str, Any], path: tuple[str, ...],
-                  scale: float = 1.0) -> float | None:
-    result = candidate.get("surface_diagnostics", {})
-    values = []
-    if result.get("status") != "available":
-        return None
-    for plane_name in ("horizontal", "vertical"):
-        selected: Any = result.get(plane_name, {})
-        for key in path:
-            selected = selected.get(key, {}) if isinstance(selected, dict) else None
-        if not isinstance(selected, (int, float)):
-            return None
-        values.append(float(selected) * scale)
-    return fmean(values)
-
-
 def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
-                 *, trends: bool = False, label_points: bool = False,
-                 diagnostic_colors: bool = False) -> str:
+                 *, trends: bool = False, label_points: bool = False) -> str:
     if not points:
         return "<p class='muted'>No completed candidates yet.</p>"
     width, height = 720, 390
@@ -99,10 +83,6 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
     for point in points:
         coverage = float(point["coverage"])
         color = colors[coverage]
-        if diagnostic_colors:
-            containment = max(0.0, min(100.0, float(point.get("containment", 0))))
-            hue = 8 + containment * 1.25
-            color = f"hsl({hue:.1f} 62% 58%)"
         radius = float(point.get("radius", 4.2))
         tooltip = html.escape(str(point.get("tooltip", "candidate")))
         parts.append(
@@ -116,16 +96,11 @@ def _scatter_svg(points: list[dict[str, Any]], x_label: str, y_label: str,
         f"<text class='plot-axis-label' x='{left + plot_width/2:.2f}' y='{height-8}' text-anchor='middle'>{html.escape(x_label)}</text>",
         f"<text class='plot-axis-label' transform='translate(17 {top + plot_height/2:.2f}) rotate(-90)' text-anchor='middle'>{html.escape(y_label)}</text>",
     ])
-    if diagnostic_colors:
-        parts.append(
-            f"<text class='plot-label' x='{left+8}' y='{top+14}'>"
-            "Color: mean containment · Size: surface score</text>")
-    else:
-        legend_x = left + 8
-        for coverage in coverages:
-            parts.append(f"<circle cx='{legend_x}' cy='{top+10}' r='4' fill='{colors[coverage]}'/>")
-            parts.append(f"<text class='plot-label' x='{legend_x+7}' y='{top+14}'>{coverage:g}°</text>")
-            legend_x += 66
+    legend_x = left + 8
+    for coverage in coverages:
+        parts.append(f"<circle cx='{legend_x}' cy='{top+10}' r='4' fill='{colors[coverage]}'/>")
+        parts.append(f"<text class='plot-label' x='{legend_x+7}' y='{top+14}'>{coverage:g}°</text>")
+        legend_x += 66
     parts.append("</svg>")
     return "".join(parts)
 
@@ -285,7 +260,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
 
     score_vs_s = []
     score_vs_ratio = []
-    diagnostic_tradeoff = []
+    score_vs_normalized_length = []
     best_by_pair: dict[tuple[float, float], dict[str, Any]] = {}
     for row in candidate_rows:
         score = row["surface_ranking_score"]
@@ -305,25 +280,17 @@ def generate_report(project_root: Path, output: Path) -> Path:
         if s_value is not None:
             score_vs_s.append({**common, "x": s_value})
         score_vs_ratio.append({**common, "x": row["length_mouth_ratio"]})
+        length = float(candidate.get("values", {}).get("length_mm", 0))
+        normalized_length = (
+            2.0 * length * math.tan(math.radians(summary["coverage"])) /
+            float(summary["mouth_width"]))
+        score_vs_normalized_length.append({**common, "x": normalized_length})
         pair_key = (summary["coverage"], summary["mouth"])
         if pair_key not in best_by_pair or score > best_by_pair[pair_key]["y"]:
             best_by_pair[pair_key] = {
                 **common, "x": summary["mouth"],
                 "label": f"S={s_value:.2g}" if s_value is not None else "",
             }
-        profile = _surface_mean(
-            candidate, ("distribution", "rms_profile_error_db"))
-        slice_departure = _surface_mean(
-            candidate, ("slice_energy_stability", "rms_departure_db"))
-        containment = _surface_mean(
-            candidate, ("containment", "mean_fraction"), 100.0)
-        if profile is not None and slice_departure is not None and containment is not None:
-            diagnostic_tradeoff.append({
-                "x": profile, "y": slice_departure,
-                "coverage": summary["coverage"], "containment": containment,
-                "radius": 3.0 + score / 25.0,
-                "tooltip": f"{tooltip} · containment {containment:.1f}%",
-            })
 
     trend_plots = (
         ("Final surface score vs S",
@@ -337,10 +304,10 @@ def generate_report(project_root: Path, output: Path) -> Path:
          _scatter_svg(list(best_by_pair.values()), "Mouth width (mm)",
                       "Best final surface score (%)", trends=True,
                       label_points=True)),
-        ("Profile error vs slice-energy departure",
-         "Point color represents mean containment; point size represents final surface score.",
-         _scatter_svg(diagnostic_tradeoff, "Profile RMS error (dB)",
-                      "Slice-energy RMS departure (dB)", diagnostic_colors=True)),
+        ("Final surface score vs coverage-normalized length",
+         "X = 2 × length × tan(coverage half-angle) / mouth width; curves test whether coverage families share a geometric constraint.",
+         _scatter_svg(score_vs_normalized_length, "Coverage-normalized length",
+                      "Final surface score (%)", trends=True)),
     )
     plots_html = "".join(
         f"<article class='plot-card'><h3>{html.escape(title)}</h3>"

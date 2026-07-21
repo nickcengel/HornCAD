@@ -65,10 +65,10 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("Final surface score vs S", report)
         self.assertIn("Final surface score vs mouth/length ratio", report)
         self.assertIn("Best score vs mouth width", report)
-        self.assertIn("Profile error vs slice-energy departure", report)
+        self.assertIn("Final surface score vs coverage-normalized length", report)
         self.assertEqual(report.count("class='trend-plot'"), 4)
         self.assertIn("class='plot-trend'", report)
-        self.assertIn("Color: mean containment · Size: surface score", report)
+        self.assertIn("2 × length × tan(coverage half-angle) / mouth width", report)
         self.assertNotIn("Average diagnostic score", report)
         self.assertNotIn("Coverage Match", report)
         # The selection ratio is mouth width divided by length: 250 / 179.
