@@ -41,17 +41,15 @@ def _search_summary(path: Path) -> dict[str, Any]:
     config = yaml.safe_load(path.read_text(encoding="utf-8"))["bem_candidate_search"]
     state_path = path.parent / "search_state.json"
     report_path = path.parent / "search_report.html"
-    finalist_path = path.parent / "finalist_comparison.html"
     summary: dict[str, Any] = {
         "coverage": coverage,
         "mouth": mouth,
-        "label": f"{coverage:g} deg / {mouth:g} mm",
+        "label": f"{coverage:g} deg\u00a0/\u200b {mouth:g} mm",
         "folder": path.parent,
         "search_yaml": path,
         "config": config,
         "state_path": state_path,
         "report_path": report_path if report_path.is_file() else None,
-        "finalist_path": finalist_path if finalist_path.is_file() else None,
         "status": "not started",
         "phase": "",
         "counts": {},
@@ -164,7 +162,16 @@ def generate_report(project_root: Path, output: Path) -> Path:
         candidate_dir = row["search"]["folder"] / "candidates" / candidate["id"]
         row["project_yaml"] = candidate_dir / "project.yaml"
         row["stl_path"] = candidate_dir / candidate.get("stl_file", "")
-        row["report_path"] = next(candidate_dir.glob("**/interactive_report.html"), None)
+        report_file = candidate.get("report_file")
+        row["report_path"] = (
+            row["search"]["folder"] / report_file if report_file else
+            next(candidate_dir.glob("bem/*_Report.html"), None)
+        )
+        row["artifact_stem"] = candidate.get("artifact_stem", candidate["id"])
+        row["length_mouth_ratio"] = (
+            float(candidate.get("values", {}).get("length_mm", 0)) /
+            float(row["search"]["mouth"])
+        )
         row["label"] = candidate.get("proposal_source", "").replace("_", " ").strip().title() or "Candidate"
         if row["label"] == "Seed":
             row["label"] = "Seed design"
@@ -201,7 +208,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
         smooth_class = "best" if smooth_best == rank - 1 else "worst" if smooth_worst == rank - 1 else ""
         waist_class = "best" if waist_best == rank - 1 else "worst" if waist_worst == rank - 1 else ""
         uniform_class = "best" if uniform_best == rank - 1 else "worst" if uniform_worst == rank - 1 else ""
-        candidate_name = html.escape(candidate["id"])
+        candidate_name = html.escape(item["artifact_stem"])
         candidate_links = []
         if item["report_path"] is not None:
             candidate_links.append(
@@ -221,15 +228,11 @@ def generate_report(project_root: Path, output: Path) -> Path:
             f"<a href='{html.escape(str(summary['report_path'].relative_to(project_root)))}'>search report</a>"
             if summary["report_path"] else "—"
         )
-        finalist_link = (
-            f"<a href='{html.escape(str(summary['finalist_path'].relative_to(project_root)))}'>final report</a>"
-            if summary["finalist_path"] else "—"
-        )
         status_badge = f"<span class='badge {html.escape(_ranking_class(summary))}'>{html.escape(candidate.get('status', 'unknown'))}</span>"
         rows.append(
             "<tr>"
             f"<td data-sort='{rank}'>{rank}</td>"
-            f"<td data-sort='{html.escape(candidate['id'])}'>{' · '.join(candidate_links)}</td>"
+            f"<td data-sort='{html.escape(item['artifact_stem'])}'>{' · '.join(candidate_links)}</td>"
             f"<td data-sort='{html.escape(summary['label'])}'>{html.escape(summary['label'])}</td>"
             f"<td data-sort='{html.escape(candidate.get('status', 'unknown'))}'>{status_badge}</td>"
             f"<td class='{score_class}' data-sort='{item['candidate_score']:.6f}'>{item['candidate_score']:.1f}%</td>"
@@ -237,16 +240,14 @@ def generate_report(project_root: Path, output: Path) -> Path:
             f"<td class='{smooth_class}' data-sort='{diagnostics['coverage_smoothness_percent']:.6f}'>{diagnostics['coverage_smoothness_percent']:.1f}%</td>"
             f"<td class='{waist_class}' data-sort='{diagnostics['waist_stability_percent']:.6f}'>{diagnostics['waist_stability_percent']:.1f}%</td>"
             f"<td class='{uniform_class}' data-sort='{diagnostics['window_uniformity_percent']:.6f}'>{diagnostics['window_uniformity_percent']:.1f}%</td>"
-            f"<td data-sort='{candidate.get('crossover_minimum_normalized_impedance', 0):.6f}'>{candidate.get('crossover_minimum_normalized_impedance', 0):.3f}</td>"
             f"<td data-sort='{candidate.get('values', {}).get('length_mm', 0):.6f}'>{candidate.get('values', {}).get('length_mm', 0):g}</td>"
+            f"<td data-sort='{item['length_mouth_ratio']:.6f}'>{item['length_mouth_ratio']:.3f}</td>"
             f"<td data-sort='{candidate.get('values', {}).get('extension_mm', 0):.6f}'>{candidate.get('values', {}).get('extension_mm', 0):g}</td>"
-            f"<td data-sort='{candidate.get('values', {}).get('osse_coverage_h_deg', 0):.6f}'>{candidate.get('values', {}).get('osse_coverage_h_deg', 0):g} / {candidate.get('values', {}).get('osse_coverage_v_deg', 0):g}</td>"
-            f"<td data-sort='{candidate.get('values', {}).get('k_h', 0):.6f}'>{candidate.get('values', {}).get('k_h', 0):.2f} / {candidate.get('values', {}).get('k_v', 0):.2f}</td>"
-            f"<td data-sort='{candidate.get('derived', {}).get('s_h', 0):.6f}'>{candidate.get('derived', {}).get('s_h', 0):.3f} / {candidate.get('derived', {}).get('s_v', 0):.3f}</td>"
-            f"<td data-sort='{candidate.get('values', {}).get('n_h', 0):.6f}'>{candidate.get('values', {}).get('n_h', 0):g} / {candidate.get('values', {}).get('n_v', 0):g}</td>"
-            f"<td data-sort='{candidate.get('derived', {}).get('mouth_curvature_radius_h_mm', 0):.6f}'>{candidate.get('derived', {}).get('mouth_curvature_radius_h_mm', 0):.1f} / {candidate.get('derived', {}).get('mouth_curvature_radius_v_mm', 0):.1f}</td>"
+            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('osse_coverage_h_deg', 0):.6f}'>{candidate.get('values', {}).get('osse_coverage_h_deg', 0):g}&nbsp;/<wbr> {candidate.get('values', {}).get('osse_coverage_v_deg', 0):g}</td>"
+            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('k_h', 0):.6f}'>{candidate.get('values', {}).get('k_h', 0):.2f}&nbsp;/<wbr> {candidate.get('values', {}).get('k_v', 0):.2f}</td>"
+            f"<td class='axis-pair' data-sort='{candidate.get('derived', {}).get('s_h', 0):.6f}'>{candidate.get('derived', {}).get('s_h', 0):.3f}&nbsp;/<wbr> {candidate.get('derived', {}).get('s_v', 0):.3f}</td>"
+            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('n_h', 0):.6f}'>{candidate.get('values', {}).get('n_h', 0):g}&nbsp;/<wbr> {candidate.get('values', {}).get('n_v', 0):g}</td>"
             f"<td data-sort='{html.escape(item['label'])}'>{html.escape(item['label'])}</td>"
-            f"<td>{finalist_link}</td>"
             "</tr>"
         )
 
@@ -264,11 +265,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
         candidate = item["candidate"]
         diagnostics = item["diagnostics"]
         status_badge = f"<span class='badge {html.escape(_ranking_class(summary))}'>{html.escape(candidate.get('status', 'unknown'))}</span>"
-        finalist_link = (
-            f"<a href='{html.escape(str(summary['finalist_path'].relative_to(project_root)))}'>final report</a>"
-            if summary["finalist_path"] else "—"
-        )
-        candidate_name = html.escape(candidate["id"])
+        candidate_name = html.escape(item["artifact_stem"])
         candidate_link = (
             f"<a href='{html.escape(str(item['report_path'].relative_to(project_root)))}'>{candidate_name}</a>"
             if item["report_path"] is not None else candidate_name
@@ -276,7 +273,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
         all_result_rows.append(
             "<tr>"
             f"<td data-sort='{rank}'>{rank}</td>"
-            f"<td data-sort='{html.escape(candidate['id'])}'>{candidate_link}</td>"
+            f"<td data-sort='{html.escape(item['artifact_stem'])}'>{candidate_link}</td>"
             f"<td data-sort='{html.escape(summary['label'])}'>{html.escape(summary['label'])}</td>"
             f"<td data-sort='{html.escape(candidate.get('status', 'unknown'))}'>{status_badge}</td>"
             f"<td data-sort='{item['candidate_score']:.6f}'>{item['candidate_score']:.1f}%</td>"
@@ -284,16 +281,14 @@ def generate_report(project_root: Path, output: Path) -> Path:
             f"<td data-sort='{diagnostics['coverage_smoothness_percent']:.6f}'>{diagnostics['coverage_smoothness_percent']:.1f}%</td>"
             f"<td data-sort='{diagnostics['waist_stability_percent']:.6f}'>{diagnostics['waist_stability_percent']:.1f}%</td>"
             f"<td data-sort='{diagnostics['window_uniformity_percent']:.6f}'>{diagnostics['window_uniformity_percent']:.1f}%</td>"
-            f"<td data-sort='{candidate.get('crossover_minimum_normalized_impedance', 0):.6f}'>{candidate.get('crossover_minimum_normalized_impedance', 0):.3f}</td>"
             f"<td data-sort='{candidate.get('values', {}).get('length_mm', 0):.6f}'>{candidate.get('values', {}).get('length_mm', 0):g}</td>"
+            f"<td data-sort='{item['length_mouth_ratio']:.6f}'>{item['length_mouth_ratio']:.3f}</td>"
             f"<td data-sort='{candidate.get('values', {}).get('extension_mm', 0):.6f}'>{candidate.get('values', {}).get('extension_mm', 0):g}</td>"
-            f"<td data-sort='{candidate.get('values', {}).get('osse_coverage_h_deg', 0):.6f}'>{candidate.get('values', {}).get('osse_coverage_h_deg', 0):g} / {candidate.get('values', {}).get('osse_coverage_v_deg', 0):g}</td>"
-            f"<td data-sort='{candidate.get('values', {}).get('k_h', 0):.6f}'>{candidate.get('values', {}).get('k_h', 0):.2f} / {candidate.get('values', {}).get('k_v', 0):.2f}</td>"
-            f"<td data-sort='{candidate.get('derived', {}).get('s_h', 0):.6f}'>{candidate.get('derived', {}).get('s_h', 0):.3f} / {candidate.get('derived', {}).get('s_v', 0):.3f}</td>"
-            f"<td data-sort='{candidate.get('values', {}).get('n_h', 0):.6f}'>{candidate.get('values', {}).get('n_h', 0):g} / {candidate.get('values', {}).get('n_v', 0):g}</td>"
-            f"<td data-sort='{candidate.get('derived', {}).get('mouth_curvature_radius_h_mm', 0):.6f}'>{candidate.get('derived', {}).get('mouth_curvature_radius_h_mm', 0):.1f} / {candidate.get('derived', {}).get('mouth_curvature_radius_v_mm', 0):.1f}</td>"
+            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('osse_coverage_h_deg', 0):.6f}'>{candidate.get('values', {}).get('osse_coverage_h_deg', 0):g}&nbsp;/<wbr> {candidate.get('values', {}).get('osse_coverage_v_deg', 0):g}</td>"
+            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('k_h', 0):.6f}'>{candidate.get('values', {}).get('k_h', 0):.2f}&nbsp;/<wbr> {candidate.get('values', {}).get('k_v', 0):.2f}</td>"
+            f"<td class='axis-pair' data-sort='{candidate.get('derived', {}).get('s_h', 0):.6f}'>{candidate.get('derived', {}).get('s_h', 0):.3f}&nbsp;/<wbr> {candidate.get('derived', {}).get('s_v', 0):.3f}</td>"
+            f"<td class='axis-pair' data-sort='{candidate.get('values', {}).get('n_h', 0):.6f}'>{candidate.get('values', {}).get('n_h', 0):g}&nbsp;/<wbr> {candidate.get('values', {}).get('n_v', 0):g}</td>"
             f"<td data-sort='{html.escape(item['label'])}'>{html.escape(item['label'])}</td>"
-            f"<td>{finalist_link}</td>"
             "</tr>"
         )
 
@@ -302,10 +297,6 @@ def generate_report(project_root: Path, output: Path) -> Path:
         report_link = (
             f"<a href='{html.escape(str(summary['report_path'].relative_to(project_root)))}'>search report</a>"
             if summary["report_path"] else "—"
-        )
-        finalist_link = (
-            f" | <a href='{html.escape(str(summary['finalist_path'].relative_to(project_root)))}'>finalist comparison</a>"
-            if summary["finalist_path"] else ""
         )
         status_badge = f"<span class='badge {html.escape(_ranking_class(summary))}'>{html.escape(summary['status'])}</span>"
         best_candidate = summary["best_candidate"]
@@ -321,11 +312,11 @@ def generate_report(project_root: Path, output: Path) -> Path:
             f"<td>{rank}</td>"
             f"<td>{html.escape(summary['label'])}</td>"
             f"<td>{status_badge}</td>"
-            f"<td>{summary['completed']} / {summary['proposal_count']}</td>"
+            f"<td>{summary['completed']}&nbsp;/<wbr> {summary['proposal_count']}</td>"
             f"<td>{_format_score(summary['average_score'])}</td>"
             f"<td>{_format_score(summary['best_score'])}</td>"
             f"<td>{best_candidate_label}</td>"
-            f"<td>{report_link}{finalist_link}</td>"
+            f"<td>{report_link}</td>"
             "</tr>"
         )
 
@@ -353,14 +344,14 @@ def generate_report(project_root: Path, output: Path) -> Path:
     document = f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}
 <title>Mouth-size / coverage grid</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#69d6c8;--good:#16856b;--warn:#b7791f;--bad:#b45353}}
-*{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}main{{max-width:1600px;margin:auto;padding:20px}}
+*{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}main{{width:100%;padding:20px}}
 h1,h2,h3{{margin:0 0 12px}}p{{line-height:1.45}}a{{color:var(--accent)}}section{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}
-table{{border-collapse:collapse;width:100%}}th,td{{padding:8px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}th{{background:var(--panel-2)}}
+table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding:8px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}th{{background:var(--panel-2);white-space:nowrap}}
 .summary{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}.card{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}}.card strong{{display:block;font-size:1.4rem;margin-bottom:4px}}
 .badge{{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.9rem;text-transform:uppercase;letter-spacing:.02em}}.badge.complete{{background:rgba(22,133,107,.18);color:#8de8cc}}.badge.running{{background:rgba(183,121,31,.2);color:#f6d39a}}.badge.failed{{background:rgba(180,83,83,.2);color:#ffb2b2}}.badge.pending{{background:rgba(148,163,189,.16);color:#c8d0d8}}
 .best{{background:#173c39;color:#9af0df;font-weight:700}}.worst{{background:#482321;color:#ffaaa3;font-weight:700}}
 .wide td:nth-child(5), .wide td:nth-child(6), .wide td:nth-child(7), .wide td:nth-child(8), .wide td:nth-child(9){{white-space:nowrap}}
-.sortable{{cursor:pointer;user-select:none}}
+.sortable{{cursor:pointer;user-select:none}}.axis-pair{{white-space:normal}}
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
 @media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
@@ -368,20 +359,20 @@ table{{border-collapse:collapse;width:100%}}th,td{{padding:8px 10px;border-botto
 <h1>Mouth-size / coverage grid</h1>
 <p class='muted'>This overview keeps the same structure as a search report, but combines the candidate entries from every sub-search into one active ranking. The combined ranking is sorted by the mean of coverage match, coverage smoothness, waist stability, and window uniformity for each completed candidate.</p>
 <section class='summary'>
-<div class='card'><strong>{started} / {total}</strong> started</div>
+<div class='card'><strong>{started}&nbsp;/<wbr> {total}</strong> started</div>
 <div class='card'><strong>{running}</strong> running sub-searches</div>
 <div class='card'><strong>{complete}</strong> complete sub-searches</div>
 <div class='card'><strong>{completed_candidates}</strong> completed candidates</div>
 </section>
 <section>
 <h2>Project range</h2>
-<table><tr><th>Coverage targets</th><th>Mouth sizes</th><th>Fixed K / N</th><th>Sweep / crossover</th><th>Ratios</th></tr>
-<tr><td>{coverage_targets} deg</td><td>{mouth_sizes} mm</td><td>K={fixed_k}, N={fixed_n}</td><td>{sweep_lower}-{sweep_upper} Hz / {crossover} Hz</td><td>{", ".join(f"{ratio:g}" for ratio in ratios) if ratios != "—" else "—"}</td></tr></table>
+<table><tr><th>Coverage targets</th><th>Mouth sizes</th><th>Fixed K&nbsp;/ N</th><th>Sweep&nbsp;/ crossover</th><th>Length-mouth ratios</th></tr>
+<tr><td>{coverage_targets} deg</td><td>{mouth_sizes} mm</td><td>K={fixed_k}, N={fixed_n}</td><td>{sweep_lower}-{sweep_upper} Hz&nbsp;/<wbr> {crossover} Hz</td><td>{", ".join(f"{ratio:g}" for ratio in ratios) if ratios != "—" else "—"}</td></tr></table>
 </section>
 <section>
 <h2>Active ranking</h2>
 <table class='wide sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Average diagnostic score</th><th class='sortable' data-sort='number'>Coverage Match</th><th class='sortable' data-sort='number'>Coverage Smoothness</th><th class='sortable' data-sort='number'>Waist Stability</th><th class='sortable' data-sort='number'>Window Uniformity</th><th class='sortable' data-sort='number'>Impedance</th><th class='sortable' data-sort='number'>Length mm</th><th class='sortable' data-sort='number'>Extension mm</th><th class='sortable' data-sort='number'>OS-SE H/V</th><th class='sortable' data-sort='number'>K H/V</th><th class='sortable' data-sort='number'>S H/V</th><th class='sortable' data-sort='number'>N H/V</th><th class='sortable' data-sort='number'>Curvature radius H/V mm</th><th class='sortable' data-sort='text'>Distinguishing trait</th><th>Final report</th></tr></thead>
+<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Average diagnostic score</th><th class='sortable' data-sort='number'>Coverage Match</th><th class='sortable' data-sort='number'>Coverage Smoothness</th><th class='sortable' data-sort='number'>Waist Stability</th><th class='sortable' data-sort='number'>Window Uniformity</th><th class='sortable' data-sort='number'>Length mm</th><th class='sortable' data-sort='number'>Length-mouth ratio</th><th class='sortable' data-sort='number'>Extension mm</th><th class='sortable' data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-sort='text'>Distinguishing trait</th></tr></thead>
 <tbody>
 {''.join(rows)}
 </tbody>
@@ -391,7 +382,7 @@ table{{border-collapse:collapse;width:100%}}th,td{{padding:8px 10px;border-botto
 <h2>All results</h2>
 <p class='muted'>This is the full candidate list across every sub-search. Click any column header to sort it.</p>
 <table class='wide sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Average diagnostic score</th><th class='sortable' data-sort='number'>Coverage Match</th><th class='sortable' data-sort='number'>Coverage Smoothness</th><th class='sortable' data-sort='number'>Waist Stability</th><th class='sortable' data-sort='number'>Window Uniformity</th><th class='sortable' data-sort='number'>Impedance</th><th class='sortable' data-sort='number'>Length mm</th><th class='sortable' data-sort='number'>Extension mm</th><th class='sortable' data-sort='number'>OS-SE H/V</th><th class='sortable' data-sort='number'>K H/V</th><th class='sortable' data-sort='number'>S H/V</th><th class='sortable' data-sort='number'>N H/V</th><th class='sortable' data-sort='number'>Curvature radius H/V mm</th><th class='sortable' data-sort='text'>Distinguishing trait</th><th>Final report</th></tr></thead>
+<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Average diagnostic score</th><th class='sortable' data-sort='number'>Coverage Match</th><th class='sortable' data-sort='number'>Coverage Smoothness</th><th class='sortable' data-sort='number'>Waist Stability</th><th class='sortable' data-sort='number'>Window Uniformity</th><th class='sortable' data-sort='number'>Length mm</th><th class='sortable' data-sort='number'>Length-mouth ratio</th><th class='sortable' data-sort='number'>Extension mm</th><th class='sortable' data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-sort='text'>Distinguishing trait</th></tr></thead>
 <tbody>
 {''.join(all_result_rows)}
 </tbody>
@@ -400,7 +391,7 @@ table{{border-collapse:collapse;width:100%}}th,td{{padding:8px 10px;border-botto
 <section>
 <h2>Sub-searches</h2>
 <table class='sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Complete / Proposed</th><th class='sortable' data-sort='number'>Average score</th><th class='sortable' data-sort='number'>Best score</th><th class='sortable' data-sort='text'>Best candidate</th><th>Links</th></tr></thead>
+<thead><tr><th class='sortable' data-sort='number'>Rank</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Complete&nbsp;/ Proposed</th><th class='sortable' data-sort='number'>Average score</th><th class='sortable' data-sort='number'>Best score</th><th class='sortable' data-sort='text'>Best candidate</th><th>Links</th></tr></thead>
 <tbody>{''.join(summary_rows)}</tbody>
 </table>
 </section>

@@ -24,15 +24,13 @@ import yaml
 try:
     from .export_horncad import solved_s, termination_metrics
     from .generate_numcalc_review import generate_review
-    from .interactive_results import (
-        comparison_report, coverage_diagnostics, load_run, single_report)
+    from .interactive_results import coverage_diagnostics, load_run, single_report
     from .run_bem_suite import find_numcalc
     from .run_numcalc_sweep import ppo_frequency_grid, run_sweep
 except ImportError:
     from export_horncad import solved_s, termination_metrics
     from generate_numcalc_review import generate_review
-    from interactive_results import (
-        comparison_report, coverage_diagnostics, load_run, single_report)
+    from interactive_results import coverage_diagnostics, load_run, single_report
     from run_bem_suite import find_numcalc
     from run_numcalc_sweep import ppo_frequency_grid, run_sweep
 
@@ -54,6 +52,54 @@ VARIABLE_LABELS = {
     "k_h": "horizontal K", "k_v": "vertical K",
     "n_h": "horizontal N", "n_v": "vertical N",
 }
+
+
+def _artifact_number(value: float) -> str:
+    """Format an authored value compactly and deterministically for filenames."""
+    return f"{float(value):g}"
+
+
+def candidate_artifact_stem(document: dict[str, Any]) -> str:
+    """Return the canonical public artifact name for a candidate project."""
+    config = document["horncad_config"]
+    global_config = config["global"]
+    horizontal = config["horizontal_basis"]
+    vertical = config["vertical_basis"]
+    dimensions = "x".join(_artifact_number(global_config[key]) for key in (
+        "mouth_width", "mouth_height", "length"))
+    extension = float(global_config.get("conical_extension_length", 0))
+    if not math.isclose(extension, 0.0, abs_tol=1e-9):
+        dimensions += f"_E{_artifact_number(extension)}"
+
+    horizontal_values = (
+        float(horizontal["coverage_deg"]), float(horizontal["k"]),
+        float(horizontal["n"]),
+    )
+    vertical_values = (
+        float(vertical["coverage_deg"]), float(vertical["k"]),
+        float(vertical["n"]),
+    )
+    # Optimizer proposals can carry sub-display floating-point noise. Treat the
+    # axes as equal when their canonical filename tokens are equal.
+    if all(_artifact_number(h) == _artifact_number(v)
+           for h, v in zip(horizontal_values, vertical_values)):
+        coverage, k_value, n_value = horizontal_values
+        profile = (f"{_artifact_number(coverage)}_K{_artifact_number(k_value)}"
+                   f"_N{_artifact_number(n_value)}")
+    else:
+        h_coverage, h_k, h_n = horizontal_values
+        v_coverage, v_k, v_n = vertical_values
+        profile = (
+            f"H{_artifact_number(h_coverage)}_K{_artifact_number(h_k)}"
+            f"_N{_artifact_number(h_n)}_V{_artifact_number(v_coverage)}"
+            f"_K{_artifact_number(v_k)}_N{_artifact_number(v_n)}"
+        )
+    return f"{dimensions}_{profile}"
+
+
+def _axis_pair(horizontal: str, vertical: str) -> str:
+    """Keep the slash with the horizontal value while permitting a line break."""
+    return f"{horizontal}&nbsp;/<wbr> {vertical}"
 
 
 def _read_yaml(path: Path) -> dict[str, Any]:
@@ -245,17 +291,25 @@ def geometry_feasibility(derived: dict[str, float]) -> tuple[bool, str | None]:
     return True, None
 
 
-def export_candidate_stl(project_path: Path, candidate_dir: Path) -> Path:
+def export_candidate_stl(project_path: Path, candidate_dir: Path,
+                         artifact_stem: str | None = None) -> Path:
     """Retain an inspectable acoustic-surface STL for every proposed candidate."""
+    document = _read_yaml(project_path)
+    stem = artifact_stem or candidate_artifact_stem(document)
+    target = candidate_dir / f"{stem}_Surface.STL"
+    if target.is_file():
+        return target
     existing = list(candidate_dir.glob("*.STL"))
     if existing:
-        return existing[0]
+        existing[0].replace(target)
+        return target
     result = subprocess.run(
         [sys.executable, str(Path(__file__).with_name("export_horncad.py")),
          str(project_path), "--mode", "acoustic_surface", "--output-dir",
          str(candidate_dir)], check=True, capture_output=True, text=True)
     path = Path(result.stdout.splitlines()[0])
-    return path
+    path.replace(target)
+    return target
 
 
 def candidate_distance(values: dict[str, float], records: list[dict[str, Any]],
@@ -349,7 +403,9 @@ def _training_records(records: list[dict[str, Any]]) -> list[dict[str, Any]]:
 def pareto_indices(records: list[dict[str, Any]]) -> set[int]:
     feasible = [(index, record) for index, record in enumerate(records)
                 if record.get("status") == "complete" and
-                record.get("sampling_stability", {}).get("status", "stable") == "stable"]
+                record.get("sampling_stability", {}).get("status", "stable") == "stable" and
+                all(key in record.get("diagnostics", {}).get("combined", {})
+                    for key in OBJECTIVES)]
     output: set[int] = set()
     for index, record in feasible:
         values = _objective_values(record)
@@ -657,11 +713,11 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
 
     def diagnostic_cell(diagnostic: dict[str, Any], key: str) -> str:
         if not diagnostic:
-            return "<td>—</td>"
+            return "<td data-sort=''>—</td>"
         try:
             value = objective_score(diagnostic, key)
         except KeyError:
-            return "<td>—</td>"
+            return "<td data-sort=''>—</td>"
         css_class = ""
         if key in extrema:
             minimum, maximum = extrema[key]
@@ -669,7 +725,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
                 css_class = " class='best'"
             elif math.isclose(value, minimum, abs_tol=1e-9):
                 css_class = " class='worst'"
-        return f"<td{css_class}>{value:.1f}%</td>"
+        return f"<td{css_class} data-sort='{value:.6f}'>{value:.1f}%</td>"
 
     traits = candidate_traits(records, seed, search["bounds"])
     rows = []
@@ -677,78 +733,86 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
         trait = record.get("experiment_label", fallback_trait)
         diagnostic = record.get("diagnostics", {}).get("combined", {})
         candidate_dir = f"candidates/{record['id']}"
+        artifact_stem = record.get("artifact_stem", record["id"])
         stl_link = (f" · <a href='{candidate_dir}/{html.escape(record['stl_file'])}'>STL</a>"
                     if record.get("stl_file") else "")
-        report_link = (f" · <a href='{html.escape(record['run_dir'])}/"
-                       "interactive_report.html'>report</a>"
-                       if record.get("run_dir") else "")
+        report_link = (f" · <a href='{html.escape(record['report_file'])}'>report</a>"
+                       if record.get("report_file") else "")
         status = "Pareto" if record.get("pareto") else record["status"].title()
+        coverage_pair = _axis_pair(
+            f"{record['values']['osse_coverage_h_deg']:.1f}",
+            f"{record['values']['osse_coverage_v_deg']:.1f}")
+        k_pair = _axis_pair(f"{record['values']['k_h']:.2f}",
+                            f"{record['values']['k_v']:.2f}")
+        s_pair = _axis_pair(
+            f"{record['derived'].get('s_h', float('nan')):.3f}",
+            f"{record['derived'].get('s_v', float('nan')):.3f}")
+        n_pair = _axis_pair(f"{record['values']['n_h']:g}",
+                            f"{record['values']['n_v']:g}")
         rows.append("<tr>" + "".join((
-            f"<td><a href='{candidate_dir}/project.yaml'>{record['id']}</a>"
+            f"<td data-sort='{html.escape(artifact_stem)}'><a href='{candidate_dir}/project.yaml'>{html.escape(artifact_stem)}</a>"
             f"{stl_link}{report_link}</td>",
-            f"<td>{html.escape(status)}</td>",
+            f"<td data-sort='{html.escape(status)}'>{html.escape(status)}</td>",
             "".join(diagnostic_cell(diagnostic, key) for key in OBJECTIVES),
-            f"<td>{record.get('crossover_minimum_normalized_impedance', float('nan')):.3f}</td>" if "crossover_minimum_normalized_impedance" in record else "<td>—</td>",
-            f"<td>{record['values']['length_mm']:.1f}</td>",
-            f"<td>{record['values']['extension_mm']:.1f}</td>",
-            f"<td>{record['values']['osse_coverage_h_deg']:.1f} / "
-            f"{record['values']['osse_coverage_v_deg']:.1f}</td>",
-            f"<td>{record['values']['k_h']:.2f} / {record['values']['k_v']:.2f}</td>",
-            f"<td>{record['derived'].get('s_h', float('nan')):.3f} / "
-            f"{record['derived'].get('s_v', float('nan')):.3f}</td>",
-            f"<td>{record['values']['n_h']:g} / {record['values']['n_v']:g}</td>",
-            f"<td>{record['derived'].get('mouth_curvature_radius_h_mm', float('nan')):.1f} / "
-            f"{record['derived'].get('mouth_curvature_radius_v_mm', float('nan')):.1f}</td>",
-            f"<td>{html.escape(trait)}</td>",
+            f"<td data-sort='{record['values']['length_mm']:.6f}'>{record['values']['length_mm']:.1f}</td>",
+            f"<td data-sort='{record['values']['extension_mm']:.6f}'>{record['values']['extension_mm']:.1f}</td>",
+            f"<td class='axis-pair' data-sort='{record['values']['osse_coverage_h_deg']:.6f}'>"
+            f"{coverage_pair}</td>",
+            f"<td class='axis-pair' data-sort='{record['values']['k_h']:.6f}'>"
+            f"{k_pair}</td>",
+            f"<td class='axis-pair' data-sort='{record['derived'].get('s_h', float('nan')):.6f}'>"
+            f"{s_pair}</td>",
+            f"<td class='axis-pair' data-sort='{record['values']['n_h']:.6f}'>"
+            f"{n_pair}</td>",
+            f"<td data-sort='{html.escape(trait)}'>{html.escape(trait)}</td>",
         )) + "</tr>")
-    range_rows = []
-    for name in VARIABLES:
-        lower, upper = search["bounds"][name]
-        retained = [record["values"][name] for record in records]
-        actual = f"{min(retained):g}–{max(retained):g}" if retained else "—"
-        range_rows.append(
-            f"<tr><td>{html.escape(VARIABLE_LABELS[name].title())}</td>"
-            f"<td>{lower:g}–{upper:g}</td><td>{seed[name]:g}</td><td>{actual}</td></tr>")
-    effects = learned_lever_effects(search, records)
-    effect_rows = []
-    for name in VARIABLES:
-        values = effects.get(name)
-        if not values:
-            continue
-        effect_rows.append(
-            f"<tr><td>{html.escape(VARIABLE_LABELS[name].title())}</td>" +
-            "".join(f"<td>{values[key]:+.1f}</td>" for key in OBJECTIVES) +
-            "</tr>")
-    objective_headers = "".join(f"<th>{label}</th>" for label in OBJECTIVE_LABELS)
-    effects_section = ("<section><h2>Learned lever effects</h2><p>Estimated diagnostic-point change for a +10% step across each configured parameter range. These are local evidence from this search, not universal design rules.</p><table><tr><th>Lever</th>" + objective_headers + "</tr>" +
-                       "".join(effect_rows) + "</table></section>" if effect_rows else
-                       "<section><h2>Learned lever effects</h2><p>Waiting for the seed and initial coupled candidates to complete.</p></section>")
+    objective_headers = "".join(
+        f"<th class='sortable' data-sort='number'>{label}</th>"
+        for label in OBJECTIVE_LABELS)
     refresh = "<meta http-equiv='refresh' content='10'>" if state["status"] == "running" else ""
-    finalist_link = (f"<p><a href='{html.escape(state['finalist_comparison'])}'>"
-                     "Open finalist comparison</a></p>"
-                     if state.get("finalist_comparison") else "")
     document = f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}
 <title>BEM candidate search</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
-*{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}main{{max-width:1400px;margin:auto;padding:20px}}
-a{{color:var(--accent-strong)}}section{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}table{{border-collapse:collapse;width:100%}}
-th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left}}td{{white-space:nowrap}}th{{background:var(--panel-2)}}td.best{{background:#173c39;color:#9af0df;font-weight:700}}td.worst{{background:#482321;color:#ffaaa3;font-weight:700}}.summary{{display:flex;gap:30px;flex-wrap:wrap}}.summary p{{color:var(--muted)}}.summary strong{{color:var(--ink)}}
+*{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}main{{width:100%;padding:20px}}
+a{{color:var(--accent-strong)}}section{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}table{{border-collapse:collapse;width:100%;min-width:max-content}}
+th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}th{{background:var(--panel-2);white-space:nowrap}}td.best{{background:#173c39;color:#9af0df;font-weight:700}}td.worst{{background:#482321;color:#ffaaa3;font-weight:700}}.summary{{display:flex;gap:30px;flex-wrap:wrap}}.summary p{{color:var(--muted)}}.summary strong{{color:var(--ink)}}
+.axis-pair{{white-space:normal}}.sortable{{cursor:pointer;user-select:none}}
 </style></head><body><main><h1>BEM candidate search</h1><section class='summary'>
 <p><strong>Status</strong><br>{html.escape(state['status'])}</p><p><strong>Phase</strong><br>{html.escape(state.get('phase', ''))}</p>
-<p><strong>Progress</strong><br>{sum(r['status']=='complete' for r in records)} / {state['max_evaluations']} evaluated</p>
+<p><strong>Progress</strong><br>{sum(r['status']=='complete' for r in records)}&nbsp;/<wbr> {state['max_evaluations']} evaluated</p>
 <p><strong>Rejected proposals</strong><br>{state.get('rejected_count', 0)}</p>
 <p><strong>Confidently inferior</strong><br>{state.get('surrogate_screened_count', 0)}</p>
 <p><strong>Sweep band</strong><br>{lower_frequency:g}–{upper_frequency:g} Hz</p>
 <p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
 <p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Each completed run is compared with a factor-two decimation and excluded from surrogate training when any headline diagnostic moves by more than {search.get('sampling_stability_points', DEFAULT_SAMPLING_STABILITY_POINTS):g} points. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
-{finalist_link}
-<section><h2>Search range</h2><table><tr><th>Parameter</th><th>Configured range</th><th>Seed</th><th>Retained candidates</th></tr>
-{''.join(range_rows)}</table><p><strong>Realized S range (both axes):</strong> {search['derived_s_bounds'][0]:g}–{search['derived_s_bounds'][1]:g}. <strong>Coverage-stage extension:</strong> fixed at the seed value; N is varied explicitly in matched length families.</p></section>
-{effects_section}
-<section><h2>Candidates</h2><table><tr><th>Candidate</th><th>Status</th>{objective_headers}<th>Impedance (information only)</th><th>Length mm</th><th>Extension mm</th><th>OS-SE H/V</th><th>K H/V</th><th>S H/V</th><th>N H/V</th><th>Curvature radius H/V mm</th><th>Distinguishing trait</th></tr>{''.join(rows)}</table></section>
-<section><p>100% is best for all acoustic diagnostics. Combined H/V scores are weighted in proportion to mouth width and height. The sweep band controls solved frequencies; the fixed diagnostic band starts at crossover and ends at the upper operating frequency. Throat impedance is recorded but does not affect feasibility, Pareto selection, surrogate acquisition, or sampling stability during coverage search. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
-</main></body></html>"""
+<section><h2>Candidates</h2><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th>{objective_headers}<th class='sortable' data-sort='number'>Length mm</th><th class='sortable' data-sort='number'>Extension mm</th><th class='sortable' data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-sort='text'>Distinguishing trait</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
+<section><p>100% is best for all acoustic diagnostics. Combined H/V scores are weighted in proportion to mouth width and height. The sweep band controls solved frequencies; the fixed diagnostic band starts at crossover and ends at the upper operating frequency. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. After the initial coupled-geometry round, proposals modeled as worse than the seed on all objectives with probability at least {100 * state['search'].get('inferior_screen_probability', DEFAULT_INFERIOR_PROBABILITY):g}% are also screened without retaining individual data.</p></section>
+<script>
+document.querySelectorAll('table.sortable-table').forEach((table) => {{
+  const headers = Array.from(table.querySelectorAll('th[data-sort]'));
+  let active = -1;
+  let direction = 'desc';
+  headers.forEach((header, index) => header.addEventListener('click', () => {{
+    direction = active === index && direction === 'desc' ? 'asc' : 'desc';
+    active = index;
+    const multiplier = direction === 'asc' ? 1 : -1;
+    const type = header.dataset.sort;
+    const rows = Array.from(table.tBodies[0].rows);
+    rows.sort((left, right) => {{
+      const a = left.cells[index]?.dataset.sort ?? left.cells[index]?.textContent ?? '';
+      const b = right.cells[index]?.dataset.sort ?? right.cells[index]?.textContent ?? '';
+      if (type === 'number') {{
+        const an = Number(a), bn = Number(b);
+        return ((Number.isFinite(an) ? an : -Infinity) - (Number.isFinite(bn) ? bn : -Infinity)) * multiplier;
+      }}
+      return String(a).localeCompare(String(b), undefined, {{numeric:true, sensitivity:'base'}}) * multiplier;
+    }});
+    table.tBodies[0].replaceChildren(...rows);
+    headers.forEach((item, itemIndex) => item.setAttribute('aria-sort', itemIndex === index ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'));
+  }}));
+}});
+</script></main></body></html>"""
     path = output_dir / "search_report.html"
     temporary = path.with_suffix(".html.tmp")
     temporary.write_text(document, encoding="utf-8")
@@ -758,27 +822,12 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left}}td{
 
 def save_state(output_dir: Path, state: dict[str, Any]) -> None:
     # Report generation refreshes the Pareto flags; persist that same snapshot.
+    state.pop("finalist_comparison", None)
     write_report(output_dir, state)
     state_path = output_dir / "search_state.json"
     temporary = state_path.with_suffix(".json.tmp")
     temporary.write_text(json.dumps(state, indent=2, sort_keys=True) + "\n")
     temporary.replace(state_path)
-
-
-def write_finalist_comparison(output_dir: Path, state: dict[str, Any],
-                              fixed_grid: np.ndarray) -> Path | None:
-    pareto = pareto_indices(state["candidates"])
-    finalists = [state["candidates"][index] for index in sorted(pareto)]
-    finalists.sort(key=lambda record: float(np.sum(_objective_values(record))),
-                   reverse=True)
-    finalists = finalists[:4]
-    if len(finalists) < 2:
-        return None
-    run_dirs = [output_dir / record["run_dir"] for record in finalists]
-    return comparison_report(
-        run_dirs, output_dir / "finalist_comparison.html",
-        [record["id"] for record in finalists], "BEM search finalists",
-        evaluation_frequencies=fixed_grid, fixed_band=True)
 
 
 def _isolated_sweep(result_queue: Any, project_path: Path, executable: Path,
@@ -842,13 +891,15 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
         manifest = isolated_sweep(candidate_dir / "project.yaml", executable,
                                   candidate_dir / "bem", frequencies, solver)
         run_dir = Path(manifest["run_dir"])
-        generate_review(run_dir, title=f"BEM search {record['id']}")
-        run = load_run(run_dir, record["id"])
+        artifact_stem = record["artifact_stem"]
+        title = f"BEM {artifact_stem}"
+        generate_review(run_dir, title=title, write_report=False)
+        run = load_run(run_dir, artifact_stem)
         diagnostics = coverage_diagnostics(run, fixed_grid, fixed_band=True)
-        single_report(run_dir, run_dir / "interactive_report.html",
-                      title=f"BEM search {record['id']}",
+        report_path = candidate_dir / "bem" / f"{artifact_stem}_Report.html"
+        single_report(run_dir, report_path, title=title,
                       evaluation_frequencies=fixed_grid, fixed_band=True,
-                      name=record["id"])
+                      name=artifact_stem)
         stability = sampling_stability(
             run, fixed_grid, search["crossover_hz"],
             search.get("sampling_stability_points", DEFAULT_SAMPLING_STABILITY_POINTS))
@@ -856,6 +907,7 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
             run, search["crossover_hz"])
         record.update(
             status="complete", run_dir=str(run_dir.relative_to(output_dir)),
+            report_file=str(report_path.relative_to(output_dir)),
             diagnostics=diagnostics,
             sampling_stability=stability,
             crossover_loading_percent=loading_percent,
@@ -971,7 +1023,10 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                                                    search["crossover_hz"]) * 48)) + 1)
     for record in state["candidates"]:
         candidate_dir = output_dir / "candidates" / record["id"]
-        stl = export_candidate_stl(candidate_dir / "project.yaml", candidate_dir)
+        project_path = candidate_dir / "project.yaml"
+        record["artifact_stem"] = candidate_artifact_stem(_read_yaml(project_path))
+        stl = export_candidate_stl(project_path, candidate_dir,
+                                   record["artifact_stem"])
         record["stl_file"] = stl.name
     if dry_run and state["proposal_count"] >= search["initial_candidates"] + 1:
         state.update(status="preflight", phase="initial candidates materialized")
@@ -1018,6 +1073,7 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                       "proposal_index": proposal_index,
                       "proposal_source": source, "values": values,
                       "derived": derived,
+                      "artifact_stem": candidate_artifact_stem(document),
                       "nearest_candidate_distance": distance}
             if source == "initial-curated":
                 record["experiment_label"] = search["initial_pool"][
@@ -1028,7 +1084,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             project_path = candidate_dir / "project.yaml"
             project_path.write_text(
                 yaml.safe_dump(document, sort_keys=False), encoding="utf-8")
-            stl = export_candidate_stl(project_path, candidate_dir)
+            stl = export_candidate_stl(project_path, candidate_dir,
+                                       record["artifact_stem"])
             record["stl_file"] = stl.name
         if dry_run:
             record.update(status="preflight")
@@ -1050,9 +1107,6 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
     elif complete >= search["max_evaluations"]:
         state.update(status="complete", phase="candidate evaluation complete",
                      completed_at_unix=time.time())
-        comparison = write_finalist_comparison(output_dir, state, fixed_grid)
-        if comparison is not None:
-            state["finalist_comparison"] = str(comparison.relative_to(output_dir))
     else:
         state.update(status="stopped", phase="proposal limit reached")
     save_state(output_dir, state)

@@ -43,10 +43,13 @@ python app/tools/run_bem_search.py path/to/my-horn-BEM-search.YAML \
   --output-dir path/to/my-horn-search
 ```
 
-Open `search_report.html` in that output directory. Running the same command
-again resumes interrupted candidates and completed NumCalc frequencies. Use
-`--dry-run` first to materialize and geometry-check the initial candidate set
-without running BEM.
+Open `search_report.html` in that output directory. Candidate STL and report
+names encode mouth width, mouth height, length, optional extension, coverage,
+K, and N. Public reports are written directly in each candidate's `bem/`
+folder; NumCalc's hashed working directory remains an internal resumable solver
+detail. Running the same command again resumes interrupted candidates and
+completed NumCalc frequencies. Use `--dry-run` first to materialize and
+geometry-check the initial candidate set without running BEM.
 
 Open `interactive_report.html` in the output directory. The standard report has
 cursor readout, H/V coverage heatmaps with explicit −6 dB contour lines and

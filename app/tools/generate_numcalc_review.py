@@ -59,7 +59,8 @@ def _throat_impedance(case_root: Path) -> complex:
     return np.conj(average_pressure / volume_velocity)
 
 
-def generate_review(run_dir: Path, title: str = "All-BEM free-air exterior") -> Path:
+def generate_review(run_dir: Path, title: str = "All-BEM free-air exterior",
+                    *, write_report: bool = True) -> Path:
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text())
     if manifest.get("status") != "complete":
@@ -114,7 +115,8 @@ def generate_review(run_dir: Path, title: str = "All-BEM free-air exterior") -> 
         writer.writeheader()
         writer.writerows(rows)
 
-    single_report(run_dir, run_dir / "interactive_report.html", title)
+    if write_report:
+        single_report(run_dir, run_dir / "interactive_report.html", title)
     return run_dir
 
 

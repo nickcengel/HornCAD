@@ -1,6 +1,7 @@
 {
   "candidates": [
     {
+      "artifact_stem": "400x400x160_45_K3_N5",
       "crossover_loading_percent": 47.69540373041952,
       "crossover_minimum_normalized_impedance": 0.3338678261129366,
       "derived": {
@@ -181,6 +182,7 @@
       "pareto": false,
       "proposal_index": 0,
       "proposal_source": "seed",
+      "report_file": "candidates/candidate-000/bem/400x400x160_45_K3_N5_Report.html",
       "run_dir": "candidates/candidate-000/bem/project-NumCalc-66783f8ad6a8",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -195,7 +197,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K3_N5_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 3.0,
@@ -208,6 +210,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K1_N2",
       "crossover_loading_percent": 35.8925037735803,
       "crossover_minimum_normalized_impedance": 0.2512475264150621,
       "derived": {
@@ -389,6 +392,7 @@
       "pareto": false,
       "proposal_index": 1,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-001/bem/400x400x160_45_K1_N2_Report.html",
       "run_dir": "candidates/candidate-001/bem/project-NumCalc-b2bd0b8b9c34",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -403,7 +407,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K1_N2_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 1.0,
@@ -416,6 +420,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K1_N3",
       "crossover_loading_percent": 36.11470739877036,
       "crossover_minimum_normalized_impedance": 0.25280295179139256,
       "derived": {
@@ -597,6 +602,7 @@
       "pareto": false,
       "proposal_index": 2,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-002/bem/400x400x160_45_K1_N3_Report.html",
       "run_dir": "candidates/candidate-002/bem/project-NumCalc-ccf8ea8765c4",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -611,7 +617,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K1_N3_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 1.0,
@@ -624,6 +630,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K1_N4",
       "crossover_loading_percent": 36.14437566611398,
       "crossover_minimum_normalized_impedance": 0.25301062966279786,
       "derived": {
@@ -805,6 +812,7 @@
       "pareto": false,
       "proposal_index": 3,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-003/bem/400x400x160_45_K1_N4_Report.html",
       "run_dir": "candidates/candidate-003/bem/project-NumCalc-02ef6a23051a",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -819,7 +827,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K1_N4_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 1.0,
@@ -832,6 +840,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K1_N5",
       "crossover_loading_percent": 36.12943632720687,
       "crossover_minimum_normalized_impedance": 0.25290605429044805,
       "derived": {
@@ -1013,6 +1022,7 @@
       "pareto": false,
       "proposal_index": 4,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-004/bem/400x400x160_45_K1_N5_Report.html",
       "run_dir": "candidates/candidate-004/bem/project-NumCalc-d5a25c09a7e0",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -1027,7 +1037,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K1_N5_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 1.0,
@@ -1040,6 +1050,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K1_N6",
       "crossover_loading_percent": 36.10587991270758,
       "crossover_minimum_normalized_impedance": 0.25274115938895303,
       "derived": {
@@ -1221,6 +1232,7 @@
       "pareto": false,
       "proposal_index": 5,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-005/bem/400x400x160_45_K1_N6_Report.html",
       "run_dir": "candidates/candidate-005/bem/project-NumCalc-37eff002de96",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -1235,7 +1247,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K1_N6_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 1.0,
@@ -1248,6 +1260,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K1_N7",
       "crossover_loading_percent": 36.097720001901905,
       "crossover_minimum_normalized_impedance": 0.25268404001331335,
       "derived": {
@@ -1429,6 +1442,7 @@
       "pareto": false,
       "proposal_index": 6,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-006/bem/400x400x160_45_K1_N7_Report.html",
       "run_dir": "candidates/candidate-006/bem/project-NumCalc-3482e195efe7",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -1443,7 +1457,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K1_N7_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 1.0,
@@ -1456,6 +1470,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K1_N8",
       "crossover_loading_percent": 36.09610275074302,
       "crossover_minimum_normalized_impedance": 0.25267271925520113,
       "derived": {
@@ -1637,6 +1652,7 @@
       "pareto": false,
       "proposal_index": 7,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-007/bem/400x400x160_45_K1_N8_Report.html",
       "run_dir": "candidates/candidate-007/bem/project-NumCalc-72501d0e8abe",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -1651,7 +1667,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K1_N8_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 1.0,
@@ -1664,6 +1680,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K1_N9",
       "crossover_loading_percent": 36.05382332541266,
       "crossover_minimum_normalized_impedance": 0.2523767632778886,
       "derived": {
@@ -1845,6 +1862,7 @@
       "pareto": false,
       "proposal_index": 8,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-008/bem/400x400x160_45_K1_N9_Report.html",
       "run_dir": "candidates/candidate-008/bem/project-NumCalc-b025e60b023d",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -1859,7 +1877,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K1_N9_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 1.0,
@@ -1872,6 +1890,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K1_N10",
       "crossover_loading_percent": 36.04599970443765,
       "crossover_minimum_normalized_impedance": 0.2523219979310635,
       "derived": {
@@ -2053,6 +2072,7 @@
       "pareto": false,
       "proposal_index": 9,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-009/bem/400x400x160_45_K1_N10_Report.html",
       "run_dir": "candidates/candidate-009/bem/project-NumCalc-c2c096a0f8d1",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -2067,7 +2087,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K1_N10_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 1.0,
@@ -2080,6 +2100,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K2_N2",
       "crossover_loading_percent": 41.661239850268004,
       "crossover_minimum_normalized_impedance": 0.291628678951876,
       "derived": {
@@ -2261,6 +2282,7 @@
       "pareto": false,
       "proposal_index": 10,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-010/bem/400x400x160_45_K2_N2_Report.html",
       "run_dir": "candidates/candidate-010/bem/project-NumCalc-bddc86068c39",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -2275,7 +2297,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K2_N2_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 2.0,
@@ -2288,6 +2310,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K2_N3",
       "crossover_loading_percent": 42.408970305200256,
       "crossover_minimum_normalized_impedance": 0.29686279213640177,
       "derived": {
@@ -2469,6 +2492,7 @@
       "pareto": false,
       "proposal_index": 11,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-011/bem/400x400x160_45_K2_N3_Report.html",
       "run_dir": "candidates/candidate-011/bem/project-NumCalc-10791c051084",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -2483,7 +2507,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K2_N3_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 2.0,
@@ -2496,6 +2520,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K2_N4",
       "crossover_loading_percent": 42.51952674193178,
       "crossover_minimum_normalized_impedance": 0.29763668719352243,
       "derived": {
@@ -2677,6 +2702,7 @@
       "pareto": false,
       "proposal_index": 12,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-012/bem/400x400x160_45_K2_N4_Report.html",
       "run_dir": "candidates/candidate-012/bem/project-NumCalc-4665bc8a88d9",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -2691,7 +2717,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K2_N4_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 2.0,
@@ -2704,6 +2730,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K2_N5",
       "crossover_loading_percent": 42.516790184290535,
       "crossover_minimum_normalized_impedance": 0.2976175312900337,
       "derived": {
@@ -2885,6 +2912,7 @@
       "pareto": false,
       "proposal_index": 13,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-013/bem/400x400x160_45_K2_N5_Report.html",
       "run_dir": "candidates/candidate-013/bem/project-NumCalc-1ce490537282",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -2899,7 +2927,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K2_N5_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 2.0,
@@ -2912,6 +2940,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K2_N6",
       "crossover_loading_percent": 42.49013286556114,
       "crossover_minimum_normalized_impedance": 0.29743093005892796,
       "derived": {
@@ -3093,6 +3122,7 @@
       "pareto": false,
       "proposal_index": 14,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-014/bem/400x400x160_45_K2_N6_Report.html",
       "run_dir": "candidates/candidate-014/bem/project-NumCalc-9c2b9d81b31a",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -3107,7 +3137,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K2_N6_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 2.0,
@@ -3120,6 +3150,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K2_N7",
       "crossover_loading_percent": 42.46130281100614,
       "crossover_minimum_normalized_impedance": 0.29722911967704296,
       "derived": {
@@ -3301,6 +3332,7 @@
       "pareto": false,
       "proposal_index": 15,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-015/bem/400x400x160_45_K2_N7_Report.html",
       "run_dir": "candidates/candidate-015/bem/project-NumCalc-d0364e1ce25d",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -3315,7 +3347,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K2_N7_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 2.0,
@@ -3328,6 +3360,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K2_N8",
       "crossover_loading_percent": 42.43065370485848,
       "crossover_minimum_normalized_impedance": 0.2970145759340093,
       "derived": {
@@ -3509,6 +3542,7 @@
       "pareto": false,
       "proposal_index": 16,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-016/bem/400x400x160_45_K2_N8_Report.html",
       "run_dir": "candidates/candidate-016/bem/project-NumCalc-ddf53415d283",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -3523,7 +3557,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K2_N8_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 2.0,
@@ -3536,6 +3570,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K2_N9",
       "crossover_loading_percent": 42.40901071411019,
       "crossover_minimum_normalized_impedance": 0.2968630749987713,
       "derived": {
@@ -3717,6 +3752,7 @@
       "pareto": false,
       "proposal_index": 17,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-017/bem/400x400x160_45_K2_N9_Report.html",
       "run_dir": "candidates/candidate-017/bem/project-NumCalc-863051d74e63",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -3731,7 +3767,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K2_N9_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 2.0,
@@ -3744,6 +3780,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K2_N10",
       "crossover_loading_percent": 42.37577447163435,
       "crossover_minimum_normalized_impedance": 0.29663042130144046,
       "derived": {
@@ -3925,6 +3962,7 @@
       "pareto": false,
       "proposal_index": 18,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-018/bem/400x400x160_45_K2_N10_Report.html",
       "run_dir": "candidates/candidate-018/bem/project-NumCalc-6dfa24244ea6",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -3939,7 +3977,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K2_N10_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 2.0,
@@ -3952,6 +3990,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K3_N2",
       "crossover_loading_percent": 46.04196833715463,
       "crossover_minimum_normalized_impedance": 0.3222937783600824,
       "derived": {
@@ -4133,6 +4172,7 @@
       "pareto": false,
       "proposal_index": 19,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-019/bem/400x400x160_45_K3_N2_Report.html",
       "run_dir": "candidates/candidate-019/bem/project-NumCalc-f7f31a32329a",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -4147,7 +4187,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K3_N2_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 3.0,
@@ -4160,6 +4200,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K3_N3",
       "crossover_loading_percent": 47.31193597004711,
       "crossover_minimum_normalized_impedance": 0.33118355179032977,
       "derived": {
@@ -4341,6 +4382,7 @@
       "pareto": false,
       "proposal_index": 20,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-020/bem/400x400x160_45_K3_N3_Report.html",
       "run_dir": "candidates/candidate-020/bem/project-NumCalc-e484a904f54c",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -4355,7 +4397,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K3_N3_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 3.0,
@@ -4368,6 +4410,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K3_N4",
       "crossover_loading_percent": 47.72842832366641,
       "crossover_minimum_normalized_impedance": 0.3340989982656648,
       "derived": {
@@ -4549,6 +4592,7 @@
       "pareto": false,
       "proposal_index": 21,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-021/bem/400x400x160_45_K3_N4_Report.html",
       "run_dir": "candidates/candidate-021/bem/project-NumCalc-441278b79648",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -4563,7 +4607,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K3_N4_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 3.0,
@@ -4576,6 +4620,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K3_N6",
       "crossover_loading_percent": 47.6756414612556,
       "crossover_minimum_normalized_impedance": 0.3337294902287892,
       "derived": {
@@ -4757,6 +4802,7 @@
       "pareto": false,
       "proposal_index": 22,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-022/bem/400x400x160_45_K3_N6_Report.html",
       "run_dir": "candidates/candidate-022/bem/project-NumCalc-6be5665e34b8",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -4771,7 +4817,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K3_N6_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 3.0,
@@ -4784,6 +4830,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K3_N7",
       "crossover_loading_percent": 47.66541422280922,
       "crossover_minimum_normalized_impedance": 0.3336578995596645,
       "derived": {
@@ -4965,6 +5012,7 @@
       "pareto": false,
       "proposal_index": 23,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-023/bem/400x400x160_45_K3_N7_Report.html",
       "run_dir": "candidates/candidate-023/bem/project-NumCalc-81a847947654",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -4979,7 +5027,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K3_N7_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 3.0,
@@ -4992,6 +5040,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K3_N8",
       "crossover_loading_percent": 47.62271189166354,
       "crossover_minimum_normalized_impedance": 0.33335898324164476,
       "derived": {
@@ -5173,6 +5222,7 @@
       "pareto": false,
       "proposal_index": 24,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-024/bem/400x400x160_45_K3_N8_Report.html",
       "run_dir": "candidates/candidate-024/bem/project-NumCalc-e5f3dae4d8fc",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -5187,7 +5237,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K3_N8_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 3.0,
@@ -5200,6 +5250,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K3_N9",
       "crossover_loading_percent": 47.635376354422334,
       "crossover_minimum_normalized_impedance": 0.3334476344809563,
       "derived": {
@@ -5381,6 +5432,7 @@
       "pareto": false,
       "proposal_index": 25,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-025/bem/400x400x160_45_K3_N9_Report.html",
       "run_dir": "candidates/candidate-025/bem/project-NumCalc-b7a59d1dc1da",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -5395,7 +5447,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K3_N9_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 3.0,
@@ -5408,6 +5460,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K3_N10",
       "crossover_loading_percent": 47.58039426401481,
       "crossover_minimum_normalized_impedance": 0.33306275984810363,
       "derived": {
@@ -5589,6 +5642,7 @@
       "pareto": false,
       "proposal_index": 26,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-026/bem/400x400x160_45_K3_N10_Report.html",
       "run_dir": "candidates/candidate-026/bem/project-NumCalc-ceae9a0ab6a9",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -5603,7 +5657,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K3_N10_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 3.0,
@@ -5616,6 +5670,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N2",
       "crossover_loading_percent": 49.425185892781336,
       "crossover_minimum_normalized_impedance": 0.3459763012494693,
       "derived": {
@@ -5797,6 +5852,7 @@
       "pareto": false,
       "proposal_index": 27,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-027/bem/400x400x160_45_K4_N2_Report.html",
       "run_dir": "candidates/candidate-027/bem/project-NumCalc-41535a3078b3",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -5811,7 +5867,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N2_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -5824,6 +5880,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N3",
       "crossover_loading_percent": 51.76204659399651,
       "crossover_minimum_normalized_impedance": 0.36233432615797556,
       "derived": {
@@ -6005,6 +6062,7 @@
       "pareto": false,
       "proposal_index": 28,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-028/bem/400x400x160_45_K4_N3_Report.html",
       "run_dir": "candidates/candidate-028/bem/project-NumCalc-34d339a94923",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -6019,7 +6077,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N3_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -6032,6 +6090,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N4",
       "crossover_loading_percent": 52.271504080749565,
       "crossover_minimum_normalized_impedance": 0.3659005285652469,
       "derived": {
@@ -6213,6 +6272,7 @@
       "pareto": false,
       "proposal_index": 29,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-029/bem/400x400x160_45_K4_N4_Report.html",
       "run_dir": "candidates/candidate-029/bem/project-NumCalc-066e602247d8",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -6227,7 +6287,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N4_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -6240,6 +6300,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N5",
       "crossover_loading_percent": 52.41914634413932,
       "crossover_minimum_normalized_impedance": 0.3669340244089752,
       "derived": {
@@ -6421,6 +6482,7 @@
       "pareto": false,
       "proposal_index": 30,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-030/bem/400x400x160_45_K4_N5_Report.html",
       "run_dir": "candidates/candidate-030/bem/project-NumCalc-58a07e8507a1",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -6435,7 +6497,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N5_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -6448,6 +6510,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N6",
       "crossover_loading_percent": 52.54601659366796,
       "crossover_minimum_normalized_impedance": 0.36782211615567567,
       "derived": {
@@ -6629,6 +6692,7 @@
       "pareto": false,
       "proposal_index": 31,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-031/bem/400x400x160_45_K4_N6_Report.html",
       "run_dir": "candidates/candidate-031/bem/project-NumCalc-382a3ba0bc24",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -6643,7 +6707,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N6_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -6656,6 +6720,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N7",
       "crossover_loading_percent": 52.53512608104728,
       "crossover_minimum_normalized_impedance": 0.367745882567331,
       "derived": {
@@ -6837,6 +6902,7 @@
       "pareto": false,
       "proposal_index": 32,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-032/bem/400x400x160_45_K4_N7_Report.html",
       "run_dir": "candidates/candidate-032/bem/project-NumCalc-c65a5b697312",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -6851,7 +6917,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N7_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -6864,6 +6930,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N8",
       "crossover_loading_percent": 52.51511533152444,
       "crossover_minimum_normalized_impedance": 0.36760580732067105,
       "derived": {
@@ -7045,6 +7112,7 @@
       "pareto": false,
       "proposal_index": 33,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-033/bem/400x400x160_45_K4_N8_Report.html",
       "run_dir": "candidates/candidate-033/bem/project-NumCalc-6634f04d272b",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -7059,7 +7127,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N8_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -7072,6 +7140,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N9",
       "crossover_loading_percent": 52.48685919544925,
       "crossover_minimum_normalized_impedance": 0.3674080143681447,
       "derived": {
@@ -7253,6 +7322,7 @@
       "pareto": false,
       "proposal_index": 34,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-034/bem/400x400x160_45_K4_N9_Report.html",
       "run_dir": "candidates/candidate-034/bem/project-NumCalc-a232a144e256",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -7267,7 +7337,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N9_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -7280,6 +7350,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N10",
       "crossover_loading_percent": 52.44870237674841,
       "crossover_minimum_normalized_impedance": 0.36714091663723886,
       "derived": {
@@ -7461,6 +7532,7 @@
       "pareto": false,
       "proposal_index": 35,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-035/bem/400x400x160_45_K4_N10_Report.html",
       "run_dir": "candidates/candidate-035/bem/project-NumCalc-e714448f6e86",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -7475,7 +7547,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N10_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -7488,6 +7560,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N2",
       "crossover_loading_percent": 52.33187323550427,
       "crossover_minimum_normalized_impedance": 0.36632311264852985,
       "derived": {
@@ -7669,6 +7742,7 @@
       "pareto": false,
       "proposal_index": 36,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-036/bem/400x400x160_45_K5_N2_Report.html",
       "run_dir": "candidates/candidate-036/bem/project-NumCalc-fa0fd09c6a53",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -7683,7 +7757,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N2_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -7696,6 +7770,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N3",
       "crossover_loading_percent": 55.57506366889391,
       "crossover_minimum_normalized_impedance": 0.3890254456822574,
       "derived": {
@@ -7877,6 +7952,7 @@
       "pareto": false,
       "proposal_index": 37,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-037/bem/400x400x160_45_K5_N3_Report.html",
       "run_dir": "candidates/candidate-037/bem/project-NumCalc-4cb511e518f0",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -7891,7 +7967,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N3_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -7904,6 +7980,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N4",
       "crossover_loading_percent": 56.38299858222014,
       "crossover_minimum_normalized_impedance": 0.39468099007554097,
       "derived": {
@@ -8085,6 +8162,7 @@
       "pareto": false,
       "proposal_index": 38,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-038/bem/400x400x160_45_K5_N4_Report.html",
       "run_dir": "candidates/candidate-038/bem/project-NumCalc-ad063843d0f7",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -8099,7 +8177,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N4_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -8112,6 +8190,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N5",
       "crossover_loading_percent": 56.77431141752081,
       "crossover_minimum_normalized_impedance": 0.3974201799226456,
       "derived": {
@@ -8293,6 +8372,7 @@
       "pareto": true,
       "proposal_index": 39,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-039/bem/400x400x160_45_K5_N5_Report.html",
       "run_dir": "candidates/candidate-039/bem/project-NumCalc-ed69dabd35fd",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -8307,7 +8387,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N5_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -8320,6 +8400,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N6",
       "crossover_loading_percent": 56.88678769861392,
       "crossover_minimum_normalized_impedance": 0.39820751389029746,
       "derived": {
@@ -8501,6 +8582,7 @@
       "pareto": false,
       "proposal_index": 40,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-040/bem/400x400x160_45_K5_N6_Report.html",
       "run_dir": "candidates/candidate-040/bem/project-NumCalc-580e7fb19684",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -8515,7 +8597,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N6_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -8528,6 +8610,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N7",
       "crossover_loading_percent": 56.923132460121664,
       "crossover_minimum_normalized_impedance": 0.39846192722085166,
       "derived": {
@@ -8709,6 +8792,7 @@
       "pareto": false,
       "proposal_index": 41,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-041/bem/400x400x160_45_K5_N7_Report.html",
       "run_dir": "candidates/candidate-041/bem/project-NumCalc-b3bc3db16b8d",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -8723,7 +8807,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N7_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -8736,6 +8820,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N8",
       "crossover_loading_percent": 56.96537251309556,
       "crossover_minimum_normalized_impedance": 0.3987576075916689,
       "derived": {
@@ -8917,6 +9002,7 @@
       "pareto": false,
       "proposal_index": 42,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-042/bem/400x400x160_45_K5_N8_Report.html",
       "run_dir": "candidates/candidate-042/bem/project-NumCalc-1f5f6e06fb68",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -8931,7 +9017,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N8_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -8944,6 +9030,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N9",
       "crossover_loading_percent": 56.89845998786077,
       "crossover_minimum_normalized_impedance": 0.39828921991502536,
       "derived": {
@@ -9125,6 +9212,7 @@
       "pareto": false,
       "proposal_index": 43,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-043/bem/400x400x160_45_K5_N9_Report.html",
       "run_dir": "candidates/candidate-043/bem/project-NumCalc-b588122718f7",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -9139,7 +9227,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N9_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -9152,6 +9240,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N10",
       "crossover_loading_percent": 56.88724132581706,
       "crossover_minimum_normalized_impedance": 0.3982106892807194,
       "derived": {
@@ -9333,6 +9422,7 @@
       "pareto": false,
       "proposal_index": 44,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-044/bem/400x400x160_45_K5_N10_Report.html",
       "run_dir": "candidates/candidate-044/bem/project-NumCalc-ef74df8d8566",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -9347,7 +9437,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N10_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -9360,6 +9450,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N15",
       "crossover_loading_percent": 52.30114199539611,
       "crossover_minimum_normalized_impedance": 0.3661079939677727,
       "derived": {
@@ -9541,6 +9632,7 @@
       "pareto": false,
       "proposal_index": 45,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-045/bem/400x400x160_45_K4_N15_Report.html",
       "run_dir": "candidates/candidate-045/bem/project-NumCalc-63ea6710b9d3",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -9555,7 +9647,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N15_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -9568,6 +9660,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N20",
       "crossover_loading_percent": 52.16568787354572,
       "crossover_minimum_normalized_impedance": 0.36515981511482004,
       "derived": {
@@ -9749,6 +9842,7 @@
       "pareto": false,
       "proposal_index": 46,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-046/bem/400x400x160_45_K4_N20_Report.html",
       "run_dir": "candidates/candidate-046/bem/project-NumCalc-77a8473612c1",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -9763,7 +9857,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N20_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -9776,6 +9870,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4_N25",
       "crossover_loading_percent": 52.10821822205148,
       "crossover_minimum_normalized_impedance": 0.3647575275543603,
       "derived": {
@@ -9957,6 +10052,7 @@
       "pareto": false,
       "proposal_index": 47,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-047/bem/400x400x160_45_K4_N25_Report.html",
       "run_dir": "candidates/candidate-047/bem/project-NumCalc-a2caec354853",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -9971,7 +10067,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4_N25_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.0,
@@ -9984,6 +10080,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4.5_N6",
       "crossover_loading_percent": 54.72225477157988,
       "crossover_minimum_normalized_impedance": 0.3830557834010591,
       "derived": {
@@ -10165,6 +10262,7 @@
       "pareto": false,
       "proposal_index": 48,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-048/bem/400x400x160_45_K4.5_N6_Report.html",
       "run_dir": "candidates/candidate-048/bem/project-NumCalc-8389cf2509c5",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -10179,7 +10277,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4.5_N6_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.5,
@@ -10192,6 +10290,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4.5_N10",
       "crossover_loading_percent": 54.71290831380372,
       "crossover_minimum_normalized_impedance": 0.3829903581966261,
       "derived": {
@@ -10373,6 +10472,7 @@
       "pareto": false,
       "proposal_index": 49,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-049/bem/400x400x160_45_K4.5_N10_Report.html",
       "run_dir": "candidates/candidate-049/bem/project-NumCalc-68d2ad03aecc",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -10387,7 +10487,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4.5_N10_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.5,
@@ -10400,6 +10500,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4.5_N15",
       "crossover_loading_percent": 54.59778937795664,
       "crossover_minimum_normalized_impedance": 0.38218452564569644,
       "derived": {
@@ -10581,6 +10682,7 @@
       "pareto": false,
       "proposal_index": 50,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-050/bem/400x400x160_45_K4.5_N15_Report.html",
       "run_dir": "candidates/candidate-050/bem/project-NumCalc-abde5461a2b0",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -10595,7 +10697,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4.5_N15_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.5,
@@ -10608,6 +10710,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4.5_N20",
       "crossover_loading_percent": 54.486781748775535,
       "crossover_minimum_normalized_impedance": 0.38140747224142874,
       "derived": {
@@ -10789,6 +10892,7 @@
       "pareto": false,
       "proposal_index": 51,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-051/bem/400x400x160_45_K4.5_N20_Report.html",
       "run_dir": "candidates/candidate-051/bem/project-NumCalc-e191f2fe6df6",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -10803,7 +10907,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4.5_N20_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.5,
@@ -10816,6 +10920,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K4.5_N25",
       "crossover_loading_percent": 54.39660140702116,
       "crossover_minimum_normalized_impedance": 0.3807762098491481,
       "derived": {
@@ -10997,6 +11102,7 @@
       "pareto": false,
       "proposal_index": 52,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-052/bem/400x400x160_45_K4.5_N25_Report.html",
       "run_dir": "candidates/candidate-052/bem/project-NumCalc-3d507af99ba9",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -11011,7 +11117,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K4.5_N25_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 4.5,
@@ -11024,6 +11130,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N15",
       "crossover_loading_percent": 56.79914388180685,
       "crossover_minimum_normalized_impedance": 0.3975940071726479,
       "derived": {
@@ -11205,6 +11312,7 @@
       "pareto": true,
       "proposal_index": 53,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-053/bem/400x400x160_45_K5_N15_Report.html",
       "run_dir": "candidates/candidate-053/bem/project-NumCalc-05bcedb65a06",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -11219,7 +11327,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N15_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -11232,6 +11340,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N20",
       "crossover_loading_percent": 56.72141028078811,
       "crossover_minimum_normalized_impedance": 0.3970498719655168,
       "derived": {
@@ -11413,6 +11522,7 @@
       "pareto": false,
       "proposal_index": 54,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-054/bem/400x400x160_45_K5_N20_Report.html",
       "run_dir": "candidates/candidate-054/bem/project-NumCalc-44cdf1136eb5",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -11427,7 +11537,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N20_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -11440,6 +11550,7 @@
       }
     },
     {
+      "artifact_stem": "400x400x160_45_K5_N25",
       "crossover_loading_percent": 56.58314506314335,
       "crossover_minimum_normalized_impedance": 0.39608201544200344,
       "derived": {
@@ -11621,6 +11732,7 @@
       "pareto": false,
       "proposal_index": 55,
       "proposal_source": "initial-curated",
+      "report_file": "candidates/candidate-055/bem/400x400x160_45_K5_N25_Report.html",
       "run_dir": "candidates/candidate-055/bem/project-NumCalc-4dd0e8625778",
       "sampling_stability": {
         "decimated_ppo_fraction": 0.5,
@@ -11635,7 +11747,7 @@
         "threshold_points": 2.0
       },
       "status": "complete",
-      "stl_file": "HornCAD-Surface-400x400x160.STL",
+      "stl_file": "400x400x160_45_K5_N25_Surface.STL",
       "values": {
         "extension_mm": 0.0,
         "k_h": 5.0,
@@ -11651,7 +11763,6 @@
   "completed_at_unix": 1784242235.286769,
   "configuration_hash": "b55505f96674658fc8f378050bfc50ee19c541d7ff787e2ba9ec7818a0d12723",
   "crossover_hz": 750.0,
-  "finalist_comparison": "finalist_comparison.html",
   "lower_frequency_hz": 500.0,
   "max_evaluations": 56,
   "phase": "candidate evaluation complete",

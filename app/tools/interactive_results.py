@@ -692,12 +692,15 @@ def _frequency_grid_values(frequencies: np.ndarray) -> tuple[list[float], list[f
 
 
 def _parameter_table(runs: list[dict[str, Any]]) -> str:
+    def cell(value: Any) -> str:
+        return html.escape(str(value)).replace(" / ", "&nbsp;/<wbr> ")
+
     keys = list(dict.fromkeys(key for run in runs for key in run["parameters"]))
     header = "<tr><th>Parameter</th>" + "".join(
         f"<th style='color:{COLORS[i]}'>{html.escape(run['name'])}</th>"
         for i, run in enumerate(runs)) + "</tr>"
-    rows = "".join("<tr><td>" + html.escape(key) + "</td>" + "".join(
-        f"<td>{html.escape(run['parameters'].get(key, '—'))}</td>" for run in runs)
+    rows = "".join("<tr><td>" + cell(key) + "</td>" + "".join(
+        f"<td>{cell(run['parameters'].get(key, '—'))}</td>" for run in runs)
         + "</tr>" for key in keys)
     return f"<table>{header}{rows}</table>"
 
@@ -746,7 +749,8 @@ def _diagnostic_tables(runs: list[dict[str, Any]],
         for name, key in DIAGNOSTIC_ROWS)
     return (f"<p class='diagnostic-band'><strong>Evaluated band:</strong> {band}. "
             f"<strong>Combined H/V weights:</strong> "
-            f"{100 * weights['horizontal']:.1f}% / {100 * weights['vertical']:.1f}% "
+            f"{100 * weights['horizontal']:.1f}%&nbsp;/<wbr> "
+            f"{100 * weights['vertical']:.1f}% "
             "from mouth width/height.</p>"
             f"<table><tr>{header}</tr>{rows}</table>")
 
@@ -768,14 +772,15 @@ def _write_html(path: Path, title: str, figure: go.Figure,
     plot = figure.to_html(full_html=False, include_plotlyjs=True,
                           config={"displaylogo": False, "scrollZoom": True,
                                   "responsive": True})
-    document = f"""<!doctype html><html><head><meta charset='utf-8'>
+    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v1 -->
 <title>{html.escape(title)}</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}
-main{{max-width:1500px;margin:auto;padding:18px}} h1{{margin:0 0 12px}}
+main{{width:100%;padding:18px}} h1{{margin:0 0 12px}}
 .plot,.parameters{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:16px}}
-table{{border-collapse:collapse;width:100%}} th,td{{padding:7px 10px;border-bottom:1px solid var(--line-soft);text-align:left}}
+table{{border-collapse:collapse;width:100%;min-width:max-content}} th,td{{padding:7px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}
 th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);margin:0 0 12px}}
+.parameters{{overflow-x:auto}}.plotly-graph-div{{width:100%!important}}
 .diagnostic-band{{font-size:1.05rem}} .diagnostic-grid{{display:grid;grid-template-columns:repeat(3,minmax(260px,1fr));gap:14px}}
 .diagnostic-card{{border:1px solid var(--line);border-radius:8px;padding:0 10px 10px}} .diagnostic-card h3{{margin:10px 0}}
 .score{{position:relative;min-width:85px}} .score span{{position:relative;z-index:1;font-variant-numeric:tabular-nums}}

@@ -36,4 +36,8 @@ examples/mouth-size-coverage-grid/**/candidates/**/*
 !examples/mouth-size-coverage-grid/**/candidates/**/
 !examples/mouth-size-coverage-grid/**/candidates/candidate-*/project.yaml
 !examples/mouth-size-coverage-grid/**/candidates/candidate-*/*.STL
-!examples/mouth-size-coverage-grid/**/candidates/candidate-*/bem/project-NumCalc-*/interactive_report.html
+!examples/mouth-size-coverage-grid/**/candidates/candidate-*/bem/*_Report.html
+
+# Retained reference-search artifacts use the same canonical public names.
+!examples/osse-400x280-reference/**/candidates/**/
+!examples/osse-400x280-reference/**/candidates/candidate-*/*.STL

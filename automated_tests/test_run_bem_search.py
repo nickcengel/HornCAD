@@ -9,7 +9,8 @@ import numpy as np
 
 from app.tools.run_bem_search import (
     VARIABLES,
-    candidate_distance, candidate_trait, candidate_traits, geometry_feasibility,
+    candidate_artifact_stem, candidate_distance, candidate_trait, candidate_traits,
+    geometry_feasibility,
     geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
     load_search, materialize_candidate, pareto_indices, propose_vector,
     sampling_stability, run_search, seed_values, write_report,
@@ -23,6 +24,26 @@ ROUND2_SEARCH = SEARCH.parent / "round-2" / "search.yaml"
 
 
 class BEMSearchTests(unittest.TestCase):
+    def test_candidate_artifact_stem_for_matching_axes(self) -> None:
+        _, _, seed = load_search(SEARCH)
+        config = seed["horncad_config"]
+        config["global"].update(mouth_width=250, mouth_height=250, length=179,
+                                conical_extension_length=0)
+        config["horizontal_basis"].update(coverage_deg=35, k=4, n=10)
+        config["vertical_basis"].update(coverage_deg=35, k=4, n=10)
+        self.assertEqual(candidate_artifact_stem(seed),
+                         "250x250x179_35_K4_N10")
+
+    def test_candidate_artifact_stem_for_independent_axes_and_extension(self) -> None:
+        _, _, seed = load_search(SEARCH)
+        config = seed["horncad_config"]
+        config["global"].update(mouth_width=250, mouth_height=250, length=179,
+                                conical_extension_length=12)
+        config["horizontal_basis"].update(coverage_deg=35, k=4, n=10)
+        config["vertical_basis"].update(coverage_deg=25, k=3, n=8)
+        self.assertEqual(candidate_artifact_stem(seed),
+                         "250x250x179_E12_H35_K4_N10_V25_K3_N8")
+
     def test_search_schema_and_materialization_preserve_intent(self) -> None:
         search, _, seed = load_search(SEARCH)
         search["intended_coverage_h_deg"] = 50.0
@@ -163,7 +184,8 @@ class BEMSearchTests(unittest.TestCase):
 
     @patch("app.tools.run_bem_search.export_candidate_stl")
     def test_dry_run_materializes_feasible_initial_candidates(self, export_stl) -> None:
-        def fake_export(_project: Path, candidate_dir: Path) -> Path:
+        def fake_export(_project: Path, candidate_dir: Path,
+                        artifact_stem: str | None = None) -> Path:
             path = candidate_dir / "candidate-surface.STL"
             path.write_bytes(b"test stl")
             return path
@@ -173,8 +195,13 @@ class BEMSearchTests(unittest.TestCase):
             self.assertEqual(state["status"], "preflight")
             self.assertTrue((Path(temp) / "search_report.html").is_file())
             report = (Path(temp) / "search_report.html").read_text()
-            self.assertIn("Configured range", report)
-            self.assertIn("N is varied explicitly", report)
+            self.assertNotIn("Search range", report)
+            self.assertNotIn("Learned lever effects", report)
+            self.assertNotIn("Impedance (information only)", report)
+            self.assertNotIn("Curvature radius H/V mm", report)
+            self.assertIn("sortable-table", report)
+            self.assertIn("&nbsp;/<wbr>", report)
+            self.assertIn("main{width:100%", report)
             self.assertIn("--bg:#0c1014", report)
             self.assertIn("color-scheme:dark", report)
             self.assertNotIn("geometry feasible", report)
