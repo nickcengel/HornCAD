@@ -157,6 +157,7 @@ class SBoundaryClosureTests(unittest.TestCase):
                         "300x300-s-boundary-r02")
                     close_baseline(root, baseline)
             self.assertEqual(materialize.call_args.args[-1], 0.4)
+            self.assertTrue(materialize.call_args.args[-2].name.endswith("-r02"))
 
 
 if __name__ == "__main__":

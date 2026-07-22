@@ -227,9 +227,16 @@ def close_baseline(root: Path, baseline: Path) -> dict[str, Any]:
                     "status": "boundary-limited", "best_s": best_s,
                     "side": status, "sentinel_s": sentinel_s,
                     "probes": len(rounds)}
+        existing_numbers = []
+        for path in rounds:
+            try:
+                existing_numbers.append(int(path.name.rsplit("-r", 1)[1]))
+            except (IndexError, ValueError):
+                continue
+        round_number = max(existing_numbers, default=0) + 1
         output = baseline.with_name(
             baseline.name.removesuffix("-s-grid") +
-            f"-s-boundary-r{probe_number:02d}")
+            f"-s-boundary-r{round_number:02d}")
         seed_project = max(points, key=lambda item: item[1])[2]
         materialize_probe(seed_project, baseline, output, target)
         state_path = output / "search_state.json"
