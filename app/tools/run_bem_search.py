@@ -201,8 +201,11 @@ def load_search(path: Path) -> tuple[dict[str, Any], Path, dict[str, Any]]:
         raise ValueError("inferior_screen_probability must be between 0.5 and 1")
     if search["sampling_stability_points"] <= 0:
         raise ValueError("sampling_stability_points must be positive")
-    if search["max_evaluations"] < 2 or search["initial_candidates"] < 1:
-        raise ValueError("search requires at least two evaluations")
+    if search["max_evaluations"] < 1:
+        raise ValueError("search requires at least one evaluation")
+    if (search["max_evaluations"] > 1 and
+            search["initial_candidates"] < 1):
+        raise ValueError("multi-candidate search requires an initial candidate")
     return search, seed_path, seed
 
 

@@ -11,6 +11,7 @@ from app.tools.run_s_boundary_closure_program import (
     authored_sentinel, baseline_searches, closure_status, materialize_probe,
     next_probe_s,
 )
+from app.tools.run_bem_search import load_search
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -57,9 +58,11 @@ class SBoundaryClosureTests(unittest.TestCase):
             project = yaml.safe_load((output / "project.yaml").read_text())
             search = yaml.safe_load((output / "search.yaml").read_text())[
                 "bem_candidate_search"]
+            loaded, _, _ = load_search(output / "search.yaml")
         self.assertEqual(project["horncad_config"]["horizontal_basis"]["solved_s"], 0.5)
         self.assertEqual(search["max_evaluations"], 1)
         self.assertEqual(search["solver"]["workers"], 10)
+        self.assertEqual(loaded["initial_candidates"], 0)
 
     def test_authored_sentinel_uses_far_edge_of_original_grid(self) -> None:
         baseline = (ROOT / "examples" / "mouth-size-coverage-grid" /

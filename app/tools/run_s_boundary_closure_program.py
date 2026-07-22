@@ -142,7 +142,7 @@ def materialize_probe(seed_project: Path, baseline: Path, output: Path,
             "n_h": [values["n_h"], values["n_h"] + 1e-6],
             "n_v": [values["n_v"], values["n_v"] + 1e-6],
         },
-        "initial_pool": [], "solver": solver,
+        "solver": solver,
     }
     (output / "search.yaml").write_text(
         yaml.safe_dump({"bem_candidate_search": search}, sort_keys=False),
