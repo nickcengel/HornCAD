@@ -253,6 +253,96 @@ def generate_report(project_root: Path, output: Path) -> Path:
         if row["label"] == "Seed":
             row["label"] = "Seed design"
 
+    best_by_design: dict[tuple[float, float], dict[str, Any]] = {}
+    for row in candidate_rows:
+        if row["surface_ranking_score"] is None:
+            continue
+        key = (row["search"]["mouth"], row["search"]["coverage"])
+        best_by_design.setdefault(key, row)
+
+    summaries_by_design: dict[tuple[float, float], list[dict[str, Any]]] = {}
+    for summary in summaries:
+        summaries_by_design.setdefault(
+            (summary["mouth"], summary["coverage"]), []).append(summary)
+    closure_by_design: dict[tuple[float, float], str] = {}
+    closure_path = project_root / "s_boundary_closure.json"
+    if closure_path.is_file():
+        closure = json.loads(closure_path.read_text(encoding="utf-8"))
+        for result in closure.get("results", []):
+            parts = Path(str(result.get("baseline", ""))).parts
+            if len(parts) < 2:
+                continue
+            try:
+                coverage = float(parts[0].removesuffix("deg"))
+                mouth = float(parts[1].split("x", 1)[0])
+            except ValueError:
+                continue
+            closure_by_design[(mouth, coverage)] = str(result.get("status", ""))
+
+    design_coverages = sorted({summary["coverage"] for summary in summaries})
+    design_mouths = sorted({summary["mouth"] for summary in summaries})
+    design_map_rows = []
+    for mouth in design_mouths:
+        cells = [f"<th scope='row'>{mouth:g} mm</th>"]
+        for coverage in design_coverages:
+            key = (mouth, coverage)
+            winner = best_by_design.get(key)
+            cell_summaries = summaries_by_design.get(key, [])
+            if winner is None:
+                cells.append("<td class='design-cell unmeasured'><span class='design-state'>unmeasured</span></td>")
+                continue
+            score = float(winner["surface_ranking_score"])
+            candidate = winner["candidate"]
+            values = candidate.get("values", {})
+            derived = candidate.get("derived", {})
+            length = float(values.get("length_mm", 0))
+            s_value = fmean((float(derived.get("s_h", 0)),
+                             float(derived.get("s_v", 0))))
+            k_value = fmean((float(values.get("k_h", 0)),
+                             float(values.get("k_v", 0))))
+            n_value = fmean((float(values.get("n_h", 0)),
+                             float(values.get("n_v", 0))))
+            closure_status = closure_by_design.get(key)
+            has_running = any(item["status"] == "running" for item in cell_summaries)
+            has_refinement = any(
+                item["status"] == "complete" and item["study"] in {
+                    "adaptive K/N grid", "coupled K/N closure", "coupled local S"}
+                for item in cell_summaries)
+            baseline_complete = any(
+                item["status"] == "complete" and item["study"] == "uniform S grid"
+                for item in cell_summaries)
+            if closure_status == "boundary-limited":
+                state, state_class = "boundary limited", "limited"
+            elif has_running or not baseline_complete:
+                state, state_class = "provisional", "provisional"
+            elif has_refinement:
+                state, state_class = "refined", "refined"
+            elif closure_status == "closed":
+                state, state_class = "S bounded", "bounded"
+            else:
+                state, state_class = "S complete", "baseline"
+            score_class = ("excellent" if score >= 90 else "good" if score >= 85
+                           else "fair" if score >= 80 else "low")
+            report_path = winner.get("report_path")
+            score_text = f"{score:.1f}"
+            if report_path is not None:
+                score_text = (f"<a href='{html.escape(str(report_path.relative_to(project_root)))}'>"
+                              f"{score_text}</a>")
+            cells.append(
+                f"<td class='design-cell {score_class}'>"
+                f"<strong class='design-score'>{score_text}</strong>"
+                f"<span class='design-state {state_class}'>{state}</span>"
+                f"<span>L {length:g} mm · W/L {mouth / length:.2f}</span>"
+                f"<span>S {s_value:.2f} · K {k_value:g} · N {n_value:g}</span>"
+                "</td>")
+        design_map_rows.append("<tr>" + "".join(cells) + "</tr>")
+    design_map_header = "".join(
+        f"<th scope='col'>{coverage:g}°</th>" for coverage in design_coverages)
+    design_map_html = (
+        "<table class='design-map'><thead><tr><th>Mouth / coverage</th>" +
+        design_map_header + "</tr></thead><tbody>" +
+        "".join(design_map_rows) + "</tbody></table>")
+
     def surface_pair(candidate: dict[str, Any], path: tuple[str, ...],
                      suffix: str = "", scale: float = 1.0) -> tuple[str, str]:
         result = candidate.get("surface_diagnostics", {})
@@ -464,6 +554,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 .wide td:nth-child(5), .wide td:nth-child(6), .wide td:nth-child(7), .wide td:nth-child(8), .wide td:nth-child(9){{white-space:nowrap}}
 .sortable{{cursor:pointer;user-select:none}}.axis-pair{{white-space:normal}}[hidden]{{display:none!important}}
 .column-controls,.angle-controls{{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}}.column-toggle,.angle-filter{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true'],.angle-filter[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}.filter-count{{margin-left:5px;color:var(--muted);font-size:.9rem}}
+.design-map{{table-layout:fixed;min-width:980px}}.design-map th:first-child{{width:125px}}.design-cell{{min-width:142px;border:1px solid var(--line);background:#17212a}}.design-cell>span{{display:block;margin-top:4px;font-size:.82rem;color:#c1cbd2;white-space:nowrap}}.design-score{{display:block;font-size:1.5rem;line-height:1}}.design-score a{{color:inherit;text-decoration:none}}.design-cell.excellent{{background:#174638}}.design-cell.good{{background:#173c3c}}.design-cell.fair{{background:#3d3820}}.design-cell.low{{background:#452827}}.design-cell.unmeasured{{background:#131920;text-align:center;vertical-align:middle}}.design-state{{width:max-content;padding:2px 6px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;font-size:.68rem!important}}.design-state.refined,.design-state.bounded{{background:rgba(105,214,200,.16);color:#9af0df}}.design-state.baseline{{background:rgba(148,163,189,.16);color:#c8d0d8}}.design-state.provisional{{background:rgba(183,121,31,.25);color:#f6d39a}}.design-state.limited{{background:rgba(180,83,83,.25);color:#ffb2b2}}
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
 @media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
@@ -481,6 +572,11 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <h2>Project range</h2>
 <table><tr><th>Coverage targets</th><th>Mouth sizes</th><th>Fixed K&nbsp;/ N</th><th>Sweep&nbsp;/ crossover</th><th>Length-mouth ratios</th></tr>
 <tr><td>{coverage_targets} deg</td><td>{mouth_sizes} mm</td><td>K={fixed_k}, N={fixed_n}</td><td>{sweep_lower}-{sweep_upper} Hz&nbsp;/<wbr> {crossover} Hz</td><td>{", ".join(f"{ratio:g}" for ratio in ratios) if ratios != "—" else "—"}</td></tr></table>
+</section>
+<section>
+<h2>Design map</h2>
+<p class='muted'>Choose a mouth and target half-coverage, then open the best measured score in that cell. Parameters are the current best prescription; provisional cells may change as their searches finish.</p>
+{design_map_html}
 </section>
 <section>
 <h2>Candidates</h2>
