@@ -120,9 +120,26 @@ def _search_summary(path: Path) -> dict[str, Any]:
     if not seed_path.is_absolute():
         seed_path = path.parent / seed_path
     seed_global = {}
+    seed_horizontal = {}
     if seed_path.is_file():
         seed_document = yaml.safe_load(seed_path.read_text(encoding="utf-8"))
         seed_global = seed_document.get("horncad_config", {}).get("global", {})
+        seed_horizontal = seed_document.get("horncad_config", {}).get(
+            "horizontal_basis", {})
+    if study_label == "S boundary closure":
+        round_label = mouth_dir.rsplit("-s-boundary-", 1)[-1]
+        target_s = seed_horizontal.get("solved_s")
+        s_detail = (f" · S={float(target_s):g}"
+                    if isinstance(target_s, (int, float)) else "")
+        study_detail = f" · S boundary closure {round_label}{s_detail}"
+    else:
+        study_detail = {
+            "uniform S grid": " · uniform S grid",
+            "adaptive K/N grid": " · adaptive K/N grid",
+            "canonical S extension": " · canonical S extension",
+            "coupled K/N closure": " · coupled K/N closure",
+            "coupled local S": " · coupled local S",
+        }.get(study_label, "")
     state_path = path.parent / "search_state.json"
     report_path = path.parent / "search_report.html"
     summary: dict[str, Any] = {
@@ -132,13 +149,7 @@ def _search_summary(path: Path) -> dict[str, Any]:
         "mouth_height": float(seed_global.get("mouth_height", mouth)),
         "label": (
             f"{coverage:g} deg\u00a0/\u200b {mouth:g} mm"
-            + ({"uniform S grid": " · uniform S grid",
-                "adaptive K/N grid": " · adaptive K/N grid",
-                "canonical S extension": " · canonical S extension",
-                "S boundary closure": " · S boundary closure",
-                "coupled K/N closure": " · coupled K/N closure",
-                "coupled local S": " · coupled local S"}.get(
-                    study_label, ""))
+            + study_detail
         ),
         "study": study_label,
         "folder": path.parent,
@@ -520,7 +531,8 @@ def generate_report(project_root: Path, output: Path) -> Path:
             f"<td>{html.escape(summary['label'])}</td>"
             f"<td>{status_badge}</td>"
             f"<td data-sort='{completed_sort}'>{completed_text}</td>"
-            f"<td>{summary['completed']}&nbsp;/<wbr> {summary['proposal_count']}</td>"
+            f"<td>{summary['completed']}&nbsp;/<wbr> {summary['failed']}"
+            f"&nbsp;/<wbr> {summary['proposal_count']}</td>"
             f"<td>{report_link}</td>"
             "</tr>"
         ))
@@ -713,7 +725,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <p><strong>Unified queue:</strong> {html.escape(program_status)} · {html.escape(phase_display)}. Rows are initially grouped by live status and then execution phase.</p>
 <div class='angle-controls' aria-label='Filter sub-searches by coverage angle'>{subsearch_angle_filters}<span id='subsearch-filter-count' class='filter-count'>{len(summary_rows)} sub-searches</span></div>
 <table id='subsearch-table' class='sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>Queue phase</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Date complete</th><th class='sortable' data-sort='number'>Complete&nbsp;/ Proposed</th><th>Links</th></tr></thead>
+<thead><tr><th class='sortable' data-sort='number'>Queue phase</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Date complete</th><th class='sortable' data-sort='number'>Complete&nbsp;/ Failed&nbsp;/ Proposed</th><th>Links</th></tr></thead>
 <tbody>{''.join(summary_rows)}</tbody>
 </table>
 </section>

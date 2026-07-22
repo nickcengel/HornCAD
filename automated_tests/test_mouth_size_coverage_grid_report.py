@@ -77,6 +77,7 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("data-subsearch-angle-filter='30'", report)
         self.assertIn("data-subsearch-angle-filter='50'", report)
         self.assertIn("id='subsearch-filter-count'", report)
+        self.assertIn("Complete&nbsp;/ Failed&nbsp;/ Proposed", report)
         self.assertIn("row.dataset.subsearchCoverageAngle.split(' ')", report)
         self.assertIn("data-sort='number'>Date complete</th>", report)
         self.assertIn("data-sort='number'>Queue phase</th>", report)
@@ -205,6 +206,7 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
             summary = _search_summary(search_dir / "search.yaml")
         self.assertEqual(summary["study"], "S boundary closure")
         self.assertIn("S boundary closure", summary["label"])
+        self.assertIn("r01", summary["label"])
 
 
 if __name__ == "__main__":
