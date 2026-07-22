@@ -45,7 +45,18 @@ SLOTS = {
     1: (("low", "low", "low"), ("high", "high", "high")),
     2: (("high", "low", "high"), ("low", "high", "low")),
 }
-MATCHED_PARAMETERS = ("length", "k", "n")
+RESPONSE_SURFACE_LEVELS = {
+    "length": {-1: 0.85, 0: 1.0, 1: 1.15},
+    "k": {-1: 3.0, 0: 4.0, 1: 5.0},
+    "n": {-1: 6.0, 0: 10.0, 1: 14.0},
+}
+RESPONSE_SURFACE_COORDINATES = (
+    (-1, 0, 0), (1, 0, 0),
+    (0, -1, 0), (0, 1, 0),
+    (0, 0, -1), (0, 0, 1),
+    *((length, k, n) for length in (-1, 1)
+      for k in (-1, 1) for n in (-1, 1)),
+)
 
 
 def snap_k_n(k: float, n: float) -> tuple[float, float]:
@@ -73,6 +84,10 @@ class Proposal:
     anchor_k: float | None = None
     anchor_n: float | None = None
     anchor_s: float | None = None
+    coordinate_label: str | None = None
+    length_level: int | None = None
+    k_level: int | None = None
+    n_level: int | None = None
     predicted_score: float | None = None
     predicted_sigma: float | None = None
 
@@ -325,102 +340,96 @@ def select_proposal(root: Path, coverage: int, mouth: int, batch: int,
     )
 
 
-def matched_parameter_for_cell(coverage: int, mouth: int) -> str:
-    """Balance length, K, and N matched pairs across the 5x5 study grid."""
-    angle_index = INTERIOR_ANGLES.index(coverage)
-    mouth_index = INTERIOR_MOUTHS.index(mouth)
-    return MATCHED_PARAMETERS[(angle_index * len(INTERIOR_MOUTHS) + mouth_index) % 3]
+def _response_surface_anchor(candidates: list[Candidate], coverage: int,
+                             mouth: int) -> Candidate:
+    anchors = [item for item in candidates
+               if item.coverage_deg == coverage and item.mouth_mm == mouth
+               and abs(item.k - 4.0) <= 0.01 and abs(item.n - 10.0) <= 0.01]
+    if not anchors:
+        raise RuntimeError(f"no K4/N10 response-surface anchor for {coverage}°/{mouth}")
+    return max(anchors, key=lambda item: item.score)
 
 
-def _axis_values(anchor: Candidate, parameter: str) -> tuple[list[float], list[float]]:
-    if parameter == "length":
-        return ([round(anchor.length_mm * factor, 3)
-                 for factor in (0.75, 0.85, 0.92)],
-                [round(anchor.length_mm * factor, 3)
-                 for factor in (1.25, 1.15, 1.08)])
-    if parameter == "k":
-        return ([anchor.k - delta for delta in (1.5, 1.0, 0.5)],
-                [anchor.k + delta for delta in (1.5, 1.0, 0.5)])
-    return ([anchor.n - delta for delta in (4.0, 3.0, 2.0, 1.0)],
-            [anchor.n + delta for delta in (4.0, 3.0, 2.0, 1.0)])
-
-
-def _matched_controls(anchor: Candidate, parameter: str,
-                      value: float) -> tuple[float, float, float]:
-    length, k, n = anchor.length_mm, anchor.k, anchor.n
-    if parameter == "length":
-        length = value
-    elif parameter == "k":
-        k = round(value * 2) / 2
-    else:
-        n = float(round(value))
-    return round(length, 3), k, n
-
-
-def select_matched_pair(root: Path, coverage: int, mouth: int,
-                        candidates: list[Candidate]) -> list[Proposal]:
-    """Select a broad one-control pair while holding the other controls fixed."""
-    baseline = _baseline(root, coverage, mouth)
-    config = _source_project(baseline)["horncad_config"]
-    cell = [item for item in candidates
-            if item.coverage_deg == coverage and item.mouth_mm == mouth]
-    if not cell:
-        raise RuntimeError(f"no measured anchor for {coverage}°/{mouth}")
-    parameter = matched_parameter_for_cell(coverage, mouth)
-    existing = {(round(item.length_mm, 3), round(item.k, 3), round(item.n, 3))
-                for item in cell}
-    existing_features = np.asarray([_candidate_feature(item, config) for item in cell])
-    for anchor in sorted(cell, key=lambda item: item.score, reverse=True):
-        pair: list[Proposal] = []
-        for slot, values in enumerate(_axis_values(anchor, parameter)):
-            chosen = None
-            for value in values:
-                length, k, n = _matched_controls(anchor, parameter, value)
-                if not (K_BOUNDS[0] <= k <= K_BOUNDS[1]
-                        and N_BOUNDS[0] <= n <= N_BOUNDS[1]):
-                    continue
-                if (round(length, 3), round(k, 3), round(n, 3)) in existing:
-                    continue
+def response_surface_design(
+        root: Path, candidates: list[Candidate]
+        ) -> tuple[list[dict[str, Any]], list[Proposal]]:
+    """Return the identical face-centered response design for all 25 cells."""
+    coordinates: list[dict[str, Any]] = []
+    proposals: list[Proposal] = []
+    for coverage in INTERIOR_ANGLES:
+        for mouth in INTERIOR_MOUTHS:
+            baseline = _baseline(root, coverage, mouth)
+            config = _source_project(baseline)["horncad_config"]
+            cell = [item for item in candidates
+                    if item.coverage_deg == coverage and item.mouth_mm == mouth]
+            anchor = _response_surface_anchor(candidates, coverage, mouth)
+            existing_features = np.asarray([
+                _candidate_feature(item, config) for item in cell])
+            for slot, (length_level, k_level, n_level) in enumerate(
+                    RESPONSE_SURFACE_COORDINATES):
+                length = round(anchor.length_mm *
+                               RESPONSE_SURFACE_LEVELS["length"][length_level], 3)
+                k = RESPONSE_SURFACE_LEVELS["k"][k_level]
+                n = RESPONSE_SURFACE_LEVELS["n"][n_level]
+                label = f"L{length_level:+d}_K{k_level:+d}_N{n_level:+d}"
+                coordinate: dict[str, Any] = {
+                    "coverage_deg": coverage, "mouth_mm": mouth,
+                    "batch": 2, "slot": slot, "coordinate_label": label,
+                    "length_level": length_level, "k_level": k_level,
+                    "n_level": n_level, "length_mm": length, "k": k, "n": n,
+                    "anchor_length_mm": anchor.length_mm,
+                    "anchor_k": anchor.k, "anchor_n": anchor.n,
+                    "anchor_s": anchor.s,
+                }
                 metrics = _independent_control_geometry(
                     config, coverage, length, k, n)
                 if metrics is None:
+                    coordinate.update(
+                        status="geometry-rejected",
+                        reason="prescribed response-surface coordinate is infeasible")
+                    coordinates.append(coordinate)
                     continue
-                feature = _feature(mouth, length, float(metrics["s"]), k, n, metrics)
+                coordinate["s"] = float(metrics["s"])
+                reused = next((item for item in cell
+                               if abs(item.length_mm - length) <= 0.001
+                               and abs(item.k - k) <= 0.001
+                               and abs(item.n - n) <= 0.001), None)
+                if reused is not None:
+                    coordinate.update(
+                        status="reused", reused_search=str(reused.search_path),
+                        reused_candidate_id=reused.candidate_id,
+                        reused_score=reused.score)
+                    coordinates.append(coordinate)
+                    continue
+                feature = _feature(
+                    mouth, length, float(metrics["s"]), k, n, metrics)
                 distance = float(np.min(np.linalg.norm(
                     existing_features - feature[None, :], axis=1)))
-                chosen = Proposal(
+                coordinate["status"] = "planned"
+                coordinates.append(coordinate)
+                proposals.append(Proposal(
                     coverage_deg=coverage, mouth_mm=mouth, batch=2, slot=slot,
                     s=float(metrics["s"]), length_mm=length, k=k, n=n,
                     mouth_length_ratio=mouth / length,
                     exit_angle_deg=float(metrics["exit_angle_deg"]),
                     normalized_curvature_radius=float(
                         metrics["normalized_curvature_radius"]),
-                    acquisition=(f"matched {parameter} pair; other independent "
-                                 "controls fixed"),
-                    nearest_distance=distance, matched_parameter=parameter,
+                    acquisition="prescribed face-centered response surface",
+                    nearest_distance=distance, matched_parameter="response-surface",
                     anchor_length_mm=anchor.length_mm, anchor_k=anchor.k,
                     anchor_n=anchor.n, anchor_s=anchor.s,
-                )
-                break
-            if chosen is None:
-                pair = []
-                break
-            pair.append(chosen)
-        if len(pair) == 2:
-            return pair
-    raise RuntimeError(
-        f"no feasible non-duplicate matched {parameter} pair for {coverage}°/{mouth}")
+                    coordinate_label=label, length_level=length_level,
+                    k_level=k_level, n_level=n_level,
+                ))
+    return coordinates, proposals
 
 
 def select_batch(root: Path, batch: int) -> list[Proposal]:
     candidates, _ = load_candidates(root)
     if batch == 2:
-        return sorted([
-            proposal
-            for angle in INTERIOR_ANGLES
-            for mouth in INTERIOR_MOUTHS
-            for proposal in select_matched_pair(root, angle, mouth, candidates)
-        ], key=lambda item: (item.coverage_deg, item.mouth_mm, item.slot))
+        _, proposals = response_surface_design(root, candidates)
+        return sorted(proposals, key=lambda item: (
+            item.coverage_deg, item.mouth_mm, item.slot))
     model = None
     output: list[Proposal] = []
     cells = [(angle, mouth) for angle in INTERIOR_ANGLES
@@ -454,16 +463,25 @@ def _search_dir(root: Path, proposal: Proposal) -> Path:
 
 def materialize_cell_search(root: Path, proposals: list[Proposal],
                             solver_workers: int = 10) -> Path:
-    if len(proposals) != 2:
-        raise ValueError("a domain-map cell search requires exactly two proposals")
-    first, second = proposals
-    if (first.coverage_deg, first.mouth_mm, first.batch) != (
-            second.coverage_deg, second.mouth_mm, second.batch):
+    if not proposals:
+        raise ValueError("a domain-map cell search requires at least one proposal")
+    first = proposals[0]
+    if any((item.coverage_deg, item.mouth_mm, item.batch) != (
+            first.coverage_deg, first.mouth_mm, first.batch)
+            for item in proposals):
         raise ValueError("domain-map proposals must belong to one cell and batch")
     baseline = _baseline(root, first.coverage_deg, first.mouth_mm)
     output = _search_dir(root, first)
     if (output / "search.yaml").exists():
-        return output
+        existing = yaml.safe_load((output / "search.yaml").read_text(
+            encoding="utf-8"))["bem_candidate_search"]
+        expected_design = ("face-centered-response-surface" if first.batch == 2
+                           else "remote-maximin")
+        if existing.get("domain_mapping", {}).get("design") == expected_design:
+            return output
+        if (output / "search_state.json").exists():
+            raise RuntimeError(
+                f"refusing to replace started stale search {output}")
     seed = _source_project(baseline)
     source = _source_search(baseline)
     fake_search = {
@@ -480,7 +498,7 @@ def materialize_cell_search(root: Path, proposals: list[Proposal],
     output.mkdir(parents=True, exist_ok=True)
     (output / "project.yaml").write_text(
         yaml.safe_dump(seed, sort_keys=False), encoding="utf-8")
-    values = [first.values, second.values]
+    values = [item.values for item in proposals]
     bounds = {}
     for name in values[0]:
         lower = min(item[name] for item in values)
@@ -497,7 +515,8 @@ def materialize_cell_search(root: Path, proposals: list[Proposal],
         "lower_frequency_hz": fake_search["lower_frequency_hz"],
         "crossover_hz": fake_search["crossover_hz"],
         "upper_frequency_hz": fake_search["upper_frequency_hz"],
-        "max_evaluations": 2, "initial_candidates": 1,
+        "max_evaluations": len(proposals),
+        "initial_candidates": max(0, len(proposals) - 1),
         "minimum_candidate_distance": 0.001,
         "derived_s_bounds": [S_BOUNDS[0] - 0.001, S_BOUNDS[1] + 0.001],
         "sampling_stability_points": float(source.get("sampling_stability_points", 2)),
@@ -505,12 +524,15 @@ def materialize_cell_search(root: Path, proposals: list[Proposal],
             "confirmation_points_per_octave", 16)),
         "adaptive_pruning": {"enabled": False}, "bounds": bounds,
         "initial_pool": [{
-            "label": f"domain map · {second.acquisition}",
-            "values": second.values,
-        }],
+            "label": (f"domain map · {item.coordinate_label or item.slot} · "
+                      f"{item.acquisition}"),
+            "values": item.values,
+        } for item in proposals[1:]],
         "domain_mapping": {
             "batch": first.batch,
-            "proposals": [asdict(first), asdict(second)],
+            "design": ("face-centered-response-surface" if first.batch == 2
+                       else "remote-maximin"),
+            "proposals": [asdict(item) for item in proposals],
             "score_materiality_points": SCORE_MATERIALITY,
         },
         "solver": solver,
@@ -522,7 +544,30 @@ def materialize_cell_search(root: Path, proposals: list[Proposal],
 
 def materialize_batch(root: Path, batch: int,
                       solver_workers: int = 10) -> tuple[list[Path], list[Proposal]]:
-    proposals = select_batch(root, batch)
+    coordinates: list[dict[str, Any]] | None = None
+    if batch == 2:
+        candidates, _ = load_candidates(root)
+        coordinates, proposals = response_surface_design(root, candidates)
+        summary = {
+            "schema_version": 1,
+            "design": "face-centered-response-surface",
+            "independent_factors": ["length_mm", "k", "n"],
+            "levels": RESPONSE_SURFACE_LEVELS,
+            "coordinates_per_cell": 15,
+            "new_coordinates_per_cell": 14,
+            "cells": len(INTERIOR_ANGLES) * len(INTERIOR_MOUTHS),
+            "total_prescribed_coordinates": len(coordinates),
+            "planned_simulations": sum(
+                item["status"] == "planned" for item in coordinates),
+            "reused_results": sum(
+                item["status"] == "reused" for item in coordinates),
+            "geometry_rejections": sum(
+                item["status"] == "geometry-rejected" for item in coordinates),
+            "coordinates": coordinates,
+        }
+        _write_json(root / "batch_2_response_surface.json", summary)
+    else:
+        proposals = select_batch(root, batch)
     grouped: dict[tuple[int, int], list[Proposal]] = {}
     for item in proposals:
         grouped.setdefault((item.coverage_deg, item.mouth_mm), []).append(item)
@@ -702,39 +747,90 @@ def _run_paths(root: Path, paths: list[Path], slots: int,
 
 
 def planned_slots() -> list[dict[str, Any]]:
-    cells_by_batch = {
-        1: [*RETAINED_EDGE_CELLS, *((angle, mouth)
-             for angle in INTERIOR_ANGLES for mouth in INTERIOR_MOUTHS)],
-        2: [(angle, mouth) for angle in INTERIOR_ANGLES
-            for mouth in INTERIOR_MOUTHS],
-    }
-    return [{
-        "coverage_deg": angle, "mouth_mm": mouth, "batch": batch, "slot": slot,
-        "status": "awaiting acquisition" if batch == 2 else "planned",
-        "matched_parameter": (
-            matched_parameter_for_cell(angle, mouth) if batch == 2 else None),
-    } for batch in (1, 2) for angle, mouth in cells_by_batch[batch]
+    output = [{
+        "coverage_deg": angle, "mouth_mm": mouth, "batch": 1, "slot": slot,
+        "status": "planned", "design": "remote-maximin",
+    } for angle in INTERIOR_ANGLES for mouth in INTERIOR_MOUTHS
       for slot in range(2)]
+    output.extend({
+        "coverage_deg": angle, "mouth_mm": mouth, "batch": 2, "slot": slot,
+        "status": "awaiting design", "design": "face-centered-response-surface",
+        "coordinate_label": f"L{length:+d}_K{k:+d}_N{n:+d}",
+        "length_level": length, "k_level": k, "n_level": n,
+    } for angle in INTERIOR_ANGLES for mouth in INTERIOR_MOUTHS
+      for slot, (length, k, n) in enumerate(RESPONSE_SURFACE_COORDINATES))
+    return output
 
 
-def run_program(root: Path, slots: int = 2,
-                solver_workers: int = 10) -> dict[str, Any]:
-    state_path = root / "domain_mapping_state.json"
-    state = {
-        "schema_version": 1, "status": "running", "phase": "domain-map-batch-1",
-        "total_candidates": len(planned_slots()), "completed_searches": 0,
-        "score_materiality_points": SCORE_MATERIALITY,
-        "started_at_unix": time.time(), "planned_slots": planned_slots(),
+def _merge_existing_batch_one_slots(
+        slots: list[dict[str, Any]], previous: dict[str, Any]) -> None:
+    previous_slots = {(item.get("coverage_deg"), item.get("mouth_mm"),
+                       item.get("batch"), item.get("slot")): item
+                      for item in previous.get("planned_slots", [])}
+    for item in slots:
+        key = (item["coverage_deg"], item["mouth_mm"], item["batch"], item["slot"])
+        if item["batch"] == 1 and key in previous_slots:
+            item.update(previous_slots[key])
+
+
+def _apply_response_surface_manifest(
+        state: dict[str, Any], root: Path, proposals: list[Proposal]) -> None:
+    manifest = json.loads((root / "batch_2_response_surface.json").read_text(
+        encoding="utf-8"))
+    records = {(item["coverage_deg"], item["mouth_mm"], item["slot"]): item
+               for item in manifest["coordinates"]}
+    proposal_records = {(item.coverage_deg, item.mouth_mm, item.slot): item
+                        for item in proposals}
+    for planned in state["planned_slots"]:
+        if planned["batch"] != 2:
+            continue
+        key = (planned["coverage_deg"], planned["mouth_mm"], planned["slot"])
+        planned.update(records[key])
+        if key in proposal_records:
+            planned.update(asdict(proposal_records[key]), status="materialized")
+    state["batch_2_design_summary"] = {
+        key: manifest[key] for key in (
+            "design", "independent_factors", "levels", "coordinates_per_cell",
+            "new_coordinates_per_cell", "cells", "total_prescribed_coordinates",
+            "planned_simulations", "reused_results", "geometry_rejections")
     }
+
+
+def run_program(root: Path, slots: int = 2, solver_workers: int = 10,
+                start_batch: int = 1) -> dict[str, Any]:
+    if start_batch not in (1, 2):
+        raise ValueError("start_batch must be 1 or 2")
+    state_path = root / "domain_mapping_state.json"
+    previous: dict[str, Any] = {}
+    if start_batch == 2 and state_path.exists():
+        previous = json.loads(state_path.read_text(encoding="utf-8"))
+    slots_plan = planned_slots()
+    _merge_existing_batch_one_slots(slots_plan, previous)
+    state = {
+        "schema_version": 2, "status": "running",
+        "phase": f"domain-map-batch-{start_batch}",
+        "total_coordinates": len(slots_plan),
+        "total_candidates": len(slots_plan),
+        "completed_searches": int(previous.get("completed_searches", 0)),
+        "score_materiality_points": SCORE_MATERIALITY,
+        "started_at_unix": previous.get("started_at_unix", time.time()),
+        "resumed_at_unix": time.time() if start_batch == 2 else None,
+        "planned_slots": slots_plan,
+    }
+    if previous.get("batch_1_proposals"):
+        state["batch_1_proposals"] = previous["batch_1_proposals"]
     _write_json(state_path, state)
-    for batch in (1, 2):
+    for batch in range(start_batch, 3):
         state["phase"] = f"domain-map-batch-{batch}"
         paths, proposals = materialize_batch(root, batch, solver_workers)
         state[f"batch_{batch}_proposals"] = [asdict(item) for item in proposals]
-        for planned, proposal in zip(
-                [item for item in state["planned_slots"] if item["batch"] == batch],
-                proposals):
-            planned.update(asdict(proposal), status="materialized")
+        if batch == 2:
+            _apply_response_surface_manifest(state, root, proposals)
+        else:
+            for planned, proposal in zip(
+                    [item for item in state["planned_slots"]
+                     if item["batch"] == batch], proposals):
+                planned.update(asdict(proposal), status="materialized")
         _write_json(state_path, state)
         generate_report(root, root / "index.html")
         _run_paths(root, paths, slots, state, state_path)
@@ -751,13 +847,18 @@ def main() -> None:
     parser.add_argument("--slots", type=int, default=2)
     parser.add_argument("--solver-workers", type=int, default=10)
     parser.add_argument("--materialize-only", action="store_true")
+    parser.add_argument("--batch", type=int, choices=(1, 2), default=1,
+                        help="batch to materialize without running")
+    parser.add_argument("--start-batch", type=int, choices=(1, 2), default=1,
+                        help="first batch to execute; use 2 for the guarded handoff")
     args = parser.parse_args()
     if args.materialize_only:
         paths, proposals = materialize_batch(
-            args.project_root, 1, args.solver_workers)
+            args.project_root, args.batch, args.solver_workers)
         print(json.dumps({"searches": len(paths), "candidates": len(proposals)}, indent=2))
         return
-    run_program(args.project_root, args.slots, args.solver_workers)
+    run_program(args.project_root, args.slots, args.solver_workers,
+                args.start_batch)
 
 
 if __name__ == "__main__":

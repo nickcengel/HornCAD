@@ -308,7 +308,7 @@ def _study_progress(root: Path) -> dict[str, Any]:
         "domain_mapping": {
             "status": str(domain.get("status", "not-started")),
             "phase": str(domain.get("phase", "not-started")),
-            "total_candidates": int(domain.get("total_candidates", 100)),
+            "total_candidates": int(domain.get("total_candidates", 400)),
             "planned_slot_count": len(domain.get("planned_slots", [])),
             "completed_searches": int(domain.get("completed_searches", 0)),
             "score_materiality_points": float(
