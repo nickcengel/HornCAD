@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "policy": "400 mm matched controls plus distinct mouths gaining at least 0.75 points",
+  "anchors": [
+    {
+      "coverage_deg": 40,
+      "baseline": "40deg/400x400-s-grid",
+      "role": "matched 400 mm control",
+      "score": 88.63759206321745,
+      "selected": true
+    },
+    {
+      "coverage_deg": 45,
+      "baseline": "45deg/400x400-s-grid",
+      "role": "matched 400 mm control",
+      "score": 87.10784581151064,
+      "selected": true
+    },
+    {
+      "coverage_deg": 45,
+      "baseline": "45deg/350x350-s-grid",
+      "role": "best distinct mouth",
+      "score": 88.28234473823136,
+      "score_gain_over_control": 1.174498926720716,
+      "selected": true,
+      "reason": "material score and scale contrast"
+    },
+    {
+      "coverage_deg": 50,
+      "baseline": "50deg/400x400-s-grid",
+      "role": "matched 400 mm control",
+      "score": 84.2421181220192,
+      "selected": true
+    },
+    {
+      "coverage_deg": 50,
+      "baseline": "50deg/250x250-s-grid",
+      "role": "best distinct mouth",
+      "score": 87.69815622263343,
+      "score_gain_over_control": 3.4560381006142222,
+      "selected": true,
+      "reason": "material score and scale contrast"
+    }
+  ]
+}

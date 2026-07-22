@@ -15,8 +15,8 @@ from app.tools.run_bem_search import (
     geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
     load_search, materialize_candidate, pareto_indices, propose_vector,
     next_kn_closure_candidate, requeue_failed_candidates, sampling_stability,
-    required_initial_probe, run_search, seed_values, sensitivity_sampling_decision,
-    write_report,
+    required_initial_probe, retain_diagnostic_archive, run_search, seed_values,
+    sensitivity_sampling_decision, write_report,
 )
 
 
@@ -27,6 +27,18 @@ ROUND2_SEARCH = SEARCH.parent / "round-2" / "search.yaml"
 
 
 class BEMSearchTests(unittest.TestCase):
+    def test_retain_diagnostic_archive_uses_stable_candidate_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            run_dir = root / "bem" / "project-NumCalc-hash"
+            run_dir.mkdir(parents=True)
+            (run_dir / "responses.npz").write_bytes(b"response surface")
+
+            retained = retain_diagnostic_archive(run_dir, root)
+
+            self.assertEqual(retained, root / "bem" / "responses.npz")
+            self.assertEqual(retained.read_bytes(), b"response surface")
+
     def test_sensitivity_policy_skips_flat_optional_point(self) -> None:
         search = {
             "intended_coverage_h_deg": 30, "intended_coverage_v_deg": 30,

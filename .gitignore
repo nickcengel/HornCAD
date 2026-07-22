@@ -34,7 +34,9 @@ examples/mouth-size-coverage-grid/**/finalist_comparison.html
 examples/mouth-size-coverage-grid/**/candidates/**/*
 !examples/mouth-size-coverage-grid/**/search_report.html
 !examples/mouth-size-coverage-grid/**/candidates/**/
+!examples/mouth-size-coverage-grid/**/candidates/candidate-*/project.yaml
 !examples/mouth-size-coverage-grid/**/candidates/candidate-*/*.STL
+!examples/mouth-size-coverage-grid/**/candidates/candidate-*/bem/responses.npz
 !examples/mouth-size-coverage-grid/**/candidates/candidate-*/bem/*_Report.html
 
 # Retained reference-search artifacts use the same canonical public names.

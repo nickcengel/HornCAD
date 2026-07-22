@@ -9,6 +9,7 @@ import html
 import json
 import math
 import multiprocessing
+import os
 from pathlib import Path
 import queue
 import shutil
@@ -1370,6 +1371,19 @@ def isolated_sweep(project_path: Path, executable: Path, run_root: Path,
     return payload
 
 
+def retain_diagnostic_archive(run_dir: Path, candidate_dir: Path) -> Path:
+    """Keep the compact response surface needed to recompute diagnostics."""
+    source = run_dir / "responses.npz"
+    if not source.is_file():
+        raise FileNotFoundError(source)
+    target = candidate_dir / "bem" / "responses.npz"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temporary = target.with_name(f".{target.name}.{os.getpid()}.tmp")
+    shutil.copyfile(source, temporary)
+    temporary.replace(target)
+    return target
+
+
 def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
                        executable: Path, frequencies: np.ndarray,
                        fixed_grid: np.ndarray, search: dict[str, Any],
@@ -1383,6 +1397,7 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
         artifact_stem = record["artifact_stem"]
         title = f"BEM {artifact_stem}"
         generate_review(run_dir, title=title, write_report=False)
+        retain_diagnostic_archive(run_dir, candidate_dir)
         run = load_run(run_dir, artifact_stem)
         diagnostics = coverage_diagnostics(run, fixed_grid, fixed_band=True)
         new_surface_diagnostics = surface_diagnostics(

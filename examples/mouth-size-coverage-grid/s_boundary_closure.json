@@ -1,0 +1,264 @@
+{
+  "status": "complete",
+  "results": [
+    {
+      "baseline": "25deg/250x250-s-grid",
+      "status": "closed",
+      "best_s": 0.7000047090867175,
+      "sentinel_s": 3.0,
+      "probes": 1
+    },
+    {
+      "baseline": "25deg/300x300-s-grid",
+      "status": "geometry-limited",
+      "best_s": 0.6999951296023326,
+      "rejected_s": 2.999987526083502,
+      "reason": "H profile puts 64.5% of radial growth in the final 10% of horn length (maximum 52%)",
+      "probes": 1
+    },
+    {
+      "baseline": "25deg/350x350-s-grid",
+      "status": "closed",
+      "best_s": 0.5000025530744928,
+      "sentinel_s": 3.0,
+      "probes": 2
+    },
+    {
+      "baseline": "25deg/400x400-s-grid",
+      "status": "closed",
+      "best_s": 0.4999967485905054,
+      "sentinel_s": 3.0,
+      "probes": 2
+    },
+    {
+      "baseline": "25deg/450x450-s-grid",
+      "status": "geometry-limited",
+      "best_s": 0.6999988073125161,
+      "rejected_s": 2.99999465889392,
+      "reason": "H profile puts 62.0% of radial growth in the final 10% of horn length (maximum 52%)",
+      "probes": 1
+    },
+    {
+      "baseline": "25deg/500x500-s-grid",
+      "status": "geometry-limited",
+      "best_s": 0.7000002417818416,
+      "rejected_s": 2.9999985785061116,
+      "reason": "H profile puts 61.4% of radial growth in the final 10% of horn length (maximum 52%)",
+      "probes": 1
+    },
+    {
+      "baseline": "30deg/250x250-s-grid",
+      "status": "closed",
+      "best_s": 0.7000019350099873,
+      "sentinel_s": 3.0,
+      "probes": 2
+    },
+    {
+      "baseline": "30deg/300x300-s-grid",
+      "status": "closed",
+      "best_s": 0.700000581871696,
+      "sentinel_s": 3.0,
+      "probes": 2
+    },
+    {
+      "baseline": "30deg/350x350-s-grid",
+      "status": "closed",
+      "best_s": 0.6999982556145166,
+      "sentinel_s": 3.0,
+      "probes": 2
+    },
+    {
+      "baseline": "30deg/400x400-s-grid",
+      "status": "closed",
+      "best_s": 0.9999970494918665,
+      "sentinel_s": 3.0,
+      "probes": 1
+    },
+    {
+      "baseline": "30deg/450x450-s-grid",
+      "status": "closed",
+      "best_s": 1.0000052072371293,
+      "sentinel_s": 3.0,
+      "probes": 1
+    },
+    {
+      "baseline": "30deg/500x500-s-grid",
+      "status": "closed",
+      "best_s": 0.9999980727468929,
+      "sentinel_s": 3.0,
+      "probes": 1
+    },
+    {
+      "baseline": "35deg/250x250-s-grid",
+      "status": "geometry-limited",
+      "best_s": 0.6999907586295905,
+      "rejected_s": 2.999974896397023,
+      "reason": "H profile puts 59.5% of radial growth in the final 10% of horn length (maximum 55%)",
+      "probes": 1
+    },
+    {
+      "baseline": "35deg/300x300-s-grid",
+      "status": "geometry-limited",
+      "best_s": 0.6999955368037946,
+      "rejected_s": 2.9999956790694764,
+      "reason": "H profile puts 58.0% of radial growth in the final 10% of horn length (maximum 55%)",
+      "probes": 1
+    },
+    {
+      "baseline": "35deg/350x350-s-grid",
+      "status": "closed",
+      "best_s": 0.999991333662845,
+      "sentinel_s": 3.0,
+      "probes": 1
+    },
+    {
+      "baseline": "35deg/400x400-s-grid",
+      "status": "closed",
+      "best_s": 1.2999993733098953,
+      "sentinel_s": 3.0,
+      "probes": 1
+    },
+    {
+      "baseline": "35deg/450x450-s-grid",
+      "status": "geometry-limited",
+      "best_s": 1.2999992656809627,
+      "rejected_s": 2.999998277890919,
+      "reason": "H profile puts 55.2% of radial growth in the final 10% of horn length (maximum 55%)",
+      "probes": 1
+    },
+    {
+      "baseline": "35deg/500x500-s-grid",
+      "status": "geometry-limited",
+      "best_s": 1.2999980809209302,
+      "rejected_s": 3.000014320261429,
+      "reason": "H profile puts 54.6% of radial growth in the final 10% of horn length (maximum 52%)",
+      "probes": 1
+    },
+    {
+      "baseline": "40deg/250x250-s-grid",
+      "status": "closed",
+      "best_s": 1.0000034841688443,
+      "sentinel_s": 4.0,
+      "probes": 1
+    },
+    {
+      "baseline": "40deg/300x300-s-grid",
+      "status": "closed",
+      "best_s": 1.0000142560835625,
+      "sentinel_s": 4.0,
+      "probes": 0
+    },
+    {
+      "baseline": "40deg/350x350-s-grid",
+      "status": "closed",
+      "best_s": 1.4999935626121603,
+      "sentinel_s": 4.0,
+      "probes": 1
+    },
+    {
+      "baseline": "40deg/400x400-s-grid",
+      "status": "closed",
+      "best_s": 1.4999988658465124,
+      "sentinel_s": 4.0,
+      "probes": 1
+    },
+    {
+      "baseline": "40deg/450x450-s-grid",
+      "status": "closed",
+      "best_s": 1.7499869378094446,
+      "sentinel_s": 4.0,
+      "probes": 1
+    },
+    {
+      "baseline": "40deg/500x500-s-grid",
+      "status": "closed",
+      "best_s": 1.750008219570792,
+      "sentinel_s": 4.0,
+      "probes": 1
+    },
+    {
+      "baseline": "45deg/250x250-s-grid",
+      "status": "closed",
+      "best_s": 1.250005957351676,
+      "sentinel_s": 4.0,
+      "probes": 0
+    },
+    {
+      "baseline": "45deg/300x300-s-grid",
+      "status": "closed",
+      "best_s": 1.5999867047771963,
+      "sentinel_s": 3.0,
+      "probes": 1
+    },
+    {
+      "baseline": "45deg/350x350-s-grid",
+      "status": "closed",
+      "best_s": 1.9000040836216643,
+      "sentinel_s": 3.0,
+      "probes": 1
+    },
+    {
+      "baseline": "45deg/400x400-s-grid",
+      "status": "closed",
+      "best_s": 1.9000205806009136,
+      "sentinel_s": 3.0,
+      "probes": 1
+    },
+    {
+      "baseline": "45deg/450x450-s-grid",
+      "status": "closed",
+      "best_s": 2.2000161004865384,
+      "sentinel_s": 3.0,
+      "probes": 0
+    },
+    {
+      "baseline": "45deg/500x500-s-grid",
+      "status": "closed",
+      "best_s": 2.1999891049538096,
+      "sentinel_s": 3.0,
+      "probes": 0
+    },
+    {
+      "baseline": "50deg/250x250-s-grid",
+      "status": "closed",
+      "best_s": 1.5000109534830757,
+      "sentinel_s": 4.0,
+      "probes": 1
+    },
+    {
+      "baseline": "50deg/300x300-s-grid",
+      "status": "closed",
+      "best_s": 2.2500208662383803,
+      "sentinel_s": 4.0,
+      "probes": 1
+    },
+    {
+      "baseline": "50deg/350x350-s-grid",
+      "status": "closed",
+      "best_s": 2.4999663809253563,
+      "sentinel_s": 4.0,
+      "probes": 1
+    },
+    {
+      "baseline": "50deg/400x400-s-grid",
+      "status": "closed",
+      "best_s": 2.5000249291484034,
+      "sentinel_s": 4.0,
+      "probes": 1
+    },
+    {
+      "baseline": "50deg/450x450-s-grid",
+      "status": "closed",
+      "best_s": 2.7499855528201036,
+      "sentinel_s": 4.0,
+      "probes": 1
+    },
+    {
+      "baseline": "50deg/500x500-s-grid",
+      "status": "closed",
+      "best_s": 2.749993922869625,
+      "sentinel_s": 4.0,
+      "probes": 1
+    }
+  ]
+}
