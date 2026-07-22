@@ -7,7 +7,7 @@ import unittest
 import yaml
 
 from app.tools.run_coupled_kn_length_program import (
-    canonical_extension_targets, materialize_canonical_s_extension,
+    anchor_selection, canonical_extension_targets, materialize_canonical_s_extension,
     materialize_kn_closure, materialize_local_s,
 )
 
@@ -64,6 +64,16 @@ class CoupledKNLengthProgramTests(unittest.TestCase):
                 "bem_candidate_search"]
         self.assertEqual(search["max_evaluations"], len(targets))
         self.assertEqual(search["solver"]["workers"], 10)
+
+    def test_anchor_selection_keeps_controls_and_material_scale_contrasts(self) -> None:
+        selected, evidence = anchor_selection(
+            ROOT / "examples" / "mouth-size-coverage-grid")
+        self.assertTrue(all(any(
+            path == ROOT / "examples" / "mouth-size-coverage-grid" /
+            f"{angle}deg" / "400x400-s-grid" for path in selected)
+                            for angle in (40, 45, 50)))
+        self.assertTrue(all("role" in item and "selected" in item
+                            for item in evidence))
 
 
 if __name__ == "__main__":

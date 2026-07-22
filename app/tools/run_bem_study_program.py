@@ -14,7 +14,7 @@ from typing import Any, Callable
 from .generate_mouth_size_coverage_grid_report import generate_report
 from .run_bem_search import run_search
 from .run_coupled_kn_length_program import (
-    materialize_canonical_s_extension, run_anchor, selected_baselines,
+    anchor_selection, materialize_canonical_s_extension, run_anchor,
 )
 from .run_s_boundary_closure_program import (
     authored_sentinel, baseline_searches, close_baseline, completed_points,
@@ -167,7 +167,12 @@ def run_program(root: Path, workers: int = 2,
 
     state["phase"] = PHASE_ORDER[2]
     _write_json(state_path, state)
-    anchors = selected_baselines(root)
+    anchors, anchor_evidence = anchor_selection(root)
+    _write_json(root / "coupled_anchor_selection.json", {
+        "schema_version": 1,
+        "policy": "400 mm matched controls plus distinct mouths gaining at least 0.75 points",
+        "anchors": anchor_evidence,
+    })
     run_dynamic_queue(
         anchors, lambda path: run_anchor(root, path), workers=workers,
         poll_seconds=poll_seconds, progress=record,

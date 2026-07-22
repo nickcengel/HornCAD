@@ -18,8 +18,11 @@ retained as historical evidence, but no new 60-degree search is scheduled.
 
 - At 40, 45, and 50 degrees, always study 400 mm as the matched cross-angle
   control. Also study the highest-scoring baseline mouth when it is distinct
-  from 400 mm. Existing K/N winners seed a selected 45-degree anchor when
-  available.
+  from 400 mm and beats the control by at least 0.75 surface-score points.
+  This keeps a meaningful mouth-scale contrast without coupling a nearly
+  redundant runner-up. Existing K/N winners seed a selected 45-degree anchor
+  when available. The queue records each decision and score margin in
+  `coupled_anchor_selection.json`.
 - Edge mouths remain conditional follow-ups. Schedule them only if the matched
   controls show material K/N movement, the best baseline lies at an edge, or
   interpolation uncertainty remains high. Do not automatically close every

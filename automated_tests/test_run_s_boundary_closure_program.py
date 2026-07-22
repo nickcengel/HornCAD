@@ -69,6 +69,20 @@ class SBoundaryClosureTests(unittest.TestCase):
                     "25deg" / "250x250-s-grid")
         self.assertEqual(authored_sentinel(baseline), 3.0)
 
+    def test_repairs_legacy_empty_probe_pool(self) -> None:
+        baseline = (ROOT / "examples" / "mouth-size-coverage-grid" /
+                    "25deg" / "250x250-s-grid")
+        seed = baseline / "project.yaml"
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "probe"
+            materialize_probe(seed, baseline, output, 0.5)
+            document = yaml.safe_load((output / "search.yaml").read_text())
+            document["bem_candidate_search"]["initial_pool"] = []
+            (output / "search.yaml").write_text(yaml.safe_dump(document))
+            materialize_probe(seed, baseline, output, 0.5)
+            loaded, _, _ = load_search(output / "search.yaml")
+        self.assertNotIn("initial_pool", loaded)
+
 
 if __name__ == "__main__":
     unittest.main()

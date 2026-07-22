@@ -19,6 +19,7 @@ from .run_bem_search import run_search
 
 CENTRAL_45_MOUTHS = (350, 400, 450)
 CANONICAL_S = tuple(0.5 + 0.25 * index for index in range(13))
+MINIMUM_NONCONTROL_SCORE_GAIN = 0.75
 
 
 def _score(record: dict[str, Any]) -> float:
@@ -40,20 +41,43 @@ def best_project(search_dir: Path) -> Path:
     return search_dir / "candidates" / record["id"] / "project.yaml"
 
 
-def selected_baselines(root: Path) -> list[Path]:
-    """Select matched 400 mm controls plus each angle's distinct best mouth."""
-    selected = []
+def anchor_selection(root: Path) -> tuple[list[Path], list[dict[str, Any]]]:
+    """Select matched controls plus only materially better scale contrasts."""
+    selected: list[Path] = []
+    evidence: list[dict[str, Any]] = []
     for angle in (40, 45, 50):
         baselines = sorted((root / f"{angle}deg").glob("*x*-s-grid"))
         if angle == 45:
             baselines = [path for path in baselines
                          if int(path.name.split("x", 1)[0]) in CENTRAL_45_MOUTHS]
-        scored = [( _score(best_record(path / "search_state.json")), path)
+        scored = [(_score(best_record(path / "search_state.json")), path)
                   for path in baselines]
         matched = root / f"{angle}deg" / "400x400-s-grid"
-        choices = {matched, max(scored, key=lambda item: item[0])[1]}
-        selected.extend(sorted(choices))
-    return selected
+        control_score = _score(best_record(matched / "search_state.json"))
+        best_score, best = max(scored, key=lambda item: item[0])
+        selected.append(matched)
+        evidence.append({
+            "coverage_deg": angle, "baseline": str(matched.relative_to(root)),
+            "role": "matched 400 mm control", "score": control_score,
+            "selected": True,
+        })
+        if best != matched:
+            gain = best_score - control_score
+            keep = gain >= MINIMUM_NONCONTROL_SCORE_GAIN
+            evidence.append({
+                "coverage_deg": angle, "baseline": str(best.relative_to(root)),
+                "role": "best distinct mouth", "score": best_score,
+                "score_gain_over_control": gain, "selected": keep,
+                "reason": ("material score and scale contrast" if keep else
+                           "score gain too small to justify a redundant coupled anchor"),
+            })
+            if keep:
+                selected.append(best)
+    return list(dict.fromkeys(selected)), evidence
+
+
+def selected_baselines(root: Path) -> list[Path]:
+    return anchor_selection(root)[0]
 
 
 def prerequisites_complete(root: Path) -> bool:

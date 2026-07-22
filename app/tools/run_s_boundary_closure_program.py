@@ -103,6 +103,14 @@ def next_probe_s(status: str, best_s: float) -> float | None:
 def materialize_probe(seed_project: Path, baseline: Path, output: Path,
                       target_s: float) -> Path:
     if (output / "search.yaml").exists():
+        # Repair probe directories authored by the pre-single-evaluation
+        # implementation before they reach the queue.
+        path = output / "search.yaml"
+        document = yaml.safe_load(path.read_text(encoding="utf-8"))
+        search = document["bem_candidate_search"]
+        if search.get("max_evaluations") == 1 and search.get("initial_pool") == []:
+            search.pop("initial_pool")
+            path.write_text(yaml.safe_dump(document, sort_keys=False), encoding="utf-8")
         return output
     seed = yaml.safe_load(seed_project.read_text(encoding="utf-8"))
     source = yaml.safe_load((baseline / "search.yaml").read_text(encoding="utf-8"))[
