@@ -12,7 +12,7 @@
       "baseline": "25deg/300x300-s-grid",
       "status": "geometry-limited",
       "best_s": 0.6999951296023326,
-      "rejected_s": 2.999987526083502,
+      "rejected_s": 2.999995523748178,
       "reason": "H profile puts 64.5% of radial growth in the final 10% of horn length (maximum 52%)",
       "probes": 1
     },
@@ -34,7 +34,7 @@
       "baseline": "25deg/450x450-s-grid",
       "status": "geometry-limited",
       "best_s": 0.6999988073125161,
-      "rejected_s": 2.99999465889392,
+      "rejected_s": 3.0000003941053652,
       "reason": "H profile puts 62.0% of radial growth in the final 10% of horn length (maximum 52%)",
       "probes": 1
     },
@@ -42,7 +42,7 @@
       "baseline": "25deg/500x500-s-grid",
       "status": "geometry-limited",
       "best_s": 0.7000002417818416,
-      "rejected_s": 2.9999985785061116,
+      "rejected_s": 3.000003833023925,
       "reason": "H profile puts 61.4% of radial growth in the final 10% of horn length (maximum 52%)",
       "probes": 1
     },
@@ -92,16 +92,16 @@
       "baseline": "35deg/250x250-s-grid",
       "status": "geometry-limited",
       "best_s": 0.6999907586295905,
-      "rejected_s": 2.999974896397023,
-      "reason": "H profile puts 59.5% of radial growth in the final 10% of horn length (maximum 55%)",
+      "rejected_s": 2.9999873988902053,
+      "reason": "H profile puts 59.5% of radial growth in the final 10% of horn length (maximum 52%)",
       "probes": 1
     },
     {
       "baseline": "35deg/300x300-s-grid",
       "status": "geometry-limited",
       "best_s": 0.6999955368037946,
-      "rejected_s": 2.9999956790694764,
-      "reason": "H profile puts 58.0% of radial growth in the final 10% of horn length (maximum 55%)",
+      "rejected_s": 3.000006502732585,
+      "reason": "H profile puts 58.0% of radial growth in the final 10% of horn length (maximum 52%)",
       "probes": 1
     },
     {
@@ -120,18 +120,16 @@
     },
     {
       "baseline": "35deg/450x450-s-grid",
-      "status": "geometry-limited",
+      "status": "closed",
       "best_s": 1.2999992656809627,
-      "rejected_s": 2.999998277890919,
-      "reason": "H profile puts 55.2% of radial growth in the final 10% of horn length (maximum 55%)",
+      "sentinel_s": 3.0,
       "probes": 1
     },
     {
       "baseline": "35deg/500x500-s-grid",
-      "status": "geometry-limited",
+      "status": "closed",
       "best_s": 1.2999980809209302,
-      "rejected_s": 3.000014320261429,
-      "reason": "H profile puts 54.6% of radial growth in the final 10% of horn length (maximum 52%)",
+      "sentinel_s": 3.0,
       "probes": 1
     },
     {

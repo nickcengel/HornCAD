@@ -1,0 +1,93 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 25
+  intended_coverage_v_deg: 25
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 2
+  initial_candidates: 1
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  bounds:
+    length_mm:
+    - 334.156999
+    - 377.022001
+    extension_mm:
+    - -1.0e-06
+    - 2.0e-06
+    osse_coverage_h_deg:
+    - 24.999999
+    - 25.000002000000002
+    osse_coverage_v_deg:
+    - 24.999999
+    - 25.000002000000002
+    k_h:
+    - 0.999999
+    - 7.000001
+    k_v:
+    - 0.999999
+    - 7.000001
+    n_h:
+    - 1.999999
+    - 20.000001
+    n_v:
+    - 1.999999
+    - 20.000001
+  initial_pool:
+  - label: "domain map \xB7 remote maximin coverage"
+    values:
+      length_mm: 334.157
+      extension_mm: 0.0
+      osse_coverage_h_deg: 25.0
+      osse_coverage_v_deg: 25.0
+      k_h: 7.0
+      k_v: 7.0
+      n_h: 20.0
+      n_v: 20.0
+  domain_mapping:
+    batch: 1
+    proposals:
+    - coverage_deg: 25
+      mouth_mm: 500
+      batch: 1
+      slot: 0
+      s: 0.1
+      length_mm: 377.022
+      k: 1.0
+      n: 2.0
+      mouth_length_ratio: 1.3261825569860646
+      exit_angle_deg: 57.444655078478405
+      normalized_curvature_radius: 0.09702631934540636
+      acquisition: remote maximin coverage
+      nearest_distance: 0.7533007034728645
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 25
+      mouth_mm: 500
+      batch: 1
+      slot: 1
+      s: 3.0
+      length_mm: 334.157
+      k: 7.0
+      n: 20.0
+      mouth_length_ratio: 1.4963026361859846
+      exit_angle_deg: 87.79123019618281
+      normalized_curvature_radius: 4.619428961682799
+      acquisition: remote maximin coverage
+      nearest_distance: 0.768508324096191
+      predicted_score: null
+      predicted_sigma: null
+    score_materiality_points: 1.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
