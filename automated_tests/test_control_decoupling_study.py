@@ -37,6 +37,13 @@ class ControlDecouplingStudyTests(unittest.TestCase):
         ]}
         self.assertEqual(_active_searches(runtime), {"searches/two"})
 
+    def test_index_registers_live_point_status_colors(self) -> None:
+        report_source = (ROOT / "app" / "tools" /
+                         "report_control_decoupling_study.py").read_text()
+        self.assertIn("pointColor(v.p.status)", report_source)
+        self.assertIn("Newly complete", report_source)
+        self.assertIn("Reused historical", report_source)
+
     def test_registered_design_is_complete_and_fixed(self) -> None:
         rows = manifest()["coordinates"]
         self.assertEqual(len(rows), MAX_REGISTERED_COORDINATES)
