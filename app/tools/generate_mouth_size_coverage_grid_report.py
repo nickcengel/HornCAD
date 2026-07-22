@@ -687,7 +687,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 .column-controls,.angle-controls{{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}}.column-toggle,.angle-filter{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true'],.angle-filter[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}.filter-count{{margin-left:5px;color:var(--muted);font-size:.9rem}}
 .show-more{{display:block;margin:14px auto 2px;border:1px solid var(--accent);border-radius:999px;padding:8px 16px;background:#173c39;color:var(--ink);cursor:pointer}}
 .design-map{{table-layout:fixed;min-width:1100px}}.design-map th:first-child{{width:210px;overflow:hidden}}.design-cell{{min-width:142px;border:1px solid var(--line);background:#17212a}}.design-cell>span{{display:block;margin-top:4px;font-size:.82rem;color:#c1cbd2;white-space:nowrap}}.design-score{{display:block;font-size:1.5rem;line-height:1}}.design-score a{{color:inherit;text-decoration:none}}.design-cell.excellent{{background:#174638}}.design-cell.good{{background:#173c3c}}.design-cell.fair{{background:#3d3820}}.design-cell.low{{background:#452827}}.design-cell.unmeasured{{background:#131920;text-align:center;vertical-align:middle}}.design-state{{width:max-content;padding:2px 6px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;font-size:.68rem!important}}.design-state.refined,.design-state.bounded{{background:rgba(105,214,200,.16);color:#9af0df}}.design-state.baseline{{background:rgba(148,163,189,.16);color:#c8d0d8}}.design-state.provisional{{background:rgba(183,121,31,.25);color:#f6d39a}}.design-state.limited{{background:rgba(180,83,83,.25);color:#ffb2b2}}
-.sampling-matrix{{table-layout:fixed;min-width:1100px}}.sampling-matrix th:first-child{{width:210px}}.sampling-matrix td{{padding:3px}}.sampling-cell{{width:100%;min-height:68px;border:1px solid transparent;border-radius:6px;padding:7px;background:#17212a;color:var(--ink);text-align:left;cursor:pointer}}.sampling-cell.active{{border-color:var(--accent);background:#173c39}}.sampling-cell strong,.sampling-cell span{{display:block}}.sampling-cell span{{margin-top:3px;color:var(--muted);font-size:.78rem;white-space:nowrap}}.sampling-empty{{color:var(--muted);text-align:center}}.sampling-views{{margin-top:12px}}.sampling-view{{min-width:0;background:#0d1319;border:1px solid var(--line);border-radius:8px;padding:8px}}.sampling-view h3{{font-size:1rem}}.sampling-canvas{{display:block;width:100%;height:520px;touch-action:none}}#sampling-3d{{cursor:grab}}#sampling-3d:active{{cursor:grabbing}}.sampling-caption{{color:var(--muted);font-size:.82rem;margin:6px 0 0}}#sampling-selection{{color:var(--accent)}}
+.sampling-matrix{{table-layout:fixed;min-width:1100px}}.sampling-matrix th:first-child{{width:210px}}.sampling-matrix td{{padding:3px}}.sampling-cell{{width:100%;min-height:68px;border:1px solid transparent;border-radius:6px;padding:7px;background:#17212a;color:var(--ink);text-align:left;cursor:pointer}}.sampling-cell.active{{border-color:var(--accent);background:#173c39}}.sampling-cell strong,.sampling-cell span{{display:block}}.sampling-cell span{{margin-top:3px;color:var(--muted);font-size:.78rem;white-space:nowrap}}.sampling-empty{{color:var(--muted);text-align:center}}.sampling-views{{margin-top:12px}}.sampling-view{{min-width:0;background:#0d1319;border:1px solid var(--line);border-radius:8px;padding:8px}}.sampling-view h3{{font-size:1rem}}.sampling-canvas{{display:block;width:100%;height:520px;touch-action:none}}#sampling-3d{{cursor:grab}}#sampling-3d:active{{cursor:grabbing}}#sampling-3d.wheel-active{{outline:1px solid var(--accent);outline-offset:-1px}}.sampling-caption{{color:var(--muted);font-size:.82rem;margin:6px 0 0}}#sampling-selection{{color:var(--accent)}}
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
 @media(max-width:700px){{.summary,.learning-cards{{grid-template-columns:1fr}}}}
@@ -723,7 +723,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 {sampling_matrix_html}
 <p><strong id='sampling-selection'></strong></p>
 <div class='sampling-views'>
-<div class='sampling-view'><h3>Measured S / K / N point cloud</h3><canvas id='sampling-3d' class='sampling-canvas'></canvas><p class='sampling-caption'>Drag to rotate; wheel to zoom. No interpolated surface is drawn.</p></div>
+<div class='sampling-view'><h3>Measured S / K / N point cloud</h3><canvas id='sampling-3d' class='sampling-canvas'></canvas><p class='sampling-caption'>Drag to rotate. Click the plot to enable wheel zoom; click elsewhere to release it. No interpolated surface is drawn.</p></div>
 </div>
 </section>
 <section>
@@ -752,6 +752,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
   const samplingPoints = {sampling_data_json};
   let samplingKey = {default_sampling_json};
   let samplingYaw = -0.65, samplingPitch = 0.65, samplingZoom = 0.82, samplingDrag = null;
+  let samplingWheelActive = false;
   const sampling3d = document.getElementById('sampling-3d');
   const samplingSelection = document.getElementById('sampling-selection');
   const cellPoints = () => {{
@@ -799,7 +800,9 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
   sampling3d.addEventListener('pointerdown',event=>{{samplingDrag=[event.clientX,event.clientY];sampling3d.setPointerCapture(event.pointerId);}});
   sampling3d.addEventListener('pointermove',event=>{{if(!samplingDrag)return;samplingYaw+=(event.clientX-samplingDrag[0])*.008;samplingPitch=Math.max(.15,Math.min(1.3,samplingPitch+(event.clientY-samplingDrag[1])*.006));samplingDrag=[event.clientX,event.clientY];drawSampling3d();}});
   sampling3d.addEventListener('pointerup',()=>samplingDrag=null);
-  sampling3d.addEventListener('wheel',event=>{{event.preventDefault();samplingZoom=Math.max(.55,Math.min(1.4,samplingZoom-event.deltaY*.001));drawSampling3d();}},{{passive:false}});
+  sampling3d.addEventListener('click',()=>{{samplingWheelActive=true;sampling3d.classList.add('wheel-active');}});
+  document.addEventListener('pointerdown',event=>{{if(!sampling3d.contains(event.target)){{samplingWheelActive=false;sampling3d.classList.remove('wheel-active');}}}});
+  sampling3d.addEventListener('wheel',event=>{{if(!samplingWheelActive)return;event.preventDefault();samplingZoom=Math.max(.55,Math.min(1.4,samplingZoom-event.deltaY*.001));drawSampling3d();}},{{passive:false}});
   window.addEventListener('resize',renderSampling);renderSampling();
   document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
     button.addEventListener('click', () => {{

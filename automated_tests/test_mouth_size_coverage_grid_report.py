@@ -128,6 +128,8 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("`K ${kRange[0].toFixed(2)}–", report)
         self.assertIn("`N ${nRange[0].toFixed(1)}–", report)
         self.assertNotIn("http-equiv='refresh'", report)
+        self.assertIn("if(!samplingWheelActive)return", report)
+        self.assertIn("Click the plot to enable wheel zoom", report)
         self.assertIn("data-column-toggle='containment-mean'", report)
         self.assertIn("data-column-toggle='profile-rms'", report)
         self.assertIn("data-column-toggle='slice-rms'", report)
