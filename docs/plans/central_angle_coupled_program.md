@@ -52,12 +52,12 @@ limits.
 
 ## Scheduling and reporting
 
-`app.tools.run_coupled_kn_length_program` waits for all 40/50 baselines and the
-active 45-degree K/N prerequisite. It first runs the canonical 45-degree
-extensions in two concurrent streams, then selects coupled anchors from the
-expanded evidence and runs two independent anchors concurrently. Each stream
-uses ten NumCalc workers, keeping the intended 20-core load while permitting
-geometry and report work in one stream to overlap solves in the other.
+`app.tools.run_bem_study_program` owns the complete production queue. After its
+per-baseline S closure chains produce one global certificate, it runs authored
+K/N grids and canonical 45-degree extensions, then selects and runs coupled
+anchors. It maintains two concurrent ten-worker search slots throughout.
+`run_coupled_kn_length_program` supplies materialization and anchor functions;
+it should not be launched as a separate waiter.
 
 Every completed local-S round regenerates the main index. Generated studies are
 siblings of the baseline searches and use names such as

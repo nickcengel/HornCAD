@@ -127,10 +127,14 @@ the conservative S=0.3-or-finer fallback.
 
 ## Scheduling and reporting
 
-The study uses two concurrent queues with ten NumCalc frequency workers each.
-It starts only after the active K/N study finishes, so no current search is
-interrupted or oversubscribed. The main index includes these candidates in the
-existing physical-parameter plots and refreshes while the study runs.
+`app.tools.run_bem_study_program` is the sole production queue. It treats each
+uniform grid and its S closure as one dependency chain, so a completed grid may
+begin closure while another baseline is still finishing. One global budget of
+two search slots counts externally running searches; each search uses ten
+NumCalc workers. After all S chains close, the same program advances to K/N
+grids and canonical extensions, then coupled refinement. The older boundary
+and coupled program modules remain implementation helpers, not independent
+production waiters.
 
 After completion, selective 42.5° and 47.5° searches are warranted only where
 the 40°/45°/50° ridge shows rapid curvature or a change in the winning geometry

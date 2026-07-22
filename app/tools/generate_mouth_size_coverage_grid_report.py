@@ -6,8 +6,10 @@ import argparse
 from datetime import datetime
 import html
 import json
+import os
 from pathlib import Path
 from statistics import fmean
+import threading
 from typing import Any
 
 import yaml
@@ -851,7 +853,8 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 </script>
 </main></body></html>"""
     output.parent.mkdir(parents=True, exist_ok=True)
-    temporary = output.with_suffix(".html.tmp")
+    temporary = output.with_name(
+        f".{output.name}.{os.getpid()}.{threading.get_ident()}.tmp")
     temporary.write_text(document, encoding="utf-8")
     temporary.replace(output)
     return output
