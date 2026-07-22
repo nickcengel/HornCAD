@@ -192,6 +192,18 @@ def _summarize_pairs(pairs: list[dict[str, Any]]) -> dict[str, Any]:
     return summary
 
 
+def _transition_summaries(pairs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    grouped: dict[tuple[float, float], list[dict[str, Any]]] = defaultdict(list)
+    for pair in pairs:
+        grouped[(round(pair["from"], 3), round(pair["to"], 3))].append(pair)
+    return [{
+        "from": transition[0], "to": transition[1], "count": len(group),
+        "score_improved_fraction": sum(
+            pair["delta"]["score"] > 0 for pair in group) / len(group),
+        "median_score_delta": median(pair["delta"]["score"] for pair in group),
+    } for transition, group in sorted(grouped.items())]
+
+
 def _effect_strata(pairs: list[dict[str, Any]], parameter: str) -> list[dict[str, Any]]:
     """Expose sign reversals without pretending they establish a causal rule."""
     if not pairs:
@@ -279,6 +291,7 @@ def analyze(root: Path) -> dict[str, Any]:
             parameter: {
                 **_summarize_pairs(parameter_pairs),
                 "strata": _effect_strata(parameter_pairs, parameter),
+                "transitions": _transition_summaries(parameter_pairs),
             }
             for parameter, parameter_pairs in pairs.items()
         },
@@ -361,6 +374,26 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         "on a starting diagnostic are hypotheses that still need repetition across independent "
         "mouth/coverage cells and held-out confirmation.",
         "",
+        "### Sampled K and N transitions",
+        "",
+        "| Control | Transition | Pairs | Score improves | Median score Δ |",
+        "| --- | ---: | ---: | ---: | ---: |",
+    ]
+    for parameter in ("k", "n"):
+        for item in analysis["matched_effects"][parameter]["transitions"]:
+            lines.append(
+                f"| {parameter.upper()} | {item['from']:g} → {item['to']:g} | "
+                f"{item['count']} | {100 * item['score_improved_fraction']:.0f}% | "
+                f"{item['median_score_delta']:.2f} |"
+            )
+    lines += [
+        "",
+        "The current K evidence describes a broad crest near K=4: increases below 4 are "
+        "usually helpful, while increases above 4 are usually harmful. The current N evidence "
+        "rejects N=2, but does not support continuing upward past 10: N=2→5 is strongly "
+        "helpful, N=5→10 is mixed, and every measured transition above 10 is harmful. These "
+        "statements apply only to the mouth/coverage/S regimes represented by the matched pairs.",
+        "",
         "## Fixed K=4, N=10 S evidence",
         "",
         f"{len(cells)} mouth/coverage cells currently have fixed K=4, N=10 evidence; "
@@ -382,7 +415,7 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         "",
         "## Immediate next analysis",
         "",
-        "1. Split matched effects by mouth, coverage, S region, and starting diagnostic state.",
+        "1. Test whether the provisional K≈4 and N≈5–10 crest repeats across independent cells.",
         "2. Test whether diagnostic-conditioned directions repeat across independent cells.",
         "3. Compare absolute and length/mouth-normalized bunching frequencies to identify which "
         "physical scale moves each frequency feature.",

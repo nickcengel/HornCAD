@@ -1,12 +1,12 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-21T19:41:57.981865-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-21T19:46:41.396626-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
-- 466 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: complete: 57, running: 2.
-- Candidate counts by coverage half-angle: 25°: 105, 30°: 26, 35°: 88, 40°: 63, 45°: 109, 50°: 75.
+- 467 unique scored physical designs across 36 mouth/coverage cells.
+- Search states: complete: 58, running: 1.
+- Candidate counts by coverage half-angle: 25°: 105, 30°: 27, 35°: 88, 40°: 63, 45°: 109, 50°: 75.
 
 The counts are evidence density, not evidence quality. Incomplete 30° work and unfinished closure studies must not yet be used for final cross-angle recommendations.
 
@@ -16,7 +16,7 @@ Positive score deltas mean increasing the named control improved the surface sco
 
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| S | 360 | 34% | -0.61 | -0.60 | 0.047 | 0.022 | -0.001 | 0.42 | 0.000 |
+| S | 361 | 34% | -0.61 | -0.60 | 0.047 | 0.022 | -0.001 | 0.42 | 0.000 |
 | K | 47 | 55% | 0.25 | -0.18 | -0.017 | 0.016 | -0.149 | 0.27 | 0.000 |
 | N | 46 | 28% | -1.06 | 0.12 | 0.010 | 0.076 | 0.008 | 0.40 | 0.000 |
 
@@ -27,13 +27,13 @@ These are aggregate directional summaries, not universal steering rules. A contr
 | Control increase | Starting regime | Pairs | Score improves | Median score Δ |
 | --- | --- | ---: | ---: | ---: |
 | S | S < 1 | 78 | 72% | 1.97 |
-| S | coverage 30° | 20 | 15% | -1.83 |
+| S | coverage 30° | 21 | 14% | -1.85 |
 | S | coverage 25° | 77 | 0% | -1.70 |
 | S | coverage 35° | 58 | 16% | -1.31 |
 | S | S ≥ 2 | 135 | 6% | -1.15 |
 | S | coverage 40° | 57 | 37% | -0.88 |
 | S | coverage 50° | 69 | 65% | 0.88 |
-| S | 1 ≤ S < 2 | 147 | 39% | -0.49 |
+| S | 1 ≤ S < 2 | 148 | 39% | -0.50 |
 | K | high starting outward_rise_violation_db | 24 | 83% | 1.08 |
 | K | high starting profile_rms_error_db | 24 | 67% | 0.98 |
 | K | high starting high_frequency_coverage_error_deg | 24 | 79% | 0.90 |
@@ -53,6 +53,21 @@ These are aggregate directional summaries, not universal steering rules. A contr
 
 This table is a screening device. Coverage/S regimes are descriptive, while splits on a starting diagnostic are hypotheses that still need repetition across independent mouth/coverage cells and held-out confirmation.
 
+### Sampled K and N transitions
+
+| Control | Transition | Pairs | Score improves | Median score Δ |
+| --- | ---: | ---: | ---: | ---: |
+| K | 3 → 3.5 | 6 | 83% | 2.33 |
+| K | 3.5 → 4 | 17 | 82% | 0.97 |
+| K | 4 → 4.5 | 18 | 39% | -0.12 |
+| K | 4.5 → 5 | 6 | 0% | -0.57 |
+| N | 2 → 5 | 6 | 100% | 14.82 |
+| N | 5 → 10 | 18 | 39% | -0.57 |
+| N | 10 → 15 | 17 | 0% | -1.46 |
+| N | 15 → 20 | 5 | 0% | -1.38 |
+
+The current K evidence describes a broad crest near K=4: increases below 4 are usually helpful, while increases above 4 are usually harmful. The current N evidence rejects N=2, but does not support continuing upward past 10: N=2→5 is strongly helpful, N=5→10 is mixed, and every measured transition above 10 is harmful. These statements apply only to the mouth/coverage/S regimes represented by the matched pairs.
+
 ## Fixed K=4, N=10 S evidence
 
 36 mouth/coverage cells currently have fixed K=4, N=10 evidence; 11 have their measured winner on an observed S endpoint. An endpoint winner is unresolved unless the study metadata establishes that the endpoint is a deliberate terminal sentinel rather than an unfinished boundary.
@@ -68,7 +83,7 @@ This table is a screening device. Coverage/S regimes are descriptive, while spli
 | 30° | 250 | 5 | 0.70–1.90 | 0.70 | 174.4 | 75.78 | yes |
 | 30° | 300 | 5 | 0.70–1.90 | 0.70 | 205.2 | 80.58 | yes |
 | 30° | 350 | 5 | 0.70–1.90 | 0.70 | 235.5 | 84.69 | yes |
-| 30° | 400 | 4 | 0.70–1.60 | 1.00 | 242.7 | 85.90 | no |
+| 30° | 400 | 5 | 0.70–1.90 | 1.00 | 242.7 | 85.90 | no |
 | 30° | 450 | 5 | 0.70–1.90 | 1.00 | 270.1 | 87.46 | no |
 | 30° | 500 | 2 | 0.70–1.00 | 1.00 | 297.3 | 86.23 | yes |
 | 35° | 250 | 10 | 0.19–1.90 | 0.70 | 153.4 | 79.74 | no |
@@ -98,7 +113,7 @@ This table is a screening device. Coverage/S regimes are descriptive, while spli
 
 ## Immediate next analysis
 
-1. Split matched effects by mouth, coverage, S region, and starting diagnostic state.
+1. Test whether the provisional K≈4 and N≈5–10 crest repeats across independent cells.
 2. Test whether diagnostic-conditioned directions repeat across independent cells.
 3. Compare absolute and length/mouth-normalized bunching frequencies to identify which physical scale moves each frequency feature.
 4. Freeze completed results as training evidence and use later completions as held-out checks before any steering rule is labeled supported.
