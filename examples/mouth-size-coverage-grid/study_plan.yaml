@@ -1,25 +1,43 @@
 planned_subsearches:
-  - label: 25-50 deg / all mouths · S boundary closure
+  - label: Remaining per-baseline S closure probes
     coverage_angles: [25, 30, 35, 40, 45, 50]
-    prerequisite: all uniform S baselines complete
-    status: planned
-  - label: 30 deg / 250-500 mm · comparable S baselines
-    coverage_angles: [30]
-    prerequisite: current broad grids complete
-    status: planned
+    prerequisite: each corresponding uniform S baseline complete
+    status: active
+    phase: 1
+    phase_label: Phase 1 · baseline / S closure
   - label: 40 deg / 400 mm · matched coupled K/N ↔ local S (up to 3 rounds)
     coverage_angles: [40]
+    prerequisite: all S closures and Phase 2 complete
+    status: queued
+    phase: 3
+    phase_label: Phase 3 · coupled refinement
   - label: 40 deg / best baseline mouth · coupled K/N ↔ local S if distinct
     coverage_angles: [40]
+    prerequisite: beat 400 mm control by at least 0.75 points
+    status: conditional
+    phase: 3
+    phase_label: Phase 3 · coupled refinement
   - label: 45 deg / 400 mm · matched coupled K/N ↔ local S (up to 3 rounds)
     coverage_angles: [45]
+    prerequisite: all S closures and Phase 2 complete
+    status: queued
+    phase: 3
+    phase_label: Phase 3 · coupled refinement
   - label: 45 deg / best 350-450 mm baseline · coupled K/N ↔ local S if distinct
     coverage_angles: [45]
+    prerequisite: beat 400 mm control by at least 0.75 points
+    status: conditional
+    phase: 3
+    phase_label: Phase 3 · coupled refinement
   - label: 50 deg / 400 mm · matched coupled K/N ↔ local S (up to 3 rounds)
     coverage_angles: [50]
+    prerequisite: all S closures and Phase 2 complete
+    status: queued
+    phase: 3
+    phase_label: Phase 3 · coupled refinement
   - label: 50 deg / best baseline mouth · coupled K/N ↔ local S if distinct
     coverage_angles: [50]
-  - label: 40/45/50 deg edge-mouth coupled closure
-    coverage_angles: [40, 45, 50]
-    prerequisite: matched controls show material K/N movement or high edge uncertainty
     status: conditional
+    prerequisite: beat 400 mm control by at least 0.75 points
+    phase: 3
+    phase_label: Phase 3 · coupled refinement

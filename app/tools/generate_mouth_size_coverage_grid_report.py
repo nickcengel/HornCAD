@@ -35,6 +35,15 @@ LEGACY_RANKING_KEYS = (
     "window_uniformity_percent",
 )
 NEAR_DUPLICATE_LENGTH_MM = 1.0
+STUDY_PHASES = {
+    "original": (1, "Phase 1 · baseline / S closure"),
+    "uniform S grid": (1, "Phase 1 · baseline / S closure"),
+    "S boundary closure": (1, "Phase 1 · baseline / S closure"),
+    "adaptive K/N grid": (2, "Phase 2 · K/N grid / S extension"),
+    "canonical S extension": (2, "Phase 2 · K/N grid / S extension"),
+    "coupled K/N closure": (3, "Phase 3 · coupled refinement"),
+    "coupled local S": (3, "Phase 3 · coupled refinement"),
+}
 
 
 def _candidate_geometry_key(item: dict[str, Any]) -> tuple[float, ...]:
@@ -486,10 +495,13 @@ def generate_report(project_root: Path, output: Path) -> Path:
             "</tr>"
         )
 
-    status_order = {"running": 0, "planned": 1, "not started": 1,
+    status_order = {"running": 0, "active": 0, "planned": 1, "queued": 1,
+                    "not started": 1,
                     "conditional": 2, "complete": 3, "failed": 4}
     summary_entries = []
     for summary in summaries:
+        phase_order, phase_label = STUDY_PHASES.get(
+            summary["study"], (9, "Outside unified queue"))
         report_link = (
             f"<a href='{html.escape(str(summary['report_path'].relative_to(project_root)))}'>search report</a>"
             if summary["report_path"] else "—"
@@ -501,10 +513,10 @@ def generate_report(project_root: Path, output: Path) -> Path:
         completed_text = (datetime.fromtimestamp(float(completed_at)).astimezone().strftime(
             "%-m-%d %H:%M") if isinstance(completed_at, (int, float)) else "—")
         summary_entries.append((
-            status_order.get(summary["status"], 2), summary["label"],
+            status_order.get(summary["status"], 2), phase_order, summary["label"],
             f"{summary['coverage']:g}",
             "<tr data-subsearch-coverage-angle='{}'>"
-            "<td>{}</td>"
+            f"<td data-sort='{phase_order}'>{html.escape(phase_label)}</td>"
             f"<td>{html.escape(summary['label'])}</td>"
             f"<td>{status_badge}</td>"
             f"<td data-sort='{completed_sort}'>{completed_text}</td>"
@@ -518,21 +530,39 @@ def generate_report(project_root: Path, output: Path) -> Path:
     for item in planned:
         prerequisite = item.get("prerequisite")
         planned_status = str(item.get("status", "planned"))
-        detail = (f"<br><span class='muted'>after {html.escape(str(prerequisite))}</span>"
+        detail = (f"<br><span class='muted'>Requires: {html.escape(str(prerequisite))}</span>"
                   if prerequisite else "")
         angles = " ".join(str(value) for value in item.get("coverage_angles", []))
+        phase_order = int(item.get("phase", 9))
+        phase_label = str(item.get("phase_label", f"Phase {phase_order}"))
         summary_entries.append((
-            status_order.get(planned_status, 1), str(item["label"]), angles,
+            status_order.get(planned_status, 1), phase_order,
+            str(item["label"]), angles,
             "<tr data-subsearch-coverage-angle='{}'>"
-            "<td>{}</td>"
+            f"<td data-sort='{phase_order}'>{html.escape(phase_label)}</td>"
             f"<td>{html.escape(str(item['label']))}{detail}</td>"
             f"<td><span class='badge pending'>{html.escape(planned_status)}</span></td>"
             "<td data-sort=''>—</td><td>—</td><td>—</td>"
             "</tr>"
         ))
-    summary_entries.sort(key=lambda item: (item[0], item[1]))
-    summary_rows = [entry[3].format(html.escape(entry[2]), rank)
-                    for rank, entry in enumerate(summary_entries, 1)]
+    summary_entries.sort(key=lambda item: (item[0], item[1], item[2]))
+    summary_rows = [entry[4].format(html.escape(entry[3]))
+                    for entry in summary_entries]
+
+    program_state_path = project_root / "study_program_state.json"
+    program_state = {}
+    if program_state_path.is_file():
+        try:
+            program_state = json.loads(program_state_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            program_state = {}
+    program_status = str(program_state.get("status", "not started"))
+    current_phase = str(program_state.get("phase", "baseline-and-s-closure"))
+    phase_display = {
+        "baseline-and-s-closure": "Phase 1 · baseline / S closure",
+        "kn-grids-and-canonical-extensions": "Phase 2 · K/N grids / S extensions",
+        "coupled": "Phase 3 · coupled refinement",
+    }.get(current_phase, current_phase)
 
     project_configs = [summary["config"] for summary in summaries if summary["config"]]
     if project_configs:
@@ -680,9 +710,10 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 </section>
 <section>
 <h2>Sub-searches</h2>
+<p><strong>Unified queue:</strong> {html.escape(program_status)} · {html.escape(phase_display)}. Rows are initially grouped by live status and then execution phase.</p>
 <div class='angle-controls' aria-label='Filter sub-searches by coverage angle'>{subsearch_angle_filters}<span id='subsearch-filter-count' class='filter-count'>{len(summary_rows)} sub-searches</span></div>
 <table id='subsearch-table' class='sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>#</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Date complete</th><th class='sortable' data-sort='number'>Complete&nbsp;/ Proposed</th><th>Links</th></tr></thead>
+<thead><tr><th class='sortable' data-sort='number'>Queue phase</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Date complete</th><th class='sortable' data-sort='number'>Complete&nbsp;/ Proposed</th><th>Links</th></tr></thead>
 <tbody>{''.join(summary_rows)}</tbody>
 </table>
 </section>
