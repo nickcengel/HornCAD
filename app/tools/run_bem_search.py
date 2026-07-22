@@ -1517,6 +1517,28 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
         "n_h": float(seed["horncad_config"]["horizontal_basis"]["n"]),
         "n_v": float(seed["horncad_config"]["vertical_basis"]["n"]),
     })
+    for record in state["candidates"]:
+        if record.get("status") != "queued":
+            continue
+        _, refreshed_derived = materialize_candidate(
+            seed, record["values"], search)
+        record.setdefault("derived", {}).update(refreshed_derived)
+        feasible, reason = geometry_feasibility(record["derived"])
+        if feasible:
+            continue
+        record.update(status="geometry-rejected", reason=reason)
+        state["rejected_count"] += 1
+        if search["max_evaluations"] == 1:
+            state["geometry_rejection"] = {
+                "reason": reason,
+                "values": record["values"],
+                "derived": record["derived"],
+                "rejected_at_unix": time.time(),
+            }
+            state.update(status="geometry-rejected",
+                         phase=f"geometry rejected: {reason}")
+            save_state(output_dir, state)
+            return state
     executable = None if dry_run else find_numcalc(binary)
     solver = dict(search.get("solver", {}))
     if retry_failed:
