@@ -1,14 +1,14 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-22T12:09:03.226615-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-22T12:16:53.085848-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
-- 855 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: cancelled: 3, complete: 130, geometry-rejected: 7, running: 2.
+- 857 unique scored physical designs across 36 mouth/coverage cells.
+- Search states: cancelled: 3, complete: 131, geometry-rejected: 7, running: 2.
 - Study program: `domain-map-batch-1` (running).
 - S-closure certificate: complete; closed: 31, geometry-limited: 5.
-- Candidate counts by coverage half-angle: 25°: 121, 30°: 49, 35°: 98, 40°: 97, 45°: 289, 50°: 201.
+- Candidate counts by coverage half-angle: 25°: 121, 30°: 49, 35°: 100, 40°: 97, 45°: 289, 50°: 201.
 
 The counts are evidence density, not evidence quality. Cross-angle conclusions remain provisional while the study program is running; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
 
@@ -18,8 +18,8 @@ Positive score deltas mean increasing the named control improved the surface sco
 
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-- Running: `35deg/400x400-domain-map-b01` — BEM evaluation candidate-001; 1/2 candidates complete; 10 solver workers.
-- Running: `35deg/450x450-domain-map-b01` — BEM evaluation candidate-000; 0/2 candidates complete; 10 solver workers.
+- Running: `35deg/450x450-domain-map-b01` — BEM evaluation candidate-001; 1/2 candidates complete; 10 solver workers.
+- Running: `40deg/250x250-domain-map-b01` — BEM evaluation candidate-000; 0/2 candidates complete; 10 solver workers.
 | Length | 514 | 68% | 0.49 | 0.45 | -0.041 | -0.028 | 0.020 | -0.27 | 0.000 |
 | K | 232 | 59% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
 | N | 259 | 45% | -0.02 | 0.04 | -0.002 | 0.001 | 0.001 | 0.07 | 0.000 |
@@ -153,12 +153,12 @@ The current wide-coverage penalty is not a general loss of surface smoothness. P
 
 ## Phase 4 remote-sample value
 
-Assessment: **remote samples mainly support the existing ridge**. 27 remote candidates are complete; median score change from the pre-Phase-4 cell incumbent is -10.41 points and median normalized distance from pre-Phase-4 evidence is 0.686. Boundary confirmations are useful until a distributed stratum is established; later repetition in that stratum should be skipped.
+Assessment: **remote samples mainly support the existing ridge**. 29 remote candidates are complete; median score change from the pre-Phase-4 cell incumbent is -11.17 points and median normalized distance from pre-Phase-4 evidence is 0.686. Boundary confirmations are useful until a distributed stratum is established; later repetition in that stratum should be skipped.
 
 | Remote stratum | Complete | Angles | Competitive | Diagnostic tradeoffs | Boundary confirmations | Median score Δ | Recommendation |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| K≈1 / N≈2 corner | 13 | 3 | 0 | 0 | 13 | -29.18 | stop stratum: low-value boundary established |
-| K≈7 / N≈20 corner | 13 | 3 | 0 | 0 | 13 | -8.48 | stop stratum: low-value boundary established |
+| K≈1 / N≈2 corner | 14 | 3 | 0 | 0 | 14 | -30.49 | stop stratum: low-value boundary established |
+| K≈7 / N≈20 corner | 14 | 3 | 0 | 0 | 14 | -9.08 | stop stratum: low-value boundary established |
 | high K / high N | 1 | 1 | 0 | 0 | 0 | -2.21 | collect distributed sentinels |
 
 ## Fixed K=4, N=10 S evidence

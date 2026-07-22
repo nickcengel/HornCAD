@@ -3,7 +3,7 @@
   "status": "running",
   "phase": "domain-map-batch-1",
   "total_candidates": 100,
-  "completed_searches": 8,
+  "completed_searches": 9,
   "score_materiality_points": 1.0,
   "started_at_unix": 1784744948.444212,
   "planned_slots": [
@@ -2110,5 +2110,5 @@
       "predicted_sigma": null
     }
   ],
-  "last_completed": "35deg/350x350-domain-map-b01"
+  "last_completed": "35deg/400x400-domain-map-b01"
 }
