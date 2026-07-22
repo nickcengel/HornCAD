@@ -919,6 +919,20 @@ def main() -> None:
     args = parser.parse_args()
     output = args.output or args.project_root / "index.html"
     print(generate_report(args.project_root, output))
+    # A long-lived study coordinator may have loaded an older report renderer.
+    # Refresh active search reports here as well so their planned blank rows and
+    # current presentation stay synchronized without restarting any solver.
+    try:
+        from .run_bem_search import write_report
+    except ImportError:
+        from run_bem_search import write_report
+    for state_path in args.project_root.glob("*deg/*x*/search_state.json"):
+        try:
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        if state.get("status") == "running":
+            write_report(state_path.parent, state)
     repository_root = Path(__file__).resolve().parents[2]
     maintained_root = repository_root / "examples" / "mouth-size-coverage-grid"
     if args.project_root.resolve() == maintained_root.resolve():

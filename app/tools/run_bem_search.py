@@ -1105,7 +1105,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     geometry = search.get("geometry_context", {})
     mouth_width = float(geometry.get("mouth_width_mm", 0))
     mouth_height = float(geometry.get("mouth_height_mm", 0))
-    kn_study = bool(search.get("adaptive_kn", {}).get("enabled", False))
+    kn_study = bool(
+        search.get("adaptive_kn", {}).get("enabled", False) or
+        search.get("adaptive_kn_closure", {}).get("enabled", False))
     default_visible_columns = ({"surface-score", "k", "n"} if kn_study else {
         "surface-score", "containment-mean", "profile-rms", "slice-rms"})
 
@@ -1200,6 +1202,57 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"{s_pair}</td>",
             f"<td class='axis-pair' data-column='n'{hidden_attribute('n')} data-sort='{record['values']['n_h']:.6f}'>"
             f"{n_pair}</td>",
+            f"<td data-column='trait' hidden data-sort='{html.escape(trait)}'>{html.escape(trait)}</td>",
+            f"<td data-column='mouth-height' hidden data-sort='{mouth_height:.6f}'>{mouth_height:g}</td>",
+            f"<td data-column='mouth-width' hidden data-sort='{mouth_width:.6f}'>{mouth_width:g}</td>",
+        )) + "</tr>")
+
+    represented_proposals = {
+        int(record.get("proposal_index", -1)) for record in records
+    }
+    pending_authored = [
+        (proposal_index, item)
+        for proposal_index, item in enumerate(search.get("initial_pool", []), 1)
+        if proposal_index not in represented_proposals and
+        proposal_index >= int(state.get("proposal_count", 0))
+    ]
+    unused_status = ("Awaiting selection" if state.get("status") == "running"
+                     else "Not required")
+    remaining_slots = max(0, int(state["max_evaluations"]) - len(records))
+    for offset in range(remaining_slots):
+        slot = len(records) + offset
+        values: dict[str, float] | None = None
+        derived: dict[str, float] = {}
+        trait = "Parameters determined from earlier results"
+        if offset < len(pending_authored):
+            _, planned = pending_authored[offset]
+            values = dict(planned["values"])
+            _, derived = materialize_candidate(seed, values, search)
+            trait = str(planned["label"])
+        def planned_value(name: str, digits: int = 1) -> str:
+            if values is None:
+                return "—"
+            return f"{float(values[name]):.{digits}f}"
+        length = float(values["length_mm"]) if values is not None else None
+        ratio = mouth_width / length if length else None
+        s_h = derived.get("s_h")
+        s_v = derived.get("s_v")
+        rows.append("<tr class='candidate-placeholder'>" + "".join((
+            f"<td data-sort='candidate-{slot:03d}'>candidate-{slot:03d}</td>",
+            f"<td data-sort='{html.escape(unused_status)}'>{html.escape(unused_status)}</td>",
+            "<td data-column='surface-score' data-sort=''>—</td>",
+            f"<td class='axis-pair' data-column='containment-mean'{hidden_attribute('containment-mean')} data-sort=''>—</td>",
+            f"<td class='axis-pair' data-column='profile-rms'{hidden_attribute('profile-rms')} data-sort=''>—</td>",
+            f"<td class='axis-pair' data-column='outward-rise'{hidden_attribute('outward-rise')} data-sort=''>—</td>",
+            f"<td class='axis-pair' data-column='slice-rms'{hidden_attribute('slice-rms')} data-sort=''>—</td>",
+            f"<td class='axis-pair' data-column='line-rms'{hidden_attribute('line-rms')} data-sort=''>—</td>",
+            f"<td data-column='length' hidden data-sort='{length if length is not None else ''}'>{planned_value('length_mm')}</td>",
+            f"<td data-column='length-mouth-ratio' hidden data-sort='{ratio if ratio is not None else ''}'>{f'{ratio:.3f}' if ratio is not None else '—'}</td>",
+            f"<td data-column='extension' hidden data-sort='{planned_value('extension_mm', 6) if values is not None else ''}'>{planned_value('extension_mm')}</td>",
+            f"<td class='axis-pair' data-column='osse' hidden data-sort='{planned_value('osse_coverage_h_deg', 6) if values is not None else ''}'>{_axis_pair(planned_value('osse_coverage_h_deg'), planned_value('osse_coverage_v_deg'))}</td>",
+            f"<td class='axis-pair' data-column='k'{hidden_attribute('k')} data-sort='{planned_value('k_h', 6) if values is not None else ''}'>{_axis_pair(planned_value('k_h', 2), planned_value('k_v', 2))}</td>",
+            f"<td class='axis-pair' data-column='s' hidden data-sort='{s_h if s_h is not None else ''}'>{_axis_pair(f'{s_h:.3f}' if s_h is not None else '—', f'{s_v:.3f}' if s_v is not None else '—')}</td>",
+            f"<td class='axis-pair' data-column='n'{hidden_attribute('n')} data-sort='{planned_value('n_h', 6) if values is not None else ''}'>{_axis_pair(planned_value('n_h', 0), planned_value('n_v', 0))}</td>",
             f"<td data-column='trait' hidden data-sort='{html.escape(trait)}'>{html.escape(trait)}</td>",
             f"<td data-column='mouth-height' hidden data-sort='{mouth_height:.6f}'>{mouth_height:g}</td>",
             f"<td data-column='mouth-width' hidden data-sort='{mouth_width:.6f}'>{mouth_width:g}</td>",
