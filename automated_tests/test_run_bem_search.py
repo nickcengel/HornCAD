@@ -165,6 +165,52 @@ class BEMSearchTests(unittest.TestCase):
         self.assertEqual((values["k_h"], values["n_h"]), (4.0, 7.5))
         self.assertEqual(closure["status"], "running")
 
+    def test_kn_closure_omits_fine_diagonals_on_axial_asymptote(self) -> None:
+        search = {"adaptive_kn_closure": {
+            "enabled": True, "initial_k_step": 0.5, "initial_n_step": 5,
+            "minimum_k_step": 0.5, "minimum_n_step": 1,
+            "minimum_k": 1, "maximum_k": 7,
+            "minimum_n": 2, "maximum_n": 40,
+            "plateau_score_tolerance_points": 0.5,
+        }}
+
+        def record(k: float, n: float, score: float) -> dict:
+            return {"status": "complete",
+                    "values": {"k_h": k, "k_v": k, "n_h": n, "n_v": n},
+                    "surface_diagnostics": {
+                        "score": {"overall_percent": score}}}
+
+        records = [record(4, 10, 90), record(3.5, 10, 89.8),
+                   record(4.5, 10, 89.7), record(4, 7.5, 89.75),
+                   record(4, 12.5, 89.65)]
+        closure = {"k_step": 0.5, "n_step": 2.5}
+
+        self.assertIsNone(next_kn_closure_candidate(search, records, closure))
+        self.assertEqual(closure["status"], "closed")
+        self.assertEqual(
+            closure["closure_method"], "refined-axial-score-asymptote")
+        self.assertEqual(len(closure["plateau_points"]), 5)
+
+    def test_kn_closure_promotes_stale_quarter_k_step(self) -> None:
+        search = {"adaptive_kn_closure": {
+            "enabled": True, "initial_k_step": 0.5, "initial_n_step": 5,
+            "minimum_k_step": 0.5, "minimum_n_step": 1,
+            "minimum_k": 1, "maximum_k": 7,
+            "minimum_n": 2, "maximum_n": 40,
+            "plateau_score_tolerance_points": 0.5,
+        }}
+        records = [{
+            "status": "complete",
+            "values": {"k_h": 4, "k_v": 4, "n_h": 10, "n_v": 10},
+            "surface_diagnostics": {"score": {"overall_percent": 90}},
+        }]
+        closure = {"k_step": 0.25, "n_step": 0.5}
+
+        values, _ = next_kn_closure_candidate(search, records, closure)
+
+        self.assertEqual((closure["k_step"], closure["n_step"]), (0.5, 1.0))
+        self.assertEqual((values["k_h"], values["n_h"]), (3.5, 10.0))
+
     def test_kn_closure_brackets_n_five_above_and_below(self) -> None:
         search = {"adaptive_kn_closure": {
             "enabled": True, "initial_k_step": 0.25, "initial_n_step": 5,

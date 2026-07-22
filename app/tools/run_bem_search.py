@@ -724,10 +724,11 @@ def next_kn_closure_candidate(search: dict[str, Any],
     n_max = float(policy.get("maximum_n", 40.0))
     min_k_step = float(policy.get("minimum_k_step", 0.5))
     min_n_step = float(policy.get("minimum_n_step", 1.0))
-    k_step = float(closure.setdefault(
-        "k_step", policy.get("initial_k_step", 0.5)))
-    n_step = float(closure.setdefault(
-        "n_step", policy.get("initial_n_step", 5.0)))
+    k_step = max(min_k_step, float(closure.setdefault(
+        "k_step", policy.get("initial_k_step", 0.5))))
+    n_step = max(min_n_step, float(closure.setdefault(
+        "n_step", policy.get("initial_n_step", 5.0))))
+    closure.update(k_step=k_step, n_step=n_step)
     closure.update(status="running", incumbent_k=best_key[0],
                    incumbent_n=best_key[1], incumbent_score=best_score)
 
@@ -776,10 +777,55 @@ def next_kn_closure_candidate(search: dict[str, Any],
         return values, (
             f"high-S low-N rescue K={k:g}, N={source_n:g}→{lower_n:g}")
 
-    offsets = ((-1, 0), (1, 0), (0, -1), (0, 1),
-               (-1, -1), (-1, 1), (1, -1), (1, 1))
+    axial_offsets = ((-1, 0), (1, 0), (0, -1), (0, 1))
+    diagonal_offsets = ((-1, -1), (-1, 1), (1, -1), (1, 1))
     neighborhood = [(best_key, best_score)]
-    for dk, dn in offsets:
+    for dk, dn in axial_offsets:
+        k = round(best_key[0] + dk * k_step, 6)
+        n = round(best_key[1] + dn * n_step, 6)
+        if not (k_min <= k <= k_max and n_min <= n <= n_max):
+            continue
+        if (k, n) not in measured:
+            values = dict(best_values)
+            values.update(k_h=k, k_v=k, n_h=n, n_v=n)
+            return values, f"K/N closure K={k:g}, N={n:g}"
+        neighborhood.append(((k, n), measured[(k, n)][0]))
+
+    plateau_tolerance = float(policy.get(
+        "plateau_score_tolerance_points", 0.5))
+    initial_k_step = float(policy.get("initial_k_step", 0.5))
+    initial_n_step = float(policy.get("initial_n_step", 5.0))
+    refinement_stage = (k_step < initial_k_step - 1e-9 or
+                        n_step < initial_n_step - 1e-9)
+    axial_spread = best_score - min(score for _, score in neighborhood)
+    best_at_upper_limit = (
+        math.isclose(best_key[0], k_max, abs_tol=1e-6) or
+        math.isclose(best_key[1], n_max, abs_tol=1e-6))
+    if (plateau_tolerance > 0 and refinement_stage and
+            not best_at_upper_limit and
+            axial_spread <= plateau_tolerance + 1e-9):
+        keys = [key for key, _ in neighborhood]
+        closure.update(
+            status="closed",
+            reason=(f"refined axial K/N score asymptote: neighborhood is "
+                    f"within {axial_spread:.3f} points; fine diagonals omitted"),
+            closure_method="refined-axial-score-asymptote",
+            plateau_score_tolerance_points=plateau_tolerance,
+            plateau_score_spread_points=axial_spread,
+            plateau_k_bounds=[min(key[0] for key in keys),
+                              max(key[0] for key in keys)],
+            plateau_n_bounds=[min(key[1] for key in keys),
+                              max(key[1] for key in keys)],
+            plateau_points=[
+                {"k": key[0], "n": key[1], "score": score}
+                for key, score in sorted(neighborhood)
+            ],
+            resolution_k=k_step,
+            resolution_n=n_step,
+        )
+        return None
+
+    for dk, dn in diagonal_offsets:
         k = round(best_key[0] + dk * k_step, 6)
         n = round(best_key[1] + dn * n_step, 6)
         if not (k_min <= k <= k_max and n_min <= n <= n_max):
@@ -793,13 +839,8 @@ def next_kn_closure_candidate(search: dict[str, Any],
     # Once the complete local neighborhood is effectively flat, more precise
     # K/N coordinates are false precision. Preserve the measured plateau and
     # hand the coupled program to its local S/length stage.
-    plateau_tolerance = float(policy.get(
-        "plateau_score_tolerance_points", 0.5))
     plateau_floor = min(score for _, score in neighborhood)
     plateau_spread = best_score - plateau_floor
-    best_at_upper_limit = (
-        math.isclose(best_key[0], k_max, abs_tol=1e-6) or
-        math.isclose(best_key[1], n_max, abs_tol=1e-6))
     if (plateau_tolerance > 0 and not best_at_upper_limit and
             plateau_spread <= plateau_tolerance + 1e-9):
         keys = [key for key, _ in neighborhood]

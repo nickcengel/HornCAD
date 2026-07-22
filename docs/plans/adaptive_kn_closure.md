@@ -23,6 +23,13 @@ considered final only when the measured winner has a local closure certificate.
 7. Repeat until an asymptote is found or the neighborhood spacing reaches
    K = 0.5 and N = 1.
 
+After the coarse 3x3 interaction check, refined rounds measure axial neighbors
+first. If those axial results are all within 0.5 score points, closure stops
+without spending four more candidates on fine diagonal combinations. Stored
+quarter-step K state is promoted to K=0.5 on resume, and stored sub-unit N
+spacing is promoted to N=1. The audit of completed Phase 3 searches found no
+practical design decision changed by finer resolution.
+
 The diagonal probes are required. Main effects alone cannot safely predict
 points such as K=3, N=5 from K=3, N=10 and K=4, N=5.
 

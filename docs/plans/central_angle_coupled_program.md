@@ -47,6 +47,8 @@ For each selected anchor:
    Quarter-step K probes are not required: current evidence shows a broad K
    crest whose quarter-step score differences are below useful diagnostic
    resolution.
+   Fine-stage diagonals are also omitted when the four axial probes are already
+   within 0.5 score points. N is never refined below a one-unit step.
 3. At the closed K/N winner, measure five local S points centered on the current
    S at offsets -0.30, -0.15, 0, +0.15, and +0.30.
 4. If the best local S is within 0.075 of the center, declare the alternating
