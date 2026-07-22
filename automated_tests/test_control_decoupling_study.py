@@ -14,6 +14,7 @@ from app.tools.plan_control_decoupling_study import (
     ANGLES, MOUTHS, MAX_REGISTERED_COORDINATES, build_manifest,
     validate_manifest,
 )
+from app.tools.report_control_decoupling_study import _active_searches
 from app.tools.run_bem_search import load_search
 
 
@@ -28,6 +29,14 @@ def manifest():
 
 
 class ControlDecouplingStudyTests(unittest.TestCase):
+    def test_runtime_events_mark_search_active_before_state_exists(self) -> None:
+        runtime = {"status": "running", "events": [
+            {"search": "searches/one", "status": "started"},
+            {"search": "searches/two", "status": "started"},
+            {"search": "searches/one", "status": "complete"},
+        ]}
+        self.assertEqual(_active_searches(runtime), {"searches/two"})
+
     def test_registered_design_is_complete_and_fixed(self) -> None:
         rows = manifest()["coordinates"]
         self.assertEqual(len(rows), MAX_REGISTERED_COORDINATES)
