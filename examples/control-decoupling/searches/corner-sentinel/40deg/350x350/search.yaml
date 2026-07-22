@@ -6,8 +6,8 @@ bem_candidate_search:
   lower_frequency_hz: 500.0
   crossover_hz: 750.0
   upper_frequency_hz: 8000.0
-  max_evaluations: 4
-  initial_candidates: 3
+  max_evaluations: 5
+  initial_candidates: 4
   minimum_candidate_distance: 0.001
   derived_s_bounds:
   - 0.049
@@ -31,11 +31,11 @@ bem_candidate_search:
     - 39.999999
     - 40.000001
     k_h:
-    - 2.499999
-    - 5.500001
+    - 1.999999
+    - 6.000001
     k_v:
-    - 2.499999
-    - 5.500001
+    - 1.999999
+    - 6.000001
     n_h:
     - 3.999999
     - 16.000001
@@ -50,9 +50,10 @@ bem_candidate_search:
   control_decoupling:
     design: canonical-three-level-factorial
     wave: corner-sentinel
-    manifest_sha256: fd3aced8913aa3252491358c8fa9486af12f1bdc6a604d4886c689ff931be25d
+    manifest_sha256: 395284e7e3f908539346ed5c7290a9e8b5243763f0e7525ce91530c389929e8d
     coordinate_ids:
     - 40d-350mm-L-1-K-1-N-1
+    - 40d-350mm-L-1-K-1-N+1
     - 40d-350mm-L-1-K+1-N-1
     - 40d-350mm-L+1-K+1-N-1
     - 40d-350mm-L+1-K+1-N+1
@@ -68,17 +69,41 @@ bem_candidate_search:
       length_factor: 0.8
       stratum: L-1_K-1_N-1
       length_mm: 121.686
-      k: 2.5
+      k: 2.0
       n: 4.0
       reference_length_mm: 152.108
       reference_result:
         search: 40deg/350x350-s-grid
         candidate_id: candidate-004
         score: 88.32384937849739
-      s: 0.9730172761836092
-      exit_angle_deg: 86.991576423538
-      normalized_curvature_radius: 1.7588531821905384
-      final_tenth_radial_growth_fraction: 0.359168494240511
+      s: 0.9122863111382532
+      exit_angle_deg: 86.80415241166763
+      normalized_curvature_radius: 1.565156855443627
+      final_tenth_radial_growth_fraction: 0.34204586837688566
+      status: planned
+      dead_region_sentinel: true
+    - id: 40d-350mm-L-1-K-1-N+1
+      kind: canonical-grid
+      stage: three-factor-corner
+      coverage_deg: 40
+      mouth_mm: 350
+      length_level: -1
+      k_level: -1
+      n_level: 1
+      length_factor: 0.8
+      stratum: L-1_K-1_N+1
+      length_mm: 121.686
+      k: 2.0
+      n: 16.0
+      reference_length_mm: 152.108
+      reference_result:
+        search: 40deg/350x350-s-grid
+        candidate_id: candidate-004
+        score: 88.32384937849739
+      s: 3.8498759570214593
+      exit_angle_deg: 88.5816178823173
+      normalized_curvature_radius: 5.978469798433556
+      final_tenth_radial_growth_fraction: 0.46432826843752567
       status: planned
       dead_region_sentinel: true
     - id: 40d-350mm-L-1-K+1-N-1
@@ -92,17 +117,17 @@ bem_candidate_search:
       length_factor: 0.8
       stratum: L-1_K+1_N-1
       length_mm: 121.686
-      k: 5.5
+      k: 6.0
       n: 4.0
       reference_length_mm: 152.108
       reference_result:
         search: 40deg/350x350-s-grid
         candidate_id: candidate-004
         score: 88.32384937849739
-      s: 1.2520574729253704
-      exit_angle_deg: 87.62548890465723
-      normalized_curvature_radius: 2.7782955348172607
-      final_tenth_radial_growth_fraction: 0.4340193096221408
+      s: 1.2868364304814646
+      exit_angle_deg: 87.685654477326
+      normalized_curvature_radius: 2.9194233265981127
+      final_tenth_radial_growth_fraction: 0.4428580674094346
       status: planned
       dead_region_sentinel: true
     - id: 40d-350mm-L+1-K+1-N-1
@@ -116,17 +141,17 @@ bem_candidate_search:
       length_factor: 1.2
       stratum: L+1_K+1_N-1
       length_mm: 182.53
-      k: 5.5
+      k: 6.0
       n: 4.0
       reference_length_mm: 152.108
       reference_result:
         search: 40deg/350x350-s-grid
         candidate_id: candidate-004
         score: 88.32384937849739
-      s: 0.38946524362229806
-      exit_angle_deg: 82.98082005536419
-      normalized_curvature_radius: 0.5221001890436683
-      final_tenth_radial_growth_fraction: 0.27189614353527036
+      s: 0.4210347534267466
+      exit_angle_deg: 83.44127296255427
+      normalized_curvature_radius: 0.5914098880252027
+      final_tenth_radial_growth_fraction: 0.2846062820315108
       status: planned
       dead_region_sentinel: true
     - id: 40d-350mm-L+1-K+1-N+1
@@ -140,28 +165,38 @@ bem_candidate_search:
       length_factor: 1.2
       stratum: L+1_K+1_N+1
       length_mm: 182.53
-      k: 5.5
+      k: 6.0
       n: 16.0
       reference_length_mm: 152.108
       reference_result:
         search: 40deg/350x350-s-grid
         candidate_id: candidate-004
         score: 88.32384937849739
-      s: 1.6435551637799055
-      exit_angle_deg: 86.76960882041762
-      normalized_curvature_radius: 1.780340373869129
-      final_tenth_radial_growth_fraction: 0.3502021617198901
+      s: 1.7767794545395215
+      exit_angle_deg: 86.99844888704264
+      normalized_curvature_radius: 2.0525167719563338
+      final_tenth_radial_growth_fraction: 0.3692596769058566
       status: planned
       dead_region_sentinel: true
   initial_pool:
+  - label: 40d-350mm-L-1-K-1-N+1
+    values:
+      length_mm: 121.686
+      extension_mm: 0.0
+      osse_coverage_h_deg: 40.0
+      osse_coverage_v_deg: 40.0
+      k_h: 2.0
+      k_v: 2.0
+      n_h: 16.0
+      n_v: 16.0
   - label: 40d-350mm-L-1-K+1-N-1
     values:
       length_mm: 121.686
       extension_mm: 0.0
       osse_coverage_h_deg: 40.0
       osse_coverage_v_deg: 40.0
-      k_h: 5.5
-      k_v: 5.5
+      k_h: 6.0
+      k_v: 6.0
       n_h: 4.0
       n_v: 4.0
   - label: 40d-350mm-L+1-K+1-N-1
@@ -170,8 +205,8 @@ bem_candidate_search:
       extension_mm: 0.0
       osse_coverage_h_deg: 40.0
       osse_coverage_v_deg: 40.0
-      k_h: 5.5
-      k_v: 5.5
+      k_h: 6.0
+      k_v: 6.0
       n_h: 4.0
       n_v: 4.0
   - label: 40d-350mm-L+1-K+1-N+1
@@ -180,7 +215,7 @@ bem_candidate_search:
       extension_mm: 0.0
       osse_coverage_h_deg: 40.0
       osse_coverage_v_deg: 40.0
-      k_h: 5.5
-      k_v: 5.5
+      k_h: 6.0
+      k_v: 6.0
       n_h: 16.0
       n_v: 16.0

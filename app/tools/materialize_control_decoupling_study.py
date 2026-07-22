@@ -7,6 +7,7 @@ import copy
 import hashlib
 import json
 from pathlib import Path
+import shutil
 from typing import Any
 
 import yaml
@@ -16,7 +17,8 @@ from .run_bem_search import VARIABLES, load_search, materialize_candidate
 
 
 WAVES = (
-    "core-axis", "boundary-sentinel", "face-sentinel", "face-continuation",
+    "core-axis", "boundary-sentinel", "axis-closure",
+    "face-sentinel", "face-continuation",
     "corner-sentinel", "corner-continuation", "locked-validation",
 )
 
@@ -33,7 +35,9 @@ No BEM work is started by the planner or materializer. This file describes the
 exact materialized queue that must be reviewed before launch.
 
 - Frozen manifest SHA-256: `{plan['manifest_sha256']}`
-- New BEM candidates before evidence-based pruning: {plan['candidate_count']}
+- Required BEM candidates before evidence-based pruning: {plan['required_candidate_count']}
+- Conditional axis-closure candidates: {plan['conditional_candidate_count']}
+- Absolute new-BEM ceiling if every closure probe triggers: {plan['candidate_count']}
 - Search directories: {plan['search_count']}
 - Parallelism: two independent searches, ten solver workers each.
 - Domain: 30-50 degree coverage half-angle and 250-450 mm square mouths.
@@ -47,6 +51,11 @@ Core center/axis contrasts always run. Face and corner sentinels run before thei
 continuations, so a preregistered dead stratum can be stopped without suppressing
 the measurements needed to identify it. Locked validation runs last and is never
 used to select or prune candidates.
+
+Axis-closure searches are materialized but run only when the corresponding inner
+endpoint points outward by the registered score/diagnostic rule. N=2 is never a
+regular grid point; it is only the lower safety-bound probe after N=4 improves
+over N=8.
 
 The runner requires the exact hash above through
 `--reviewed-manifest-sha256`; changing and rematerializing the manifest invalidates
@@ -67,6 +76,8 @@ def _values(row: dict[str, Any]) -> dict[str, float]:
 
 
 def coordinate_wave(row: dict[str, Any]) -> str | None:
+    if row.get("status") == "conditional" and row.get("stage") == "axis-closure":
+        return "axis-closure"
     if row.get("status") != "planned":
         return None
     stage = row["stage"]
@@ -184,7 +195,7 @@ def materialize_study(source_root: Path, output_root: Path,
         if wave is None:
             continue
         coordinate_id = (row["id"] if wave in {
-            "face-continuation", "corner-continuation"} else None)
+            "axis-closure", "face-continuation", "corner-continuation"} else None)
         key = (wave, int(row["coverage_deg"]), int(row["mouth_mm"]),
                coordinate_id)
         grouped.setdefault(key, []).append(row)
@@ -203,18 +214,30 @@ def materialize_study(source_root: Path, output_root: Path,
             "coordinate_ids": [row["id"] for row in rows],
         })
     planned_ids = {row["id"] for row in manifest["coordinates"]
-                   if row["status"] == "planned"}
+                   if row["status"] in {"planned", "conditional"}}
     materialized_ids = {identifier for item in searches
                         for identifier in item["coordinate_ids"]}
     if materialized_ids != planned_ids:
         missing = sorted(planned_ids - materialized_ids)
         extra = sorted(materialized_ids - planned_ids)
         raise RuntimeError(f"materialization mismatch; missing={missing}, extra={extra}")
+    expected_paths = {output_root / item["path"] for item in searches}
+    stale_paths = sorted({path.parent for path in
+                          (output_root / "searches").rglob("search.yaml")} -
+                         expected_paths)
+    for stale in stale_paths:
+        if (stale / "search_state.json").exists():
+            raise RuntimeError(f"refusing to remove a started stale search: {stale}")
+        shutil.rmtree(stale)
     plan = {
         "schema_version": 1, "manifest_sha256": digest,
         "solver_workers": solver_workers,
         "search_count": len(searches),
         "candidate_count": len(materialized_ids),
+        "required_candidate_count": sum(
+            row["status"] == "planned" for row in manifest["coordinates"]),
+        "conditional_candidate_count": sum(
+            row["status"] == "conditional" for row in manifest["coordinates"]),
         "wave_counts": {
             wave: {
                 "searches": sum(item["wave"] == wave for item in searches),

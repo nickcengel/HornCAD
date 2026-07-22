@@ -9,24 +9,29 @@ OS-SE horns. Historical searches are evidence sources, not an execution queue.
 - Square mouths: 250, 300, 350, 400, and 450 mm.
 - Independent controls: physical length, K, and N. S is recorded as derived.
 - Per cell: complete 3×3×3 factorial at length factors 0.80/1.00/1.20,
-  K 2.5/4.0/5.5, and N 4/8/16.
+  K 2/4/6, and N 4/8/16.
 - Per cell: one strictly reused K4/N10 reference and two length-only boundary
   sentinels at factors 0.70 and 1.30.
+- Per cell: six conditional hard-boundary probes at length factors 0.60/1.40,
+  K 1/7, and N 2/20. These are registered but run only after an inner endpoint
+  points outward. N=2 is never part of the regular grid.
 - Locked validation: two deterministic interior coordinates per cell.
 - Registered ceiling: 675 factorial + 25 references + 50 boundary sentinels +
-  50 validation = 800 coordinates.
+  50 validation + 150 conditional closure probes = 950 coordinates. The actual
+  new-BEM ceiling remains 800.
 
 Preflight currently classifies 25 coordinates as strictly
-reusable, 135 as invalid geometry,
-70 as physically redundant, and
-570 as requiring BEM.
+reusable, 184 as invalid geometry,
+89 as physically redundant, and
+566 as requiring BEM. A further
+86 feasible closure probes run only when triggered.
 
-After geometry and redundancy filtering, 496
+After geometry and redundancy filtering, 492
 independent factorial coordinates remain, with
-16-
+18-
 22 per cell. The complete
 quadratic control basis has rank 10 and condition
-5.09; no absolute pairwise factor
+5.23; no absolute pairwise factor
 correlation exceeds 0.30. Every cell retains at least two physically active
 high-N points. More importantly, every cell independently retains rank 10 for
 the same ten-term quadratic L/K/N model; per-cell condition numbers range from
@@ -39,6 +44,23 @@ The full factorial gives balanced independent L, K, and N effects plus every
 two- and three-control interaction. Existing results may fill exact slots but do
 not alter the registered design. Dense optimizer traces cannot count as grid
 coverage merely because they are numerous.
+
+## Prior evidence retained
+
+The physical-length center in each cell is the best retained K4/N10 S-grid
+length, not a generic constant. Twenty-three retained cells have closed S
+evidence and two are geometry-limited. This preserves the earlier mouth/coverage
+length prescription while the factorial measures how K and N modify it.
+
+K=2/4/6 brackets the useful K≈3-6 ridge more honestly than the earlier
+2.5/4/5.5 proposal. Fine K changes near the ridge generally moved score by only
+tenths, but K=6 was not independently closed, so K=1/7 remain conditional probes.
+
+N=2 is not a regular sample. Four retained fixed-length/fixed-K comparisons put
+it 14.9-17.6 score points below N=5-10; it runs only if N=4 unexpectedly improves
+over N=8. N=4/8/16 is used because it leaves every cell full-rank and physically
+distinct. Substituting N=10 for N=8 makes some cells rank-deficient through
+profile redundancy; the K4/N10 anchor is still reused in every cell.
 
 ## Geometry and reuse gates
 
@@ -58,14 +80,20 @@ responses will be rescored with the current diagnostics before final analysis.
 ## Execution and dead-region policy
 
 Execution order is reference anchors, core center/axes, sparse boundary sentinels,
-two-factor faces, three-factor corners, then locked validation. Core axes are
+conditional axis closure, two-factor faces, three-factor corners, then locked
+validation. Core axes are
 never pruned by score. Face/corner strata may be
 stopped only after at least five distributed cells spanning three angles and
 three mouths show that at least 80% are five or more score points below their cell
 reference and none offers a material diagnostic improvement. Distributed
-sentinels remain. The predeclared face/corner sentinel wave is 90 candidates,
-15.8% of the 570 planned solves; continuation work is avoided only when that
+sentinels remain. The predeclared face/corner sentinel wave is 90 candidates;
+continuation work is avoided only when that
 evidence satisfies the explicit rule.
+
+An outer L/K/N closure point runs only if the measured inner endpoint improves
+score by at least 0.5 points or materially improves a component diagnostic over
+the center. N=2 is therefore only a lower safety-bound check after N=4 beats N=8;
+existing evidence gives no reason to sample it routinely.
 
 Two searches with ten workers each keep twenty cores occupied. Search completion,
 failure, or geometry rejection immediately releases a slot. Single-candidate

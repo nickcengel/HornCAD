@@ -31,11 +31,11 @@ bem_candidate_search:
     - 49.999999
     - 50.000001
     k_h:
-    - 5.499999
-    - 5.500001
+    - 5.999999
+    - 6.000001
     k_v:
-    - 5.499999
-    - 5.500001
+    - 5.999999
+    - 6.000001
     n_h:
     - 3.999999
     - 4.000001
@@ -50,7 +50,7 @@ bem_candidate_search:
   control_decoupling:
     design: canonical-three-level-factorial
     wave: corner-continuation
-    manifest_sha256: fd3aced8913aa3252491358c8fa9486af12f1bdc6a604d4886c689ff931be25d
+    manifest_sha256: 395284e7e3f908539346ed5c7290a9e8b5243763f0e7525ce91530c389929e8d
     coordinate_ids:
     - 50d-300mm-L+1-K+1-N-1
     coordinates:
@@ -65,15 +65,15 @@ bem_candidate_search:
       length_factor: 1.2
       stratum: L+1_K+1_N-1
       length_mm: 112.69
-      k: 5.5
+      k: 6.0
       n: 4.0
       reference_length_mm: 93.908
       reference_result:
         search: 50deg/300x300-s-grid
         candidate_id: candidate-007
         score: 87.27187944968756
-      s: 0.6209385675830055
-      exit_angle_deg: 85.50718844867741
-      normalized_curvature_radius: 0.8954623856622146
-      final_tenth_radial_growth_fraction: 0.29804407866329874
+      s: 0.6678270698943846
+      exit_angle_deg: 85.78819119648402
+      normalized_curvature_radius: 1.0102209798444879
+      final_tenth_radial_growth_fraction: 0.3115992139282923
       status: planned

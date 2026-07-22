@@ -130,6 +130,63 @@ def _diagnostics(record: dict[str, Any]) -> dict[str, float] | None:
     return {key: float(value) for key, value in values.items()}
 
 
+def material_improvement(endpoint: dict[str, float],
+                         center: dict[str, float]) -> bool:
+    """Use the preregistered practical score/diagnostic thresholds."""
+    return (
+        endpoint["score"] >= center["score"] + 0.5 or
+        endpoint["containment_percent"] >= center["containment_percent"] + 0.5 or
+        endpoint["profile_rms_db"] <= center["profile_rms_db"] - 0.1 or
+        endpoint["slice_rms_db"] <= center["slice_rms_db"] - 0.1 or
+        endpoint["outward_rise_db"] <= center["outward_rise_db"] - 0.1 or
+        endpoint["minus_six_rms_deg"] <= center["minus_six_rms_deg"] - 0.5)
+
+
+def axis_closure_decisions(root: Path, manifest: dict[str, Any]
+                           ) -> dict[str, dict[str, Any]]:
+    """Decide which hard-boundary probes are justified by inner endpoints."""
+    records: dict[str, dict[str, Any]] = {}
+    for wave in ("core-axis", "boundary-sentinel"):
+        wave_root = root / "searches" / wave
+        if not wave_root.exists():
+            continue
+        for search_path in wave_root.rglob("search.yaml"):
+            records.update(_coordinate_records(search_path.parent))
+    center_id = lambda row: f"{row['coverage_deg']}d-{row['mouth_mm']}mm-L+0-K+0-N+0"
+    endpoint_templates = {
+        ("L", "low"): lambda row: f"{row['coverage_deg']}d-{row['mouth_mm']}mm-boundary-L1",
+        ("L", "high"): lambda row: f"{row['coverage_deg']}d-{row['mouth_mm']}mm-boundary-L2",
+        ("K", "low"): lambda row: f"{row['coverage_deg']}d-{row['mouth_mm']}mm-L+0-K-1-N+0",
+        ("K", "high"): lambda row: f"{row['coverage_deg']}d-{row['mouth_mm']}mm-L+0-K+1-N+0",
+        ("N", "low"): lambda row: f"{row['coverage_deg']}d-{row['mouth_mm']}mm-L+0-K+0-N-1",
+        ("N", "high"): lambda row: f"{row['coverage_deg']}d-{row['mouth_mm']}mm-L+0-K+0-N+1",
+    }
+    decisions = {}
+    for row in manifest["coordinates"]:
+        if row.get("status") != "conditional" or row.get("stage") != "axis-closure":
+            continue
+        endpoint_id = endpoint_templates[
+            (row["closure_axis"], row["closure_direction"])](row)
+        center_record, endpoint_record = records.get(center_id(row)), records.get(endpoint_id)
+        center = _diagnostics(center_record) if center_record else None
+        endpoint = _diagnostics(endpoint_record) if endpoint_record else None
+        if center is None or endpoint is None:
+            decisions[row["id"]] = {
+                "decision": "skip-missing-evidence", "center": center_id(row),
+                "inner_endpoint": endpoint_id,
+            }
+            continue
+        run = material_improvement(endpoint, center)
+        decisions[row["id"]] = {
+            "decision": "run" if run else "closed-at-inner-endpoint",
+            "center": center_id(row), "inner_endpoint": endpoint_id,
+            "score_change": endpoint["score"] - center["score"],
+            "material_diagnostic_improvement": run and (
+                endpoint["score"] < center["score"] + 0.5),
+        }
+    return decisions
+
+
 def _reference_diagnostics(source_root: Path, row: dict[str, Any]
                            ) -> dict[str, float] | None:
     reused = row["reused_from"]
@@ -226,6 +283,7 @@ def run_study(root: Path, reviewed_sha256: str, slots: int = 2) -> dict[str, Any
         "schema_version": 1, "status": "running", "manifest_sha256": digest,
         "started_at_unix": time.time(), "slots": slots, "events": [],
         "dead_region_decisions": {}, "skipped_searches": [],
+        "axis_closure_decisions": {},
     }
     state_path = root / RUNTIME_STATE
 
@@ -243,6 +301,20 @@ def run_study(root: Path, reviewed_sha256: str, slots: int = 2) -> dict[str, Any
         state["wave"] = wave
         _write_json(state_path, state)
         planned = [item for item in plan["searches"] if item["wave"] == wave]
+        if wave == "axis-closure":
+            decisions = state["axis_closure_decisions"]
+            retained = []
+            for item in planned:
+                decision = decisions.get(item["coordinate_ids"][0], {})
+                if decision.get("decision") == "run":
+                    retained.append(item)
+                else:
+                    state["skipped_searches"].append({
+                        "wave": wave, "search": item["path"],
+                        "coordinate_ids": item["coordinate_ids"],
+                        "reason": decision.get("decision", "closure not triggered"),
+                    })
+            planned = retained
         if wave in {"face-continuation", "corner-continuation"}:
             decision_wave = ("face-sentinel" if wave == "face-continuation"
                              else "corner-sentinel")
@@ -267,6 +339,11 @@ def run_study(root: Path, reviewed_sha256: str, slots: int = 2) -> dict[str, Any
         _run_queue(paths, slots,
                    lambda path: run_search(path / "search.yaml", path, None),
                    record)
+        if wave == "boundary-sentinel":
+            state["axis_closure_decisions"] = axis_closure_decisions(
+                root, manifest)
+            _write_json(state_path, state)
+            refresh_index(root)
         if wave in {"face-sentinel", "corner-sentinel"}:
             state["dead_region_decisions"][wave] = dead_region_decisions(
                 root, manifest, wave)

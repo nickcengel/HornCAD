@@ -1,9 +1,11 @@
 {
   "schema_version": 1,
-  "manifest_sha256": "fd3aced8913aa3252491358c8fa9486af12f1bdc6a604d4886c689ff931be25d",
+  "manifest_sha256": "395284e7e3f908539346ed5c7290a9e8b5243763f0e7525ce91530c389929e8d",
   "solver_workers": 10,
-  "search_count": 336,
-  "candidate_count": 570,
+  "search_count": 417,
+  "candidate_count": 652,
+  "required_candidate_count": 566,
+  "conditional_candidate_count": 86,
   "wave_counts": {
     "core-axis": {
       "searches": 25,
@@ -13,21 +15,25 @@
       "searches": 23,
       "candidates": 24
     },
+    "axis-closure": {
+      "searches": 86,
+      "candidates": 86
+    },
     "face-sentinel": {
-      "searches": 15,
+      "searches": 16,
       "candidates": 60
     },
     "face-continuation": {
-      "searches": 155,
-      "candidates": 155
+      "searches": 148,
+      "candidates": 148
     },
     "corner-sentinel": {
-      "searches": 13,
-      "candidates": 30
+      "searches": 10,
+      "candidates": 29
     },
     "corner-continuation": {
-      "searches": 80,
-      "candidates": 80
+      "searches": 84,
+      "candidates": 84
     },
     "locked-validation": {
       "searches": 25,
@@ -663,20 +669,889 @@
       ]
     },
     {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/30deg/250x250-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-250mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/30deg/250x250-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-250mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/30deg/250x250-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-250mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/30deg/300x300-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-300mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/30deg/300x300-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-300mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/30deg/300x300-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-300mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/30deg/350x350-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-350mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/30deg/350x350-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-350mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/30deg/350x350-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-350mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/30deg/400x400-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-400mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/30deg/400x400-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-400mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/30deg/400x400-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-400mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/30deg/450x450-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-450mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/30deg/450x450-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-450mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 30,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/30deg/450x450-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-450mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/35deg/250x250-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-250mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/35deg/250x250-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-250mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/35deg/300x300-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-300mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/35deg/300x300-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-300mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/35deg/300x300-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-300mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/35deg/350x350-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-350mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/35deg/350x350-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-350mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/35deg/350x350-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-350mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/35deg/400x400-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-400mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/35deg/400x400-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-400mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/35deg/400x400-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-400mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/35deg/400x400-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-400mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/35deg/450x450-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-450mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/35deg/450x450-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-450mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/35deg/450x450-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-450mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 35,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/35deg/450x450-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-450mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/40deg/250x250-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-250mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/40deg/250x250-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-250mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/40deg/250x250-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-250mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/40deg/300x300-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-300mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/40deg/300x300-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-300mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/40deg/300x300-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-300mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/40deg/350x350-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-350mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/40deg/350x350-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-350mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/40deg/350x350-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-350mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/40deg/350x350-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-350mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/40deg/400x400-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-400mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/40deg/400x400-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-400mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/40deg/400x400-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-400mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/40deg/400x400-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-400mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/40deg/450x450-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-450mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/40deg/450x450-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-450mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/40deg/450x450-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-450mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 40,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/40deg/450x450-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-450mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/45deg/250x250-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-250mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/45deg/250x250-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-250mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/45deg/250x250-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-250mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/45deg/300x300-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-300mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/45deg/300x300-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-300mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/45deg/300x300-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-300mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/45deg/350x350-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-350mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/45deg/350x350-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-350mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/45deg/350x350-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-350mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/45deg/350x350-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-350mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/45deg/400x400-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-400mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/45deg/400x400-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-400mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/45deg/400x400-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-400mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/45deg/400x400-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-400mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/45deg/450x450-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-450mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/45deg/450x450-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-450mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/45deg/450x450-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-450mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 45,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/45deg/450x450-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-450mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/50deg/250x250-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-250mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/50deg/250x250-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-250mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 250,
+      "path": "searches/axis-closure/50deg/250x250-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-250mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/50deg/300x300-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-300mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/50deg/300x300-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-300mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/50deg/300x300-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-300mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 300,
+      "path": "searches/axis-closure/50deg/300x300-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-300mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/50deg/350x350-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-350mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/50deg/350x350-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-350mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/50deg/350x350-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-350mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 350,
+      "path": "searches/axis-closure/50deg/350x350-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-350mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/50deg/400x400-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-400mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/50deg/400x400-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-400mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/50deg/400x400-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-400mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 400,
+      "path": "searches/axis-closure/50deg/400x400-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-400mm-closure-N-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/50deg/450x450-closure-K-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-450mm-closure-K-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/50deg/450x450-closure-K-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-450mm-closure-K-low"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/50deg/450x450-closure-L-high",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-450mm-closure-L-high"
+      ]
+    },
+    {
+      "wave": "axis-closure",
+      "coverage_deg": 50,
+      "mouth_mm": 450,
+      "path": "searches/axis-closure/50deg/450x450-closure-N-low",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-450mm-closure-N-low"
+      ]
+    },
+    {
       "wave": "face-sentinel",
       "coverage_deg": 30,
       "mouth_mm": 250,
       "path": "searches/face-sentinel/30deg/250x250",
-      "candidate_count": 8,
+      "candidate_count": 7,
       "coordinate_ids": [
         "30d-250mm-L-1-K-1-N+0",
         "30d-250mm-L-1-K+0-N-1",
         "30d-250mm-L-1-K+0-N+1",
         "30d-250mm-L-1-K+1-N+0",
-        "30d-250mm-L+0-K-1-N-1",
         "30d-250mm-L+0-K+1-N-1",
         "30d-250mm-L+0-K+1-N+1",
         "30d-250mm-L+1-K+1-N+0"
+      ]
+    },
+    {
+      "wave": "face-sentinel",
+      "coverage_deg": 30,
+      "mouth_mm": 300,
+      "path": "searches/face-sentinel/30deg/300x300",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "30d-300mm-L+0-K-1-N-1"
       ]
     },
     {
@@ -723,22 +1598,23 @@
     {
       "wave": "face-sentinel",
       "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/face-sentinel/35deg/350x350",
-      "candidate_count": 2,
+      "mouth_mm": 250,
+      "path": "searches/face-sentinel/35deg/250x250",
+      "candidate_count": 1,
       "coordinate_ids": [
-        "35d-350mm-L-1-K+0-N+1",
-        "35d-350mm-L-1-K+1-N+0"
+        "35d-250mm-L-1-K+1-N+0"
       ]
     },
     {
       "wave": "face-sentinel",
       "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/face-sentinel/35deg/450x450",
-      "candidate_count": 1,
+      "mouth_mm": 350,
+      "path": "searches/face-sentinel/35deg/350x350",
+      "candidate_count": 3,
       "coordinate_ids": [
-        "35d-450mm-L-1-K+1-N+0"
+        "35d-350mm-L-1-K+0-N+1",
+        "35d-350mm-L-1-K+1-N+0",
+        "35d-350mm-L+0-K+1-N+1"
       ]
     },
     {
@@ -746,10 +1622,9 @@
       "coverage_deg": 40,
       "mouth_mm": 250,
       "path": "searches/face-sentinel/40deg/250x250",
-      "candidate_count": 2,
+      "candidate_count": 1,
       "coordinate_ids": [
-        "40d-250mm-L-1-K+0-N+1",
-        "40d-250mm-L-1-K+1-N+0"
+        "40d-250mm-L-1-K+0-N+1"
       ]
     },
     {
@@ -757,9 +1632,10 @@
       "coverage_deg": 40,
       "mouth_mm": 300,
       "path": "searches/face-sentinel/40deg/300x300",
-      "candidate_count": 1,
+      "candidate_count": 2,
       "coordinate_ids": [
-        "40d-300mm-L-1-K+0-N+1"
+        "40d-300mm-L-1-K+0-N+1",
+        "40d-300mm-L-1-K+1-N+0"
       ]
     },
     {
@@ -767,14 +1643,13 @@
       "coverage_deg": 40,
       "mouth_mm": 350,
       "path": "searches/face-sentinel/40deg/350x350",
-      "candidate_count": 9,
+      "candidate_count": 8,
       "coordinate_ids": [
         "40d-350mm-L-1-K-1-N+0",
         "40d-350mm-L-1-K+0-N-1",
         "40d-350mm-L+0-K-1-N-1",
         "40d-350mm-L+0-K-1-N+1",
         "40d-350mm-L+0-K+1-N-1",
-        "40d-350mm-L+0-K+1-N+1",
         "40d-350mm-L+1-K-1-N+0",
         "40d-350mm-L+1-K+0-N-1",
         "40d-350mm-L+1-K+1-N+0"
@@ -799,17 +1674,6 @@
       "candidate_count": 1,
       "coordinate_ids": [
         "45d-350mm-L+1-K+0-N+1"
-      ]
-    },
-    {
-      "wave": "face-sentinel",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/face-sentinel/45deg/450x450",
-      "candidate_count": 2,
-      "coordinate_ids": [
-        "45d-450mm-L+0-K-1-N+1",
-        "45d-450mm-L+1-K+0-N+1"
       ]
     },
     {
@@ -843,13 +1707,24 @@
     {
       "wave": "face-sentinel",
       "coverage_deg": 50,
+      "mouth_mm": 400,
+      "path": "searches/face-sentinel/50deg/400x400",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-400mm-L+1-K+0-N+1"
+      ]
+    },
+    {
+      "wave": "face-sentinel",
+      "coverage_deg": 50,
       "mouth_mm": 450,
       "path": "searches/face-sentinel/50deg/450x450",
-      "candidate_count": 8,
+      "candidate_count": 9,
       "coordinate_ids": [
         "50d-450mm-L-1-K-1-N+0",
         "50d-450mm-L-1-K+0-N-1",
         "50d-450mm-L+0-K-1-N-1",
+        "50d-450mm-L+0-K-1-N+1",
         "50d-450mm-L+0-K+1-N-1",
         "50d-450mm-L+1-K-1-N+0",
         "50d-450mm-L+1-K+0-N-1",
@@ -875,16 +1750,6 @@
       "candidate_count": 1,
       "coordinate_ids": [
         "30d-300mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/30deg/300x300-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L+0-K-1-N-1"
       ]
     },
     {
@@ -1061,16 +1926,6 @@
       "wave": "face-continuation",
       "coverage_deg": 30,
       "mouth_mm": 400,
-      "path": "searches/face-continuation/30deg/400x400-L-1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-400mm-L-1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 400,
       "path": "searches/face-continuation/30deg/400x400-L-1-K-1-N+0",
       "candidate_count": 1,
       "coordinate_ids": [
@@ -1131,16 +1986,6 @@
       "wave": "face-continuation",
       "coverage_deg": 35,
       "mouth_mm": 250,
-      "path": "searches/face-continuation/35deg/250x250-L-1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-250mm-L-1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 250,
       "path": "searches/face-continuation/35deg/250x250-L-1-K-1-N+0",
       "candidate_count": 1,
       "coordinate_ids": [
@@ -1165,16 +2010,6 @@
       "candidate_count": 1,
       "coordinate_ids": [
         "35d-300mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/35deg/300x300-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L+0-K-1-N-1"
       ]
     },
     {
@@ -1231,30 +2066,10 @@
       "wave": "face-continuation",
       "coverage_deg": 35,
       "mouth_mm": 350,
-      "path": "searches/face-continuation/35deg/350x350-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
       "path": "searches/face-continuation/35deg/350x350-L+0-K+1-N-1",
       "candidate_count": 1,
       "coordinate_ids": [
         "35d-350mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/35deg/350x350-L+0-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L+0-K-1-N+1"
       ]
     },
     {
@@ -1275,16 +2090,6 @@
       "candidate_count": 1,
       "coordinate_ids": [
         "35d-350mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/35deg/350x350-L+1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L+1-K-1-N+0"
       ]
     },
     {
@@ -1601,20 +2406,20 @@
       "wave": "face-continuation",
       "coverage_deg": 40,
       "mouth_mm": 300,
-      "path": "searches/face-continuation/40deg/300x300-L-1-K+1-N+0",
+      "path": "searches/face-continuation/40deg/300x300-L-1-K-1-N+0",
       "candidate_count": 1,
       "coordinate_ids": [
-        "40d-300mm-L-1-K+1-N+0"
+        "40d-300mm-L-1-K-1-N+0"
       ]
     },
     {
       "wave": "face-continuation",
       "coverage_deg": 40,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/40deg/300x300-L-1-K-1-N+0",
+      "mouth_mm": 350,
+      "path": "searches/face-continuation/40deg/350x350-L+0-K+1-N+1",
       "candidate_count": 1,
       "coordinate_ids": [
-        "40d-300mm-L-1-K-1-N+0"
+        "40d-350mm-L+0-K+1-N+1"
       ]
     },
     {
@@ -2021,16 +2826,6 @@
       "wave": "face-continuation",
       "coverage_deg": 45,
       "mouth_mm": 400,
-      "path": "searches/face-continuation/45deg/400x400-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
       "path": "searches/face-continuation/45deg/400x400-L+0-K+1-N-1",
       "candidate_count": 1,
       "coordinate_ids": [
@@ -2121,10 +2916,30 @@
       "wave": "face-continuation",
       "coverage_deg": 45,
       "mouth_mm": 450,
+      "path": "searches/face-continuation/45deg/450x450-L+0-K-1-N+1",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-450mm-L+0-K-1-N+1"
+      ]
+    },
+    {
+      "wave": "face-continuation",
+      "coverage_deg": 45,
+      "mouth_mm": 450,
       "path": "searches/face-continuation/45deg/450x450-L+0-K-1-N-1",
       "candidate_count": 1,
       "coordinate_ids": [
         "45d-450mm-L+0-K-1-N-1"
+      ]
+    },
+    {
+      "wave": "face-continuation",
+      "coverage_deg": 45,
+      "mouth_mm": 450,
+      "path": "searches/face-continuation/45deg/450x450-L+1-K+0-N+1",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-450mm-L+1-K+0-N+1"
       ]
     },
     {
@@ -2351,16 +3166,6 @@
       "wave": "face-continuation",
       "coverage_deg": 50,
       "mouth_mm": 400,
-      "path": "searches/face-continuation/50deg/400x400-L+1-K+0-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L+1-K+0-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
       "path": "searches/face-continuation/50deg/400x400-L+1-K+0-N-1",
       "candidate_count": 1,
       "coordinate_ids": [
@@ -2447,16 +3252,6 @@
     {
       "wave": "corner-sentinel",
       "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/corner-sentinel/35deg/350x350",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-sentinel",
-      "coverage_deg": 35,
       "mouth_mm": 450,
       "path": "searches/corner-sentinel/35deg/450x450",
       "candidate_count": 1,
@@ -2469,9 +3264,10 @@
       "coverage_deg": 40,
       "mouth_mm": 350,
       "path": "searches/corner-sentinel/40deg/350x350",
-      "candidate_count": 4,
+      "candidate_count": 5,
       "coordinate_ids": [
         "40d-350mm-L-1-K-1-N-1",
+        "40d-350mm-L-1-K-1-N+1",
         "40d-350mm-L-1-K+1-N-1",
         "40d-350mm-L+1-K+1-N-1",
         "40d-350mm-L+1-K+1-N+1"
@@ -2489,55 +3285,36 @@
     },
     {
       "wave": "corner-sentinel",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/corner-sentinel/45deg/250x250",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-sentinel",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/corner-sentinel/45deg/350x350",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L+1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-sentinel",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/corner-sentinel/45deg/450x450",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L+1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-sentinel",
       "coverage_deg": 50,
       "mouth_mm": 250,
       "path": "searches/corner-sentinel/50deg/250x250",
-      "candidate_count": 3,
+      "candidate_count": 5,
       "coordinate_ids": [
         "50d-250mm-L-1-K-1-N-1",
+        "50d-250mm-L-1-K-1-N+1",
         "50d-250mm-L-1-K+1-N-1",
-        "50d-250mm-L+1-K+1-N-1"
+        "50d-250mm-L+1-K+1-N-1",
+        "50d-250mm-L+1-K+1-N+1"
       ]
     },
     {
       "wave": "corner-sentinel",
       "coverage_deg": 50,
-      "mouth_mm": 300,
-      "path": "searches/corner-sentinel/50deg/300x300",
-      "candidate_count": 2,
+      "mouth_mm": 350,
+      "path": "searches/corner-sentinel/50deg/350x350",
+      "candidate_count": 1,
       "coordinate_ids": [
-        "50d-300mm-L+1-K-1-N-1",
-        "50d-300mm-L+1-K+1-N+1"
+        "50d-350mm-L+1-K-1-N-1"
+      ]
+    },
+    {
+      "wave": "corner-sentinel",
+      "coverage_deg": 50,
+      "mouth_mm": 400,
+      "path": "searches/corner-sentinel/50deg/400x400",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-400mm-L+1-K-1-N-1"
       ]
     },
     {
@@ -2718,6 +3495,16 @@
       "wave": "corner-continuation",
       "coverage_deg": 35,
       "mouth_mm": 300,
+      "path": "searches/corner-continuation/35deg/300x300-L+1-K+1-N-1",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-300mm-L+1-K+1-N-1"
+      ]
+    },
+    {
+      "wave": "corner-continuation",
+      "coverage_deg": 35,
+      "mouth_mm": 300,
       "path": "searches/corner-continuation/35deg/300x300-L-1-K+1-N-1",
       "candidate_count": 1,
       "coordinate_ids": [
@@ -2748,6 +3535,16 @@
       "wave": "corner-continuation",
       "coverage_deg": 35,
       "mouth_mm": 350,
+      "path": "searches/corner-continuation/35deg/350x350-L+1-K+1-N+1",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-350mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "corner-continuation",
+      "coverage_deg": 35,
+      "mouth_mm": 350,
       "path": "searches/corner-continuation/35deg/350x350-L+1-K+1-N-1",
       "candidate_count": 1,
       "coordinate_ids": [
@@ -2762,6 +3559,16 @@
       "candidate_count": 1,
       "coordinate_ids": [
         "35d-350mm-L-1-K+1-N-1"
+      ]
+    },
+    {
+      "wave": "corner-continuation",
+      "coverage_deg": 35,
+      "mouth_mm": 350,
+      "path": "searches/corner-continuation/35deg/350x350-L-1-K-1-N+1",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "35d-350mm-L-1-K-1-N+1"
       ]
     },
     {
@@ -2978,6 +3785,16 @@
       "wave": "corner-continuation",
       "coverage_deg": 40,
       "mouth_mm": 400,
+      "path": "searches/corner-continuation/40deg/400x400-L-1-K-1-N+1",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "40d-400mm-L-1-K-1-N+1"
+      ]
+    },
+    {
+      "wave": "corner-continuation",
+      "coverage_deg": 40,
+      "mouth_mm": 400,
       "path": "searches/corner-continuation/40deg/400x400-L-1-K-1-N-1",
       "candidate_count": 1,
       "coordinate_ids": [
@@ -3028,6 +3845,16 @@
       "wave": "corner-continuation",
       "coverage_deg": 45,
       "mouth_mm": 250,
+      "path": "searches/corner-continuation/45deg/250x250-L+1-K+1-N+1",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-250mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "corner-continuation",
+      "coverage_deg": 45,
+      "mouth_mm": 250,
       "path": "searches/corner-continuation/45deg/250x250-L+1-K+1-N-1",
       "candidate_count": 1,
       "coordinate_ids": [
@@ -3042,6 +3869,16 @@
       "candidate_count": 1,
       "coordinate_ids": [
         "45d-250mm-L-1-K+1-N-1"
+      ]
+    },
+    {
+      "wave": "corner-continuation",
+      "coverage_deg": 45,
+      "mouth_mm": 250,
+      "path": "searches/corner-continuation/45deg/250x250-L-1-K-1-N+1",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "45d-250mm-L-1-K-1-N+1"
       ]
     },
     {
@@ -3158,16 +3995,6 @@
       "wave": "corner-continuation",
       "coverage_deg": 45,
       "mouth_mm": 400,
-      "path": "searches/corner-continuation/45deg/400x400-L+1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L+1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
       "path": "searches/corner-continuation/45deg/400x400-L-1-K+1-N-1",
       "candidate_count": 1,
       "coordinate_ids": [
@@ -3228,6 +4055,16 @@
       "wave": "corner-continuation",
       "coverage_deg": 50,
       "mouth_mm": 300,
+      "path": "searches/corner-continuation/50deg/300x300-L+1-K+1-N+1",
+      "candidate_count": 1,
+      "coordinate_ids": [
+        "50d-300mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "corner-continuation",
+      "coverage_deg": 50,
+      "mouth_mm": 300,
       "path": "searches/corner-continuation/50deg/300x300-L+1-K+1-N-1",
       "candidate_count": 1,
       "coordinate_ids": [
@@ -3278,16 +4115,6 @@
       "wave": "corner-continuation",
       "coverage_deg": 50,
       "mouth_mm": 350,
-      "path": "searches/corner-continuation/50deg/350x350-L+1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L+1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
       "path": "searches/corner-continuation/50deg/350x350-L-1-K+1-N-1",
       "candidate_count": 1,
       "coordinate_ids": [
@@ -3322,16 +4149,6 @@
       "candidate_count": 1,
       "coordinate_ids": [
         "50d-400mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/50deg/400x400-L+1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L+1-K-1-N-1"
       ]
     },
     {

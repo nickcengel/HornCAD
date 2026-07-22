@@ -31,11 +31,11 @@ bem_candidate_search:
     - 49.999999
     - 50.000001
     k_h:
-    - 2.499999
-    - 5.500001
+    - 1.999999
+    - 6.000001
     k_v:
-    - 2.499999
-    - 5.500001
+    - 1.999999
+    - 6.000001
     n_h:
     - 3.999999
     - 16.000001
@@ -50,7 +50,7 @@ bem_candidate_search:
   control_decoupling:
     design: canonical-three-level-factorial
     wave: core-axis
-    manifest_sha256: fd3aced8913aa3252491358c8fa9486af12f1bdc6a604d4886c689ff931be25d
+    manifest_sha256: 395284e7e3f908539346ed5c7290a9e8b5243763f0e7525ce91530c389929e8d
     coordinate_ids:
     - 50d-300mm-L+0-K+0-N+0
     - 50d-300mm-L-1-K+0-N+0
@@ -117,17 +117,17 @@ bem_candidate_search:
       length_factor: 1.0
       stratum: L+0_K-1_N+0
       length_mm: 93.908
-      k: 2.5
+      k: 2.0
       n: 8.0
       reference_length_mm: 93.908
       reference_result:
         search: 50deg/300x300-s-grid
         candidate_id: candidate-007
         score: 87.27187944968756
-      s: 1.364503372441996
-      exit_angle_deg: 87.57485338034328
-      normalized_curvature_radius: 2.078849807862185
-      final_tenth_radial_growth_fraction: 0.3368326330391208
+      s: 1.2122956527838764
+      exit_angle_deg: 87.29082941847692
+      normalized_curvature_radius: 1.678776687252271
+      final_tenth_radial_growth_fraction: 0.3099525384014885
       status: planned
     - id: 50d-300mm-L+0-K+0-N-1
       kind: canonical-grid
@@ -186,17 +186,17 @@ bem_candidate_search:
       length_factor: 1.0
       stratum: L+0_K+1_N+0
       length_mm: 93.908
-      k: 5.5
+      k: 6.0
       n: 8.0
       reference_length_mm: 93.908
       reference_result:
         search: 50deg/300x300-s-grid
         candidate_id: candidate-007
         score: 87.27187944968756
-      s: 2.081253679415533
-      exit_angle_deg: 88.3737043383506
-      normalized_curvature_radius: 4.517135575671429
-      final_tenth_radial_growth_fraction: 0.4589765502515082
+      s: 2.172988567303956
+      exit_angle_deg: 88.43913942628164
+      normalized_curvature_radius: 4.893526897216914
+      final_tenth_radial_growth_fraction: 0.4740153776821134
       status: planned
     - id: 50d-300mm-L+1-K+0-N+0
       kind: canonical-grid
@@ -238,8 +238,8 @@ bem_candidate_search:
       extension_mm: 0.0
       osse_coverage_h_deg: 50.0
       osse_coverage_v_deg: 50.0
-      k_h: 2.5
-      k_v: 2.5
+      k_h: 2.0
+      k_v: 2.0
       n_h: 8.0
       n_v: 8.0
   - label: 50d-300mm-L+0-K+0-N-1
@@ -268,8 +268,8 @@ bem_candidate_search:
       extension_mm: 0.0
       osse_coverage_h_deg: 50.0
       osse_coverage_v_deg: 50.0
-      k_h: 5.5
-      k_v: 5.5
+      k_h: 6.0
+      k_v: 6.0
       n_h: 8.0
       n_v: 8.0
   - label: 50d-300mm-L+1-K+0-N+0

@@ -33,20 +33,20 @@ horncad_config:
     stl_export_mode: body
   horizontal_basis:
     coverage_deg: 50.0
-    k: 5.5
+    k: 6.0
     n: 4.0
-    solved_s: 1.9523723440327618
-    mouth_exit_angle_deg: 88.46992647681866
-    mouth_curvature_radius_mm: 797.5315253017332
-    normalized_mouth_curvature_radius: 4.557323001724189
+    solved_s: 2.0018650989166136
+    mouth_exit_angle_deg: 88.50553200899508
+    mouth_curvature_radius_mm: 834.7263281910577
+    normalized_mouth_curvature_radius: 4.76986473252033
   vertical_basis:
     coverage_deg: 50.0
-    k: 5.5
+    k: 6.0
     n: 4.0
-    solved_s: 1.9523723440327618
-    mouth_exit_angle_deg: 88.46992647681866
-    mouth_curvature_radius_mm: 797.5315253017332
-    normalized_mouth_curvature_radius: 4.557323001724189
+    solved_s: 2.0018650989166136
+    mouth_exit_angle_deg: 88.50553200899508
+    mouth_curvature_radius_mm: 834.7263281910577
+    normalized_mouth_curvature_radius: 4.76986473252033
   section_modifier:
     mouth_squareness: 0
     squareness_morph_spline:

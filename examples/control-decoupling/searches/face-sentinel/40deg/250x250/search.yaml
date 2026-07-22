@@ -6,8 +6,8 @@ bem_candidate_search:
   lower_frequency_hz: 500.0
   crossover_hz: 750.0
   upper_frequency_hz: 8000.0
-  max_evaluations: 2
-  initial_candidates: 1
+  max_evaluations: 1
+  initial_candidates: 0
   minimum_candidate_distance: 0.001
   derived_s_bounds:
   - 0.049
@@ -32,15 +32,15 @@ bem_candidate_search:
     - 40.000001
     k_h:
     - 3.999999
-    - 5.500001
+    - 4.000001
     k_v:
     - 3.999999
-    - 5.500001
+    - 4.000001
     n_h:
-    - 7.999999
+    - 15.999999
     - 16.000001
     n_v:
-    - 7.999999
+    - 15.999999
     - 16.000001
   solver:
     points_per_octave: 12
@@ -50,10 +50,9 @@ bem_candidate_search:
   control_decoupling:
     design: canonical-three-level-factorial
     wave: face-sentinel
-    manifest_sha256: fd3aced8913aa3252491358c8fa9486af12f1bdc6a604d4886c689ff931be25d
+    manifest_sha256: 395284e7e3f908539346ed5c7290a9e8b5243763f0e7525ce91530c389929e8d
     coordinate_ids:
     - 40d-250mm-L-1-K+0-N+1
-    - 40d-250mm-L-1-K+1-N+0
     coordinates:
     - id: 40d-250mm-L-1-K+0-N+1
       kind: canonical-grid
@@ -79,38 +78,3 @@ bem_candidate_search:
       final_tenth_radial_growth_fraction: 0.516574407365302
       status: planned
       dead_region_sentinel: true
-    - id: 40d-250mm-L-1-K+1-N+0
-      kind: canonical-grid
-      stage: two-factor-face
-      coverage_deg: 40
-      mouth_mm: 250
-      length_level: -1
-      k_level: 1
-      n_level: 0
-      length_factor: 0.8
-      stratum: L-1_K+1_N+0
-      length_mm: 100.492
-      k: 5.5
-      n: 8.0
-      reference_length_mm: 125.615
-      reference_result:
-        search: 40deg/250x250-s-grid
-        candidate_id: candidate-002
-        score: 83.47723703047352
-      s: 1.8477749291910741
-      exit_angle_deg: 88.15425974247749
-      normalized_curvature_radius: 4.468741460416253
-      final_tenth_radial_growth_fraction: 0.5116530727603301
-      status: planned
-      dead_region_sentinel: true
-  initial_pool:
-  - label: 40d-250mm-L-1-K+1-N+0
-    values:
-      length_mm: 100.492
-      extension_mm: 0.0
-      osse_coverage_h_deg: 40.0
-      osse_coverage_v_deg: 40.0
-      k_h: 5.5
-      k_v: 5.5
-      n_h: 8.0
-      n_v: 8.0

@@ -31,11 +31,11 @@ bem_candidate_search:
     - 44.999999
     - 45.000001
     k_h:
-    - 2.499999
-    - 5.500001
+    - 1.999999
+    - 6.000001
     k_v:
-    - 2.499999
-    - 5.500001
+    - 1.999999
+    - 6.000001
     n_h:
     - 3.999999
     - 16.000001
@@ -50,7 +50,7 @@ bem_candidate_search:
   control_decoupling:
     design: canonical-three-level-factorial
     wave: core-axis
-    manifest_sha256: fd3aced8913aa3252491358c8fa9486af12f1bdc6a604d4886c689ff931be25d
+    manifest_sha256: 395284e7e3f908539346ed5c7290a9e8b5243763f0e7525ce91530c389929e8d
     coordinate_ids:
     - 45d-400mm-L+0-K+0-N+0
     - 45d-400mm-L-1-K+0-N+0
@@ -117,17 +117,17 @@ bem_candidate_search:
       length_factor: 1.0
       stratum: L+0_K-1_N+0
       length_mm: 143.112
-      k: 2.5
+      k: 2.0
       n: 8.0
       reference_length_mm: 143.112
       reference_result:
         search: 45deg/400x400-coupled-r01-kn
         candidate_id: candidate-000
         score: 87.10784581151064
-      s: 1.1997959974200547
-      exit_angle_deg: 87.2399420005326
-      normalized_curvature_radius: 1.8331698553529308
-      final_tenth_radial_growth_fraction: 0.32952514286056556
+      s: 1.0930801169866797
+      exit_angle_deg: 86.98759281112974
+      normalized_curvature_radius: 1.547995452326881
+      final_tenth_radial_growth_fraction: 0.3082515356585167
       status: planned
     - id: 45d-400mm-L+0-K+0-N-1
       kind: canonical-grid
@@ -186,17 +186,17 @@ bem_candidate_search:
       length_factor: 1.0
       stratum: L+0_K+1_N+0
       length_mm: 143.112
-      k: 5.5
+      k: 6.0
       n: 8.0
       reference_length_mm: 143.112
       reference_result:
         search: 45deg/400x400-coupled-r01-kn
         candidate_id: candidate-000
         score: 87.10784581151064
-      s: 1.7314643514382013
-      exit_angle_deg: 88.05044984481015
-      normalized_curvature_radius: 3.602352700552143
-      final_tenth_radial_growth_fraction: 0.432566763536836
+      s: 1.803855139132634
+      exit_angle_deg: 88.1250825748227
+      normalized_curvature_radius: 3.887181520603815
+      final_tenth_radial_growth_fraction: 0.44616409430077325
       status: planned
     - id: 45d-400mm-L+1-K+0-N+0
       kind: canonical-grid
@@ -238,8 +238,8 @@ bem_candidate_search:
       extension_mm: 0.0
       osse_coverage_h_deg: 45.0
       osse_coverage_v_deg: 45.0
-      k_h: 2.5
-      k_v: 2.5
+      k_h: 2.0
+      k_v: 2.0
       n_h: 8.0
       n_v: 8.0
   - label: 45d-400mm-L+0-K+0-N-1
@@ -268,8 +268,8 @@ bem_candidate_search:
       extension_mm: 0.0
       osse_coverage_h_deg: 45.0
       osse_coverage_v_deg: 45.0
-      k_h: 5.5
-      k_v: 5.5
+      k_h: 6.0
+      k_v: 6.0
       n_h: 8.0
       n_v: 8.0
   - label: 45d-400mm-L+1-K+0-N+0

@@ -1,0 +1,76 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 35
+  intended_coverage_v_deg: 35
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 1
+  initial_candidates: 0
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 153.445999
+    - 153.446001
+    extension_mm:
+    - -1.0e-06
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 34.999999
+    - 35.000001
+    osse_coverage_v_deg:
+    - 34.999999
+    - 35.000001
+    k_h:
+    - 3.999999
+    - 4.000001
+    k_v:
+    - 3.999999
+    - 4.000001
+    n_h:
+    - 1.999999
+    - 2.000001
+    n_v:
+    - 1.999999
+    - 2.000001
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
+  control_decoupling:
+    design: canonical-three-level-factorial
+    wave: axis-closure
+    manifest_sha256: 395284e7e3f908539346ed5c7290a9e8b5243763f0e7525ce91530c389929e8d
+    coordinate_ids:
+    - 35d-250mm-closure-N-low
+    coordinates:
+    - id: 35d-250mm-closure-N-low
+      kind: conditional-axis-closure
+      stage: axis-closure
+      coverage_deg: 35
+      mouth_mm: 250
+      length_factor: 1.0
+      length_mm: 153.446
+      k: 4.0
+      n: 2.0
+      reference_length_mm: 153.446
+      closure_axis: N
+      closure_direction: low
+      length_level: 0
+      k_level: 0
+      n_level: -1
+      s: 0.20260185345653034
+      exit_angle_deg: 70.05925180488856
+      normalized_curvature_radius: 0.15303833429968924
+      final_tenth_radial_growth_fraction: 0.1960361887733727
+      status: conditional

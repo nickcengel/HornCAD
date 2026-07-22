@@ -36,10 +36,11 @@ class ControlDecouplingStudyTests(unittest.TestCase):
             for mouth in MOUTHS:
                 cell = [row for row in rows if
                         row["coverage_deg"] == angle and row["mouth_mm"] == mouth]
-                self.assertEqual(len(cell), 32)
+                self.assertEqual(len(cell), 38)
                 self.assertEqual(Counter(row["kind"] for row in cell), {
                     "canonical-grid": 27, "reference-anchor": 1,
                     "boundary-sentinel": 2, "locked-validation": 2,
+                    "conditional-axis-closure": 6,
                 })
 
     def test_preflight_rejects_known_bad_geometry_and_is_balanced(self) -> None:
@@ -93,16 +94,30 @@ class ControlDecouplingStudyTests(unittest.TestCase):
 
     def test_execution_plan_materializes_every_planned_coordinate_once(self) -> None:
         plan = json.loads((STUDY / "execution_plan.json").read_text())
-        self.assertEqual(plan["candidate_count"], manifest()["status_counts"]["planned"])
+        self.assertEqual(plan["candidate_count"],
+                         manifest()["status_counts"]["planned"] +
+                         manifest()["status_counts"].get("conditional", 0))
         identifiers = [identifier for search in plan["searches"]
                        for identifier in search["coordinate_ids"]]
         self.assertEqual(len(identifiers), len(set(identifiers)))
         planned = {row["id"] for row in manifest()["coordinates"]
-                   if row["status"] == "planned"}
+                   if row["status"] in {"planned", "conditional"}}
         self.assertEqual(set(identifiers), planned)
         review = (STUDY / "launch_review.md").read_text()
         self.assertIn(plan["manifest_sha256"], review)
         self.assertIn("No BEM work is started", review)
+
+    def test_broad_k_grid_and_n2_only_as_conditional_closure(self) -> None:
+        rows = manifest()["coordinates"]
+        grid = [row for row in rows if row["kind"] == "canonical-grid"]
+        self.assertEqual({row["k"] for row in grid}, {2.0, 4.0, 6.0})
+        self.assertEqual({row["n"] for row in grid}, {4.0, 8.0, 16.0})
+        n2 = [row for row in rows if row["n"] == 2.0]
+        self.assertEqual(len(n2), 25)
+        self.assertTrue(all(row["kind"] == "conditional-axis-closure"
+                            and row["closure_axis"] == "N"
+                            and row["closure_direction"] == "low"
+                            for row in n2))
 
     def test_single_candidate_searches_omit_empty_initial_pool(self) -> None:
         single_count = 0

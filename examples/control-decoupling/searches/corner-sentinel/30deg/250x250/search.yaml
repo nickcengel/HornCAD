@@ -31,11 +31,11 @@ bem_candidate_search:
     - 29.999999
     - 30.000001
     k_h:
-    - 2.499999
-    - 5.500001
+    - 1.999999
+    - 6.000001
     k_v:
-    - 2.499999
-    - 5.500001
+    - 1.999999
+    - 6.000001
     n_h:
     - 3.999999
     - 16.000001
@@ -50,7 +50,7 @@ bem_candidate_search:
   control_decoupling:
     design: canonical-three-level-factorial
     wave: corner-sentinel
-    manifest_sha256: fd3aced8913aa3252491358c8fa9486af12f1bdc6a604d4886c689ff931be25d
+    manifest_sha256: 395284e7e3f908539346ed5c7290a9e8b5243763f0e7525ce91530c389929e8d
     coordinate_ids:
     - 30d-250mm-L-1-K-1-N-1
     - 30d-250mm-L-1-K-1-N+1
@@ -68,17 +68,17 @@ bem_candidate_search:
       length_factor: 0.8
       stratum: L-1_K-1_N-1
       length_mm: 139.546
-      k: 2.5
+      k: 2.0
       n: 4.0
       reference_length_mm: 174.432
       reference_result:
         search: 30deg/250x250-s-grid
         candidate_id: candidate-000
         score: 75.78387357594507
-      s: 0.4883967730387125
-      exit_angle_deg: 84.13684376252804
-      normalized_curvature_radius: 0.7629025439189641
-      final_tenth_radial_growth_fraction: 0.3218168735493016
+      s: 0.44012682741979886
+      exit_angle_deg: 83.55509271584476
+      normalized_curvature_radius: 0.6380985328949641
+      final_tenth_radial_growth_fraction: 0.299676602614998
       status: planned
       dead_region_sentinel: true
     - id: 30d-250mm-L-1-K-1-N+1
@@ -92,17 +92,17 @@ bem_candidate_search:
       length_factor: 0.8
       stratum: L-1_K-1_N+1
       length_mm: 139.546
-      k: 2.5
+      k: 2.0
       n: 16.0
       reference_length_mm: 174.432
       reference_result:
         search: 30deg/250x250-s-grid
         candidate_id: candidate-000
         score: 75.78387357594507
-      s: 2.0610492244069842
-      exit_angle_deg: 87.37014601451395
-      normalized_curvature_radius: 2.8148648087062944
-      final_tenth_radial_growth_fraction: 0.43031472097015205
+      s: 1.8573485869907265
+      exit_angle_deg: 87.0935780884
+      normalized_curvature_radius: 2.3145923285824335
+      final_tenth_radial_growth_fraction: 0.39745123177584885
       status: planned
       dead_region_sentinel: true
     - id: 30d-250mm-L-1-K+1-N-1
@@ -116,17 +116,17 @@ bem_candidate_search:
       length_factor: 0.8
       stratum: L-1_K+1_N-1
       length_mm: 139.546
-      k: 5.5
+      k: 6.0
       n: 4.0
       reference_length_mm: 174.432
       reference_result:
         search: 30deg/250x250-s-grid
         candidate_id: candidate-000
         score: 75.78387357594507
-      s: 0.6946284049249826
-      exit_angle_deg: 85.75669464766375
-      normalized_curvature_radius: 1.4114600730722833
-      final_tenth_radial_growth_fraction: 0.4109341973432479
+      s: 0.7184455145753347
+      exit_angle_deg: 85.88648486792106
+      normalized_curvature_radius: 1.4977113804451005
+      final_tenth_radial_growth_fraction: 0.42061030586582043
       status: planned
       dead_region_sentinel: true
     - id: 30d-250mm-L+1-K+1-N-1
@@ -140,17 +140,17 @@ bem_candidate_search:
       length_factor: 1.2
       stratum: L+1_K+1_N-1
       length_mm: 209.318
-      k: 5.5
+      k: 6.0
       n: 4.0
       reference_length_mm: 174.432
       reference_result:
         search: 30deg/250x250-s-grid
         candidate_id: candidate-000
         score: 75.78387357594507
-      s: 0.15650518212079792
-      exit_angle_deg: 74.139274239685
-      normalized_curvature_radius: 0.1864382011759868
-      final_tenth_radial_growth_fraction: 0.22806256797433883
+      s: 0.1798415143169199
+      exit_angle_deg: 75.76836014797763
+      normalized_curvature_radius: 0.22290738332121907
+      final_tenth_radial_growth_fraction: 0.24316844635336046
       status: planned
       dead_region_sentinel: true
   initial_pool:
@@ -160,8 +160,8 @@ bem_candidate_search:
       extension_mm: 0.0
       osse_coverage_h_deg: 30.0
       osse_coverage_v_deg: 30.0
-      k_h: 2.5
-      k_v: 2.5
+      k_h: 2.0
+      k_v: 2.0
       n_h: 16.0
       n_v: 16.0
   - label: 30d-250mm-L-1-K+1-N-1
@@ -170,8 +170,8 @@ bem_candidate_search:
       extension_mm: 0.0
       osse_coverage_h_deg: 30.0
       osse_coverage_v_deg: 30.0
-      k_h: 5.5
-      k_v: 5.5
+      k_h: 6.0
+      k_v: 6.0
       n_h: 4.0
       n_v: 4.0
   - label: 30d-250mm-L+1-K+1-N-1
@@ -180,7 +180,7 @@ bem_candidate_search:
       extension_mm: 0.0
       osse_coverage_h_deg: 30.0
       osse_coverage_v_deg: 30.0
-      k_h: 5.5
-      k_v: 5.5
+      k_h: 6.0
+      k_v: 6.0
       n_h: 4.0
       n_v: 4.0

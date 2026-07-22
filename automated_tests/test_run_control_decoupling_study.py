@@ -4,7 +4,9 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from app.tools.run_control_decoupling_study import _load_frozen, _run_queue
+from app.tools.run_control_decoupling_study import (
+    _load_frozen, _run_queue, material_improvement,
+)
 
 
 class ControlDecouplingRunnerTests(unittest.TestCase):
@@ -29,6 +31,17 @@ class ControlDecouplingRunnerTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1] / "examples" / "control-decoupling"
         _, plan, digest = _load_frozen(root)
         self.assertEqual(plan["manifest_sha256"], digest)
+
+    def test_closure_requires_practical_score_or_diagnostic_change(self) -> None:
+        center = {"score": 80.0, "containment_percent": 90.0,
+                  "profile_rms_db": 1.0, "slice_rms_db": 1.0,
+                  "outward_rise_db": 1.0, "minus_six_rms_deg": 3.0}
+        noise = dict(center, score=80.2, profile_rms_db=0.95)
+        score_gain = dict(center, score=80.5)
+        diagnostic_gain = dict(center, slice_rms_db=0.89)
+        self.assertFalse(material_improvement(noise, center))
+        self.assertTrue(material_improvement(score_gain, center))
+        self.assertTrue(material_improvement(diagnostic_gain, center))
 
 
 if __name__ == "__main__":

@@ -26,14 +26,18 @@ from .run_bem_search import geometry_feasibility
 ANGLES = (30, 35, 40, 45, 50)
 MOUTHS = (250, 300, 350, 400, 450)
 LENGTH_FACTORS = (0.80, 1.00, 1.20)
-K_LEVELS = (2.5, 4.0, 5.5)
+K_LEVELS = (2.0, 4.0, 6.0)
 N_LEVELS = (4.0, 8.0, 16.0)
 BOUNDARY_LENGTH_FACTORS = (0.70, 1.30)
+CLOSURE_LENGTH_FACTORS = (0.60, 1.40)
+CLOSURE_K_LEVELS = (1.0, 7.0)
+CLOSURE_N_LEVELS = (2.0, 20.0)
 PROFILE_SAMPLE_COUNT = 41
 PROFILE_RMS_MATERIALITY = 0.01
 REUSE_LENGTH_TOLERANCE_MM = 0.25
 VALIDATION_POINTS_PER_CELL = 2
-MAX_REGISTERED_COORDINATES = 800
+MAX_REGISTERED_COORDINATES = 950
+MAX_NEW_BEM_CANDIDATES = 800
 CANONICAL_SCHEMA = 1
 
 
@@ -413,6 +417,54 @@ def build_manifest(source_root: Path) -> dict[str, Any]:
                             "final_tenth_radial_growth_fraction"],
                     )
                 cell_rows.append(row)
+            closure_specs = (
+                ("L-low", CLOSURE_LENGTH_FACTORS[0], 4.0, 8.0, -1, 0, 0),
+                ("L-high", CLOSURE_LENGTH_FACTORS[1], 4.0, 8.0, 1, 0, 0),
+                ("K-low", 1.0, CLOSURE_K_LEVELS[0], 8.0, 0, -1, 0),
+                ("K-high", 1.0, CLOSURE_K_LEVELS[1], 8.0, 0, 1, 0),
+                ("N-low", 1.0, 4.0, CLOSURE_N_LEVELS[0], 0, 0, -1),
+                ("N-high", 1.0, 4.0, CLOSURE_N_LEVELS[1], 0, 0, 1),
+            )
+            for label, length_factor, k, n, length_direction, k_direction, n_direction in closure_specs:
+                length = round(reference.length_mm * length_factor, 3)
+                metrics, rejection = _geometry_audit(config, angle, length, k, n)
+                row = {
+                    "id": f"{angle}d-{mouth}mm-closure-{label}",
+                    "kind": "conditional-axis-closure", "stage": "axis-closure",
+                    "coverage_deg": angle, "mouth_mm": mouth,
+                    "length_factor": length_factor, "length_mm": length,
+                    "k": k, "n": n, "reference_length_mm": reference.length_mm,
+                    "closure_axis": label[0], "closure_direction": label.split("-", 1)[1],
+                    "length_level": length_direction, "k_level": k_direction,
+                    "n_level": n_direction,
+                }
+                if metrics is None:
+                    row.update(status="geometry-rejected", reason=rejection)
+                else:
+                    profile = _profile(config, angle, length, k, n, metrics["s"])
+                    redundant = None
+                    for other_profile, other_id in accepted_profiles[length]:
+                        rms = float(np.sqrt(np.mean((profile - other_profile) ** 2)))
+                        if rms < PROFILE_RMS_MATERIALITY:
+                            redundant = (other_id, rms)
+                            break
+                    row.update(
+                        s=metrics["s"], exit_angle_deg=metrics["exit_angle_deg"],
+                        normalized_curvature_radius=metrics[
+                            "normalized_curvature_radius"],
+                        final_tenth_radial_growth_fraction=metrics[
+                            "final_tenth_radial_growth_fraction"],
+                    )
+                    if redundant:
+                        row.update(
+                            status="geometry-redundant",
+                            reason="normalized radial profile changes less than 1% RMS",
+                            represented_by=redundant[0],
+                            profile_rms_difference=redundant[1],
+                        )
+                    else:
+                        row["status"] = "conditional"
+                cell_rows.append(row)
             coordinates.extend(cell_rows)
     sentinel_targets = ((30, 250), (50, 450), (40, 350),
                         (30, 450), (50, 250))
@@ -430,7 +482,13 @@ def build_manifest(source_root: Path) -> dict[str, Any]:
                 remaining = [row for row in available if row not in selected]
                 if not remaining:
                     break
+                selected_angles = {row["coverage_deg"] for row in selected}
+                selected_mouths = {row["mouth_mm"] for row in selected}
                 chosen = min(remaining, key=lambda row: (
+                    (row["coverage_deg"] in selected_angles)
+                    if len(selected_angles) < 3 else False,
+                    (row["mouth_mm"] in selected_mouths)
+                    if len(selected_mouths) < 3 else False,
                     abs(row["coverage_deg"] - target_angle) / 5 +
                     abs(row["mouth_mm"] - target_mouth) / 50,
                     row["coverage_deg"], row["mouth_mm"]))
@@ -442,6 +500,7 @@ def build_manifest(source_root: Path) -> dict[str, Any]:
         stage: dict(Counter(row["status"] for row in coordinates
                             if row["stage"] == stage))
         for stage in ("reference-anchor", "core-axis", "boundary-sentinel",
+                      "axis-closure",
                       "two-factor-face", "three-factor-corner",
                       "locked-validation")
     }
@@ -519,7 +578,12 @@ def build_manifest(source_root: Path) -> dict[str, Any]:
             "boundary_length_factors": list(BOUNDARY_LENGTH_FACTORS),
             "boundary_sentinels": 50,
             "locked_validation_coordinates": 50,
+            "conditional_axis_closure_coordinates": 150,
+            "conditional_closure_length_factors": list(CLOSURE_LENGTH_FACTORS),
+            "conditional_closure_k_levels": list(CLOSURE_K_LEVELS),
+            "conditional_closure_n_levels": list(CLOSURE_N_LEVELS),
             "maximum_registered_coordinates": MAX_REGISTERED_COORDINATES,
+            "maximum_new_bem_candidates": MAX_NEW_BEM_CANDIDATES,
         },
         "geometry_policy": {
             "profile_rms_materiality_fraction": PROFILE_RMS_MATERIALITY,
@@ -538,9 +602,23 @@ def build_manifest(source_root: Path) -> dict[str, Any]:
             "requires_retained_responses_npz": True,
             "compatible_source_results": len(results),
         },
+        "prior_evidence": {
+            "length_centers": (
+                "best retained K4/N10 S-grid length in each cell; 23 cells have "
+                "closed S evidence and two are geometry-limited"),
+            "k_range": (
+                "matched fine-step gains are generally small near K4-K6, but K6 "
+                "is not independently closed; use K2/4/6 plus conditional K1/7"),
+            "n2": (
+                "14 retained N2 results are noncompetitive; four fixed-length/fixed-K "
+                "matches trail N5-N10 by 14.9-17.6 score points; N2 closure only"),
+            "n_center": (
+                "N4/8/16 preserves a full-rank physically distinct model in all "
+                "25 cells; N4/10/16 becomes rank-deficient in some cells"),
+        },
         "execution_policy": {
             "stage_order": ["reference-anchor", "core-axis",
-                            "boundary-sentinel", "two-factor-face",
+                            "boundary-sentinel", "axis-closure", "two-factor-face",
                             "three-factor-corner", "locked-validation"],
             "solver_slots": 2, "workers_per_slot": 10,
             "axis_stage_is_never_score_pruned": True,
@@ -560,6 +638,11 @@ def build_manifest(source_root: Path) -> dict[str, Any]:
                 "a completed or geometry-rejected search immediately releases its slot; "
                 "single-candidate searches use an explicit seed candidate rather than an "
                 "empty initial pool"),
+            "axis_closure_rule": (
+                "run the next outward L, K, or N endpoint only when the measured "
+                "inner endpoint improves score by at least 0.5 points or provides "
+                "a material diagnostic improvement over the center; N=2 is only "
+                "the conditional lower safety-bound probe after N=4 points outward"),
         },
         "completion_policy": {
             "all_registered_coordinates_have_terminal_status": True,
@@ -604,10 +687,11 @@ def validate_manifest(manifest: dict[str, Any], source_root: Path) -> list[str]:
     validation = [row for row in rows if row["kind"] == "locked-validation"]
     anchors = [row for row in rows if row["kind"] == "reference-anchor"]
     boundaries = [row for row in rows if row["kind"] == "boundary-sentinel"]
-    if (len(grid), len(anchors), len(boundaries), len(validation)) != (675, 25, 50, 50):
+    closures = [row for row in rows if row["kind"] == "conditional-axis-closure"]
+    if (len(grid), len(anchors), len(boundaries), len(validation), len(closures)) != (675, 25, 50, 50, 150):
         errors.append(
             "expected 675 grid/25 anchors/50 boundaries/50 validation, got "
-            f"{len(grid)}/{len(anchors)}/{len(boundaries)}/{len(validation)}")
+            f"{len(grid)}/{len(anchors)}/{len(boundaries)}/{len(validation)}/{len(closures)}")
     for angle in ANGLES:
         for mouth in MOUTHS:
             cell_grid = [row for row in grid if row["coverage_deg"] == angle and
@@ -619,16 +703,21 @@ def validate_manifest(manifest: dict[str, Any], source_root: Path) -> list[str]:
                             row["coverage_deg"] == angle and row["mouth_mm"] == mouth]
             cell_boundaries = [row for row in boundaries if
                                row["coverage_deg"] == angle and row["mouth_mm"] == mouth]
+            cell_closures = [row for row in closures if
+                             row["coverage_deg"] == angle and row["mouth_mm"] == mouth]
             if (len(cell_grid), len(cell_anchors), len(cell_boundaries),
-                    len(cell_validation)) != (27, 1, 2, 2):
+                    len(cell_validation), len(cell_closures)) != (27, 1, 2, 2, 6):
                 errors.append(
                     f"{angle}°/{mouth} mm has {len(cell_grid)} grid, "
                     f"{len(cell_anchors)} anchors, {len(cell_boundaries)} boundaries, "
-                    f"and {len(cell_validation)} validation coordinates")
-    allowed = {"planned", "reused", "geometry-rejected", "geometry-redundant"}
+                    f"{len(cell_validation)} validation, and {len(cell_closures)} closure coordinates")
+    allowed = {"planned", "conditional", "reused", "geometry-rejected", "geometry-redundant"}
     unknown = sorted(set(row["status"] for row in rows) - allowed)
     if unknown:
         errors.append(f"unknown coordinate statuses: {unknown}")
+    new_bem = sum(row["status"] in {"planned", "conditional"} for row in rows)
+    if new_bem > MAX_NEW_BEM_CANDIDATES:
+        errors.append(f"new BEM ceiling exceeded: {new_bem} > {MAX_NEW_BEM_CANDIDATES}")
     audit = manifest.get("design_audit", {})
     if audit.get("quadratic_model_rank") != 10:
         errors.append("feasible factorial does not identify all quadratic terms")
@@ -691,17 +780,22 @@ OS-SE horns. Historical searches are evidence sources, not an execution queue.
 - Square mouths: 250, 300, 350, 400, and 450 mm.
 - Independent controls: physical length, K, and N. S is recorded as derived.
 - Per cell: complete 3×3×3 factorial at length factors 0.80/1.00/1.20,
-  K 2.5/4.0/5.5, and N 4/8/16.
+  K 2/4/6, and N 4/8/16.
 - Per cell: one strictly reused K4/N10 reference and two length-only boundary
   sentinels at factors 0.70 and 1.30.
+- Per cell: six conditional hard-boundary probes at length factors 0.60/1.40,
+  K 1/7, and N 2/20. These are registered but run only after an inner endpoint
+  points outward. N=2 is never part of the regular grid.
 - Locked validation: two deterministic interior coordinates per cell.
 - Registered ceiling: 675 factorial + 25 references + 50 boundary sentinels +
-  50 validation = 800 coordinates.
+  50 validation + 150 conditional closure probes = 950 coordinates. The actual
+  new-BEM ceiling remains 800.
 
 Preflight currently classifies {counts.get('reused', 0)} coordinates as strictly
 reusable, {counts.get('geometry-rejected', 0)} as invalid geometry,
 {counts.get('geometry-redundant', 0)} as physically redundant, and
-{counts.get('planned', 0)} as requiring BEM.
+{counts.get('planned', 0)} as requiring BEM. A further
+{counts.get('conditional', 0)} feasible closure probes run only when triggered.
 
 After geometry and redundancy filtering, {audit['active_factorial_coordinates']}
 independent factorial coordinates remain, with
@@ -722,6 +816,23 @@ two- and three-control interaction. Existing results may fill exact slots but do
 not alter the registered design. Dense optimizer traces cannot count as grid
 coverage merely because they are numerous.
 
+## Prior evidence retained
+
+The physical-length center in each cell is the best retained K4/N10 S-grid
+length, not a generic constant. Twenty-three retained cells have closed S
+evidence and two are geometry-limited. This preserves the earlier mouth/coverage
+length prescription while the factorial measures how K and N modify it.
+
+K=2/4/6 brackets the useful K≈3-6 ridge more honestly than the earlier
+2.5/4/5.5 proposal. Fine K changes near the ridge generally moved score by only
+tenths, but K=6 was not independently closed, so K=1/7 remain conditional probes.
+
+N=2 is not a regular sample. Four retained fixed-length/fixed-K comparisons put
+it 14.9-17.6 score points below N=5-10; it runs only if N=4 unexpectedly improves
+over N=8. N=4/8/16 is used because it leaves every cell full-rank and physically
+distinct. Substituting N=10 for N=8 makes some cells rank-deficient through
+profile redundancy; the K4/N10 anchor is still reused in every cell.
+
 ## Geometry and reuse gates
 
 Every coordinate is solved analytically before meshing. Invalid OS-SE solutions,
@@ -740,14 +851,20 @@ responses will be rescored with the current diagnostics before final analysis.
 ## Execution and dead-region policy
 
 Execution order is reference anchors, core center/axes, sparse boundary sentinels,
-two-factor faces, three-factor corners, then locked validation. Core axes are
+conditional axis closure, two-factor faces, three-factor corners, then locked
+validation. Core axes are
 never pruned by score. Face/corner strata may be
 stopped only after at least five distributed cells spanning three angles and
 three mouths show that at least 80% are five or more score points below their cell
 reference and none offers a material diagnostic improvement. Distributed
-sentinels remain. The predeclared face/corner sentinel wave is 90 candidates,
-15.8% of the 570 planned solves; continuation work is avoided only when that
+sentinels remain. The predeclared face/corner sentinel wave is 90 candidates;
+continuation work is avoided only when that
 evidence satisfies the explicit rule.
+
+An outer L/K/N closure point runs only if the measured inner endpoint improves
+score by at least 0.5 points or materially improves a component diagnostic over
+the center. N=2 is therefore only a lower safety-bound check after N=4 beats N=8;
+existing evidence gives no reason to sample it routinely.
 
 Two searches with ten workers each keep twenty cores occupied. Search completion,
 failure, or geometry rejection immediately releases a slot. Single-candidate
