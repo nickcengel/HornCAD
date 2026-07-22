@@ -1,11 +1,55 @@
 {
   "schema_version": 1,
-  "status": "ready",
-  "phase": "controlled-learning-initializing",
+  "status": "running",
+  "phase": "controlled-learning-round-1",
   "method": "held-cell-error-controlled-physical-contrasts",
-  "rounds": [],
+  "started_at_unix": 1784750862.691636,
+  "rounds": [
+    {
+      "round": 1,
+      "status": "running",
+      "candidate_count": 30,
+      "control_counts": {
+        "length": 10,
+        "k": 10,
+        "n": 10
+      },
+      "direction_counts": {
+        "length_decrease": 5,
+        "length_increase": 5,
+        "k_decrease": 5,
+        "k_increase": 5,
+        "n_decrease": 5,
+        "n_increase": 5
+      },
+      "searches": [
+        "30deg/250x250-learning-r01",
+        "30deg/300x300-learning-r01",
+        "30deg/350x350-learning-r01",
+        "30deg/400x400-learning-r01",
+        "30deg/450x450-learning-r01",
+        "35deg/250x250-learning-r01",
+        "35deg/300x300-learning-r01",
+        "35deg/350x350-learning-r01",
+        "35deg/400x400-learning-r01",
+        "35deg/450x450-learning-r01",
+        "40deg/250x250-learning-r01",
+        "40deg/400x400-learning-r01",
+        "40deg/450x450-learning-r01",
+        "45deg/250x250-learning-r01",
+        "45deg/350x350-learning-r01",
+        "45deg/400x400-learning-r01",
+        "45deg/450x450-learning-r01",
+        "50deg/250x250-learning-r01",
+        "50deg/400x400-learning-r01",
+        "50deg/450x450-learning-r01"
+      ],
+      "manifest": "learning_batch_r01.json"
+    }
+  ],
   "stop_rule": {
     "maximum_rounds": 3,
     "minimum_median_relative_rmse_improvement": 0.02
-  }
+  },
+  "active_round": 1
 }
