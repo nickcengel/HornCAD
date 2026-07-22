@@ -102,7 +102,7 @@ def throat_impedance_diagnostics(
     magnitude_db = np.interp(
         log_frequency, np.log2(frequencies), 20.0 * np.log10(magnitude))
 
-    shelf_width_octaves = min(1.0, span_octaves / 2.0)
+    shelf_width_octaves = span_octaves / 2.0
     shelf_mask = log_frequency >= log_frequency[-1] - shelf_width_octaves
     shelf_reference_db = _trimmed_mean(magnitude_db[shelf_mask])
     shelf_reference = float(10.0 ** (shelf_reference_db / 20.0))
@@ -159,7 +159,8 @@ def throat_impedance_diagnostics(
         },
         "shelf": {
             "reference_magnitude": shelf_reference,
-            "reference_method": "10% trimmed geometric mean of final shelf band",
+            "reference_method": (
+                "10% trimmed geometric mean of upper half of logarithmic band"),
             "lower_frequency_hz": float(2.0 ** (log_frequency[-1] - shelf_width_octaves)),
             "upper_frequency_hz": upper,
             "rms_deviation_db": shelf_rms_db,

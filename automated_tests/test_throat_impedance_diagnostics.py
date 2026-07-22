@@ -18,6 +18,8 @@ class ThroatImpedanceDiagnosticsTests(unittest.TestCase):
         self.assertTrue(result["crossover"]["passes_target"])
         self.assertAlmostEqual(result["smoothness"]["ripple_rms_db"], 0.0)
         self.assertEqual(result["smoothness"]["reversal_count"], 0)
+        self.assertAlmostEqual(result["shelf"]["lower_frequency_hz"], 2000.0)
+        self.assertAlmostEqual(result["shelf"]["upper_frequency_hz"], 8000.0)
 
     def test_smooth_high_pass_shape_is_allowed(self) -> None:
         ratio = self.frequencies / 500.0

@@ -9,10 +9,12 @@ any smooth high-pass-like rise. It does not prescribe a filter order or slope.
 
 ## Provisional measurements
 
-The shelf reference is the 10% trimmed geometric mean over the final octave of
-the sweep, or the final half of the available logarithmic band when less than
-two octaves are available. This is harder for a single peak or trough to distort
-than either a maximum or an ordinary arithmetic mean.
+The shelf reference is the 10% trimmed geometric mean over the upper half of
+the crossover-to-high-sweep span on a logarithmic frequency axis. For a
+500 Hz–8 kHz diagnostic band, that means 2–8 kHz. This is harder for a single
+peak or trough to distort than either a maximum or an ordinary arithmetic mean,
+while representing substantially more of the working passband than the final
+octave alone.
 
 The crossover magnitude should be at least 50% of that shelf reference. The
 crossover component saturates at 100% once this threshold is reached; excess
