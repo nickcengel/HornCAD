@@ -1,14 +1,14 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-22T00:29:57.662058-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-22T00:43:17.762714-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
-- 580 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: complete: 96, geometry-rejected: 7, running: 2.
+- 584 unique scored physical designs across 36 mouth/coverage cells.
+- Search states: complete: 97, geometry-rejected: 7, running: 2.
 - Study program: `coupled` (running).
 - S-closure certificate: complete; closed: 29, geometry-limited: 7.
-- Candidate counts by coverage half-angle: 25°: 110, 30°: 39, 35°: 90, 40°: 95, 45°: 165, 50°: 81.
+- Candidate counts by coverage half-angle: 25°: 110, 30°: 39, 35°: 90, 40°: 97, 45°: 167, 50°: 81.
 
 The counts are evidence density, not evidence quality. Cross-angle conclusions remain provisional while the study program is running; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
 
@@ -18,7 +18,7 @@ Positive score deltas mean increasing the named control improved the surface sco
 
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| S | 420 | 34% | -0.55 | -0.60 | 0.043 | 0.021 | -0.005 | 0.38 | 0.000 |
+| S | 424 | 34% | -0.55 | -0.60 | 0.043 | 0.021 | -0.006 | 0.38 | 0.000 |
 | K | 86 | 55% | 0.04 | -0.10 | 0.001 | 0.018 | -0.084 | 0.28 | 0.000 |
 | N | 90 | 38% | -0.24 | 0.07 | -0.003 | 0.015 | 0.000 | 0.16 | 0.000 |
 
@@ -29,13 +29,13 @@ These are aggregate directional summaries, not universal steering rules. A contr
 | Control increase | Starting regime | Pairs | Score improves | Median score Δ |
 | --- | --- | ---: | ---: | ---: |
 | S | coverage 30° | 33 | 18% | -1.94 |
-| S | S < 1 | 94 | 73% | 1.86 |
+| S | S < 1 | 95 | 73% | 1.82 |
 | S | coverage 25° | 82 | 4% | -1.61 |
 | S | coverage 35° | 60 | 15% | -1.20 |
 | S | S ≥ 2 | 160 | 6% | -1.16 |
-| S | coverage 40° | 64 | 36% | -0.97 |
+| S | coverage 40° | 66 | 35% | -0.97 |
 | S | coverage 50° | 75 | 60% | 0.75 |
-| S | 1 ≤ S < 2 | 166 | 39% | -0.33 |
+| S | 1 ≤ S < 2 | 169 | 39% | -0.34 |
 | K | high starting high_frequency_coverage_error_deg | 43 | 81% | 0.58 |
 | K | coverage 35° | 16 | 56% | 0.54 |
 | K | high starting profile_rms_error_db | 43 | 58% | 0.19 |

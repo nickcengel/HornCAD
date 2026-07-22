@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "snapshot_completed_at": "2026-07-22T00:29:57.662058-07:00",
+  "snapshot_completed_at": "2026-07-22T00:43:17.762714-07:00",
   "provisional": true,
   "study_progress": {
     "program_status": "running",
@@ -13,17 +13,17 @@
     }
   },
   "search_states": {
-    "complete": 96,
+    "complete": 97,
     "geometry-rejected": 7,
     "running": 2
   },
-  "unique_candidate_count": 580,
+  "unique_candidate_count": 584,
   "coverage_counts": {
     "25": 110,
     "30": 39,
     "35": 90,
-    "40": 95,
-    "45": 165,
+    "40": 97,
+    "45": 167,
     "50": 81
   },
   "mouth_coverage_cell_count": 36,
@@ -499,16 +499,16 @@
   ],
   "matched_effects": {
     "s": {
-      "count": 420,
-      "score_improved_fraction": 0.34285714285714286,
+      "count": 424,
+      "score_improved_fraction": 0.3419811320754717,
       "median_delta": {
-        "score": -0.5455738879576373,
+        "score": -0.5478065283013152,
         "mean_containment": -0.5979942837718042,
         "profile_rms_error_db": 0.042605493722040366,
-        "slice_energy_departure_db": 0.02072056473437356,
-        "outward_rise_violation_db": -0.004764298834991171,
+        "slice_energy_departure_db": 0.02101536707529239,
+        "outward_rise_violation_db": -0.005514717794420643,
         "minus_six_rms_error_deg": 0.37654808909582993,
-        "high_frequency_coverage_error_deg": -0.26102420475166843
+        "high_frequency_coverage_error_deg": -0.26911644518172284
       },
       "median_dominant_bunching_shift_octaves": 0.0,
       "strata": [
@@ -532,14 +532,14 @@
         },
         {
           "stratum": "coverage 40\u00b0",
-          "count": 64,
-          "score_improved_fraction": 0.359375,
+          "count": 66,
+          "score_improved_fraction": 0.3484848484848485,
           "median_score_delta": -0.9669852025104007
         },
         {
           "stratum": "coverage 45\u00b0",
-          "count": 106,
-          "score_improved_fraction": 0.5471698113207547,
+          "count": 108,
+          "score_improved_fraction": 0.5462962962962963,
           "median_score_delta": 0.0824854236705832
         },
         {
@@ -550,15 +550,15 @@
         },
         {
           "stratum": "S < 1",
-          "count": 94,
-          "score_improved_fraction": 0.7340425531914894,
-          "median_score_delta": 1.857516463243563
+          "count": 95,
+          "score_improved_fraction": 0.7263157894736842,
+          "median_score_delta": 1.816696211526903
         },
         {
           "stratum": "1 \u2264 S < 2",
-          "count": 166,
-          "score_improved_fraction": 0.39156626506024095,
-          "median_score_delta": -0.3281436218776861
+          "count": 169,
+          "score_improved_fraction": 0.3905325443786982,
+          "median_score_delta": -0.33963580779291647
         },
         {
           "stratum": "S \u2265 2",
@@ -758,6 +758,13 @@
           "median_score_delta": 0.16853738003641183
         },
         {
+          "from": 0.98,
+          "to": 1.13,
+          "count": 1,
+          "score_improved_fraction": 0.0,
+          "median_score_delta": -0.9091060001850195
+        },
+        {
           "from": 0.987,
           "to": 1.0,
           "count": 1,
@@ -835,6 +842,20 @@
           "median_score_delta": 0.9076838083859968
         },
         {
+          "from": 1.13,
+          "to": 1.28,
+          "count": 1,
+          "score_improved_fraction": 0.0,
+          "median_score_delta": -1.657825678623837
+        },
+        {
+          "from": 1.171,
+          "to": 1.321,
+          "count": 1,
+          "score_improved_fraction": 1.0,
+          "median_score_delta": 0.20096290502249303
+        },
+        {
           "from": 1.223,
           "to": 1.25,
           "count": 1,
@@ -910,6 +931,13 @@
           "count": 15,
           "score_improved_fraction": 0.0,
           "median_score_delta": -2.0805134050253287
+        },
+        {
+          "from": 1.321,
+          "to": 1.471,
+          "count": 1,
+          "score_improved_fraction": 0.0,
+          "median_score_delta": -0.545888260471429
         },
         {
           "from": 1.35,
