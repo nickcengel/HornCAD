@@ -147,3 +147,10 @@ The primary confirmatory fit uses only this canonical study and strict exact
 response reuses. A second augmented predictive fit may then add all compatible
 historical responses, retaining source provenance. Historical optimizer traces
 can improve prediction but cannot substitute for a missing canonical contrast.
+
+`benchmarks.json` separately registers the highest-current-score compatible
+historical candidate in every mouth/coverage cell. These 25 prior optimized
+results are rescored directly from their retained NPZ response surfaces and shown
+as external purple-diamond comparisons in the index. They do not alter the frozen
+manifest and are excluded from the primary fit, closure decisions, pruning, and
+locked validation.
