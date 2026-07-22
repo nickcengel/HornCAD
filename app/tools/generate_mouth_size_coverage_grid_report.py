@@ -13,8 +13,10 @@ from typing import Any
 import yaml
 
 try:
+    from .analyze_bem_design_space import analyze as analyze_design_space
     from .surface_diagnostics import surface_score
 except ImportError:
+    from analyze_bem_design_space import analyze as analyze_design_space
     from surface_diagnostics import surface_score
 
 
@@ -188,6 +190,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
         SUPPORTED_MOUTH_MAX_MM
     ]
     summaries = [_search_summary(path) for path in search_paths]
+    learning = analyze_design_space(project_root)
     summaries.sort(key=lambda item: (item["coverage"], item["mouth"]))
     total = len(summaries)
     started = sum(summary["status"] != "not started" for summary in summaries)
@@ -595,6 +598,15 @@ def generate_report(project_root: Path, output: Path) -> Path:
             for angle in subsearch_angles
         )
     )
+    learning_effects = learning["matched_effects"]
+    fixed_cells = learning["fixed_k4_n10_cells"]
+    endpoint_cells = sum(cell["winner_at_sampled_boundary"] for cell in fixed_cells)
+    learning_cards = "".join(
+        f"<div class='card'><strong>{html.escape(parameter.upper())} "
+        f"{effect.get('median_delta', {}).get('score', 0):+.2f}</strong>"
+        f"median adjacent score change · {effect['count']} matched pairs</div>"
+        for parameter, effect in learning_effects.items()
+    )
 
     document = f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}
 <title>Mouth-size / coverage grid</title><style>
@@ -603,6 +615,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
 h1,h2,h3{{margin:0 0 12px}}p{{line-height:1.45}}a{{color:var(--accent)}}section{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}
 table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding:8px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}th{{background:var(--panel-2);white-space:nowrap}}
 .summary{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}.card{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}}.card strong{{display:block;font-size:1.4rem;margin-bottom:4px}}
+.learning-cards{{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}}.learning-cards .card{{background:var(--panel-2);font-size:.85rem;color:var(--muted)}}
 .badge{{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.9rem;text-transform:uppercase;letter-spacing:.02em}}.badge.complete{{background:rgba(22,133,107,.18);color:#8de8cc}}.badge.running{{background:rgba(183,121,31,.2);color:#f6d39a}}.badge.failed{{background:rgba(180,83,83,.2);color:#ffb2b2}}.badge.pending{{background:rgba(148,163,189,.16);color:#c8d0d8}}
 .best{{background:#173c39;color:#9af0df;font-weight:700}}.worst{{background:#482321;color:#ffaaa3;font-weight:700}}
 .wide td:nth-child(5), .wide td:nth-child(6), .wide td:nth-child(7), .wide td:nth-child(8), .wide td:nth-child(9){{white-space:nowrap}}
@@ -614,7 +627,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
 @media(max-width:900px){{.sampling-views{{grid-template-columns:1fr}}}}
-@media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
+@media(max-width:700px){{.summary,.learning-cards{{grid-template-columns:1fr}}}}
 </style></head><body><main>
 <h1>Mouth-size / coverage grid</h1>
 <p>Supported domain: 25°–50° half-coverage and 250–500 mm mouth size.</p>
@@ -624,6 +637,12 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <div class='card'><strong>{running}</strong> running sub-searches</div>
 <div class='card'><strong>{complete}</strong> complete sub-searches</div>
 <div class='card'><strong>{completed_candidates}</strong> completed candidates</div>
+</section>
+<section>
+<h2>Provisional learning</h2>
+<p>{learning['unique_candidate_count']} unique scored physical designs currently support {learning['mouth_coverage_cell_count']} mouth/coverage cells. {endpoint_cells} of {len(fixed_cells)} fixed K=4, N=10 cells still place their measured winner on an observed S endpoint.</p>
+<div class='learning-cards'>{learning_cards}</div>
+<p class='muted'>These are aggregate matched comparisons, not universal steering rules. Positive means increasing the control improved score at the median adjacent step. Regime-conditioned and held-out checks are required before using a direction to propose a horn.</p>
 </section>
 <section>
 <h2>Project range</h2>

@@ -98,6 +98,8 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         )
         self.assertIn("Candidates are ranked by the final surface score", report)
         self.assertIn("<h2>Design map</h2>", report)
+        self.assertIn("<h2>Provisional learning</h2>", report)
+        self.assertIn("aggregate matched comparisons", report)
         self.assertIn("class='design-map'", report)
         self.assertIn("<th scope='col'>30°</th>", report)
         self.assertIn("<th scope='row'>250 mm</th>", report)

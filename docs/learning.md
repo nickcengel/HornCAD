@@ -1,5 +1,12 @@
 # Horn Learning Log
 
+The active, regenerable evidence snapshot is
+[`docs/reference/research/current_bem_design_space_analysis.md`](reference/research/current_bem_design_space_analysis.md).
+It supersedes the older fixed-45° observations below when the two disagree.
+The snapshot reports canonical candidate counts, fixed-K/N S boundary status,
+matched adjacent S/K/N effects, and diagnostic-conditioned hypotheses while
+the remaining BEM work continues.
+
 This document tracks the design questions we are trying to answer, the
 provisional answers we have so far, and the experiments meant to turn those
 answers into practical rules of thumb.
