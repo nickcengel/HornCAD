@@ -553,6 +553,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 .wide td:nth-child(5), .wide td:nth-child(6), .wide td:nth-child(7), .wide td:nth-child(8), .wide td:nth-child(9){{white-space:nowrap}}
 .sortable{{cursor:pointer;user-select:none}}.axis-pair{{white-space:normal}}[hidden]{{display:none!important}}
 .column-controls,.angle-controls{{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}}.column-toggle,.angle-filter{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true'],.angle-filter[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}.filter-count{{margin-left:5px;color:var(--muted);font-size:.9rem}}
+.show-more{{display:block;margin:14px auto 2px;border:1px solid var(--accent);border-radius:999px;padding:8px 16px;background:#173c39;color:var(--ink);cursor:pointer}}
 .design-map{{table-layout:fixed;min-width:1100px}}.design-map th:first-child{{width:210px;overflow:hidden}}.design-cell{{min-width:142px;border:1px solid var(--line);background:#17212a}}.design-cell>span{{display:block;margin-top:4px;font-size:.82rem;color:#c1cbd2;white-space:nowrap}}.design-score{{display:block;font-size:1.5rem;line-height:1}}.design-score a{{color:inherit;text-decoration:none}}.design-cell.excellent{{background:#174638}}.design-cell.good{{background:#173c3c}}.design-cell.fair{{background:#3d3820}}.design-cell.low{{background:#452827}}.design-cell.unmeasured{{background:#131920;text-align:center;vertical-align:middle}}.design-state{{width:max-content;padding:2px 6px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;font-size:.68rem!important}}.design-state.refined,.design-state.bounded{{background:rgba(105,214,200,.16);color:#9af0df}}.design-state.baseline{{background:rgba(148,163,189,.16);color:#c8d0d8}}.design-state.provisional{{background:rgba(183,121,31,.25);color:#f6d39a}}.design-state.limited{{background:rgba(180,83,83,.25);color:#ffb2b2}}
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
@@ -587,6 +588,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 {''.join(rows)}
 </tbody>
 </table>
+<button type='button' id='candidate-show-more' class='show-more'>Show 25 more</button>
 </section>
 <section>
 <h2>Sub-searches</h2>
@@ -609,20 +611,37 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
   }});
   const candidateTable = document.getElementById('candidate-table');
   const candidateCount = document.getElementById('candidate-filter-count');
+  const candidateShowMore = document.getElementById('candidate-show-more');
+  let candidateAngle = 'all';
+  let candidateLimit = 25;
+  const renderCandidates = () => {{
+    let matched = 0;
+    let shown = 0;
+    Array.from(candidateTable.tBodies[0].rows).forEach((row) => {{
+      const matches = candidateAngle === 'all' || row.dataset.coverageAngle === candidateAngle;
+      if (matches) matched += 1;
+      const visible = matches && shown < candidateLimit;
+      row.hidden = !visible;
+      if (visible) shown += 1;
+    }});
+    candidateCount.textContent = `Showing ${{shown}} of ${{matched}} candidate${{matched === 1 ? '' : 's'}}`;
+    candidateShowMore.hidden = shown >= matched;
+  }};
   document.querySelectorAll('[data-angle-filter]').forEach((button) => {{
     button.addEventListener('click', () => {{
-      const selected = button.dataset.angleFilter;
-      let visible = 0;
+      candidateAngle = button.dataset.angleFilter;
+      candidateLimit = 25;
       document.querySelectorAll('[data-angle-filter]').forEach((item) => {{
         item.setAttribute('aria-pressed', String(item === button));
       }});
-      Array.from(candidateTable.tBodies[0].rows).forEach((row) => {{
-        row.hidden = selected !== 'all' && row.dataset.coverageAngle !== selected;
-        if (!row.hidden) visible += 1;
-      }});
-      candidateCount.textContent = `${{visible}} candidate${{visible === 1 ? '' : 's'}}`;
+      renderCandidates();
     }});
   }});
+  candidateShowMore.addEventListener('click', () => {{
+    candidateLimit += 25;
+    renderCandidates();
+  }});
+  renderCandidates();
   const subsearchTable = document.getElementById('subsearch-table');
   const subsearchCount = document.getElementById('subsearch-filter-count');
   document.querySelectorAll('[data-subsearch-angle-filter]').forEach((button) => {{
@@ -667,6 +686,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
         return compare(valueA, valueB, type, direction);
       }});
       tbody.replaceChildren(...rows);
+      if (table === candidateTable) renderCandidates();
       headers.forEach((th, i) => th.setAttribute('aria-sort', i === index ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'));
       activeIndex = index;
       activeDirection = direction;
