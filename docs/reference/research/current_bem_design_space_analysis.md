@@ -1,14 +1,14 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-22T13:11:10.405469-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-22T13:15:02.688997-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
-- 870 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: cancelled: 3, complete: 133, geometry-rejected: 7, running: 2, superseded: 4.
+- 873 unique scored physical designs across 36 mouth/coverage cells.
+- Search states: cancelled: 3, complete: 135, geometry-rejected: 7, superseded: 4.
 - Study program: `controlled-learning-round-1` (running).
 - S-closure certificate: complete; closed: 31, geometry-limited: 5.
-- Candidate counts by coverage half-angle: 25°: 121, 30°: 59, 35°: 101, 40°: 99, 45°: 289, 50°: 201.
+- Candidate counts by coverage half-angle: 25°: 121, 30°: 62, 35°: 101, 40°: 99, 45°: 289, 50°: 201.
 
 The counts are evidence density, not evidence quality. Cross-angle conclusions remain provisional while the study program is running; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
 
@@ -18,10 +18,8 @@ Positive score deltas mean increasing the named control improved the surface sco
 
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-- Running: `30deg/250x250-learning-r01` — BEM evaluation candidate-001; 1/2 candidates complete; 10 solver workers.
-- Running: `30deg/300x300-learning-r01` — BEM evaluation candidate-000; 0/2 candidates complete; 10 solver workers.
-| Length | 519 | 68% | 0.48 | 0.45 | -0.040 | -0.027 | 0.020 | -0.26 | 0.000 |
-| K | 233 | 59% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
+| Length | 520 | 68% | 0.48 | 0.45 | -0.039 | -0.027 | 0.021 | -0.25 | 0.000 |
+| K | 235 | 58% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
 | N | 260 | 45% | -0.02 | 0.04 | -0.002 | 0.001 | 0.001 | 0.07 | 0.000 |
 
 These are aggregate directional summaries, not universal steering rules. A control can reverse sign by mouth, coverage, S, or the other OS-SE controls. The next pass must stratify matched effects by the starting diagnostic state before promoting a rule.
@@ -30,22 +28,22 @@ These are aggregate directional summaries, not universal steering rules. A contr
 
 | Control increase | Starting regime | Pairs | Score improves | Median score Δ |
 | --- | --- | ---: | ---: | ---: |
-| Length | coverage 30° | 38 | 76% | 1.76 |
+| Length | coverage 30° | 39 | 74% | 1.70 |
 | Length | coverage 25° | 83 | 96% | 1.56 |
-| Length | low starting mean_containment | 259 | 89% | 1.32 |
-| Length | high starting slice_energy_departure_db | 260 | 83% | 1.29 |
+| Length | low starting mean_containment | 260 | 88% | 1.32 |
+| Length | high starting slice_energy_departure_db | 260 | 82% | 1.29 |
 | Length | high starting minus_six_rms_error_deg | 260 | 81% | 1.23 |
-| Length | high starting profile_rms_error_db | 260 | 79% | 1.21 |
+| Length | high starting profile_rms_error_db | 260 | 78% | 1.21 |
 | Length | coverage 35° | 61 | 84% | 1.17 |
-| Length | low starting outward_rise_violation_db | 259 | 87% | 1.09 |
+| Length | low starting outward_rise_violation_db | 260 | 87% | 1.08 |
+| K | coverage 30° | 3 | 33% | -1.22 |
 | K | coverage 35° | 16 | 56% | 0.54 |
-| K | high starting high_frequency_coverage_error_deg | 117 | 74% | 0.19 |
 | K | coverage 25° | 15 | 40% | -0.19 |
-| K | high starting outward_rise_violation_db | 117 | 72% | 0.14 |
-| K | high starting profile_rms_error_db | 117 | 62% | 0.12 |
-| K | low starting minus_six_rms_error_deg | 116 | 69% | 0.10 |
-| K | high starting mean_containment | 117 | 62% | 0.07 |
-| K | high starting slice_energy_departure_db | 117 | 57% | 0.07 |
+| K | high starting high_frequency_coverage_error_deg | 118 | 73% | 0.18 |
+| K | high starting outward_rise_violation_db | 118 | 71% | 0.13 |
+| K | high starting profile_rms_error_db | 118 | 61% | 0.11 |
+| K | low starting minus_six_rms_error_deg | 117 | 68% | 0.10 |
+| K | high starting mean_containment | 118 | 62% | 0.07 |
 | N | coverage 25° | 14 | 14% | -1.54 |
 | N | coverage 35° | 16 | 25% | -0.68 |
 | N | low starting mean_containment | 130 | 43% | -0.05 |
@@ -62,6 +60,7 @@ This table is a screening device. Coverage/S regimes are descriptive, while spli
 | Control | Transition | Pairs | Score improves | Median score Δ |
 | --- | ---: | ---: | ---: | ---: |
 | K | 3 → 3.5 | 6 | 83% | 2.33 |
+| K | 3 → 4 | 2 | 0% | -1.56 |
 | K | 3 → 5 | 1 | 100% | 8.37 |
 | K | 3.5 → 3.75 | 3 | 100% | 0.60 |
 | K | 3.5 → 4 | 21 | 86% | 1.03 |
@@ -147,7 +146,7 @@ The current wide-coverage penalty is not a general loss of surface smoothness. P
 | Coverage | Cells | Median score | Mouth / length | Profile RMS dB | Slice-energy dB | Outward rise dB | -6 dB RMS deg |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | 25° | 6 | 80.99 | 1.269 | 1.589 | 1.202 | 0.170 | 9.87 |
-| 30° | 6 | 85.30 | 1.567 | 1.410 | 0.975 | 0.224 | 8.27 |
+| 30° | 6 | 85.30 | 1.572 | 1.410 | 0.975 | 0.224 | 8.27 |
 | 35° | 6 | 86.06 | 1.916 | 1.362 | 0.795 | 0.515 | 6.27 |
 | 40° | 6 | 87.02 | 2.316 | 1.309 | 0.749 | 0.544 | 5.40 |
 | 45° | 6 | 86.86 | 2.663 | 1.267 | 0.788 | 0.733 | 5.49 |
@@ -159,8 +158,8 @@ Assessment: **remote samples mainly support the existing ridge**. 36 remote cand
 
 | Remote stratum | Complete | Angles | Competitive | Diagnostic tradeoffs | Boundary confirmations | Median score Δ | Recommendation |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
-| K≈1 / N≈2 corner | 15 | 4 | 0 | 0 | 15 | -29.18 | stop stratum: low-value boundary established |
-| K≈7 / N≈20 corner | 16 | 4 | 0 | 0 | 16 | -8.54 | stop stratum: low-value boundary established |
+| K≈1 / N≈2 corner | 15 | 4 | 0 | 0 | 15 | -29.68 | stop stratum: low-value boundary established |
+| K≈7 / N≈20 corner | 16 | 4 | 0 | 0 | 16 | -8.79 | stop stratum: low-value boundary established |
 | high K / high N | 5 | 1 | 0 | 0 | 0 | -2.95 | collect distributed sentinels |
 
 ## Fixed K=4, N=10 S evidence
