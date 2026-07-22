@@ -90,6 +90,31 @@ tail points may be pruned, but S=4 still runs to detect an unexpected second
 rise. Canonical matched-comparison sets and short local-refinement sets are not
 adaptively pruned.
 
+## Sensitivity-driven S evidence contract
+
+Comparable searches require equivalent evidence, not identical dense grids.
+For the remaining 30-degree baselines, the common mandatory skeleton is S=0.7,
+1.3, 1.9, 2.5, and 3.0. It is evaluated in space-filling order (low, high,
+center, then the remaining largest gaps) so both boundaries and the broad
+interior are known early. The S=0.7 and S=3.0 points are mandatory sentinels.
+
+After the skeleton, refine measured intervals at authored points when their
+endpoint score change exceeds 0.75 points, when they contain or border the
+winner and remain wider than S=0.3, or when adjacent slopes reverse sign. A
+flat interval with no more than 0.75 points of estimated variation needs no
+additional density once the winner is bracketed. If the high sentinel recovers
+by more than 0.75 points, reopen the skipped interval and bisect it. Every skip
+records its interval, score evidence, and reason.
+
+Before enabling this policy, replay it against completed dense 40- and
+50-degree grids. At least 95 percent of searches must retain a winner within
+one score point of the full grid, no search may lose more than two points, the
+selected S must be within 0.3 of the full-grid winner or on an equal plateau,
+and the replay must save at least 25 percent of solves. Failure reduces the
+coarse maximum spacing from S=0.6 to S=0.3 rather than weakening the regret
+limits. Running searches retain their loaded policy; only not-started searches
+adopt a validated new order. Boundary closure remains the final common gate.
+
 ## Scheduling and reporting
 
 The study uses two concurrent queues with ten NumCalc frequency workers each.

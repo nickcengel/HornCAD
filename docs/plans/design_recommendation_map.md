@@ -49,6 +49,33 @@ Interpolation is allowed only inside a sufficiently sampled domain.
 Extrapolation must be clearly labeled and must not silently become a final
 recommendation.
 
+## Diagnostic learning and steering rules
+
+The final surface score decides whether a proposal is better overall, but it is
+not the only learning target. Fit and compare changes in containment, profile
+RMS error, outward-rise violation, slice-energy departure, the secondary -6 dB
+line, and their retained frequency traces. This separates three outputs:
+
+1. **Prediction:** which unmeasured candidate is likely to score higher.
+2. **Diagnosis:** which acoustic behavior currently limits the result.
+3. **Steering:** which OS-SE control direction is likely to correct that
+   behavior in the current geometry regime.
+
+Every learned steering rule must state its diagnostic condition, geometry
+regime, parameter action, expected component and final-score changes, support
+count, exceptions, and confidence. Confidence is `hypothesis` for uncontrolled
+correlation, `supported` for repeated matched perturbations, and `validated`
+only after the rule predicts held-out or prospective results. For example,
+"decrease K when containment is already high but the coverage trace narrows too
+quickly" is learnable from matched K perturbations and the frequency-resolved
+-6 dB traces; candidates that change K, N, and S together may suggest that rule
+but cannot establish it.
+
+The learner should therefore retain multi-output diagnostic models and paired
+local effects even when a scalar-score model ranks proposals more accurately.
+Feature importance alone is not a steering rule, and a component improvement
+is not accepted when its weighted final-score tradeoff is negative.
+
 ## Output schema
 
 A versioned machine-readable record should include at least:

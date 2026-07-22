@@ -99,6 +99,19 @@ The model must retain:
 Do not use extrapolated curves as design evidence without a confirmation BEM
 run.
 
+Curve learning should produce conditional steering evidence rather than only a
+predicted heatmap. For every matched S, K, or N perturbation, retain the parent
+diagnostic state, parameter delta, frequency-by-frequency response delta,
+component-score delta, and final-score delta. Aggregate a direction only inside
+geometry regimes where its sign is consistent. Report contradictory regimes as
+exceptions or interactions, not as noise to be averaged away.
+
+The initial rule vocabulary includes containment state, high-frequency
+narrowing or widening, profile-shape error, outward-rise concentration, and the
+location and width of slice-energy bunching. Rules progress from hypothesis to
+supported to validated only through held-out matched comparisons and eventual
+prospective confirmation.
+
 ## Reports and visualizations
 
 Candidate reports should eventually include:
