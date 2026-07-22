@@ -349,6 +349,19 @@ class BEMSearchTests(unittest.TestCase):
         self.assertFalse(feasible)
         self.assertIn("negative", reason)
 
+    def test_late_expansion_disc_geometry_is_rejected(self) -> None:
+        derived = {
+            "s_h": 3.0, "s_v": 3.0,
+            "final_tenth_radial_growth_h": 0.613,
+            "final_tenth_radial_growth_v": 0.613,
+        }
+        feasible, reason = geometry_feasibility(derived)
+        self.assertFalse(feasible)
+        self.assertIn("61.3%", reason)
+        derived["final_tenth_radial_growth_h"] = 0.55
+        derived["final_tenth_radial_growth_v"] = 0.55
+        self.assertEqual(geometry_feasibility(derived), (True, None))
+
     def test_seed_then_space_filling_proposals_are_bounded(self) -> None:
         search, _, seed = load_search(SEARCH)
         search["seed_values"] = seed_values(seed)
@@ -514,8 +527,9 @@ class BEMSearchTests(unittest.TestCase):
             for length in (255.0, 285.0, 315.0, 345.0):
                 matched = [record for record in families
                            if record["values"]["length_mm"] == length]
-                self.assertEqual([record["values"]["n_h"] for record in matched],
-                                 [2.0, 10.0, 25.0])
+                self.assertTrue(matched)
+                self.assertTrue({record["values"]["n_h"] for record in matched}
+                                <= {2.0, 10.0, 25.0})
                 self.assertEqual(len({(record["values"]["osse_coverage_h_deg"],
                                        record["values"]["osse_coverage_v_deg"],
                                        record["values"]["k_h"], record["values"]["k_v"])

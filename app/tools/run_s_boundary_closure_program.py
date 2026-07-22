@@ -162,6 +162,22 @@ def close_baseline(root: Path, baseline: Path) -> dict[str, Any]:
     rounds = sorted(baseline.parent.glob(
         baseline.name.removesuffix("-s-grid") + "-s-boundary-r*"))
     for probe_number in range(1, MAXIMUM_PROBES + 1):
+        for rejected_round in rounds:
+            state_path = rejected_round / "search_state.json"
+            if not state_path.exists():
+                continue
+            rejected_state = json.loads(state_path.read_text(encoding="utf-8"))
+            if rejected_state.get("status") == "geometry-rejected":
+                rejection = rejected_state.get("geometry_rejection", {})
+                return {
+                    "baseline": str(baseline.relative_to(root)),
+                    "status": "geometry-limited",
+                    "best_s": max(completed_points([baseline, *rounds]),
+                                  key=lambda item: item[1])[0],
+                    "rejected_s": rejection.get("derived", {}).get("s_h"),
+                    "reason": rejection.get("reason", "geometry rejected"),
+                    "probes": len(rounds),
+                }
         points = completed_points([baseline, *rounds])
         sentinel_s = authored_sentinel(baseline)
         sentinel_measured = any(abs(point[0] - sentinel_s) <= 0.02
@@ -188,7 +204,16 @@ def close_baseline(root: Path, baseline: Path) -> dict[str, Any]:
         materialize_probe(seed_project, baseline, output, target)
         state_path = output / "search_state.json"
         if not state_path.exists() or json.loads(state_path.read_text()).get("status") != "complete":
-            run_search(output / "search.yaml", output, None)
+            probe_state = run_search(output / "search.yaml", output, None)
+            if probe_state.get("status") == "geometry-rejected":
+                rejection = probe_state.get("geometry_rejection", {})
+                return {
+                    "baseline": str(baseline.relative_to(root)),
+                    "status": "geometry-limited", "best_s": best_s,
+                    "rejected_s": rejection.get("derived", {}).get("s_h"),
+                    "reason": rejection.get("reason", "geometry rejected"),
+                    "probes": len(rounds) + (output not in rounds),
+                }
         if output not in rounds:
             rounds.append(output)
         generate_report(root, root / "index.html")
@@ -203,7 +228,9 @@ def run_program(root: Path, workers: int = 2) -> dict[str, Any]:
                    for baseline in baselines]
         results = [future.result() for future in as_completed(futures)]
     results.sort(key=lambda item: item["baseline"])
-    status = "complete" if all(item["status"] == "closed" for item in results) else "blocked"
+    acceptable = {"closed", "geometry-limited"}
+    status = "complete" if all(item["status"] in acceptable
+                               for item in results) else "blocked"
     certificate = {"status": status, "results": results}
     path = root / "s_boundary_closure.json"
     temporary = path.with_suffix(".json.tmp")

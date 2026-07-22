@@ -100,6 +100,12 @@ measurements describe the geometry produced jointly by S, N, K, coverage, and
 length; they are preferable to interpreting N as an independent amount of
 roundover.
 
+`final_tenth_radial_growth_fraction` measures how much of the total throat-to-mouth
+radius increase occurs in the final 10% of axial length. Candidate searches reject
+a profile above 0.55 before meshing or BEM. This excludes shallow, disc-like mouth
+skirts whose useful horn expansion is concentrated immediately before the mouth;
+the constraint is evaluated independently for the horizontal and vertical axes.
+
 ## Sampling and Output
 
 The exporter adaptively distributes axial samples according to basis-profile curvature. Each ring uses the configured side-sample budget, with additional attention around squared-mouth corners. Output names are derived from mode and nominal dimensions:

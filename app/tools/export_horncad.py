@@ -176,11 +176,18 @@ def termination_metrics(length: float, r0: float, coverage: float, k: float,
               4 * samples[2] - samples[3]) / (step * step)
     curvature = abs(second) / max((1 + slope * slope) ** 1.5, 1e-12)
     radius = math.inf if curvature < 1e-12 else 1.0 / curvature
+    total_radial_growth = max(end_radius - r0, 1e-9)
+    radius_at_ninety_percent = osse_radius(
+        0.9 * length, length, r0, coverage, k, n, s, throat_angle)
+    final_tenth_radial_growth_fraction = max(
+        0.0, (end_radius - radius_at_ninety_percent) / total_radial_growth)
     return {
         "s": float(s),
         "exit_angle_deg": math.degrees(math.atan(slope)),
         "curvature_radius_mm": float(radius),
         "normalized_curvature_radius": float(radius / max(end_radius, 1e-9)),
+        "final_tenth_radial_growth_fraction": float(
+            final_tenth_radial_growth_fraction),
     }
 
 

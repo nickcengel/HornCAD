@@ -53,6 +53,7 @@ DEFAULT_ADAPTIVE_PRUNING_MIN_EVALUATIONS = 5
 DEFAULT_ADAPTIVE_PRUNING_MARGIN_POINTS = 3.0
 DEFAULT_ADAPTIVE_PRUNING_CONFIDENCE_SIGMA = 2.0
 DEFAULT_ADAPTIVE_PRUNING_UNCERTAINTY_FLOOR_POINTS = 1.5
+MAX_FINAL_TENTH_RADIAL_GROWTH_FRACTION = 0.55
 VARIABLE_LABELS = {
     "length_mm": "length", "extension_mm": "extension",
     "osse_coverage_h_deg": "horizontal OS-SE coverage",
@@ -289,6 +290,10 @@ def materialize_candidate(seed: dict[str, Any], values: dict[str, float],
         "mouth_curvature_radius_v_mm": v_termination["curvature_radius_mm"],
         "normalized_mouth_curvature_h": h_termination["normalized_curvature_radius"],
         "normalized_mouth_curvature_v": v_termination["normalized_curvature_radius"],
+        "final_tenth_radial_growth_h": h_termination[
+            "final_tenth_radial_growth_fraction"],
+        "final_tenth_radial_growth_v": v_termination[
+            "final_tenth_radial_growth_fraction"],
     }
 
 
@@ -299,6 +304,14 @@ def geometry_feasibility(derived: dict[str, float]) -> tuple[bool, str | None]:
         return False, "horizontal s is negative"
     if derived["s_v"] < 0:
         return False, "vertical s is negative"
+    for axis in ("h", "v"):
+        growth = derived.get(f"final_tenth_radial_growth_{axis}")
+        if (growth is not None and
+                growth > MAX_FINAL_TENTH_RADIAL_GROWTH_FRACTION):
+            return False, (
+                f"{axis.upper()} profile puts {growth:.1%} of radial growth in "
+                f"the final 10% of horn length (maximum "
+                f"{MAX_FINAL_TENTH_RADIAL_GROWTH_FRACTION:.0%})")
     return True, None
 
 
@@ -846,6 +859,8 @@ def geometry_feature_vector(search: dict[str, Any], values: dict[str, float]) ->
             values[n_key], end_radius, context["throat_angle_deg"])
         s_lower, s_upper = search["derived_s_bounds"]
         if (not s_lower <= metrics["s"] <= s_upper or
+                metrics["final_tenth_radial_growth_fraction"] >
+                MAX_FINAL_TENTH_RADIAL_GROWTH_FRACTION or
                 not all(math.isfinite(item) for item in metrics.values())):
             return None
         features.extend((metrics["s"] / (1 + metrics["s"]),
@@ -1586,9 +1601,27 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             document, derived = materialize_candidate(seed, values, search)
             feasible, reason = geometry_feasibility(derived)
             distance = candidate_distance(values, state["candidates"], search["bounds"])
-            if (not feasible or
-                    (source != "initial-curated" and
-                     distance < search["minimum_candidate_distance"])):
+            if not feasible:
+                state["rejected_count"] += 1
+                if search["max_evaluations"] == 1:
+                    state["geometry_rejection"] = {
+                        "reason": reason,
+                        "values": values,
+                        "derived": derived,
+                        "rejected_at_unix": time.time(),
+                    }
+                    state.update(status="geometry-rejected",
+                                 phase=f"geometry rejected: {reason}")
+                    save_state(output_dir, state)
+                    break
+                save_state(output_dir, state)
+                if (dry_run and proposal_index + 1 >=
+                        min(search["max_evaluations"],
+                            search["initial_candidates"] + 1)):
+                    break
+                continue
+            if (source != "initial-curated" and
+                    distance < search["minimum_candidate_distance"]):
                 state["rejected_count"] += 1
                 save_state(output_dir, state)
                 continue
@@ -1656,7 +1689,9 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
     complete = sum(record["status"] == "complete" for record in state["candidates"])
     remaining_failed = sum(
         record["status"] == "failed" for record in state["candidates"])
-    if dry_run:
+    if state.get("status") == "geometry-rejected":
+        pass
+    elif dry_run:
         state.update(status="preflight", phase="initial candidates materialized")
     elif retry_failed and remaining_failed:
         state.update(status="recovery-incomplete",

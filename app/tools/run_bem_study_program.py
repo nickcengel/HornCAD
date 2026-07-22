@@ -48,8 +48,11 @@ def _priority(path: Path) -> tuple[int, int, str]:
 def _needs_s_work(baseline: Path) -> bool:
     if search_status(baseline) != "complete":
         return True
-    points = completed_points([baseline, *sorted(baseline.parent.glob(
-        baseline.name.removesuffix("-s-grid") + "-s-boundary-r*"))])
+    rounds = sorted(baseline.parent.glob(
+        baseline.name.removesuffix("-s-grid") + "-s-boundary-r*"))
+    if any(search_status(path) == "geometry-rejected" for path in rounds):
+        return False
+    points = completed_points([baseline, *rounds])
     if not points:
         return True
     status, _ = closure_status(points)
@@ -135,8 +138,9 @@ def run_program(root: Path, workers: int = 2,
         baselines, lambda path: _run_baseline_chain(root, path),
         workers=workers, poll_seconds=poll_seconds, progress=record)
     closure_results.sort(key=lambda item: item["baseline"])
+    acceptable_closures = {"closed", "geometry-limited"}
     certificate = {
-        "status": ("complete" if all(item["status"] == "closed"
+        "status": ("complete" if all(item["status"] in acceptable_closures
                                      for item in closure_results) else "blocked"),
         "results": closure_results,
     }

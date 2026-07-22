@@ -1,15 +1,16 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
-from types import SimpleNamespace
 import tempfile
+from types import SimpleNamespace
 import unittest
 
 import yaml
 
 from app.tools.run_s_boundary_closure_program import (
-    authored_sentinel, baseline_searches, closure_status, materialize_probe,
-    next_probe_s,
+    authored_sentinel, baseline_searches, close_baseline, closure_status,
+    materialize_probe, next_probe_s,
 )
 from app.tools.run_bem_search import load_search
 
@@ -82,6 +83,29 @@ class SBoundaryClosureTests(unittest.TestCase):
             materialize_probe(seed, baseline, output, 0.5)
             loaded, _, _ = load_search(output / "search.yaml")
         self.assertNotIn("initial_pool", loaded)
+
+    def test_geometry_rejected_probe_closes_admissible_s_range(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            baseline = root / "30deg" / "300x300-s-grid"
+            rejected = root / "30deg" / "300x300-s-boundary-r01"
+            baseline.mkdir(parents=True)
+            rejected.mkdir()
+            (baseline / "search_state.json").write_text(json.dumps({
+                "status": "complete", "candidates": [{
+                    "id": "candidate-000", "status": "complete",
+                    "derived": {"s_h": 2.5},
+                    "surface_diagnostics": {"score": {"overall_percent": 80}},
+                }],
+            }))
+            (rejected / "search_state.json").write_text(json.dumps({
+                "status": "geometry-rejected", "geometry_rejection": {
+                    "reason": "late radial growth", "derived": {"s_h": 3.0}},
+            }))
+            result = close_baseline(root, baseline)
+        self.assertEqual(result["status"], "geometry-limited")
+        self.assertEqual(result["best_s"], 2.5)
+        self.assertEqual(result["rejected_s"], 3.0)
 
 
 if __name__ == "__main__":

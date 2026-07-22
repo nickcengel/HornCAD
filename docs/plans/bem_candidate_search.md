@@ -76,6 +76,14 @@ computed from the analytic profile before meshing.
 
 ## Search bounds
 
+Candidate geometry is screened before STL meshing and BEM. A horizontal or
+vertical profile is inadmissible when more than 55% of its throat-to-mouth radial
+growth occurs in the final 10% of horn length. This derived constraint targets
+the large-disc/small-horn geometry class without imposing a global S or mouth-exit
+angle limit. Fixed S-boundary probes that cross this limit are marked
+`geometry-rejected`, abandoned immediately, and accepted as evidence that the
+admissible S range is geometrically bounded.
+
 Length uses an explicit exploration envelope. The maintained example uses:
 
 ```text
