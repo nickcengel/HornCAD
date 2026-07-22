@@ -206,7 +206,7 @@ def materialize_kn_closure(seed_project: Path, baseline: Path,
             "k_h": [1.0, 7.000001], "k_v": [1.0, 7.000001],
             "n_h": [2.0, 40.000001], "n_v": [2.0, 40.000001],
         },
-        "initial_pool": [], "solver": solver,
+        "solver": solver,
     }
     (output / "search.yaml").write_text(
         yaml.safe_dump({"bem_candidate_search": search}, sort_keys=False),

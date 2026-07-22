@@ -10,6 +10,7 @@ from app.tools.run_coupled_kn_length_program import (
     anchor_selection, canonical_extension_targets, materialize_canonical_s_extension,
     materialize_kn_closure, materialize_local_s,
 )
+from app.tools.run_bem_search import load_search
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -30,7 +31,10 @@ class CoupledKNLengthProgramTests(unittest.TestCase):
             materialize_kn_closure(self.seed, self.baseline, output)
             search = yaml.safe_load((output / "search.yaml").read_text())[
                 "bem_candidate_search"]
+            loaded, _, _ = load_search(output / "search.yaml")
         self.assertEqual(search["initial_candidates"], 0)
+        self.assertEqual(loaded["initial_candidates"], 0)
+        self.assertNotIn("initial_pool", loaded)
         self.assertTrue(search["adaptive_kn_closure"]["enabled"])
         self.assertEqual(search["adaptive_kn_closure"]["minimum_k"], 1.0)
         self.assertEqual(search["adaptive_kn_closure"]["minimum_n"], 2.0)

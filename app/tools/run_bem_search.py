@@ -205,7 +205,8 @@ def load_search(path: Path) -> tuple[dict[str, Any], Path, dict[str, Any]]:
     if search["max_evaluations"] < 1:
         raise ValueError("search requires at least one evaluation")
     if (search["max_evaluations"] > 1 and
-            search["initial_candidates"] < 1):
+            search["initial_candidates"] < 1 and
+            not search.get("adaptive_kn_closure", {}).get("enabled", False)):
         raise ValueError("multi-candidate search requires an initial candidate")
     return search, seed_path, seed
 
