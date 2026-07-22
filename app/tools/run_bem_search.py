@@ -1460,6 +1460,24 @@ def retain_diagnostic_archive(run_dir: Path, candidate_dir: Path) -> Path:
     return target
 
 
+def remove_solver_working_data(run_dir: Path, retained_archive: Path) -> None:
+    """Delete a NumCalc work tree only after validating its retained archive."""
+    if not run_dir.name.startswith("project-NumCalc-"):
+        raise ValueError(f"refusing to remove unexpected solver directory: {run_dir}")
+    if not retained_archive.is_file():
+        raise FileNotFoundError(retained_archive)
+    # Loading every array catches truncated ZIP members, not merely a readable
+    # archive header. Diagnostics and reports can be regenerated from this file.
+    with np.load(retained_archive, allow_pickle=False) as archive:
+        if not archive.files:
+            raise ValueError(f"empty retained response archive: {retained_archive}")
+        for key in archive.files:
+            np.asarray(archive[key])
+    if run_dir.resolve() == retained_archive.parent.resolve():
+        raise ValueError("retained archive must live outside solver work tree")
+    shutil.rmtree(run_dir)
+
+
 def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
                        executable: Path, frequencies: np.ndarray,
                        fixed_grid: np.ndarray, search: dict[str, Any],
@@ -1473,7 +1491,7 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
         artifact_stem = record["artifact_stem"]
         title = f"BEM {artifact_stem}"
         generate_review(run_dir, title=title, write_report=False)
-        retain_diagnostic_archive(run_dir, candidate_dir)
+        response_archive = retain_diagnostic_archive(run_dir, candidate_dir)
         run = load_run(run_dir, artifact_stem)
         diagnostics = coverage_diagnostics(run, fixed_grid, fixed_band=True)
         new_surface_diagnostics = surface_diagnostics(
@@ -1487,8 +1505,10 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
             search.get("sampling_stability_points", DEFAULT_SAMPLING_STABILITY_POINTS))
         loading_percent, loading_minimum = crossover_loading(
             run, search["crossover_hz"])
+        remove_solver_working_data(run_dir, response_archive)
         record.update(
-            status="complete", run_dir=str(run_dir.relative_to(output_dir)),
+            status="complete",
+            response_archive=str(response_archive.relative_to(output_dir)),
             report_file=str(report_path.relative_to(output_dir)),
             completed_at_unix=time.time(),
             diagnostics=diagnostics,

@@ -24,8 +24,8 @@ examples/**/finalist_comparison.html
 examples/**/search_batch.*
 examples/**/candidate_field.csv
 
-# Generated mouth-size coverage-grid outputs. Keep final reports and surface
-# STLs; leave materialized candidate projects, solver data, logs, and state local.
+# Generated mouth-size coverage-grid outputs. Keep final reports and compact
+# candidate artifacts; leave logs and restart state local.
 examples/mouth-size-coverage-grid/search_batch.*
 examples/mouth-size-coverage-grid/**/search_run.log
 examples/mouth-size-coverage-grid/**/search_state.json
@@ -44,3 +44,17 @@ examples/mouth-size-coverage-grid/**/candidates/**/*
 # Retained reference-search artifacts use the same canonical public names.
 !examples/osse-400x280-reference/**/candidates/**/
 !examples/osse-400x280-reference/**/candidates/candidate-*/*.STL
+
+# Portable final artifacts for every study, including control-decoupling.
+!examples/**/search_report.html
+!examples/**/candidates/**/
+!examples/**/candidates/candidate-*/project.yaml
+!examples/**/candidates/candidate-*/*.STL
+!examples/**/candidates/candidate-*/bem/responses.npz
+!examples/**/candidates/candidate-*/bem/*_Report.html
+
+# Raw NumCalc trees are never retained. Keep these rules after every public
+# artifact exception so an unignored candidate directory cannot expose them.
+examples/**/project-NumCalc-*/
+examples/**/candidates/candidate-*/bem/coverage_diagnostics.json
+examples/**/candidates/candidate-*/bem/surface_diagnostics.json

@@ -39,6 +39,8 @@ exact materialized queue that must be reviewed before launch.
 - Absolute new-BEM ceiling if every closure probe triggers: {plan['candidate_count']}
 - Search directories: {plan['search_count']}
 - Parallelism: two independent searches, ten solver workers each.
+- Storage: validate and retain responses.npz, STL, and reports; delete each raw
+  project-NumCalc work tree immediately after its candidate completes.
 - Domain: 30-50 degree coverage half-angle and 250-450 mm square mouths.
 - Geometry: symmetric, square, zero-extension round OS-SE horns only.
 

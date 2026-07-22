@@ -98,6 +98,17 @@ failure is isolated and cannot stall the other slot or the remaining searches.
 The runner records the failure and finishes all independent work before reporting
 the study blocked.
 
+The queue is restartable from the per-search ledgers. Completed searches are
+skipped, an interrupted running candidate is requeued, and a failed coordinate is
+retried once with the recovery mesh policy. An unresolved failure releases its
+slot, remains visible in the runtime audit, and prevents a false complete status.
+
+Each completed candidate retains its project YAML, surface STL, report, and
+validated compressed `bem/responses.npz`. That archive contains the frequency,
+angle, response, and impedance arrays required to regenerate diagnostics and
+reports. The much larger `project-NumCalc-*` mesh/solver tree is deleted only
+after the retained archive has been opened and every stored array validated.
+
 The study cannot be launched accidentally by either generator. The runner requires
 the exact SHA-256 of the reviewed manifest, and refuses a stale execution plan or
 a confirmation hash from an earlier version of the design.

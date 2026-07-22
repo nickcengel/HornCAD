@@ -208,6 +208,26 @@ def _run_queue(paths: list[Path], slots: int, task: Callable[[Path], Any],
                     event(path, "complete", None)
 
 
+def _run_restartable_search(path: Path) -> dict[str, Any]:
+    """Resume interruptions and retry previously failed fixed coordinates once."""
+    state = _search_state(path)
+    retry_failed = any(
+        row.get("status") == "failed" for row in state.get("candidates", []))
+    result = run_search(
+        path / "search.yaml", path, None, retry_failed=retry_failed)
+    failed = [row for row in result.get("candidates", [])
+              if row.get("status") == "failed"]
+    if failed and not retry_failed:
+        result = run_search(
+            path / "search.yaml", path, None, retry_failed=True)
+        failed = [row for row in result.get("candidates", [])
+                  if row.get("status") == "failed"]
+    if failed or result.get("status") not in {"complete", "geometry-rejected"}:
+        raise RuntimeError(
+            f"search ended {result.get('status')} with {len(failed)} failed candidates")
+    return result
+
+
 def run_study(root: Path, reviewed_sha256: str, slots: int = 2) -> dict[str, Any]:
     manifest, plan, digest = _load_frozen(root)
     if reviewed_sha256 != digest:
@@ -250,9 +270,7 @@ def run_study(root: Path, reviewed_sha256: str, slots: int = 2) -> dict[str, Any
             planned = retained
         paths = [root / item["path"] for item in planned
                  if search_status(root / item["path"]) != "complete"]
-        _run_queue(paths, slots,
-                   lambda path: run_search(path / "search.yaml", path, None),
-                   record)
+        _run_queue(paths, slots, _run_restartable_search, record)
         if wave == "boundary-sentinel":
             state["axis_closure_decisions"] = axis_closure_decisions(
                 root, manifest)

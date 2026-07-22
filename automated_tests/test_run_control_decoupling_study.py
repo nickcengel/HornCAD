@@ -3,9 +3,10 @@ from __future__ import annotations
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from app.tools.run_control_decoupling_study import (
-    _load_frozen, _run_queue, material_improvement,
+    _load_frozen, _run_queue, _run_restartable_search, material_improvement,
 )
 
 
@@ -31,6 +32,19 @@ class ControlDecouplingRunnerTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1] / "examples" / "control-decoupling"
         _, plan, digest = _load_frozen(root)
         self.assertEqual(plan["manifest_sha256"], digest)
+
+    def test_search_retries_failed_candidate_once(self) -> None:
+        first = {"status": "stopped", "candidates": [{"status": "failed"}]}
+        recovered = {"status": "complete", "candidates": [{"status": "complete"}]}
+        with patch("app.tools.run_control_decoupling_study._search_state",
+                   return_value={}), patch(
+                "app.tools.run_control_decoupling_study.run_search",
+                side_effect=[first, recovered]) as mocked:
+            result = _run_restartable_search(Path("search"))
+
+        self.assertEqual(result["status"], "complete")
+        self.assertFalse(mocked.call_args_list[0].kwargs["retry_failed"])
+        self.assertTrue(mocked.call_args_list[1].kwargs["retry_failed"])
 
     def test_closure_requires_practical_score_or_diagnostic_change(self) -> None:
         center = {"score": 80.0, "containment_percent": 90.0,

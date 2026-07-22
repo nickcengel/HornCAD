@@ -15,7 +15,8 @@ from app.tools.run_bem_search import (
     geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
     load_search, materialize_candidate, pareto_indices, propose_vector,
     next_kn_closure_candidate, requeue_failed_candidates, sampling_stability,
-    required_initial_probe, retain_diagnostic_archive, run_search, seed_values,
+    remove_solver_working_data, required_initial_probe,
+    retain_diagnostic_archive, run_search, seed_values,
     sensitivity_sampling_decision, write_report,
 )
 
@@ -38,6 +39,32 @@ class BEMSearchTests(unittest.TestCase):
 
             self.assertEqual(retained, root / "bem" / "responses.npz")
             self.assertEqual(retained.read_bytes(), b"response surface")
+
+    def test_remove_solver_working_data_validates_archive_first(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            run_dir = root / "bem" / "project-NumCalc-hash"
+            run_dir.mkdir(parents=True)
+            retained = root / "bem" / "responses.npz"
+            np.savez_compressed(retained, frequencies_hz=np.array([500.0]))
+
+            remove_solver_working_data(run_dir, retained)
+
+            self.assertFalse(run_dir.exists())
+            self.assertTrue(retained.is_file())
+
+    def test_remove_solver_working_data_preserves_raw_if_archive_bad(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            run_dir = root / "bem" / "project-NumCalc-hash"
+            run_dir.mkdir(parents=True)
+            retained = root / "bem" / "responses.npz"
+            retained.write_bytes(b"broken")
+
+            with self.assertRaises(Exception):
+                remove_solver_working_data(run_dir, retained)
+
+            self.assertTrue(run_dir.is_dir())
 
     def test_sensitivity_policy_skips_flat_optional_point(self) -> None:
         search = {

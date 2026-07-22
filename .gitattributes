@@ -1,0 +1,3 @@
+# Generated interactive reports embed third-party JavaScript with intentional
+# trailing spaces. Do not treat those generated lines as source whitespace errors.
+*.html -whitespace

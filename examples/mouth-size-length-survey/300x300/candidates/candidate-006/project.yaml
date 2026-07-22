@@ -1,0 +1,105 @@
+horncad_config:
+  type: HornCAD
+  version: 2
+  units: mm
+  global:
+    length: 122.0
+    throat_radius: 12.7
+    throat_angle_deg: 6
+    conical_extension_length: 0.0
+    effective_throat_radius: 12.7
+    measured_total_length: 122.0
+    mouth_width: 300.0
+    mouth_height: 300.0
+    mouth_sag: 0
+    mouth_sag_h_enabled: true
+    mouth_sag_v_enabled: true
+  operating_intent:
+    horizontal_coverage_deg: 45.0
+    vertical_coverage_deg: 45.0
+    crossover_hz: 750.0
+    upper_frequency_hz: 8000.0
+    lower_frequency_hz: 500.0
+  body:
+    mouth_rear_offset: 6
+    mount_diameter: 140
+    mount_flange_thickness: 12
+    throat_start_wall_thickness: 6
+    minimum_wall_thickness: 6
+    screw_hole_count: 3
+    screw_hole_diameter: 5
+    screw_pattern_diameter: 110
+    mount_fillet: 12
+    stl_export_mode: body
+  horizontal_basis:
+    coverage_deg: 45.0
+    k: 4.0
+    n: 10.0
+    solved_s: 1.3499653255087052
+    mouth_exit_angle_deg: 87.21297803802614
+    mouth_curvature_radius_mm: 295.9006339426864
+    normalized_mouth_curvature_radius: 1.9726708929512426
+  vertical_basis:
+    coverage_deg: 45.0
+    k: 4.0
+    n: 10.0
+    solved_s: 1.3499653255087052
+    mouth_exit_angle_deg: 87.21297803802614
+    mouth_curvature_radius_mm: 295.9006339426864
+    normalized_mouth_curvature_radius: 1.9726708929512426
+  section_modifier:
+    mouth_squareness: 0
+    squareness_morph_spline:
+    - x: 0
+      y: 0
+      angle_deg: 0
+      tension: 0.35
+    - x: 1
+      y: 1
+      angle_deg: 0
+      tension: 0.35
+    horizontal_modifier:
+      enabled: false
+      profile_delta_spline:
+      - x: 0
+        y_mm: 0
+        angle_deg: 6.011899
+        tension: 0.35
+      - x: 1
+        y_mm: 0
+        angle_deg: 84.765166
+        tension: 0.35
+      thickness_spline:
+      - x: 0
+        y: 1
+        angle_deg: 0
+        tension: 0.35
+      - x: 1
+        y: 0
+        angle_deg: 0
+        tension: 0.35
+    vertical_modifier:
+      enabled: false
+      profile_delta_spline:
+      - x: 0
+        y_mm: 0
+        angle_deg: 6.011899
+        tension: 0.35
+      - x: 1
+        y_mm: 0
+        angle_deg: 84.765166
+        tension: 0.35
+      thickness_spline:
+      - x: 0
+        y: 1
+        angle_deg: 0
+        tension: 0.35
+      - x: 1
+        y: 0
+        angle_deg: 0
+        tension: 0.35
+  view:
+    wire_density: 64
+  export:
+    stl_z_stations: 44
+    stl_side_samples: 160
