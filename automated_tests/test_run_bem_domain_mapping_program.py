@@ -10,7 +10,7 @@ import yaml
 
 from app.tools.run_bem_domain_mapping_program import (
     ANGLES, MOUTHS, Proposal, SLOTS, materialize_cell_search, planned_slots,
-    _candidate_geometry,
+    snap_k_n, _candidate_geometry,
 )
 
 
@@ -33,6 +33,10 @@ class BemDomainMappingProgramTests(unittest.TestCase):
                                     ("high", "high", "high")))
         self.assertEqual(SLOTS[2], (("high", "low", "high"),
                                     ("low", "high", "low")))
+
+    def test_new_controls_snap_to_half_k_and_integer_n(self) -> None:
+        self.assertEqual(snap_k_n(5.25, 8.75), (5.0, 9.0))
+        self.assertEqual(snap_k_n(5.5, 8.2), (5.5, 8.0))
 
     def test_candidate_geometry_derives_length_and_respects_growth_limit(self) -> None:
         baseline = (ROOT / "examples" / "mouth-size-coverage-grid" /

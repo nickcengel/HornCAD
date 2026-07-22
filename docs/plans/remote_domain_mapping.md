@@ -37,6 +37,11 @@ Candidate generation uses feasible symmetric points in:
 - K from 1 through 7, rounded to 0.5; and
 - N from 2 through 20, rounded to integers.
 
+These grids also apply to any new directional closure probe. A closure may
+retain an already-running legacy quarter-step value as historical evidence,
+but it cannot propagate that value into a later candidate: K is snapped to the
+nearest 0.5 and N to the nearest integer before materialization.
+
 Length is derived from S, K, and N with the same HornCAD equations used by the
 exporter. Negative-S and late-growth/disc-like geometry are rejected before
 BEM and replaced with the next feasible proposal.

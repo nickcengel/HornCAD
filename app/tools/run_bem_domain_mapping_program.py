@@ -44,6 +44,11 @@ SLOTS = {
 }
 
 
+def snap_k_n(k: float, n: float) -> tuple[float, float]:
+    """Return the only control grid allowed for newly materialized candidates."""
+    return round(float(k) * 2) / 2, float(round(float(n)))
+
+
 @dataclass(frozen=True)
 class Proposal:
     coverage_deg: int
@@ -474,7 +479,50 @@ def close_coupled_length(root: Path, coverage: int = 50, mouth: int = 400,
         output = (root / f"{coverage}deg" /
                   f"{mouth}x{mouth}-coupled-length-closure-r{probe:02d}")
         materialize_probe(best[2], baseline, output, target)
+        project = yaml.safe_load((output / "project.yaml").read_text(
+            encoding="utf-8"))
+        if not (output / "search_state.json").exists():
+            config = project["horncad_config"]
+            horizontal = config["horizontal_basis"]
+            snapped_k, snapped_n = snap_k_n(horizontal["k"], horizontal["n"])
+            length = _length_for_controls(
+                config, coverage, target, snapped_k, snapped_n)
+            if length is None:
+                raise ValueError(
+                    f"could not derive snapped-grid length for S={target:g}")
+            values = {
+                "length_mm": length, "extension_mm": 0.0,
+                "osse_coverage_h_deg": float(coverage),
+                "osse_coverage_v_deg": float(coverage),
+                "k_h": snapped_k, "k_v": snapped_k,
+                "n_h": snapped_n, "n_v": snapped_n,
+            }
+            source = _source_search(baseline)
+            project, _ = materialize_candidate(project, values, {
+                "intended_coverage_h_deg": coverage,
+                "intended_coverage_v_deg": coverage,
+                "lower_frequency_hz": float(source["lower_frequency_hz"]),
+                "crossover_hz": float(source["crossover_hz"]),
+                "upper_frequency_hz": float(source["upper_frequency_hz"]),
+            })
+            (output / "project.yaml").write_text(
+                yaml.safe_dump(project, sort_keys=False), encoding="utf-8")
         document = yaml.safe_load((output / "search.yaml").read_text(encoding="utf-8"))
+        snapped_values = {
+            "length_mm": float(project["horncad_config"]["global"]["length"]),
+            "extension_mm": 0.0,
+            "osse_coverage_h_deg": float(coverage),
+            "osse_coverage_v_deg": float(coverage),
+            "k_h": float(project["horncad_config"]["horizontal_basis"]["k"]),
+            "k_v": float(project["horncad_config"]["vertical_basis"]["k"]),
+            "n_h": float(project["horncad_config"]["horizontal_basis"]["n"]),
+            "n_v": float(project["horncad_config"]["vertical_basis"]["n"]),
+        }
+        if not (output / "search_state.json").exists():
+            document["bem_candidate_search"]["bounds"] = {
+                name: [value - 0.001, value + 0.001]
+                for name, value in snapped_values.items()
+            }
         document["bem_candidate_search"]["solver"]["workers"] = 20
         document["bem_candidate_search"]["coupled_length_closure"] = {
             "side": side, "target_s": target, "expanding_step": delta,
