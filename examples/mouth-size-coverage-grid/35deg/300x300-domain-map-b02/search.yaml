@@ -1,0 +1,419 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 35
+  intended_coverage_v_deg: 35
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 11
+  initial_candidates: 10
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 153.271999
+    - 207.368001
+    extension_mm:
+    - -1.0e-06
+    - 2.0e-06
+    osse_coverage_h_deg:
+    - 34.999999
+    - 35.000001999999995
+    osse_coverage_v_deg:
+    - 34.999999
+    - 35.000001999999995
+    k_h:
+    - 2.999999
+    - 5.000001
+    k_v:
+    - 2.999999
+    - 5.000001
+    n_h:
+    - 5.999999
+    - 14.000001
+    n_v:
+    - 5.999999
+    - 14.000001
+  initial_pool:
+  - label: "domain map \xB7 L+1_K+0_N+0 \xB7 prescribed face-centered response surface"
+    values:
+      length_mm: 207.368
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 10.0
+      n_v: 10.0
+  - label: "domain map \xB7 L+0_K+0_N-1 \xB7 prescribed face-centered response surface"
+    values:
+      length_mm: 180.32
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 6.0
+      n_v: 6.0
+  - label: "domain map \xB7 L+0_K+0_N+1 \xB7 prescribed face-centered response surface"
+    values:
+      length_mm: 180.32
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 14.0
+      n_v: 14.0
+  - label: "domain map \xB7 L-1_K-1_N-1 \xB7 prescribed face-centered response surface"
+    values:
+      length_mm: 153.272
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 3.0
+      k_v: 3.0
+      n_h: 6.0
+      n_v: 6.0
+  - label: "domain map \xB7 L-1_K-1_N+1 \xB7 prescribed face-centered response surface"
+    values:
+      length_mm: 153.272
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 3.0
+      k_v: 3.0
+      n_h: 14.0
+      n_v: 14.0
+  - label: "domain map \xB7 L-1_K+1_N-1 \xB7 prescribed face-centered response surface"
+    values:
+      length_mm: 153.272
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 5.0
+      k_v: 5.0
+      n_h: 6.0
+      n_v: 6.0
+  - label: "domain map \xB7 L-1_K+1_N+1 \xB7 prescribed face-centered response surface"
+    values:
+      length_mm: 153.272
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 5.0
+      k_v: 5.0
+      n_h: 14.0
+      n_v: 14.0
+  - label: "domain map \xB7 L+1_K-1_N+1 \xB7 prescribed face-centered response surface"
+    values:
+      length_mm: 207.368
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 3.0
+      k_v: 3.0
+      n_h: 14.0
+      n_v: 14.0
+  - label: "domain map \xB7 L+1_K+1_N-1 \xB7 prescribed face-centered response surface"
+    values:
+      length_mm: 207.368
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 5.0
+      k_v: 5.0
+      n_h: 6.0
+      n_v: 6.0
+  - label: "domain map \xB7 L+1_K+1_N+1 \xB7 prescribed face-centered response surface"
+    values:
+      length_mm: 207.368
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 5.0
+      k_v: 5.0
+      n_h: 14.0
+      n_v: 14.0
+  domain_mapping:
+    batch: 2
+    design: face-centered-response-surface
+    proposals:
+    - coverage_deg: 35
+      mouth_mm: 300
+      batch: 2
+      slot: 0
+      s: 1.3269254953523757
+      length_mm: 153.272
+      k: 4.0
+      n: 10.0
+      mouth_length_ratio: 1.9573046609948328
+      exit_angle_deg: 87.12590699653322
+      normalized_curvature_radius: 2.299255759523262
+      acquisition: prescribed face-centered response surface
+      nearest_distance: 0.0077395196036869375
+      matched_parameter: response-surface
+      anchor_length_mm: 180.32
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.6999955368037946
+      coordinate_label: L-1_K+0_N+0
+      length_level: -1
+      k_level: 0
+      n_level: 0
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 35
+      mouth_mm: 300
+      batch: 2
+      slot: 1
+      s: 0.22974013151768172
+      length_mm: 207.368
+      k: 4.0
+      n: 10.0
+      mouth_length_ratio: 1.4467034450831373
+      exit_angle_deg: 76.25074923797797
+      normalized_curvature_radius: 0.16868885098553735
+      acquisition: prescribed face-centered response surface
+      nearest_distance: 0.16566287510846173
+      matched_parameter: response-surface
+      anchor_length_mm: 180.32
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.6999955368037946
+      coordinate_label: L+1_K+0_N+0
+      length_level: 1
+      k_level: 0
+      n_level: 0
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 35
+      mouth_mm: 300
+      batch: 2
+      slot: 4
+      s: 0.4109854873506244
+      length_mm: 180.32
+      k: 4.0
+      n: 6.0
+      mouth_length_ratio: 1.6637089618456078
+      exit_angle_deg: 83.1124394200758
+      normalized_curvature_radius: 0.5497713047631254
+      acquisition: prescribed face-centered response surface
+      nearest_distance: 0.059001376421602414
+      matched_parameter: response-surface
+      anchor_length_mm: 180.32
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.6999955368037946
+      coordinate_label: L+0_K+0_N-1
+      length_level: 0
+      k_level: 0
+      n_level: -1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 35
+      mouth_mm: 300
+      batch: 2
+      slot: 5
+      s: 1.0426552391117059
+      length_mm: 180.32
+      k: 4.0
+      n: 14.0
+      mouth_length_ratio: 1.6637089618456078
+      exit_angle_deg: 85.47842667688354
+      normalized_curvature_radius: 1.0774387994016317
+      acquisition: prescribed face-centered response surface
+      nearest_distance: 0.06046613020765826
+      matched_parameter: response-surface
+      anchor_length_mm: 180.32
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.6999955368037946
+      coordinate_label: L+0_K+0_N+1
+      length_level: 0
+      k_level: 0
+      n_level: 1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 35
+      mouth_mm: 300
+      batch: 2
+      slot: 6
+      s: 0.6642796218791279
+      length_mm: 153.272
+      k: 3.0
+      n: 6.0
+      mouth_length_ratio: 1.9573046609948328
+      exit_angle_deg: 85.57619323730133
+      normalized_curvature_radius: 1.0865634378915825
+      acquisition: prescribed face-centered response surface
+      nearest_distance: 0.1616183969942988
+      matched_parameter: response-surface
+      anchor_length_mm: 180.32
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.6999955368037946
+      coordinate_label: L-1_K-1_N-1
+      length_level: -1
+      k_level: -1
+      n_level: -1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 35
+      mouth_mm: 300
+      batch: 2
+      slot: 7
+      s: 1.6852532493355972
+      length_mm: 153.272
+      k: 3.0
+      n: 14.0
+      mouth_length_ratio: 1.9573046609948328
+      exit_angle_deg: 87.13529126286065
+      normalized_curvature_radius: 2.223889527518702
+      acquisition: prescribed face-centered response surface
+      nearest_distance: 0.2200280579959768
+      matched_parameter: response-surface
+      anchor_length_mm: 180.32
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.6999955368037946
+      coordinate_label: L-1_K-1_N+1
+      length_level: -1
+      k_level: -1
+      n_level: 1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 35
+      mouth_mm: 300
+      batch: 2
+      slot: 8
+      s: 0.8776339810576868
+      length_mm: 153.272
+      k: 5.0
+      n: 6.0
+      mouth_length_ratio: 1.9573046609948328
+      exit_angle_deg: 86.58840861089513
+      normalized_curvature_radius: 1.790918424176225
+      acquisition: prescribed face-centered response surface
+      nearest_distance: 0.1875265209336196
+      matched_parameter: response-surface
+      anchor_length_mm: 180.32
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.6999955368037946
+      coordinate_label: L-1_K+1_N-1
+      length_level: -1
+      k_level: 1
+      n_level: -1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 35
+      mouth_mm: 300
+      batch: 2
+      slot: 9
+      s: 2.226525501596566
+      length_mm: 153.272
+      k: 5.0
+      n: 14.0
+      mouth_length_ratio: 1.9573046609948328
+      exit_angle_deg: 87.8057839595767
+      normalized_curvature_radius: 3.743900784280369
+      acquisition: prescribed face-centered response surface
+      nearest_distance: 0.2820287092389668
+      matched_parameter: response-surface
+      anchor_length_mm: 180.32
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.6999955368037946
+      coordinate_label: L-1_K+1_N+1
+      length_level: -1
+      k_level: 1
+      n_level: 1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 35
+      mouth_mm: 300
+      batch: 2
+      slot: 11
+      s: 0.09570467447181039
+      length_mm: 207.368
+      k: 3.0
+      n: 14.0
+      mouth_length_ratio: 1.4467034450831373
+      exit_angle_deg: 61.912496488189255
+      normalized_curvature_radius: 0.06335918860365215
+      acquisition: prescribed face-centered response surface
+      nearest_distance: 0.34634107291210514
+      matched_parameter: response-surface
+      anchor_length_mm: 180.32
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.6999955368037946
+      coordinate_label: L+1_K-1_N+1
+      length_level: 1
+      k_level: -1
+      n_level: 1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 35
+      mouth_mm: 300
+      batch: 2
+      slot: 12
+      s: 0.2219552527588345
+      length_mm: 207.368
+      k: 5.0
+      n: 6.0
+      mouth_length_ratio: 1.4467034450831373
+      exit_angle_deg: 78.25546058181096
+      normalized_curvature_radius: 0.2393824308292747
+      acquisition: prescribed face-centered response surface
+      nearest_distance: 0.1300395570223252
+      matched_parameter: response-surface
+      anchor_length_mm: 180.32
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.6999955368037946
+      coordinate_label: L+1_K+1_N-1
+      length_level: 1
+      k_level: 1
+      n_level: -1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 35
+      mouth_mm: 300
+      batch: 2
+      slot: 13
+      s: 0.5630924065694023
+      length_mm: 207.368
+      k: 5.0
+      n: 14.0
+      mouth_length_ratio: 1.4467034450831373
+      exit_angle_deg: 82.05826157528651
+      normalized_curvature_radius: 0.4261636504648154
+      acquisition: prescribed face-centered response surface
+      nearest_distance: 0.22253696161242295
+      matched_parameter: response-surface
+      anchor_length_mm: 180.32
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.6999955368037946
+      coordinate_label: L+1_K+1_N+1
+      length_level: 1
+      k_level: 1
+      n_level: 1
+      predicted_score: null
+      predicted_sigma: null
+    score_materiality_points: 1.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
