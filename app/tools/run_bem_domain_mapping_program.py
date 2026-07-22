@@ -21,7 +21,8 @@ from scipy.stats import qmc
 import yaml
 
 from .analyze_bem_design_space import Candidate, load_candidates
-from .export_horncad import solved_s, termination_metrics
+from .bem_learning import merged_candidate_policy, nominal_candidate_rejections
+from .export_horncad import osse_radius, solved_s, termination_metrics
 from .generate_mouth_size_coverage_grid_report import generate_report
 from .run_bem_search import (
     MAX_FINAL_TENTH_RADIAL_GROWTH_FRACTION, geometry_feasibility,
@@ -60,6 +61,7 @@ RESPONSE_SURFACE_COORDINATES = (
 )
 MODEL_CONDITION_LIMIT = 18.0
 NEAR_EXISTING_DISTANCE = 0.18
+PROFILE_SAMPLE_COUNT = 41
 
 
 def snap_k_n(k: float, n: float) -> tuple[float, float]:
@@ -93,6 +95,11 @@ class Proposal:
     n_level: int | None = None
     predicted_score: float | None = None
     predicted_sigma: float | None = None
+    hypothesis: str | None = None
+    contrast_search: str | None = None
+    contrast_candidate_id: str | None = None
+    enforced_learning_rules: tuple[str, ...] = ()
+    learning_round: int | None = None
 
     @property
     def values(self) -> dict[str, float]:
@@ -365,6 +372,76 @@ def _quadratic_feature(length: float, k: float, n: float,
     ])
 
 
+def _normalized_profile(
+        config: dict[str, Any], coverage: float, length: float,
+        k: float, n: float) -> np.ndarray:
+    """Return the dimensionless radial surface used to judge physical novelty."""
+    global_config = config["global"]
+    mouth_radius = float(global_config["mouth_width"]) / 2
+    throat_radius = float(global_config["throat_radius"])
+    throat_angle = float(global_config["throat_angle_deg"])
+    metrics = termination_metrics(
+        length, throat_radius, coverage, k, n, mouth_radius, throat_angle)
+    stations = np.linspace(0.0, 1.0, PROFILE_SAMPLE_COUNT)
+    return np.asarray([
+        osse_radius(float(station * length), length, throat_radius, coverage,
+                    k, n, float(metrics["s"]), throat_angle) / mouth_radius
+        for station in stations
+    ])
+
+
+def _physical_distance(
+        length: float, profile: np.ndarray, other_length: float,
+        other_profile: np.ndarray, anchor_length: float,
+        length_materiality: float, profile_materiality: float) -> tuple[float, float]:
+    """Distance in physically observable geometry, not nominal K/N coordinates."""
+    profile_rms = float(np.sqrt(np.mean((profile - other_profile) ** 2)))
+    distance = math.hypot(
+        (length - other_length) / (length_materiality * anchor_length),
+        profile_rms / profile_materiality,
+    )
+    return distance, profile_rms
+
+
+def _physical_quadratic_features(
+        lengths: np.ndarray, profiles: np.ndarray, anchor_length: float,
+        basis: np.ndarray | None = None,
+        center: np.ndarray | None = None,
+        score_scale: np.ndarray | None = None,
+        ) -> tuple[np.ndarray, dict[str, Any]]:
+    """Represent length plus two dominant radial-profile modes quadratically.
+
+    Unlike raw K/N features, a parameter change that leaves the surface unchanged
+    cannot create rank or improve the experimental design.
+    """
+    if center is None:
+        center = np.mean(profiles, axis=0)
+    centered = profiles - center
+    if basis is None:
+        singular, _, right = np.linalg.svd(centered, full_matrices=False)
+        del singular
+        basis = right[:2]
+    scores = centered @ basis.T
+    if score_scale is None:
+        score_scale = np.maximum(np.std(scores, axis=0), 1e-6)
+    scores = scores / score_scale
+    length_unit = (lengths / anchor_length - 1.0) / 0.15
+    x, y = scores[:, 0], scores[:, 1]
+    matrix = np.column_stack([
+        np.ones(len(lengths)), length_unit, x, y,
+        length_unit ** 2, x ** 2, y ** 2,
+        length_unit * x, length_unit * y, x * y,
+    ])
+    variance = np.var(centered, axis=0).sum()
+    reconstructed = scores * score_scale @ basis
+    captured = 1.0 - float(np.sum((centered - reconstructed) ** 2)) / max(
+        float(np.sum(centered ** 2)), 1e-12)
+    return matrix, {
+        "center": center, "basis": basis, "score_scale": score_scale,
+        "profile_variance_captured": captured if variance > 0 else 1.0,
+    }
+
+
 def _model_stats(matrix: np.ndarray) -> tuple[int, float]:
     if not len(matrix):
         return 0, math.inf
@@ -376,7 +453,9 @@ def _model_stats(matrix: np.ndarray) -> tuple[int, float]:
 
 
 def _existing_symmetric_points(root: Path, coverage: int, mouth: int,
-                               anchor_length: float) -> list[dict[str, Any]]:
+                               anchor_length: float,
+                               config: dict[str, Any] | None = None
+                               ) -> list[dict[str, Any]]:
     """Load reusable zero-extension evidence without averaging asymmetric runs."""
     points: list[dict[str, Any]] = []
     pattern = f"{coverage}deg/{mouth}x{mouth}*/search_state.json"
@@ -410,6 +489,8 @@ def _existing_symmetric_points(root: Path, coverage: int, mouth: int,
                 "length_mm": length, "k": k, "n": n,
                 "search": str(state_path.relative_to(root)),
                 "candidate_id": record.get("id"),
+                **({"profile": _normalized_profile(
+                    config, coverage, length, k, n)} if config is not None else {}),
             })
     # Dense local optimizer traces must not masquerade as independent volume.
     unique: dict[tuple[float, float, float], dict[str, Any]] = {}
@@ -426,7 +507,12 @@ def _existing_symmetric_points(root: Path, coverage: int, mouth: int,
 def response_surface_design(
         root: Path, candidates: list[Candidate]
         ) -> tuple[list[dict[str, Any]], list[Proposal]]:
-    """Augment existing evidence only until a stable quadratic model is identified."""
+    """Add only physically distinct points needed to identify surface behavior."""
+    policy = merged_candidate_policy()
+    profile_materiality = float(
+        policy["normalized_profile_rms_materiality_fraction"])
+    length_materiality = float(
+        policy["normalized_length_materiality_fraction"])
     coordinates: list[dict[str, Any]] = []
     proposals: list[Proposal] = []
     for coverage in INTERIOR_ANGLES:
@@ -435,11 +521,7 @@ def response_surface_design(
             config = _source_project(baseline)["horncad_config"]
             anchor = _response_surface_anchor(candidates, coverage, mouth)
             existing = _existing_symmetric_points(
-                root, coverage, mouth, anchor.length_mm)
-            matrix = np.asarray([_quadratic_feature(
-                item["length_mm"], item["k"], item["n"], anchor.length_mm)
-                for item in existing])
-            initial_rank, initial_condition = _model_stats(matrix)
+                root, coverage, mouth, anchor.length_mm, config)
             feasible_pool: list[tuple[dict[str, Any], Proposal, np.ndarray]] = []
             for slot, (length_level, k_level, n_level) in enumerate(
                     RESPONSE_SURFACE_COORDINATES):
@@ -456,10 +538,14 @@ def response_surface_design(
                     "anchor_length_mm": anchor.length_mm,
                     "anchor_k": anchor.k, "anchor_n": anchor.n,
                     "anchor_s": anchor.s,
-                    "existing_model_rank": initial_rank,
-                    "existing_model_condition": (
-                        initial_condition if math.isfinite(initial_condition) else None),
                 }
+                rejected_by = nominal_candidate_rejections(
+                    coverage, mouth, k, n)
+                if rejected_by:
+                    coordinate.update(status="rejected-by-learning",
+                                      rejected_by_rules=rejected_by)
+                    coordinates.append(coordinate)
+                    continue
                 metrics = _independent_control_geometry(
                     config, coverage, length, k, n)
                 if metrics is None:
@@ -469,19 +555,24 @@ def response_surface_design(
                     coordinates.append(coordinate)
                     continue
                 coordinate["s"] = float(metrics["s"])
-                normalized = np.asarray([[
-                    (length - item["length_mm"]) / (0.15 * anchor.length_mm),
-                    k - item["k"], (n - item["n"]) / 4.0,
-                ] for item in existing])
-                nearest_index = (int(np.argmin(np.linalg.norm(normalized, axis=1)))
-                                 if len(normalized) else None)
-                nearest_distance = (float(np.linalg.norm(normalized[nearest_index]))
+                profile = _normalized_profile(config, coverage, length, k, n)
+                physical = [_physical_distance(
+                    length, profile, item["length_mm"], item["profile"],
+                    anchor.length_mm, length_materiality, profile_materiality)
+                    for item in existing]
+                nearest_index = (int(np.argmin([item[0] for item in physical]))
+                                 if physical else None)
+                nearest_distance = (physical[nearest_index][0]
                                     if nearest_index is not None else math.inf)
+                nearest_profile_rms = (physical[nearest_index][1]
+                                       if nearest_index is not None else math.inf)
                 coordinate["nearest_existing_distance"] = nearest_distance
-                if nearest_distance < NEAR_EXISTING_DISTANCE:
+                coordinate["nearest_existing_profile_rms_fraction"] = nearest_profile_rms
+                if nearest_distance < 1.0:
                     reused = existing[nearest_index]
                     coordinate.update(
-                        status="covered-by-existing",
+                        status="rejected-geometrically-redundant",
+                        rejected_by_rules=["physical-profile-materiality-v1"],
                         reused_search=reused["search"],
                         reused_candidate_id=reused["candidate_id"])
                     coordinates.append(coordinate)
@@ -503,8 +594,34 @@ def response_surface_design(
                     coordinate_label=label, length_level=length_level,
                     k_level=k_level, n_level=n_level,
                 )
-                feasible_pool.append((coordinate, proposal, _quadratic_feature(
-                    length, k, n, anchor.length_mm)))
+                feasible_pool.append((coordinate, proposal, profile))
+            all_lengths = np.asarray([
+                *[item["length_mm"] for item in existing],
+                *[item[1].length_mm for item in feasible_pool],
+            ])
+            all_profiles = np.asarray([
+                *[item["profile"] for item in existing],
+                *[item[2] for item in feasible_pool],
+            ])
+            all_matrix, physical_model = _physical_quadratic_features(
+                all_lengths, all_profiles, anchor.length_mm)
+            existing_count = len(existing)
+            matrix = all_matrix[:existing_count]
+            pool_features = all_matrix[existing_count:]
+            initial_rank, initial_condition = _model_stats(matrix)
+            for coordinate, _, _ in feasible_pool:
+                coordinate.update(
+                    existing_model_rank=initial_rank,
+                    existing_model_condition=(
+                        initial_condition if math.isfinite(initial_condition) else None),
+                    profile_variance_captured=(
+                        physical_model["profile_variance_captured"]),
+                    selection_space="normalized-length-plus-profile-pca")
+            feasible_pool = [
+                (coordinate, proposal, feature)
+                for (coordinate, proposal, _), feature
+                in zip(feasible_pool, pool_features)
+            ]
             selected: list[tuple[dict[str, Any], Proposal, np.ndarray]] = []
             available = feasible_pool[:]
             while available:
@@ -575,7 +692,9 @@ def select_batch(root: Path, batch: int) -> list[Proposal]:
 
 
 def _search_dir(root: Path, proposal: Proposal) -> Path:
-    suffix = (f"{proposal.mouth_mm}x{proposal.mouth_mm}-system-id-b02"
+    suffix = (f"{proposal.mouth_mm}x{proposal.mouth_mm}-learning-r{proposal.learning_round:02d}"
+              if proposal.learning_round is not None else
+              f"{proposal.mouth_mm}x{proposal.mouth_mm}-profile-id-b03"
               if proposal.batch == 2 else
               f"{proposal.mouth_mm}x{proposal.mouth_mm}-domain-map-b01")
     return (root / f"{proposal.coverage_deg}deg" /
@@ -596,7 +715,9 @@ def materialize_cell_search(root: Path, proposals: list[Proposal],
     if (output / "search.yaml").exists():
         existing = yaml.safe_load((output / "search.yaml").read_text(
             encoding="utf-8"))["bem_candidate_search"]
-        expected_design = ("deduplicated-quadratic-augmentation" if first.batch == 2
+        expected_design = ("held-cell-error-controlled-physical-contrasts"
+                           if first.learning_round is not None else
+                           "physical-profile-quadratic-augmentation" if first.batch == 2
                            else "remote-maximin")
         if (existing.get("domain_mapping", {}).get("design") == expected_design
                 and (first.batch != 2 or existing.get("fixed_design") is True)):
@@ -653,7 +774,9 @@ def materialize_cell_search(root: Path, proposals: list[Proposal],
         } for item in proposals[1:]],
         "domain_mapping": {
             "batch": first.batch,
-            "design": ("deduplicated-quadratic-augmentation" if first.batch == 2
+            "design": ("held-cell-error-controlled-physical-contrasts"
+                       if first.learning_round is not None else
+                       "physical-profile-quadratic-augmentation" if first.batch == 2
                        else "remote-maximin"),
             "proposals": [asdict(item) for item in proposals],
             "score_materiality_points": SCORE_MATERIALITY,
@@ -669,7 +792,7 @@ def materialize_batch(root: Path, batch: int,
                       solver_workers: int = 10) -> tuple[list[Path], list[Proposal]]:
     coordinates: list[dict[str, Any]] | None = None
     if batch == 2:
-        manifest_path = root / "batch_2_response_surface.json"
+        manifest_path = root / "batch_2_physical_response_surface.json"
         frozen_manifest: dict[str, Any] = {}
         if manifest_path.exists():
             try:
@@ -679,9 +802,9 @@ def materialize_batch(root: Path, batch: int,
                 frozen_manifest = {}
         frozen_coordinates = frozen_manifest.get("coordinates", [])
         can_resume_frozen = (
-            frozen_manifest.get("schema_version") == 2 and
+            frozen_manifest.get("schema_version") == 3 and
             frozen_manifest.get("design") ==
-            "deduplicated-quadratic-augmentation" and
+            "physical-profile-quadratic-augmentation" and
             all("proposal" in item for item in frozen_coordinates
                 if item.get("status") == "selected")
         )
@@ -700,26 +823,32 @@ def materialize_batch(root: Path, batch: int,
                 cell = [item for item in coordinates
                         if item["coverage_deg"] == coverage
                         and item["mouth_mm"] == mouth]
+                audited = next((item for item in cell
+                                if "existing_model_rank" in item), {})
                 cell_stats.append({
                     "coverage_deg": coverage, "mouth_mm": mouth,
                     "candidate_pool": len(cell),
                     "selected_simulations": sum(
                         item["status"] == "selected" for item in cell),
-                    "existing_model_rank": cell[0]["existing_model_rank"],
-                    "existing_model_condition": cell[0]["existing_model_condition"],
+                    "existing_model_rank": audited.get("existing_model_rank", 0),
+                    "existing_model_condition": audited.get(
+                        "existing_model_condition"),
                     "final_model_rank": next((item.get("final_model_rank")
                                                for item in cell
                                                if "final_model_rank" in item),
-                                              cell[0]["existing_model_rank"]),
+                                              audited.get("existing_model_rank", 0)),
                     "final_model_condition": next((
                         item.get("final_model_condition") for item in cell
                         if "final_model_condition" in item),
-                        cell[0]["existing_model_condition"]),
+                        audited.get("existing_model_condition")),
+                    "profile_variance_captured": audited.get(
+                        "profile_variance_captured"),
                 })
         generated_summary = {
-            "schema_version": 2,
-            "design": "deduplicated-quadratic-augmentation",
-            "independent_factors": ["length_mm", "k", "n"],
+            "schema_version": 3,
+            "design": "physical-profile-quadratic-augmentation",
+            "independent_factors": [
+                "normalized_length", "radial_profile_pc1", "radial_profile_pc2"],
             "levels": RESPONSE_SURFACE_LEVELS,
             "candidate_coordinates_per_cell": len(RESPONSE_SURFACE_COORDINATES),
             "cells": len(INTERIOR_ANGLES) * len(INTERIOR_MOUTHS),
@@ -727,13 +856,21 @@ def materialize_batch(root: Path, batch: int,
             "planned_simulations": sum(
                 item["status"] == "selected" for item in coordinates),
             "covered_by_existing": sum(
-                item["status"] == "covered-by-existing" for item in coordinates),
+                item["status"] == "rejected-geometrically-redundant"
+                for item in coordinates),
+            "rejected_by_learning": sum(
+                item["status"] == "rejected-by-learning" for item in coordinates),
             "not_selected_sufficient_information": sum(
                 item["status"] == "not-selected-sufficient-information"
                 for item in coordinates),
             "geometry_rejections": sum(
                 item["status"] == "geometry-rejected" for item in coordinates),
-            "near_existing_distance": NEAR_EXISTING_DISTANCE,
+            "normalized_profile_rms_materiality_fraction": float(
+                merged_candidate_policy()[
+                    "normalized_profile_rms_materiality_fraction"]),
+            "normalized_length_materiality_fraction": float(
+                merged_candidate_policy()[
+                    "normalized_length_materiality_fraction"]),
             "model_condition_limit": MODEL_CONDITION_LIMIT,
             "cell_stats": cell_stats,
             "coordinates": coordinates,
@@ -930,7 +1067,7 @@ def planned_slots() -> list[dict[str, Any]]:
     output.extend({
         "coverage_deg": angle, "mouth_mm": mouth, "batch": 2, "slot": slot,
         "status": "awaiting information audit",
-        "design": "deduplicated-quadratic-augmentation",
+        "design": "physical-profile-quadratic-augmentation",
         "coordinate_label": f"L{length:+d}_K{k:+d}_N{n:+d}",
         "length_level": length, "k_level": k, "n_level": n,
     } for angle in INTERIOR_ANGLES for mouth in INTERIOR_MOUTHS
@@ -951,7 +1088,7 @@ def _merge_existing_batch_one_slots(
 
 def _apply_response_surface_manifest(
         state: dict[str, Any], root: Path, proposals: list[Proposal]) -> None:
-    manifest = json.loads((root / "batch_2_response_surface.json").read_text(
+    manifest = json.loads((root / "batch_2_physical_response_surface.json").read_text(
         encoding="utf-8"))
     records = {(item["coverage_deg"], item["mouth_mm"], item["slot"]): item
                for item in manifest["coordinates"]}
@@ -970,14 +1107,20 @@ def _apply_response_surface_manifest(
             "candidate_coordinates_per_cell", "cells",
             "total_candidate_coordinates", "planned_simulations",
             "covered_by_existing", "not_selected_sufficient_information",
-            "geometry_rejections", "near_existing_distance",
+            "rejected_by_learning", "geometry_rejections",
+            "normalized_profile_rms_materiality_fraction",
+            "normalized_length_materiality_fraction",
             "model_condition_limit")
     }
 
 
 def retire_superseded_batch_two(root: Path) -> None:
     """Keep completed evidence but hide the aborted duplicate-heavy searches."""
-    for state_path in root.glob("*deg/*-domain-map-b02/search_state.json"):
+    state_paths = [
+        *root.glob("*deg/*-domain-map-b02/search_state.json"),
+        *root.glob("*deg/*-system-id-b02/search_state.json"),
+    ]
+    for state_path in state_paths:
         try:
             state = json.loads(state_path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
@@ -985,17 +1128,22 @@ def retire_superseded_batch_two(root: Path) -> None:
         state.update(
             status="superseded",
             phase="superseded after existing-data redundancy audit",
-            superseded_by="deduplicated-quadratic-augmentation",
+            superseded_by="physical-profile-quadratic-augmentation",
             superseded_at_unix=time.time(),
         )
         for candidate in state.get("candidates", []):
             if candidate.get("status") in {"running", "queued"}:
-                candidate["status"] = "abandoned-redundant-design"
+                candidate["status"] = "abandoned-physically-unaudited-design"
         _write_json(state_path, state)
 
 
 def run_program(root: Path, slots: int = 2, solver_workers: int = 10,
                 start_batch: int = 1) -> dict[str, Any]:
+    raise RuntimeError(
+        "superseded study: use app.tools.run_bem_learning_program; "
+        "raw parameter-space domain mapping is intentionally disabled")
+    # Retained below only to preserve the historical state-transition implementation
+    # while completed artifacts remain readable.
     if start_batch not in (1, 2):
         raise ValueError("start_batch must be 1 or 2")
     state_path = root / "domain_mapping_state.json"
@@ -1006,7 +1154,7 @@ def run_program(root: Path, slots: int = 2, solver_workers: int = 10,
     slots_plan = planned_slots()
     _merge_existing_batch_one_slots(slots_plan, previous)
     state = {
-        "schema_version": 2, "status": "running",
+        "schema_version": 3, "status": "running",
         "phase": ("domain-map-batch-1" if start_batch == 1
                   else "system-identification-batch-2"),
         "total_coordinates": len(slots_plan),

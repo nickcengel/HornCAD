@@ -1,103 +1,101 @@
-# Zero-extension system-identification study
+# Zero-extension controlled-learning study
 
-## Objective
+## Objective and domain
 
-The study must teach how physical length, K, and N affect score and each surface
+The study must teach how physical length, K, and N affect every surface
 diagnostic across the useful symmetric, square, zero-extension horn domain. It
 is not a local score optimizer. S is a derived OS-SE geometry result, not a
 fourth independent control.
 
-The active domain is the same 25-cell matrix in every stage:
-
-- half-coverage: 30, 35, 40, 45, and 50 degrees;
-- square mouth: 250, 300, 350, 400, and 450 mm; and
-- zero extension with identical horizontal and vertical curves.
-
-The retained 25-degree and 500 mm results are edge history only. They receive no
-new work. Conical extensions, round-to-square morphing, and independently
+The active domain contains 25 mouth/coverage cells: half-coverage 30, 35, 40,
+45, and 50 degrees crossed with square mouths 250, 300, 350, 400, and 450 mm.
+The retained 25-degree and 500 mm results are historical edge evidence and
+receive no new work. Extensions, round-to-square morphing, and independently
 coupled horizontal/vertical curves remain later studies.
 
-## Batch 1: remote validation
+## What the earlier work established
 
-Batch 1 originally prescribed the same two remote maximin samples in every
-cell: one low-S/low-K/low-N point and one high-S/high-K/high-N point. Interim
-review found 29 of 30 completed remote outcomes were simple boundary
-confirmations, none was competitive, and none exposed a useful diagnostic
-tradeoff. Median score change was -11.3 points. Because the controls move
-together, the samples also cannot estimate independent effects.
+The remote-mapping batch prescribed low-S/low-K/low-N and
+high-S/high-K/high-N samples. Thirty-six completed remote candidates produced
+no competitive design or useful diagnostic tradeoff; their median score change
+was -10.18 points. Those outer strata are closed.
 
-The remote batch is therefore intentionally truncated after the two candidates
-that were already in flight on July 22 finish. Completed results remain sparse
-outer-boundary evidence and out-of-domain model checks. Unstarted cells are
-recorded as abandoned redundant boundary work rather than simulated. The
-response-surface stage receives the saved compute.
+Quarter-step K refinement was also below practical resolution. Across 110 such
+candidates, a selected winner's median advantage over a nearby coarse K value
+was 0.05 score points and the maximum was 0.14. New K values use 0.5 steps and
+new N values use integer steps.
 
-## Batch 2: deduplicated quadratic identification
+## Rejected replacement designs
 
-Each cell uses its best completed K=4, N=10 result as a deterministic center
-with physical length L0. All new candidates use the same normalized levels:
+Two proposed replacements were rejected before full execution:
 
-- length levels: 0.85 L0, 1.00 L0, and 1.15 L0;
-- K levels: 3, 4, and 5; and
-- N levels: 6, 10, and 14.
+1. A common response-surface grid repeated K=4/N=10 length work already
+   present in the S grids.
+2. A per-cell D-optimal augmentation reduced that duplication but still treated
+   nominal K/N separation as information. At 30 degrees and 250 mm, changing N
+   from 6 to 14 at L=200.597 mm and K=3 changes normalized radius by only 0.41%
+   RMS. It is not an independent physical contrast.
 
-The existing K4/N10 S grids already sample the physical-length axis. Repeating
-K4/N10 at nominal ±15% length was therefore removed. The augmentation pool is
-limited to four center-length K/N axial points and eight low/high interaction
-corners. Existing symmetric zero-extension evidence is deduplicated in
-normalized length/K/N coordinates before it contributes model information.
+The second design requested 223 new candidates to condition 25 separate cell
+models. That ignored transfer across cells and optimized matrix rank rather
+than acoustic knowledge. It was not launched. Completed candidates from the
+interrupted attempts remain evidence; queued candidates are superseded.
 
-For each cell, a greedy D-optimal audit selects only enough feasible pool points
-to make the combined existing-plus-new quadratic feature matrix full rank and
-bring its condition number to 18 or less. The modeled terms are length, K, N,
-their three squares, and all three pair interactions. This preserves a common
-factor basis across cells while allowing cells with substantial prior evidence
-to run fewer new candidates. A nearby existing point within 0.18 normalized
-distance covers a proposed coordinate; geometry-invalid points remain explicit
-boundary outcomes. Nothing is silently replaced by an optimizer proposal.
+## Physical representation and validation
 
-The materialized manifest is `batch_2_response_surface.json`. It is the source
-of truth for all 300 audited pool coordinates, their physical and normalized
-values, geometry status, nearest-existing distance, selection result, and each
-cell's before/after matrix rank and condition number. Once committed, that
-manifest is fixed for execution and resume.
+All completed candidates in the retained cells are represented by coverage,
+mouth, length/mouth, and normalized radial-profile modes. Three profile modes
+retain 99.915% of measured surface-shape variance. K, N, and S remain steering
+labels but cannot make a sample informative unless they change the surface.
 
-## Analysis and steering rules
+Models are fit separately to score, containment, profile RMS error,
+slice-energy departure, outward-rise violation, -6 dB RMS error, and
+high-frequency coverage error. Validation withholds an entire mouth/coverage
+cell, not random candidates, so dense local traces cannot leak into their own
+test data. The initial physical model reaches held-cell R² of 0.903 for score,
+0.873 for slice energy, 0.918 for outward rise, and 0.966 for -6 dB error. Its
+largest gaps, mainly 250-300 mm mouths at 30 degrees and a few 50-degree edges,
+determine where new evidence is valuable.
 
-Models are fit to final surface score and separately to mean containment,
-profile RMS error, slice-energy departure, outward-rise violation, and the
-secondary -6 dB line diagnostic. The first questions are:
+## Controlled learning batches
 
-1. Which factor changes each response, in which direction, and with what
-   magnitude?
-2. Which effects reverse with coverage, mouth size, length regime, or starting
-   diagnostic state?
-3. Which interactions explain energy bunching or the outward-rise degradation
-   seen at wider coverage?
-4. Do Batch-1 remote samples agree with the fitted surface or expose another
-   ridge that the local three-level design misses?
+Each batch contains 30 direct one-control contrasts:
 
-Later points are allowed only when a predefined model check justifies them:
-large held-out residual, unresolved curvature at an active boundary, or an
-interaction whose uncertainty changes a design recommendation. No sub-point
-score polishing and no ad hoc per-cell optimizer are part of this phase.
+- 10 length, 10 K, and 10 N contrasts;
+- five increases and five decreases for every control;
+- at most two candidates in one mouth/coverage cell; and
+- a material normalized-length or radial-profile change relative to a named
+  completed candidate while the other two controls remain fixed.
 
-## Execution and handoff
+Selection rejects excluded 25-degree/500 mm cells, old quarter-grid controls,
+known remote boundary strata, repeated K4/N10 length-axis work, near-existing
+geometry, and N changes whose surface difference is below 1% RMS. Every
+manifest entry states its hypothesis, contrasting search/candidate, physical
+novelty, and the learning rules that admitted it.
 
-The duplicate-heavy first Batch-2 attempt was stopped after its two active
-+15% length candidates finished. Its completed points remain evidence, but the
-superseded searches are hidden. The replacement entry point preserves Batch-1
-state, writes the audited manifest, materializes only selected candidates, and
-resumes completed work rather than duplicating it.
+The study asks which factor changes each diagnostic, where directions reverse,
+which interactions explain energy bunching or outward-rise degradation, and
+whether a rule learned in one mouth/coverage cell predicts a held-out cell.
 
+After every batch the complete model is rebuilt. Another batch is permitted
+only if the median held-cell RMSE improvement across diagnostics is at least 2%.
+The program stops on a prediction plateau, no physically novel direct
+contrasts, or three rounds. No sub-point score polishing and no ad hoc per-cell
+optimizer are part of this phase.
+
+## Execution and record keeping
+
+The authoritative rules are in
+`docs/reference/research/bem_learning_ledger.json`. Candidate generation loads
+that ledger; report prose and scheduler policy are no longer separate informal
+notes. Contradicted work is marked superseded rather than silently retained in
+the active queue.
+
+Each round freezes its analysis and candidate manifest before BEM execution.
 Two concurrent searches with ten solver workers each keep the 20-core machine
-occupied. Each completed subsearch updates the state and index report. The
-state ledger retains the original 50 Batch-1 slots so completed and
-intentionally abandoned work remain distinguishable, followed by the 300
-audited Batch-2 candidate-pool coordinates and their selected/not-selected
-outcomes.
+occupied. The unattended runner refits after completion and applies the
+registered stop rule before creating another round.
 
-Phase 4 is complete only when every coordinate is complete, reused,
-geometry-rejected, or explicitly failed. Candidate reports, compact response
-archives needed for future diagnostics, the manifest, state, analysis, and
-index are tracked as study artifacts.
+Candidate reports, compact response archives needed for future diagnostics,
+manifests, state, validation analyses, and the index are tracked study
+artifacts.

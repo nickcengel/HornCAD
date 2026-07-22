@@ -274,6 +274,7 @@ def _read_json(path: Path) -> dict[str, Any]:
 def _study_progress(root: Path) -> dict[str, Any]:
     program = _read_json(root / "study_program_state.json")
     domain = _read_json(root / "domain_mapping_state.json")
+    learning = _read_json(root / "learning_program_state.json")
     closure = _read_json(root / "s_boundary_closure.json")
     closure_results = closure.get("results", [])
     closure_counts = Counter(
@@ -297,7 +298,7 @@ def _study_progress(root: Path) -> dict[str, Any]:
             "solver_workers": int(state.get("search", {}).get(
                 "solver", {}).get("workers", 0)),
         })
-    active = domain if domain else program
+    active = learning if learning else domain if domain else program
     return {
         "program_status": str(active.get("status", "unknown")),
         "program_phase": str(active.get("phase", "unknown")),
@@ -314,6 +315,7 @@ def _study_progress(root: Path) -> dict[str, Any]:
             "score_materiality_points": float(
                 domain.get("score_materiality_points", 1.0)),
         },
+        "controlled_learning": learning,
     }
 
 

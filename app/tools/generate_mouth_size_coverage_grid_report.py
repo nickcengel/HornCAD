@@ -53,6 +53,8 @@ STUDY_PHASES = {
         4, "Phase 4 · response-surface system identification"),
     "quadratic system identification": (
         4, "Phase 4 · deduplicated quadratic identification"),
+    "controlled diagnostic learning": (
+        4, "Phase 4 · controlled diagnostic learning"),
 }
 
 
@@ -125,6 +127,8 @@ def _search_summary(path: Path) -> dict[str, Any]:
         study_label = "remote domain map"
     elif "-system-id-b" in mouth_dir:
         study_label = "quadratic system identification"
+    elif "-learning-r" in mouth_dir:
+        study_label = "controlled diagnostic learning"
     elif mouth_dir.endswith("-s-grid"):
         study_label = "uniform S grid"
     elif mouth_dir.endswith("-kn-grid"):
@@ -166,6 +170,9 @@ def _search_summary(path: Path) -> dict[str, Any]:
                 + mouth_dir.rsplit("-", 1)[-1].upper()),
             "quadratic system identification": (
                 " · deduplicated length/K/N identification "
+                + mouth_dir.rsplit("-", 1)[-1].upper()),
+            "controlled diagnostic learning": (
+                " · controlled diagnostic learning "
                 + mouth_dir.rsplit("-", 1)[-1].upper()),
         }.get(study_label, "")
     state_path = path.parent / "search_state.json"
@@ -602,6 +609,15 @@ def generate_report(project_root: Path, output: Path) -> Path:
     if domain_state:
         program_status = str(domain_state.get("status", program_status))
         current_phase = str(domain_state.get("phase", current_phase))
+    learning_state_path = project_root / "learning_program_state.json"
+    if learning_state_path.is_file():
+        try:
+            learning_state = json.loads(learning_state_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            learning_state = {}
+        if learning_state:
+            program_status = str(learning_state.get("status", program_status))
+            current_phase = str(learning_state.get("phase", current_phase))
     current_phase_order = {
         "baseline-and-s-closure": 1,
         "kn-grids-and-canonical-extensions": 2,
@@ -612,6 +628,11 @@ def generate_report(project_root: Path, output: Path) -> Path:
         "domain-map-complete": 4,
         "system-identification-batch-2": 4,
         "system-identification-complete": 4,
+        "controlled-learning-initializing": 4,
+        "controlled-learning-round-1": 4,
+        "controlled-learning-round-2": 4,
+        "controlled-learning-round-3": 4,
+        "controlled-learning-complete": 4,
     }.get(current_phase, 0)
 
     plan_path = project_root / "study_plan.yaml"
@@ -690,6 +711,16 @@ def generate_report(project_root: Path, output: Path) -> Path:
             "Phase 4 · deduplicated quadratic identification"),
         "system-identification-complete": (
             "Phase 4 · quadratic identification complete"),
+        "controlled-learning-initializing": (
+            "Phase 4 · controlled diagnostic learning initialization"),
+        "controlled-learning-round-1": (
+            "Phase 4 · controlled diagnostic learning, round 1"),
+        "controlled-learning-round-2": (
+            "Phase 4 · controlled diagnostic learning, round 2"),
+        "controlled-learning-round-3": (
+            "Phase 4 · controlled diagnostic learning, round 3"),
+        "controlled-learning-complete": (
+            "Phase 4 · controlled diagnostic learning complete"),
     }.get(current_phase, current_phase)
 
     project_configs = [summary["config"] for summary in summaries if summary["config"]]

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "purpose": "Authoritative evidence and candidate-selection rules for the zero-extension BEM study.",
+  "updated": "2026-07-22",
+  "rules": [
+    {
+      "id": "study-domain-v1",
+      "status": "active",
+      "confidence": "policy",
+      "evidence": "The retained practical design domain requested for this study is 30-50 degrees and 250-450 mm.",
+      "apply": {
+        "coverage_deg": [30, 35, 40, 45, 50],
+        "mouth_mm": [250, 300, 350, 400, 450]
+      }
+    },
+    {
+      "id": "remote-extremes-closed-v1",
+      "status": "active",
+      "confidence": "high",
+      "evidence": "36 completed remote candidates produced no competitive design; the median score delta was -10.18 points and the low/low and high/high strata were boundary confirmations.",
+      "apply": {
+        "reject_strata": [
+          {"maximum_k": 1.5, "maximum_n": 3.0},
+          {"minimum_k": 6.5, "minimum_n": 18.0}
+        ]
+      }
+    },
+    {
+      "id": "coarse-control-grid-v1",
+      "status": "active",
+      "confidence": "high",
+      "evidence": "Across 110 quarter-step-K Phase 3 candidates, the selected winner's median advantage over a nearby coarse K value was 0.05 score points and the maximum was 0.14.",
+      "apply": {"minimum_k_step": 0.5, "minimum_n_step": 1.0}
+    },
+    {
+      "id": "reuse-existing-length-axis-v1",
+      "status": "active",
+      "confidence": "high",
+      "evidence": "Fixed K=4, N=10 S grids already sample the local length axis in every retained mouth/coverage cell.",
+      "apply": {"reject_repeated_k4_n10_length_axis": true}
+    },
+    {
+      "id": "physical-profile-materiality-v1",
+      "status": "active",
+      "confidence": "high",
+      "evidence": "At 30 degrees and 250 mm, L=200.597 mm and K=3, changing N from 6 to 14 changes normalized radius by only 0.41% RMS (1.07% maximum). The nominal N separation is not independent physical information.",
+      "apply": {
+        "normalized_profile_rms_materiality_fraction": 0.01,
+        "normalized_length_materiality_fraction": 0.05,
+        "selection_space": "normalized-length plus normalized-radial-profile PCA",
+        "reject_nominal_parameter_change_without_material_geometry_change": true
+      }
+    },
+    {
+      "id": "score-materiality-v1",
+      "status": "active",
+      "confidence": "policy",
+      "evidence": "The study maps controls and diagnostics; it does not spend solves resolving local score changes smaller than practical relevance.",
+      "apply": {"local_score_materiality_points": 0.5}
+    }
+  ]
+}

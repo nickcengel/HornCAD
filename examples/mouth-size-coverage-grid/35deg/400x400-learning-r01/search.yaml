@@ -1,0 +1,138 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 35
+  intended_coverage_v_deg: 35
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 2
+  initial_candidates: 1
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 170.023999
+    - 200.028001
+    extension_mm:
+    - -1.0e-06
+    - 2.0e-06
+    osse_coverage_h_deg:
+    - 34.999999
+    - 35.000001999999995
+    osse_coverage_v_deg:
+    - 34.999999
+    - 35.000001999999995
+    k_h:
+    - 2.499999
+    - 3.500001
+    k_v:
+    - 2.499999
+    - 3.500001
+    n_h:
+    - 4.999999
+    - 5.000002
+    n_v:
+    - 4.999999
+    - 5.000002
+  initial_pool:
+  - label: "system identification \xB7 learn-k-14 \xB7 held-cell transfer gap + direct\
+      \ physical contrast"
+    values:
+      length_mm: 200.028
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 2.5
+      k_v: 2.5
+      n_h: 5.0
+      n_v: 5.0
+  domain_mapping:
+    batch: 2
+    design: held-cell-error-controlled-physical-contrasts
+    proposals:
+    - coverage_deg: 35
+      mouth_mm: 400
+      batch: 2
+      slot: 3
+      s: 0.9716656197729536
+      length_mm: 170.024
+      k: 3.5
+      n: 5.0
+      mouth_length_ratio: 2.352609043429163
+      exit_angle_deg: 87.00611366392101
+      normalized_curvature_radius: 2.014004881883595
+      acquisition: held-cell transfer gap + direct physical contrast
+      nearest_distance: 2.255837945685627
+      matched_parameter: length
+      anchor_length_mm: 200.028
+      anchor_k: 3.5
+      anchor_n: 5.0
+      anchor_s: null
+      coordinate_label: learn-length-03
+      length_level: null
+      k_level: null
+      n_level: null
+      predicted_score: null
+      predicted_sigma: null
+      hypothesis: At fixed K, N, decrease length materially changes the horn surface
+        and tests diagnostic transfer in a cell with normalized held-cell error 1.18.
+      contrast_search: 35deg/400x400-kn-grid/search_state.json
+      contrast_candidate_id: candidate-009
+      enforced_learning_rules:
+      - study-domain-v1
+      - remote-extremes-closed-v1
+      - coarse-control-grid-v1
+      - reuse-existing-length-axis-v1
+      - physical-profile-materiality-v1
+      - score-materiality-v1
+      learning_round: 1
+    - coverage_deg: 35
+      mouth_mm: 400
+      batch: 2
+      slot: 14
+      s: 0.5177319026002937
+      length_mm: 200.028
+      k: 2.5
+      n: 5.0
+      mouth_length_ratio: 1.999720039194513
+      exit_angle_deg: 84.59560862642392
+      normalized_curvature_radius: 0.7583352351549715
+      acquisition: held-cell transfer gap + direct physical contrast
+      nearest_distance: 2.7103297044620227
+      matched_parameter: k
+      anchor_length_mm: 200.028
+      anchor_k: 3.5
+      anchor_n: 5.0
+      anchor_s: null
+      coordinate_label: learn-k-14
+      length_level: null
+      k_level: null
+      n_level: null
+      predicted_score: null
+      predicted_sigma: null
+      hypothesis: At fixed length, N, decrease k materially changes the horn surface
+        and tests diagnostic transfer in a cell with normalized held-cell error 1.18.
+      contrast_search: 35deg/400x400-kn-grid/search_state.json
+      contrast_candidate_id: candidate-009
+      enforced_learning_rules:
+      - study-domain-v1
+      - remote-extremes-closed-v1
+      - coarse-control-grid-v1
+      - reuse-existing-length-axis-v1
+      - physical-profile-materiality-v1
+      - score-materiality-v1
+      learning_round: 1
+    score_materiality_points: 1.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10

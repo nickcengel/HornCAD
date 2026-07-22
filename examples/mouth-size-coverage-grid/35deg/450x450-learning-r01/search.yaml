@@ -1,0 +1,91 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 35
+  intended_coverage_v_deg: 35
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 1
+  initial_candidates: 0
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 183.457999
+    - 183.458002
+    extension_mm:
+    - -1.0e-06
+    - 2.0e-06
+    osse_coverage_h_deg:
+    - 34.999999
+    - 35.000001999999995
+    osse_coverage_v_deg:
+    - 34.999999
+    - 35.000001999999995
+    k_h:
+    - 3.999999
+    - 4.000002
+    k_v:
+    - 3.999999
+    - 4.000002
+    n_h:
+    - 13.999999
+    - 14.000001999999999
+    n_v:
+    - 13.999999
+    - 14.000001999999999
+  initial_pool: []
+  domain_mapping:
+    batch: 2
+    design: held-cell-error-controlled-physical-contrasts
+    proposals:
+    - coverage_deg: 35
+      mouth_mm: 450
+      batch: 2
+      slot: 25
+      s: 3.2769318233730518
+      length_mm: 183.458
+      k: 4.0
+      n: 14.0
+      mouth_length_ratio: 2.4528774978469188
+      exit_angle_deg: 88.49758145721155
+      normalized_curvature_radius: 6.320798752681911
+      acquisition: held-cell transfer gap + direct physical contrast
+      nearest_distance: 1.0740369830599126
+      matched_parameter: n
+      anchor_length_mm: 183.458
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: null
+      coordinate_label: learn-n-25
+      length_level: null
+      k_level: null
+      n_level: null
+      predicted_score: null
+      predicted_sigma: null
+      hypothesis: At fixed length, K, increase n materially changes the horn surface
+        and tests diagnostic transfer in a cell with normalized held-cell error 0.89.
+      contrast_search: 35deg/450x450-s-grid/search_state.json
+      contrast_candidate_id: candidate-005
+      enforced_learning_rules:
+      - study-domain-v1
+      - remote-extremes-closed-v1
+      - coarse-control-grid-v1
+      - reuse-existing-length-axis-v1
+      - physical-profile-materiality-v1
+      - score-materiality-v1
+      learning_round: 1
+    score_materiality_points: 1.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10

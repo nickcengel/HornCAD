@@ -1,32 +1,17 @@
 {
   "schema_version": 1,
-  "snapshot_completed_at": "2026-07-22T12:31:35.804282-07:00",
+  "snapshot_completed_at": "2026-07-22T12:51:07.064133-07:00",
   "provisional": true,
   "study_progress": {
-    "program_status": "running",
-    "program_phase": "system-identification-batch-2",
+    "program_status": "ready",
+    "program_phase": "controlled-learning-initializing",
     "s_closure_status": "complete",
     "s_closure_cell_count": 36,
     "s_closure_counts": {
       "closed": 31,
       "geometry-limited": 5
     },
-    "running_searches": [
-      {
-        "search": "30deg/250x250-system-id-b02",
-        "phase": "BEM evaluation candidate-000",
-        "completed_candidates": 0,
-        "planned_candidates": 7,
-        "solver_workers": 10
-      },
-      {
-        "search": "30deg/300x300-system-id-b02",
-        "phase": "BEM evaluation candidate-000",
-        "completed_candidates": 0,
-        "planned_candidates": 7,
-        "solver_workers": 10
-      }
-    ],
+    "running_searches": [],
     "domain_mapping": {
       "status": "running",
       "phase": "system-identification-batch-2",
@@ -34,6 +19,17 @@
       "planned_slot_count": 350,
       "completed_searches": 11,
       "score_materiality_points": 1.0
+    },
+    "controlled_learning": {
+      "schema_version": 1,
+      "status": "ready",
+      "phase": "controlled-learning-initializing",
+      "method": "held-cell-error-controlled-physical-contrasts",
+      "rounds": [],
+      "stop_rule": {
+        "maximum_rounds": 3,
+        "minimum_median_relative_rmse_improvement": 0.02
+      }
     }
   },
   "phase_three_audit": {
@@ -939,13 +935,12 @@
     "cancelled": 3,
     "complete": 133,
     "geometry-rejected": 7,
-    "running": 2,
-    "superseded": 2
+    "superseded": 4
   },
-  "unique_candidate_count": 864,
+  "unique_candidate_count": 869,
   "coverage_counts": {
     "25": 121,
-    "30": 53,
+    "30": 58,
     "35": 101,
     "40": 99,
     "45": 289,
@@ -4901,16 +4896,16 @@
       ]
     },
     "k": {
-      "count": 232,
-      "score_improved_fraction": 0.5862068965517241,
+      "count": 233,
+      "score_improved_fraction": 0.5879828326180258,
       "median_delta": {
-        "score": 0.059502649063283286,
-        "mean_containment": -0.057845237372205816,
-        "profile_rms_error_db": 0.0027287305350846003,
-        "slice_energy_departure_db": 0.017870723818043055,
-        "outward_rise_violation_db": -0.0678282601227696,
-        "minus_six_rms_error_deg": 0.2759581914900471,
-        "high_frequency_coverage_error_deg": -0.828799003529507
+        "score": 0.06096293382458384,
+        "mean_containment": -0.057869130868652974,
+        "profile_rms_error_db": 0.002693241617036879,
+        "slice_energy_departure_db": 0.01783904244167156,
+        "outward_rise_violation_db": -0.06796684005870701,
+        "minus_six_rms_error_deg": 0.27583282775971796,
+        "high_frequency_coverage_error_deg": -0.827460166205908
       },
       "median_dominant_bunching_shift_octaves": 0.0,
       "strata": [
@@ -4952,9 +4947,9 @@
         },
         {
           "stratum": "high starting mean_containment",
-          "count": 116,
-          "score_improved_fraction": 0.6120689655172413,
-          "median_score_delta": 0.07212132916379943
+          "count": 117,
+          "score_improved_fraction": 0.6153846153846154,
+          "median_score_delta": 0.07287034348676968
         },
         {
           "stratum": "low starting profile_rms_error_db",
@@ -4964,9 +4959,9 @@
         },
         {
           "stratum": "high starting profile_rms_error_db",
-          "count": 116,
-          "score_improved_fraction": 0.6206896551724138,
-          "median_score_delta": 0.11764605138924367
+          "count": 117,
+          "score_improved_fraction": 0.6239316239316239,
+          "median_score_delta": 0.1195761961943731
         },
         {
           "stratum": "low starting slice_energy_departure_db",
@@ -4976,9 +4971,9 @@
         },
         {
           "stratum": "high starting slice_energy_departure_db",
-          "count": 116,
-          "score_improved_fraction": 0.5689655172413793,
-          "median_score_delta": 0.07212132916379943
+          "count": 117,
+          "score_improved_fraction": 0.5726495726495726,
+          "median_score_delta": 0.07287034348676968
         },
         {
           "stratum": "low starting outward_rise_violation_db",
@@ -4988,9 +4983,9 @@
         },
         {
           "stratum": "high starting outward_rise_violation_db",
-          "count": 116,
-          "score_improved_fraction": 0.7155172413793104,
-          "median_score_delta": 0.13222339725301424
+          "count": 117,
+          "score_improved_fraction": 0.717948717948718,
+          "median_score_delta": 0.1354553742304745
         },
         {
           "stratum": "low starting minus_six_rms_error_deg",
@@ -5000,9 +4995,9 @@
         },
         {
           "stratum": "high starting minus_six_rms_error_deg",
-          "count": 116,
-          "score_improved_fraction": 0.4827586206896552,
-          "median_score_delta": -0.007546156417433281
+          "count": 117,
+          "score_improved_fraction": 0.48717948717948717,
+          "median_score_delta": -0.007366569894514896
         },
         {
           "stratum": "low starting high_frequency_coverage_error_deg",
@@ -5012,9 +5007,9 @@
         },
         {
           "stratum": "high starting high_frequency_coverage_error_deg",
-          "count": 116,
-          "score_improved_fraction": 0.7413793103448276,
-          "median_score_delta": 0.18977535554547842
+          "count": 117,
+          "score_improved_fraction": 0.7435897435897436,
+          "median_score_delta": 0.1871323573722634
         }
       ],
       "transitions": [
@@ -5024,6 +5019,13 @@
           "count": 6,
           "score_improved_fraction": 0.8333333333333334,
           "median_score_delta": 2.3291909938442643
+        },
+        {
+          "from": 3.0,
+          "to": 5.0,
+          "count": 1,
+          "score_improved_fraction": 1.0,
+          "median_score_delta": 8.366010111602918
         },
         {
           "from": 3.5,
@@ -5154,16 +5156,16 @@
       ]
     },
     "n": {
-      "count": 259,
-      "score_improved_fraction": 0.4517374517374517,
+      "count": 260,
+      "score_improved_fraction": 0.45384615384615384,
       "median_delta": {
-        "score": -0.024869089333677152,
-        "mean_containment": 0.04408302128021546,
-        "profile_rms_error_db": -0.0023175525301075695,
-        "slice_energy_departure_db": 0.00101195358736339,
-        "outward_rise_violation_db": 0.0012119590005124081,
-        "minus_six_rms_error_deg": 0.06663904858027969,
-        "high_frequency_coverage_error_deg": -0.2091351140315183
+        "score": -0.02305947547062459,
+        "mean_containment": 0.04398679750821799,
+        "profile_rms_error_db": -0.0024250408185364503,
+        "slice_energy_departure_db": 0.0010147465829026259,
+        "outward_rise_violation_db": 0.001165506064991828,
+        "minus_six_rms_error_deg": 0.06778418007688813,
+        "high_frequency_coverage_error_deg": -0.21321267358341878
       },
       "median_dominant_bunching_shift_octaves": 0.0,
       "strata": [
@@ -5199,9 +5201,9 @@
         },
         {
           "stratum": "low starting mean_containment",
-          "count": 129,
-          "score_improved_fraction": 0.4263565891472868,
-          "median_score_delta": -0.05000843314290648
+          "count": 130,
+          "score_improved_fraction": 0.4307692307692308,
+          "median_score_delta": -0.04825952110786602
         },
         {
           "stratum": "high starting mean_containment",
@@ -5211,21 +5213,21 @@
         },
         {
           "stratum": "low starting profile_rms_error_db",
-          "count": 129,
-          "score_improved_fraction": 0.3953488372093023,
-          "median_score_delta": -0.03395250428351915
+          "count": 130,
+          "score_improved_fraction": 0.4,
+          "median_score_delta": -0.03348109173047931
         },
         {
           "stratum": "high starting profile_rms_error_db",
           "count": 130,
           "score_improved_fraction": 0.5076923076923077,
-          "median_score_delta": 0.029658713840227335
+          "median_score_delta": 0.04278202567002154
         },
         {
           "stratum": "low starting slice_energy_departure_db",
-          "count": 129,
-          "score_improved_fraction": 0.4108527131782946,
-          "median_score_delta": -0.04179819125350548
+          "count": 130,
+          "score_improved_fraction": 0.4153846153846154,
+          "median_score_delta": -0.03995246796296925
         },
         {
           "stratum": "high starting slice_energy_departure_db",
@@ -5235,9 +5237,9 @@
         },
         {
           "stratum": "low starting outward_rise_violation_db",
-          "count": 129,
-          "score_improved_fraction": 0.37209302325581395,
-          "median_score_delta": -0.04179819125350548
+          "count": 130,
+          "score_improved_fraction": 0.3769230769230769,
+          "median_score_delta": -0.04059576314946156
         },
         {
           "stratum": "high starting outward_rise_violation_db",
@@ -5247,21 +5249,21 @@
         },
         {
           "stratum": "low starting minus_six_rms_error_deg",
-          "count": 129,
-          "score_improved_fraction": 0.4573643410852713,
-          "median_score_delta": -0.024869089333677152
+          "count": 130,
+          "score_improved_fraction": 0.45384615384615384,
+          "median_score_delta": -0.02746760487058708
         },
         {
           "stratum": "high starting minus_six_rms_error_deg",
           "count": 130,
-          "score_improved_fraction": 0.4461538461538462,
-          "median_score_delta": -0.02422240085539329
+          "score_improved_fraction": 0.45384615384615384,
+          "median_score_delta": -0.020124370161660465
         },
         {
           "stratum": "low starting high_frequency_coverage_error_deg",
-          "count": 129,
-          "score_improved_fraction": 0.3798449612403101,
-          "median_score_delta": -0.038106744672433024
+          "count": 130,
+          "score_improved_fraction": 0.38461538461538464,
+          "median_score_delta": -0.037733998489287046
         },
         {
           "stratum": "high starting high_frequency_coverage_error_deg",
@@ -5340,6 +5342,13 @@
           "count": 3,
           "score_improved_fraction": 1.0,
           "median_score_delta": 0.2237615870119214
+        },
+        {
+          "from": 6.0,
+          "to": 14.0,
+          "count": 1,
+          "score_improved_fraction": 1.0,
+          "median_score_delta": 0.951088873951079
         },
         {
           "from": 6.25,
