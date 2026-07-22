@@ -342,6 +342,61 @@ def generate_report(project_root: Path, output: Path) -> Path:
         "<table class='design-map'><thead><tr><th>Mouth / coverage</th>" +
         design_map_header + "</tr></thead><tbody>" +
         "".join(design_map_rows) + "</tbody></table>")
+
+    sampling_points = []
+    for row in candidate_rows:
+        candidate = row["candidate"]
+        derived = candidate.get("derived", {})
+        values = candidate.get("values", {})
+        axes = (derived.get("s_h"), derived.get("s_v"), values.get("k_h"),
+                values.get("k_v"), values.get("n_h"), values.get("n_v"))
+        if row["surface_ranking_score"] is None or not all(
+                isinstance(value, (int, float)) for value in axes):
+            continue
+        report_path = row.get("report_path")
+        sampling_points.append({
+            "mouth": row["search"]["mouth"],
+            "coverage": row["search"]["coverage"],
+            "s": fmean((float(axes[0]), float(axes[1]))),
+            "k": fmean((float(axes[2]), float(axes[3]))),
+            "n": fmean((float(axes[4]), float(axes[5]))),
+            "score": float(row["surface_ranking_score"]),
+            "candidate": row["artifact_stem"],
+            "report": (str(report_path.relative_to(project_root))
+                       if report_path is not None else ""),
+        })
+    sampling_groups: dict[tuple[float, float], list[dict[str, Any]]] = {}
+    for point in sampling_points:
+        sampling_groups.setdefault((point["mouth"], point["coverage"]), []).append(point)
+    default_sampling_key = max(
+        sampling_groups, key=lambda key: (len(sampling_groups[key]),
+                                          -abs(key[0] - 400), -abs(key[1] - 45)))
+    sampling_rows = []
+    for mouth in design_mouths:
+        cells = [f"<th scope='row'>{mouth:g} mm</th>"]
+        for coverage in design_coverages:
+            points = sampling_groups.get((mouth, coverage), [])
+            if not points:
+                cells.append("<td class='sampling-empty'>—</td>")
+                continue
+            def extent(name: str) -> str:
+                extent_values = [float(point[name]) for point in points]
+                return f"{min(extent_values):g}–{max(extent_values):g}"
+            active = " active" if (mouth, coverage) == default_sampling_key else ""
+            cells.append(
+                f"<td><button type='button' class='sampling-cell{active}' "
+                f"data-sampling-key='{mouth:g}:{coverage:g}'>"
+                f"<strong>{len(points)}</strong><span>S {extent('s')}</span>"
+                f"<span>K {extent('k')} · N {extent('n')}</span></button></td>")
+        sampling_rows.append("<tr>" + "".join(cells) + "</tr>")
+    sampling_matrix_html = (
+        "<table class='sampling-matrix'><thead><tr><th>Mouth / coverage</th>" +
+        design_map_header + "</tr></thead><tbody>" +
+        "".join(sampling_rows) + "</tbody></table>")
+    sampling_data_json = json.dumps(sampling_points, separators=(",", ":"))
+    default_sampling_json = json.dumps(
+        f"{default_sampling_key[0]:g}:{default_sampling_key[1]:g}")
+
     def surface_pair(candidate: dict[str, Any], path: tuple[str, ...],
                      suffix: str = "", scale: float = 1.0) -> tuple[str, str]:
         result = candidate.get("surface_diagnostics", {})
@@ -555,8 +610,10 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 .column-controls,.angle-controls{{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}}.column-toggle,.angle-filter{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true'],.angle-filter[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}.filter-count{{margin-left:5px;color:var(--muted);font-size:.9rem}}
 .show-more{{display:block;margin:14px auto 2px;border:1px solid var(--accent);border-radius:999px;padding:8px 16px;background:#173c39;color:var(--ink);cursor:pointer}}
 .design-map{{table-layout:fixed;min-width:1100px}}.design-map th:first-child{{width:210px;overflow:hidden}}.design-cell{{min-width:142px;border:1px solid var(--line);background:#17212a}}.design-cell>span{{display:block;margin-top:4px;font-size:.82rem;color:#c1cbd2;white-space:nowrap}}.design-score{{display:block;font-size:1.5rem;line-height:1}}.design-score a{{color:inherit;text-decoration:none}}.design-cell.excellent{{background:#174638}}.design-cell.good{{background:#173c3c}}.design-cell.fair{{background:#3d3820}}.design-cell.low{{background:#452827}}.design-cell.unmeasured{{background:#131920;text-align:center;vertical-align:middle}}.design-state{{width:max-content;padding:2px 6px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;font-size:.68rem!important}}.design-state.refined,.design-state.bounded{{background:rgba(105,214,200,.16);color:#9af0df}}.design-state.baseline{{background:rgba(148,163,189,.16);color:#c8d0d8}}.design-state.provisional{{background:rgba(183,121,31,.25);color:#f6d39a}}.design-state.limited{{background:rgba(180,83,83,.25);color:#ffb2b2}}
+.sampling-matrix{{table-layout:fixed;min-width:1100px}}.sampling-matrix th:first-child{{width:210px}}.sampling-matrix td{{padding:3px}}.sampling-cell{{width:100%;min-height:68px;border:1px solid transparent;border-radius:6px;padding:7px;background:#17212a;color:var(--ink);text-align:left;cursor:pointer}}.sampling-cell.active{{border-color:var(--accent);background:#173c39}}.sampling-cell strong,.sampling-cell span{{display:block}}.sampling-cell span{{margin-top:3px;color:var(--muted);font-size:.78rem;white-space:nowrap}}.sampling-empty{{color:var(--muted);text-align:center}}.sampling-views{{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}}.sampling-view{{min-width:0;background:#0d1319;border:1px solid var(--line);border-radius:8px;padding:8px}}.sampling-view h3{{font-size:1rem}}.sampling-canvas{{display:block;width:100%;height:390px;touch-action:none}}#sampling-3d{{cursor:grab}}#sampling-3d:active{{cursor:grabbing}}.sampling-caption{{color:var(--muted);font-size:.82rem;margin:6px 0 0}}#sampling-selection{{color:var(--accent)}}
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
+@media(max-width:900px){{.sampling-views{{grid-template-columns:1fr}}}}
 @media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
 </style></head><body><main>
 <h1>Mouth-size / coverage grid</h1>
@@ -577,6 +634,16 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <h2>Design map</h2>
 <p class='muted'>Choose a mouth and target half-coverage, then open the best measured score in that cell. Parameters are the current best prescription; provisional cells may change as their searches finish.</p>
 {design_map_html}
+</section>
+<section>
+<h2>Sampling extent</h2>
+<p class='muted'>Select a mouth/coverage cell to inspect measured S, K, and N coordinates. Counts and ranges include actual completed candidates only.</p>
+{sampling_matrix_html}
+<p><strong id='sampling-selection'></strong></p>
+<div class='sampling-views'>
+<div class='sampling-view'><h3>S × K, colored by N</h3><canvas id='sampling-2d' class='sampling-canvas'></canvas><p class='sampling-caption'>Point size increases with surface score. Click a point to open its candidate report.</p></div>
+<div class='sampling-view'><h3>Measured S / K / N point cloud</h3><canvas id='sampling-3d' class='sampling-canvas'></canvas><p class='sampling-caption'>Drag to rotate; wheel to zoom. No interpolated surface is drawn.</p></div>
+</div>
 </section>
 <section>
 <h2>Candidates</h2>
@@ -600,6 +667,69 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 </section>
 <script>
 (() => {{
+  const samplingPoints = {sampling_data_json};
+  let samplingKey = {default_sampling_json};
+  let samplingYaw = -0.65, samplingPitch = 0.65, samplingZoom = 0.82, samplingDrag = null;
+  let projected2d = [];
+  const sampling2d = document.getElementById('sampling-2d');
+  const sampling3d = document.getElementById('sampling-3d');
+  const samplingSelection = document.getElementById('sampling-selection');
+  const cellPoints = () => {{
+    const [mouth, coverage] = samplingKey.split(':').map(Number);
+    return samplingPoints.filter(point => point.mouth === mouth && point.coverage === coverage);
+  }};
+  const canvasContext = canvas => {{
+    const ratio = window.devicePixelRatio || 1;
+    const rect = canvas.getBoundingClientRect();
+    canvas.width = Math.round(rect.width * ratio); canvas.height = Math.round(rect.height * ratio);
+    const context = canvas.getContext('2d'); context.setTransform(ratio,0,0,ratio,0,0);
+    context.clearRect(0,0,rect.width,rect.height); return [context,rect];
+  }};
+  const limits = (points, name) => {{
+    const values = points.map(point => point[name]);
+    let low=Math.min(...values), high=Math.max(...values);
+    const pad=Math.max((high-low)*.1,.08); return [low-pad,high+pad];
+  }};
+  const nColor = (n, range) => {{
+    const fraction=(n-range[0])/Math.max(range[1]-range[0],1e-9);
+    return `hsl(${{Math.round(190-fraction*150)}} 70% 62%)`;
+  }};
+  const drawSampling2d = () => {{
+    const points=cellPoints(); if (!points.length) return;
+    const [context,rect]=canvasContext(sampling2d), margin={{left:48,right:18,top:22,bottom:42}};
+    const sRange=limits(points,'s'), kRange=limits(points,'k'), nRange=limits(points,'n');
+    const sx=s=>margin.left+(s-sRange[0])/(sRange[1]-sRange[0])*(rect.width-margin.left-margin.right);
+    const sy=k=>rect.height-margin.bottom-(k-kRange[0])/(kRange[1]-kRange[0])*(rect.height-margin.top-margin.bottom);
+    context.strokeStyle='#263541'; context.fillStyle='#94a3ad'; context.font='11px system-ui';
+    for(let i=0;i<5;i++){{const f=i/4,x=margin.left+f*(rect.width-margin.left-margin.right),y=margin.top+f*(rect.height-margin.top-margin.bottom);context.beginPath();context.moveTo(x,margin.top);context.lineTo(x,rect.height-margin.bottom);context.moveTo(margin.left,y);context.lineTo(rect.width-margin.right,y);context.stroke();context.fillText((sRange[0]+f*(sRange[1]-sRange[0])).toFixed(2),x-10,rect.height-20);context.fillText((kRange[1]-f*(kRange[1]-kRange[0])).toFixed(2),5,y+4);}}
+    projected2d=points.map(point=>({{point,x:sx(point.s),y:sy(point.k)}}));
+    for(const item of projected2d){{const radius=3+Math.max(0,item.point.score-70)*.08;context.beginPath();context.arc(item.x,item.y,radius,0,Math.PI*2);context.fillStyle=nColor(item.point.n,nRange);context.globalAlpha=.78;context.fill();context.globalAlpha=1;context.strokeStyle='#071015';context.stroke();}}
+    context.fillStyle='#e5edf2';context.font='12px system-ui';context.fillText('S',rect.width/2,rect.height-5);context.save();context.translate(13,rect.height/2);context.rotate(-Math.PI/2);context.fillText('K',0,0);context.restore();context.fillStyle=nColor(nRange[0],nRange);context.fillText(`N ${{nRange[0].toFixed(1)}}`,margin.left,14);context.fillStyle=nColor(nRange[1],nRange);context.fillText(`N ${{nRange[1].toFixed(1)}}`,margin.left+58,14);
+  }};
+  const drawSampling3d = () => {{
+    const points=cellPoints(); if (!points.length) return;
+    const [context,rect]=canvasContext(sampling3d); const sRange=limits(points,'s'),kRange=limits(points,'k'),nRange=limits(points,'n');
+    const normalized=point=>({{x:(point.s-sRange[0])/(sRange[1]-sRange[0])*2-1,y:(point.k-kRange[0])/(kRange[1]-kRange[0])*2-1,z:(point.n-nRange[0])/(nRange[1]-nRange[0])*2-1,point}});
+    const scale=Math.min(rect.width,rect.height)*.3*samplingZoom;
+    const project=value=>{{const x=value.x*Math.cos(samplingYaw)-value.y*Math.sin(samplingYaw),y=value.x*Math.sin(samplingYaw)+value.y*Math.cos(samplingYaw);return {{x:rect.width/2+x*scale,y:rect.height/2+(y*Math.cos(samplingPitch)-value.z*Math.sin(samplingPitch))*scale,depth:y*Math.sin(samplingPitch)+value.z*Math.cos(samplingPitch),point:value.point}};}};
+    const projected=points.map(normalized).map(project).sort((a,b)=>a.depth-b.depth);
+    context.strokeStyle='#30414d';context.beginPath();context.moveTo(rect.width*.15,rect.height*.82);context.lineTo(rect.width*.85,rect.height*.82);context.stroke();
+    for(const item of projected){{context.beginPath();context.arc(item.x,item.y,3.8,0,Math.PI*2);context.fillStyle=nColor(item.point.n,nRange);context.globalAlpha=.82;context.fill();context.globalAlpha=1;context.strokeStyle='#071015';context.stroke();}}
+    context.fillStyle='#94a3ad';context.font='12px system-ui';context.fillText('S / K / N measured coordinates',12,20);
+  }};
+  const renderSampling = () => {{
+    const [mouth,coverage]=samplingKey.split(':'); const points=cellPoints();
+    samplingSelection.textContent=`${{mouth}} mm / ${{coverage}}° — ${{points.length}} measured candidates`;
+    document.querySelectorAll('[data-sampling-key]').forEach(button=>button.classList.toggle('active',button.dataset.samplingKey===samplingKey));
+    drawSampling2d();drawSampling3d();
+  }};
+  document.querySelectorAll('[data-sampling-key]').forEach(button=>button.addEventListener('click',()=>{{samplingKey=button.dataset.samplingKey;renderSampling();}}));
+  sampling2d.addEventListener('click',event=>{{const rect=sampling2d.getBoundingClientRect(),x=event.clientX-rect.left,y=event.clientY-rect.top;const nearest=projected2d.reduce((best,item)=>{{const distance=Math.hypot(item.x-x,item.y-y);return !best||distance<best.distance?{{...item,distance}}:best;}},null);if(nearest&&nearest.distance<12&&nearest.point.report)location.href=nearest.point.report;}});
+  sampling3d.addEventListener('pointerdown',event=>{{samplingDrag=[event.clientX,event.clientY];sampling3d.setPointerCapture(event.pointerId);}});
+  sampling3d.addEventListener('pointermove',event=>{{if(!samplingDrag)return;samplingYaw+=(event.clientX-samplingDrag[0])*.008;samplingPitch=Math.max(.15,Math.min(1.3,samplingPitch+(event.clientY-samplingDrag[1])*.006));samplingDrag=[event.clientX,event.clientY];drawSampling3d();}});
+  sampling3d.addEventListener('pointerup',()=>samplingDrag=null);
+  sampling3d.addEventListener('wheel',event=>{{event.preventDefault();samplingZoom=Math.max(.55,Math.min(1.4,samplingZoom-event.deltaY*.001));drawSampling3d();}},{{passive:false}});
+  window.addEventListener('resize',renderSampling);renderSampling();
   document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
     button.addEventListener('click', () => {{
       const visible = button.getAttribute('aria-pressed') !== 'true';
