@@ -1,11 +1,11 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-22T09:28:01.465342-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-22T09:34:40.932518-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
 - 820 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: complete: 112, geometry-rejected: 7, running: 1.
+- Search states: complete: 112, geometry-rejected: 7, running: 3.
 - Study program: `coupled` (running).
 - S-closure certificate: complete; closed: 29, geometry-limited: 7.
 - Candidate counts by coverage half-angle: 25°: 110, 30°: 39, 35°: 90, 40°: 97, 45°: 289, 50°: 195.

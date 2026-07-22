@@ -3,552 +3,522 @@
   "phase": "coupled",
   "events": [
     {
-      "time_unix": 1784697918.9443042,
+      "time_unix": 1784737809.0422242,
       "phase": "baseline-and-s-closure",
       "task": "40deg/400x400-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697918.944844,
+      "time_unix": 1784737809.0427961,
       "phase": "baseline-and-s-closure",
       "task": "40deg/350x350-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697918.975584,
+      "time_unix": 1784737809.081009,
       "phase": "baseline-and-s-closure",
       "task": "40deg/400x400-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697918.993132,
+      "time_unix": 1784737809.091779,
       "phase": "baseline-and-s-closure",
       "task": "40deg/450x450-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697918.9939148,
+      "time_unix": 1784737809.0920389,
       "phase": "baseline-and-s-closure",
       "task": "40deg/350x350-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.0008802,
+      "time_unix": 1784737809.098737,
       "phase": "baseline-and-s-closure",
       "task": "40deg/300x300-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.032982,
+      "time_unix": 1784737809.1303182,
       "phase": "baseline-and-s-closure",
       "task": "40deg/450x450-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.0550249,
+      "time_unix": 1784737809.141887,
       "phase": "baseline-and-s-closure",
       "task": "40deg/500x500-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.05544,
+      "time_unix": 1784737809.1529112,
       "phase": "baseline-and-s-closure",
       "task": "40deg/300x300-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.0622919,
+      "time_unix": 1784737809.1601799,
       "phase": "baseline-and-s-closure",
       "task": "40deg/250x250-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.095191,
+      "time_unix": 1784737809.192959,
       "phase": "baseline-and-s-closure",
       "task": "40deg/500x500-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.107827,
+      "time_unix": 1784737809.203615,
       "phase": "baseline-and-s-closure",
       "task": "45deg/400x400-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.120908,
+      "time_unix": 1784737809.215894,
       "phase": "baseline-and-s-closure",
       "task": "40deg/250x250-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.12139,
+      "time_unix": 1784737809.223701,
       "phase": "baseline-and-s-closure",
       "task": "45deg/350x350-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.159147,
+      "time_unix": 1784737809.2469382,
       "phase": "baseline-and-s-closure",
       "task": "45deg/400x400-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.168372,
+      "time_unix": 1784737809.254038,
       "phase": "baseline-and-s-closure",
       "task": "45deg/450x450-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.168788,
+      "time_unix": 1784737809.262163,
       "phase": "baseline-and-s-closure",
       "task": "45deg/350x350-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.169081,
+      "time_unix": 1784737809.2624269,
       "phase": "baseline-and-s-closure",
       "task": "45deg/300x300-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.196911,
+      "time_unix": 1784737809.290038,
       "phase": "baseline-and-s-closure",
       "task": "45deg/450x450-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.198484,
+      "time_unix": 1784737809.296171,
       "phase": "baseline-and-s-closure",
       "task": "45deg/500x500-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.212654,
+      "time_unix": 1784737809.305726,
       "phase": "baseline-and-s-closure",
       "task": "45deg/300x300-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.219567,
+      "time_unix": 1784737809.312597,
       "phase": "baseline-and-s-closure",
       "task": "45deg/250x250-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.247067,
+      "time_unix": 1784737809.338938,
       "phase": "baseline-and-s-closure",
       "task": "45deg/500x500-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.247914,
+      "time_unix": 1784737809.339365,
       "phase": "baseline-and-s-closure",
       "task": "50deg/400x400-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.270617,
+      "time_unix": 1784737809.36169,
       "phase": "baseline-and-s-closure",
       "task": "45deg/250x250-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.271012,
+      "time_unix": 1784737809.361994,
       "phase": "baseline-and-s-closure",
       "task": "50deg/350x350-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.3278441,
+      "time_unix": 1784737809.417055,
       "phase": "baseline-and-s-closure",
       "task": "50deg/400x400-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.336212,
+      "time_unix": 1784737809.425162,
       "phase": "baseline-and-s-closure",
       "task": "50deg/450x450-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.340912,
+      "time_unix": 1784737809.4290712,
       "phase": "baseline-and-s-closure",
       "task": "50deg/350x350-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.341328,
+      "time_unix": 1784737809.438756,
       "phase": "baseline-and-s-closure",
       "task": "50deg/300x300-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.393908,
+      "time_unix": 1784737809.472229,
       "phase": "baseline-and-s-closure",
       "task": "50deg/450x450-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.406443,
+      "time_unix": 1784737809.481333,
       "phase": "baseline-and-s-closure",
       "task": "50deg/500x500-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.407021,
+      "time_unix": 1784737809.503016,
       "phase": "baseline-and-s-closure",
       "task": "50deg/300x300-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.416862,
+      "time_unix": 1784737809.504509,
       "phase": "baseline-and-s-closure",
       "task": "50deg/250x250-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.448818,
+      "time_unix": 1784737809.534688,
       "phase": "baseline-and-s-closure",
       "task": "50deg/500x500-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.458567,
+      "time_unix": 1784737809.535143,
       "phase": "baseline-and-s-closure",
       "task": "30deg/400x400-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.469837,
+      "time_unix": 1784737809.55807,
       "phase": "baseline-and-s-closure",
       "task": "50deg/250x250-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.474642,
+      "time_unix": 1784737809.562847,
       "phase": "baseline-and-s-closure",
       "task": "30deg/350x350-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.488092,
+      "time_unix": 1784737809.5720708,
       "phase": "baseline-and-s-closure",
       "task": "30deg/400x400-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.498059,
+      "time_unix": 1784737809.577228,
       "phase": "baseline-and-s-closure",
       "task": "30deg/450x450-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.508298,
+      "time_unix": 1784737809.597192,
       "phase": "baseline-and-s-closure",
       "task": "30deg/350x350-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.513637,
+      "time_unix": 1784737809.6098719,
       "phase": "baseline-and-s-closure",
       "task": "30deg/300x300-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.526581,
+      "time_unix": 1784737809.610353,
       "phase": "baseline-and-s-closure",
       "task": "30deg/450x450-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.5319371,
+      "time_unix": 1784737809.614487,
       "phase": "baseline-and-s-closure",
       "task": "30deg/500x500-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.5508428,
+      "time_unix": 1784737809.639387,
       "phase": "baseline-and-s-closure",
       "task": "30deg/300x300-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.565187,
+      "time_unix": 1784737809.6480498,
       "phase": "baseline-and-s-closure",
       "task": "30deg/250x250-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.565572,
+      "time_unix": 1784737809.6483998,
       "phase": "baseline-and-s-closure",
       "task": "30deg/500x500-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.570584,
+      "time_unix": 1784737809.6487198,
       "phase": "baseline-and-s-closure",
       "task": "35deg/400x400-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.589616,
+      "time_unix": 1784737809.679436,
       "phase": "baseline-and-s-closure",
       "task": "30deg/250x250-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.595336,
+      "time_unix": 1784737809.687855,
       "phase": "baseline-and-s-closure",
       "task": "35deg/350x350-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.605375,
+      "time_unix": 1784737809.6881459,
       "phase": "baseline-and-s-closure",
       "task": "35deg/400x400-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.610843,
+      "time_unix": 1784737809.6920698,
       "phase": "baseline-and-s-closure",
       "task": "35deg/450x450-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.624233,
+      "time_unix": 1784737809.710763,
       "phase": "baseline-and-s-closure",
       "task": "35deg/350x350-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.629567,
+      "time_unix": 1784737809.715656,
       "phase": "baseline-and-s-closure",
       "task": "35deg/300x300-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.6347468,
+      "time_unix": 1784737809.716363,
       "phase": "baseline-and-s-closure",
       "task": "35deg/450x450-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.642982,
+      "time_unix": 1784737809.720345,
       "phase": "baseline-and-s-closure",
       "task": "35deg/500x500-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.643806,
+      "time_unix": 1784737809.7245052,
       "phase": "baseline-and-s-closure",
       "task": "35deg/300x300-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.6486871,
+      "time_unix": 1784737809.729345,
       "phase": "baseline-and-s-closure",
       "task": "35deg/250x250-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.654054,
+      "time_unix": 1784737809.7341719,
       "phase": "baseline-and-s-closure",
       "task": "35deg/500x500-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.661899,
+      "time_unix": 1784737809.734516,
       "phase": "baseline-and-s-closure",
       "task": "25deg/400x400-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.662931,
+      "time_unix": 1784737809.749037,
       "phase": "baseline-and-s-closure",
       "task": "35deg/250x250-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.6635032,
+      "time_unix": 1784737809.750995,
       "phase": "baseline-and-s-closure",
       "task": "25deg/350x350-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.7051709,
+      "time_unix": 1784737809.775542,
       "phase": "baseline-and-s-closure",
       "task": "25deg/400x400-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.7118652,
+      "time_unix": 1784737809.783246,
       "phase": "baseline-and-s-closure",
       "task": "25deg/450x450-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.7161212,
+      "time_unix": 1784737809.7937999,
       "phase": "baseline-and-s-closure",
       "task": "25deg/350x350-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.720304,
+      "time_unix": 1784737809.798006,
       "phase": "baseline-and-s-closure",
       "task": "25deg/300x300-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.724989,
+      "time_unix": 1784737809.80218,
       "phase": "baseline-and-s-closure",
       "task": "25deg/450x450-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.731909,
+      "time_unix": 1784737809.802468,
       "phase": "baseline-and-s-closure",
       "task": "25deg/500x500-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.73873,
+      "time_unix": 1784737809.821058,
       "phase": "baseline-and-s-closure",
       "task": "25deg/300x300-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.74437,
+      "time_unix": 1784737809.826498,
       "phase": "baseline-and-s-closure",
       "task": "25deg/250x250-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.757184,
+      "time_unix": 1784737809.82685,
       "phase": "baseline-and-s-closure",
       "task": "25deg/500x500-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.774722,
+      "time_unix": 1784737809.850039,
       "phase": "baseline-and-s-closure",
       "task": "25deg/250x250-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.834364,
+      "time_unix": 1784737809.909548,
       "phase": "kn-grids-and-canonical-extensions",
       "task": "45deg/300x300-canonical-s",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.8353522,
+      "time_unix": 1784737809.910125,
       "phase": "kn-grids-and-canonical-extensions",
       "task": "45deg/350x350-canonical-s",
       "status": "started"
     },
     {
-      "time_unix": 1784697919.951156,
-      "phase": "kn-grids-and-canonical-extensions",
-      "task": "45deg/350x350-canonical-s",
-      "status": "complete"
-    },
-    {
-      "time_unix": 1784697919.951561,
-      "phase": "kn-grids-and-canonical-extensions",
-      "task": "45deg/400x400-canonical-s",
-      "status": "started"
-    },
-    {
-      "time_unix": 1784697919.951853,
+      "time_unix": 1784737810.021621,
       "phase": "kn-grids-and-canonical-extensions",
       "task": "45deg/300x300-canonical-s",
       "status": "complete"
     },
     {
-      "time_unix": 1784697919.95853,
+      "time_unix": 1784737810.02203,
+      "phase": "kn-grids-and-canonical-extensions",
+      "task": "45deg/350x350-canonical-s",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784737810.022308,
+      "phase": "kn-grids-and-canonical-extensions",
+      "task": "45deg/400x400-canonical-s",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784737810.022601,
       "phase": "kn-grids-and-canonical-extensions",
       "task": "45deg/450x450-canonical-s",
       "status": "started"
     },
     {
-      "time_unix": 1784697920.0472069,
+      "time_unix": 1784737810.133319,
       "phase": "kn-grids-and-canonical-extensions",
       "task": "45deg/400x400-canonical-s",
       "status": "complete"
     },
     {
-      "time_unix": 1784697920.0587552,
+      "time_unix": 1784737810.13378,
       "phase": "kn-grids-and-canonical-extensions",
       "task": "45deg/500x500-canonical-s",
       "status": "started"
     },
     {
-      "time_unix": 1784697920.076573,
+      "time_unix": 1784737810.1341052,
       "phase": "kn-grids-and-canonical-extensions",
       "task": "45deg/450x450-canonical-s",
       "status": "complete"
     },
     {
-      "time_unix": 1784697920.114707,
+      "time_unix": 1784737810.182846,
       "phase": "kn-grids-and-canonical-extensions",
       "task": "45deg/500x500-canonical-s",
       "status": "complete"
     },
     {
-      "time_unix": 1784697920.266988,
+      "time_unix": 1784737810.333097,
       "phase": "coupled",
       "task": "40deg/400x400-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784697920.267499,
+      "time_unix": 1784737810.333688,
       "phase": "coupled",
       "task": "45deg/400x400-s-grid",
       "status": "started"
     },
     {
-      "time_unix": 1784706200.1970859,
-      "phase": "coupled",
-      "task": "40deg/400x400-s-grid",
-      "status": "complete"
-    },
-    {
-      "time_unix": 1784706200.197679,
-      "phase": "coupled",
-      "task": "45deg/350x350-s-grid",
-      "status": "started"
-    },
-    {
-      "time_unix": 1784719182.873322,
-      "phase": "coupled",
-      "task": "45deg/350x350-s-grid",
-      "status": "complete"
-    },
-    {
-      "time_unix": 1784719182.8739562,
-      "phase": "coupled",
-      "task": "50deg/400x400-s-grid",
-      "status": "started"
-    },
-    {
-      "time_unix": 1784723468.197761,
+      "time_unix": 1784737824.556133,
       "phase": "coupled",
       "task": "45deg/400x400-s-grid",
       "status": "complete"
     },
     {
-      "time_unix": 1784723468.198494,
+      "time_unix": 1784737824.556661,
       "phase": "coupled",
-      "task": "50deg/250x250-s-grid",
+      "task": "45deg/350x350-s-grid",
       "status": "started"
-    },
-    {
-      "time_unix": 1784726880.320195,
-      "phase": "coupled",
-      "task": "50deg/250x250-s-grid",
-      "status": "complete"
     }
   ],
   "workers": 2,
-  "started_at_unix": 1784697918.18047
+  "started_at_unix": 1784737808.280055
 }

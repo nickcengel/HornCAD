@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "snapshot_completed_at": "2026-07-22T09:28:01.465342-07:00",
+  "snapshot_completed_at": "2026-07-22T09:34:40.932518-07:00",
   "provisional": true,
   "study_progress": {
     "program_status": "running",
@@ -15,7 +15,7 @@
   "search_states": {
     "complete": 112,
     "geometry-rejected": 7,
-    "running": 1
+    "running": 3
   },
   "unique_candidate_count": 820,
   "coverage_counts": {
