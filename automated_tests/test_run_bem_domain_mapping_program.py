@@ -83,13 +83,18 @@ class BemDomainMappingProgramTests(unittest.TestCase):
             (root / "domain_mapping_state.json").write_text(json.dumps({
                 "phase": "domain-map-batch-2", "completed_searches": 25,
                 "planned_slots": planned_slots(),
+                "batch_1_status": "truncated-after-active-searches",
+                "batch_1_decision": {"abandoned_candidate_slots": 28},
             }))
             with patch.object(
                     domain_program, "materialize_batch", return_value=([], [])) as materialize, \
                     patch.object(domain_program, "_apply_response_surface_manifest"), \
                     patch.object(domain_program, "generate_report"):
-                domain_program.run_program(root, start_batch=2)
+                state = domain_program.run_program(root, start_batch=2)
         materialize.assert_called_once_with(root, 2, 10)
+        self.assertEqual(state["batch_1_status"],
+                         "truncated-after-active-searches")
+        self.assertEqual(state["batch_1_decision"]["abandoned_candidate_slots"], 28)
 
     def test_new_controls_snap_to_half_k_and_integer_n(self) -> None:
         self.assertEqual(snap_k_n(5.25, 8.75), (5.0, 9.0))

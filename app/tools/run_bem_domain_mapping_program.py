@@ -821,6 +821,9 @@ def run_program(root: Path, slots: int = 2, solver_workers: int = 10,
     }
     if previous.get("batch_1_proposals"):
         state["batch_1_proposals"] = previous["batch_1_proposals"]
+    for key in ("batch_1_status", "batch_1_decision"):
+        if key in previous:
+            state[key] = previous[key]
     _write_json(state_path, state)
     for batch in range(start_batch, 3):
         state["phase"] = f"domain-map-batch-{batch}"
