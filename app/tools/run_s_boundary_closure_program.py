@@ -18,8 +18,7 @@ from .generate_mouth_size_coverage_grid_report import generate_report
 from .run_bem_search import run_search
 
 
-LOWER_STEP = 0.2
-UPPER_STEP = 0.25
+INITIAL_BOUNDARY_STEP = 0.3
 MINIMUM_S = 0.05
 MAXIMUM_S = 8.0
 MAXIMUM_PROBES = 32
@@ -88,16 +87,40 @@ def closure_status(points: list[tuple[float, float, Path]]) -> tuple[str, float]
     return ("lower" if not lower else "upper"), best[0]
 
 
-def next_probe_s(status: str, best_s: float) -> float | None:
+def next_probe_s(status: str, best_s: float,
+                 directional_probe_count: int = 0) -> float | None:
+    step = INITIAL_BOUNDARY_STEP * 2 ** max(0, directional_probe_count)
     if status == "lower":
         if best_s <= MINIMUM_S + 1e-6:
             return None
-        return round(max(MINIMUM_S, best_s - LOWER_STEP), 4)
+        return round(max(MINIMUM_S, best_s - step), 4)
     if status == "upper":
         if best_s >= MAXIMUM_S - 1e-6:
             return None
-        return round(min(MAXIMUM_S, best_s + UPPER_STEP), 4)
+        return round(min(MAXIMUM_S, best_s + step), 4)
     return None
+
+
+def geometry_rejections(search_dirs: list[Path]) -> list[dict[str, Any]]:
+    """Return authored S coordinates rejected before a BEM evaluation."""
+    output = []
+    for search_dir in search_dirs:
+        state_path = search_dir / "search_state.json"
+        if not state_path.exists():
+            continue
+        state = json.loads(state_path.read_text(encoding="utf-8"))
+        if state.get("status") != "geometry-rejected":
+            continue
+        rejection = state.get("geometry_rejection", {})
+        value = rejection.get("derived", {}).get("s_h")
+        if value is None:
+            continue
+        output.append({
+            "s": float(value),
+            "reason": rejection.get("reason", "geometry rejected"),
+            "search_dir": search_dir,
+        })
+    return output
 
 
 def materialize_probe(seed_project: Path, baseline: Path, output: Path,
@@ -162,32 +185,39 @@ def close_baseline(root: Path, baseline: Path) -> dict[str, Any]:
     rounds = sorted(baseline.parent.glob(
         baseline.name.removesuffix("-s-grid") + "-s-boundary-r*"))
     for probe_number in range(1, MAXIMUM_PROBES + 1):
-        for rejected_round in rounds:
-            state_path = rejected_round / "search_state.json"
-            if not state_path.exists():
-                continue
-            rejected_state = json.loads(state_path.read_text(encoding="utf-8"))
-            if rejected_state.get("status") == "geometry-rejected":
-                rejection = rejected_state.get("geometry_rejection", {})
-                return {
-                    "baseline": str(baseline.relative_to(root)),
-                    "status": "geometry-limited",
-                    "best_s": max(completed_points([baseline, *rounds]),
-                                  key=lambda item: item[1])[0],
-                    "rejected_s": rejection.get("derived", {}).get("s_h"),
-                    "reason": rejection.get("reason", "geometry rejected"),
-                    "probes": len(rounds),
-                }
         points = completed_points([baseline, *rounds])
+        rejected = geometry_rejections(rounds)
         sentinel_s = authored_sentinel(baseline)
-        sentinel_measured = any(abs(point[0] - sentinel_s) <= 0.02
-                                for point in points)
+        sentinel_resolved = (
+            any(abs(point[0] - sentinel_s) <= 0.02 for point in points) or
+            any(abs(item["s"] - sentinel_s) <= 0.02 for item in rejected)
+        )
         status, best_s = closure_status(points)
-        if not sentinel_measured:
+        blocking_rejection = next((item for item in rejected if (
+            status == "lower" and item["s"] < best_s - 1e-3) or (
+            status == "upper" and item["s"] > best_s + 1e-3)), None)
+        if blocking_rejection is not None:
+            return {
+                "baseline": str(baseline.relative_to(root)),
+                "status": "geometry-limited", "side": status,
+                "best_s": best_s, "rejected_s": blocking_rejection["s"],
+                "reason": blocking_rejection["reason"], "probes": len(rounds),
+            }
+        if not sentinel_resolved:
             target = sentinel_s
             status = "sentinel"
         else:
-            target = next_probe_s(status, best_s)
+            baseline_best_s = max(completed_points([baseline]),
+                                  key=lambda item: item[1])[0]
+            directional_probe_count = sum(
+                (item[0] < baseline_best_s - 1e-3 if status == "lower"
+                 else item[0] > baseline_best_s + 1e-3)
+                for item in completed_points(rounds))
+            directional_probe_count += sum(
+                (item["s"] < baseline_best_s - 1e-3 if status == "lower"
+                 else item["s"] > baseline_best_s + 1e-3)
+                for item in rejected)
+            target = next_probe_s(status, best_s, directional_probe_count)
         if status == "closed":
             return {"baseline": str(baseline.relative_to(root)),
                     "status": "closed", "best_s": best_s,

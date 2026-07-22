@@ -5,6 +5,7 @@ from pathlib import Path
 import tempfile
 from types import SimpleNamespace
 import unittest
+from unittest import mock
 
 import yaml
 
@@ -29,13 +30,13 @@ class SBoundaryClosureTests(unittest.TestCase):
 
     def test_low_boundary_moves_down_until_bracketed(self) -> None:
         status, best = closure_status(self.points((0.7, 90), (1.0, 85)))
-        self.assertEqual((status, next_probe_s(status, best)), ("lower", 0.5))
-        status, best = closure_status(self.points((0.5, 88), (0.7, 90), (1.0, 85)))
+        self.assertEqual((status, next_probe_s(status, best)), ("lower", 0.4))
+        status, best = closure_status(self.points((0.4, 88), (0.7, 90), (1.0, 85)))
         self.assertEqual((status, best), ("closed", 0.7))
 
     def test_improving_boundary_continues_outward(self) -> None:
         status, best = closure_status(self.points((0.5, 92), (0.7, 90), (1.0, 85)))
-        self.assertEqual((status, next_probe_s(status, best)), ("lower", 0.3))
+        self.assertEqual((status, next_probe_s(status, best, 1)), ("lower", 0.05))
 
     def test_only_uniform_baseline_names_are_selected(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -84,19 +85,28 @@ class SBoundaryClosureTests(unittest.TestCase):
             loaded, _, _ = load_search(output / "search.yaml")
         self.assertNotIn("initial_pool", loaded)
 
-    def test_geometry_rejected_probe_closes_admissible_s_range(self) -> None:
+    def test_geometry_rejected_probe_closes_only_its_direction(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             baseline = root / "30deg" / "300x300-s-grid"
             rejected = root / "30deg" / "300x300-s-boundary-r01"
             baseline.mkdir(parents=True)
             rejected.mkdir()
+            (baseline / "search.yaml").write_text(yaml.safe_dump({
+                "bem_candidate_search": {"initial_pool": [{"label": "S=3.0"}]},
+            }))
+            (baseline / "project.yaml").write_text(yaml.safe_dump({
+                "horncad_config": {"horizontal_basis": {"solved_s": 2.5}},
+            }))
             (baseline / "search_state.json").write_text(json.dumps({
-                "status": "complete", "candidates": [{
-                    "id": "candidate-000", "status": "complete",
-                    "derived": {"s_h": 2.5},
-                    "surface_diagnostics": {"score": {"overall_percent": 80}},
-                }],
+                "status": "complete", "candidates": [
+                    {"id": "candidate-000", "status": "complete",
+                     "derived": {"s_h": 2.5},
+                     "surface_diagnostics": {"score": {"overall_percent": 80}}},
+                    {"id": "candidate-001", "status": "complete",
+                     "derived": {"s_h": 2.0},
+                     "surface_diagnostics": {"score": {"overall_percent": 75}}},
+                ],
             }))
             (rejected / "search_state.json").write_text(json.dumps({
                 "status": "geometry-rejected", "geometry_rejection": {
@@ -104,8 +114,49 @@ class SBoundaryClosureTests(unittest.TestCase):
             }))
             result = close_baseline(root, baseline)
         self.assertEqual(result["status"], "geometry-limited")
+        self.assertEqual(result["side"], "upper")
         self.assertEqual(result["best_s"], 2.5)
         self.assertEqual(result["rejected_s"], 3.0)
+
+    def test_rejected_high_s_sentinel_does_not_close_low_winner(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            baseline = root / "30deg" / "300x300-s-grid"
+            rejected = root / "30deg" / "300x300-s-boundary-r01"
+            baseline.mkdir(parents=True)
+            rejected.mkdir()
+            (baseline / "search.yaml").write_text(yaml.safe_dump({
+                "bem_candidate_search": {"initial_pool": [{"label": "S=3.0"}]},
+            }))
+            (baseline / "project.yaml").write_text(yaml.safe_dump({
+                "horncad_config": {"horizontal_basis": {"solved_s": 0.7}},
+            }))
+            (baseline / "search_state.json").write_text(json.dumps({
+                "status": "complete", "candidates": [
+                    {"id": "candidate-000", "status": "complete",
+                     "derived": {"s_h": 0.7},
+                     "surface_diagnostics": {"score": {"overall_percent": 90}}},
+                    {"id": "candidate-001", "status": "complete",
+                     "derived": {"s_h": 1.0},
+                     "surface_diagnostics": {"score": {"overall_percent": 85}}},
+                ],
+            }))
+            (rejected / "search_state.json").write_text(json.dumps({
+                "status": "geometry-rejected", "geometry_rejection": {
+                    "reason": "late radial growth", "derived": {"s_h": 3.0}},
+            }))
+            with mock.patch(
+                    "app.tools.run_s_boundary_closure_program.materialize_probe") as materialize:
+                with mock.patch(
+                        "app.tools.run_s_boundary_closure_program.run_search",
+                        return_value={"status": "geometry-rejected",
+                                      "geometry_rejection": {
+                                          "reason": "low-side limit",
+                                          "derived": {"s_h": 0.4}}}):
+                    materialize.return_value = baseline.with_name(
+                        "300x300-s-boundary-r02")
+                    close_baseline(root, baseline)
+            self.assertEqual(materialize.call_args.args[-1], 0.4)
 
 
 if __name__ == "__main__":
