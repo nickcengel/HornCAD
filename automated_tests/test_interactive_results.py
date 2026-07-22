@@ -11,7 +11,7 @@ import numpy as np
 
 from app.tools.interactive_results import (
     AIR_DENSITY_KG_M3, SOUND_SPEED_M_S, _frequency_axis,
-    _frequency_grid_values, _positive_half_angle,
+    _frequency_grid_values, _heatmap_coloraxis, _positive_half_angle,
     _crossover_transition_weights, comparison_report, comparison_diagnostics,
     coverage_diagnostics, load_run, single_report,
 )
@@ -21,6 +21,19 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class InteractiveResultsTests(unittest.TestCase):
+    def test_heatmap_coloraxis_preserves_positive_db_values(self) -> None:
+        coloraxis = _heatmap_coloraxis({
+            "horizontal": np.array([[-30.0, 0.0, 1.2]]),
+            "vertical": np.array([[-20.0, 0.0, 4.1]]),
+        })
+
+        self.assertEqual(coloraxis["cmin"], -30.0)
+        self.assertEqual(coloraxis["cmax"], 5.0)
+        self.assertEqual(coloraxis["colorscale"][-1][1], "#fff7f7")
+        zero_stop = next(stop for stop in coloraxis["colorscale"]
+                         if stop[1] == "#dc2626")
+        self.assertLess(zero_stop[0], 1.0)
+
     def test_frequency_axis_uses_readable_major_ticks_and_minor_grid(self) -> None:
         axis = _frequency_axis(np.array([500.0, 8000.0]))
         self.assertEqual(axis["tickvals"],
@@ -88,7 +101,7 @@ class InteractiveResultsTests(unittest.TestCase):
             surface_diagnostics = json.loads(
                 fixed.with_name("surface_diagnostics.json").read_text())
             self.assertIn("Horn acoustic parameters", single_text)
-            self.assertIn("report-schema: canonical-v10", single_text)
+            self.assertIn("report-schema: canonical-v11", single_text)
             self.assertIn("Surface diagnostics", single_text)
             self.assertIn("Coverage-window containment", single_text)
             self.assertIn("Angular slice-energy departure", single_text)

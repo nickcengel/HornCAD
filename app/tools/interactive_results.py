@@ -701,6 +701,38 @@ def _frequency_grid_values(frequencies: np.ndarray) -> tuple[list[float], list[f
     return major, fine
 
 
+def _heatmap_coloraxis(run: dict[str, Any]) -> dict[str, Any]:
+    """Return a shared dB scale that preserves positive off-axis response."""
+    finite_values = np.concatenate([
+        np.asarray(run[key], dtype=float)[
+            np.isfinite(np.asarray(run[key], dtype=float))]
+        for key in ("horizontal", "vertical")
+    ])
+    positive_peak = max(0.0, float(np.max(finite_values))) if finite_values.size else 0.0
+    positive_limit = max(3.0, float(np.ceil(positive_peak)))
+    negative_limit = -30.0
+    span = positive_limit - negative_limit
+
+    def position(db: float) -> float:
+        return (db - negative_limit) / span
+
+    colorscale = [
+        [position(-30), "#30123b"],
+        [position(-20), "#355f8d"],
+        [position(-12), "#22a884"],
+        [position(-6), "#fde725"],
+        [position(0), "#dc2626"],
+        [position(positive_limit), "#fff7f7"],
+    ]
+    return {
+        "cmin": negative_limit,
+        "cmax": positive_limit,
+        "colorscale": colorscale,
+        "colorbar": {"title": "dB", "x": 1.015, "y": .78,
+                     "len": .42, "thickness": 16},
+    }
+
+
 def _parameter_table(runs: list[dict[str, Any]]) -> str:
     def cell(value: Any) -> str:
         return html.escape(str(value)).replace(" / ", "&nbsp;/<wbr> ")
@@ -1051,7 +1083,7 @@ def _write_html(path: Path, title: str, figure: go.Figure,
                                   "responsive": True})
     surface_plot = _surface_diagnostic_plot(runs, surface_results)
     stl_viewer = _embedded_stl_viewer(path)
-    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v10 -->
+    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v11 -->
 <title>{html.escape(title)}</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}
@@ -1125,7 +1157,7 @@ def single_report(run_dir: Path, output: Path | None = None,
         figure.add_trace(go.Heatmap(
             x=run["frequencies"], y=run["angles"], z=run[key].T,
             coloraxis="coloraxis",
-            hovertemplate="%{x:.1f} Hz<br>%{y:.1f}°<br>%{z:.2f} dB<extra></extra>"),
+            hovertemplate="%{x:.1f} Hz<br>%{y:.1f}°<br>%{z:+.2f} dB<extra></extra>"),
             row=1, col=column)
         figure.add_trace(go.Contour(
             x=run["frequencies"], y=run["angles"], z=run[key].T,
@@ -1177,9 +1209,7 @@ def single_report(run_dir: Path, output: Path | None = None,
     figure.update_yaxes(title_text="|Z| / (ρc/Sₜ)", row=2, col=1)
     figure.update_layout(
         height=1000, hovermode="closest",
-        coloraxis={"cmin": -30, "cmax": 0, "colorscale": "Turbo",
-                   "colorbar": {"title": "dB", "x": 1.015, "y": .78,
-                                "len": .42, "thickness": 16}},
+        coloraxis=_heatmap_coloraxis(run),
         legend={"orientation": "h", "x": 0, "xanchor": "left",
                 "y": 1.12, "yanchor": "bottom"},
         margin={"t": 145, "r": 95, "b": 75, "l": 80})
