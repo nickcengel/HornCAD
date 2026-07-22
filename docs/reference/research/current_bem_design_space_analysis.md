@@ -1,14 +1,14 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-22T12:51:07.064133-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-22T13:11:10.405469-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
-- 869 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: cancelled: 3, complete: 133, geometry-rejected: 7, superseded: 4.
-- Study program: `controlled-learning-initializing` (ready).
+- 870 unique scored physical designs across 36 mouth/coverage cells.
+- Search states: cancelled: 3, complete: 133, geometry-rejected: 7, running: 2, superseded: 4.
+- Study program: `controlled-learning-round-1` (running).
 - S-closure certificate: complete; closed: 31, geometry-limited: 5.
-- Candidate counts by coverage half-angle: 25°: 121, 30°: 58, 35°: 101, 40°: 99, 45°: 289, 50°: 201.
+- Candidate counts by coverage half-angle: 25°: 121, 30°: 59, 35°: 101, 40°: 99, 45°: 289, 50°: 201.
 
 The counts are evidence density, not evidence quality. Cross-angle conclusions remain provisional while the study program is running; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
 
@@ -18,7 +18,9 @@ Positive score deltas mean increasing the named control improved the surface sco
 
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Length | 518 | 68% | 0.48 | 0.45 | -0.040 | -0.027 | 0.020 | -0.26 | 0.000 |
+- Running: `30deg/250x250-learning-r01` — BEM evaluation candidate-001; 1/2 candidates complete; 10 solver workers.
+- Running: `30deg/300x300-learning-r01` — BEM evaluation candidate-000; 0/2 candidates complete; 10 solver workers.
+| Length | 519 | 68% | 0.48 | 0.45 | -0.040 | -0.027 | 0.020 | -0.26 | 0.000 |
 | K | 233 | 59% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
 | N | 260 | 45% | -0.02 | 0.04 | -0.002 | 0.001 | 0.001 | 0.07 | 0.000 |
 
@@ -28,12 +30,12 @@ These are aggregate directional summaries, not universal steering rules. A contr
 
 | Control increase | Starting regime | Pairs | Score improves | Median score Δ |
 | --- | --- | ---: | ---: | ---: |
-| Length | coverage 30° | 37 | 78% | 1.81 |
+| Length | coverage 30° | 38 | 76% | 1.76 |
 | Length | coverage 25° | 83 | 96% | 1.56 |
 | Length | low starting mean_containment | 259 | 89% | 1.32 |
-| Length | high starting slice_energy_departure_db | 259 | 83% | 1.30 |
-| Length | high starting minus_six_rms_error_deg | 259 | 81% | 1.24 |
-| Length | high starting profile_rms_error_db | 259 | 79% | 1.21 |
+| Length | high starting slice_energy_departure_db | 260 | 83% | 1.29 |
+| Length | high starting minus_six_rms_error_deg | 260 | 81% | 1.23 |
+| Length | high starting profile_rms_error_db | 260 | 79% | 1.21 |
 | Length | coverage 35° | 61 | 84% | 1.17 |
 | Length | low starting outward_rise_violation_db | 259 | 87% | 1.09 |
 | K | coverage 35° | 16 | 56% | 0.54 |
