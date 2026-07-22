@@ -15,17 +15,11 @@ remain historical edge evidence, but are not allocated full remote-map work.
 Conical extensions, section-shape morphing, and independent horizontal/vertical
 curves are explicitly deferred.
 
-## Boundary repair
+## Historical boundary work
 
-S closure is directional. A rejected far high-S sentinel closes only the high
-side and cannot certify a low-S endpoint winner. Unresolved directions use
-expanding S displacements of 0.3, 0.6, and 1.2 from the incumbent, stopping at
-a measured decline, a same-direction geometry limit, or the S safety limit.
-
-Four fixed-K/N cells were incorrectly labeled geometry-limited by the older
-sentinel behavior. They are eligible for corrected low-side closure. The
-50-degree, 400 mm coupled result remains a practical stop rather than a proven
-length bracket.
+Earlier S-boundary and coupled-length work remains historical evidence. The
+Phase-4 coordinator does not rerun those phases; it starts directly with remote
+domain-map Batch 1.
 
 ## Equal-opportunity map
 
@@ -50,16 +44,21 @@ Length is derived from S, K, and N with the same HornCAD equations used by the
 exporter. Negative-S and late-growth/disc-like geometry are rejected before
 BEM and replaced with the next feasible proposal.
 
-Batch 1 maximizes distance from existing realized geometry. Batch 2 combines
-70% distance with 30% global model uncertainty. Its two cross-strata complete
-the coarse low/high K and N foldover begun by Batch 1. At 45 and 50 degrees,
-one candidate per mouth is selected as a matched cross-angle contrast in
-mouth/length ratio, K, and N.
+Batch 1 maximizes distance from existing realized geometry and is retained as
+broad discovery work. Batch 2 is a controlled-effect experiment, not another
+optimizer. Every cell receives one two-candidate matched pair. The varied
+control is balanced across the grid: nine cells vary physical length, eight
+vary K, and eight vary N. The other two independent controls are held exactly
+fixed within each pair. Initial targets are approximately −25%/+25% length,
+−1.5/+1.5 K, or −4/+4 N around a measured anchor, with predefined closer
+fallbacks when geometry or an existing duplicate prevents the broad pair.
 
-Prescribed mapping candidates are not pruned for a poor predicted score. A
-local exploitation proposal may replace the normal Batch-2 acquisition only
-when its predicted score minus one prediction sigma exceeds the incumbent by
-at least one point.
+This 50-candidate allocation estimates replicated main effects across the full
+mouth/coverage domain without pretending S and physical length are independent;
+S is recorded as a derived coordinate. It does not estimate every control in
+every cell or identify all K/N/length interactions. Interaction blocks are a
+separate follow-up selected from cells where matched effects reverse or depend
+strongly on the starting diagnostic state.
 
 ## Learning objective
 
@@ -71,9 +70,9 @@ gain.
 
 The first diagnostic hypothesis is that wider-coverage horns retain good
 containment and average in-window distribution but develop angular shoulders
-as mouth/length ratio increases. The matched 45/50-degree contrasts and remote
-long/high-K points test whether reducing mouth/length ratio while increasing K
-suppresses outward rise without sacrificing containment.
+as mouth/length ratio increases. Batch 1 maps remote alternatives; Batch 2 uses
+matched score and diagnostic differences to determine whether length, K, or N
+actually changes that behavior when the other independent controls are fixed.
 
 ## Completion
 

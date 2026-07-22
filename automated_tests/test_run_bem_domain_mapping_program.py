@@ -11,8 +11,9 @@ import yaml
 import app.tools.run_bem_domain_mapping_program as domain_program
 
 from app.tools.run_bem_domain_mapping_program import (
-    ANGLES, MOUTHS, Proposal, SLOTS, materialize_cell_search, planned_slots,
-    snap_k_n, _active_baseline_searches, _candidate_geometry,
+    ANGLES, MOUTHS, Proposal, SLOTS, matched_parameter_for_cell,
+    materialize_cell_search, planned_slots, snap_k_n,
+    _active_baseline_searches, _candidate_geometry,
 )
 
 
@@ -32,11 +33,21 @@ class BemDomainMappingProgramTests(unittest.TestCase):
         self.assertFalse(any(item["coverage_deg"] == 25 for item in slots))
         self.assertFalse(any(item["mouth_mm"] == 500 for item in slots))
 
-    def test_foldover_spans_low_and_high_k_n_s(self) -> None:
+    def test_batch_one_spans_remote_low_and_high_strata(self) -> None:
         self.assertEqual(SLOTS[1], (("low", "low", "low"),
                                     ("high", "high", "high")))
-        self.assertEqual(SLOTS[2], (("high", "low", "high"),
-                                    ("low", "high", "low")))
+
+    def test_batch_two_balances_matched_independent_controls(self) -> None:
+        assignments = [
+            matched_parameter_for_cell(angle, mouth)
+            for angle in ANGLES for mouth in MOUTHS
+        ]
+        self.assertEqual(assignments.count("length"), 9)
+        self.assertEqual(assignments.count("k"), 8)
+        self.assertEqual(assignments.count("n"), 8)
+        batch_two = [item for item in planned_slots() if item["batch"] == 2]
+        self.assertTrue(all(item["matched_parameter"] in {"length", "k", "n"}
+                            for item in batch_two))
 
     def test_boundary_repair_excludes_retired_edges(self) -> None:
         with tempfile.TemporaryDirectory() as temp:

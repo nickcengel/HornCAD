@@ -45,6 +45,7 @@ SLOTS = {
     1: (("low", "low", "low"), ("high", "high", "high")),
     2: (("high", "low", "high"), ("low", "high", "low")),
 }
+MATCHED_PARAMETERS = ("length", "k", "n")
 
 
 def snap_k_n(k: float, n: float) -> tuple[float, float]:
@@ -67,6 +68,11 @@ class Proposal:
     normalized_curvature_radius: float
     acquisition: str
     nearest_distance: float
+    matched_parameter: str | None = None
+    anchor_length_mm: float | None = None
+    anchor_k: float | None = None
+    anchor_n: float | None = None
+    anchor_s: float | None = None
     predicted_score: float | None = None
     predicted_sigma: float | None = None
 
@@ -129,12 +135,23 @@ def _candidate_geometry(config: dict[str, Any], coverage: float, s: float,
     length = _length_for_controls(config, coverage, s, k, n)
     if length is None:
         return None
+    result = _independent_control_geometry(config, coverage, length, k, n)
+    return (length, result) if result is not None else None
+
+
+def _independent_control_geometry(
+        config: dict[str, Any], coverage: float, length: float,
+        k: float, n: float) -> dict[str, float] | None:
+    """Validate length/K/N controls and return their derived OS-SE geometry."""
     global_config = config["global"]
-    metrics = termination_metrics(
-        length, float(global_config["throat_radius"]), coverage, k, n,
-        float(global_config["mouth_width"]) / 2,
-        float(global_config["throat_angle_deg"]),
-    )
+    try:
+        metrics = termination_metrics(
+            length, float(global_config["throat_radius"]), coverage, k, n,
+            float(global_config["mouth_width"]) / 2,
+            float(global_config["throat_angle_deg"]),
+        )
+    except (ValueError, ZeroDivisionError, OverflowError):
+        return None
     derived = {
         "s_h": metrics["s"], "s_v": metrics["s"],
         "mouth_exit_angle_h_deg": metrics["exit_angle_deg"],
@@ -147,7 +164,9 @@ def _candidate_geometry(config: dict[str, Any], coverage: float, s: float,
         "final_tenth_radial_growth_v": metrics["final_tenth_radial_growth_fraction"],
     }
     feasible, _ = geometry_feasibility(derived)
-    return (length, metrics) if feasible else None
+    if not feasible or not S_BOUNDS[0] <= float(metrics["s"]) <= S_BOUNDS[1]:
+        return None
+    return metrics
 
 
 def _feature(mouth: float, length: float, s: float, k: float, n: float,
@@ -306,9 +325,103 @@ def select_proposal(root: Path, coverage: int, mouth: int, batch: int,
     )
 
 
+def matched_parameter_for_cell(coverage: int, mouth: int) -> str:
+    """Balance length, K, and N matched pairs across the 5x5 study grid."""
+    angle_index = INTERIOR_ANGLES.index(coverage)
+    mouth_index = INTERIOR_MOUTHS.index(mouth)
+    return MATCHED_PARAMETERS[(angle_index * len(INTERIOR_MOUTHS) + mouth_index) % 3]
+
+
+def _axis_values(anchor: Candidate, parameter: str) -> tuple[list[float], list[float]]:
+    if parameter == "length":
+        return ([round(anchor.length_mm * factor, 3)
+                 for factor in (0.75, 0.85, 0.92)],
+                [round(anchor.length_mm * factor, 3)
+                 for factor in (1.25, 1.15, 1.08)])
+    if parameter == "k":
+        return ([anchor.k - delta for delta in (1.5, 1.0, 0.5)],
+                [anchor.k + delta for delta in (1.5, 1.0, 0.5)])
+    return ([anchor.n - delta for delta in (4.0, 3.0, 2.0, 1.0)],
+            [anchor.n + delta for delta in (4.0, 3.0, 2.0, 1.0)])
+
+
+def _matched_controls(anchor: Candidate, parameter: str,
+                      value: float) -> tuple[float, float, float]:
+    length, k, n = anchor.length_mm, anchor.k, anchor.n
+    if parameter == "length":
+        length = value
+    elif parameter == "k":
+        k = round(value * 2) / 2
+    else:
+        n = float(round(value))
+    return round(length, 3), k, n
+
+
+def select_matched_pair(root: Path, coverage: int, mouth: int,
+                        candidates: list[Candidate]) -> list[Proposal]:
+    """Select a broad one-control pair while holding the other controls fixed."""
+    baseline = _baseline(root, coverage, mouth)
+    config = _source_project(baseline)["horncad_config"]
+    cell = [item for item in candidates
+            if item.coverage_deg == coverage and item.mouth_mm == mouth]
+    if not cell:
+        raise RuntimeError(f"no measured anchor for {coverage}°/{mouth}")
+    parameter = matched_parameter_for_cell(coverage, mouth)
+    existing = {(round(item.length_mm, 3), round(item.k, 3), round(item.n, 3))
+                for item in cell}
+    existing_features = np.asarray([_candidate_feature(item, config) for item in cell])
+    for anchor in sorted(cell, key=lambda item: item.score, reverse=True):
+        pair: list[Proposal] = []
+        for slot, values in enumerate(_axis_values(anchor, parameter)):
+            chosen = None
+            for value in values:
+                length, k, n = _matched_controls(anchor, parameter, value)
+                if not (K_BOUNDS[0] <= k <= K_BOUNDS[1]
+                        and N_BOUNDS[0] <= n <= N_BOUNDS[1]):
+                    continue
+                if (round(length, 3), round(k, 3), round(n, 3)) in existing:
+                    continue
+                metrics = _independent_control_geometry(
+                    config, coverage, length, k, n)
+                if metrics is None:
+                    continue
+                feature = _feature(mouth, length, float(metrics["s"]), k, n, metrics)
+                distance = float(np.min(np.linalg.norm(
+                    existing_features - feature[None, :], axis=1)))
+                chosen = Proposal(
+                    coverage_deg=coverage, mouth_mm=mouth, batch=2, slot=slot,
+                    s=float(metrics["s"]), length_mm=length, k=k, n=n,
+                    mouth_length_ratio=mouth / length,
+                    exit_angle_deg=float(metrics["exit_angle_deg"]),
+                    normalized_curvature_radius=float(
+                        metrics["normalized_curvature_radius"]),
+                    acquisition=(f"matched {parameter} pair; other independent "
+                                 "controls fixed"),
+                    nearest_distance=distance, matched_parameter=parameter,
+                    anchor_length_mm=anchor.length_mm, anchor_k=anchor.k,
+                    anchor_n=anchor.n, anchor_s=anchor.s,
+                )
+                break
+            if chosen is None:
+                pair = []
+                break
+            pair.append(chosen)
+        if len(pair) == 2:
+            return pair
+    raise RuntimeError(
+        f"no feasible non-duplicate matched {parameter} pair for {coverage}°/{mouth}")
+
+
 def select_batch(root: Path, batch: int) -> list[Proposal]:
     candidates, _ = load_candidates(root)
-    model = KernelScoreModel(candidates) if batch == 2 else None
+    if batch == 2:
+        return sorted([
+            proposal
+            for angle in INTERIOR_ANGLES
+            for mouth in INTERIOR_MOUTHS
+            for proposal in select_matched_pair(root, angle, mouth, candidates)
+        ], key=lambda item: (item.coverage_deg, item.mouth_mm, item.slot))
+    model = None
     output: list[Proposal] = []
     cells = [(angle, mouth) for angle in INTERIOR_ANGLES
              for mouth in INTERIOR_MOUTHS]
@@ -598,6 +711,8 @@ def planned_slots() -> list[dict[str, Any]]:
     return [{
         "coverage_deg": angle, "mouth_mm": mouth, "batch": batch, "slot": slot,
         "status": "awaiting acquisition" if batch == 2 else "planned",
+        "matched_parameter": (
+            matched_parameter_for_cell(angle, mouth) if batch == 2 else None),
     } for batch in (1, 2) for angle, mouth in cells_by_batch[batch]
       for slot in range(2)]
 

@@ -13,7 +13,8 @@ from statistics import median
 from typing import Any, Iterable
 
 
-PARAMETERS = ("s", "k", "n")
+PARAMETERS = ("length_mm", "k", "n")
+PARAMETER_LABELS = {"length_mm": "Length", "k": "K", "n": "N"}
 DIAGNOSTICS = (
     "score", "mean_containment", "profile_rms_error_db",
     "slice_energy_departure_db", "outward_rise_violation_db",
@@ -132,7 +133,7 @@ def deduplicate(candidates: Iterable[Candidate]) -> list[Candidate]:
 
 def _pair_key(candidate: Candidate, parameter: str) -> tuple[float, ...]:
     base = [candidate.mouth_mm, candidate.coverage_deg]
-    if parameter != "s":
+    if parameter != "length_mm":
         base.append(candidate.length_mm)
     if parameter != "k":
         base.append(candidate.k)
@@ -161,6 +162,7 @@ def matched_pairs(candidates: Iterable[Candidate], parameter: str) -> list[dict[
                 "delta_parameter": delta_parameter,
                 "start": dict(lower.diagnostics),
                 "start_s": lower.s,
+                "start_length_mm": lower.length_mm,
                 "start_k": lower.k,
                 "start_n": lower.n,
                 "delta": {
@@ -212,23 +214,15 @@ def _effect_strata(pairs: list[dict[str, Any]], parameter: str) -> list[dict[str
     for coverage in sorted(set(pair["coverage_deg"] for pair in pairs)):
         strata.append((f"coverage {coverage:g}°", [
             pair for pair in pairs if pair["coverage_deg"] == coverage]))
-    if parameter == "s":
-        bins = (("S < 1", lambda value: value < 1),
-                ("1 ≤ S < 2", lambda value: 1 <= value < 2),
-                ("S ≥ 2", lambda value: value >= 2))
-        for label, predicate in bins:
-            strata.append((label, [pair for pair in pairs
-                                  if predicate(pair["start_s"])]))
-    else:
-        for diagnostic in (
-                "mean_containment", "profile_rms_error_db",
-                "slice_energy_departure_db", "outward_rise_violation_db",
-                "minus_six_rms_error_deg", "high_frequency_coverage_error_deg"):
-            midpoint = median(pair["start"][diagnostic] for pair in pairs)
-            strata.append((f"low starting {diagnostic}", [
-                pair for pair in pairs if pair["start"][diagnostic] < midpoint]))
-            strata.append((f"high starting {diagnostic}", [
-                pair for pair in pairs if pair["start"][diagnostic] >= midpoint]))
+    for diagnostic in (
+            "mean_containment", "profile_rms_error_db",
+            "slice_energy_departure_db", "outward_rise_violation_db",
+            "minus_six_rms_error_deg", "high_frequency_coverage_error_deg"):
+        midpoint = median(pair["start"][diagnostic] for pair in pairs)
+        strata.append((f"low starting {diagnostic}", [
+            pair for pair in pairs if pair["start"][diagnostic] < midpoint]))
+        strata.append((f"high starting {diagnostic}", [
+            pair for pair in pairs if pair["start"][diagnostic] >= midpoint]))
     output = []
     for label, group in strata:
         if len(group) < 3:
@@ -681,7 +675,7 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         "## Controlled adjacent effects",
         "",
         "Positive score deltas mean increasing the named control improved the surface score. "
-        "For error diagnostics, negative deltas are improvements. S comparisons hold K and N "
+        "For error diagnostics, negative deltas are improvements. Length comparisons hold K and N "
         "fixed; K comparisons hold physical length and N fixed; N comparisons hold physical "
         "length and K fixed.",
         "",
@@ -700,7 +694,7 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         item = analysis["matched_effects"][parameter]
         delta = item.get("median_delta", {})
         lines.append(
-            f"| {parameter.upper()} | {item['count']} | "
+            f"| {PARAMETER_LABELS[parameter]} | {item['count']} | "
             f"{100 * item.get('score_improved_fraction', 0):.0f}% | "
             f"{_number(delta.get('score'))} | {_number(delta.get('mean_containment'))} | "
             f"{_number(delta.get('profile_rms_error_db'), 3)} | "
@@ -728,7 +722,7 @@ def render_markdown(analysis: dict[str, Any]) -> str:
             -abs(item["median_score_delta"]), -item["count"]))[:8]
         for item in selected:
             lines.append(
-                f"| {parameter.upper()} | {item['stratum']} | {item['count']} | "
+                f"| {PARAMETER_LABELS[parameter]} | {item['stratum']} | {item['count']} | "
                 f"{100 * item['score_improved_fraction']:.0f}% | "
                 f"{item['median_score_delta']:.2f} |"
             )

@@ -622,17 +622,20 @@ def generate_report(project_root: Path, output: Path) -> Path:
     if domain_state and current_phase == "domain-map-batch-1":
         existing_folders = {summary["folder"] for summary in summaries}
         batch_two_cells = sorted({
-            (int(item["coverage_deg"]), int(item["mouth_mm"]))
+            (int(item["coverage_deg"]), int(item["mouth_mm"]),
+             str(item.get("matched_parameter") or "matched control"))
             for item in domain_state.get("planned_slots", [])
             if int(item.get("batch", 0)) == 2
             and int(item["coverage_deg"]) in ACTIVE_PHASE_FOUR_ANGLES
             and int(item["mouth_mm"]) in ACTIVE_PHASE_FOUR_MOUTHS
         })
-        for angle, mouth in batch_two_cells:
+        for angle, mouth, matched_parameter in batch_two_cells:
             folder = project_root / f"{angle}deg" / f"{mouth}x{mouth}-domain-map-b02"
             if folder in existing_folders:
                 continue
-            label = f"{angle} deg /​ {mouth} mm · remote domain map B02"
+            control_label = "length" if matched_parameter == "length" else matched_parameter.upper()
+            label = (f"{angle} deg /​ {mouth} mm · matched {control_label} "
+                     "pair B02")
             summary_entries.append((
                 1, 4, label, str(angle),
                 "<tr data-subsearch-coverage-angle='{}' "
@@ -754,7 +757,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
         f"<td>{html.escape(str(item['recommendation']))}</td></tr>"
         for item in domain_meta.get("strata", []))
     learning_cards = "".join(
-        f"<div class='card'><strong>{html.escape(parameter.upper())} "
+        f"<div class='card'><strong>{html.escape('Length' if parameter == 'length_mm' else parameter.upper())} "
         f"{effect.get('median_delta', {}).get('score', 0):+.2f}</strong>"
         f"median adjacent score change · {effect['count']} matched pairs</div>"
         for parameter, effect in learning_effects.items()
@@ -795,7 +798,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <div class='learning-cards'>{learning_cards}</div>
 <p><strong>Phase 3 audit:</strong> {phase_three_audit['quarter_step_k_candidate_count']} quarter-step K candidates changed the selected winner by only {phase_three_audit['median_winner_advantage_over_nearby_k']:.3f} points at the median ({phase_three_audit['maximum_winner_advantage_over_nearby_k']:.3f} maximum) versus a nearby measured K at the same N. Future closure uses K ≥ 0.5 steps, N ≥ 1 steps, and moves to local S/length inside a 0.5-point score asymptote.</p>
 <p><strong>Coupled completion:</strong> {len(phase_three_audit['anchor_gains']) - len(coupled_practical_stops)} anchors converged; {len(coupled_practical_stops)} stopped at the three-round limit with less than 0.5 points available over its local-S center but without a formally bracketed length optimum.</p>
-<p><strong>Remote domain map:</strong> {html.escape(domain_status)} · {html.escape(domain_phase)} · {domain_total} candidates. Four candidates cover each of the 25 cells from 30°–50° and 250–450 mm. No Phase-4 work is scheduled at 25° or 500 mm. Local exploitation requires at least a 1-point uncertainty-adjusted predicted gain.</p>
+<p><strong>Remote domain map:</strong> {html.escape(domain_status)} · {html.escape(domain_phase)} · {domain_total} candidates. Batch 1 supplies two remote discovery candidates per cell. Batch 2 supplies a matched length, K, or N pair with the other independent controls fixed; pair types are balanced across the 25 cells from 30°–50° and 250–450 mm. No Phase-4 work is scheduled at 25° or 500 mm.</p>
 <p><strong>Wide-coverage hypothesis:</strong> current winners keep profile and slice-energy error comparatively smooth, but outward-rise violation increases with mouth/length ratio. Matched 45°/50° probes test whether longer, coarsely higher-K geometries reduce those angular shoulders without losing containment.</p>
 <h3>Remote-sample value</h3>
 <p><strong>{html.escape(str(domain_meta.get('assessment', 'insufficient distributed evidence')))}</strong> · {domain_meta.get('completed_remote_candidates', 0)} complete. Competitive: {domain_counts.get('new-cell-winner', 0) + domain_counts.get('competitive-remote', 0)}; diagnostic tradeoffs: {domain_counts.get('diagnostic-tradeoff', 0)}; boundary confirmations: {domain_counts.get('boundary-confirmation', 0)}; redundant near existing evidence: {domain_counts.get('redundant-near-existing', 0)}.</p>

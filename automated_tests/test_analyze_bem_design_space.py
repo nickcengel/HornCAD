@@ -30,15 +30,16 @@ class DesignSpaceAnalysisTests(unittest.TestCase):
         new = candidate(score=80.0, completed=2.0)
         self.assertEqual(deduplicate([old, new]), [new])
 
-    def test_s_pairs_hold_k_and_n(self):
+    def test_length_pairs_hold_k_and_n(self):
         items = [
             candidate(length=120, s=1.0, score=70),
             candidate(length=110, s=1.5, score=80),
             candidate(length=105, s=1.8, k=4.5, score=90),
         ]
-        pairs = matched_pairs(items, "s")
+        pairs = matched_pairs(items, "length_mm")
         self.assertEqual(len(pairs), 1)
-        self.assertEqual(pairs[0]["delta"]["score"], 10)
+        self.assertEqual(pairs[0]["from"], 110)
+        self.assertEqual(pairs[0]["delta"]["score"], -10)
 
     def test_k_pairs_hold_length_and_n(self):
         items = [candidate(k=3.5, score=75), candidate(k=4.0, score=80)]
