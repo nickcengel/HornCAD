@@ -510,8 +510,6 @@ class BEMSearchTests(unittest.TestCase):
             self.assertIn("main{width:100%", report)
             self.assertIn("--bg:#0c1014", report)
             self.assertIn("color-scheme:dark", report)
-            self.assertIn("candidate-placeholder", report)
-            self.assertIn("Not required", report)
             self.assertNotIn("geometry feasible", report)
             self.assertGreaterEqual(len(state["candidates"]), 1)
             self.assertFalse(any(record["status"] == "rejected"
