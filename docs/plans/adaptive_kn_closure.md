@@ -14,8 +14,9 @@ considered final only when the measured winner has a local closure certificate.
 2. Choose the highest measured surface score as the incumbent.
 3. Measure all feasible axial and diagonal neighbors around that incumbent.
 4. If a neighbor wins, move the incumbent and repeat its neighborhood.
-5. If the incumbent wins its complete neighborhood, halve the K and N spacing.
-6. Repeat until the neighborhood spacing reaches K = 0.25 and N = 1.
+5. If the incumbent wins its complete neighborhood, refine N spacing while
+   retaining K = 0.5 spacing.
+6. Repeat until the neighborhood spacing reaches K = 0.5 and N = 1.
 
 The diagonal probes are required. Main effects alone cannot safely predict
 points such as K=3, N=5 from K=3, N=10 and K=4, N=5.
@@ -55,7 +56,7 @@ The search records the source score, best score, K, and N transition in
 `search_state.json` records a `kn_closure` object with the incumbent, current
 spacing, status, and reason. The possible terminal states are:
 
-- `closed`: all axial and diagonal neighbors were measured at K=0.25 and N=1.
+- `closed`: all axial and diagonal neighbors were measured at K=0.5 and N=1.
 - `boundary-limited`: the best point reached K=7 or N=40.
 - `unresolved`: closure could not start from valid completed symmetric points.
 

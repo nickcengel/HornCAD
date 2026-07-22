@@ -99,7 +99,7 @@ def materialize_kn_search(source_project: Path, source_search: Path,
         "adaptive_kn_closure": {
             "enabled": True,
             "initial_k_step": 0.5,
-            "minimum_k_step": 0.25,
+            "minimum_k_step": 0.5,
             "minimum_k": 1.0,
             "maximum_k": 7.0,
             "initial_n_step": 5.0,

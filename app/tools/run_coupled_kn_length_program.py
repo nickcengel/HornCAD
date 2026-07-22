@@ -190,7 +190,7 @@ def materialize_kn_closure(seed_project: Path, baseline: Path,
         "sampling_stability_points": float(source.get("sampling_stability_points", 2)),
         "confirmation_points_per_octave": float(source.get("confirmation_points_per_octave", 16)),
         "adaptive_kn_closure": {
-            "enabled": True, "initial_k_step": 0.5, "minimum_k_step": 0.25,
+            "enabled": True, "initial_k_step": 0.5, "minimum_k_step": 0.5,
             "minimum_k": 1.0, "maximum_k": 7.0,
             "initial_n_step": 5.0, "minimum_n_step": 1.0,
             "minimum_n": 2.0, "maximum_n": 40.0,

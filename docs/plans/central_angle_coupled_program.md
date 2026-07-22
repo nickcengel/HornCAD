@@ -41,7 +41,9 @@ For each selected anchor:
 
 1. Start from the best completed baseline or existing K/N candidate.
 2. Run adaptive K/N closure at fixed length. The closure measures axial and
-   diagonal neighbors and refines to K=0.25 and N=1 resolution.
+   diagonal neighbors at K=0.5 and refines N to 1 resolution. Quarter-step K
+   probes are not required: current evidence shows a broad K crest whose
+   quarter-step score differences are below useful diagnostic resolution.
 3. At the closed K/N winner, measure five local S points centered on the current
    S at offsets -0.30, -0.15, 0, +0.15, and +0.30.
 4. If the best local S is within 0.075 of the center, declare the alternating

@@ -720,7 +720,7 @@ def next_kn_closure_candidate(search: dict[str, Any],
     k_max = float(policy.get("maximum_k", 7.0))
     n_min = float(policy.get("minimum_n", 2.0))
     n_max = float(policy.get("maximum_n", 40.0))
-    min_k_step = float(policy.get("minimum_k_step", 0.25))
+    min_k_step = float(policy.get("minimum_k_step", 0.5))
     min_n_step = float(policy.get("minimum_n_step", 1.0))
     k_step = float(closure.setdefault(
         "k_step", policy.get("initial_k_step", 0.5)))
