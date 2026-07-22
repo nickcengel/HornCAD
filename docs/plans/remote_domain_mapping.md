@@ -19,12 +19,18 @@ coupled horizontal/vertical curves remain later studies.
 
 ## Batch 1: remote validation
 
-The already-running Batch 1 contributes the same two remote maximin samples in
-every cell: one low-S/low-K/low-N point and one high-S/high-K/high-N point. Its
-50 outcomes test whether useful behavior exists far from the previously dense
-K=4, N=10 ridge. They are retained as broad discovery and held-out validation,
-but their correlated controls cannot by themselves estimate independent
-effects.
+Batch 1 originally prescribed the same two remote maximin samples in every
+cell: one low-S/low-K/low-N point and one high-S/high-K/high-N point. Interim
+review found 29 of 30 completed remote outcomes were simple boundary
+confirmations, none was competitive, and none exposed a useful diagnostic
+tradeoff. Median score change was -11.3 points. Because the controls move
+together, the samples also cannot estimate independent effects.
+
+The remote batch is therefore intentionally truncated after the two candidates
+that were already in flight on July 22 finish. Completed results remain sparse
+outer-boundary evidence and out-of-domain model checks. Unstarted cells are
+recorded as abandoned redundant boundary work rather than simulated. The
+response-surface stage receives the saved compute.
 
 ## Batch 2: identical response surface in every cell
 
@@ -83,8 +89,9 @@ cell searches, and resumes completed work rather than duplicating it.
 
 Two concurrent searches with ten solver workers each keep the 20-core machine
 occupied. Each completed subsearch updates the state and index report. The
-state ledger exposes all 400 Phase-4 coordinate outcomes in advance: 50 remote
-Batch-1 coordinates plus 350 Batch-2 response-surface coordinates.
+state ledger retains the original 50 Batch-1 slots so completed and
+intentionally abandoned work remain distinguishable, followed by the 350
+Batch-2 response-surface coordinates.
 
 Phase 4 is complete only when every coordinate is complete, reused,
 geometry-rejected, or explicitly failed. Candidate reports, compact response
