@@ -34,6 +34,9 @@ class CoupledKNLengthProgramTests(unittest.TestCase):
         self.assertTrue(search["adaptive_kn_closure"]["enabled"])
         self.assertEqual(search["adaptive_kn_closure"]["minimum_k"], 1.0)
         self.assertEqual(search["adaptive_kn_closure"]["minimum_n"], 2.0)
+        self.assertEqual(search["adaptive_kn_closure"]["rescue_minimum_s"], 2.0)
+        self.assertEqual(search["adaptive_kn_closure"]["rescue_minimum_n"], 8.0)
+        self.assertEqual(search["adaptive_kn_closure"]["rescue_n_step"], 2.0)
         self.assertEqual(search["solver"]["workers"], 10)
 
     def test_materializes_five_point_local_s_rescan_at_closed_kn(self) -> None:

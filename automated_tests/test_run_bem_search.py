@@ -124,6 +124,55 @@ class BEMSearchTests(unittest.TestCase):
         values, _ = next_kn_closure_candidate(search, records, closure)
         self.assertEqual((values["k_h"], values["n_h"]), (4.0, 7.5))
 
+    def test_bad_high_s_high_n_result_rescues_k_with_lower_n_first(self) -> None:
+        search = {"adaptive_kn_closure": {
+            "enabled": True, "initial_k_step": 0.5, "initial_n_step": 5,
+            "minimum_k_step": 0.25, "minimum_n_step": 1,
+            "minimum_k": 1, "maximum_k": 7,
+            "minimum_n": 2, "maximum_n": 40,
+        }}
+
+        def record(k: float, n: float, s: float, score: float) -> dict:
+            return {
+                "status": "complete",
+                "values": {"k_h": k, "k_v": k, "n_h": n, "n_v": n},
+                "derived": {"s_h": s, "s_v": s},
+                "surface_diagnostics": {"score": {"overall_percent": score}},
+            }
+
+        records = [record(4, 6, 1.5, 88), record(3.5, 10, 2.2, 82)]
+        closure: dict = {}
+
+        values, label = next_kn_closure_candidate(search, records, closure)
+
+        self.assertEqual((values["k_h"], values["n_h"]), (3.5, 8.0))
+        self.assertIn("rescue", label)
+        self.assertEqual(closure["last_rescue"]["from_n"], 10)
+
+    def test_rescue_does_not_fire_without_thresholds(self) -> None:
+        search = {"adaptive_kn_closure": {
+            "enabled": True, "initial_k_step": 0.5, "initial_n_step": 5,
+            "minimum_k_step": 0.25, "minimum_n_step": 1,
+            "minimum_k": 1, "maximum_k": 7,
+            "minimum_n": 2, "maximum_n": 40,
+        }}
+        records = [{
+            "status": "complete",
+            "values": {"k_h": 4, "k_v": 4, "n_h": 10, "n_v": 10},
+            "derived": {"s_h": 1.9, "s_v": 1.9},
+            "surface_diagnostics": {"score": {"overall_percent": 88}},
+        }, {
+            "status": "complete",
+            "values": {"k_h": 3.5, "k_v": 3.5, "n_h": 10, "n_v": 10},
+            "derived": {"s_h": 2.2, "s_v": 2.2},
+            "surface_diagnostics": {"score": {"overall_percent": 86}},
+        }]
+        closure: dict = {}
+
+        _, label = next_kn_closure_candidate(search, records, closure)
+
+        self.assertNotIn("rescue", label)
+
     def test_kn_pruning_waits_for_local_cross_then_skips_bad_extreme(self) -> None:
         search = {
             "adaptive_kn": {"enabled": True},

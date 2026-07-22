@@ -715,6 +715,51 @@ def next_kn_closure_candidate(search: dict[str, Any],
     closure.update(status="running", incumbent_k=best_key[0],
                    incumbent_n=best_key[1], incumbent_score=best_score)
 
+    # A poor high-N result at high S does not establish that its K is poor.
+    # Test the same length and K with lower N before leaving that K region.
+    rescue_enabled = bool(policy.get("high_s_low_n_rescue", True))
+    rescue_min_s = float(policy.get("rescue_minimum_s", 2.0))
+    rescue_min_n = float(policy.get("rescue_minimum_n", 8.0))
+    rescue_n_step = float(policy.get("rescue_n_step", 2.0))
+    rescue_margin = float(policy.get("rescue_score_margin_points", 3.0))
+    rescue_candidates = []
+    if rescue_enabled:
+        for record in records:
+            if record.get("status") != "complete":
+                continue
+            values = record.get("values", {})
+            derived = record.get("derived", {})
+            k_h, k_v = float(values.get("k_h", math.nan)), float(
+                values.get("k_v", math.nan))
+            n_h, n_v = float(values.get("n_h", math.nan)), float(
+                values.get("n_v", math.nan))
+            s_h, s_v = float(derived.get("s_h", math.nan)), float(
+                derived.get("s_v", math.nan))
+            score = _record_surface_score(record, search)
+            if (score is None or not all(math.isfinite(item) for item in
+                    (k_h, k_v, n_h, n_v, s_h, s_v)) or
+                    not math.isclose(k_h, k_v, abs_tol=1e-6) or
+                    not math.isclose(n_h, n_v, abs_tol=1e-6) or
+                    min(s_h, s_v) < rescue_min_s or n_h < rescue_min_n or
+                    score > best_score - rescue_margin):
+                continue
+            lower_n = round(max(n_min, n_h - rescue_n_step), 6)
+            if lower_n >= n_h - 1e-6 or (round(k_h, 6), lower_n) in measured:
+                continue
+            rescue_candidates.append((score, n_h, k_h, lower_n, values))
+    if rescue_candidates:
+        score, source_n, k, lower_n, source_values = max(
+            rescue_candidates, key=lambda item: (item[0], -item[1]))
+        values = dict(source_values)
+        values.update(k_h=k, k_v=k, n_h=lower_n, n_v=lower_n)
+        closure["last_rescue"] = {
+            "k": k, "from_n": source_n, "to_n": lower_n,
+            "source_score": score, "best_score": best_score,
+            "minimum_s": rescue_min_s, "score_margin_points": rescue_margin,
+        }
+        return values, (
+            f"high-S low-N rescue K={k:g}, N={source_n:g}→{lower_n:g}")
+
     offsets = ((-1, 0), (1, 0), (0, -1), (0, 1),
                (-1, -1), (-1, 1), (1, -1), (1, 1))
     for dk, dn in offsets:

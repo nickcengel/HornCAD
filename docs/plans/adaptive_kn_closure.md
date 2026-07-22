@@ -36,6 +36,20 @@ bracketing rule applies to every interior winner. N intervals are bisected
 through intermediate values rather than restricting N to multiples of five.
 This allows each geometry and S value to establish its own useful N range.
 
+## High-S, high-N K rescue
+
+A poor high-N result does not by itself reject its K. When a completed
+candidate has S >= 2.0 and N >= 8 and scores at least 3 surface-score points
+below the current search best, closure first holds length and K fixed and
+lowers N by 2. If the lower-N result remains poor while N is still at least 8,
+the rule may step downward again. Only after this measured lower-N check may
+the normal neighborhood move away from that K region.
+
+This is a rescue probe, not an assumption that lower N must win. It prevents
+high-S termination behavior from making a potentially useful K appear bad.
+The search records the source score, best score, K, and N transition in
+`kn_closure.last_rescue`.
+
 ## Closure certificate
 
 `search_state.json` records a `kn_closure` object with the incumbent, current
