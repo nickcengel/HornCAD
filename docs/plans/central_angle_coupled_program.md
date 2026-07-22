@@ -41,15 +41,24 @@ For each selected anchor:
 
 1. Start from the best completed baseline or existing K/N candidate.
 2. Run adaptive K/N closure at fixed length. The closure measures axial and
-   diagonal neighbors at K=0.5 and refines N to 1 resolution. Quarter-step K
-   probes are not required: current evidence shows a broad K crest whose
-   quarter-step score differences are below useful diagnostic resolution.
+   diagonal neighbors at K=0.5. If the complete neighborhood is within 0.5
+   surface-score points of its incumbent, record the plateau and move directly
+   to local S/length refinement. Otherwise refine N toward 1 resolution.
+   Quarter-step K probes are not required: current evidence shows a broad K
+   crest whose quarter-step score differences are below useful diagnostic
+   resolution.
 3. At the closed K/N winner, measure five local S points centered on the current
    S at offsets -0.30, -0.15, 0, +0.15, and +0.30.
 4. If the best local S is within 0.075 of the center, declare the alternating
    search converged.
 5. Otherwise use the new length as the next seed and repeat, for at most three
    rounds. Reaching that limit is reported as unresolved, not converged.
+
+The asymptote handoff does not erase the K/N alternatives. Its closure
+certificate retains the complete plateau, including K/N bounds and scores.
+When local S selects a materially different length, the next round reopens K/N
+there. This separates the physical evidence for a broad K≈4 region from an
+algorithmic tendency to keep selecting exactly K=4.
 
 K is limited to 1 through 7 and N to 2 through 40. A K/N winner at an upper
 limit remains boundary-limited. Lower limits K=1 and N=2 are accepted safety

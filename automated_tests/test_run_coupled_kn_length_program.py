@@ -39,6 +39,9 @@ class CoupledKNLengthProgramTests(unittest.TestCase):
         self.assertEqual(search["adaptive_kn_closure"]["minimum_k_step"], 0.5)
         self.assertEqual(search["adaptive_kn_closure"]["minimum_k"], 1.0)
         self.assertEqual(search["adaptive_kn_closure"]["minimum_n"], 2.0)
+        self.assertEqual(
+            search["adaptive_kn_closure"]["plateau_score_tolerance_points"],
+            0.5)
         self.assertEqual(search["adaptive_kn_closure"]["rescue_minimum_s"], 2.0)
         self.assertEqual(search["adaptive_kn_closure"]["rescue_minimum_n"], 8.0)
         self.assertEqual(search["adaptive_kn_closure"]["rescue_n_step"], 2.0)

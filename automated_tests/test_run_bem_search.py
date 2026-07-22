@@ -110,6 +110,61 @@ class BEMSearchTests(unittest.TestCase):
         self.assertIsNone(next_kn_closure_candidate(search, records, closure))
         self.assertEqual(closure["status"], "closed")
 
+    def test_kn_closure_hands_off_to_length_on_score_asymptote(self) -> None:
+        search = {"adaptive_kn_closure": {
+            "enabled": True, "initial_k_step": 0.5, "initial_n_step": 5,
+            "minimum_k_step": 0.5, "minimum_n_step": 1,
+            "minimum_k": 1, "maximum_k": 7,
+            "minimum_n": 2, "maximum_n": 40,
+            "plateau_score_tolerance_points": 0.5,
+        }}
+
+        def record(k: float, n: float, score: float) -> dict:
+            return {"status": "complete",
+                    "values": {"k_h": k, "k_v": k, "n_h": n, "n_v": n},
+                    "surface_diagnostics": {
+                        "score": {"overall_percent": score}}}
+
+        records = []
+        for k in (3.5, 4.0, 4.5):
+            for n in (5, 10, 15):
+                records.append(record(k, n, 89.8 -
+                                      0.1 * abs(k - 4) -
+                                      0.02 * abs(n - 10)))
+        closure: dict = {}
+
+        self.assertIsNone(next_kn_closure_candidate(search, records, closure))
+        self.assertEqual(closure["status"], "closed")
+        self.assertEqual(closure["closure_method"], "score-asymptote")
+        self.assertEqual(closure["plateau_k_bounds"], [3.5, 4.5])
+        self.assertEqual(closure["plateau_n_bounds"], [5.0, 15.0])
+        self.assertEqual(len(closure["plateau_points"]), 9)
+        self.assertGreater(closure["resolution_n"], 1)
+
+    def test_kn_closure_refines_when_score_has_not_asymptoted(self) -> None:
+        search = {"adaptive_kn_closure": {
+            "enabled": True, "initial_k_step": 0.5, "initial_n_step": 5,
+            "minimum_k_step": 0.5, "minimum_n_step": 1,
+            "minimum_k": 1, "maximum_k": 7,
+            "minimum_n": 2, "maximum_n": 40,
+            "plateau_score_tolerance_points": 0.5,
+        }}
+
+        def record(k: float, n: float, score: float) -> dict:
+            return {"status": "complete",
+                    "values": {"k_h": k, "k_v": k, "n_h": n, "n_v": n},
+                    "surface_diagnostics": {
+                        "score": {"overall_percent": score}}}
+
+        records = [record(k, n, 90 - abs(k - 4) - abs(n - 10) / 2)
+                   for k in (3.5, 4.0, 4.5) for n in (5, 10, 15)]
+        closure: dict = {}
+
+        values, _ = next_kn_closure_candidate(search, records, closure)
+
+        self.assertEqual((values["k_h"], values["n_h"]), (4.0, 7.5))
+        self.assertEqual(closure["status"], "running")
+
     def test_kn_closure_brackets_n_five_above_and_below(self) -> None:
         search = {"adaptive_kn_closure": {
             "enabled": True, "initial_k_step": 0.25, "initial_n_step": 5,

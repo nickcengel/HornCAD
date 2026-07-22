@@ -690,8 +690,9 @@ def next_kn_closure_candidate(search: dict[str, Any],
     """Return the next probe needed to bracket the measured K/N optimum.
 
     A closure search follows the best measured point rather than assuming K and
-    N are additive.  It measures the full local 3x3 neighborhood, then halves
-    the spacing until the authored resolution is reached.
+    N are additive.  It measures the full local 3x3 neighborhood, then either
+    stops when that neighborhood is a score plateau or halves the spacing until
+    the authored resolution is reached.
     """
     policy = search.get("adaptive_kn_closure", {})
     if not policy.get("enabled", False):
@@ -777,16 +778,50 @@ def next_kn_closure_candidate(search: dict[str, Any],
 
     offsets = ((-1, 0), (1, 0), (0, -1), (0, 1),
                (-1, -1), (-1, 1), (1, -1), (1, 1))
+    neighborhood = [(best_key, best_score)]
     for dk, dn in offsets:
         k = round(best_key[0] + dk * k_step, 6)
         n = round(best_key[1] + dn * n_step, 6)
         if not (k_min <= k <= k_max and n_min <= n <= n_max):
             continue
-        if (k, n) in measured:
-            continue
-        values = dict(best_values)
-        values.update(k_h=k, k_v=k, n_h=n, n_v=n)
-        return values, f"K/N closure K={k:g}, N={n:g}"
+        if (k, n) not in measured:
+            values = dict(best_values)
+            values.update(k_h=k, k_v=k, n_h=n, n_v=n)
+            return values, f"K/N closure K={k:g}, N={n:g}"
+        neighborhood.append(((k, n), measured[(k, n)][0]))
+
+    # Once the complete local neighborhood is effectively flat, more precise
+    # K/N coordinates are false precision. Preserve the measured plateau and
+    # hand the coupled program to its local S/length stage.
+    plateau_tolerance = float(policy.get(
+        "plateau_score_tolerance_points", 0.5))
+    plateau_floor = min(score for _, score in neighborhood)
+    plateau_spread = best_score - plateau_floor
+    best_at_upper_limit = (
+        math.isclose(best_key[0], k_max, abs_tol=1e-6) or
+        math.isclose(best_key[1], n_max, abs_tol=1e-6))
+    if (plateau_tolerance > 0 and not best_at_upper_limit and
+            plateau_spread <= plateau_tolerance + 1e-9):
+        keys = [key for key, _ in neighborhood]
+        closure.update(
+            status="closed",
+            reason=(f"local K/N score asymptote: complete neighborhood is "
+                    f"within {plateau_spread:.3f} points"),
+            closure_method="score-asymptote",
+            plateau_score_tolerance_points=plateau_tolerance,
+            plateau_score_spread_points=plateau_spread,
+            plateau_k_bounds=[min(key[0] for key in keys),
+                              max(key[0] for key in keys)],
+            plateau_n_bounds=[min(key[1] for key in keys),
+                              max(key[1] for key in keys)],
+            plateau_points=[
+                {"k": key[0], "n": key[1], "score": score}
+                for key, score in sorted(neighborhood)
+            ],
+            resolution_k=k_step,
+            resolution_n=n_step,
+        )
+        return None
 
     next_k_step = max(min_k_step, k_step / 2)
     next_n_step = max(min_n_step, n_step / 2)
