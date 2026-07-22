@@ -5,8 +5,10 @@ from pathlib import Path
 import shutil
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import yaml
+import app.tools.run_bem_domain_mapping_program as domain_program
 
 from app.tools.run_bem_domain_mapping_program import (
     ANGLES, MOUTHS, Proposal, SLOTS, materialize_cell_search, planned_slots,
@@ -48,6 +50,15 @@ class BemDomainMappingProgramTests(unittest.TestCase):
         self.assertEqual(selected, {
             "30deg/250x250-s-grid", "50deg/450x450-s-grid",
         })
+
+    def test_domain_mapper_does_not_restart_legacy_closure_phases(self) -> None:
+        with tempfile.TemporaryDirectory() as temp, patch.object(
+                domain_program, "materialize_batch", return_value=([], [])), \
+                patch.object(domain_program, "generate_report"):
+            state = domain_program.run_program(Path(temp))
+        self.assertEqual(state["total_candidates"], 100)
+        self.assertNotIn("s_closure", state)
+        self.assertNotIn("coupled_length_closure", state)
 
     def test_new_controls_snap_to_half_k_and_integer_n(self) -> None:
         self.assertEqual(snap_k_n(5.25, 8.75), (5.0, 9.0))

@@ -606,14 +606,11 @@ def run_program(root: Path, slots: int = 2,
                 solver_workers: int = 10) -> dict[str, Any]:
     state_path = root / "domain_mapping_state.json"
     state = {
-        "schema_version": 1, "status": "running", "phase": "boundary-repair",
+        "schema_version": 1, "status": "running", "phase": "domain-map-batch-1",
         "total_candidates": len(planned_slots()), "completed_searches": 0,
         "score_materiality_points": SCORE_MATERIALITY,
         "started_at_unix": time.time(), "planned_slots": planned_slots(),
     }
-    _write_json(state_path, state)
-    state["s_closure"] = repair_s_closure(root, slots)
-    state["coupled_length_closure"] = close_coupled_length(root)
     _write_json(state_path, state)
     for batch in (1, 2):
         state["phase"] = f"domain-map-batch-{batch}"
