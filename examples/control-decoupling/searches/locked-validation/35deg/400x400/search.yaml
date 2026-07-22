@@ -1,0 +1,100 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 35
+  intended_coverage_v_deg: 35
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 2
+  initial_candidates: 1
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 175.624999
+    - 204.429001
+    extension_mm:
+    - -1.0e-06
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 34.999999
+    - 35.000001
+    osse_coverage_v_deg:
+    - 34.999999
+    - 35.000001
+    k_h:
+    - 2.999999
+    - 4.500001
+    k_v:
+    - 2.999999
+    - 4.500001
+    n_h:
+    - 6.999999
+    - 11.000001
+    n_v:
+    - 6.999999
+    - 11.000001
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
+  control_decoupling:
+    design: canonical-three-level-factorial
+    wave: locked-validation
+    manifest_sha256: f2f7c87cbdde9cb86b50828006b9dfc6c7cc287da96791a8dd39dd82ee2cab43
+    coordinate_ids:
+    - 35d-400mm-validation-01
+    - 35d-400mm-validation-02
+    coordinates:
+    - id: 35d-400mm-validation-01
+      kind: locked-validation
+      stage: locked-validation
+      coverage_deg: 35
+      mouth_mm: 400
+      length_factor: 0.878
+      length_mm: 175.625
+      k: 3.0
+      n: 7.0
+      reference_length_mm: 200.028
+      locked_before_bem: true
+      status: planned
+      s: 1.160190609919572
+      exit_angle_deg: 87.26757465015781
+      normalized_curvature_radius: 2.311826191663385
+      final_tenth_radial_growth_fraction: 0.3971740530929422
+    - id: 35d-400mm-validation-02
+      kind: locked-validation
+      stage: locked-validation
+      coverage_deg: 35
+      mouth_mm: 400
+      length_factor: 1.022
+      length_mm: 204.429
+      k: 4.5
+      n: 11.0
+      reference_length_mm: 200.028
+      locked_before_bem: true
+      status: planned
+      s: 1.4347169376811824
+      exit_angle_deg: 87.17259298238787
+      normalized_curvature_radius: 2.347491850324342
+      final_tenth_radial_growth_fraction: 0.3998061019702943
+  initial_pool:
+  - label: 35d-400mm-validation-02
+    values:
+      length_mm: 204.429
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 4.5
+      k_v: 4.5
+      n_h: 11.0
+      n_v: 11.0

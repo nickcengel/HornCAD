@@ -1,0 +1,284 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 45
+  intended_coverage_v_deg: 45
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 7
+  initial_candidates: 6
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 125.279999
+    - 187.92000099999998
+    extension_mm:
+    - -1.0e-06
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 44.999999
+    - 45.000001
+    osse_coverage_v_deg:
+    - 44.999999
+    - 45.000001
+    k_h:
+    - 2.499999
+    - 5.500001
+    k_v:
+    - 2.499999
+    - 5.500001
+    n_h:
+    - 3.999999
+    - 16.000001
+    n_v:
+    - 3.999999
+    - 16.000001
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
+  control_decoupling:
+    design: canonical-three-level-factorial
+    wave: core-axis
+    manifest_sha256: f2f7c87cbdde9cb86b50828006b9dfc6c7cc287da96791a8dd39dd82ee2cab43
+    coordinate_ids:
+    - 45d-450mm-L+0-K+0-N+0
+    - 45d-450mm-L-1-K+0-N+0
+    - 45d-450mm-L+0-K-1-N+0
+    - 45d-450mm-L+0-K+0-N-1
+    - 45d-450mm-L+0-K+0-N+1
+    - 45d-450mm-L+0-K+1-N+0
+    - 45d-450mm-L+1-K+0-N+0
+    coordinates:
+    - id: 45d-450mm-L+0-K+0-N+0
+      kind: canonical-grid
+      stage: core-axis
+      coverage_deg: 45
+      mouth_mm: 450
+      length_level: 0
+      k_level: 0
+      n_level: 0
+      length_factor: 1.0
+      stratum: L+0_K+0_N+0
+      length_mm: 156.6
+      k: 4.0
+      n: 8.0
+      reference_length_mm: 156.6
+      reference_result:
+        search: 45deg/450x450-canonical-s
+        candidate_id: candidate-002
+        score: 85.15857634175853
+      s: 1.5660486367929032
+      exit_angle_deg: 87.85667272442628
+      normalized_curvature_radius: 2.9157764181500085
+      final_tenth_radial_growth_fraction: 0.3889097296323486
+      status: planned
+    - id: 45d-450mm-L-1-K+0-N+0
+      kind: canonical-grid
+      stage: core-axis
+      coverage_deg: 45
+      mouth_mm: 450
+      length_level: -1
+      k_level: 0
+      n_level: 0
+      length_factor: 0.8
+      stratum: L-1_K+0_N+0
+      length_mm: 125.28
+      k: 4.0
+      n: 8.0
+      reference_length_mm: 156.6
+      reference_result:
+        search: 45deg/450x450-canonical-s
+        candidate_id: candidate-002
+        score: 85.15857634175853
+      s: 2.7390293215968766
+      exit_angle_deg: 88.75239204698808
+      normalized_curvature_radius: 6.759030657506594
+      final_tenth_radial_growth_fraction: 0.49612246037105895
+      status: planned
+    - id: 45d-450mm-L+0-K-1-N+0
+      kind: canonical-grid
+      stage: core-axis
+      coverage_deg: 45
+      mouth_mm: 450
+      length_level: 0
+      k_level: -1
+      n_level: 0
+      length_factor: 1.0
+      stratum: L+0_K-1_N+0
+      length_mm: 156.6
+      k: 2.5
+      n: 8.0
+      reference_length_mm: 156.6
+      reference_result:
+        search: 45deg/450x450-canonical-s
+        candidate_id: candidate-002
+        score: 85.15857634175853
+      s: 1.2948279640535383
+      exit_angle_deg: 87.43285828431794
+      normalized_curvature_radius: 2.0530502001656434
+      final_tenth_radial_growth_fraction: 0.3373237942095515
+      status: planned
+    - id: 45d-450mm-L+0-K+0-N-1
+      kind: canonical-grid
+      stage: core-axis
+      coverage_deg: 45
+      mouth_mm: 450
+      length_level: 0
+      k_level: 0
+      n_level: -1
+      length_factor: 1.0
+      stratum: L+0_K+0_N-1
+      length_mm: 156.6
+      k: 4.0
+      n: 4.0
+      reference_length_mm: 156.6
+      reference_result:
+        search: 45deg/450x450-canonical-s
+        candidate_id: candidate-002
+        score: 85.15857634175853
+      s: 0.8341614913267333
+      exit_angle_deg: 86.55085960705183
+      normalized_curvature_radius: 1.3632444644160768
+      final_tenth_radial_growth_fraction: 0.32341362842966465
+      status: planned
+    - id: 45d-450mm-L+0-K+0-N+1
+      kind: canonical-grid
+      stage: core-axis
+      coverage_deg: 45
+      mouth_mm: 450
+      length_level: 0
+      k_level: 0
+      n_level: 1
+      length_factor: 1.0
+      stratum: L+0_K+0_N+1
+      length_mm: 156.6
+      k: 4.0
+      n: 16.0
+      reference_length_mm: 156.6
+      reference_result:
+        search: 45deg/450x450-canonical-s
+        candidate_id: candidate-002
+        score: 85.15857634175853
+      s: 3.520186843234639
+      exit_angle_deg: 88.45784048332936
+      normalized_curvature_radius: 5.092029359992078
+      final_tenth_radial_growth_fraction: 0.4334161399153456
+      status: planned
+    - id: 45d-450mm-L+0-K+1-N+0
+      kind: canonical-grid
+      stage: core-axis
+      coverage_deg: 45
+      mouth_mm: 450
+      length_level: 0
+      k_level: 1
+      n_level: 0
+      length_factor: 1.0
+      stratum: L+0_K+1_N+0
+      length_mm: 156.6
+      k: 5.5
+      n: 8.0
+      reference_length_mm: 156.6
+      reference_result:
+        search: 45deg/450x450-canonical-s
+        candidate_id: candidate-002
+        score: 85.15857634175853
+      s: 1.7992496270482445
+      exit_angle_deg: 88.1223260171652
+      normalized_curvature_radius: 3.7739692048445557
+      final_tenth_radial_growth_fraction: 0.43223394211134125
+      status: planned
+    - id: 45d-450mm-L+1-K+0-N+0
+      kind: canonical-grid
+      stage: core-axis
+      coverage_deg: 45
+      mouth_mm: 450
+      length_level: 1
+      k_level: 0
+      n_level: 0
+      length_factor: 1.2
+      stratum: L+1_K+0_N+0
+      length_mm: 187.92
+      k: 4.0
+      n: 8.0
+      reference_length_mm: 156.6
+      reference_result:
+        search: 45deg/450x450-canonical-s
+        candidate_id: candidate-002
+        score: 85.15857634175853
+      s: 0.7747373635954268
+      exit_angle_deg: 85.84527951605956
+      normalized_curvature_radius: 0.9728823960347053
+      final_tenth_radial_growth_fraction: 0.279270553596884
+      status: planned
+  initial_pool:
+  - label: 45d-450mm-L-1-K+0-N+0
+    values:
+      length_mm: 125.28
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 8.0
+      n_v: 8.0
+  - label: 45d-450mm-L+0-K-1-N+0
+    values:
+      length_mm: 156.6
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 2.5
+      k_v: 2.5
+      n_h: 8.0
+      n_v: 8.0
+  - label: 45d-450mm-L+0-K+0-N-1
+    values:
+      length_mm: 156.6
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 4.0
+      n_v: 4.0
+  - label: 45d-450mm-L+0-K+0-N+1
+    values:
+      length_mm: 156.6
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 16.0
+      n_v: 16.0
+  - label: 45d-450mm-L+0-K+1-N+0
+    values:
+      length_mm: 156.6
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 5.5
+      k_v: 5.5
+      n_h: 8.0
+      n_v: 8.0
+  - label: 45d-450mm-L+1-K+0-N+0
+    values:
+      length_mm: 187.92
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.0
+      k_v: 4.0
+      n_h: 8.0
+      n_v: 8.0

@@ -1,0 +1,71 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 45
+  intended_coverage_v_deg: 45
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 1
+  initial_candidates: 0
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 162.499999
+    - 162.500001
+    extension_mm:
+    - -1.0e-06
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 44.999999
+    - 45.000001
+    osse_coverage_v_deg:
+    - 44.999999
+    - 45.000001
+    k_h:
+    - 3.999999
+    - 4.000001
+    k_v:
+    - 3.999999
+    - 4.000001
+    n_h:
+    - 7.999999
+    - 8.000001
+    n_v:
+    - 7.999999
+    - 8.000001
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
+  control_decoupling:
+    design: canonical-three-level-factorial
+    wave: boundary-sentinel
+    manifest_sha256: f2f7c87cbdde9cb86b50828006b9dfc6c7cc287da96791a8dd39dd82ee2cab43
+    coordinate_ids:
+    - 45d-350mm-boundary-L2
+    coordinates:
+    - id: 45d-350mm-boundary-L2
+      kind: boundary-sentinel
+      stage: boundary-sentinel
+      coverage_deg: 45
+      mouth_mm: 350
+      length_factor: 1.3
+      length_mm: 162.5
+      k: 4.0
+      n: 8.0
+      reference_length_mm: 125.0
+      status: planned
+      s: 0.4741605069981124
+      exit_angle_deg: 83.53861152807265
+      normalized_curvature_radius: 0.4715946574443664
+      final_tenth_radial_growth_fraction: 0.23357842828871103

@@ -1,0 +1,79 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 35
+  intended_coverage_v_deg: 35
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 1
+  initial_candidates: 0
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 267.117999
+    - 267.118001
+    extension_mm:
+    - -1.0e-06
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 34.999999
+    - 35.000001
+    osse_coverage_v_deg:
+    - 34.999999
+    - 35.000001
+    k_h:
+    - 3.999999
+    - 4.000001
+    k_v:
+    - 3.999999
+    - 4.000001
+    n_h:
+    - 3.999999
+    - 4.000001
+    n_v:
+    - 3.999999
+    - 4.000001
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
+  control_decoupling:
+    design: canonical-three-level-factorial
+    wave: face-continuation
+    manifest_sha256: f2f7c87cbdde9cb86b50828006b9dfc6c7cc287da96791a8dd39dd82ee2cab43
+    coordinate_ids:
+    - 35d-450mm-L+1-K+0-N-1
+    coordinates:
+    - id: 35d-450mm-L+1-K+0-N-1
+      kind: canonical-grid
+      stage: two-factor-face
+      coverage_deg: 35
+      mouth_mm: 450
+      length_level: 1
+      k_level: 0
+      n_level: -1
+      length_factor: 1.2
+      stratum: L+1_K+0_N-1
+      length_mm: 267.118
+      k: 4.0
+      n: 4.0
+      reference_length_mm: 222.598
+      reference_result:
+        search: 35deg/450x450-s-grid
+        candidate_id: candidate-002
+        score: 88.01625463923227
+      s: 0.2457523768608746
+      exit_angle_deg: 79.42748887436962
+      normalized_curvature_radius: 0.27825210363119984
+      final_tenth_radial_growth_fraction: 0.22147612620785084
+      status: planned
