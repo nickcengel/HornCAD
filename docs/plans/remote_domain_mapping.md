@@ -8,10 +8,12 @@ sampled most heavily around the original K=4, N=10 surface. Phase 4 changes the
 objective from polishing sub-point score differences to reducing holes in the
 measured design domain.
 
-The active domain remains square, symmetric, and zero-extension: coverage
-half-angles 25–50 degrees in five-degree increments and mouths 250–500 mm in
-50 mm increments. Conical extensions, section-shape morphing, and independent
-horizontal/vertical curves are explicitly deferred.
+The active design envelope remains square, symmetric, and zero-extension:
+coverage half-angles 30–50 degrees in five-degree increments and mouths
+250–450 mm in 50 mm increments. Existing 25-degree results and 500 mm mouths
+remain historical edge evidence, but are not allocated full remote-map work.
+Conical extensions, section-shape morphing, and independent horizontal/vertical
+curves are explicitly deferred.
 
 ## Boundary repair
 
@@ -27,9 +29,12 @@ length bracket.
 
 ## Equal-opportunity map
 
-Every one of the 36 mouth/coverage cells receives four remote candidates, for
-144 candidates total. Two candidates per cell run in Batch 1. Batch 2 is not
-materialized until Batch 1 results have entered the measured dataset.
+Every one of the 25 interior mouth/coverage cells receives four remote
+candidates. The five 25-degree cells already completed or running at
+250–450 mm retain their two Batch-1 candidates as sparse edge sentinels. No
+Batch 2 is scheduled at 25 degrees, and no Phase-4 candidate is scheduled at a
+500 mm mouth. This yields 110 candidates total. Batch 2 is not materialized
+until Batch 1 results have entered the measured dataset.
 
 Candidate generation uses feasible symmetric points in:
 
@@ -73,7 +78,7 @@ suppresses outward rise without sacrificing containment.
 
 ## Completion
 
-Phase 4 is complete only when all 144 candidate slots are complete or carry an
+Phase 4 is complete only when all 110 candidate slots are complete or carry an
 explicit geometry/failure outcome. Reports expose planned and active slots,
 acquisition reasons, parameter values, nearest-evidence distance, and the
 one-point materiality rule. Compact response archives remain retained so new

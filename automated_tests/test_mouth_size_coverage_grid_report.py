@@ -61,7 +61,7 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("data-angle-filter='45'", report)
         self.assertNotIn("data-angle-filter='60'", report)
         self.assertIn(
-            "Supported domain: 25°–50° half-coverage and 250–500 mm mouth size",
+            "Active Phase 4 envelope: 30°–50° half-coverage and 250–450 mm mouth size",
             report,
         )
         self.assertNotIn("data-sort='200.000000'", report)
@@ -77,6 +77,10 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("data-subsearch-angle-filter='30'", report)
         self.assertIn("data-subsearch-angle-filter='50'", report)
         self.assertIn("id='subsearch-filter-count'", report)
+        self.assertIn("id='subsearch-edge-toggle'", report)
+        self.assertIn("data-subsearch-edge-history='true'", report)
+        self.assertIn("showSubsearchEdgeHistory = false", report)
+        self.assertIn("renderSubsearches();", report)
         self.assertIn("data-sort='number'>Best score</th>", report)
         self.assertIn("Complete&nbsp;/ Failed&nbsp;/ Proposed", report)
         self.assertIn("row.dataset.subsearchCoverageAngle.split(' ')", report)

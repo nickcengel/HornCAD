@@ -20,13 +20,19 @@ ROOT = Path(__file__).resolve().parents[1]
 class BemDomainMappingProgramTests(unittest.TestCase):
     def test_plan_has_four_slots_in_every_cell(self) -> None:
         slots = planned_slots()
-        self.assertEqual(len(slots), 144)
-        for angle in ANGLES:
-            for mouth in MOUTHS:
+        self.assertEqual(len(slots), 110)
+        for angle in (30, 35, 40, 45, 50):
+            for mouth in (250, 300, 350, 400, 450):
                 cell = [item for item in slots if
                         item["coverage_deg"] == angle and item["mouth_mm"] == mouth]
                 self.assertEqual(len(cell), 4)
                 self.assertEqual({item["batch"] for item in cell}, {1, 2})
+        for mouth in (250, 300, 350, 400, 450):
+            cell = [item for item in slots if
+                    item["coverage_deg"] == 25 and item["mouth_mm"] == mouth]
+            self.assertEqual(len(cell), 2)
+            self.assertEqual({item["batch"] for item in cell}, {1})
+        self.assertFalse(any(item["mouth_mm"] == 500 for item in slots))
 
     def test_foldover_spans_low_and_high_k_n_s(self) -> None:
         self.assertEqual(SLOTS[1], (("low", "low", "low"),

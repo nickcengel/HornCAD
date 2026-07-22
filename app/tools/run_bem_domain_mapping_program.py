@@ -34,6 +34,9 @@ from .run_s_boundary_closure_program import (
 
 ANGLES = (25, 30, 35, 40, 45, 50)
 MOUTHS = (250, 300, 350, 400, 450, 500)
+INTERIOR_ANGLES = (30, 35, 40, 45, 50)
+INTERIOR_MOUTHS = (250, 300, 350, 400, 450)
+RETAINED_EDGE_CELLS = tuple((25, mouth) for mouth in (250, 300, 350, 400, 450))
 S_BOUNDS = (0.05, 4.0)
 K_BOUNDS = (1.0, 7.0)
 N_BOUNDS = (2.0, 20.0)
@@ -307,14 +310,19 @@ def select_batch(root: Path, batch: int) -> list[Proposal]:
     candidates, _ = load_candidates(root)
     model = KernelScoreModel(candidates) if batch == 2 else None
     output: list[Proposal] = []
-    for angle in ANGLES:
+    cells = [(angle, mouth) for angle in INTERIOR_ANGLES
+             for mouth in INTERIOR_MOUTHS]
+    if batch == 1:
+        cells = [*RETAINED_EDGE_CELLS, *cells]
+    for angle in sorted(set(angle for angle, _ in cells)):
         if angle == 50:
             continue
-        for mouth in MOUTHS:
+        for mouth in sorted(mouth for candidate_angle, mouth in cells
+                            if candidate_angle == angle):
             for slot in range(2):
                 output.append(select_proposal(
                     root, angle, mouth, batch, slot, candidates, output, model))
-    for mouth in MOUTHS:
+    for mouth in sorted(mouth for angle, mouth in cells if angle == 50):
         for slot in range(2):
             matched = next((item for item in output if (
                 batch == 1 and slot == 0 and item.coverage_deg == 45 and
@@ -572,10 +580,16 @@ def _run_paths(root: Path, paths: list[Path], slots: int,
 
 
 def planned_slots() -> list[dict[str, Any]]:
+    cells_by_batch = {
+        1: [*RETAINED_EDGE_CELLS, *((angle, mouth)
+             for angle in INTERIOR_ANGLES for mouth in INTERIOR_MOUTHS)],
+        2: [(angle, mouth) for angle in INTERIOR_ANGLES
+            for mouth in INTERIOR_MOUTHS],
+    }
     return [{
         "coverage_deg": angle, "mouth_mm": mouth, "batch": batch, "slot": slot,
         "status": "awaiting acquisition" if batch == 2 else "planned",
-    } for batch in (1, 2) for angle in ANGLES for mouth in MOUTHS
+    } for batch in (1, 2) for angle, mouth in cells_by_batch[batch]
       for slot in range(2)]
 
 
@@ -584,7 +598,7 @@ def run_program(root: Path, slots: int = 2,
     state_path = root / "domain_mapping_state.json"
     state = {
         "schema_version": 1, "status": "running", "phase": "boundary-repair",
-        "total_candidates": 144, "completed_searches": 0,
+        "total_candidates": len(planned_slots()), "completed_searches": 0,
         "score_materiality_points": SCORE_MATERIALITY,
         "started_at_unix": time.time(), "planned_slots": planned_slots(),
     }

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "snapshot_completed_at": "2026-07-22T10:47:17.388484-07:00",
+  "snapshot_completed_at": "2026-07-22T11:02:52.478185-07:00",
   "provisional": true,
   "study_progress": {
     "program_status": "running",
@@ -13,14 +13,7 @@
     },
     "running_searches": [
       {
-        "search": "25deg/350x350-domain-map-b01",
-        "phase": "BEM evaluation candidate-000",
-        "completed_candidates": 0,
-        "planned_candidates": 2,
-        "solver_workers": 10
-      },
-      {
-        "search": "25deg/400x400-domain-map-b01",
+        "search": "25deg/450x450-domain-map-b01",
         "phase": "BEM evaluation candidate-000",
         "completed_candidates": 0,
         "planned_candidates": 2,
@@ -32,7 +25,7 @@
       "phase": "domain-map-batch-1",
       "total_candidates": 144,
       "planned_slot_count": 144,
-      "completed_searches": 2,
+      "completed_searches": 4,
       "score_materiality_points": 1.0
     }
   },
@@ -134,33 +127,33 @@
     "score_asymptote_tolerance_points": 0.5
   },
   "domain_mapping_meta_analysis": {
-    "completed_remote_candidates": 4,
+    "completed_remote_candidates": 8,
     "assessment": "insufficient distributed evidence",
     "classification_counts": {
-      "boundary-confirmation": 4
+      "boundary-confirmation": 8
     },
-    "median_nearest_pre_phase_distance": 0.6077630538249879,
-    "median_score_delta": -7.765213398346269,
-    "distance_score_correlation": 0.8569352749077404,
+    "median_nearest_pre_phase_distance": 0.6746768945172896,
+    "median_score_delta": -10.558228941414121,
+    "distance_score_correlation": 0.3452411487567624,
     "strata": [
       {
         "stratum": "K\u22481 / N\u22482 corner",
-        "completed": 2,
+        "completed": 4,
         "angle_count": 1,
         "competitive": 0,
         "diagnostic_tradeoffs": 0,
-        "boundary_confirmations": 2,
-        "median_score_delta": -15.300564206606044,
+        "boundary_confirmations": 4,
+        "median_score_delta": -25.18292579799266,
         "recommendation": "collect distributed sentinels"
       },
       {
         "stratum": "K\u22487 / N\u224820 corner",
-        "completed": 2,
+        "completed": 4,
         "angle_count": 1,
         "competitive": 0,
         "diagnostic_tradeoffs": 0,
-        "boundary_confirmations": 2,
-        "median_score_delta": -5.900955177088527,
+        "boundary_confirmations": 4,
+        "median_score_delta": -8.91592339699151,
         "recommendation": "collect distributed sentinels"
       }
     ],
@@ -248,17 +241,101 @@
           "outward_rise_db": 0.0,
           "minus_six_rms_deg": 3.3593859907302583
         }
+      },
+      {
+        "coverage_deg": 25.0,
+        "mouth_mm": 350.0,
+        "s": 2.6999944888430583,
+        "k": 7.0,
+        "n": 20.0,
+        "mouth_length_ratio": 1.3779039325378235,
+        "nearest_pre_phase_distance": 0.7629315270772611,
+        "score": 70.32475068834043,
+        "incumbent_score": 80.07624356736294,
+        "score_delta": -9.751492879022507,
+        "stratum": "K\u22487 / N\u224820 corner",
+        "classification": "boundary-confirmation",
+        "component_changes": {
+          "containment": -5.318783427501302,
+          "profile_rms_db": 0.6721917089743843,
+          "slice_energy_db": 0.4079203630167614,
+          "outward_rise_db": 0.0,
+          "minus_six_rms_deg": 4.003285318408196
+        }
+      },
+      {
+        "coverage_deg": 25.0,
+        "mouth_mm": 350.0,
+        "s": 0.10000100660223922,
+        "k": 1.0,
+        "n": 2.0,
+        "mouth_length_ratio": 1.3287270794578792,
+        "nearest_pre_phase_distance": 0.6720460367980813,
+        "score": 52.86144750285768,
+        "incumbent_score": 80.07624356736294,
+        "score_delta": -27.214796064505258,
+        "stratum": "K\u22481 / N\u22482 corner",
+        "classification": "boundary-confirmation",
+        "component_changes": {
+          "containment": -0.5285581596670852,
+          "profile_rms_db": 1.5928530039802347,
+          "slice_energy_db": 0.904571632422333,
+          "outward_rise_db": 3.5209440916961174,
+          "minus_six_rms_deg": 0.40192083949502866
+        }
+      },
+      {
+        "coverage_deg": 25.0,
+        "mouth_mm": 400.0,
+        "s": 2.7999879306827027,
+        "k": 7.0,
+        "n": 20.0,
+        "mouth_length_ratio": 1.4192902838935388,
+        "nearest_pre_phase_distance": 0.7640178118153683,
+        "score": 71.67979469641213,
+        "incumbent_score": 83.04475970021787,
+        "score_delta": -11.364965003805736,
+        "stratum": "K\u22487 / N\u224820 corner",
+        "classification": "boundary-confirmation",
+        "component_changes": {
+          "containment": -5.276391307379441,
+          "profile_rms_db": 0.6672283918234241,
+          "slice_energy_db": 0.6322779855950253,
+          "outward_rise_db": -0.3550515485065988,
+          "minus_six_rms_deg": 4.85847785292102
+        }
+      },
+      {
+        "coverage_deg": 25.0,
+        "mouth_mm": 400.0,
+        "s": 0.09999911422365423,
+        "k": 1.0,
+        "n": 2.0,
+        "mouth_length_ratio": 1.327554048044181,
+        "nearest_pre_phase_distance": 0.6718707445160421,
+        "score": 53.98656619055909,
+        "incumbent_score": 83.04475970021787,
+        "score_delta": -29.05819350965878,
+        "stratum": "K\u22481 / N\u22482 corner",
+        "classification": "boundary-confirmation",
+        "component_changes": {
+          "containment": -0.7576754232498928,
+          "profile_rms_db": 1.6097305447569288,
+          "slice_energy_db": 1.0942996273147823,
+          "outward_rise_db": 3.330115655706855,
+          "minus_six_rms_deg": 1.0711319777126445
+        }
       }
     ]
   },
   "search_states": {
-    "complete": 117,
+    "complete": 119,
     "geometry-rejected": 7,
-    "running": 2
+    "running": 1
   },
-  "unique_candidate_count": 830,
+  "unique_candidate_count": 834,
   "coverage_counts": {
-    "25": 114,
+    "25": 118,
     "30": 39,
     "35": 90,
     "40": 97,

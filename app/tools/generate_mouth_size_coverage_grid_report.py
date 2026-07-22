@@ -27,6 +27,9 @@ SUPPORTED_COVERAGE_MIN_DEG = 25.0
 SUPPORTED_COVERAGE_MAX_DEG = 50.0
 SUPPORTED_MOUTH_MIN_MM = 250.0
 SUPPORTED_MOUTH_MAX_MM = 500.0
+ACTIVE_PHASE_FOUR_ANGLES = frozenset((30, 35, 40, 45, 50))
+ACTIVE_PHASE_FOUR_MOUTHS = frozenset((250, 300, 350, 400, 450))
+ACTIVE_PHASE_FOUR_CANDIDATE_TOTAL = 110
 
 
 LEGACY_RANKING_KEYS = (
@@ -544,10 +547,13 @@ def generate_report(project_root: Path, output: Path) -> Path:
         best_score = max(completed_scores) if completed_scores else None
         best_score_sort = "" if best_score is None else f"{best_score:.6f}"
         best_score_text = "—" if best_score is None else f"{best_score:.1f}%"
+        is_edge_history = summary["coverage"] == 25 or summary["mouth"] == 500
         summary_entries.append((
             status_order.get(summary["status"], 2), phase_order, summary["label"],
             f"{summary['coverage']:g}",
-            "<tr data-subsearch-coverage-angle='{}'>"
+            "<tr data-subsearch-coverage-angle='{}' "
+            f"data-subsearch-edge-history='{str(is_edge_history).lower()}'"
+            f"{' hidden' if is_edge_history else ''}>"
             f"<td data-sort='{phase_order}'>{html.escape(phase_label)}</td>"
             f"<td>{html.escape(summary['label'])}</td>"
             f"<td>{status_badge}</td>"
@@ -603,7 +609,8 @@ def generate_report(project_root: Path, output: Path) -> Path:
         summary_entries.append((
             status_order.get(planned_status, 1), phase_order,
             str(item["label"]), angles,
-            "<tr data-subsearch-coverage-angle='{}'>"
+            "<tr data-subsearch-coverage-angle='{}' "
+            "data-subsearch-edge-history='false'>"
             f"<td data-sort='{phase_order}'>{html.escape(phase_label)}</td>"
             f"<td>{html.escape(str(item['label']))}{detail}</td>"
             f"<td><span class='badge pending'>{html.escape(planned_status)}</span></td>"
@@ -612,24 +619,34 @@ def generate_report(project_root: Path, output: Path) -> Path:
         ))
     if domain_state and current_phase == "domain-map-batch-1":
         existing_folders = {summary["folder"] for summary in summaries}
-        for angle in (25, 30, 35, 40, 45, 50):
-            for mouth in (250, 300, 350, 400, 450, 500):
-                folder = project_root / f"{angle}deg" / f"{mouth}x{mouth}-domain-map-b02"
-                if folder in existing_folders:
-                    continue
-                label = f"{angle} deg /​ {mouth} mm · remote domain map B02"
-                summary_entries.append((
-                    1, 4, label, str(angle),
-                    "<tr data-subsearch-coverage-angle='{}'>"
-                    "<td data-sort='4'>Phase 4 · remote domain mapping</td>"
-                    f"<td>{html.escape(label)}</td>"
-                    "<td><span class='badge pending'>awaiting acquisition</span></td>"
-                    "<td data-sort=''>—</td><td data-sort=''>—</td>"
-                    "<td>0&nbsp;/<wbr> 0&nbsp;/<wbr> 2</td><td>—</td></tr>"
-                ))
+        batch_two_cells = sorted({
+            (int(item["coverage_deg"]), int(item["mouth_mm"]))
+            for item in domain_state.get("planned_slots", [])
+            if int(item.get("batch", 0)) == 2
+            and int(item["coverage_deg"]) in ACTIVE_PHASE_FOUR_ANGLES
+            and int(item["mouth_mm"]) in ACTIVE_PHASE_FOUR_MOUTHS
+        })
+        for angle, mouth in batch_two_cells:
+            folder = project_root / f"{angle}deg" / f"{mouth}x{mouth}-domain-map-b02"
+            if folder in existing_folders:
+                continue
+            label = f"{angle} deg /​ {mouth} mm · remote domain map B02"
+            summary_entries.append((
+                1, 4, label, str(angle),
+                "<tr data-subsearch-coverage-angle='{}' "
+                f"data-subsearch-edge-history='{str(angle == 25 or mouth == 500).lower()}'"
+                f"{' hidden' if angle == 25 or mouth == 500 else ''}>"
+                "<td data-sort='4'>Phase 4 · remote domain mapping</td>"
+                f"<td>{html.escape(label)}</td>"
+                "<td><span class='badge pending'>awaiting acquisition</span></td>"
+                "<td data-sort=''>—</td><td data-sort=''>—</td>"
+                "<td>0&nbsp;/<wbr> 0&nbsp;/<wbr> 2</td><td>—</td></tr>"
+            ))
     summary_entries.sort(key=lambda item: (item[0], item[1], item[2]))
     summary_rows = [entry[4].format(html.escape(entry[3]))
                     for entry in summary_entries]
+    visible_summary_count = sum(
+        "data-subsearch-edge-history='true'" not in row for row in summary_rows)
 
     phase_display = {
         "baseline-and-s-closure": "Phase 1 · baseline / S closure",
@@ -718,6 +735,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
     domain_progress = learning.get("study_progress", {}).get("domain_mapping", {})
     domain_status = str(domain_progress.get("status", "not-started"))
     domain_phase = str(domain_progress.get("phase", "not-started"))
+    domain_total = ACTIVE_PHASE_FOUR_CANDIDATE_TOTAL
     domain_meta = learning.get("domain_mapping_meta_analysis", {})
     domain_counts = domain_meta.get("classification_counts", {})
     domain_meta_rows = "".join(
@@ -758,7 +776,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 @media(max-width:700px){{.summary,.learning-cards{{grid-template-columns:1fr}}}}
 </style></head><body><main>
 <h1>Mouth-size / coverage grid</h1>
-<p>Supported domain: 25°–50° half-coverage and 250–500 mm mouth size.</p>
+<p>Active Phase 4 envelope: 30°–50° half-coverage and 250–450 mm mouth size. Retained 25° and 500 mm results are edge history.</p>
 <p class='muted'>Candidates are ranked by the final surface score. Previous rank and previous diagnostic score are shown beside it for direct comparison. The final score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%.</p>
 <section class='summary'>
 <div class='card'><strong>{started}&nbsp;/<wbr> {total}</strong> started</div>
@@ -772,7 +790,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <div class='learning-cards'>{learning_cards}</div>
 <p><strong>Phase 3 audit:</strong> {phase_three_audit['quarter_step_k_candidate_count']} quarter-step K candidates changed the selected winner by only {phase_three_audit['median_winner_advantage_over_nearby_k']:.3f} points at the median ({phase_three_audit['maximum_winner_advantage_over_nearby_k']:.3f} maximum) versus a nearby measured K at the same N. Future closure uses K ≥ 0.5 steps, N ≥ 1 steps, and moves to local S/length inside a 0.5-point score asymptote.</p>
 <p><strong>Coupled completion:</strong> {len(phase_three_audit['anchor_gains']) - len(coupled_practical_stops)} anchors converged; {len(coupled_practical_stops)} stopped at the three-round limit with less than 0.5 points available over its local-S center but without a formally bracketed length optimum.</p>
-<p><strong>Remote domain map:</strong> {html.escape(domain_status)} · {html.escape(domain_phase)}. The program allocates four zero-extension candidates to each of 36 mouth/coverage cells in two equal 72-candidate batches. Local exploitation requires at least a 1-point uncertainty-adjusted predicted gain.</p>
+<p><strong>Remote domain map:</strong> {html.escape(domain_status)} · {html.escape(domain_phase)} · {domain_total} candidates. Four candidates cover each of the 25 interior cells from 30°–50° and 250–450 mm; ten completed/running 25° Batch-1 candidates remain as sparse edge sentinels. No Phase-4 work is scheduled at 500 mm. Local exploitation requires at least a 1-point uncertainty-adjusted predicted gain.</p>
 <p><strong>Wide-coverage hypothesis:</strong> current winners keep profile and slice-energy error comparatively smooth, but outward-rise violation increases with mouth/length ratio. Matched 45°/50° probes test whether longer, coarsely higher-K geometries reduce those angular shoulders without losing containment.</p>
 <h3>Remote-sample value</h3>
 <p><strong>{html.escape(str(domain_meta.get('assessment', 'insufficient distributed evidence')))}</strong> · {domain_meta.get('completed_remote_candidates', 0)} complete. Competitive: {domain_counts.get('new-cell-winner', 0) + domain_counts.get('competitive-remote', 0)}; diagnostic tradeoffs: {domain_counts.get('diagnostic-tradeoff', 0)}; boundary confirmations: {domain_counts.get('boundary-confirmation', 0)}; redundant near existing evidence: {domain_counts.get('redundant-near-existing', 0)}.</p>
@@ -813,7 +831,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <section>
 <h2>Sub-searches</h2>
 <p><strong>Unified queue:</strong> {html.escape(program_status)} · {html.escape(phase_display)}. Rows are initially grouped by live status and then execution phase.</p>
-<div class='angle-controls' aria-label='Filter sub-searches by coverage angle'>{subsearch_angle_filters}<span id='subsearch-filter-count' class='filter-count'>{len(summary_rows)} sub-searches</span></div>
+<div class='angle-controls' aria-label='Filter sub-searches by coverage angle'>{subsearch_angle_filters}<button type='button' class='angle-filter' id='subsearch-edge-toggle' aria-pressed='false'>Show edge history</button><span id='subsearch-filter-count' class='filter-count'>{visible_summary_count} sub-searches</span></div>
 <table id='subsearch-table' class='sortable-table'>
 <thead><tr><th class='sortable' data-sort='number'>Queue phase</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Date complete</th><th class='sortable' data-sort='number'>Best score</th><th class='sortable' data-sort='number'>Complete&nbsp;/ Failed&nbsp;/ Proposed</th><th>Links</th></tr></thead>
 <tbody>{''.join(summary_rows)}</tbody>
@@ -920,21 +938,36 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
   renderCandidates();
   const subsearchTable = document.getElementById('subsearch-table');
   const subsearchCount = document.getElementById('subsearch-filter-count');
+  const subsearchEdgeToggle = document.getElementById('subsearch-edge-toggle');
+  let subsearchAngle = 'all';
+  let showSubsearchEdgeHistory = false;
+  const renderSubsearches = () => {{
+    let visible = 0;
+    Array.from(subsearchTable.tBodies[0].rows).forEach((row) => {{
+      const angles = row.dataset.subsearchCoverageAngle.split(' ');
+      const matchesAngle = subsearchAngle === 'all' || angles.includes(subsearchAngle);
+      const matchesHistory = showSubsearchEdgeHistory || row.dataset.subsearchEdgeHistory !== 'true';
+      row.hidden = !matchesAngle || !matchesHistory;
+      if (!row.hidden) visible += 1;
+    }});
+    subsearchCount.textContent = `${{visible}} sub-search${{visible === 1 ? '' : 'es'}}`;
+  }};
   document.querySelectorAll('[data-subsearch-angle-filter]').forEach((button) => {{
     button.addEventListener('click', () => {{
-      const selected = button.dataset.subsearchAngleFilter;
-      let visible = 0;
+      subsearchAngle = button.dataset.subsearchAngleFilter;
       document.querySelectorAll('[data-subsearch-angle-filter]').forEach((item) => {{
         item.setAttribute('aria-pressed', String(item === button));
       }});
-      Array.from(subsearchTable.tBodies[0].rows).forEach((row) => {{
-        const angles = row.dataset.subsearchCoverageAngle.split(' ');
-        row.hidden = selected !== 'all' && !angles.includes(selected);
-        if (!row.hidden) visible += 1;
-      }});
-      subsearchCount.textContent = `${{visible}} sub-search${{visible === 1 ? '' : 'es'}}`;
+      renderSubsearches();
     }});
   }});
+  subsearchEdgeToggle.addEventListener('click', () => {{
+    showSubsearchEdgeHistory = !showSubsearchEdgeHistory;
+    subsearchEdgeToggle.setAttribute('aria-pressed', String(showSubsearchEdgeHistory));
+    subsearchEdgeToggle.textContent = showSubsearchEdgeHistory ? 'Hide edge history' : 'Show edge history';
+    renderSubsearches();
+  }});
+  renderSubsearches();
   const compare = (a, b, type, direction) => {{
     const mul = direction === 'asc' ? 1 : -1;
     if (type === 'number') {{
