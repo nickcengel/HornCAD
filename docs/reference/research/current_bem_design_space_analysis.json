@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "snapshot_completed_at": "2026-07-22T11:32:13.120292-07:00",
+  "snapshot_completed_at": "2026-07-22T11:34:37.243815-07:00",
   "provisional": true,
   "study_progress": {
     "program_status": "running",
@@ -13,15 +13,15 @@
     },
     "running_searches": [
       {
-        "search": "30deg/250x250-domain-map-b01",
+        "search": "30deg/300x300-domain-map-b01",
         "phase": "BEM evaluation candidate-001",
         "completed_candidates": 1,
         "planned_candidates": 2,
         "solver_workers": 10
       },
       {
-        "search": "30deg/300x300-domain-map-b01",
-        "phase": "BEM evaluation candidate-000",
+        "search": "30deg/350x350-domain-map-b01",
+        "phase": "BEM evaluation candidate-001",
         "completed_candidates": 0,
         "planned_candidates": 2,
         "solver_workers": 10
@@ -32,7 +32,7 @@
       "phase": "domain-map-batch-1",
       "total_candidates": 100,
       "planned_slot_count": 100,
-      "completed_searches": 0,
+      "completed_searches": 1,
       "score_materiality_points": 1.0
     }
   },
@@ -134,33 +134,33 @@
     "score_asymptote_tolerance_points": 0.5
   },
   "domain_mapping_meta_analysis": {
-    "completed_remote_candidates": 11,
-    "assessment": "insufficient distributed evidence",
+    "completed_remote_candidates": 13,
+    "assessment": "remote samples mainly support the existing ridge",
     "classification_counts": {
-      "boundary-confirmation": 11
+      "boundary-confirmation": 13
     },
-    "median_nearest_pre_phase_distance": 0.6720460367980813,
+    "median_nearest_pre_phase_distance": 0.677307752236498,
     "median_score_delta": -12.851081440465677,
-    "distance_score_correlation": 0.4908823374281984,
+    "distance_score_correlation": 0.4880929174698341,
     "strata": [
       {
         "stratum": "K\u22481 / N\u22482 corner",
+        "completed": 7,
+        "angle_count": 2,
+        "competitive": 0,
+        "diagnostic_tradeoffs": 0,
+        "boundary_confirmations": 7,
+        "median_score_delta": -27.214796064505258,
+        "recommendation": "collect distributed sentinels"
+      },
+      {
+        "stratum": "K\u22487 / N\u224820 corner",
         "completed": 6,
         "angle_count": 2,
         "competitive": 0,
         "diagnostic_tradeoffs": 0,
         "boundary_confirmations": 6,
-        "median_score_delta": -25.18292579799266,
-        "recommendation": "collect distributed sentinels"
-      },
-      {
-        "stratum": "K\u22487 / N\u224820 corner",
-        "completed": 5,
-        "angle_count": 1,
-        "competitive": 0,
-        "diagnostic_tradeoffs": 0,
-        "boundary_confirmations": 5,
-        "median_score_delta": -9.751492879022507,
+        "median_score_delta": -8.91592339699151,
         "recommendation": "collect distributed sentinels"
       }
     ],
@@ -395,19 +395,61 @@
           "outward_rise_db": 3.1247255258166167,
           "minus_six_rms_deg": -0.021523384529604783
         }
+      },
+      {
+        "coverage_deg": 30.0,
+        "mouth_mm": 250.0,
+        "s": 2.70000493800663,
+        "k": 7.0,
+        "n": 20.0,
+        "mouth_length_ratio": 1.4729709824716453,
+        "nearest_pre_phase_distance": 0.7766196648435301,
+        "score": 70.54495748406868,
+        "incumbent_score": 75.78387357594507,
+        "score_delta": -5.238916091876391,
+        "stratum": "K\u22487 / N\u224820 corner",
+        "classification": "boundary-confirmation",
+        "component_changes": {
+          "containment": -2.808694661996199,
+          "profile_rms_db": 0.48474143100949996,
+          "slice_energy_db": 0.13829755758906415,
+          "outward_rise_db": 0.0,
+          "minus_six_rms_deg": 1.8720835648631393
+        }
+      },
+      {
+        "coverage_deg": 30.0,
+        "mouth_mm": 300.0,
+        "s": 0.099998768256857,
+        "k": 1.0,
+        "n": 2.0,
+        "mouth_length_ratio": 1.5533015424284315,
+        "nearest_pre_phase_distance": 0.6774307568883334,
+        "score": 51.39819422145334,
+        "incumbent_score": 80.57987436957481,
+        "score_delta": -29.181680148121472,
+        "stratum": "K\u22481 / N\u22482 corner",
+        "classification": "boundary-confirmation",
+        "component_changes": {
+          "containment": 0.33857551214175885,
+          "profile_rms_db": 1.6926657317151093,
+          "slice_energy_db": 1.0629788944998468,
+          "outward_rise_db": 3.950475631586988,
+          "minus_six_rms_deg": 0.5543167760150283
+        }
       }
     ]
   },
   "search_states": {
     "cancelled": 3,
-    "complete": 122,
+    "complete": 123,
     "geometry-rejected": 7,
     "running": 2
   },
-  "unique_candidate_count": 839,
+  "unique_candidate_count": 841,
   "coverage_counts": {
     "25": 121,
-    "30": 40,
+    "30": 42,
     "35": 91,
     "40": 97,
     "45": 289,
