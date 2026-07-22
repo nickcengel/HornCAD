@@ -44,6 +44,8 @@ STUDY_PHASES = {
     "canonical S extension": (2, "Phase 2 · K/N grid / S extension"),
     "coupled K/N closure": (3, "Phase 3 · coupled refinement"),
     "coupled local S": (3, "Phase 3 · coupled refinement"),
+    "coupled length closure": (4, "Phase 4 · boundary repair / domain mapping"),
+    "remote domain map": (4, "Phase 4 · remote domain mapping"),
 }
 
 
@@ -110,6 +112,10 @@ def _search_summary(path: Path) -> dict[str, Any]:
         study_label = "coupled K/N closure"
     elif "-coupled-" in mouth_dir and mouth_dir.endswith("-s"):
         study_label = "coupled local S"
+    elif "-coupled-length-closure-r" in mouth_dir:
+        study_label = "coupled length closure"
+    elif "-domain-map-b" in mouth_dir:
+        study_label = "remote domain map"
     elif mouth_dir.endswith("-s-grid"):
         study_label = "uniform S grid"
     elif mouth_dir.endswith("-kn-grid"):
@@ -140,6 +146,9 @@ def _search_summary(path: Path) -> dict[str, Any]:
             "canonical S extension": " · canonical S extension",
             "coupled K/N closure": " · coupled K/N closure",
             "coupled local S": " · coupled local S",
+            "coupled length closure": " · coupled coarse length closure",
+            "remote domain map": (
+                " · remote domain map " + mouth_dir.rsplit("-", 1)[-1].upper()),
         }.get(study_label, "")
     state_path = path.parent / "search_state.json"
     report_path = path.parent / "search_report.html"
@@ -332,7 +341,8 @@ def generate_report(project_root: Path, output: Path) -> Path:
             has_running = any(item["status"] == "running" for item in cell_summaries)
             has_refinement = any(
                 item["status"] == "complete" and item["study"] in {
-                    "adaptive K/N grid", "coupled K/N closure", "coupled local S"}
+                    "adaptive K/N grid", "coupled K/N closure", "coupled local S",
+                    "remote domain map"}
                 for item in cell_summaries)
             baseline_complete = any(
                 item["status"] == "complete" and item["study"] == "uniform S grid"
@@ -557,10 +567,24 @@ def generate_report(project_root: Path, output: Path) -> Path:
             program_state = {}
     program_status = str(program_state.get("status", "not started"))
     current_phase = str(program_state.get("phase", "baseline-and-s-closure"))
+    domain_state_path = project_root / "domain_mapping_state.json"
+    domain_state = {}
+    if domain_state_path.is_file():
+        try:
+            domain_state = json.loads(domain_state_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            domain_state = {}
+    if domain_state:
+        program_status = str(domain_state.get("status", program_status))
+        current_phase = str(domain_state.get("phase", current_phase))
     current_phase_order = {
         "baseline-and-s-closure": 1,
         "kn-grids-and-canonical-extensions": 2,
         "coupled": 3,
+        "boundary-repair": 4,
+        "domain-map-batch-1": 4,
+        "domain-map-batch-2": 4,
+        "domain-map-complete": 4,
     }.get(current_phase, 0)
 
     plan_path = project_root / "study_plan.yaml"
@@ -586,6 +610,23 @@ def generate_report(project_root: Path, output: Path) -> Path:
             "<td data-sort=''>—</td><td data-sort=''>—</td><td>—</td><td>—</td>"
             "</tr>"
         ))
+    if domain_state and current_phase == "domain-map-batch-1":
+        existing_folders = {summary["folder"] for summary in summaries}
+        for angle in (25, 30, 35, 40, 45, 50):
+            for mouth in (250, 300, 350, 400, 450, 500):
+                folder = project_root / f"{angle}deg" / f"{mouth}x{mouth}-domain-map-b02"
+                if folder in existing_folders:
+                    continue
+                label = f"{angle} deg /​ {mouth} mm · remote domain map B02"
+                summary_entries.append((
+                    1, 4, label, str(angle),
+                    "<tr data-subsearch-coverage-angle='{}'>"
+                    "<td data-sort='4'>Phase 4 · remote domain mapping</td>"
+                    f"<td>{html.escape(label)}</td>"
+                    "<td><span class='badge pending'>awaiting acquisition</span></td>"
+                    "<td data-sort=''>—</td><td data-sort=''>—</td>"
+                    "<td>0&nbsp;/<wbr> 0&nbsp;/<wbr> 2</td><td>—</td></tr>"
+                ))
     summary_entries.sort(key=lambda item: (item[0], item[1], item[2]))
     summary_rows = [entry[4].format(html.escape(entry[3]))
                     for entry in summary_entries]
@@ -594,6 +635,10 @@ def generate_report(project_root: Path, output: Path) -> Path:
         "baseline-and-s-closure": "Phase 1 · baseline / S closure",
         "kn-grids-and-canonical-extensions": "Phase 2 · K/N grids / S extensions",
         "coupled": "Phase 3 · coupled refinement",
+        "boundary-repair": "Phase 4 · directional boundary repair",
+        "domain-map-batch-1": "Phase 4 · remote domain map, batch 1 of 2",
+        "domain-map-batch-2": "Phase 4 · remote domain map, batch 2 of 2",
+        "domain-map-complete": "Phase 4 · remote domain map complete",
     }.get(current_phase, current_phase)
 
     project_configs = [summary["config"] for summary in summaries if summary["config"]]
@@ -670,6 +715,9 @@ def generate_report(project_root: Path, output: Path) -> Path:
     ]
     fixed_cells = learning["fixed_k4_n10_cells"]
     endpoint_cells = sum(cell["winner_at_sampled_boundary"] for cell in fixed_cells)
+    domain_progress = learning.get("study_progress", {}).get("domain_mapping", {})
+    domain_status = str(domain_progress.get("status", "not-started"))
+    domain_phase = str(domain_progress.get("phase", "not-started"))
     learning_cards = "".join(
         f"<div class='card'><strong>{html.escape(parameter.upper())} "
         f"{effect.get('median_delta', {}).get('score', 0):+.2f}</strong>"
@@ -712,6 +760,8 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <div class='learning-cards'>{learning_cards}</div>
 <p><strong>Phase 3 audit:</strong> {phase_three_audit['quarter_step_k_candidate_count']} quarter-step K candidates changed the selected winner by only {phase_three_audit['median_winner_advantage_over_nearby_k']:.3f} points at the median ({phase_three_audit['maximum_winner_advantage_over_nearby_k']:.3f} maximum) versus a nearby measured K at the same N. Future closure uses K ≥ 0.5 steps, N ≥ 1 steps, and moves to local S/length inside a 0.5-point score asymptote.</p>
 <p><strong>Coupled completion:</strong> {len(phase_three_audit['anchor_gains']) - len(coupled_practical_stops)} anchors converged; {len(coupled_practical_stops)} stopped at the three-round limit with less than 0.5 points available over its local-S center but without a formally bracketed length optimum.</p>
+<p><strong>Remote domain map:</strong> {html.escape(domain_status)} · {html.escape(domain_phase)}. The program allocates four zero-extension candidates to each of 36 mouth/coverage cells in two equal 72-candidate batches. Local exploitation requires at least a 1-point uncertainty-adjusted predicted gain.</p>
+<p><strong>Wide-coverage hypothesis:</strong> current winners keep profile and slice-energy error comparatively smooth, but outward-rise violation increases with mouth/length ratio. Matched 45°/50° probes test whether longer, coarsely higher-K geometries reduce those angular shoulders without losing containment.</p>
 <p class='muted'>These are aggregate matched comparisons, not universal steering rules. Positive means increasing the control improved score at the median adjacent step. Regime-conditioned and held-out checks are required before using a direction to propose a horn.</p>
 </section>
 <section>

@@ -279,6 +279,7 @@ def _read_json(path: Path) -> dict[str, Any]:
 
 def _study_progress(root: Path) -> dict[str, Any]:
     program = _read_json(root / "study_program_state.json")
+    domain = _read_json(root / "domain_mapping_state.json")
     closure = _read_json(root / "s_boundary_closure.json")
     closure_results = closure.get("results", [])
     closure_counts = Counter(
@@ -302,14 +303,47 @@ def _study_progress(root: Path) -> dict[str, Any]:
             "solver_workers": int(state.get("search", {}).get(
                 "solver", {}).get("workers", 0)),
         })
+    active = domain if domain else program
     return {
-        "program_status": str(program.get("status", "unknown")),
-        "program_phase": str(program.get("phase", "unknown")),
+        "program_status": str(active.get("status", "unknown")),
+        "program_phase": str(active.get("phase", "unknown")),
         "s_closure_status": str(closure.get("status", "unknown")),
         "s_closure_cell_count": len(closure_results),
         "s_closure_counts": dict(sorted(closure_counts.items())),
         "running_searches": running_searches,
+        "domain_mapping": {
+            "status": str(domain.get("status", "not-started")),
+            "phase": str(domain.get("phase", "not-started")),
+            "total_candidates": int(domain.get("total_candidates", 144)),
+            "planned_slot_count": len(domain.get("planned_slots", [])),
+            "completed_searches": int(domain.get("completed_searches", 0)),
+            "score_materiality_points": float(
+                domain.get("score_materiality_points", 1.0)),
+        },
     }
+
+
+def _coverage_winner_summary(candidates: Iterable[Candidate]) -> list[dict[str, Any]]:
+    """Describe the angle trend without letting dense cells dominate it."""
+    cells: dict[tuple[float, float], list[Candidate]] = defaultdict(list)
+    for item in candidates:
+        cells[(item.coverage_deg, item.mouth_mm)].append(item)
+    winners = [max(group, key=lambda item: item.score) for group in cells.values()]
+    output = []
+    for coverage in sorted(set(item.coverage_deg for item in winners)):
+        group = [item for item in winners if item.coverage_deg == coverage]
+        output.append({
+            "coverage_deg": coverage, "cell_count": len(group),
+            "median_score": median(item.score for item in group),
+            "median_mouth_length_ratio": median(
+                item.mouth_mm / item.length_mm for item in group),
+            **{f"median_{name}": median(item.diagnostics[name] for item in group)
+               for name in ("mean_containment", "profile_rms_error_db",
+                            "slice_energy_departure_db",
+                            "outward_rise_violation_db",
+                            "minus_six_rms_error_deg")},
+        })
+    return output
 
 
 def _phase_three_audit(root: Path) -> dict[str, Any]:
@@ -447,6 +481,7 @@ def analyze(root: Path) -> dict[str, Any]:
         "mouth_coverage_cell_count": len(set(
             (item.mouth_mm, item.coverage_deg) for item in candidates)),
         "fixed_k4_n10_cells": _cell_summaries(candidates),
+        "coverage_winner_summary": _coverage_winner_summary(candidates),
         "matched_effects": {
             parameter: {
                 **_summarize_pairs(parameter_pairs),
@@ -608,6 +643,27 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         )
     lines += [
         "",
+        "## Coverage and mouth/length trend",
+        "",
+        "The current wide-coverage penalty is not a general loss of surface smoothness. "
+        "Profile and slice-energy errors improve through the central angles, while outward-rise "
+        "violation grows as the preferred horn becomes shorter relative to its mouth. This "
+        "supports testing longer, higher-K wide horns, but does not yet establish a causal rule.",
+        "",
+        "| Coverage | Cells | Median score | Mouth / length | Profile RMS dB | Slice-energy dB | Outward rise dB | -6 dB RMS deg |",
+        "| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
+    ]
+    for item in analysis["coverage_winner_summary"]:
+        lines.append(
+            f"| {item['coverage_deg']:g}° | {item['cell_count']} | "
+            f"{item['median_score']:.2f} | {item['median_mouth_length_ratio']:.3f} | "
+            f"{item['median_profile_rms_error_db']:.3f} | "
+            f"{item['median_slice_energy_departure_db']:.3f} | "
+            f"{item['median_outward_rise_violation_db']:.3f} | "
+            f"{item['median_minus_six_rms_error_deg']:.2f} |"
+        )
+    lines += [
+        "",
         "## Fixed K=4, N=10 S evidence",
         "",
         f"{len(cells)} mouth/coverage cells currently have fixed K=4, N=10 evidence; "
@@ -629,12 +685,13 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         "",
         "## Immediate next analysis",
         "",
-        "1. Test whether the strongest current K and N transition signals repeat across "
-        "independent cells.",
-        "2. Test whether diagnostic-conditioned directions repeat across independent cells.",
-        "3. Compare absolute and length/mouth-normalized bunching frequencies to identify which "
+        "1. Complete four remote zero-extension candidates in every mouth/coverage cell.",
+        "2. Test whether longer, higher-K wide-coverage candidates reduce outward-rise without "
+        "losing containment.",
+        "3. Test whether diagnostic-conditioned directions repeat across independent cells.",
+        "4. Compare absolute and length/mouth-normalized bunching frequencies to identify which "
         "physical scale moves each frequency feature.",
-        "4. Freeze completed results as training evidence and use later completions as held-out "
+        "5. Freeze completed results as training evidence and use later completions as held-out "
         "checks before any steering rule is labeled supported.",
         "",
         "Generated by `app/tools/analyze_bem_design_space.py`; do not edit this snapshot by hand.",

@@ -11,7 +11,15 @@
       "closed": 29,
       "geometry-limited": 7
     },
-    "running_searches": []
+    "running_searches": [],
+    "domain_mapping": {
+      "status": "not-started",
+      "phase": "not-started",
+      "total_candidates": 144,
+      "planned_slot_count": 0,
+      "completed_searches": 0,
+      "score_materiality_points": 1.0
+    }
   },
   "phase_three_audit": {
     "search_count": 10,
@@ -592,6 +600,74 @@
       "winner_at_sampled_boundary": false,
       "lower_score": 80.59102391594382,
       "upper_score": 80.6434408411034
+    }
+  ],
+  "coverage_winner_summary": [
+    {
+      "coverage_deg": 25.0,
+      "cell_count": 6,
+      "median_score": 80.9864391040754,
+      "median_mouth_length_ratio": 1.2685476029438023,
+      "median_mean_containment": 81.97172124713114,
+      "median_profile_rms_error_db": 1.5894278228217853,
+      "median_slice_energy_departure_db": 1.2016287674989037,
+      "median_outward_rise_violation_db": 0.16970965749020958,
+      "median_minus_six_rms_error_deg": 9.873927652220246
+    },
+    {
+      "coverage_deg": 30.0,
+      "cell_count": 6,
+      "median_score": 85.29848867258059,
+      "median_mouth_length_ratio": 1.5670308775968989,
+      "median_mean_containment": 84.46439823696616,
+      "median_profile_rms_error_db": 1.4097896700235886,
+      "median_slice_energy_departure_db": 0.9747691325835192,
+      "median_outward_rise_violation_db": 0.22417435803376443,
+      "median_minus_six_rms_error_deg": 8.267201371961635
+    },
+    {
+      "coverage_deg": 35.0,
+      "cell_count": 6,
+      "median_score": 86.06161760240636,
+      "median_mouth_length_ratio": 1.916315901411106,
+      "median_mean_containment": 86.45582290598446,
+      "median_profile_rms_error_db": 1.3623453969904147,
+      "median_slice_energy_departure_db": 0.7950625752315497,
+      "median_outward_rise_violation_db": 0.5150749410665382,
+      "median_minus_six_rms_error_deg": 6.274356790364964
+    },
+    {
+      "coverage_deg": 40.0,
+      "cell_count": 6,
+      "median_score": 87.0241302063278,
+      "median_mouth_length_ratio": 2.31610817720584,
+      "median_mean_containment": 88.40657170315981,
+      "median_profile_rms_error_db": 1.3094960774333975,
+      "median_slice_energy_departure_db": 0.7493310233935769,
+      "median_outward_rise_violation_db": 0.5438965777189235,
+      "median_minus_six_rms_error_deg": 5.396236881696267
+    },
+    {
+      "coverage_deg": 45.0,
+      "cell_count": 6,
+      "median_score": 86.85532124439595,
+      "median_mouth_length_ratio": 2.6632861458179646,
+      "median_mean_containment": 89.86855495352926,
+      "median_profile_rms_error_db": 1.266739738657943,
+      "median_slice_energy_departure_db": 0.7882482864362175,
+      "median_outward_rise_violation_db": 0.7331103743938364,
+      "median_minus_six_rms_error_deg": 5.489768301952271
+    },
+    {
+      "coverage_deg": 50.0,
+      "cell_count": 6,
+      "median_score": 86.5189510389095,
+      "median_mouth_length_ratio": 3.278755393491207,
+      "median_mean_containment": 91.13283510228204,
+      "median_profile_rms_error_db": 1.2827653590815242,
+      "median_slice_energy_departure_db": 0.788301143749911,
+      "median_outward_rise_violation_db": 1.037761802325246,
+      "median_minus_six_rms_error_deg": 6.268381039407521
     }
   ],
   "matched_effects": {
