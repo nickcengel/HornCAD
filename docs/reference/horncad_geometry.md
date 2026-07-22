@@ -102,7 +102,7 @@ roundover.
 
 `final_tenth_radial_growth_fraction` measures how much of the total throat-to-mouth
 radius increase occurs in the final 10% of axial length. Candidate searches reject
-a profile above 0.55 before meshing or BEM. This excludes shallow, disc-like mouth
+a profile above 0.52 before meshing or BEM. This excludes shallow, disc-like mouth
 skirts whose useful horn expansion is concentrated immediately before the mouth;
 the constraint is evaluated independently for the horizontal and vertical axes.
 

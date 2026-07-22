@@ -358,8 +358,8 @@ class BEMSearchTests(unittest.TestCase):
         feasible, reason = geometry_feasibility(derived)
         self.assertFalse(feasible)
         self.assertIn("61.3%", reason)
-        derived["final_tenth_radial_growth_h"] = 0.55
-        derived["final_tenth_radial_growth_v"] = 0.55
+        derived["final_tenth_radial_growth_h"] = 0.52
+        derived["final_tenth_radial_growth_v"] = 0.52
         self.assertEqual(geometry_feasibility(derived), (True, None))
 
     def test_seed_then_space_filling_proposals_are_bounded(self) -> None:
