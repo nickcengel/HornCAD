@@ -18,8 +18,7 @@ from .run_bem_search import VARIABLES, load_search, materialize_candidate
 
 WAVES = (
     "core-axis", "boundary-sentinel", "axis-closure",
-    "face-sentinel", "face-continuation",
-    "corner-sentinel", "corner-continuation", "locked-validation",
+    "two-factor-face", "three-factor-corner", "locked-validation",
 )
 
 
@@ -35,7 +34,7 @@ No BEM work is started by the planner or materializer. This file describes the
 exact materialized queue that must be reviewed before launch.
 
 - Frozen manifest SHA-256: `{plan['manifest_sha256']}`
-- Required BEM candidates before evidence-based pruning: {plan['required_candidate_count']}
+- Required feasible, profile-distinct factorial/validation candidates: {plan['required_candidate_count']}
 - Conditional axis-closure candidates: {plan['conditional_candidate_count']}
 - Absolute new-BEM ceiling if every closure probe triggers: {plan['candidate_count']}
 - Search directories: {plan['search_count']}
@@ -47,10 +46,10 @@ exact materialized queue that must be reviewed before launch.
 | --- | ---: | ---: |
 {chr(10).join(rows)}
 
-Core center/axis contrasts always run. Face and corner sentinels run before their
-continuations, so a preregistered dead stratum can be stopped without suppressing
-the measurements needed to identify it. Locked validation runs last and is never
-used to select or prune candidates.
+Every feasible, profile-distinct canonical center, axis, face, and corner runs.
+There is no score-based factorial pruning because control effects may reverse by
+mouth, coverage, derived S, or length. Locked validation runs last and is never
+used to fit or select candidates.
 
 Axis-closure searches are materialized but run only when the corresponding inner
 endpoint points outward by the registered score/diagnostic rule. N=2 is never a
@@ -84,11 +83,9 @@ def coordinate_wave(row: dict[str, Any]) -> str | None:
     if stage in {"core-axis", "boundary-sentinel", "locked-validation"}:
         return stage
     if stage == "two-factor-face":
-        return ("face-sentinel" if row.get("dead_region_sentinel")
-                else "face-continuation")
+        return stage
     if stage == "three-factor-corner":
-        return ("corner-sentinel" if row.get("dead_region_sentinel")
-                else "corner-continuation")
+        return stage
     raise ValueError(f"planned coordinate has unknown stage: {stage}")
 
 
@@ -194,8 +191,7 @@ def materialize_study(source_root: Path, output_root: Path,
         wave = coordinate_wave(row)
         if wave is None:
             continue
-        coordinate_id = (row["id"] if wave in {
-            "axis-closure", "face-continuation", "corner-continuation"} else None)
+        coordinate_id = row["id"] if wave == "axis-closure" else None
         key = (wave, int(row["coverage_deg"]), int(row["mouth_mm"]),
                coordinate_id)
         grouped.setdefault(key, []).append(row)

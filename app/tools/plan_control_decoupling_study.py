@@ -466,35 +466,6 @@ def build_manifest(source_root: Path) -> dict[str, Any]:
                         row["status"] = "conditional"
                 cell_rows.append(row)
             coordinates.extend(cell_rows)
-    sentinel_targets = ((30, 250), (50, 450), (40, 350),
-                        (30, 450), (50, 250))
-    for stage in ("two-factor-face", "three-factor-corner"):
-        strata = sorted(set(row["stratum"] for row in coordinates
-                            if row.get("stage") == stage and
-                            row.get("status") == "planned"))
-        for stratum in strata:
-            available = [row for row in coordinates if
-                         row.get("stage") == stage and
-                         row.get("stratum") == stratum and
-                         row.get("status") == "planned"]
-            selected: list[dict[str, Any]] = []
-            for target_angle, target_mouth in sentinel_targets:
-                remaining = [row for row in available if row not in selected]
-                if not remaining:
-                    break
-                selected_angles = {row["coverage_deg"] for row in selected}
-                selected_mouths = {row["mouth_mm"] for row in selected}
-                chosen = min(remaining, key=lambda row: (
-                    (row["coverage_deg"] in selected_angles)
-                    if len(selected_angles) < 3 else False,
-                    (row["mouth_mm"] in selected_mouths)
-                    if len(selected_mouths) < 3 else False,
-                    abs(row["coverage_deg"] - target_angle) / 5 +
-                    abs(row["mouth_mm"] - target_mouth) / 50,
-                    row["coverage_deg"], row["mouth_mm"]))
-                selected.append(chosen)
-            for row in selected:
-                row["dead_region_sentinel"] = True
     counts = Counter(row["status"] for row in coordinates)
     stage_counts = {
         stage: dict(Counter(row["status"] for row in coordinates
@@ -622,18 +593,10 @@ def build_manifest(source_root: Path) -> dict[str, Any]:
                             "three-factor-corner", "locked-validation"],
             "solver_slots": 2, "workers_per_slot": 10,
             "axis_stage_is_never_score_pruned": True,
-            "eligible_dead_region_stages": [
-                "two-factor-face", "three-factor-corner"],
-            "dead_region_minimum_completed_cells": 5,
-            "dead_region_minimum_angles": 3,
-            "dead_region_minimum_mouths": 3,
-            "dead_region_sentinels_per_stratum": 5,
-            "dead_region_sentinel_candidates": 90,
-            "dead_region_rule": (
-                "prune remaining members of a normalized stratum only when at least "
-                "80% are >=5 score points below their cell reference and none improves "
-                "containment by 0.5, profile/slice/outward error by 0.1 dB, or -6 dB "
-                "RMS error by 0.5 degrees; retain distributed sentinels"),
+            "factorial_score_pruning_enabled": False,
+            "factorial_completion_rule": (
+                "run every feasible, profile-distinct canonical factorial coordinate; "
+                "linked effects may reverse with mouth, coverage, S, or length"),
             "handoff_rule": (
                 "a completed or geometry-rejected search immediately releases its slot; "
                 "single-candidate searches use an explicit seed candidate rather than an "
@@ -662,6 +625,12 @@ def build_manifest(source_root: Path) -> dict[str, Any]:
                 "L*K", "L*N", "K*N",
             ],
             "within_cell_models_required_for_all_25_cells": True,
+            "primary_confirmatory_dataset": (
+                "canonical study coordinates plus only strict exact-response reuses; "
+                "historical optimizer traces do not fill missing canonical contrasts"),
+            "augmented_predictive_dataset": (
+                "after confirmatory analysis, add all solver-compatible historical "
+                "responses with provenance retained for prediction and transfer checks"),
             "second_stage": (
                 "map the same within-cell coefficients across mouth and coverage; "
                 "report replicated signs, magnitudes, and diagnostic tradeoffs"),
@@ -737,19 +706,6 @@ def validate_manifest(manifest: dict[str, Any], source_root: Path) -> list[str]:
     if audit.get("per_cell_factor_level_counts", {}).get(
             "n_level", {}).get("1", {}).get("minimum", 0) < 2:
         errors.append("a cell retains fewer than two physically active high-N points")
-    for stage in ("two-factor-face", "three-factor-corner"):
-        strata = sorted(set(row["stratum"] for row in grid
-                            if row["stage"] == stage and row["status"] == "planned"))
-        for stratum in strata:
-            active = [row for row in grid if row["stage"] == stage and
-                      row["stratum"] == stratum and row["status"] == "planned"]
-            sentinels = [row for row in active if row.get("dead_region_sentinel")]
-            if len(sentinels) != min(5, len(active)):
-                errors.append(f"{stage}/{stratum} has wrong sentinel count")
-            if len(sentinels) >= 5 and (
-                    len(set(row["coverage_deg"] for row in sentinels)) < 3 or
-                    len(set(row["mouth_mm"] for row in sentinels)) < 3):
-                errors.append(f"{stage}/{stratum} sentinels are not distributed")
     # The actual geometry guard, not a prose promise, must reject known failures.
     for example in manifest["geometry_policy"]["known_disc_like_examples_must_be_rejected"]:
         angle, mouth = example["coverage_deg"], example["mouth_mm"]
@@ -848,18 +804,14 @@ Reuse requires matching mouth, coverage, K, N, length within 0.25 mm, identical
 solver/frequency fingerprint, and a retained responses.npz archive. Reused
 responses will be rescored with the current diagnostics before final analysis.
 
-## Execution and dead-region policy
+## Execution and completion policy
 
 Execution order is reference anchors, core center/axes, sparse boundary sentinels,
 conditional axis closure, two-factor faces, three-factor corners, then locked
-validation. Core axes are
-never pruned by score. Face/corner strata may be
-stopped only after at least five distributed cells spanning three angles and
-three mouths show that at least 80% are five or more score points below their cell
-reference and none offers a material diagnostic improvement. Distributed
-sentinels remain. The predeclared face/corner sentinel wave is 90 candidates;
-continuation work is avoided only when that
-evidence satisfies the explicit rule.
+validation. No canonical factorial coordinate is pruned by score. Every feasible,
+profile-distinct center, axis, face, and corner runs because L/K/N effects are
+already known to change with mouth, coverage, and derived S. This preserves the
+same identifiable response model in every cell.
 
 An outer L/K/N closure point runs only if the measured inner endpoint improves
 score by at least 0.5 points or materially improves a component diagnostic over
@@ -899,6 +851,11 @@ The second stage maps those cell-local coefficients across mouth and coverage,
 looking for effects that repeat rather than relying on one optimizer trace or one
 cell. The two locked interior points per cell test interpolation and are excluded
 from fitting, selection, and pruning.
+
+The primary confirmatory fit uses only this canonical study and strict exact
+response reuses. A second augmented predictive fit may then add all compatible
+historical responses, retaining source provenance. Historical optimizer traces
+can improve prediction but cannot substitute for a missing canonical contrast.
 """
 
 

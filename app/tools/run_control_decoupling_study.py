@@ -187,72 +187,6 @@ def axis_closure_decisions(root: Path, manifest: dict[str, Any]
     return decisions
 
 
-def _reference_diagnostics(source_root: Path, row: dict[str, Any]
-                           ) -> dict[str, float] | None:
-    reused = row["reused_from"]
-    state = _search_state(source_root / reused["search"])
-    matches = [record for record in state.get("candidates", [])
-               if str(record.get("id")) == reused["candidate_id"]]
-    return _diagnostics(matches[0]) if len(matches) == 1 else None
-
-
-def dead_region_decisions(root: Path, manifest: dict[str, Any],
-                          wave: str) -> dict[str, dict[str, Any]]:
-    """Evaluate the preregistered score rule after distributed sentinels."""
-    if wave not in {"face-sentinel", "corner-sentinel"}:
-        return {}
-    stage = ("two-factor-face" if wave == "face-sentinel"
-             else "three-factor-corner")
-    source_root = (root / manifest["source_evidence_root"]).resolve()
-    references = {(row["coverage_deg"], row["mouth_mm"]): row
-                  for row in manifest["coordinates"]
-                  if row["kind"] == "reference-anchor"}
-    measured: dict[str, list[dict[str, Any]]] = {}
-    for search_dir in (root / "searches" / wave).rglob("search.yaml"):
-        for identifier, record in _coordinate_records(search_dir.parent).items():
-            row = next(item for item in manifest["coordinates"]
-                       if item["id"] == identifier)
-            diagnostics = _diagnostics(record)
-            reference = _reference_diagnostics(
-                source_root, references[(row["coverage_deg"], row["mouth_mm"])])
-            if diagnostics is not None and reference is not None:
-                measured.setdefault(row["stratum"], []).append({
-                    "coordinate": row, "diagnostics": diagnostics,
-                    "reference": reference,
-                })
-    decisions: dict[str, dict[str, Any]] = {}
-    for stratum in sorted(set(row["stratum"] for row in manifest["coordinates"]
-                              if row.get("stage") == stage)):
-        evidence = measured.get(stratum, [])
-        angles = {item["coordinate"]["coverage_deg"] for item in evidence}
-        mouths = {item["coordinate"]["mouth_mm"] for item in evidence}
-        enough = len(evidence) >= 5 and len(angles) >= 3 and len(mouths) >= 3
-        poor = [item for item in evidence
-                if item["diagnostics"]["score"] <=
-                item["reference"]["score"] - 5.0]
-        improvements = []
-        for item in evidence:
-            current, reference = item["diagnostics"], item["reference"]
-            improvements.append(
-                current["containment_percent"] >=
-                reference["containment_percent"] + 0.5 or
-                current["profile_rms_db"] <= reference["profile_rms_db"] - 0.1 or
-                current["slice_rms_db"] <= reference["slice_rms_db"] - 0.1 or
-                current["outward_rise_db"] <= reference["outward_rise_db"] - 0.1 or
-                current["minus_six_rms_deg"] <=
-                reference["minus_six_rms_deg"] - 0.5)
-        prune = (enough and len(poor) / len(evidence) >= 0.80 and
-                 not any(improvements))
-        decisions[stratum] = {
-            "stage": stage, "sentinels_with_diagnostics": len(evidence),
-            "angles": sorted(angles), "mouths_mm": sorted(mouths),
-            "poor_fraction": len(poor) / len(evidence) if evidence else None,
-            "any_material_diagnostic_improvement": any(improvements),
-            "decision": "prune-continuation" if prune else "continue",
-        }
-    return decisions
-
-
 def _run_queue(paths: list[Path], slots: int, task: Callable[[Path], Any],
                event: Callable[[Path, str, str | None], None]) -> None:
     pending = list(paths)
@@ -282,8 +216,7 @@ def run_study(root: Path, reviewed_sha256: str, slots: int = 2) -> dict[str, Any
     state: dict[str, Any] = {
         "schema_version": 1, "status": "running", "manifest_sha256": digest,
         "started_at_unix": time.time(), "slots": slots, "events": [],
-        "dead_region_decisions": {}, "skipped_searches": [],
-        "axis_closure_decisions": {},
+        "skipped_searches": [], "axis_closure_decisions": {},
     }
     state_path = root / RUNTIME_STATE
 
@@ -315,25 +248,6 @@ def run_study(root: Path, reviewed_sha256: str, slots: int = 2) -> dict[str, Any
                         "reason": decision.get("decision", "closure not triggered"),
                     })
             planned = retained
-        if wave in {"face-continuation", "corner-continuation"}:
-            decision_wave = ("face-sentinel" if wave == "face-continuation"
-                             else "corner-sentinel")
-            decisions = state["dead_region_decisions"].get(decision_wave, {})
-            retained = []
-            rows_by_id = {row["id"]: row for row in manifest["coordinates"]}
-            for item in planned:
-                strata = {rows_by_id[identifier].get("stratum")
-                          for identifier in item["coordinate_ids"]}
-                if any(decisions.get(stratum, {}).get("decision") ==
-                       "prune-continuation" for stratum in strata):
-                    state["skipped_searches"].append({
-                        "wave": wave, "search": item["path"],
-                        "coordinate_ids": item["coordinate_ids"],
-                        "reason": "preregistered dead-region rule",
-                    })
-                else:
-                    retained.append(item)
-            planned = retained
         paths = [root / item["path"] for item in planned
                  if search_status(root / item["path"]) != "complete"]
         _run_queue(paths, slots,
@@ -342,11 +256,6 @@ def run_study(root: Path, reviewed_sha256: str, slots: int = 2) -> dict[str, Any
         if wave == "boundary-sentinel":
             state["axis_closure_decisions"] = axis_closure_decisions(
                 root, manifest)
-            _write_json(state_path, state)
-            refresh_index(root)
-        if wave in {"face-sentinel", "corner-sentinel"}:
-            state["dead_region_decisions"][wave] = dead_region_decisions(
-                root, manifest, wave)
             _write_json(state_path, state)
             refresh_index(root)
     failures = [event for event in state["events"]

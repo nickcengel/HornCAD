@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "manifest_sha256": "395284e7e3f908539346ed5c7290a9e8b5243763f0e7525ce91530c389929e8d",
+  "manifest_sha256": "d3e0c8e4be17cfba943f452d25e5a159c50b6949b3ae0815a3dd613fe6c1d1b5",
   "solver_workers": 10,
-  "search_count": 417,
+  "search_count": 209,
   "candidate_count": 652,
   "required_candidate_count": 566,
   "conditional_candidate_count": 86,
@@ -19,21 +19,13 @@
       "searches": 86,
       "candidates": 86
     },
-    "face-sentinel": {
-      "searches": 16,
-      "candidates": 60
+    "two-factor-face": {
+      "searches": 25,
+      "candidates": 208
     },
-    "face-continuation": {
-      "searches": 148,
-      "candidates": 148
-    },
-    "corner-sentinel": {
-      "searches": 10,
-      "candidates": 29
-    },
-    "corner-continuation": {
-      "searches": 84,
-      "candidates": 84
+    "three-factor-corner": {
+      "searches": 25,
+      "candidates": 113
     },
     "locked-validation": {
       "searches": 25,
@@ -1529,10 +1521,10 @@
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
       "coverage_deg": 30,
       "mouth_mm": 250,
-      "path": "searches/face-sentinel/30deg/250x250",
+      "path": "searches/two-factor-face/30deg/250x250",
       "candidate_count": 7,
       "coordinate_ids": [
         "30d-250mm-L-1-K-1-N+0",
@@ -1545,42 +1537,62 @@
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
       "coverage_deg": 30,
       "mouth_mm": 300,
-      "path": "searches/face-sentinel/30deg/300x300",
-      "candidate_count": 1,
+      "path": "searches/two-factor-face/30deg/300x300",
+      "candidate_count": 8,
       "coordinate_ids": [
-        "30d-300mm-L+0-K-1-N-1"
+        "30d-300mm-L-1-K-1-N+0",
+        "30d-300mm-L-1-K+0-N-1",
+        "30d-300mm-L-1-K+0-N+1",
+        "30d-300mm-L-1-K+1-N+0",
+        "30d-300mm-L+0-K-1-N-1",
+        "30d-300mm-L+0-K+1-N-1",
+        "30d-300mm-L+0-K+1-N+1",
+        "30d-300mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
       "coverage_deg": 30,
       "mouth_mm": 350,
-      "path": "searches/face-sentinel/30deg/350x350",
-      "candidate_count": 1,
+      "path": "searches/two-factor-face/30deg/350x350",
+      "candidate_count": 8,
       "coordinate_ids": [
-        "30d-350mm-L-1-K+0-N+1"
+        "30d-350mm-L-1-K-1-N+0",
+        "30d-350mm-L-1-K+0-N-1",
+        "30d-350mm-L-1-K+0-N+1",
+        "30d-350mm-L-1-K+1-N+0",
+        "30d-350mm-L+0-K-1-N-1",
+        "30d-350mm-L+0-K+1-N-1",
+        "30d-350mm-L+0-K+1-N+1",
+        "30d-350mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
       "coverage_deg": 30,
       "mouth_mm": 400,
-      "path": "searches/face-sentinel/30deg/400x400",
-      "candidate_count": 3,
+      "path": "searches/two-factor-face/30deg/400x400",
+      "candidate_count": 9,
       "coordinate_ids": [
+        "30d-400mm-L-1-K-1-N+0",
+        "30d-400mm-L-1-K+0-N-1",
+        "30d-400mm-L+0-K-1-N-1",
         "30d-400mm-L+0-K-1-N+1",
+        "30d-400mm-L+0-K+1-N-1",
+        "30d-400mm-L+0-K+1-N+1",
         "30d-400mm-L+1-K-1-N+0",
-        "30d-400mm-L+1-K+0-N-1"
+        "30d-400mm-L+1-K+0-N-1",
+        "30d-400mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
       "coverage_deg": 30,
       "mouth_mm": 450,
-      "path": "searches/face-sentinel/30deg/450x450",
+      "path": "searches/two-factor-face/30deg/450x450",
       "candidate_count": 10,
       "coordinate_ids": [
         "30d-450mm-L-1-K-1-N+0",
@@ -1596,91 +1608,269 @@
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
       "coverage_deg": 35,
       "mouth_mm": 250,
-      "path": "searches/face-sentinel/35deg/250x250",
-      "candidate_count": 1,
+      "path": "searches/two-factor-face/35deg/250x250",
+      "candidate_count": 7,
       "coordinate_ids": [
-        "35d-250mm-L-1-K+1-N+0"
+        "35d-250mm-L-1-K-1-N+0",
+        "35d-250mm-L-1-K+0-N-1",
+        "35d-250mm-L-1-K+0-N+1",
+        "35d-250mm-L-1-K+1-N+0",
+        "35d-250mm-L+0-K+1-N-1",
+        "35d-250mm-L+0-K+1-N+1",
+        "35d-250mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
+      "coverage_deg": 35,
+      "mouth_mm": 300,
+      "path": "searches/two-factor-face/35deg/300x300",
+      "candidate_count": 7,
+      "coordinate_ids": [
+        "35d-300mm-L-1-K-1-N+0",
+        "35d-300mm-L-1-K+0-N-1",
+        "35d-300mm-L-1-K+0-N+1",
+        "35d-300mm-L-1-K+1-N+0",
+        "35d-300mm-L+0-K+1-N-1",
+        "35d-300mm-L+0-K+1-N+1",
+        "35d-300mm-L+1-K+1-N+0"
+      ]
+    },
+    {
+      "wave": "two-factor-face",
       "coverage_deg": 35,
       "mouth_mm": 350,
-      "path": "searches/face-sentinel/35deg/350x350",
-      "candidate_count": 3,
+      "path": "searches/two-factor-face/35deg/350x350",
+      "candidate_count": 8,
       "coordinate_ids": [
+        "35d-350mm-L-1-K-1-N+0",
+        "35d-350mm-L-1-K+0-N-1",
         "35d-350mm-L-1-K+0-N+1",
         "35d-350mm-L-1-K+1-N+0",
-        "35d-350mm-L+0-K+1-N+1"
+        "35d-350mm-L+0-K-1-N-1",
+        "35d-350mm-L+0-K+1-N-1",
+        "35d-350mm-L+0-K+1-N+1",
+        "35d-350mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
+      "coverage_deg": 35,
+      "mouth_mm": 400,
+      "path": "searches/two-factor-face/35deg/400x400",
+      "candidate_count": 9,
+      "coordinate_ids": [
+        "35d-400mm-L-1-K-1-N+0",
+        "35d-400mm-L-1-K+0-N-1",
+        "35d-400mm-L+0-K-1-N-1",
+        "35d-400mm-L+0-K-1-N+1",
+        "35d-400mm-L+0-K+1-N-1",
+        "35d-400mm-L+0-K+1-N+1",
+        "35d-400mm-L+1-K-1-N+0",
+        "35d-400mm-L+1-K+0-N-1",
+        "35d-400mm-L+1-K+1-N+0"
+      ]
+    },
+    {
+      "wave": "two-factor-face",
+      "coverage_deg": 35,
+      "mouth_mm": 450,
+      "path": "searches/two-factor-face/35deg/450x450",
+      "candidate_count": 9,
+      "coordinate_ids": [
+        "35d-450mm-L-1-K-1-N+0",
+        "35d-450mm-L-1-K+0-N-1",
+        "35d-450mm-L+0-K-1-N-1",
+        "35d-450mm-L+0-K-1-N+1",
+        "35d-450mm-L+0-K+1-N-1",
+        "35d-450mm-L+0-K+1-N+1",
+        "35d-450mm-L+1-K-1-N+0",
+        "35d-450mm-L+1-K+0-N-1",
+        "35d-450mm-L+1-K+1-N+0"
+      ]
+    },
+    {
+      "wave": "two-factor-face",
       "coverage_deg": 40,
       "mouth_mm": 250,
-      "path": "searches/face-sentinel/40deg/250x250",
-      "candidate_count": 1,
+      "path": "searches/two-factor-face/40deg/250x250",
+      "candidate_count": 7,
       "coordinate_ids": [
-        "40d-250mm-L-1-K+0-N+1"
+        "40d-250mm-L-1-K-1-N+0",
+        "40d-250mm-L-1-K+0-N-1",
+        "40d-250mm-L-1-K+0-N+1",
+        "40d-250mm-L+0-K-1-N-1",
+        "40d-250mm-L+0-K+1-N-1",
+        "40d-250mm-L+0-K+1-N+1",
+        "40d-250mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
       "coverage_deg": 40,
       "mouth_mm": 300,
-      "path": "searches/face-sentinel/40deg/300x300",
-      "candidate_count": 2,
+      "path": "searches/two-factor-face/40deg/300x300",
+      "candidate_count": 8,
       "coordinate_ids": [
+        "40d-300mm-L-1-K-1-N+0",
+        "40d-300mm-L-1-K+0-N-1",
         "40d-300mm-L-1-K+0-N+1",
-        "40d-300mm-L-1-K+1-N+0"
+        "40d-300mm-L-1-K+1-N+0",
+        "40d-300mm-L+0-K-1-N-1",
+        "40d-300mm-L+0-K+1-N-1",
+        "40d-300mm-L+0-K+1-N+1",
+        "40d-300mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
       "coverage_deg": 40,
       "mouth_mm": 350,
-      "path": "searches/face-sentinel/40deg/350x350",
-      "candidate_count": 8,
+      "path": "searches/two-factor-face/40deg/350x350",
+      "candidate_count": 9,
       "coordinate_ids": [
         "40d-350mm-L-1-K-1-N+0",
         "40d-350mm-L-1-K+0-N-1",
         "40d-350mm-L+0-K-1-N-1",
         "40d-350mm-L+0-K-1-N+1",
         "40d-350mm-L+0-K+1-N-1",
+        "40d-350mm-L+0-K+1-N+1",
         "40d-350mm-L+1-K-1-N+0",
         "40d-350mm-L+1-K+0-N-1",
         "40d-350mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
+      "coverage_deg": 40,
+      "mouth_mm": 400,
+      "path": "searches/two-factor-face/40deg/400x400",
+      "candidate_count": 9,
+      "coordinate_ids": [
+        "40d-400mm-L-1-K-1-N+0",
+        "40d-400mm-L-1-K+0-N-1",
+        "40d-400mm-L+0-K-1-N-1",
+        "40d-400mm-L+0-K-1-N+1",
+        "40d-400mm-L+0-K+1-N-1",
+        "40d-400mm-L+0-K+1-N+1",
+        "40d-400mm-L+1-K-1-N+0",
+        "40d-400mm-L+1-K+0-N-1",
+        "40d-400mm-L+1-K+1-N+0"
+      ]
+    },
+    {
+      "wave": "two-factor-face",
       "coverage_deg": 40,
       "mouth_mm": 450,
-      "path": "searches/face-sentinel/40deg/450x450",
-      "candidate_count": 2,
+      "path": "searches/two-factor-face/40deg/450x450",
+      "candidate_count": 10,
       "coordinate_ids": [
+        "40d-450mm-L-1-K-1-N+0",
+        "40d-450mm-L-1-K+0-N-1",
+        "40d-450mm-L+0-K-1-N-1",
+        "40d-450mm-L+0-K-1-N+1",
+        "40d-450mm-L+0-K+1-N-1",
         "40d-450mm-L+0-K+1-N+1",
-        "40d-450mm-L+1-K+0-N+1"
+        "40d-450mm-L+1-K-1-N+0",
+        "40d-450mm-L+1-K+0-N-1",
+        "40d-450mm-L+1-K+0-N+1",
+        "40d-450mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
+      "coverage_deg": 45,
+      "mouth_mm": 250,
+      "path": "searches/two-factor-face/45deg/250x250",
+      "candidate_count": 6,
+      "coordinate_ids": [
+        "45d-250mm-L-1-K-1-N+0",
+        "45d-250mm-L-1-K+0-N-1",
+        "45d-250mm-L+0-K-1-N-1",
+        "45d-250mm-L+0-K+1-N-1",
+        "45d-250mm-L+0-K+1-N+1",
+        "45d-250mm-L+1-K+1-N+0"
+      ]
+    },
+    {
+      "wave": "two-factor-face",
+      "coverage_deg": 45,
+      "mouth_mm": 300,
+      "path": "searches/two-factor-face/45deg/300x300",
+      "candidate_count": 9,
+      "coordinate_ids": [
+        "45d-300mm-L-1-K-1-N+0",
+        "45d-300mm-L-1-K+0-N-1",
+        "45d-300mm-L+0-K-1-N-1",
+        "45d-300mm-L+0-K-1-N+1",
+        "45d-300mm-L+0-K+1-N-1",
+        "45d-300mm-L+0-K+1-N+1",
+        "45d-300mm-L+1-K-1-N+0",
+        "45d-300mm-L+1-K+0-N-1",
+        "45d-300mm-L+1-K+1-N+0"
+      ]
+    },
+    {
+      "wave": "two-factor-face",
       "coverage_deg": 45,
       "mouth_mm": 350,
-      "path": "searches/face-sentinel/45deg/350x350",
-      "candidate_count": 1,
+      "path": "searches/two-factor-face/45deg/350x350",
+      "candidate_count": 9,
       "coordinate_ids": [
-        "45d-350mm-L+1-K+0-N+1"
+        "45d-350mm-L-1-K-1-N+0",
+        "45d-350mm-L-1-K+0-N-1",
+        "45d-350mm-L+0-K-1-N-1",
+        "45d-350mm-L+0-K-1-N+1",
+        "45d-350mm-L+0-K+1-N-1",
+        "45d-350mm-L+1-K-1-N+0",
+        "45d-350mm-L+1-K+0-N-1",
+        "45d-350mm-L+1-K+0-N+1",
+        "45d-350mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
+      "coverage_deg": 45,
+      "mouth_mm": 400,
+      "path": "searches/two-factor-face/45deg/400x400",
+      "candidate_count": 8,
+      "coordinate_ids": [
+        "45d-400mm-L-1-K-1-N+0",
+        "45d-400mm-L-1-K+0-N-1",
+        "45d-400mm-L+0-K-1-N-1",
+        "45d-400mm-L+0-K-1-N+1",
+        "45d-400mm-L+0-K+1-N-1",
+        "45d-400mm-L+1-K-1-N+0",
+        "45d-400mm-L+1-K+0-N-1",
+        "45d-400mm-L+1-K+1-N+0"
+      ]
+    },
+    {
+      "wave": "two-factor-face",
+      "coverage_deg": 45,
+      "mouth_mm": 450,
+      "path": "searches/two-factor-face/45deg/450x450",
+      "candidate_count": 9,
+      "coordinate_ids": [
+        "45d-450mm-L-1-K-1-N+0",
+        "45d-450mm-L-1-K+0-N-1",
+        "45d-450mm-L+0-K-1-N-1",
+        "45d-450mm-L+0-K-1-N+1",
+        "45d-450mm-L+0-K+1-N-1",
+        "45d-450mm-L+1-K-1-N+0",
+        "45d-450mm-L+1-K+0-N-1",
+        "45d-450mm-L+1-K+0-N+1",
+        "45d-450mm-L+1-K+1-N+0"
+      ]
+    },
+    {
+      "wave": "two-factor-face",
       "coverage_deg": 50,
       "mouth_mm": 250,
-      "path": "searches/face-sentinel/50deg/250x250",
+      "path": "searches/two-factor-face/50deg/250x250",
       "candidate_count": 6,
       "coordinate_ids": [
         "50d-250mm-L-1-K-1-N+0",
@@ -1692,33 +1882,64 @@
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
       "coverage_deg": 50,
       "mouth_mm": 300,
-      "path": "searches/face-sentinel/50deg/300x300",
-      "candidate_count": 4,
+      "path": "searches/two-factor-face/50deg/300x300",
+      "candidate_count": 9,
       "coordinate_ids": [
+        "50d-300mm-L-1-K-1-N+0",
+        "50d-300mm-L-1-K+0-N-1",
+        "50d-300mm-L+0-K-1-N-1",
         "50d-300mm-L+0-K-1-N+1",
+        "50d-300mm-L+0-K+1-N-1",
         "50d-300mm-L+1-K-1-N+0",
         "50d-300mm-L+1-K+0-N-1",
-        "50d-300mm-L+1-K+0-N+1"
+        "50d-300mm-L+1-K+0-N+1",
+        "50d-300mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
+      "coverage_deg": 50,
+      "mouth_mm": 350,
+      "path": "searches/two-factor-face/50deg/350x350",
+      "candidate_count": 9,
+      "coordinate_ids": [
+        "50d-350mm-L-1-K-1-N+0",
+        "50d-350mm-L-1-K+0-N-1",
+        "50d-350mm-L+0-K-1-N-1",
+        "50d-350mm-L+0-K-1-N+1",
+        "50d-350mm-L+0-K+1-N-1",
+        "50d-350mm-L+1-K-1-N+0",
+        "50d-350mm-L+1-K+0-N-1",
+        "50d-350mm-L+1-K+0-N+1",
+        "50d-350mm-L+1-K+1-N+0"
+      ]
+    },
+    {
+      "wave": "two-factor-face",
       "coverage_deg": 50,
       "mouth_mm": 400,
-      "path": "searches/face-sentinel/50deg/400x400",
-      "candidate_count": 1,
+      "path": "searches/two-factor-face/50deg/400x400",
+      "candidate_count": 9,
       "coordinate_ids": [
-        "50d-400mm-L+1-K+0-N+1"
+        "50d-400mm-L-1-K-1-N+0",
+        "50d-400mm-L-1-K+0-N-1",
+        "50d-400mm-L+0-K-1-N-1",
+        "50d-400mm-L+0-K-1-N+1",
+        "50d-400mm-L+0-K+1-N-1",
+        "50d-400mm-L+1-K-1-N+0",
+        "50d-400mm-L+1-K+0-N-1",
+        "50d-400mm-L+1-K+0-N+1",
+        "50d-400mm-L+1-K+1-N+0"
       ]
     },
     {
-      "wave": "face-sentinel",
+      "wave": "two-factor-face",
       "coverage_deg": 50,
       "mouth_mm": 450,
-      "path": "searches/face-sentinel/50deg/450x450",
+      "path": "searches/two-factor-face/50deg/450x450",
       "candidate_count": 9,
       "coordinate_ids": [
         "50d-450mm-L-1-K-1-N+0",
@@ -1733,1490 +1954,10 @@
       ]
     },
     {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/30deg/300x300-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/30deg/300x300-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/30deg/300x300-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/30deg/300x300-L-1-K+0-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L-1-K+0-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/30deg/300x300-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/30deg/300x300-L-1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L-1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/30deg/300x300-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/30deg/350x350-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-350mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/30deg/350x350-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-350mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/30deg/350x350-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-350mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/30deg/350x350-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-350mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/30deg/350x350-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-350mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/30deg/350x350-L-1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-350mm-L-1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/30deg/350x350-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-350mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/30deg/400x400-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-400mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/30deg/400x400-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-400mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/30deg/400x400-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-400mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/30deg/400x400-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-400mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/30deg/400x400-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-400mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/30deg/400x400-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-400mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/35deg/250x250-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-250mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/35deg/250x250-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-250mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/35deg/250x250-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-250mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/35deg/250x250-L-1-K+0-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-250mm-L-1-K+0-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/35deg/250x250-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-250mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/35deg/250x250-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-250mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/35deg/300x300-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/35deg/300x300-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/35deg/300x300-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/35deg/300x300-L-1-K+0-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L-1-K+0-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/35deg/300x300-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/35deg/300x300-L-1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L-1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/35deg/300x300-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/35deg/350x350-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/35deg/350x350-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/35deg/350x350-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/35deg/350x350-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/35deg/350x350-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/35deg/400x400-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/35deg/400x400-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/35deg/400x400-L+0-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L+0-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/35deg/400x400-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/35deg/400x400-L+1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L+1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/35deg/400x400-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/35deg/400x400-L+1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L+1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/35deg/400x400-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/35deg/400x400-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/35deg/450x450-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/35deg/450x450-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/35deg/450x450-L+0-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L+0-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/35deg/450x450-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/35deg/450x450-L+1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L+1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/35deg/450x450-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/35deg/450x450-L+1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L+1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/35deg/450x450-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/35deg/450x450-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/40deg/250x250-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-250mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/40deg/250x250-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-250mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/40deg/250x250-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-250mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/40deg/250x250-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-250mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/40deg/250x250-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-250mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/40deg/250x250-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-250mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/40deg/300x300-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-300mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/40deg/300x300-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-300mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/40deg/300x300-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-300mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/40deg/300x300-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-300mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/40deg/300x300-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-300mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/40deg/300x300-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-300mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/40deg/350x350-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-350mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/40deg/400x400-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/40deg/400x400-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/40deg/400x400-L+0-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L+0-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/40deg/400x400-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/40deg/400x400-L+1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L+1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/40deg/400x400-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/40deg/400x400-L+1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L+1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/40deg/400x400-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/40deg/400x400-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/40deg/450x450-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/40deg/450x450-L+0-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L+0-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/40deg/450x450-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/40deg/450x450-L+1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L+1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/40deg/450x450-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/40deg/450x450-L+1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L+1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/40deg/450x450-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/40deg/450x450-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/45deg/250x250-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/45deg/250x250-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/45deg/250x250-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/45deg/250x250-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/45deg/250x250-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/face-continuation/45deg/250x250-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/45deg/300x300-L+0-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L+0-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/45deg/300x300-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/45deg/300x300-L+0-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L+0-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/45deg/300x300-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/45deg/300x300-L+1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L+1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/45deg/300x300-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/45deg/300x300-L+1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L+1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/45deg/300x300-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/45deg/300x300-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/45deg/350x350-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/45deg/350x350-L+0-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L+0-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/45deg/350x350-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/45deg/350x350-L+1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L+1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/45deg/350x350-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/45deg/350x350-L+1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L+1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/45deg/350x350-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/45deg/350x350-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/45deg/400x400-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/45deg/400x400-L+0-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L+0-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/45deg/400x400-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/45deg/400x400-L+1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L+1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/45deg/400x400-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/45deg/400x400-L+1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L+1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/45deg/400x400-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/45deg/400x400-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/45deg/450x450-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/45deg/450x450-L+0-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L+0-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/45deg/450x450-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/45deg/450x450-L+1-K+0-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L+1-K+0-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/45deg/450x450-L+1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L+1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/45deg/450x450-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/45deg/450x450-L+1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L+1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/45deg/450x450-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/face-continuation/45deg/450x450-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/50deg/300x300-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-300mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/50deg/300x300-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-300mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/50deg/300x300-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-300mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/50deg/300x300-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-300mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 300,
-      "path": "searches/face-continuation/50deg/300x300-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-300mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/50deg/350x350-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/50deg/350x350-L+0-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L+0-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/50deg/350x350-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/50deg/350x350-L+1-K+0-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L+1-K+0-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/50deg/350x350-L+1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L+1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/50deg/350x350-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/50deg/350x350-L+1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L+1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/50deg/350x350-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/face-continuation/50deg/350x350-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/50deg/400x400-L+0-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L+0-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/50deg/400x400-L+0-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L+0-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/50deg/400x400-L+0-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L+0-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/50deg/400x400-L+1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L+1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/50deg/400x400-L+1-K+1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L+1-K+1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/50deg/400x400-L+1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L+1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/50deg/400x400-L-1-K+0-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L-1-K+0-N-1"
-      ]
-    },
-    {
-      "wave": "face-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/face-continuation/50deg/400x400-L-1-K-1-N+0",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L-1-K-1-N+0"
-      ]
-    },
-    {
-      "wave": "corner-sentinel",
+      "wave": "three-factor-corner",
       "coverage_deg": 30,
       "mouth_mm": 250,
-      "path": "searches/corner-sentinel/30deg/250x250",
+      "path": "searches/three-factor-corner/30deg/250x250",
       "candidate_count": 4,
       "coordinate_ids": [
         "30d-250mm-L-1-K-1-N-1",
@@ -3226,20 +1967,50 @@
       ]
     },
     {
-      "wave": "corner-sentinel",
+      "wave": "three-factor-corner",
+      "coverage_deg": 30,
+      "mouth_mm": 300,
+      "path": "searches/three-factor-corner/30deg/300x300",
+      "candidate_count": 4,
+      "coordinate_ids": [
+        "30d-300mm-L-1-K-1-N-1",
+        "30d-300mm-L-1-K-1-N+1",
+        "30d-300mm-L-1-K+1-N-1",
+        "30d-300mm-L+1-K+1-N-1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
+      "coverage_deg": 30,
+      "mouth_mm": 350,
+      "path": "searches/three-factor-corner/30deg/350x350",
+      "candidate_count": 4,
+      "coordinate_ids": [
+        "30d-350mm-L-1-K-1-N-1",
+        "30d-350mm-L-1-K-1-N+1",
+        "30d-350mm-L-1-K+1-N-1",
+        "30d-350mm-L+1-K+1-N-1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
       "coverage_deg": 30,
       "mouth_mm": 400,
-      "path": "searches/corner-sentinel/30deg/400x400",
-      "candidate_count": 1,
+      "path": "searches/three-factor-corner/30deg/400x400",
+      "candidate_count": 5,
       "coordinate_ids": [
+        "30d-400mm-L-1-K-1-N-1",
+        "30d-400mm-L-1-K-1-N+1",
+        "30d-400mm-L-1-K+1-N-1",
+        "30d-400mm-L+1-K+1-N-1",
         "30d-400mm-L+1-K+1-N+1"
       ]
     },
     {
-      "wave": "corner-sentinel",
+      "wave": "three-factor-corner",
       "coverage_deg": 30,
       "mouth_mm": 450,
-      "path": "searches/corner-sentinel/30deg/450x450",
+      "path": "searches/three-factor-corner/30deg/450x450",
       "candidate_count": 5,
       "coordinate_ids": [
         "30d-450mm-L-1-K-1-N-1",
@@ -3250,20 +2021,104 @@
       ]
     },
     {
-      "wave": "corner-sentinel",
+      "wave": "three-factor-corner",
       "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/corner-sentinel/35deg/450x450",
-      "candidate_count": 1,
+      "mouth_mm": 250,
+      "path": "searches/three-factor-corner/35deg/250x250",
+      "candidate_count": 4,
       "coordinate_ids": [
-        "35d-450mm-L-1-K-1-N+1"
+        "35d-250mm-L-1-K-1-N-1",
+        "35d-250mm-L-1-K-1-N+1",
+        "35d-250mm-L-1-K+1-N-1",
+        "35d-250mm-L+1-K+1-N-1"
       ]
     },
     {
-      "wave": "corner-sentinel",
+      "wave": "three-factor-corner",
+      "coverage_deg": 35,
+      "mouth_mm": 300,
+      "path": "searches/three-factor-corner/35deg/300x300",
+      "candidate_count": 4,
+      "coordinate_ids": [
+        "35d-300mm-L-1-K-1-N-1",
+        "35d-300mm-L-1-K-1-N+1",
+        "35d-300mm-L-1-K+1-N-1",
+        "35d-300mm-L+1-K+1-N-1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
+      "coverage_deg": 35,
+      "mouth_mm": 350,
+      "path": "searches/three-factor-corner/35deg/350x350",
+      "candidate_count": 5,
+      "coordinate_ids": [
+        "35d-350mm-L-1-K-1-N-1",
+        "35d-350mm-L-1-K-1-N+1",
+        "35d-350mm-L-1-K+1-N-1",
+        "35d-350mm-L+1-K+1-N-1",
+        "35d-350mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
+      "coverage_deg": 35,
+      "mouth_mm": 400,
+      "path": "searches/three-factor-corner/35deg/400x400",
+      "candidate_count": 5,
+      "coordinate_ids": [
+        "35d-400mm-L-1-K-1-N-1",
+        "35d-400mm-L-1-K-1-N+1",
+        "35d-400mm-L-1-K+1-N-1",
+        "35d-400mm-L+1-K+1-N-1",
+        "35d-400mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
+      "coverage_deg": 35,
+      "mouth_mm": 450,
+      "path": "searches/three-factor-corner/35deg/450x450",
+      "candidate_count": 5,
+      "coordinate_ids": [
+        "35d-450mm-L-1-K-1-N-1",
+        "35d-450mm-L-1-K-1-N+1",
+        "35d-450mm-L-1-K+1-N-1",
+        "35d-450mm-L+1-K+1-N-1",
+        "35d-450mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
+      "coverage_deg": 40,
+      "mouth_mm": 250,
+      "path": "searches/three-factor-corner/40deg/250x250",
+      "candidate_count": 4,
+      "coordinate_ids": [
+        "40d-250mm-L-1-K-1-N-1",
+        "40d-250mm-L-1-K-1-N+1",
+        "40d-250mm-L-1-K+1-N-1",
+        "40d-250mm-L+1-K+1-N-1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
+      "coverage_deg": 40,
+      "mouth_mm": 300,
+      "path": "searches/three-factor-corner/40deg/300x300",
+      "candidate_count": 4,
+      "coordinate_ids": [
+        "40d-300mm-L-1-K-1-N-1",
+        "40d-300mm-L-1-K-1-N+1",
+        "40d-300mm-L-1-K+1-N-1",
+        "40d-300mm-L+1-K+1-N-1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
       "coverage_deg": 40,
       "mouth_mm": 350,
-      "path": "searches/corner-sentinel/40deg/350x350",
+      "path": "searches/three-factor-corner/40deg/350x350",
       "candidate_count": 5,
       "coordinate_ids": [
         "40d-350mm-L-1-K-1-N-1",
@@ -3274,20 +2129,104 @@
       ]
     },
     {
-      "wave": "corner-sentinel",
+      "wave": "three-factor-corner",
       "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/corner-sentinel/40deg/450x450",
-      "candidate_count": 1,
+      "mouth_mm": 400,
+      "path": "searches/three-factor-corner/40deg/400x400",
+      "candidate_count": 5,
       "coordinate_ids": [
-        "40d-450mm-L+1-K-1-N-1"
+        "40d-400mm-L-1-K-1-N-1",
+        "40d-400mm-L-1-K-1-N+1",
+        "40d-400mm-L-1-K+1-N-1",
+        "40d-400mm-L+1-K+1-N-1",
+        "40d-400mm-L+1-K+1-N+1"
       ]
     },
     {
-      "wave": "corner-sentinel",
+      "wave": "three-factor-corner",
+      "coverage_deg": 40,
+      "mouth_mm": 450,
+      "path": "searches/three-factor-corner/40deg/450x450",
+      "candidate_count": 5,
+      "coordinate_ids": [
+        "40d-450mm-L-1-K-1-N-1",
+        "40d-450mm-L-1-K+1-N-1",
+        "40d-450mm-L+1-K-1-N-1",
+        "40d-450mm-L+1-K+1-N-1",
+        "40d-450mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
+      "coverage_deg": 45,
+      "mouth_mm": 250,
+      "path": "searches/three-factor-corner/45deg/250x250",
+      "candidate_count": 5,
+      "coordinate_ids": [
+        "45d-250mm-L-1-K-1-N-1",
+        "45d-250mm-L-1-K-1-N+1",
+        "45d-250mm-L-1-K+1-N-1",
+        "45d-250mm-L+1-K+1-N-1",
+        "45d-250mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
+      "coverage_deg": 45,
+      "mouth_mm": 300,
+      "path": "searches/three-factor-corner/45deg/300x300",
+      "candidate_count": 4,
+      "coordinate_ids": [
+        "45d-300mm-L-1-K-1-N-1",
+        "45d-300mm-L-1-K+1-N-1",
+        "45d-300mm-L+1-K+1-N-1",
+        "45d-300mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
+      "coverage_deg": 45,
+      "mouth_mm": 350,
+      "path": "searches/three-factor-corner/45deg/350x350",
+      "candidate_count": 4,
+      "coordinate_ids": [
+        "45d-350mm-L-1-K-1-N-1",
+        "45d-350mm-L-1-K+1-N-1",
+        "45d-350mm-L+1-K+1-N-1",
+        "45d-350mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
+      "coverage_deg": 45,
+      "mouth_mm": 400,
+      "path": "searches/three-factor-corner/45deg/400x400",
+      "candidate_count": 4,
+      "coordinate_ids": [
+        "45d-400mm-L-1-K-1-N-1",
+        "45d-400mm-L-1-K+1-N-1",
+        "45d-400mm-L+1-K+1-N-1",
+        "45d-400mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
+      "coverage_deg": 45,
+      "mouth_mm": 450,
+      "path": "searches/three-factor-corner/45deg/450x450",
+      "candidate_count": 4,
+      "coordinate_ids": [
+        "45d-450mm-L-1-K-1-N-1",
+        "45d-450mm-L-1-K+1-N-1",
+        "45d-450mm-L+1-K+1-N-1",
+        "45d-450mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
       "coverage_deg": 50,
       "mouth_mm": 250,
-      "path": "searches/corner-sentinel/50deg/250x250",
+      "path": "searches/three-factor-corner/50deg/250x250",
       "candidate_count": 5,
       "coordinate_ids": [
         "50d-250mm-L-1-K-1-N-1",
@@ -3298,30 +2237,51 @@
       ]
     },
     {
-      "wave": "corner-sentinel",
+      "wave": "three-factor-corner",
+      "coverage_deg": 50,
+      "mouth_mm": 300,
+      "path": "searches/three-factor-corner/50deg/300x300",
+      "candidate_count": 4,
+      "coordinate_ids": [
+        "50d-300mm-L-1-K-1-N-1",
+        "50d-300mm-L-1-K+1-N-1",
+        "50d-300mm-L+1-K+1-N-1",
+        "50d-300mm-L+1-K+1-N+1"
+      ]
+    },
+    {
+      "wave": "three-factor-corner",
       "coverage_deg": 50,
       "mouth_mm": 350,
-      "path": "searches/corner-sentinel/50deg/350x350",
-      "candidate_count": 1,
+      "path": "searches/three-factor-corner/50deg/350x350",
+      "candidate_count": 5,
       "coordinate_ids": [
-        "50d-350mm-L+1-K-1-N-1"
+        "50d-350mm-L-1-K-1-N-1",
+        "50d-350mm-L-1-K+1-N-1",
+        "50d-350mm-L+1-K-1-N-1",
+        "50d-350mm-L+1-K+1-N-1",
+        "50d-350mm-L+1-K+1-N+1"
       ]
     },
     {
-      "wave": "corner-sentinel",
+      "wave": "three-factor-corner",
       "coverage_deg": 50,
       "mouth_mm": 400,
-      "path": "searches/corner-sentinel/50deg/400x400",
-      "candidate_count": 1,
+      "path": "searches/three-factor-corner/50deg/400x400",
+      "candidate_count": 5,
       "coordinate_ids": [
-        "50d-400mm-L+1-K-1-N-1"
+        "50d-400mm-L-1-K-1-N-1",
+        "50d-400mm-L-1-K+1-N-1",
+        "50d-400mm-L+1-K-1-N-1",
+        "50d-400mm-L+1-K+1-N-1",
+        "50d-400mm-L+1-K+1-N+1"
       ]
     },
     {
-      "wave": "corner-sentinel",
+      "wave": "three-factor-corner",
       "coverage_deg": 50,
       "mouth_mm": 450,
-      "path": "searches/corner-sentinel/50deg/450x450",
+      "path": "searches/three-factor-corner/50deg/450x450",
       "candidate_count": 5,
       "coordinate_ids": [
         "50d-450mm-L-1-K-1-N-1",
@@ -3329,846 +2289,6 @@
         "50d-450mm-L+1-K-1-N-1",
         "50d-450mm-L+1-K+1-N-1",
         "50d-450mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/30deg/300x300-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/30deg/300x300-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/30deg/300x300-L-1-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/30deg/300x300-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-300mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/30deg/350x350-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-350mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/30deg/350x350-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-350mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/30deg/350x350-L-1-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-350mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/30deg/350x350-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-350mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/30deg/400x400-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-400mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/30deg/400x400-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-400mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/30deg/400x400-L-1-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-400mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 30,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/30deg/400x400-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "30d-400mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/35deg/250x250-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-250mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/35deg/250x250-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-250mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/35deg/250x250-L-1-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-250mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/35deg/250x250-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-250mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/35deg/300x300-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/35deg/300x300-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/35deg/300x300-L-1-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/35deg/300x300-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-300mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/35deg/350x350-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/35deg/350x350-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/35deg/350x350-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/35deg/350x350-L-1-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/35deg/350x350-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-350mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/35deg/400x400-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/35deg/400x400-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/35deg/400x400-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/35deg/400x400-L-1-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/35deg/400x400-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-400mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/35deg/450x450-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/35deg/450x450-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/35deg/450x450-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 35,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/35deg/450x450-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "35d-450mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/40deg/250x250-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-250mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/40deg/250x250-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-250mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/40deg/250x250-L-1-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-250mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/40deg/250x250-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-250mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/40deg/300x300-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-300mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/40deg/300x300-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-300mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/40deg/300x300-L-1-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-300mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/40deg/300x300-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-300mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/40deg/400x400-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/40deg/400x400-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/40deg/400x400-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/40deg/400x400-L-1-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/40deg/400x400-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-400mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/40deg/450x450-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/40deg/450x450-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/40deg/450x450-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 40,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/40deg/450x450-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "40d-450mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/45deg/250x250-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/45deg/250x250-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/45deg/250x250-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/45deg/250x250-L-1-K-1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L-1-K-1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 250,
-      "path": "searches/corner-continuation/45deg/250x250-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-250mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/45deg/300x300-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/45deg/300x300-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/45deg/300x300-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/45deg/300x300-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-300mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/45deg/350x350-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/45deg/350x350-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/45deg/350x350-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/45deg/350x350-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-350mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/45deg/400x400-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/45deg/400x400-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/45deg/400x400-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/45deg/400x400-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-400mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/45deg/450x450-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/45deg/450x450-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/45deg/450x450-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 45,
-      "mouth_mm": 450,
-      "path": "searches/corner-continuation/45deg/450x450-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "45d-450mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/50deg/300x300-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-300mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/50deg/300x300-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-300mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/50deg/300x300-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-300mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 300,
-      "path": "searches/corner-continuation/50deg/300x300-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-300mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/50deg/350x350-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/50deg/350x350-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/50deg/350x350-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 350,
-      "path": "searches/corner-continuation/50deg/350x350-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-350mm-L-1-K-1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/50deg/400x400-L+1-K+1-N+1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L+1-K+1-N+1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/50deg/400x400-L+1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L+1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/50deg/400x400-L-1-K+1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L-1-K+1-N-1"
-      ]
-    },
-    {
-      "wave": "corner-continuation",
-      "coverage_deg": 50,
-      "mouth_mm": 400,
-      "path": "searches/corner-continuation/50deg/400x400-L-1-K-1-N-1",
-      "candidate_count": 1,
-      "coordinate_ids": [
-        "50d-400mm-L-1-K-1-N-1"
       ]
     },
     {

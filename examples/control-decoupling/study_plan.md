@@ -77,18 +77,14 @@ Reuse requires matching mouth, coverage, K, N, length within 0.25 mm, identical
 solver/frequency fingerprint, and a retained responses.npz archive. Reused
 responses will be rescored with the current diagnostics before final analysis.
 
-## Execution and dead-region policy
+## Execution and completion policy
 
 Execution order is reference anchors, core center/axes, sparse boundary sentinels,
 conditional axis closure, two-factor faces, three-factor corners, then locked
-validation. Core axes are
-never pruned by score. Face/corner strata may be
-stopped only after at least five distributed cells spanning three angles and
-three mouths show that at least 80% are five or more score points below their cell
-reference and none offers a material diagnostic improvement. Distributed
-sentinels remain. The predeclared face/corner sentinel wave is 90 candidates;
-continuation work is avoided only when that
-evidence satisfies the explicit rule.
+validation. No canonical factorial coordinate is pruned by score. Every feasible,
+profile-distinct center, axis, face, and corner runs because L/K/N effects are
+already known to change with mouth, coverage, and derived S. This preserves the
+same identifiable response model in every cell.
 
 An outer L/K/N closure point runs only if the measured inner endpoint improves
 score by at least 0.5 points or materially improves a component diagnostic over
@@ -128,3 +124,8 @@ The second stage maps those cell-local coefficients across mouth and coverage,
 looking for effects that repeat rather than relying on one optimizer trace or one
 cell. The two locked interior points per cell test interpolation and are excluded
 from fitting, selection, and pruning.
+
+The primary confirmatory fit uses only this canonical study and strict exact
+response reuses. A second augmented predictive fit may then add all compatible
+historical responses, retaining source provenance. Historical optimizer traces
+can improve prediction but cannot substitute for a missing canonical contrast.

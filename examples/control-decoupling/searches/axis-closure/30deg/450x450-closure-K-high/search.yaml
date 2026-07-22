@@ -50,7 +50,7 @@ bem_candidate_search:
   control_decoupling:
     design: canonical-three-level-factorial
     wave: axis-closure
-    manifest_sha256: 395284e7e3f908539346ed5c7290a9e8b5243763f0e7525ce91530c389929e8d
+    manifest_sha256: d3e0c8e4be17cfba943f452d25e5a159c50b6949b3ae0815a3dd613fe6c1d1b5
     coordinate_ids:
     - 30d-450mm-closure-K-high
     coordinates:

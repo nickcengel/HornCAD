@@ -108,16 +108,8 @@
     "solver_slots": 2,
     "workers_per_slot": 10,
     "axis_stage_is_never_score_pruned": true,
-    "eligible_dead_region_stages": [
-      "two-factor-face",
-      "three-factor-corner"
-    ],
-    "dead_region_minimum_completed_cells": 5,
-    "dead_region_minimum_angles": 3,
-    "dead_region_minimum_mouths": 3,
-    "dead_region_sentinels_per_stratum": 5,
-    "dead_region_sentinel_candidates": 90,
-    "dead_region_rule": "prune remaining members of a normalized stratum only when at least 80% are >=5 score points below their cell reference and none improves containment by 0.5, profile/slice/outward error by 0.1 dB, or -6 dB RMS error by 0.5 degrees; retain distributed sentinels",
+    "factorial_score_pruning_enabled": false,
+    "factorial_completion_rule": "run every feasible, profile-distinct canonical factorial coordinate; linked effects may reverse with mouth, coverage, S, or length",
     "handoff_rule": "a completed or geometry-rejected search immediately releases its slot; single-candidate searches use an explicit seed candidate rather than an empty initial pool",
     "axis_closure_rule": "run the next outward L, K, or N endpoint only when the measured inner endpoint improves score by at least 0.5 points or provides a material diagnostic improvement over the center; N=2 is only the conditional lower safety-bound probe after N=4 points outward"
   },
@@ -150,6 +142,8 @@
       "K*N"
     ],
     "within_cell_models_required_for_all_25_cells": true,
+    "primary_confirmatory_dataset": "canonical study coordinates plus only strict exact-response reuses; historical optimizer traces do not fill missing canonical contrasts",
+    "augmented_predictive_dataset": "after confirmatory analysis, add all solver-compatible historical responses with provenance retained for prediction and transfer checks",
     "second_stage": "map the same within-cell coefficients across mouth and coverage; report replicated signs, magnitudes, and diagnostic tradeoffs",
     "locked_validation": "evaluate interpolation at two preregistered interior points per cell; never use these points to fit, select, or prune"
   },
@@ -595,8 +589,7 @@
       "exit_angle_deg": 85.97073396844314,
       "normalized_curvature_radius": 1.3365405090829618,
       "final_tenth_radial_growth_fraction": 0.35789215533360647,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-250mm-L-1-K+0-N-1",
@@ -622,8 +615,7 @@
       "exit_angle_deg": 85.19676075029231,
       "normalized_curvature_radius": 1.1142633490686564,
       "final_tenth_radial_growth_fraction": 0.3742744467837828,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-250mm-L-1-K+0-N+1",
@@ -649,8 +641,7 @@
       "exit_angle_deg": 87.8678156954852,
       "normalized_curvature_radius": 4.247223068302929,
       "final_tenth_radial_growth_fraction": 0.5091500220364973,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-250mm-L-1-K+1-N+0",
@@ -676,8 +667,7 @@
       "exit_angle_deg": 87.4695598425858,
       "normalized_curvature_radius": 3.300595798530594,
       "final_tenth_radial_growth_fraction": 0.5156390569519597,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-250mm-L+0-K-1-N-1",
@@ -761,8 +751,7 @@
       "exit_angle_deg": 82.89959782871598,
       "normalized_curvature_radius": 0.6559928074611721,
       "final_tenth_radial_growth_fraction": 0.33514452151886875,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-250mm-L+0-K+1-N+1",
@@ -788,8 +777,7 @@
       "exit_angle_deg": 86.8025481998025,
       "normalized_curvature_radius": 2.3873147362559863,
       "final_tenth_radial_growth_fraction": 0.4464135407267937,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-250mm-L+1-K-1-N+0",
@@ -896,8 +884,7 @@
       "exit_angle_deg": 80.72946543380144,
       "normalized_curvature_radius": 0.40708592999985616,
       "final_tenth_radial_growth_fraction": 0.27884971759662336,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-250mm-L-1-K-1-N-1",
@@ -923,8 +910,7 @@
       "exit_angle_deg": 83.55509271584476,
       "normalized_curvature_radius": 0.6380985328949641,
       "final_tenth_radial_growth_fraction": 0.299676602614998,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-250mm-L-1-K-1-N+1",
@@ -950,8 +936,7 @@
       "exit_angle_deg": 87.0935780884,
       "normalized_curvature_radius": 2.3145923285824335,
       "final_tenth_radial_growth_fraction": 0.39745123177584885,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-250mm-L-1-K+1-N-1",
@@ -977,8 +962,7 @@
       "exit_angle_deg": 85.88648486792106,
       "normalized_curvature_radius": 1.4977113804451005,
       "final_tenth_radial_growth_fraction": 0.42061030586582043,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-250mm-L-1-K+1-N+1",
@@ -1073,8 +1057,7 @@
       "exit_angle_deg": 75.76836014797763,
       "normalized_curvature_radius": 0.22290738332121907,
       "final_tenth_radial_growth_fraction": 0.24316844635336046,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-250mm-L+1-K+1-N+1",
@@ -1634,8 +1617,7 @@
       "exit_angle_deg": 74.28479351588675,
       "normalized_curvature_radius": 0.15816834042703803,
       "final_tenth_radial_growth_fraction": 0.19238359466995913,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-300mm-L+0-K-1-N+1",
@@ -2504,8 +2486,7 @@
       "exit_angle_deg": 87.9103667335228,
       "normalized_curvature_radius": 4.268612329120726,
       "final_tenth_radial_growth_fraction": 0.4879939745620444,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-350mm-L-1-K+1-N+0",
@@ -3498,8 +3479,7 @@
       "exit_angle_deg": 85.72906958224722,
       "normalized_curvature_radius": 1.1889199834517712,
       "final_tenth_radial_growth_fraction": 0.30739512932528834,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-400mm-L+0-K+1-N-1",
@@ -3577,8 +3557,7 @@
       "exit_angle_deg": 69.68779086060756,
       "normalized_curvature_radius": 0.09665132818414994,
       "final_tenth_radial_growth_fraction": 0.156803324398722,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-400mm-L+1-K+0-N-1",
@@ -3604,8 +3583,7 @@
       "exit_angle_deg": 75.62208801193069,
       "normalized_curvature_radius": 0.1942935931475058,
       "final_tenth_radial_growth_fraction": 0.21008067830347296,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-400mm-L+1-K+0-N+1",
@@ -3871,8 +3849,7 @@
       "exit_angle_deg": 85.25847809799191,
       "normalized_curvature_radius": 1.1612898827479257,
       "final_tenth_radial_growth_fraction": 0.3348487733435995,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-400mm-validation-01",
@@ -4299,8 +4276,7 @@
       "exit_angle_deg": 87.21539336934869,
       "normalized_curvature_radius": 2.368296259800818,
       "final_tenth_radial_growth_fraction": 0.40107231158837325,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L-1-K+0-N-1",
@@ -4326,8 +4302,7 @@
       "exit_angle_deg": 86.22422786521363,
       "normalized_curvature_radius": 1.5353314391611608,
       "final_tenth_radial_growth_fraction": 0.3815883471748106,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L-1-K+0-N+1",
@@ -4376,8 +4351,7 @@
       "exit_angle_deg": 87.9345662282136,
       "normalized_curvature_radius": 4.252121826991252,
       "final_tenth_radial_growth_fraction": 0.5142510639469241,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L+0-K-1-N-1",
@@ -4403,8 +4377,7 @@
       "exit_angle_deg": 80.99882544910317,
       "normalized_curvature_radius": 0.368373861258922,
       "final_tenth_radial_growth_fraction": 0.23964551135976228,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L+0-K-1-N+1",
@@ -4430,8 +4403,7 @@
       "exit_angle_deg": 85.84689038806573,
       "normalized_curvature_radius": 1.2417654146699966,
       "final_tenth_radial_growth_fraction": 0.3084959437339314,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L+0-K+1-N-1",
@@ -4457,8 +4429,7 @@
       "exit_angle_deg": 84.36319896115177,
       "normalized_curvature_radius": 0.882754992325508,
       "final_tenth_radial_growth_fraction": 0.3381844203391745,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L+0-K+1-N+1",
@@ -4484,8 +4455,7 @@
       "exit_angle_deg": 87.47873906179387,
       "normalized_curvature_radius": 3.285595798470687,
       "final_tenth_radial_growth_fraction": 0.4542946999974836,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L+1-K-1-N+0",
@@ -4511,8 +4481,7 @@
       "exit_angle_deg": 71.06952680674831,
       "normalized_curvature_radius": 0.10598859031716756,
       "final_tenth_radial_growth_fraction": 0.15950049051194726,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L+1-K+0-N-1",
@@ -4538,8 +4507,7 @@
       "exit_angle_deg": 75.54551716367847,
       "normalized_curvature_radius": 0.19075345330981572,
       "final_tenth_radial_growth_fraction": 0.20615445109560507,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L+1-K+0-N+1",
@@ -4594,8 +4562,7 @@
       "exit_angle_deg": 83.33917845235905,
       "normalized_curvature_radius": 0.6551514680578034,
       "final_tenth_radial_growth_fraction": 0.2959851243990504,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L-1-K-1-N-1",
@@ -4621,8 +4588,7 @@
       "exit_angle_deg": 85.50150863259337,
       "normalized_curvature_radius": 1.0953726520099496,
       "final_tenth_radial_growth_fraction": 0.3310397911572201,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L-1-K-1-N+1",
@@ -4648,8 +4614,7 @@
       "exit_angle_deg": 88.00015001736224,
       "normalized_curvature_radius": 4.158058242245515,
       "final_tenth_radial_growth_fraction": 0.44866134406857777,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L-1-K+1-N-1",
@@ -4675,8 +4640,7 @@
       "exit_angle_deg": 86.63771130874933,
       "normalized_curvature_radius": 1.9204388625082036,
       "final_tenth_radial_growth_fraction": 0.4187193022168464,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L-1-K+1-N+1",
@@ -4783,8 +4747,7 @@
       "exit_angle_deg": 79.57677395899938,
       "normalized_curvature_radius": 0.3360210604504775,
       "final_tenth_radial_growth_fraction": 0.2541357961317464,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-L+1-K+1-N+1",
@@ -4810,8 +4773,7 @@
       "exit_angle_deg": 85.14843506840464,
       "normalized_curvature_radius": 1.099794899787218,
       "final_tenth_radial_growth_fraction": 0.3244228991632088,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "30d-450mm-validation-01",
@@ -5316,8 +5278,7 @@
       "exit_angle_deg": 87.69771991988756,
       "normalized_curvature_radius": 3.5140885657994163,
       "final_tenth_radial_growth_fraction": 0.5033223028231399,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "35d-250mm-L+0-K-1-N-1",
@@ -7124,8 +7085,7 @@
       "exit_angle_deg": 88.4179929374852,
       "normalized_curvature_radius": 6.018962958522126,
       "final_tenth_radial_growth_fraction": 0.5151515971987946,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "35d-350mm-L-1-K+1-N+0",
@@ -7151,8 +7111,7 @@
       "exit_angle_deg": 88.08476104211766,
       "normalized_curvature_radius": 4.499324881732045,
       "final_tenth_radial_growth_fraction": 0.5151057235265117,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "35d-350mm-L+0-K-1-N-1",
@@ -7259,8 +7218,7 @@
       "exit_angle_deg": 87.61436073377169,
       "normalized_curvature_radius": 3.3431100816432853,
       "final_tenth_radial_growth_fraction": 0.44930895339921073,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "35d-350mm-L+1-K-1-N+0",
@@ -9255,8 +9213,7 @@
       "exit_angle_deg": 88.42153710038431,
       "normalized_curvature_radius": 5.489841561838234,
       "final_tenth_radial_growth_fraction": 0.4643034708276049,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "35d-450mm-L-1-K+1-N-1",
@@ -9897,8 +9854,7 @@
       "exit_angle_deg": 88.4893741440514,
       "normalized_curvature_radius": 6.087533352078291,
       "final_tenth_radial_growth_fraction": 0.516574407365302,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-250mm-L-1-K+1-N+0",
@@ -10813,8 +10769,7 @@
       "exit_angle_deg": 88.5067657233741,
       "normalized_curvature_radius": 6.106095979630392,
       "final_tenth_radial_growth_fraction": 0.504013893148608,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-300mm-L-1-K+1-N+0",
@@ -10840,8 +10795,7 @@
       "exit_angle_deg": 88.22788756558134,
       "normalized_curvature_radius": 4.746830927973503,
       "final_tenth_radial_growth_fraction": 0.5116462348098736,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-300mm-L+0-K-1-N-1",
@@ -11684,8 +11638,7 @@
       "exit_angle_deg": 88.02413487998882,
       "normalized_curvature_radius": 3.3995307279015416,
       "final_tenth_radial_growth_fraction": 0.41485348287140833,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L-1-K+0-N-1",
@@ -11711,8 +11664,7 @@
       "exit_angle_deg": 87.38400510924157,
       "normalized_curvature_radius": 2.3041932813322035,
       "final_tenth_radial_growth_fraction": 0.40190330250407175,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L-1-K+0-N+1",
@@ -11784,8 +11736,7 @@
       "exit_angle_deg": 83.68538442944863,
       "normalized_curvature_radius": 0.5338201196399504,
       "final_tenth_radial_growth_fraction": 0.24986539810816535,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L+0-K-1-N+1",
@@ -11811,8 +11762,7 @@
       "exit_angle_deg": 87.10350097240739,
       "normalized_curvature_radius": 1.840476448455438,
       "final_tenth_radial_growth_fraction": 0.3228156978736018,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L+0-K+1-N-1",
@@ -11838,8 +11788,7 @@
       "exit_angle_deg": 86.24364875939426,
       "normalized_curvature_radius": 1.4217527389151083,
       "final_tenth_radial_growth_fraction": 0.3660833605186623,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L+0-K+1-N+1",
@@ -11891,8 +11840,7 @@
       "exit_angle_deg": 77.45419826423716,
       "normalized_curvature_radius": 0.16072905853583716,
       "final_tenth_radial_growth_fraction": 0.17064744370445065,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L+1-K+0-N-1",
@@ -11918,8 +11866,7 @@
       "exit_angle_deg": 80.82559188679605,
       "normalized_curvature_radius": 0.32230457058968087,
       "final_tenth_radial_growth_fraction": 0.2285533755640328,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L+1-K+0-N+1",
@@ -11974,8 +11921,7 @@
       "exit_angle_deg": 85.85827830669687,
       "normalized_curvature_radius": 1.2020087036877516,
       "final_tenth_radial_growth_fraction": 0.33500937958772115,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L-1-K-1-N-1",
@@ -12001,8 +11947,7 @@
       "exit_angle_deg": 86.80415241166763,
       "normalized_curvature_radius": 1.565156855443627,
       "final_tenth_radial_growth_fraction": 0.34204586837688566,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L-1-K-1-N+1",
@@ -12028,8 +11973,7 @@
       "exit_angle_deg": 88.5816178823173,
       "normalized_curvature_radius": 5.978469798433556,
       "final_tenth_radial_growth_fraction": 0.46432826843752567,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L-1-K+1-N-1",
@@ -12055,8 +11999,7 @@
       "exit_angle_deg": 87.685654477326,
       "normalized_curvature_radius": 2.9194233265981127,
       "final_tenth_radial_growth_fraction": 0.4428580674094346,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L-1-K+1-N+1",
@@ -12163,8 +12106,7 @@
       "exit_angle_deg": 83.44127296255427,
       "normalized_curvature_radius": 0.5914098880252027,
       "final_tenth_radial_growth_fraction": 0.2846062820315108,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-L+1-K+1-N+1",
@@ -12190,8 +12132,7 @@
       "exit_angle_deg": 86.99844888704264,
       "normalized_curvature_radius": 2.0525167719563338,
       "final_tenth_radial_growth_fraction": 0.3692596769058566,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-350mm-validation-01",
@@ -13721,8 +13662,7 @@
       "exit_angle_deg": 88.50711899478046,
       "normalized_curvature_radius": 6.265842134095279,
       "final_tenth_radial_growth_fraction": 0.5018576708948725,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-450mm-L+1-K-1-N+0",
@@ -13800,8 +13740,7 @@
       "exit_angle_deg": 86.59345259996245,
       "normalized_curvature_radius": 1.49660619421022,
       "final_tenth_radial_growth_fraction": 0.311670603375564,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-450mm-L+1-K+1-N+0",
@@ -13951,8 +13890,7 @@
       "exit_angle_deg": 78.73913120858353,
       "normalized_curvature_radius": 0.21107184423487985,
       "final_tenth_radial_growth_fraction": 0.18613556849369303,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "40d-450mm-L+1-K-1-N+1",
@@ -16535,8 +16473,7 @@
       "exit_angle_deg": 86.97987968836509,
       "normalized_curvature_radius": 1.684839229614759,
       "final_tenth_radial_growth_fraction": 0.3179384529962657,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "45d-350mm-L+1-K+1-N+0",
@@ -19015,8 +18952,7 @@
       "exit_angle_deg": 88.0353065186664,
       "normalized_curvature_radius": 2.877189214079961,
       "final_tenth_radial_growth_fraction": 0.37294813484483647,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-250mm-L-1-K+0-N-1",
@@ -19042,8 +18978,7 @@
       "exit_angle_deg": 87.64145840336144,
       "normalized_curvature_radius": 2.362082613406883,
       "final_tenth_radial_growth_fraction": 0.3889372256589311,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-250mm-L-1-K+0-N+1",
@@ -19115,8 +19050,7 @@
       "exit_angle_deg": 82.22300293206473,
       "normalized_curvature_radius": 0.3170899288785585,
       "final_tenth_radial_growth_fraction": 0.20467497791165642,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-250mm-L+0-K-1-N+1",
@@ -19171,8 +19105,7 @@
       "exit_angle_deg": 86.60420769400301,
       "normalized_curvature_radius": 1.451396100208702,
       "final_tenth_radial_growth_fraction": 0.35513287531533005,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-250mm-L+0-K+1-N+1",
@@ -19198,8 +19131,7 @@
       "exit_angle_deg": 88.48156446047227,
       "normalized_curvature_radius": 5.420870745836457,
       "final_tenth_radial_growth_fraction": 0.4761817697685848,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-250mm-L+1-K-1-N+0",
@@ -19306,8 +19238,7 @@
       "exit_angle_deg": 85.86375302317155,
       "normalized_curvature_radius": 1.0168929858307874,
       "final_tenth_radial_growth_fraction": 0.3072936545677981,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-250mm-L-1-K-1-N-1",
@@ -19333,8 +19264,7 @@
       "exit_angle_deg": 86.84460005358011,
       "normalized_curvature_radius": 1.3527749064433316,
       "final_tenth_radial_growth_fraction": 0.3112079706605771,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-250mm-L-1-K-1-N+1",
@@ -19360,8 +19290,7 @@
       "exit_angle_deg": 88.58503847425138,
       "normalized_curvature_radius": 5.011165582397394,
       "final_tenth_radial_growth_fraction": 0.4149022821553887,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-250mm-L-1-K+1-N-1",
@@ -19387,8 +19316,7 @@
       "exit_angle_deg": 87.98428908777441,
       "normalized_curvature_radius": 3.194032727886118,
       "final_tenth_radial_growth_fraction": 0.43847551277062236,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-250mm-L-1-K+1-N+1",
@@ -19483,8 +19411,7 @@
       "exit_angle_deg": 83.52907755914686,
       "normalized_curvature_radius": 0.5187979000080504,
       "final_tenth_radial_growth_fraction": 0.2651573249612562,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-250mm-L+1-K+1-N+1",
@@ -19510,8 +19437,7 @@
       "exit_angle_deg": 86.98498689953408,
       "normalized_curvature_radius": 1.7065424799685087,
       "final_tenth_radial_growth_fraction": 0.33592645467119575,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-250mm-validation-01",
@@ -20062,8 +19988,7 @@
       "exit_angle_deg": 88.03873634037488,
       "normalized_curvature_radius": 2.877885466264219,
       "final_tenth_radial_growth_fraction": 0.34189851429794854,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-300mm-L+0-K+1-N-1",
@@ -20138,8 +20063,7 @@
       "exit_angle_deg": 82.3458994676897,
       "normalized_curvature_radius": 0.2900498878819658,
       "final_tenth_radial_growth_fraction": 0.18777758521307808,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-300mm-L+1-K+0-N-1",
@@ -20165,8 +20089,7 @@
       "exit_angle_deg": 84.18563504959748,
       "normalized_curvature_radius": 0.5566677165020587,
       "final_tenth_radial_growth_fraction": 0.2509392914402551,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-300mm-L+1-K+0-N+1",
@@ -20192,8 +20115,7 @@
       "exit_angle_deg": 87.29917736646232,
       "normalized_curvature_radius": 1.8496190989038352,
       "final_tenth_radial_growth_fraction": 0.318700958345739,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-300mm-L+1-K+1-N+0",
@@ -21246,8 +21168,7 @@
       "exit_angle_deg": 81.7314062439834,
       "normalized_curvature_radius": 0.28383601264643726,
       "final_tenth_radial_growth_fraction": 0.1908243731432992,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-350mm-L+1-K-1-N+1",
@@ -22000,8 +21921,7 @@
       "exit_angle_deg": 87.6756302920009,
       "normalized_curvature_radius": 2.3238545781955624,
       "final_tenth_radial_growth_fraction": 0.32860479709565493,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-400mm-L+1-K+1-N+0",
@@ -22151,8 +22071,7 @@
       "exit_angle_deg": 82.07726656956396,
       "normalized_curvature_radius": 0.3020572138951538,
       "final_tenth_radial_growth_fraction": 0.19173058919455818,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-400mm-L+1-K-1-N+1",
@@ -22654,8 +22573,7 @@
       "exit_angle_deg": 88.89211423533703,
       "normalized_curvature_radius": 6.928083689893739,
       "final_tenth_radial_growth_fraction": 0.4552481979795207,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L-1-K+0-N-1",
@@ -22681,8 +22599,7 @@
       "exit_angle_deg": 88.44991034136011,
       "normalized_curvature_radius": 4.205222527009571,
       "final_tenth_radial_growth_fraction": 0.4219315082552625,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L-1-K+0-N+1",
@@ -22754,8 +22671,7 @@
       "exit_angle_deg": 86.8437517796142,
       "normalized_curvature_radius": 1.3223013750382433,
       "final_tenth_radial_growth_fraction": 0.2912158257500102,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L+0-K-1-N+1",
@@ -22781,8 +22697,7 @@
       "exit_angle_deg": 88.5832184690286,
       "normalized_curvature_radius": 4.882066213998352,
       "final_tenth_radial_growth_fraction": 0.3874776279948466,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L+0-K+1-N-1",
@@ -22808,8 +22723,7 @@
       "exit_angle_deg": 87.81270569794836,
       "normalized_curvature_radius": 2.674844888399648,
       "final_tenth_radial_growth_fraction": 0.38812139486135033,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L+0-K+1-N+1",
@@ -22858,8 +22772,7 @@
       "exit_angle_deg": 85.91693464711989,
       "normalized_curvature_radius": 0.8249038071233733,
       "final_tenth_radial_growth_fraction": 0.2410844946056222,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L+1-K+0-N-1",
@@ -22885,8 +22798,7 @@
       "exit_angle_deg": 85.56805631734876,
       "normalized_curvature_radius": 0.8303587728860865,
       "final_tenth_radial_growth_fraction": 0.26753677533093473,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L+1-K+0-N+1",
@@ -22912,8 +22824,7 @@
       "exit_angle_deg": 87.97727388557645,
       "normalized_curvature_radius": 2.91348741215632,
       "final_tenth_radial_growth_fraction": 0.3473794183346212,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L+1-K+1-N+0",
@@ -22939,8 +22850,7 @@
       "exit_angle_deg": 87.79248704169247,
       "normalized_curvature_radius": 2.679706338345539,
       "final_tenth_radial_growth_fraction": 0.3757646385320087,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L-1-K-1-N-1",
@@ -22966,8 +22876,7 @@
       "exit_angle_deg": 88.19906929099372,
       "normalized_curvature_radius": 3.140145928364415,
       "final_tenth_radial_growth_fraction": 0.37218479663020865,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L-1-K-1-N+1",
@@ -23016,8 +22925,7 @@
       "exit_angle_deg": 88.59781065121281,
       "normalized_curvature_radius": 5.110288767949703,
       "final_tenth_radial_growth_fraction": 0.4580481830560274,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L-1-K+1-N+1",
@@ -23066,8 +22974,7 @@
       "exit_angle_deg": 83.65098357276256,
       "normalized_curvature_radius": 0.42856333008735154,
       "final_tenth_radial_growth_fraction": 0.20965466408319564,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L+1-K-1-N+1",
@@ -23122,8 +23029,7 @@
       "exit_angle_deg": 86.46307877551631,
       "normalized_curvature_radius": 1.2694694503078054,
       "final_tenth_radial_growth_fraction": 0.3146542878203725,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-L+1-K+1-N+1",
@@ -23149,8 +23055,7 @@
       "exit_angle_deg": 88.40845413602855,
       "normalized_curvature_radius": 4.651500678900086,
       "final_tenth_radial_growth_fraction": 0.417290810187528,
-      "status": "planned",
-      "dead_region_sentinel": true
+      "status": "planned"
     },
     {
       "id": "50d-450mm-validation-01",
