@@ -360,12 +360,24 @@ def build_manifest(source_root: Path) -> dict[str, Any]:
                 cell_rows.append(row)
             # The K4/N10 result that defined the length reference is preserved as
             # a free historical anchor even though N=10 is not a factorial level.
+            reference_metrics, reference_rejection = _geometry_audit(
+                config, angle, reference.length_mm, 4.0, 10.0)
+            if reference_metrics is None:
+                raise RuntimeError(
+                    f"reference failed current geometry gate for {angle}°/{mouth} mm: "
+                    f"{reference_rejection}")
             cell_rows.append({
                 "id": f"{angle}d-{mouth}mm-reference-K4-N10",
                 "kind": "reference-anchor", "stage": "reference-anchor",
                 "coverage_deg": angle, "mouth_mm": mouth,
                 "length_factor": 1.0, "length_mm": reference.length_mm,
-                "k": 4.0, "n": 10.0, "status": "reused",
+                "k": 4.0, "n": 10.0, "s": reference_metrics["s"],
+                "exit_angle_deg": reference_metrics["exit_angle_deg"],
+                "normalized_curvature_radius": reference_metrics[
+                    "normalized_curvature_radius"],
+                "final_tenth_radial_growth_fraction": reference_metrics[
+                    "final_tenth_radial_growth_fraction"],
+                "status": "reused",
                 "reused_from": {
                     "search": reference.search_path,
                     "candidate_id": reference.candidate_id,
@@ -788,7 +800,8 @@ def render_index(manifest: dict[str, Any], progress: dict[str, Any] | None = Non
                 f"<td>{row['mouth_mm']} mm</td>",
                 f"<td>{row['length_mm']:.1f}</td>",
                 f"<td>{row['k']:g}</td><td>{row['n']:g}</td>",
-                f"<td>{row.get('s', float('nan')):.2f}</td>",
+                (f"<td>{row['s']:.2f}</td>" if isinstance(row.get("s"),
+                 (int, float)) and math.isfinite(row["s"]) else "<td>—</td>"),
                 f"<td>{html.escape(row['stage'])}</td>",
                 f"<td>{html.escape(status)}</td>",
                 f"<td>{html.escape(reason)}</td>",

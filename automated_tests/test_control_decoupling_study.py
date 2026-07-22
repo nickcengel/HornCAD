@@ -67,6 +67,7 @@ class ControlDecouplingStudyTests(unittest.TestCase):
         self.assertEqual(len(reused), 25)
         self.assertTrue(all(row["kind"] == "reference-anchor" for row in reused))
         self.assertTrue(all(row["k"] == 4 and row["n"] == 10 for row in reused))
+        self.assertTrue(all(math.isfinite(row["s"]) for row in reused))
         self.assertTrue(all(row["reused_from"]["response"].endswith(
             "responses.npz") for row in reused))
 

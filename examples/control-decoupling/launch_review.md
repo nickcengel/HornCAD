@@ -3,7 +3,7 @@
 No BEM work is started by the planner or materializer. This file describes the
 exact materialized queue that must be reviewed before launch.
 
-- Frozen manifest SHA-256: `f2f7c87cbdde9cb86b50828006b9dfc6c7cc287da96791a8dd39dd82ee2cab43`
+- Frozen manifest SHA-256: `fd3aced8913aa3252491358c8fa9486af12f1bdc6a604d4886c689ff931be25d`
 - New BEM candidates before evidence-based pruning: 570
 - Search directories: 336
 - Parallelism: two independent searches, ten solver workers each.
