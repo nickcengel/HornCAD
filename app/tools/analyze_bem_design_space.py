@@ -269,8 +269,34 @@ def _cell_summaries(candidates: Iterable[Candidate]) -> list[dict[str, Any]]:
     return output
 
 
+def _read_json(path: Path) -> dict[str, Any]:
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return value if isinstance(value, dict) else {}
+
+
+def _study_progress(root: Path) -> dict[str, Any]:
+    program = _read_json(root / "study_program_state.json")
+    closure = _read_json(root / "s_boundary_closure.json")
+    closure_results = closure.get("results", [])
+    closure_counts = Counter(
+        str(item.get("status", "unknown"))
+        for item in closure_results if isinstance(item, dict)
+    )
+    return {
+        "program_status": str(program.get("status", "unknown")),
+        "program_phase": str(program.get("phase", "unknown")),
+        "s_closure_status": str(closure.get("status", "unknown")),
+        "s_closure_cell_count": len(closure_results),
+        "s_closure_counts": dict(sorted(closure_counts.items())),
+    }
+
+
 def analyze(root: Path) -> dict[str, Any]:
     candidates, search_states = load_candidates(root)
+    progress = _study_progress(root)
     coverage_counts = Counter(candidate.coverage_deg for candidate in candidates)
     pairs = {parameter: matched_pairs(candidates, parameter)
              for parameter in PARAMETERS}
@@ -279,7 +305,11 @@ def analyze(root: Path) -> dict[str, Any]:
         "schema_version": 1,
         "snapshot_completed_at": (
             datetime.fromtimestamp(latest).astimezone().isoformat() if latest else None),
-        "provisional": any(key not in ("complete",) for key in search_states),
+        "provisional": (
+            progress["program_status"] != "complete" or
+            any(key in search_states for key in ("running", "pending"))
+        ),
+        "study_progress": progress,
         "search_states": search_states,
         "unique_candidate_count": len(candidates),
         "coverage_counts": {f"{key:g}": coverage_counts[key]
@@ -305,6 +335,13 @@ def _number(value: float | None, digits: int = 2) -> str:
 def render_markdown(analysis: dict[str, Any]) -> str:
     state_text = ", ".join(
         f"{key}: {value}" for key, value in analysis["search_states"].items())
+    progress = analysis.get("study_progress", {})
+    phase = progress.get("program_phase", "unknown")
+    program_status = progress.get("program_status", "unknown")
+    closure_status = progress.get("s_closure_status", "unknown")
+    closure_counts = progress.get("s_closure_counts", {})
+    closure_text = ", ".join(
+        f"{key}: {value}" for key, value in closure_counts.items()) or "unavailable"
     lines = [
         "# Current BEM design-space analysis",
         "",
@@ -316,11 +353,14 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         f"- {analysis['unique_candidate_count']} unique scored physical designs across "
         f"{analysis['mouth_coverage_cell_count']} mouth/coverage cells.",
         f"- Search states: {state_text}.",
+        f"- Study program: `{phase}` ({program_status}).",
+        f"- S-closure certificate: {closure_status}; {closure_text}.",
         "- Candidate counts by coverage half-angle: " + ", ".join(
             f"{key}°: {value}" for key, value in analysis["coverage_counts"].items()) + ".",
         "",
-        "The counts are evidence density, not evidence quality. Incomplete 30° work and "
-        "unfinished closure studies must not yet be used for final cross-angle recommendations.",
+        "The counts are evidence density, not evidence quality. Cross-angle conclusions remain "
+        "provisional while the study program is running; expected geometry rejections describe "
+        "the admissible design boundary rather than missing solver evidence.",
         "",
         "## Controlled adjacent effects",
         "",
@@ -388,11 +428,10 @@ def render_markdown(analysis: dict[str, Any]) -> str:
             )
     lines += [
         "",
-        "The current K evidence describes a broad crest near K=4: increases below 4 are "
-        "usually helpful, while increases above 4 are usually harmful. The current N evidence "
-        "rejects N=2, but does not support continuing upward past 10: N=2→5 is strongly "
-        "helpful, N=5→10 is mixed, and every measured transition above 10 is harmful. These "
-        "statements apply only to the mouth/coverage/S regimes represented by the matched pairs.",
+        "The transition table is the current K/N conclusion: it is rebuilt from matched physical "
+        "designs on every refresh. A direction is not promoted to a general rule until it repeats "
+        "across independent mouth/coverage cells; later K/N results can therefore reverse an "
+        "earlier provisional interpretation without leaving stale prose in this document.",
         "",
         "## Fixed K=4, N=10 S evidence",
         "",
@@ -415,7 +454,8 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         "",
         "## Immediate next analysis",
         "",
-        "1. Test whether the provisional K≈4 and N≈5–10 crest repeats across independent cells.",
+        "1. Test whether the strongest current K and N transition signals repeat across "
+        "independent cells.",
         "2. Test whether diagnostic-conditioned directions repeat across independent cells.",
         "3. Compare absolute and length/mouth-normalized bunching frequencies to identify which "
         "physical scale moves each frequency feature.",

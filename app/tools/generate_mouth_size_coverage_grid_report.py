@@ -15,10 +15,11 @@ from typing import Any
 import yaml
 
 try:
-    from .analyze_bem_design_space import analyze as analyze_design_space
+    from .analyze_bem_design_space import (
+        analyze as analyze_design_space, render_markdown)
     from .surface_diagnostics import surface_score
 except ImportError:
-    from analyze_bem_design_space import analyze as analyze_design_space
+    from analyze_bem_design_space import analyze as analyze_design_space, render_markdown
     from surface_diagnostics import surface_score
 
 
@@ -918,6 +919,21 @@ def main() -> None:
     args = parser.parse_args()
     output = args.output or args.project_root / "index.html"
     print(generate_report(args.project_root, output))
+    repository_root = Path(__file__).resolve().parents[2]
+    maintained_root = repository_root / "examples" / "mouth-size-coverage-grid"
+    if args.project_root.resolve() == maintained_root.resolve():
+        analysis = analyze_design_space(args.project_root)
+        analysis_root = repository_root / "docs" / "reference" / "research"
+        artifacts = {
+            analysis_root / "current_bem_design_space_analysis.json":
+                json.dumps(analysis, indent=2) + "\n",
+            analysis_root / "current_bem_design_space_analysis.md":
+                render_markdown(analysis),
+        }
+        for path, document in artifacts.items():
+            temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+            temporary.write_text(document, encoding="utf-8")
+            temporary.replace(path)
 
 
 if __name__ == "__main__":

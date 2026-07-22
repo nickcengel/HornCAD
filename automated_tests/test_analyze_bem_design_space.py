@@ -1,7 +1,10 @@
 import unittest
+import json
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from app.tools.analyze_bem_design_space import (
-    Candidate, _transition_summaries, deduplicate, matched_pairs,
+    Candidate, _study_progress, _transition_summaries, deduplicate, matched_pairs,
 )
 
 
@@ -48,6 +51,26 @@ class DesignSpaceAnalysisTests(unittest.TestCase):
         self.assertEqual([(item["from"], item["to"]) for item in summaries],
                          [(2, 5), (5, 10)])
         self.assertEqual(summaries[0]["median_score_delta"], 20)
+
+    def test_study_progress_tracks_live_phase_and_closure(self):
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            (root / "study_program_state.json").write_text(json.dumps({
+                "status": "running", "phase": "coupled-closure",
+            }))
+            (root / "s_boundary_closure.json").write_text(json.dumps({
+                "status": "complete",
+                "results": [
+                    {"status": "closed"},
+                    {"status": "geometry-limited"},
+                ],
+            }))
+            progress = _study_progress(root)
+        self.assertEqual(progress["program_phase"], "coupled-closure")
+        self.assertEqual(progress["s_closure_status"], "complete")
+        self.assertEqual(progress["s_closure_counts"], {
+            "closed": 1, "geometry-limited": 1,
+        })
 
 
 if __name__ == "__main__":
