@@ -285,12 +285,136 @@ def _study_progress(root: Path) -> dict[str, Any]:
         str(item.get("status", "unknown"))
         for item in closure_results if isinstance(item, dict)
     )
+    running_searches = []
+    for state_path in sorted(root.glob("*deg/*x*/search_state.json")):
+        state = _read_json(state_path)
+        if state.get("status") != "running":
+            continue
+        candidates = state.get("candidates", [])
+        running_searches.append({
+            "search": str(state_path.parent.relative_to(root)),
+            "phase": str(state.get("phase", "unknown")),
+            "completed_candidates": sum(
+                record.get("status") == "complete" for record in candidates),
+            "planned_candidates": int(state.get(
+                "max_evaluations", state.get("search", {}).get(
+                    "max_evaluations", len(candidates)))),
+            "solver_workers": int(state.get("search", {}).get(
+                "solver", {}).get("workers", 0)),
+        })
     return {
         "program_status": str(program.get("status", "unknown")),
         "program_phase": str(program.get("phase", "unknown")),
         "s_closure_status": str(closure.get("status", "unknown")),
         "s_closure_cell_count": len(closure_results),
         "s_closure_counts": dict(sorted(closure_counts.items())),
+        "running_searches": running_searches,
+    }
+
+
+def _phase_three_audit(root: Path) -> dict[str, Any]:
+    """Summarize the practical value of completed coupled K/N refinement."""
+    search_count = completed_count = quarter_k_count = 0
+    winner_advantages = []
+    anchors: dict[tuple[float, float], list[dict[str, float]]] = defaultdict(list)
+    for state_path in sorted(root.glob("*deg/*coupled*-kn/search_state.json")):
+        state = _read_json(state_path)
+        completed = []
+        for record in state.get("candidates", []):
+            if record.get("status") != "complete":
+                continue
+            score = record.get("surface_diagnostics", {}).get(
+                "score", {}).get("overall_percent")
+            values = record.get("values", {})
+            if score is None or values.get("k_h") is None or values.get("n_h") is None:
+                continue
+            item = {
+                "k": float(values["k_h"]), "n": float(values["n_h"]),
+                "score": float(score),
+            }
+            completed.append(item)
+            quarter_k_count += not math.isclose(
+                item["k"] * 2, round(item["k"] * 2), abs_tol=1e-6)
+        if not completed:
+            continue
+        search_count += 1
+        completed_count += len(completed)
+        best = max(completed, key=lambda item: item["score"])
+        alternatives = [
+            item for item in completed
+            if math.isclose(item["n"], best["n"], abs_tol=1e-6) and
+            1e-6 < abs(item["k"] - best["k"]) <= 0.500001
+        ]
+        if alternatives:
+            winner_advantages.append(
+                best["score"] - max(item["score"] for item in alternatives))
+        coverage = float(state_path.parent.parent.name.removesuffix("deg"))
+        mouth = float(state_path.parent.name.split("x", 1)[0])
+        anchors[(coverage, mouth)].append({
+            "seed_score": completed[0]["score"], "best_score": best["score"],
+        })
+    anchor_gains = []
+    for (coverage, mouth), rounds in sorted(anchors.items()):
+        local_s_paths = sorted(root.glob(
+            f"{coverage:g}deg/{mouth:g}x{mouth:g}-coupled-r*-s/search_state.json"))
+        local_s_status = "not-run"
+        final_values: dict[str, float | str] = {}
+        if local_s_paths:
+            latest_s_state = _read_json(local_s_paths[-1])
+            sampled = []
+            for record in latest_s_state.get("candidates", []):
+                score = record.get("surface_diagnostics", {}).get(
+                    "score", {}).get("overall_percent")
+                if record.get("status") != "complete" or score is None:
+                    continue
+                sampled.append({
+                    "s": float(record["derived"]["s_h"]),
+                    "length": float(record["values"]["length_mm"]),
+                    "k": float(record["values"]["k_h"]),
+                    "n": float(record["values"]["n_h"]),
+                    "score": float(score),
+                })
+            if sampled:
+                ordered = sorted(sampled, key=lambda item: item["s"])
+                center = ordered[len(ordered) // 2]
+                best_s = max(ordered, key=lambda item: item["score"])
+                center_delta = abs(best_s["s"] - center["s"])
+                gain_over_center = best_s["score"] - center["score"]
+                if center_delta <= 0.075:
+                    local_s_status = "converged"
+                elif len(local_s_paths) >= 3 and gain_over_center < 0.5:
+                    local_s_status = "practical-stop-unbracketed"
+                else:
+                    local_s_status = "unresolved"
+                final_values = {
+                    "local_s_round_count": len(local_s_paths),
+                    "local_s_status": local_s_status,
+                    "final_score": best_s["score"], "final_s": best_s["s"],
+                    "final_length_mm": best_s["length"],
+                    "final_k": best_s["k"], "final_n": best_s["n"],
+                    "local_s_gain_over_center_points": gain_over_center,
+                    "local_s_winner_at_edge": best_s in (ordered[0], ordered[-1]),
+                }
+        anchor_gains.append({
+            "coverage_deg": coverage, "mouth_mm": mouth,
+            "first_seed_score": rounds[0]["seed_score"],
+            "latest_kn_score": rounds[-1]["best_score"],
+            "gain_points": rounds[-1]["best_score"] - rounds[0]["seed_score"],
+            "round_count": len(rounds),
+            **final_values,
+        })
+    return {
+        "search_count": search_count,
+        "completed_candidate_count": completed_count,
+        "quarter_step_k_candidate_count": quarter_k_count,
+        "median_winner_advantage_over_nearby_k": (
+            median(winner_advantages) if winner_advantages else None),
+        "maximum_winner_advantage_over_nearby_k": (
+            max(winner_advantages) if winner_advantages else None),
+        "anchor_gains": anchor_gains,
+        "adopted_minimum_k_step": 0.5,
+        "adopted_minimum_n_step": 1.0,
+        "score_asymptote_tolerance_points": 0.5,
     }
 
 
@@ -301,15 +425,21 @@ def analyze(root: Path) -> dict[str, Any]:
     pairs = {parameter: matched_pairs(candidates, parameter)
              for parameter in PARAMETERS}
     latest = max((candidate.completed_at for candidate in candidates), default=0)
+    phase_three_audit = _phase_three_audit(root)
+    coupled_unresolved = any(
+        item.get("local_s_status") not in (None, "converged")
+        for item in phase_three_audit["anchor_gains"])
     return {
         "schema_version": 1,
         "snapshot_completed_at": (
             datetime.fromtimestamp(latest).astimezone().isoformat() if latest else None),
         "provisional": (
             progress["program_status"] != "complete" or
-            any(key in search_states for key in ("running", "pending"))
+            any(key in search_states for key in ("running", "pending")) or
+            coupled_unresolved
         ),
         "study_progress": progress,
+        "phase_three_audit": phase_three_audit,
         "search_states": search_states,
         "unique_candidate_count": len(candidates),
         "coverage_counts": {f"{key:g}": coverage_counts[key]
@@ -358,9 +488,13 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         "- Candidate counts by coverage half-angle: " + ", ".join(
             f"{key}°: {value}" for key, value in analysis["coverage_counts"].items()) + ".",
         "",
-        "The counts are evidence density, not evidence quality. Cross-angle conclusions remain "
-        "provisional while the study program is running; expected geometry rejections describe "
-        "the admissible design boundary rather than missing solver evidence.",
+        ("The counts are evidence density, not evidence quality. The production queue has "
+         "finished, but practical-stop or unbracketed coupled anchors remain explicitly "
+         "provisional; expected geometry rejections describe the admissible design boundary "
+         "rather than missing solver evidence." if program_status == "complete" else
+         "The counts are evidence density, not evidence quality. Cross-angle conclusions remain "
+         "provisional while the study program is running; expected geometry rejections describe "
+         "the admissible design boundary rather than missing solver evidence."),
         "",
         "## Controlled adjacent effects",
         "",
@@ -372,6 +506,14 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         "| Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |",
         "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |",
     ]
+    running_searches = progress.get("running_searches", [])
+    if running_searches:
+        lines.extend(
+            f"- Running: `{item['search']}` — {item['phase']}; "
+            f"{item['completed_candidates']}/{item['planned_candidates']} candidates complete; "
+            f"{item['solver_workers']} solver workers."
+            for item in running_searches
+        )
     for parameter in PARAMETERS:
         item = analysis["matched_effects"][parameter]
         delta = item.get("median_delta", {})
@@ -432,6 +574,39 @@ def render_markdown(analysis: dict[str, Any]) -> str:
         "designs on every refresh. A direction is not promoted to a general rule until it repeats "
         "across independent mouth/coverage cells; later K/N results can therefore reverse an "
         "earlier provisional interpretation without leaving stale prose in this document.",
+        "",
+        "## Phase 3 coupled-search audit",
+        "",
+    ]
+    audit = analysis["phase_three_audit"]
+    lines += [
+        f"Across {audit['search_count']} coupled K/N rounds, "
+        f"{audit['completed_candidate_count']} candidates were completed; "
+        f"{audit['quarter_step_k_candidate_count']} used quarter-step K values. "
+        f"At the selected winners, the median advantage over a measured nearby K choice at "
+        f"the same N was {_number(audit['median_winner_advantage_over_nearby_k'], 3)} points "
+        f"and the maximum was {_number(audit['maximum_winner_advantage_over_nearby_k'], 3)}. "
+        "That resolution did not change a practical design decision.",
+        "",
+        "The coupled phase remains useful at coarse resolution: it showed that useful K and N "
+        "move with length and are not fixed at the original K=4, N=10 seed. Future closure uses "
+        f"K steps no finer than {audit['adopted_minimum_k_step']:g}, N steps no finer than "
+        f"{audit['adopted_minimum_n_step']:g}, and hands off to local S/length when the measured "
+        f"neighborhood is within {audit['score_asymptote_tolerance_points']:g} score points.",
+        "",
+        "| Coverage | Mouth | K/N rounds | First seed | Final score | Final S / L | Final K / N | Status |",
+        "| ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+    ]
+    for item in audit["anchor_gains"]:
+        lines.append(
+            f"| {item['coverage_deg']:g}° | {item['mouth_mm']:g} | "
+            f"{item['round_count']} | {item['first_seed_score']:.2f} | "
+            f"{item.get('final_score', item['latest_kn_score']):.2f} | "
+            f"{_number(item.get('final_s'), 2)} / {_number(item.get('final_length_mm'), 1)} mm | "
+            f"{_number(item.get('final_k'), 2)} / {_number(item.get('final_n'), 2)} | "
+            f"{item.get('local_s_status', 'not run')} |"
+        )
+    lines += [
         "",
         "## Fixed K=4, N=10 S evidence",
         "",

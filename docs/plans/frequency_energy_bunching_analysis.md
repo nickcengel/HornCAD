@@ -42,7 +42,8 @@ Once a mouth/coverage design has a closed local K/N and length optimum, measure
 matched local perturbations around it:
 
 - Length or S below and above the incumbent.
-- K below and above the incumbent, initially by 0.25.
+- K below and above the incumbent in 0.5 steps. The Phase 3 audit found no
+  practical design decision changed by quarter-step K probes.
 - N below and above the incumbent, initially by 1.
 - Selected diagonal perturbations when K/N or K/length interactions are
   plausible.

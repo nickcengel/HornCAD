@@ -1,16 +1,16 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-22T09:28:01.465342-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-22T09:57:56.715150-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
-- 820 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: complete: 113, geometry-rejected: 7.
-- Study program: `coupled` (running).
+- 825 unique scored physical designs across 36 mouth/coverage cells.
+- Search states: complete: 114, geometry-rejected: 7.
+- Study program: `coupled` (complete).
 - S-closure certificate: complete; closed: 29, geometry-limited: 7.
-- Candidate counts by coverage half-angle: 25°: 110, 30°: 39, 35°: 90, 40°: 97, 45°: 289, 50°: 195.
+- Candidate counts by coverage half-angle: 25°: 110, 30°: 39, 35°: 90, 40°: 97, 45°: 289, 50°: 200.
 
-The counts are evidence density, not evidence quality. Cross-angle conclusions remain provisional while the study program is running; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
+The counts are evidence density, not evidence quality. The production queue has finished, but practical-stop or unbracketed coupled anchors remain explicitly provisional; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
 
 ## Controlled adjacent effects
 
@@ -18,7 +18,7 @@ Positive score deltas mean increasing the named control improved the surface sco
 
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| S | 506 | 31% | -0.51 | -0.46 | 0.041 | 0.028 | -0.019 | 0.28 | 0.000 |
+| S | 511 | 31% | -0.50 | -0.44 | 0.041 | 0.028 | -0.020 | 0.27 | 0.000 |
 | K | 232 | 59% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
 | N | 259 | 45% | -0.02 | 0.04 | -0.002 | 0.001 | 0.001 | 0.07 | 0.000 |
 
@@ -32,9 +32,9 @@ These are aggregate directional summaries, not universal steering rules. A contr
 | S | coverage 25° | 82 | 4% | -1.61 |
 | S | S < 1 | 102 | 69% | 1.48 |
 | S | coverage 35° | 60 | 15% | -1.20 |
-| S | S ≥ 2 | 175 | 6% | -1.09 |
+| S | S ≥ 2 | 178 | 6% | -1.08 |
 | S | coverage 40° | 66 | 35% | -0.97 |
-| S | 1 ≤ S < 2 | 229 | 34% | -0.40 |
+| S | 1 ≤ S < 2 | 231 | 34% | -0.40 |
 | S | coverage 45° | 161 | 43% | -0.08 |
 | K | coverage 35° | 16 | 56% | 0.54 |
 | K | high starting high_frequency_coverage_error_deg | 116 | 74% | 0.19 |
@@ -121,6 +121,20 @@ This table is a screening device. Coverage/S regimes are descriptive, while spli
 | N | 15 → 20 | 5 | 0% | -1.38 |
 
 The transition table is the current K/N conclusion: it is rebuilt from matched physical designs on every refresh. A direction is not promoted to a general rule until it repeats across independent mouth/coverage cells; later K/N results can therefore reverse an earlier provisional interpretation without leaving stale prose in this document.
+
+## Phase 3 coupled-search audit
+
+Across 10 coupled K/N rounds, 276 candidates were completed; 110 used quarter-step K values. At the selected winners, the median advantage over a measured nearby K choice at the same N was 0.050 points and the maximum was 0.140. That resolution did not change a practical design decision.
+
+The coupled phase remains useful at coarse resolution: it showed that useful K and N move with length and are not fixed at the original K=4, N=10 seed. Future closure uses K steps no finer than 0.5, N steps no finer than 1, and hands off to local S/length when the measured neighborhood is within 0.5 score points.
+
+| Coverage | Mouth | K/N rounds | First seed | Final score | Final S / L | Final K / N | Status |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| 40° | 400 | 1 | 88.64 | 89.77 | 0.98 / 171.6 mm | 4.25 / 6.50 | converged |
+| 45° | 350 | 2 | 88.30 | 88.63 | 1.37 / 128.8 mm | 4.00 / 7.75 | converged |
+| 45° | 400 | 3 | 87.11 | 89.21 | 1.28 / 153.6 mm | 5.25 / 7.50 | converged |
+| 50° | 250 | 1 | 87.70 | 87.73 | 1.72 / 89.8 mm | 4.00 / 11.25 | converged |
+| 50° | 400 | 3 | 84.24 | 86.28 | 1.72 / 133.2 mm | 5.50 / 8.75 | practical-stop-unbracketed |
 
 ## Fixed K=4, N=10 S evidence
 

@@ -663,6 +663,11 @@ def generate_report(project_root: Path, output: Path) -> Path:
         )
     )
     learning_effects = learning["matched_effects"]
+    phase_three_audit = learning["phase_three_audit"]
+    coupled_practical_stops = [
+        item for item in phase_three_audit["anchor_gains"]
+        if item.get("local_s_status") == "practical-stop-unbracketed"
+    ]
     fixed_cells = learning["fixed_k4_n10_cells"]
     endpoint_cells = sum(cell["winner_at_sampled_boundary"] for cell in fixed_cells)
     learning_cards = "".join(
@@ -705,6 +710,8 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <h2>Provisional learning</h2>
 <p>{learning['unique_candidate_count']} unique scored physical designs currently support {learning['mouth_coverage_cell_count']} mouth/coverage cells. {endpoint_cells} of {len(fixed_cells)} fixed K=4, N=10 cells still place their measured winner on an observed S endpoint.</p>
 <div class='learning-cards'>{learning_cards}</div>
+<p><strong>Phase 3 audit:</strong> {phase_three_audit['quarter_step_k_candidate_count']} quarter-step K candidates changed the selected winner by only {phase_three_audit['median_winner_advantage_over_nearby_k']:.3f} points at the median ({phase_three_audit['maximum_winner_advantage_over_nearby_k']:.3f} maximum) versus a nearby measured K at the same N. Future closure uses K ≥ 0.5 steps, N ≥ 1 steps, and moves to local S/length inside a 0.5-point score asymptote.</p>
+<p><strong>Coupled completion:</strong> {len(phase_three_audit['anchor_gains']) - len(coupled_practical_stops)} anchors converged; {len(coupled_practical_stops)} stopped at the three-round limit with less than 0.5 points available over its local-S center but without a formally bracketed length optimum.</p>
 <p class='muted'>These are aggregate matched comparisons, not universal steering rules. Positive means increasing the control improved score at the median adjacent step. Regime-conditioned and held-out checks are required before using a direction to propose a horn.</p>
 </section>
 <section>

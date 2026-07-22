@@ -4,7 +4,8 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from app.tools.analyze_bem_design_space import (
-    Candidate, _study_progress, _transition_summaries, deduplicate, matched_pairs,
+    Candidate, _phase_three_audit, _study_progress, _transition_summaries,
+    deduplicate, matched_pairs,
 )
 
 
@@ -71,6 +72,64 @@ class DesignSpaceAnalysisTests(unittest.TestCase):
         self.assertEqual(progress["s_closure_counts"], {
             "closed": 1, "geometry-limited": 1,
         })
+
+    def test_phase_three_audit_quantifies_quarter_step_value(self):
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            search = root / "45deg" / "400x400-coupled-r01-kn"
+            search.mkdir(parents=True)
+            records = []
+            for index, (k, score) in enumerate(((4.0, 88), (4.25, 88.1),
+                                                (4.5, 88.08))):
+                records.append({
+                    "id": f"candidate-{index:03d}", "status": "complete",
+                    "values": {"k_h": k, "n_h": 8},
+                    "surface_diagnostics": {
+                        "score": {"overall_percent": score}},
+                })
+            (search / "search_state.json").write_text(json.dumps({
+                "status": "complete", "candidates": records,
+            }))
+
+            audit = _phase_three_audit(root)
+
+        self.assertEqual(audit["search_count"], 1)
+        self.assertEqual(audit["completed_candidate_count"], 3)
+        self.assertEqual(audit["quarter_step_k_candidate_count"], 1)
+        self.assertAlmostEqual(
+            audit["maximum_winner_advantage_over_nearby_k"], 0.02)
+
+    def test_phase_three_audit_marks_small_round_limit_boundary_gain(self):
+        with TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            kn = root / "50deg" / "400x400-coupled-r03-kn"
+            kn.mkdir(parents=True)
+            (kn / "search_state.json").write_text(json.dumps({
+                "candidates": [{
+                    "status": "complete", "values": {"k_h": 5, "n_h": 8},
+                    "surface_diagnostics": {"score": {"overall_percent": 85}},
+                }],
+            }))
+            for round_number in (1, 2, 3):
+                search = root / "50deg" / f"400x400-coupled-r{round_number:02d}-s"
+                search.mkdir(parents=True)
+                records = [{
+                    "status": "complete",
+                    "derived": {"s_h": s},
+                    "values": {"length_mm": 120 - s, "k_h": 5, "n_h": 8},
+                    "surface_diagnostics": {
+                        "score": {"overall_percent": score}},
+                } for s, score in ((1.0, 85.3), (1.3, 85.0), (1.6, 84.5))]
+                (search / "search_state.json").write_text(json.dumps({
+                    "candidates": records,
+                }))
+
+            audit = _phase_three_audit(root)
+
+        anchor = audit["anchor_gains"][0]
+        self.assertEqual(anchor["local_s_status"],
+                         "practical-stop-unbracketed")
+        self.assertAlmostEqual(anchor["local_s_gain_over_center_points"], 0.3)
 
 
 if __name__ == "__main__":

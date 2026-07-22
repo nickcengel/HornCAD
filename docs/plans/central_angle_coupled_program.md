@@ -77,7 +77,8 @@ limits.
 `app.tools.run_bem_study_program` owns the complete production queue. After its
 per-baseline S closure chains produce one global certificate, it runs authored
 K/N grids and canonical 45-degree extensions, then selects and runs coupled
-anchors. It maintains two concurrent ten-worker search slots throughout.
+anchors. It maintains two concurrent ten-worker search slots while at least two
+useful searches remain; a single useful tail search receives all 20 workers.
 `run_coupled_kn_length_program` supplies materialization and anchor functions;
 it should not be launched as a separate waiter.
 
