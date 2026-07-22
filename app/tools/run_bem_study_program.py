@@ -136,7 +136,8 @@ def run_program(root: Path, workers: int = 2,
     baselines = ordered_baselines(root)
     closure_results = run_dynamic_queue(
         baselines, lambda path: _run_baseline_chain(root, path),
-        workers=workers, poll_seconds=poll_seconds, progress=record)
+        workers=workers, poll_seconds=poll_seconds, progress=record,
+        count_external_running=False)
     closure_results.sort(key=lambda item: item["baseline"])
     acceptable_closures = {"closed", "geometry-limited"}
     certificate = {
