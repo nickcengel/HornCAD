@@ -346,6 +346,149 @@ def _coverage_winner_summary(candidates: Iterable[Candidate]) -> list[dict[str, 
     return output
 
 
+def _remote_stratum(candidate: Candidate) -> str:
+    if candidate.k <= 1.5 and candidate.n <= 2.5:
+        return "K≈1 / N≈2 corner"
+    if candidate.k >= 6.5 and candidate.n >= 18.0:
+        return "K≈7 / N≈20 corner"
+    return ("low K" if candidate.k < 4 else "high K") + " / " + (
+        "low N" if candidate.n < 10 else "high N")
+
+
+def _domain_mapping_meta(candidates: Iterable[Candidate],
+                         started_at: float | None) -> dict[str, Any]:
+    """Measure whether Phase 4 adds regions, tradeoffs, or only boundaries."""
+    items = list(candidates)
+    remote = [item for item in items if item.search_path is not None and
+              "-domain-map-b" in item.search_path.parent.name]
+    baseline = [item for item in items if item not in remote and (
+        started_at is None or item.completed_at <= started_at)]
+    by_cell: dict[tuple[float, float], list[Candidate]] = defaultdict(list)
+    for item in baseline:
+        by_cell[(item.coverage_deg, item.mouth_mm)].append(item)
+
+    def coordinate(item: Candidate) -> tuple[float, ...]:
+        return (
+            (item.mouth_mm / item.length_mm - 0.5) / 5.5,
+            (item.s - 0.05) / 3.95,
+            (item.k - 1) / 6,
+            (item.n - 2) / 18,
+        )
+
+    records = []
+    for item in remote:
+        cell = by_cell.get((item.coverage_deg, item.mouth_mm), [])
+        if not cell:
+            continue
+        incumbent = max(cell, key=lambda candidate: candidate.score)
+        point = coordinate(item)
+        nearest = min(math.dist(point, coordinate(other)) for other in cell)
+        delta = item.score - incumbent.score
+        component_changes = {
+            "containment": (
+                item.diagnostics["mean_containment"] -
+                incumbent.diagnostics["mean_containment"]),
+            "profile_rms_db": (
+                item.diagnostics["profile_rms_error_db"] -
+                incumbent.diagnostics["profile_rms_error_db"]),
+            "slice_energy_db": (
+                item.diagnostics["slice_energy_departure_db"] -
+                incumbent.diagnostics["slice_energy_departure_db"]),
+            "outward_rise_db": (
+                item.diagnostics["outward_rise_violation_db"] -
+                incumbent.diagnostics["outward_rise_violation_db"]),
+            "minus_six_rms_deg": (
+                item.diagnostics["minus_six_rms_error_deg"] -
+                incumbent.diagnostics["minus_six_rms_error_deg"]),
+        }
+        meaningful_tradeoff = (
+            component_changes["containment"] >= 0.5 or
+            component_changes["profile_rms_db"] <= -0.1 or
+            component_changes["slice_energy_db"] <= -0.1 or
+            component_changes["outward_rise_db"] <= -0.1 or
+            component_changes["minus_six_rms_deg"] <= -0.5
+        )
+        if nearest < 0.08:
+            classification = "redundant-near-existing"
+        elif delta > 0:
+            classification = "new-cell-winner"
+        elif delta >= -1:
+            classification = "competitive-remote"
+        elif delta <= -3:
+            classification = "boundary-confirmation"
+        elif meaningful_tradeoff:
+            classification = "diagnostic-tradeoff"
+        else:
+            classification = "inconclusive"
+        records.append({
+            "coverage_deg": item.coverage_deg, "mouth_mm": item.mouth_mm,
+            "s": item.s, "k": item.k, "n": item.n,
+            "mouth_length_ratio": item.mouth_mm / item.length_mm,
+            "nearest_pre_phase_distance": nearest,
+            "score": item.score, "incumbent_score": incumbent.score,
+            "score_delta": delta, "stratum": _remote_stratum(item),
+            "classification": classification,
+            "component_changes": component_changes,
+        })
+    counts = Counter(record["classification"] for record in records)
+    strata = []
+    for label in sorted(set(record["stratum"] for record in records)):
+        group = [record for record in records if record["stratum"] == label]
+        competitive = sum(record["classification"] in (
+            "new-cell-winner", "competitive-remote") for record in group)
+        tradeoffs = sum(record["classification"] == "diagnostic-tradeoff"
+                        for record in group)
+        boundaries = sum(record["classification"] == "boundary-confirmation"
+                         for record in group)
+        angle_count = len(set(record["coverage_deg"] for record in group))
+        if competitive:
+            recommendation = "continue: competitive remote evidence"
+        elif (len(group) >= 6 and angle_count >= 3 and not tradeoffs and
+              boundaries / len(group) >= 0.8):
+            recommendation = "stop stratum: low-value boundary established"
+        else:
+            recommendation = "collect distributed sentinels"
+        strata.append({
+            "stratum": label, "completed": len(group),
+            "angle_count": angle_count, "competitive": competitive,
+            "diagnostic_tradeoffs": tradeoffs,
+            "boundary_confirmations": boundaries,
+            "median_score_delta": median(record["score_delta"] for record in group),
+            "recommendation": recommendation,
+        })
+    if len(records) >= 2:
+        xs = [record["nearest_pre_phase_distance"] for record in records]
+        ys = [record["score_delta"] for record in records]
+        x_mean, y_mean = sum(xs) / len(xs), sum(ys) / len(ys)
+        numerator = sum((x - x_mean) * (y - y_mean) for x, y in zip(xs, ys))
+        denominator = math.sqrt(sum((x - x_mean) ** 2 for x in xs) *
+                                sum((y - y_mean) ** 2 for y in ys))
+        correlation = numerator / denominator if denominator else None
+    else:
+        correlation = None
+    competitive_total = counts["new-cell-winner"] + counts["competitive-remote"]
+    if competitive_total:
+        assessment = "remote competitive region found"
+    elif len(records) < 12:
+        assessment = "insufficient distributed evidence"
+    elif counts["boundary-confirmation"] / len(records) >= 0.75:
+        assessment = "remote samples mainly support the existing ridge"
+    else:
+        assessment = "mixed remote evidence"
+    return {
+        "completed_remote_candidates": len(records),
+        "assessment": assessment,
+        "classification_counts": dict(sorted(counts.items())),
+        "median_nearest_pre_phase_distance": (
+            median(record["nearest_pre_phase_distance"] for record in records)
+            if records else None),
+        "median_score_delta": (
+            median(record["score_delta"] for record in records) if records else None),
+        "distance_score_correlation": correlation,
+        "strata": strata, "candidates": records,
+    }
+
+
 def _phase_three_audit(root: Path) -> dict[str, Any]:
     """Summarize the practical value of completed coupled K/N refinement."""
     search_count = completed_count = quarter_k_count = 0
@@ -460,6 +603,9 @@ def analyze(root: Path) -> dict[str, Any]:
              for parameter in PARAMETERS}
     latest = max((candidate.completed_at for candidate in candidates), default=0)
     phase_three_audit = _phase_three_audit(root)
+    domain_state = _read_json(root / "domain_mapping_state.json")
+    domain_meta = _domain_mapping_meta(
+        candidates, domain_state.get("started_at_unix"))
     coupled_unresolved = any(
         item.get("local_s_status") not in (None, "converged")
         for item in phase_three_audit["anchor_gains"])
@@ -474,6 +620,7 @@ def analyze(root: Path) -> dict[str, Any]:
         ),
         "study_progress": progress,
         "phase_three_audit": phase_three_audit,
+        "domain_mapping_meta_analysis": domain_meta,
         "search_states": search_states,
         "unique_candidate_count": len(candidates),
         "coverage_counts": {f"{key:g}": coverage_counts[key]
@@ -661,6 +808,29 @@ def render_markdown(analysis: dict[str, Any]) -> str:
             f"{item['median_slice_energy_departure_db']:.3f} | "
             f"{item['median_outward_rise_violation_db']:.3f} | "
             f"{item['median_minus_six_rms_error_deg']:.2f} |"
+        )
+    meta = analysis["domain_mapping_meta_analysis"]
+    lines += [
+        "",
+        "## Phase 4 remote-sample value",
+        "",
+        f"Assessment: **{meta['assessment']}**. "
+        f"{meta['completed_remote_candidates']} remote candidates are complete; median score "
+        f"change from the pre-Phase-4 cell incumbent is "
+        f"{_number(meta['median_score_delta'], 2)} points and median normalized distance from "
+        f"pre-Phase-4 evidence is {_number(meta['median_nearest_pre_phase_distance'], 3)}. "
+        "Boundary confirmations are useful until a distributed stratum is established; later "
+        "repetition in that stratum should be skipped.",
+        "",
+        "| Remote stratum | Complete | Angles | Competitive | Diagnostic tradeoffs | Boundary confirmations | Median score Δ | Recommendation |",
+        "| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |",
+    ]
+    for item in meta["strata"]:
+        lines.append(
+            f"| {item['stratum']} | {item['completed']} | {item['angle_count']} | "
+            f"{item['competitive']} | {item['diagnostic_tradeoffs']} | "
+            f"{item['boundary_confirmations']} | {item['median_score_delta']:.2f} | "
+            f"{item['recommendation']} |"
         )
     lines += [
         "",

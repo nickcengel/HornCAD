@@ -1,23 +1,38 @@
 {
   "schema_version": 1,
-  "snapshot_completed_at": "2026-07-22T09:57:56.715150-07:00",
+  "snapshot_completed_at": "2026-07-22T10:47:17.388484-07:00",
   "provisional": true,
   "study_progress": {
-    "program_status": "complete",
-    "program_phase": "coupled",
+    "program_status": "running",
+    "program_phase": "domain-map-batch-1",
     "s_closure_status": "complete",
     "s_closure_cell_count": 36,
     "s_closure_counts": {
-      "closed": 29,
-      "geometry-limited": 7
+      "closed": 31,
+      "geometry-limited": 5
     },
-    "running_searches": [],
+    "running_searches": [
+      {
+        "search": "25deg/350x350-domain-map-b01",
+        "phase": "BEM evaluation candidate-000",
+        "completed_candidates": 0,
+        "planned_candidates": 2,
+        "solver_workers": 10
+      },
+      {
+        "search": "25deg/400x400-domain-map-b01",
+        "phase": "BEM evaluation candidate-000",
+        "completed_candidates": 0,
+        "planned_candidates": 2,
+        "solver_workers": 10
+      }
+    ],
     "domain_mapping": {
-      "status": "not-started",
-      "phase": "not-started",
+      "status": "running",
+      "phase": "domain-map-batch-1",
       "total_candidates": 144,
-      "planned_slot_count": 0,
-      "completed_searches": 0,
+      "planned_slot_count": 144,
+      "completed_searches": 2,
       "score_materiality_points": 1.0
     }
   },
@@ -118,18 +133,137 @@
     "adopted_minimum_n_step": 1.0,
     "score_asymptote_tolerance_points": 0.5
   },
-  "search_states": {
-    "complete": 114,
-    "geometry-rejected": 7
+  "domain_mapping_meta_analysis": {
+    "completed_remote_candidates": 4,
+    "assessment": "insufficient distributed evidence",
+    "classification_counts": {
+      "boundary-confirmation": 4
+    },
+    "median_nearest_pre_phase_distance": 0.6077630538249879,
+    "median_score_delta": -7.765213398346269,
+    "distance_score_correlation": 0.8569352749077404,
+    "strata": [
+      {
+        "stratum": "K\u22481 / N\u22482 corner",
+        "completed": 2,
+        "angle_count": 1,
+        "competitive": 0,
+        "diagnostic_tradeoffs": 0,
+        "boundary_confirmations": 2,
+        "median_score_delta": -15.300564206606044,
+        "recommendation": "collect distributed sentinels"
+      },
+      {
+        "stratum": "K\u22487 / N\u224820 corner",
+        "completed": 2,
+        "angle_count": 1,
+        "competitive": 0,
+        "diagnostic_tradeoffs": 0,
+        "boundary_confirmations": 2,
+        "median_score_delta": -5.900955177088527,
+        "recommendation": "collect distributed sentinels"
+      }
+    ],
+    "candidates": [
+      {
+        "coverage_deg": 25.0,
+        "mouth_mm": 250.0,
+        "s": 0.10000160872677807,
+        "k": 1.0,
+        "n": 2.0,
+        "mouth_length_ratio": 1.3335467008054622,
+        "nearest_pre_phase_distance": 0.677307752236498,
+        "score": 63.51387402439019,
+        "incumbent_score": 70.96394690612222,
+        "score_delta": -7.4500728817320265,
+        "stratum": "K\u22481 / N\u22482 corner",
+        "classification": "boundary-confirmation",
+        "component_changes": {
+          "containment": 1.7822665165527098,
+          "profile_rms_db": 0.29896646559429785,
+          "slice_energy_db": 0.187790299816621,
+          "outward_rise_db": 1.3890453814658215,
+          "minus_six_rms_deg": -1.0154405490624079
+        }
+      },
+      {
+        "coverage_deg": 25.0,
+        "mouth_mm": 250.0,
+        "s": 2.2999991946245872,
+        "k": 7.0,
+        "n": 20.0,
+        "mouth_length_ratio": 1.2492192379762648,
+        "nearest_pre_phase_distance": 0.7598891921307902,
+        "score": 67.24239046690568,
+        "incumbent_score": 70.96394690612222,
+        "score_delta": -3.721556439216542,
+        "stratum": "K\u22487 / N\u224820 corner",
+        "classification": "boundary-confirmation",
+        "component_changes": {
+          "containment": -2.765901213838106,
+          "profile_rms_db": 0.3615545799126898,
+          "slice_energy_db": 0.06476833436847507,
+          "outward_rise_db": 0.0,
+          "minus_six_rms_deg": 1.760426474307362
+        }
+      },
+      {
+        "coverage_deg": 25.0,
+        "mouth_mm": 300.0,
+        "s": 0.09999883183344752,
+        "k": 1.0,
+        "n": 2.0,
+        "mouth_length_ratio": 1.3305303493972698,
+        "nearest_pre_phase_distance": 0.452233707308854,
+        "score": 53.79724978357766,
+        "incumbent_score": 76.94830531505772,
+        "score_delta": -23.15105553148006,
+        "stratum": "K\u22481 / N\u22482 corner",
+        "classification": "boundary-confirmation",
+        "component_changes": {
+          "containment": 1.0554767325522079,
+          "profile_rms_db": 1.1934137283489554,
+          "slice_energy_db": 0.8008768987849177,
+          "outward_rise_db": 3.1069396646696568,
+          "minus_six_rms_deg": 0.12179879086762568
+        }
+      },
+      {
+        "coverage_deg": 25.0,
+        "mouth_mm": 300.0,
+        "s": 2.3999966174686103,
+        "k": 7.0,
+        "n": 19.0,
+        "mouth_length_ratio": 1.32805652208558,
+        "nearest_pre_phase_distance": 0.5382183554134777,
+        "score": 68.86795140009721,
+        "incumbent_score": 76.94830531505772,
+        "score_delta": -8.080353914960511,
+        "stratum": "K\u22487 / N\u224820 corner",
+        "classification": "boundary-confirmation",
+        "component_changes": {
+          "containment": -3.904205841207073,
+          "profile_rms_db": 0.5399065845904589,
+          "slice_energy_db": 0.3774699603964389,
+          "outward_rise_db": 0.0,
+          "minus_six_rms_deg": 3.3593859907302583
+        }
+      }
+    ]
   },
-  "unique_candidate_count": 825,
+  "search_states": {
+    "complete": 117,
+    "geometry-rejected": 7,
+    "running": 2
+  },
+  "unique_candidate_count": 830,
   "coverage_counts": {
-    "25": 110,
+    "25": 114,
     "30": 39,
     "35": 90,
     "40": 97,
     "45": 289,
-    "50": 200
+    "50": 201
   },
   "mouth_coverage_cell_count": 36,
   "fixed_k4_n10_cells": [
@@ -672,16 +806,16 @@
   ],
   "matched_effects": {
     "s": {
-      "count": 511,
-      "score_improved_fraction": 0.3131115459882583,
+      "count": 512,
+      "score_improved_fraction": 0.314453125,
       "median_delta": {
-        "score": -0.4962606998499268,
-        "mean_containment": -0.4442786732188182,
-        "profile_rms_error_db": 0.04081059877820681,
-        "slice_energy_departure_db": 0.028271239297499307,
-        "outward_rise_violation_db": -0.019621367737424733,
-        "minus_six_rms_error_deg": 0.2707091501081731,
-        "high_frequency_coverage_error_deg": -0.3763265654673802
+        "score": -0.4942101076507086,
+        "mean_containment": -0.447398496494273,
+        "profile_rms_error_db": 0.04079925320833,
+        "slice_energy_departure_db": 0.02810118962070507,
+        "outward_rise_violation_db": -0.01994628681265795,
+        "minus_six_rms_error_deg": 0.26529366751190064,
+        "high_frequency_coverage_error_deg": -0.37885307002520374
       },
       "median_dominant_bunching_shift_octaves": 0.0,
       "strata": [
@@ -717,9 +851,9 @@
         },
         {
           "stratum": "coverage 50\u00b0",
-          "count": 109,
-          "score_improved_fraction": 0.45871559633027525,
-          "median_score_delta": -0.07359303575601928
+          "count": 110,
+          "score_improved_fraction": 0.4636363636363636,
+          "median_score_delta": -0.0634359866061942
         },
         {
           "stratum": "S < 1",
@@ -729,9 +863,9 @@
         },
         {
           "stratum": "1 \u2264 S < 2",
-          "count": 231,
-          "score_improved_fraction": 0.341991341991342,
-          "median_score_delta": -0.39599277610108174
+          "count": 232,
+          "score_improved_fraction": 0.3448275862068966,
+          "median_score_delta": -0.38850478974116953
         },
         {
           "stratum": "S \u2265 2",
@@ -1349,6 +1483,13 @@
           "count": 1,
           "score_improved_fraction": 0.0,
           "median_score_delta": -0.43835491754919076
+        },
+        {
+          "from": 1.424,
+          "to": 1.724,
+          "count": 1,
+          "score_improved_fraction": 1.0,
+          "median_score_delta": 0.6110458313095108
         },
         {
           "from": 1.426,

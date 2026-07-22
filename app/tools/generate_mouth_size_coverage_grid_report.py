@@ -718,6 +718,18 @@ def generate_report(project_root: Path, output: Path) -> Path:
     domain_progress = learning.get("study_progress", {}).get("domain_mapping", {})
     domain_status = str(domain_progress.get("status", "not-started"))
     domain_phase = str(domain_progress.get("phase", "not-started"))
+    domain_meta = learning.get("domain_mapping_meta_analysis", {})
+    domain_counts = domain_meta.get("classification_counts", {})
+    domain_meta_rows = "".join(
+        "<tr>"
+        f"<td>{html.escape(str(item['stratum']))}</td>"
+        f"<td>{item['completed']}</td><td>{item['angle_count']}</td>"
+        f"<td>{item['competitive']}</td>"
+        f"<td>{item['diagnostic_tradeoffs']}</td>"
+        f"<td>{item['boundary_confirmations']}</td>"
+        f"<td>{item['median_score_delta']:+.2f}</td>"
+        f"<td>{html.escape(str(item['recommendation']))}</td></tr>"
+        for item in domain_meta.get("strata", []))
     learning_cards = "".join(
         f"<div class='card'><strong>{html.escape(parameter.upper())} "
         f"{effect.get('median_delta', {}).get('score', 0):+.2f}</strong>"
@@ -762,6 +774,9 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <p><strong>Coupled completion:</strong> {len(phase_three_audit['anchor_gains']) - len(coupled_practical_stops)} anchors converged; {len(coupled_practical_stops)} stopped at the three-round limit with less than 0.5 points available over its local-S center but without a formally bracketed length optimum.</p>
 <p><strong>Remote domain map:</strong> {html.escape(domain_status)} · {html.escape(domain_phase)}. The program allocates four zero-extension candidates to each of 36 mouth/coverage cells in two equal 72-candidate batches. Local exploitation requires at least a 1-point uncertainty-adjusted predicted gain.</p>
 <p><strong>Wide-coverage hypothesis:</strong> current winners keep profile and slice-energy error comparatively smooth, but outward-rise violation increases with mouth/length ratio. Matched 45°/50° probes test whether longer, coarsely higher-K geometries reduce those angular shoulders without losing containment.</p>
+<h3>Remote-sample value</h3>
+<p><strong>{html.escape(str(domain_meta.get('assessment', 'insufficient distributed evidence')))}</strong> · {domain_meta.get('completed_remote_candidates', 0)} complete. Competitive: {domain_counts.get('new-cell-winner', 0) + domain_counts.get('competitive-remote', 0)}; diagnostic tradeoffs: {domain_counts.get('diagnostic-tradeoff', 0)}; boundary confirmations: {domain_counts.get('boundary-confirmation', 0)}; redundant near existing evidence: {domain_counts.get('redundant-near-existing', 0)}.</p>
+<table><thead><tr><th>Remote stratum</th><th>Complete</th><th>Angles</th><th>Competitive</th><th>Diagnostic tradeoffs</th><th>Boundary confirmations</th><th>Median score Δ</th><th>Recommendation</th></tr></thead><tbody>{domain_meta_rows}</tbody></table>
 <p class='muted'>These are aggregate matched comparisons, not universal steering rules. Positive means increasing the control improved score at the median adjacent step. Regime-conditioned and held-out checks are required before using a direction to propose a horn.</p>
 </section>
 <section>

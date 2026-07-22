@@ -1,16 +1,16 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-22T09:57:56.715150-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-22T10:47:17.388484-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
-- 825 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: complete: 114, geometry-rejected: 7.
-- Study program: `coupled` (complete).
-- S-closure certificate: complete; closed: 29, geometry-limited: 7.
-- Candidate counts by coverage half-angle: 25°: 110, 30°: 39, 35°: 90, 40°: 97, 45°: 289, 50°: 200.
+- 830 unique scored physical designs across 36 mouth/coverage cells.
+- Search states: complete: 117, geometry-rejected: 7, running: 2.
+- Study program: `domain-map-batch-1` (running).
+- S-closure certificate: complete; closed: 31, geometry-limited: 5.
+- Candidate counts by coverage half-angle: 25°: 114, 30°: 39, 35°: 90, 40°: 97, 45°: 289, 50°: 201.
 
-The counts are evidence density, not evidence quality. The production queue has finished, but practical-stop or unbracketed coupled anchors remain explicitly provisional; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
+The counts are evidence density, not evidence quality. Cross-angle conclusions remain provisional while the study program is running; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
 
 ## Controlled adjacent effects
 
@@ -18,7 +18,9 @@ Positive score deltas mean increasing the named control improved the surface sco
 
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| S | 511 | 31% | -0.50 | -0.44 | 0.041 | 0.028 | -0.020 | 0.27 | 0.000 |
+- Running: `25deg/350x350-domain-map-b01` — BEM evaluation candidate-000; 0/2 candidates complete; 10 solver workers.
+- Running: `25deg/400x400-domain-map-b01` — BEM evaluation candidate-000; 0/2 candidates complete; 10 solver workers.
+| S | 512 | 31% | -0.49 | -0.45 | 0.041 | 0.028 | -0.020 | 0.27 | 0.000 |
 | K | 232 | 59% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
 | N | 259 | 45% | -0.02 | 0.04 | -0.002 | 0.001 | 0.001 | 0.07 | 0.000 |
 
@@ -34,7 +36,7 @@ These are aggregate directional summaries, not universal steering rules. A contr
 | S | coverage 35° | 60 | 15% | -1.20 |
 | S | S ≥ 2 | 178 | 6% | -1.08 |
 | S | coverage 40° | 66 | 35% | -0.97 |
-| S | 1 ≤ S < 2 | 231 | 34% | -0.40 |
+| S | 1 ≤ S < 2 | 232 | 34% | -0.39 |
 | S | coverage 45° | 161 | 43% | -0.08 |
 | K | coverage 35° | 16 | 56% | 0.54 |
 | K | high starting high_frequency_coverage_error_deg | 116 | 74% | 0.19 |
@@ -148,6 +150,15 @@ The current wide-coverage penalty is not a general loss of surface smoothness. P
 | 40° | 6 | 87.02 | 2.316 | 1.309 | 0.749 | 0.544 | 5.40 |
 | 45° | 6 | 86.86 | 2.663 | 1.267 | 0.788 | 0.733 | 5.49 |
 | 50° | 6 | 86.52 | 3.279 | 1.283 | 0.788 | 1.038 | 6.27 |
+
+## Phase 4 remote-sample value
+
+Assessment: **insufficient distributed evidence**. 4 remote candidates are complete; median score change from the pre-Phase-4 cell incumbent is -7.77 points and median normalized distance from pre-Phase-4 evidence is 0.608. Boundary confirmations are useful until a distributed stratum is established; later repetition in that stratum should be skipped.
+
+| Remote stratum | Complete | Angles | Competitive | Diagnostic tradeoffs | Boundary confirmations | Median score Δ | Recommendation |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| K≈1 / N≈2 corner | 2 | 1 | 0 | 0 | 2 | -15.30 | collect distributed sentinels |
+| K≈7 / N≈20 corner | 2 | 1 | 0 | 0 | 2 | -5.90 | collect distributed sentinels |
 
 ## Fixed K=4, N=10 S evidence
 

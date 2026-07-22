@@ -4,20 +4,23 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from app.tools.analyze_bem_design_space import (
-    Candidate, _phase_three_audit, _study_progress, _transition_summaries,
+    Candidate, _domain_mapping_meta, _phase_three_audit, _study_progress,
+    _transition_summaries,
     deduplicate, matched_pairs,
 )
 
 
 def candidate(*, length=100.0, s=1.0, k=4.0, n=10.0, score=80.0,
-              completed=1.0):
+              completed=1.0, search_path=None, mouth=300.0, coverage=40.0,
+              diagnostic_updates=None):
     diagnostics = {
         "score": score, "mean_containment": 90.0,
         "profile_rms_error_db": 2.0, "slice_energy_departure_db": 1.0,
         "outward_rise_violation_db": 0.5, "minus_six_rms_error_deg": 5.0,
         "high_frequency_coverage_error_deg": -2.0,
     }
-    return Candidate(None, "report.html", completed, 300.0, 40.0, length,
+    diagnostics.update(diagnostic_updates or {})
+    return Candidate(search_path, "report.html", completed, mouth, coverage, length,
                      s, k, n, score, diagnostics, 2000.0)
 
 
@@ -52,6 +55,38 @@ class DesignSpaceAnalysisTests(unittest.TestCase):
         self.assertEqual([(item["from"], item["to"]) for item in summaries],
                          [(2, 5), (5, 10)])
         self.assertEqual(summaries[0]["median_score_delta"], 20)
+
+    def test_remote_meta_stops_distributed_low_value_corner(self):
+        items = []
+        for index, (coverage, mouth) in enumerate(
+                ((25, 250), (25, 300), (35, 250),
+                 (35, 300), (50, 250), (50, 300))):
+            items.append(candidate(
+                score=90, completed=1, mouth=mouth, coverage=coverage,
+                length=mouth / 2, search_path=Path(
+                    f"{coverage}deg/{mouth}x{mouth}-s-grid/search_state.json")))
+            items.append(candidate(
+                score=84, completed=3, mouth=mouth, coverage=coverage,
+                length=mouth / 1.2, s=0.1, k=1, n=2,
+                search_path=Path(
+                    f"{coverage}deg/{mouth}x{mouth}-domain-map-b01/search_state.json")))
+        meta = _domain_mapping_meta(items, 2)
+        self.assertEqual(meta["completed_remote_candidates"], 6)
+        self.assertEqual(meta["classification_counts"]["boundary-confirmation"], 6)
+        self.assertEqual(meta["strata"][0]["recommendation"],
+                         "stop stratum: low-value boundary established")
+
+    def test_remote_meta_retains_competitive_remote_region(self):
+        baseline = candidate(
+            score=90, completed=1, search_path=Path(
+                "40deg/300x300-s-grid/search_state.json"))
+        remote = candidate(
+            score=90.2, completed=3, length=180, s=3, k=7, n=20,
+            search_path=Path(
+                "40deg/300x300-domain-map-b01/search_state.json"))
+        meta = _domain_mapping_meta([baseline, remote], 2)
+        self.assertEqual(meta["assessment"], "remote competitive region found")
+        self.assertEqual(meta["classification_counts"]["new-cell-winner"], 1)
 
     def test_study_progress_tracks_live_phase_and_closure(self):
         with TemporaryDirectory() as temporary:
