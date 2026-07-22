@@ -1,14 +1,14 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-22T11:16:35.995832-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-22T11:23:21.898439-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
-- 837 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: cancelled: 2, complete: 121, geometry-rejected: 7, running: 2.
-- Study program: `boundary-repair` (running).
+- 838 unique scored physical designs across 36 mouth/coverage cells.
+- Search states: cancelled: 3, complete: 122, geometry-rejected: 7, running: 2.
+- Study program: `domain-map-batch-1` (running).
 - S-closure certificate: complete; closed: 31, geometry-limited: 5.
-- Candidate counts by coverage half-angle: 25°: 121, 30°: 39, 35°: 90, 40°: 97, 45°: 289, 50°: 201.
+- Candidate counts by coverage half-angle: 25°: 121, 30°: 39, 35°: 91, 40°: 97, 45°: 289, 50°: 201.
 
 The counts are evidence density, not evidence quality. Cross-angle conclusions remain provisional while the study program is running; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
 
@@ -18,9 +18,9 @@ Positive score deltas mean increasing the named control improved the surface sco
 
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-- Running: `35deg/250x250-s-boundary-r02` — BEM evaluation candidate-000; 0/1 candidates complete; 10 solver workers.
-- Running: `35deg/300x300-s-boundary-r02` — BEM evaluation candidate-000; 0/1 candidates complete; 10 solver workers.
-| S | 513 | 31% | -0.49 | -0.45 | 0.041 | 0.028 | -0.020 | 0.27 | 0.000 |
+- Running: `30deg/250x250-domain-map-b01` — BEM evaluation candidate-000; 0/2 candidates complete; 10 solver workers.
+- Running: `30deg/300x300-domain-map-b01` — BEM evaluation candidate-000; 0/2 candidates complete; 10 solver workers.
+| S | 514 | 32% | -0.49 | -0.45 | 0.041 | 0.028 | -0.020 | 0.27 | 0.000 |
 | K | 232 | 59% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
 | N | 259 | 45% | -0.02 | 0.04 | -0.002 | 0.001 | 0.001 | 0.07 | 0.000 |
 
@@ -32,8 +32,8 @@ These are aggregate directional summaries, not universal steering rules. A contr
 | --- | --- | ---: | ---: | ---: |
 | S | coverage 30° | 33 | 18% | -1.94 |
 | S | coverage 25° | 83 | 4% | -1.56 |
-| S | S < 1 | 103 | 68% | 1.48 |
-| S | coverage 35° | 60 | 15% | -1.20 |
+| S | S < 1 | 104 | 68% | 1.48 |
+| S | coverage 35° | 61 | 16% | -1.17 |
 | S | S ≥ 2 | 178 | 6% | -1.08 |
 | S | coverage 40° | 66 | 35% | -0.97 |
 | S | 1 ≤ S < 2 | 232 | 34% | -0.39 |
@@ -178,7 +178,7 @@ Assessment: **insufficient distributed evidence**. 10 remote candidates are comp
 | 30° | 400 | 6 | 0.70–3.00 | 1.00 | 242.7 | 85.90 | no |
 | 30° | 450 | 6 | 0.70–3.00 | 1.00 | 270.1 | 87.46 | no |
 | 30° | 500 | 6 | 0.70–3.00 | 1.00 | 297.3 | 86.23 | no |
-| 35° | 250 | 10 | 0.19–1.90 | 0.70 | 153.4 | 79.74 | no |
+| 35° | 250 | 11 | 0.19–1.90 | 0.70 | 153.4 | 79.74 | no |
 | 35° | 300 | 11 | 0.70–3.48 | 0.70 | 180.3 | 84.53 | yes |
 | 35° | 350 | 11 | 0.70–3.41 | 1.00 | 191.0 | 86.50 | no |
 | 35° | 400 | 12 | 0.70–3.39 | 1.30 | 200.0 | 88.23 | no |
