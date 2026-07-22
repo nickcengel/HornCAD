@@ -536,6 +536,21 @@ def generate_report(project_root: Path, output: Path) -> Path:
             f"<td>{report_link}</td>"
             "</tr>"
         ))
+    program_state_path = project_root / "study_program_state.json"
+    program_state = {}
+    if program_state_path.is_file():
+        try:
+            program_state = json.loads(program_state_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            program_state = {}
+    program_status = str(program_state.get("status", "not started"))
+    current_phase = str(program_state.get("phase", "baseline-and-s-closure"))
+    current_phase_order = {
+        "baseline-and-s-closure": 1,
+        "kn-grids-and-canonical-extensions": 2,
+        "coupled": 3,
+    }.get(current_phase, 0)
+
     plan_path = project_root / "study_plan.yaml"
     planned = (yaml.safe_load(plan_path.read_text(encoding="utf-8")) or {}).get(
         "planned_subsearches", []) if plan_path.is_file() else []
@@ -546,6 +561,8 @@ def generate_report(project_root: Path, output: Path) -> Path:
                   if prerequisite else "")
         angles = " ".join(str(value) for value in item.get("coverage_angles", []))
         phase_order = int(item.get("phase", 9))
+        if program_status == "complete" or phase_order < current_phase_order:
+            continue
         phase_label = str(item.get("phase_label", f"Phase {phase_order}"))
         summary_entries.append((
             status_order.get(planned_status, 1), phase_order,
@@ -561,15 +578,6 @@ def generate_report(project_root: Path, output: Path) -> Path:
     summary_rows = [entry[4].format(html.escape(entry[3]))
                     for entry in summary_entries]
 
-    program_state_path = project_root / "study_program_state.json"
-    program_state = {}
-    if program_state_path.is_file():
-        try:
-            program_state = json.loads(program_state_path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
-            program_state = {}
-    program_status = str(program_state.get("status", "not started"))
-    current_phase = str(program_state.get("phase", "baseline-and-s-closure"))
     phase_display = {
         "baseline-and-s-closure": "Phase 1 · baseline / S closure",
         "kn-grids-and-canonical-extensions": "Phase 2 · K/N grids / S extensions",
