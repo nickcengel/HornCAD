@@ -15,7 +15,7 @@ from app.tools.run_bem_search import (
     geometry_feature_vector, inferior_to_seed_probability, learned_lever_effects,
     load_search, materialize_candidate, pareto_indices, propose_vector,
     next_kn_closure_candidate, requeue_failed_candidates, sampling_stability,
-    required_initial_probe, run_search, seed_values,
+    required_initial_probe, run_search, seed_values, sensitivity_sampling_decision,
     write_report,
 )
 
@@ -27,6 +27,28 @@ ROUND2_SEARCH = SEARCH.parent / "round-2" / "search.yaml"
 
 
 class BEMSearchTests(unittest.TestCase):
+    def test_sensitivity_policy_skips_flat_optional_point(self) -> None:
+        search = {
+            "intended_coverage_h_deg": 30, "intended_coverage_v_deg": 30,
+            "s_sensitivity_sampling": {
+                "enabled": True, "mandatory_s": [0.7, 1.3, 1.9, 2.5, 3.0],
+            },
+            "initial_candidates": 6,
+            "initial_pool": [{"label": f"coverage 30°, S={s}", "values": {}}
+                             for s in (0.7, 1.3, 1.9, 2.5, 3.0, 1.0)],
+        }
+        samples = ((0.7, 80), (1.3, 80.4), (1.9, 88), (2.5, 84), (3.0, 82))
+        records = [{
+            "status": "complete", "derived": {"s_h": s, "s_v": s},
+            "surface_diagnostics": {"score": {"overall_percent": score}},
+        } for s, score in samples]
+
+        decision = sensitivity_sampling_decision(
+            search, records, {}, {"s_h": 1.0, "s_v": 1.0})
+
+        self.assertIsNotNone(decision)
+        self.assertIn("insensitive", decision["reason"])
+
     def test_required_boundary_probe_bypasses_only_its_authored_point(self) -> None:
         search = {"initial_pool": [
             {"label": "coverage 50°, S=3.75"},

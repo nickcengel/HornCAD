@@ -26,6 +26,7 @@ try:
     from .generate_numcalc_review import generate_review
     from .interactive_results import coverage_diagnostics, load_run, single_report
     from .surface_diagnostics import surface_diagnostics, surface_score
+    from .s_sensitivity_sampling import SPoint, interval_refinement_reason
     from .run_bem_suite import find_numcalc
     from .run_numcalc_sweep import ppo_frequency_grid, run_sweep
 except ImportError:
@@ -33,6 +34,7 @@ except ImportError:
     from generate_numcalc_review import generate_review
     from interactive_results import coverage_diagnostics, load_run, single_report
     from surface_diagnostics import surface_diagnostics, surface_score
+    from s_sensitivity_sampling import SPoint, interval_refinement_reason
     from run_bem_suite import find_numcalc
     from run_numcalc_sweep import ppo_frequency_grid, run_sweep
 
@@ -451,6 +453,8 @@ def adaptive_pruning_decision(search: dict[str, Any],
     curves from becoming overconfident.
     """
     policy = search.get("adaptive_pruning", {})
+    if search.get("s_sensitivity_sampling", {}).get("enabled", False):
+        return None
     # Pruning is opt-in. Short local/canonical S sets use compatible labels but
     # intentionally require every authored comparison point.
     enabled = policy.get("enabled", False)
@@ -530,6 +534,56 @@ def adaptive_pruning_decision(search: dict[str, Any],
         "threshold_score": threshold,
         "confidence_sigma": confidence_sigma,
         "observed_points": len(samples),
+        "values": values,
+    }
+
+
+def sensitivity_sampling_decision(search: dict[str, Any],
+                                  records: list[dict[str, Any]],
+                                  values: dict[str, float],
+                                  derived: dict[str, float]) -> dict[str, Any] | None:
+    """Skip an insensitive authored S point after the common skeleton is known."""
+    policy = search.get("s_sensitivity_sampling", {})
+    if not policy.get("enabled", False) or not _uniform_s_sweep(search):
+        return None
+    target_h = float(derived.get("s_h", math.nan))
+    target_v = float(derived.get("s_v", math.nan))
+    if (not math.isfinite(target_h) or not math.isfinite(target_v) or
+            not math.isclose(target_h, target_v, rel_tol=0, abs_tol=0.01)):
+        return None
+    points = []
+    for record in records:
+        if record.get("status") != "complete":
+            continue
+        score = _record_surface_score(record, search)
+        s_h = float(record.get("derived", {}).get("s_h", math.nan))
+        s_v = float(record.get("derived", {}).get("s_v", math.nan))
+        if (score is not None and math.isfinite(s_h) and math.isfinite(s_v) and
+                math.isclose(s_h, s_v, rel_tol=0, abs_tol=0.01)):
+            points.append(SPoint((s_h + s_v) / 2, score))
+    skeleton = [float(value) for value in policy.get("mandatory_s", [])]
+    if any(not any(abs(point.s - required) <= 0.02 for point in points)
+           for required in skeleton):
+        return None
+    target_s = (target_h + target_v) / 2
+    reason = interval_refinement_reason(
+        points, target_s,
+        float(policy.get("variation_points", 0.75)),
+        float(policy.get("winner_resolution", 0.3)))
+    if reason is not None:
+        return None
+    measured = sorted(points, key=lambda point: point.s)
+    lower = max((point for point in measured if point.s < target_s),
+                key=lambda point: point.s)
+    upper = min((point for point in measured if point.s > target_s),
+                key=lambda point: point.s)
+    return {
+        "reason": "measured interval is insensitive and already resolved",
+        "target_s": target_s,
+        "interval_s": [lower.s, upper.s],
+        "interval_scores": [lower.score, upper.score],
+        "score_variation": abs(upper.score - lower.score),
+        "variation_threshold": float(policy.get("variation_points", 0.75)),
         "values": values,
     }
 
@@ -1110,6 +1164,13 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
         f"<button type='button' class='column-toggle' data-column-toggle='{column}' "
         f"aria-pressed='{'true' if visible else 'false'}'>{html.escape(label)}</button>"
         for column, label, visible in toggle_columns)
+    sensitivity_policy = search.get("s_sensitivity_sampling", {})
+    sensitivity_text = ("Disabled" if not sensitivity_policy.get("enabled") else
+                        "Mandatory S " + ", ".join(
+                            f"{float(value):g}" for value in
+                            sensitivity_policy.get("mandatory_s", [])) +
+                        f"; refine above {float(sensitivity_policy.get('variation_points', 0.75)):g} score points; "
+                        f"winner resolution S={float(sensitivity_policy.get('winner_resolution', 0.3)):g}")
     refresh = "<meta http-equiv='refresh' content='10'>" if state["status"] == "running" else ""
     document = f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}
 <title>BEM candidate search</title><style>
@@ -1125,6 +1186,7 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vert
 <p><strong>Rejected proposals</strong><br>{state.get('rejected_count', 0)}</p>
 <p><strong>Confidently inferior</strong><br>{state.get('surrogate_screened_count', 0)}</p>
 <p><strong>Adaptive skips</strong><br>{state.get('adaptive_pruned_count', 0)}</p>
+<p><strong>S sensitivity policy</strong><br>{html.escape(sensitivity_text)}</p>
 <p><strong>K/N closure</strong><br>{html.escape(state.get('kn_closure', {}).get('status', 'not requested'))}</p>
 <p><strong>Sweep band</strong><br>{lower_frequency:g}–{upper_frequency:g} Hz</p>
 <p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
@@ -1486,6 +1548,8 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
                             if source == "initial-curated" else None)
             required_probe = required_initial_probe(search, proposal_index, source)
             pruning = None if closure_stage or required_probe else (
+                sensitivity_sampling_decision(
+                    search, state["candidates"], values, derived) or
                 adaptive_pruning_decision(
                     search, state["candidates"], values, derived) or
                 adaptive_kn_pruning_decision(search, state["candidates"], values))

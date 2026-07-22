@@ -115,6 +115,16 @@ coarse maximum spacing from S=0.6 to S=0.3 rather than weakening the regret
 limits. Running searches retain their loaded policy; only not-started searches
 adopt a validated new order. Boundary closure remains the final common gate.
 
+The initial replay audit found only one 40/50-degree grid with every authored S
+coordinate actually measured; the other grids had already pruned part of their
+tails. That single dense curve required every point under the 0.75-point
+sensitivity rule, so it supplied no evidence for the required 25-percent
+savings. The gate is therefore `insufficient`, and the sensitivity policy is
+not enabled for remaining production searches. The tested implementation and
+replay command remain available for reassessment after boundary closure or a
+larger dense reference set exists. Existing fixed-grid and closure behavior is
+the conservative S=0.3-or-finer fallback.
+
 ## Scheduling and reporting
 
 The study uses two concurrent queues with ten NumCalc frequency workers each.
