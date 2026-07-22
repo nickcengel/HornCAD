@@ -29,7 +29,7 @@ SUPPORTED_MOUTH_MIN_MM = 250.0
 SUPPORTED_MOUTH_MAX_MM = 500.0
 ACTIVE_PHASE_FOUR_ANGLES = frozenset((30, 35, 40, 45, 50))
 ACTIVE_PHASE_FOUR_MOUTHS = frozenset((250, 300, 350, 400, 450))
-ACTIVE_PHASE_FOUR_CANDIDATE_TOTAL = 400
+ACTIVE_PHASE_FOUR_CANDIDATE_TOTAL = 350
 
 
 LEGACY_RANKING_KEYS = (
@@ -51,6 +51,8 @@ STUDY_PHASES = {
     "remote domain map": (4, "Phase 4 · remote domain mapping"),
     "response-surface system identification": (
         4, "Phase 4 · response-surface system identification"),
+    "quadratic system identification": (
+        4, "Phase 4 · deduplicated quadratic identification"),
 }
 
 
@@ -121,6 +123,8 @@ def _search_summary(path: Path) -> dict[str, Any]:
         study_label = "coupled length closure"
     elif "-domain-map-b" in mouth_dir:
         study_label = "remote domain map"
+    elif "-system-id-b" in mouth_dir:
+        study_label = "quadratic system identification"
     elif mouth_dir.endswith("-s-grid"):
         study_label = "uniform S grid"
     elif mouth_dir.endswith("-kn-grid"):
@@ -159,6 +163,9 @@ def _search_summary(path: Path) -> dict[str, Any]:
                 " · remote domain map " + mouth_dir.rsplit("-", 1)[-1].upper()),
             "response-surface system identification": (
                 " · length/K/N response surface "
+                + mouth_dir.rsplit("-", 1)[-1].upper()),
+            "quadratic system identification": (
+                " · deduplicated length/K/N identification "
                 + mouth_dir.rsplit("-", 1)[-1].upper()),
         }.get(study_label, "")
     state_path = path.parent / "search_state.json"
@@ -532,6 +539,8 @@ def generate_report(project_root: Path, output: Path) -> Path:
                     "conditional": 2, "complete": 3, "failed": 4}
     summary_entries = []
     for summary in summaries:
+        if summary["status"] == "superseded":
+            continue
         phase_order, phase_label = STUDY_PHASES.get(
             summary["study"], (9, "Outside unified queue"))
         report_link = (
@@ -601,6 +610,8 @@ def generate_report(project_root: Path, output: Path) -> Path:
         "domain-map-batch-1": 4,
         "domain-map-batch-2": 4,
         "domain-map-complete": 4,
+        "system-identification-batch-2": 4,
+        "system-identification-complete": 4,
     }.get(current_phase, 0)
 
     plan_path = project_root / "study_plan.yaml"
@@ -675,6 +686,10 @@ def generate_report(project_root: Path, output: Path) -> Path:
         "domain-map-batch-1": "Phase 4 · remote domain map, batch 1 of 2",
         "domain-map-batch-2": "Phase 4 · remote domain map, batch 2 of 2",
         "domain-map-complete": "Phase 4 · remote domain map complete",
+        "system-identification-batch-2": (
+            "Phase 4 · deduplicated quadratic identification"),
+        "system-identification-complete": (
+            "Phase 4 · quadratic identification complete"),
     }.get(current_phase, current_phase)
 
     project_configs = [summary["config"] for summary in summaries if summary["config"]]
@@ -755,6 +770,18 @@ def generate_report(project_root: Path, output: Path) -> Path:
     domain_status = str(domain_progress.get("status", "not-started"))
     domain_phase = str(domain_progress.get("phase", "not-started"))
     domain_total = ACTIVE_PHASE_FOUR_CANDIDATE_TOTAL
+    design_manifest = {}
+    design_manifest_path = project_root / "batch_2_response_surface.json"
+    if design_manifest_path.is_file():
+        try:
+            design_manifest = json.loads(design_manifest_path.read_text(
+                encoding="utf-8"))
+        except json.JSONDecodeError:
+            design_manifest = {}
+    selected_identification_points = int(design_manifest.get(
+        "planned_simulations", 0))
+    covered_identification_points = int(design_manifest.get(
+        "covered_by_existing", 0))
     domain_meta = learning.get("domain_mapping_meta_analysis", {})
     domain_counts = domain_meta.get("classification_counts", {})
     domain_meta_rows = "".join(
@@ -809,7 +836,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <div class='learning-cards'>{learning_cards}</div>
 <p><strong>Phase 3 audit:</strong> {phase_three_audit['quarter_step_k_candidate_count']} quarter-step K candidates changed the selected winner by only {phase_three_audit['median_winner_advantage_over_nearby_k']:.3f} points at the median ({phase_three_audit['maximum_winner_advantage_over_nearby_k']:.3f} maximum) versus a nearby measured K at the same N. Future closure uses K ≥ 0.5 steps, N ≥ 1 steps, and moves to local S/length inside a 0.5-point score asymptote.</p>
 <p><strong>Coupled completion:</strong> {len(phase_three_audit['anchor_gains']) - len(coupled_practical_stops)} anchors converged; {len(coupled_practical_stops)} stopped at the three-round limit with less than 0.5 points available over its local-S center but without a formally bracketed length optimum.</p>
-<p><strong>System-identification study:</strong> {html.escape(domain_status)} · {html.escape(domain_phase)} · {domain_total} ledgered coordinate outcomes. Remote Batch 1 is intentionally truncated after its already-active candidates finish: 29 of its first 30 results merely reconfirmed poor outer boundaries. Completed remote points remain sparse validation evidence; unstarted slots are recorded as abandoned. Batch 2 applies the same 15-point face-centered length/K/N response surface in every one of the 25 cells: the measured center, six single-factor points, and eight interaction corners. S is recorded only as a derived result. Infeasible coordinates remain explicit geometry-rejected outcomes; existing exact coordinates are reused. No Phase-4 work is scheduled at 25° or 500 mm.</p>
+<p><strong>System-identification study:</strong> {html.escape(domain_status)} · {html.escape(domain_phase)} · {domain_total} audited coordinate slots. Remote Batch 1 was truncated after it repeatedly reconfirmed poor outer boundaries. Batch 2 reuses the existing K4/N10 S-grid as the length axis, deduplicates dense local optimizer traces, and selects only the missing K/N axial or length×K×N corner points needed to give each cell a full-rank quadratic model with condition number ≤ 18. Current audit: {selected_identification_points} new simulations selected and {covered_identification_points} candidate coordinates already covered by nearby measured evidence. S remains a derived result. Superseded duplicate-heavy searches are hidden, while their completed results remain available to the model.</p>
 <p><strong>Wide-coverage hypothesis:</strong> current winners keep profile and slice-energy error comparatively smooth, but outward-rise violation increases with mouth/length ratio. Matched 45°/50° probes test whether longer, coarsely higher-K geometries reduce those angular shoulders without losing containment.</p>
 <h3>Remote-sample value</h3>
 <p><strong>{html.escape(str(domain_meta.get('assessment', 'insufficient distributed evidence')))}</strong> · {domain_meta.get('completed_remote_candidates', 0)} complete. Competitive: {domain_counts.get('new-cell-winner', 0) + domain_counts.get('competitive-remote', 0)}; diagnostic tradeoffs: {domain_counts.get('diagnostic-tradeoff', 0)}; boundary confirmations: {domain_counts.get('boundary-confirmation', 0)}; redundant near existing evidence: {domain_counts.get('redundant-near-existing', 0)}.</p>

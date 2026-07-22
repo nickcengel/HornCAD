@@ -21,14 +21,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class BemDomainMappingProgramTests(unittest.TestCase):
-    def test_plan_has_same_sixteen_coordinates_in_every_cell(self) -> None:
+    def test_plan_has_same_audited_pool_in_every_cell(self) -> None:
         slots = planned_slots()
-        self.assertEqual(len(slots), 400)
+        self.assertEqual(len(slots), 350)
         for angle in (30, 35, 40, 45, 50):
             for mouth in (250, 300, 350, 400, 450):
                 cell = [item for item in slots if
                         item["coverage_deg"] == angle and item["mouth_mm"] == mouth]
-                self.assertEqual(len(cell), 16)
+                self.assertEqual(len(cell), 14)
                 self.assertEqual({item["batch"] for item in cell}, {1, 2})
                 batch_two = [item for item in cell if item["batch"] == 2]
                 self.assertEqual(
@@ -41,7 +41,7 @@ class BemDomainMappingProgramTests(unittest.TestCase):
         self.assertEqual(SLOTS[1], (("low", "low", "low"),
                                     ("high", "high", "high")))
 
-    def test_batch_two_is_face_centered_with_six_axes_and_eight_corners(self) -> None:
+    def test_batch_two_omits_redundant_length_axis(self) -> None:
         batch_two = [item for item in planned_slots() if item["batch"] == 2]
         one_cell = [item for item in batch_two
                     if item["coverage_deg"] == 30 and item["mouth_mm"] == 250]
@@ -51,8 +51,11 @@ class BemDomainMappingProgramTests(unittest.TestCase):
         corners = [item for item in one_cell
                    if all(level != 0 for level in (
                        item["length_level"], item["k_level"], item["n_level"]))]
-        self.assertEqual(len(axes), 6)
+        self.assertEqual(len(axes), 4)
         self.assertEqual(len(corners), 8)
+        self.assertFalse(any(item["length_level"] != 0
+                             and item["k_level"] == item["n_level"] == 0
+                             for item in one_cell))
 
     def test_boundary_repair_excludes_retired_edges(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
@@ -73,7 +76,7 @@ class BemDomainMappingProgramTests(unittest.TestCase):
                 patch.object(domain_program, "_apply_response_surface_manifest"), \
                 patch.object(domain_program, "generate_report"):
             state = domain_program.run_program(Path(temp))
-        self.assertEqual(state["total_coordinates"], 400)
+        self.assertEqual(state["total_coordinates"], 350)
         self.assertNotIn("s_closure", state)
         self.assertNotIn("coupled_length_closure", state)
 

@@ -1,0 +1,283 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 30
+  intended_coverage_v_deg: 30
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 7
+  initial_candidates: 6
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 148.266999
+    - 200.597001
+    extension_mm:
+    - -1.0e-06
+    - 2.0e-06
+    osse_coverage_h_deg:
+    - 29.999999
+    - 30.000002000000002
+    osse_coverage_v_deg:
+    - 29.999999
+    - 30.000002000000002
+    k_h:
+    - 2.999999
+    - 5.000001
+    k_v:
+    - 2.999999
+    - 5.000001
+    n_h:
+    - 5.999999
+    - 14.000001
+    n_v:
+    - 5.999999
+    - 14.000001
+  initial_pool:
+  - label: "domain map \xB7 L+1_K-1_N+1 \xB7 D-optimal quadratic information augmentation"
+    values:
+      length_mm: 200.597
+      extension_mm: 0.0
+      osse_coverage_h_deg: 30.0
+      osse_coverage_v_deg: 30.0
+      k_h: 3.0
+      k_v: 3.0
+      n_h: 14.0
+      n_v: 14.0
+  - label: "domain map \xB7 L+1_K+1_N-1 \xB7 D-optimal quadratic information augmentation"
+    values:
+      length_mm: 200.597
+      extension_mm: 0.0
+      osse_coverage_h_deg: 30.0
+      osse_coverage_v_deg: 30.0
+      k_h: 5.0
+      k_v: 5.0
+      n_h: 6.0
+      n_v: 6.0
+  - label: "domain map \xB7 L+1_K+1_N+1 \xB7 D-optimal quadratic information augmentation"
+    values:
+      length_mm: 200.597
+      extension_mm: 0.0
+      osse_coverage_h_deg: 30.0
+      osse_coverage_v_deg: 30.0
+      k_h: 5.0
+      k_v: 5.0
+      n_h: 14.0
+      n_v: 14.0
+  - label: "domain map \xB7 L-1_K-1_N-1 \xB7 D-optimal quadratic information augmentation"
+    values:
+      length_mm: 148.267
+      extension_mm: 0.0
+      osse_coverage_h_deg: 30.0
+      osse_coverage_v_deg: 30.0
+      k_h: 3.0
+      k_v: 3.0
+      n_h: 6.0
+      n_v: 6.0
+  - label: "domain map \xB7 L-1_K-1_N+1 \xB7 D-optimal quadratic information augmentation"
+    values:
+      length_mm: 148.267
+      extension_mm: 0.0
+      osse_coverage_h_deg: 30.0
+      osse_coverage_v_deg: 30.0
+      k_h: 3.0
+      k_v: 3.0
+      n_h: 14.0
+      n_v: 14.0
+  - label: "domain map \xB7 L+0_K-1_N+0 \xB7 D-optimal quadratic information augmentation"
+    values:
+      length_mm: 174.432
+      extension_mm: 0.0
+      osse_coverage_h_deg: 30.0
+      osse_coverage_v_deg: 30.0
+      k_h: 3.0
+      k_v: 3.0
+      n_h: 10.0
+      n_v: 10.0
+  domain_mapping:
+    batch: 2
+    design: deduplicated-quadratic-augmentation
+    proposals:
+    - coverage_deg: 30
+      mouth_mm: 250
+      batch: 2
+      slot: 8
+      s: 0.0826712110081557
+      length_mm: 200.597
+      k: 3.0
+      n: 6.0
+      mouth_length_ratio: 1.2462798546339178
+      exit_angle_deg: 65.22824629716469
+      normalized_curvature_radius: 0.08552414511187523
+      acquisition: D-optimal quadratic information augmentation
+      nearest_distance: 1.4142135623730951
+      matched_parameter: quadratic-augmentation
+      anchor_length_mm: 174.432
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.7000019350099873
+      coordinate_label: L+1_K-1_N-1
+      length_level: 1
+      k_level: -1
+      n_level: -1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 30
+      mouth_mm: 250
+      batch: 2
+      slot: 9
+      s: 0.20973385663086705
+      length_mm: 200.597
+      k: 3.0
+      n: 14.0
+      mouth_length_ratio: 1.2462798546339178
+      exit_angle_deg: 71.82157625953103
+      normalized_curvature_radius: 0.11536468251186546
+      acquisition: D-optimal quadratic information augmentation
+      nearest_distance: 1.4142135623730951
+      matched_parameter: quadratic-augmentation
+      anchor_length_mm: 174.432
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.7000019350099873
+      coordinate_label: L+1_K-1_N+1
+      length_level: 1
+      k_level: -1
+      n_level: 1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 30
+      mouth_mm: 250
+      batch: 2
+      slot: 10
+      s: 0.2530291746051344
+      length_mm: 200.597
+      k: 5.0
+      n: 6.0
+      mouth_length_ratio: 1.2462798546339178
+      exit_angle_deg: 79.2027742307346
+      normalized_curvature_radius: 0.3126846188347209
+      acquisition: D-optimal quadratic information augmentation
+      nearest_distance: 1.4142135623730951
+      matched_parameter: quadratic-augmentation
+      anchor_length_mm: 174.432
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.7000019350099873
+      coordinate_label: L+1_K+1_N-1
+      length_level: 1
+      k_level: 1
+      n_level: -1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 30
+      mouth_mm: 250
+      batch: 2
+      slot: 11
+      s: 0.6419258165315194
+      length_mm: 200.597
+      k: 5.0
+      n: 14.0
+      mouth_length_ratio: 1.2462798546339178
+      exit_angle_deg: 82.81452747170195
+      normalized_curvature_radius: 0.5848687534135221
+      acquisition: D-optimal quadratic information augmentation
+      nearest_distance: 1.4142135623730951
+      matched_parameter: quadratic-augmentation
+      anchor_length_mm: 174.432
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.7000019350099873
+      coordinate_label: L+1_K+1_N+1
+      length_level: 1
+      k_level: 1
+      n_level: 1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 30
+      mouth_mm: 250
+      batch: 2
+      slot: 4
+      s: 0.6218611572786487
+      length_mm: 148.267
+      k: 3.0
+      n: 6.0
+      mouth_length_ratio: 1.686147288337931
+      exit_angle_deg: 85.24306343729941
+      normalized_curvature_radius: 1.084127024141293
+      acquisition: D-optimal quadratic information augmentation
+      nearest_distance: 1.4142135623730951
+      matched_parameter: quadratic-augmentation
+      anchor_length_mm: 174.432
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.7000019350099873
+      coordinate_label: L-1_K-1_N-1
+      length_level: -1
+      k_level: -1
+      n_level: -1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 30
+      mouth_mm: 250
+      batch: 2
+      slot: 5
+      s: 1.5776391468623587
+      length_mm: 148.267
+      k: 3.0
+      n: 14.0
+      mouth_length_ratio: 1.686147288337931
+      exit_angle_deg: 86.92654312103976
+      normalized_curvature_radius: 2.2334354574476762
+      acquisition: D-optimal quadratic information augmentation
+      nearest_distance: 1.4142135623730951
+      matched_parameter: quadratic-augmentation
+      anchor_length_mm: 174.432
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.7000019350099873
+      coordinate_label: L-1_K-1_N+1
+      length_level: -1
+      k_level: -1
+      n_level: 1
+      predicted_score: null
+      predicted_sigma: null
+    - coverage_deg: 30
+      mouth_mm: 250
+      batch: 2
+      slot: 0
+      s: 0.5340608608253427
+      length_mm: 174.432
+      k: 3.0
+      n: 10.0
+      mouth_length_ratio: 1.4332232617868281
+      exit_angle_deg: 83.1827932356871
+      normalized_curvature_radius: 0.5880217860748155
+      acquisition: D-optimal quadratic information augmentation
+      nearest_distance: 1.0
+      matched_parameter: quadratic-augmentation
+      anchor_length_mm: 174.432
+      anchor_k: 4.0
+      anchor_n: 10.0
+      anchor_s: 0.7000019350099873
+      coordinate_label: L+0_K-1_N+0
+      length_level: 0
+      k_level: -1
+      n_level: 0
+      predicted_score: null
+      predicted_sigma: null
+    score_materiality_points: 1.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10

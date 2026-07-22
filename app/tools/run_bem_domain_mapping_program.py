@@ -50,13 +50,16 @@ RESPONSE_SURFACE_LEVELS = {
     "k": {-1: 3.0, 0: 4.0, 1: 5.0},
     "n": {-1: 6.0, 0: 10.0, 1: 14.0},
 }
+# Candidate pool for missing information only. Existing K4/N10 S-grid points
+# supply the length axis; do not simulate that axis again.
 RESPONSE_SURFACE_COORDINATES = (
-    (-1, 0, 0), (1, 0, 0),
     (0, -1, 0), (0, 1, 0),
     (0, 0, -1), (0, 0, 1),
     *((length, k, n) for length in (-1, 1)
       for k in (-1, 1) for n in (-1, 1)),
 )
+MODEL_CONDITION_LIMIT = 18.0
+NEAR_EXISTING_DISTANCE = 0.18
 
 
 def snap_k_n(k: float, n: float) -> tuple[float, float]:
@@ -350,21 +353,94 @@ def _response_surface_anchor(candidates: list[Candidate], coverage: int,
     return max(anchors, key=lambda item: item.score)
 
 
+def _quadratic_feature(length: float, k: float, n: float,
+                       anchor_length: float) -> np.ndarray:
+    length_unit = (length / anchor_length - 1.0) / 0.15
+    k_unit = k - 4.0
+    n_unit = (n - 10.0) / 4.0
+    return np.asarray([
+        1.0, length_unit, k_unit, n_unit,
+        length_unit ** 2, k_unit ** 2, n_unit ** 2,
+        length_unit * k_unit, length_unit * n_unit, k_unit * n_unit,
+    ])
+
+
+def _model_stats(matrix: np.ndarray) -> tuple[int, float]:
+    if not len(matrix):
+        return 0, math.inf
+    singular = np.linalg.svd(matrix, compute_uv=False)
+    rank = int(np.linalg.matrix_rank(matrix, tol=1e-7))
+    condition = (float(singular[0] / singular[-1])
+                 if rank == 10 and singular[-1] > 1e-9 else math.inf)
+    return rank, condition
+
+
+def _existing_symmetric_points(root: Path, coverage: int, mouth: int,
+                               anchor_length: float) -> list[dict[str, Any]]:
+    """Load reusable zero-extension evidence without averaging asymmetric runs."""
+    points: list[dict[str, Any]] = []
+    pattern = f"{coverage}deg/{mouth}x{mouth}*/search_state.json"
+    for state_path in sorted(root.glob(pattern)):
+        try:
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, FileNotFoundError):
+            continue
+        for record in state.get("candidates", []):
+            if record.get("status") != "complete":
+                continue
+            values = record.get("values", {})
+            try:
+                if abs(float(values.get("extension_mm", 0.0))) > 0.01:
+                    continue
+                if abs(float(values["osse_coverage_h_deg"]) -
+                       float(values["osse_coverage_v_deg"])) > 0.01:
+                    continue
+                if (abs(float(values["k_h"]) - float(values["k_v"])) > 0.01 or
+                        abs(float(values["n_h"]) - float(values["n_v"])) > 0.01):
+                    continue
+                length = float(values["length_mm"])
+                k = (float(values["k_h"]) + float(values["k_v"])) / 2
+                n = (float(values["n_h"]) + float(values["n_v"])) / 2
+            except (KeyError, TypeError, ValueError):
+                continue
+            if not (0.65 <= length / anchor_length <= 1.35 and
+                    2.0 <= k <= 6.0 and 4.0 <= n <= 16.0):
+                continue
+            points.append({
+                "length_mm": length, "k": k, "n": n,
+                "search": str(state_path.relative_to(root)),
+                "candidate_id": record.get("id"),
+            })
+    # Dense local optimizer traces must not masquerade as independent volume.
+    unique: dict[tuple[float, float, float], dict[str, Any]] = {}
+    for point in points:
+        key = (
+            round((point["length_mm"] / anchor_length - 1.0) / 0.15, 2),
+            round(point["k"] - 4.0, 2),
+            round((point["n"] - 10.0) / 4.0, 2),
+        )
+        unique.setdefault(key, point)
+    return list(unique.values())
+
+
 def response_surface_design(
         root: Path, candidates: list[Candidate]
         ) -> tuple[list[dict[str, Any]], list[Proposal]]:
-    """Return the identical face-centered response design for all 25 cells."""
+    """Augment existing evidence only until a stable quadratic model is identified."""
     coordinates: list[dict[str, Any]] = []
     proposals: list[Proposal] = []
     for coverage in INTERIOR_ANGLES:
         for mouth in INTERIOR_MOUTHS:
             baseline = _baseline(root, coverage, mouth)
             config = _source_project(baseline)["horncad_config"]
-            cell = [item for item in candidates
-                    if item.coverage_deg == coverage and item.mouth_mm == mouth]
             anchor = _response_surface_anchor(candidates, coverage, mouth)
-            existing_features = np.asarray([
-                _candidate_feature(item, config) for item in cell])
+            existing = _existing_symmetric_points(
+                root, coverage, mouth, anchor.length_mm)
+            matrix = np.asarray([_quadratic_feature(
+                item["length_mm"], item["k"], item["n"], anchor.length_mm)
+                for item in existing])
+            initial_rank, initial_condition = _model_stats(matrix)
+            feasible_pool: list[tuple[dict[str, Any], Proposal, np.ndarray]] = []
             for slot, (length_level, k_level, n_level) in enumerate(
                     RESPONSE_SURFACE_COORDINATES):
                 length = round(anchor.length_mm *
@@ -380,6 +456,9 @@ def response_surface_design(
                     "anchor_length_mm": anchor.length_mm,
                     "anchor_k": anchor.k, "anchor_n": anchor.n,
                     "anchor_s": anchor.s,
+                    "existing_model_rank": initial_rank,
+                    "existing_model_condition": (
+                        initial_condition if math.isfinite(initial_condition) else None),
                 }
                 metrics = _independent_control_geometry(
                     config, coverage, length, k, n)
@@ -390,37 +469,76 @@ def response_surface_design(
                     coordinates.append(coordinate)
                     continue
                 coordinate["s"] = float(metrics["s"])
-                reused = next((item for item in cell
-                               if abs(item.length_mm - length) <= 0.001
-                               and abs(item.k - k) <= 0.001
-                               and abs(item.n - n) <= 0.001), None)
-                if reused is not None:
+                normalized = np.asarray([[
+                    (length - item["length_mm"]) / (0.15 * anchor.length_mm),
+                    k - item["k"], (n - item["n"]) / 4.0,
+                ] for item in existing])
+                nearest_index = (int(np.argmin(np.linalg.norm(normalized, axis=1)))
+                                 if len(normalized) else None)
+                nearest_distance = (float(np.linalg.norm(normalized[nearest_index]))
+                                    if nearest_index is not None else math.inf)
+                coordinate["nearest_existing_distance"] = nearest_distance
+                if nearest_distance < NEAR_EXISTING_DISTANCE:
+                    reused = existing[nearest_index]
                     coordinate.update(
-                        status="reused", reused_search=str(reused.search_path),
-                        reused_candidate_id=reused.candidate_id,
-                        reused_score=reused.score)
+                        status="covered-by-existing",
+                        reused_search=reused["search"],
+                        reused_candidate_id=reused["candidate_id"])
                     coordinates.append(coordinate)
                     continue
-                feature = _feature(
-                    mouth, length, float(metrics["s"]), k, n, metrics)
-                distance = float(np.min(np.linalg.norm(
-                    existing_features - feature[None, :], axis=1)))
-                coordinate["status"] = "planned"
+                coordinate["status"] = "available-for-augmentation"
                 coordinates.append(coordinate)
-                proposals.append(Proposal(
+                proposal = Proposal(
                     coverage_deg=coverage, mouth_mm=mouth, batch=2, slot=slot,
                     s=float(metrics["s"]), length_mm=length, k=k, n=n,
                     mouth_length_ratio=mouth / length,
                     exit_angle_deg=float(metrics["exit_angle_deg"]),
                     normalized_curvature_radius=float(
                         metrics["normalized_curvature_radius"]),
-                    acquisition="prescribed face-centered response surface",
-                    nearest_distance=distance, matched_parameter="response-surface",
+                    acquisition="D-optimal quadratic information augmentation",
+                    nearest_distance=nearest_distance,
+                    matched_parameter="quadratic-augmentation",
                     anchor_length_mm=anchor.length_mm, anchor_k=anchor.k,
                     anchor_n=anchor.n, anchor_s=anchor.s,
                     coordinate_label=label, length_level=length_level,
                     k_level=k_level, n_level=n_level,
-                ))
+                )
+                feasible_pool.append((coordinate, proposal, _quadratic_feature(
+                    length, k, n, anchor.length_mm)))
+            selected: list[tuple[dict[str, Any], Proposal, np.ndarray]] = []
+            available = feasible_pool[:]
+            while available:
+                rank, condition = _model_stats(matrix)
+                if rank == 10 and condition <= MODEL_CONDITION_LIMIT:
+                    break
+                best_index = 0
+                best_key: tuple[float, float, float] | None = None
+                for index, (_, _, feature) in enumerate(available):
+                    augmented = np.vstack([matrix, feature])
+                    candidate_rank, candidate_condition = _model_stats(augmented)
+                    _, log_determinant = np.linalg.slogdet(
+                        augmented.T @ augmented + 1e-6 * np.eye(10))
+                    key = (float(candidate_rank),
+                           -min(candidate_condition, 1e98), float(log_determinant))
+                    if best_key is None or key > best_key:
+                        best_key, best_index = key, index
+                chosen = available.pop(best_index)
+                selected.append(chosen)
+                matrix = np.vstack([matrix, chosen[2]])
+            final_rank, final_condition = _model_stats(matrix)
+            for coordinate, proposal, _ in selected:
+                coordinate.update(
+                    status="selected", final_model_rank=final_rank,
+                    final_model_condition=(final_condition if math.isfinite(
+                        final_condition) else None),
+                    proposal=asdict(proposal))
+                proposals.append(proposal)
+            for coordinate, _, _ in available:
+                coordinate.update(
+                    status="not-selected-sufficient-information",
+                    final_model_rank=final_rank,
+                    final_model_condition=(final_condition if math.isfinite(
+                        final_condition) else None))
     return coordinates, proposals
 
 
@@ -457,8 +575,11 @@ def select_batch(root: Path, batch: int) -> list[Proposal]:
 
 
 def _search_dir(root: Path, proposal: Proposal) -> Path:
+    suffix = (f"{proposal.mouth_mm}x{proposal.mouth_mm}-system-id-b02"
+              if proposal.batch == 2 else
+              f"{proposal.mouth_mm}x{proposal.mouth_mm}-domain-map-b01")
     return (root / f"{proposal.coverage_deg}deg" /
-            f"{proposal.mouth_mm}x{proposal.mouth_mm}-domain-map-b{proposal.batch:02d}")
+            suffix)
 
 
 def materialize_cell_search(root: Path, proposals: list[Proposal],
@@ -475,7 +596,7 @@ def materialize_cell_search(root: Path, proposals: list[Proposal],
     if (output / "search.yaml").exists():
         existing = yaml.safe_load((output / "search.yaml").read_text(
             encoding="utf-8"))["bem_candidate_search"]
-        expected_design = ("face-centered-response-surface" if first.batch == 2
+        expected_design = ("deduplicated-quadratic-augmentation" if first.batch == 2
                            else "remote-maximin")
         if (existing.get("domain_mapping", {}).get("design") == expected_design
                 and (first.batch != 2 or existing.get("fixed_design") is True)):
@@ -526,13 +647,13 @@ def materialize_cell_search(root: Path, proposals: list[Proposal],
         "adaptive_pruning": {"enabled": False},
         "fixed_design": True, "bounds": bounds,
         "initial_pool": [{
-            "label": (f"domain map · {item.coordinate_label or item.slot} · "
+            "label": (f"system identification · {item.coordinate_label or item.slot} · "
                       f"{item.acquisition}"),
             "values": item.values,
         } for item in proposals[1:]],
         "domain_mapping": {
             "batch": first.batch,
-            "design": ("face-centered-response-surface" if first.batch == 2
+            "design": ("deduplicated-quadratic-augmentation" if first.batch == 2
                        else "remote-maximin"),
             "proposals": [asdict(item) for item in proposals],
             "score_materiality_points": SCORE_MATERIALITY,
@@ -548,26 +669,78 @@ def materialize_batch(root: Path, batch: int,
                       solver_workers: int = 10) -> tuple[list[Path], list[Proposal]]:
     coordinates: list[dict[str, Any]] | None = None
     if batch == 2:
-        candidates, _ = load_candidates(root)
-        coordinates, proposals = response_surface_design(root, candidates)
-        summary = {
-            "schema_version": 1,
-            "design": "face-centered-response-surface",
+        manifest_path = root / "batch_2_response_surface.json"
+        frozen_manifest: dict[str, Any] = {}
+        if manifest_path.exists():
+            try:
+                frozen_manifest = json.loads(manifest_path.read_text(
+                    encoding="utf-8"))
+            except json.JSONDecodeError:
+                frozen_manifest = {}
+        frozen_coordinates = frozen_manifest.get("coordinates", [])
+        can_resume_frozen = (
+            frozen_manifest.get("schema_version") == 2 and
+            frozen_manifest.get("design") ==
+            "deduplicated-quadratic-augmentation" and
+            all("proposal" in item for item in frozen_coordinates
+                if item.get("status") == "selected")
+        )
+        if can_resume_frozen:
+            coordinates = frozen_coordinates
+            proposals = [Proposal(**item["proposal"]) for item in coordinates
+                         if item.get("status") == "selected"]
+            summary = frozen_manifest
+        else:
+            candidates, _ = load_candidates(root)
+            coordinates, proposals = response_surface_design(root, candidates)
+            summary = {}
+        cell_stats = []
+        for coverage in INTERIOR_ANGLES:
+            for mouth in INTERIOR_MOUTHS:
+                cell = [item for item in coordinates
+                        if item["coverage_deg"] == coverage
+                        and item["mouth_mm"] == mouth]
+                cell_stats.append({
+                    "coverage_deg": coverage, "mouth_mm": mouth,
+                    "candidate_pool": len(cell),
+                    "selected_simulations": sum(
+                        item["status"] == "selected" for item in cell),
+                    "existing_model_rank": cell[0]["existing_model_rank"],
+                    "existing_model_condition": cell[0]["existing_model_condition"],
+                    "final_model_rank": next((item.get("final_model_rank")
+                                               for item in cell
+                                               if "final_model_rank" in item),
+                                              cell[0]["existing_model_rank"]),
+                    "final_model_condition": next((
+                        item.get("final_model_condition") for item in cell
+                        if "final_model_condition" in item),
+                        cell[0]["existing_model_condition"]),
+                })
+        generated_summary = {
+            "schema_version": 2,
+            "design": "deduplicated-quadratic-augmentation",
             "independent_factors": ["length_mm", "k", "n"],
             "levels": RESPONSE_SURFACE_LEVELS,
-            "coordinates_per_cell": 15,
-            "new_coordinates_per_cell": 14,
+            "candidate_coordinates_per_cell": len(RESPONSE_SURFACE_COORDINATES),
             "cells": len(INTERIOR_ANGLES) * len(INTERIOR_MOUTHS),
-            "total_prescribed_coordinates": len(coordinates),
+            "total_candidate_coordinates": len(coordinates),
             "planned_simulations": sum(
-                item["status"] == "planned" for item in coordinates),
-            "reused_results": sum(
-                item["status"] == "reused" for item in coordinates),
+                item["status"] == "selected" for item in coordinates),
+            "covered_by_existing": sum(
+                item["status"] == "covered-by-existing" for item in coordinates),
+            "not_selected_sufficient_information": sum(
+                item["status"] == "not-selected-sufficient-information"
+                for item in coordinates),
             "geometry_rejections": sum(
                 item["status"] == "geometry-rejected" for item in coordinates),
+            "near_existing_distance": NEAR_EXISTING_DISTANCE,
+            "model_condition_limit": MODEL_CONDITION_LIMIT,
+            "cell_stats": cell_stats,
             "coordinates": coordinates,
         }
-        _write_json(root / "batch_2_response_surface.json", summary)
+        if not can_resume_frozen:
+            summary = generated_summary
+            _write_json(manifest_path, summary)
     else:
         proposals = select_batch(root, batch)
     grouped: dict[tuple[int, int], list[Proposal]] = {}
@@ -756,7 +929,8 @@ def planned_slots() -> list[dict[str, Any]]:
       for slot in range(2)]
     output.extend({
         "coverage_deg": angle, "mouth_mm": mouth, "batch": 2, "slot": slot,
-        "status": "awaiting design", "design": "face-centered-response-surface",
+        "status": "awaiting information audit",
+        "design": "deduplicated-quadratic-augmentation",
         "coordinate_label": f"L{length:+d}_K{k:+d}_N{n:+d}",
         "length_level": length, "k_level": k, "n_level": n,
     } for angle in INTERIOR_ANGLES for mouth in INTERIOR_MOUTHS
@@ -792,10 +966,32 @@ def _apply_response_surface_manifest(
             planned.update(asdict(proposal_records[key]), status="materialized")
     state["batch_2_design_summary"] = {
         key: manifest[key] for key in (
-            "design", "independent_factors", "levels", "coordinates_per_cell",
-            "new_coordinates_per_cell", "cells", "total_prescribed_coordinates",
-            "planned_simulations", "reused_results", "geometry_rejections")
+            "design", "independent_factors", "levels",
+            "candidate_coordinates_per_cell", "cells",
+            "total_candidate_coordinates", "planned_simulations",
+            "covered_by_existing", "not_selected_sufficient_information",
+            "geometry_rejections", "near_existing_distance",
+            "model_condition_limit")
     }
+
+
+def retire_superseded_batch_two(root: Path) -> None:
+    """Keep completed evidence but hide the aborted duplicate-heavy searches."""
+    for state_path in root.glob("*deg/*-domain-map-b02/search_state.json"):
+        try:
+            state = json.loads(state_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError:
+            continue
+        state.update(
+            status="superseded",
+            phase="superseded after existing-data redundancy audit",
+            superseded_by="deduplicated-quadratic-augmentation",
+            superseded_at_unix=time.time(),
+        )
+        for candidate in state.get("candidates", []):
+            if candidate.get("status") in {"running", "queued"}:
+                candidate["status"] = "abandoned-redundant-design"
+        _write_json(state_path, state)
 
 
 def run_program(root: Path, slots: int = 2, solver_workers: int = 10,
@@ -806,11 +1002,13 @@ def run_program(root: Path, slots: int = 2, solver_workers: int = 10,
     previous: dict[str, Any] = {}
     if start_batch == 2 and state_path.exists():
         previous = json.loads(state_path.read_text(encoding="utf-8"))
+        retire_superseded_batch_two(root)
     slots_plan = planned_slots()
     _merge_existing_batch_one_slots(slots_plan, previous)
     state = {
         "schema_version": 2, "status": "running",
-        "phase": f"domain-map-batch-{start_batch}",
+        "phase": ("domain-map-batch-1" if start_batch == 1
+                  else "system-identification-batch-2"),
         "total_coordinates": len(slots_plan),
         "total_candidates": len(slots_plan),
         "completed_searches": int(previous.get("completed_searches", 0)),
@@ -826,7 +1024,8 @@ def run_program(root: Path, slots: int = 2, solver_workers: int = 10,
             state[key] = previous[key]
     _write_json(state_path, state)
     for batch in range(start_batch, 3):
-        state["phase"] = f"domain-map-batch-{batch}"
+        state["phase"] = ("domain-map-batch-1" if batch == 1
+                          else "system-identification-batch-2")
         paths, proposals = materialize_batch(root, batch, solver_workers)
         state[f"batch_{batch}_proposals"] = [asdict(item) for item in proposals]
         if batch == 2:
@@ -839,7 +1038,7 @@ def run_program(root: Path, slots: int = 2, solver_workers: int = 10,
         _write_json(state_path, state)
         generate_report(root, root / "index.html")
         _run_paths(root, paths, slots, state, state_path)
-    state.update(status="complete", phase="domain-map-complete",
+    state.update(status="complete", phase="system-identification-complete",
                  completed_at_unix=time.time())
     _write_json(state_path, state)
     generate_report(root, root / "index.html")
