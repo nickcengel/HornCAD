@@ -216,7 +216,8 @@ def materialize_kn_closure(seed_project: Path, baseline: Path,
 
 
 def materialize_local_s(seed_project: Path, baseline: Path,
-                        output: Path) -> tuple[Path, float]:
+                        output: Path,
+                        solver_workers: int = 10) -> tuple[Path, float]:
     if (output / "search_state.json").exists():
         seed = yaml.safe_load((output / "project.yaml").read_text(encoding="utf-8"))
         return output, float(seed["horncad_config"]["horizontal_basis"]["solved_s"])
@@ -238,7 +239,7 @@ def materialize_local_s(seed_project: Path, baseline: Path,
              "values": _candidate_values(length, coverage, k, n)}
             for s, length in zip(targets[1:], lengths[1:])]
     solver = copy.deepcopy(source["solver"])
-    solver["workers"] = 10
+    solver["workers"] = solver_workers
     search = {
         "version": 1, "seed_yaml": "project.yaml",
         "intended_coverage_h_deg": coverage, "intended_coverage_v_deg": coverage,
@@ -283,8 +284,11 @@ def run_anchor(root: Path, baseline: Path, max_rounds: int = 3) -> str:
             seed_project, baseline, prefix.with_name(prefix.name + "-kn"))
         run_search(kn_dir / "search.yaml", kn_dir, None)
         kn_best = best_project(kn_dir)
+        kn_workers = int(_source_search(kn_dir).get(
+            "solver", {}).get("workers", 10))
         s_dir, center_s = materialize_local_s(
-            kn_best, baseline, prefix.with_name(prefix.name + "-s"))
+            kn_best, baseline, prefix.with_name(prefix.name + "-s"),
+            solver_workers=kn_workers)
         run_search(s_dir / "search.yaml", s_dir, None)
         s_best_record = best_record(s_dir / "search_state.json")
         generate_report(root, root / "index.html")

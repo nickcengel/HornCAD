@@ -50,7 +50,8 @@ class CoupledKNLengthProgramTests(unittest.TestCase):
     def test_materializes_five_point_local_s_rescan_at_closed_kn(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             output = Path(temp) / "closure-s"
-            _, center = materialize_local_s(self.seed, self.baseline, output)
+            _, center = materialize_local_s(
+                self.seed, self.baseline, output, solver_workers=20)
             search = yaml.safe_load((output / "search.yaml").read_text())[
                 "bem_candidate_search"]
             project = yaml.safe_load((output / "project.yaml").read_text())
@@ -61,6 +62,7 @@ class CoupledKNLengthProgramTests(unittest.TestCase):
         n = project["horncad_config"]["horizontal_basis"]["n"]
         self.assertEqual(search["bounds"]["k_h"][0], k)
         self.assertEqual(search["bounds"]["n_h"][0], n)
+        self.assertEqual(search["solver"]["workers"], 20)
 
     def test_canonical_extension_adds_matched_points_without_rerunning_grid(self) -> None:
         targets = canonical_extension_targets(self.baseline)
