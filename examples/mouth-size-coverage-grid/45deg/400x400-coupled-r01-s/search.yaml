@@ -1,0 +1,87 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 45.0
+  intended_coverage_v_deg: 45.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 5
+  initial_candidates: 4
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 1.161
+  - 1.781
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  bounds:
+    length_mm:
+    - 133.876
+    - 153.654
+    extension_mm:
+    - 0.0
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 45.0
+    - 45.000001
+    osse_coverage_v_deg:
+    - 45.0
+    - 45.000001
+    k_h:
+    - 4.5
+    - 4.500001
+    k_v:
+    - 4.5
+    - 4.500001
+    n_h:
+    - 7.5
+    - 7.500001
+    n_v:
+    - 7.5
+    - 7.500001
+  initial_pool:
+  - label: local S=1.321, L=148.203 mm
+    values:
+      length_mm: 148.203
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.5
+      k_v: 4.5
+      n_h: 7.5
+      n_v: 7.5
+  - label: local S=1.471, L=143.112 mm
+    values:
+      length_mm: 143.112
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.5
+      k_v: 4.5
+      n_h: 7.5
+      n_v: 7.5
+  - label: local S=1.621, L=138.347 mm
+    values:
+      length_mm: 138.347
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.5
+      k_v: 4.5
+      n_h: 7.5
+      n_v: 7.5
+  - label: local S=1.771, L=133.877 mm
+    values:
+      length_mm: 133.877
+      extension_mm: 0.0
+      osse_coverage_h_deg: 45.0
+      osse_coverage_v_deg: 45.0
+      k_h: 4.5
+      k_v: 4.5
+      n_h: 7.5
+      n_v: 7.5
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10

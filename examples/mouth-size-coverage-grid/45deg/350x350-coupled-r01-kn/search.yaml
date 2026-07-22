@@ -1,0 +1,61 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 45.0
+  intended_coverage_v_deg: 45.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 80
+  initial_candidates: 0
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.0
+  - 8.0
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_kn_closure:
+    enabled: true
+    initial_k_step: 0.5
+    minimum_k_step: 0.25
+    minimum_k: 1.0
+    maximum_k: 7.0
+    initial_n_step: 5.0
+    minimum_n_step: 1.0
+    minimum_n: 2.0
+    maximum_n: 40.0
+    high_s_low_n_rescue: true
+    rescue_minimum_s: 2.0
+    rescue_minimum_n: 8.0
+    rescue_n_step: 2.0
+    rescue_score_margin_points: 3.0
+  bounds:
+    length_mm:
+    - 124.999
+    - 125.001
+    extension_mm:
+    - 0.0
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 45.0
+    - 45.000001
+    osse_coverage_v_deg:
+    - 45.0
+    - 45.000001
+    k_h:
+    - 1.0
+    - 7.000001
+    k_v:
+    - 1.0
+    - 7.000001
+    n_h:
+    - 2.0
+    - 40.000001
+    n_v:
+    - 2.0
+    - 40.000001
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
