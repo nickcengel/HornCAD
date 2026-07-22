@@ -332,7 +332,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
                 f"<td class='design-cell {score_class}'>"
                 f"<strong class='design-score'>{score_text}</strong>"
                 f"<span class='design-state {state_class}'>{state}</span>"
-                f"<span>L {length:g} mm · W/L {mouth / length:.2f}</span>"
+                f"<span>L {length:.1f} mm · W/L {mouth / length:.2f}</span>"
                 f"<span>S {s_value:.2f} · K {k_value:g} · N {n_value:g}</span>"
                 "</td>")
         design_map_rows.append("<tr>" + "".join(cells) + "</tr>")
@@ -342,12 +342,6 @@ def generate_report(project_root: Path, output: Path) -> Path:
         "<table class='design-map'><thead><tr><th>Mouth / coverage</th>" +
         design_map_header + "</tr></thead><tbody>" +
         "".join(design_map_rows) + "</tbody></table>")
-    design_surface_data = json.dumps([
-        {"mouth": mouth, "coverage": coverage,
-         "score": float(row["surface_ranking_score"])}
-        for (mouth, coverage), row in sorted(best_by_design.items())
-    ])
-
     def surface_pair(candidate: dict[str, Any], path: tuple[str, ...],
                      suffix: str = "", scale: float = 1.0) -> tuple[str, str]:
         result = candidate.get("surface_diagnostics", {})
@@ -559,8 +553,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 .wide td:nth-child(5), .wide td:nth-child(6), .wide td:nth-child(7), .wide td:nth-child(8), .wide td:nth-child(9){{white-space:nowrap}}
 .sortable{{cursor:pointer;user-select:none}}.axis-pair{{white-space:normal}}[hidden]{{display:none!important}}
 .column-controls,.angle-controls{{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}}.column-toggle,.angle-filter{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true'],.angle-filter[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}.filter-count{{margin-left:5px;color:var(--muted);font-size:.9rem}}
-.design-map{{table-layout:fixed;min-width:980px}}.design-map th:first-child{{width:125px}}.design-cell{{min-width:142px;border:1px solid var(--line);background:#17212a}}.design-cell>span{{display:block;margin-top:4px;font-size:.82rem;color:#c1cbd2;white-space:nowrap}}.design-score{{display:block;font-size:1.5rem;line-height:1}}.design-score a{{color:inherit;text-decoration:none}}.design-cell.excellent{{background:#174638}}.design-cell.good{{background:#173c3c}}.design-cell.fair{{background:#3d3820}}.design-cell.low{{background:#452827}}.design-cell.unmeasured{{background:#131920;text-align:center;vertical-align:middle}}.design-state{{width:max-content;padding:2px 6px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;font-size:.68rem!important}}.design-state.refined,.design-state.bounded{{background:rgba(105,214,200,.16);color:#9af0df}}.design-state.baseline{{background:rgba(148,163,189,.16);color:#c8d0d8}}.design-state.provisional{{background:rgba(183,121,31,.25);color:#f6d39a}}.design-state.limited{{background:rgba(180,83,83,.25);color:#ffb2b2}}
-.surface-wrap{{position:relative;max-width:1050px;margin:14px auto 0}}#design-surface{{display:block;width:100%;height:520px;border:1px solid var(--line);border-radius:8px;background:#0d1319;cursor:grab;touch-action:none}}#design-surface:active{{cursor:grabbing}}.surface-key{{display:flex;justify-content:space-between;color:var(--muted);font-size:.82rem;margin-top:5px}}
+.design-map{{table-layout:fixed;min-width:1100px}}.design-map th:first-child{{width:210px;overflow:hidden}}.design-cell{{min-width:142px;border:1px solid var(--line);background:#17212a}}.design-cell>span{{display:block;margin-top:4px;font-size:.82rem;color:#c1cbd2;white-space:nowrap}}.design-score{{display:block;font-size:1.5rem;line-height:1}}.design-score a{{color:inherit;text-decoration:none}}.design-cell.excellent{{background:#174638}}.design-cell.good{{background:#173c3c}}.design-cell.fair{{background:#3d3820}}.design-cell.low{{background:#452827}}.design-cell.unmeasured{{background:#131920;text-align:center;vertical-align:middle}}.design-state{{width:max-content;padding:2px 6px;border-radius:999px;text-transform:uppercase;letter-spacing:.03em;font-size:.68rem!important}}.design-state.refined,.design-state.bounded{{background:rgba(105,214,200,.16);color:#9af0df}}.design-state.baseline{{background:rgba(148,163,189,.16);color:#c8d0d8}}.design-state.provisional{{background:rgba(183,121,31,.25);color:#f6d39a}}.design-state.limited{{background:rgba(180,83,83,.25);color:#ffb2b2}}
 .muted{{color:var(--muted)}}
 @media(max-width:1100px){{.summary{{grid-template-columns:repeat(2,minmax(0,1fr))}}}}
 @media(max-width:700px){{.summary{{grid-template-columns:1fr}}}}
@@ -583,10 +576,6 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <h2>Design map</h2>
 <p class='muted'>Choose a mouth and target half-coverage, then open the best measured score in that cell. Parameters are the current best prescription; provisional cells may change as their searches finish.</p>
 {design_map_html}
-<div class='surface-wrap'>
-<canvas id='design-surface' aria-label='Three-dimensional surface of best score by coverage and mouth size'></canvas>
-<div class='surface-key'><span>Coverage →</span><span>Drag to rotate · wheel to zoom</span><span>Mouth size →</span></div>
-</div>
 </section>
 <section>
 <h2>Candidates</h2>
@@ -609,76 +598,6 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 </section>
 <script>
 (() => {{
-  const surface = document.getElementById('design-surface');
-  const surfacePoints = {design_surface_data};
-  if (surface && surfacePoints.length) {{
-    const context = surface.getContext('2d');
-    const coverages = [...new Set(surfacePoints.map(point => point.coverage))].sort((a,b) => a-b);
-    const mouths = [...new Set(surfacePoints.map(point => point.mouth))].sort((a,b) => a-b);
-    const scores = surfacePoints.map(point => point.score);
-    const scoreMin = Math.floor(Math.min(...scores) / 5) * 5;
-    const scoreMax = Math.ceil(Math.max(...scores) / 5) * 5;
-    const byCoordinate = new Map(surfacePoints.map(point => [`${{point.coverage}}:${{point.mouth}}`, point]));
-    let yaw = -0.72, pitch = 0.68, zoom = 0.82, drag = null;
-    const normalized = point => ({{
-      x: (point.coverage - coverages[0]) / Math.max(coverages.at(-1) - coverages[0], 1) * 2 - 1,
-      y: (point.mouth - mouths[0]) / Math.max(mouths.at(-1) - mouths[0], 1) * 2 - 1,
-      z: (point.score - scoreMin) / Math.max(scoreMax - scoreMin, 1) * 1.45,
-      score: point.score,
-    }});
-    const draw = () => {{
-      const ratio = window.devicePixelRatio || 1;
-      const rect = surface.getBoundingClientRect();
-      surface.width = Math.round(rect.width * ratio);
-      surface.height = Math.round(rect.height * ratio);
-      context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      context.clearRect(0, 0, rect.width, rect.height);
-      const scale = Math.min(rect.width, rect.height) * 0.31 * zoom;
-      const project = point => {{
-        const x1 = point.x * Math.cos(yaw) - point.y * Math.sin(yaw);
-        const y1 = point.x * Math.sin(yaw) + point.y * Math.cos(yaw);
-        return {{x: rect.width/2 + x1*scale,
-                 y: rect.height*.68 + (y1*Math.cos(pitch)-point.z*Math.sin(pitch))*scale,
-                 depth: y1*Math.sin(pitch)+point.z*Math.cos(pitch)}};
-      }};
-      const faces = [];
-      for (let yi=0; yi<mouths.length-1; yi++) for (let xi=0; xi<coverages.length-1; xi++) {{
-        const raw = [byCoordinate.get(`${{coverages[xi]}}:${{mouths[yi]}}`),
-                     byCoordinate.get(`${{coverages[xi+1]}}:${{mouths[yi]}}`),
-                     byCoordinate.get(`${{coverages[xi+1]}}:${{mouths[yi+1]}}`),
-                     byCoordinate.get(`${{coverages[xi]}}:${{mouths[yi+1]}}`)];
-        if (raw.some(point => !point)) continue;
-        const points = raw.map(normalized).map(project);
-        faces.push({{points, depth: points.reduce((sum,p) => sum+p.depth,0)/4,
-                     score: raw.reduce((sum,p) => sum+p.score,0)/4}});
-      }}
-      faces.sort((a,b) => a.depth-b.depth);
-      for (const face of faces) {{
-        const fraction = (face.score-scoreMin)/Math.max(scoreMax-scoreMin,1);
-        context.beginPath(); context.moveTo(face.points[0].x,face.points[0].y);
-        face.points.slice(1).forEach(point => context.lineTo(point.x,point.y));
-        context.closePath();
-        context.fillStyle = `hsla(${{Math.round(fraction*155)}},55%,32%,.82)`;
-        context.strokeStyle = 'rgba(180,225,220,.42)'; context.lineWidth = 1;
-        context.fill(); context.stroke();
-      }}
-      for (const raw of surfacePoints) {{
-        const point = project(normalized(raw));
-        context.beginPath(); context.arc(point.x, point.y, 3, 0, Math.PI*2);
-        context.fillStyle = '#d7fff7'; context.fill();
-      }}
-      context.fillStyle = '#94a3ad'; context.font = '12px system-ui';
-      context.fillText(`Surface score ${{scoreMin}}–${{scoreMax}}`, 14, 22);
-      context.fillText(`${{coverages[0]}}°`, 14, rect.height-14);
-      context.fillText(`${{coverages.at(-1)}}° coverage`, rect.width-92, rect.height-14);
-      context.fillText(`${{mouths[0]}}–${{mouths.at(-1)}} mm mouth`, rect.width-132, 22);
-    }};
-    surface.addEventListener('pointerdown', event => {{ drag = [event.clientX,event.clientY]; surface.setPointerCapture(event.pointerId); }});
-    surface.addEventListener('pointermove', event => {{ if (!drag) return; yaw += (event.clientX-drag[0])*.008; pitch = Math.max(.2,Math.min(1.25,pitch+(event.clientY-drag[1])*.006)); drag=[event.clientX,event.clientY]; draw(); }});
-    surface.addEventListener('pointerup', () => {{ drag = null; }});
-    surface.addEventListener('wheel', event => {{ event.preventDefault(); zoom=Math.max(.55,Math.min(1.35,zoom-event.deltaY*.001)); draw(); }}, {{passive:false}});
-    window.addEventListener('resize', draw); draw();
-  }}
   document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
     button.addEventListener('click', () => {{
       const visible = button.getAttribute('aria-pressed') !== 'true';
