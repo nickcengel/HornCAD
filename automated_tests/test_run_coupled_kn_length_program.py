@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -63,6 +64,26 @@ class CoupledKNLengthProgramTests(unittest.TestCase):
         self.assertEqual(search["bounds"]["k_h"][0], k)
         self.assertEqual(search["bounds"]["n_h"][0], n)
         self.assertEqual(search["solver"]["workers"], 20)
+        self.assertEqual(search["local_s_center_s"], center)
+
+    def test_existing_local_s_search_recovers_authored_center(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "closure-s"
+            _, center = materialize_local_s(self.seed, self.baseline, output)
+            search = yaml.safe_load((output / "search.yaml").read_text())[
+                "bem_candidate_search"]
+            (output / "search_state.json").write_text(json.dumps({
+                "candidates": [
+                    {"derived": {"s_h": center + delta}}
+                    for delta in (-0.3, -0.15, 0, 0.15, 0.3)
+                ]
+            }))
+
+            _, resumed_center = materialize_local_s(
+                self.seed, self.baseline, output)
+
+        self.assertEqual(resumed_center, search["local_s_center_s"])
+        self.assertAlmostEqual(resumed_center, center)
 
     def test_canonical_extension_adds_matched_points_without_rerunning_grid(self) -> None:
         targets = canonical_extension_targets(self.baseline)

@@ -62,6 +62,12 @@ When local S selects a materially different length, the next round reopens K/N
 there. This separates the physical evidence for a broad K≈4 region from an
 algorithmic tendency to keep selecting exactly K=4.
 
+Each local-S search stores its authored center explicitly. When a study is
+resumed, convergence is measured against that center—not against the lowest S
+sample stored in the seed project. Older rounds recover the center as the
+median of their sampled S values. This prevents completed anchors from being
+mistakenly reopened after a coordinator restart.
+
 K is limited to 1 through 7 and N to 2 through 40. A K/N winner at an upper
 limit remains boundary-limited. Lower limits K=1 and N=2 are accepted safety
 limits.

@@ -219,8 +219,20 @@ def materialize_local_s(seed_project: Path, baseline: Path,
                         output: Path,
                         solver_workers: int = 10) -> tuple[Path, float]:
     if (output / "search_state.json").exists():
-        seed = yaml.safe_load((output / "project.yaml").read_text(encoding="utf-8"))
-        return output, float(seed["horncad_config"]["horizontal_basis"]["solved_s"])
+        source = _source_search(output)
+        stored_center = source.get("local_s_center_s")
+        if stored_center is not None:
+            return output, float(stored_center)
+        state = json.loads((output / "search_state.json").read_text())
+        sampled_s = sorted({
+            float(record.get("derived", {}).get("s_h"))
+            for record in state.get("candidates", [])
+            if record.get("derived", {}).get("s_h") is not None
+        })
+        if sampled_s:
+            return output, sampled_s[len(sampled_s) // 2]
+        lower, upper = map(float, source["derived_s_bounds"])
+        return output, (lower + upper) / 2
     seed = yaml.safe_load(seed_project.read_text(encoding="utf-8"))
     source = _source_search(baseline)
     config = seed["horncad_config"]
@@ -248,6 +260,7 @@ def materialize_local_s(seed_project: Path, baseline: Path,
         "upper_frequency_hz": float(source["upper_frequency_hz"]),
         "max_evaluations": len(targets), "initial_candidates": len(pool),
         "minimum_candidate_distance": 0.001,
+        "local_s_center_s": center,
         "derived_s_bounds": [min(targets) - 0.01, max(targets) + 0.01],
         "sampling_stability_points": float(source.get("sampling_stability_points", 2)),
         "confirmation_points_per_octave": float(source.get("confirmation_points_per_octave", 16)),

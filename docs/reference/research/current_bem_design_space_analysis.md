@@ -1,14 +1,14 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-22T09:37:20.828123-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-22T09:28:01.465342-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
-- 821 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: complete: 112, geometry-rejected: 7, running: 3.
+- 820 unique scored physical designs across 36 mouth/coverage cells.
+- Search states: complete: 113, geometry-rejected: 7.
 - Study program: `coupled` (running).
 - S-closure certificate: complete; closed: 29, geometry-limited: 7.
-- Candidate counts by coverage half-angle: 25°: 110, 30°: 39, 35°: 90, 40°: 97, 45°: 290, 50°: 195.
+- Candidate counts by coverage half-angle: 25°: 110, 30°: 39, 35°: 90, 40°: 97, 45°: 289, 50°: 195.
 
 The counts are evidence density, not evidence quality. Cross-angle conclusions remain provisional while the study program is running; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
 
@@ -19,8 +19,8 @@ Positive score deltas mean increasing the named control improved the surface sco
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | S | 506 | 31% | -0.51 | -0.46 | 0.041 | 0.028 | -0.019 | 0.28 | 0.000 |
-| K | 233 | 59% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
-| N | 260 | 45% | -0.03 | 0.04 | -0.002 | 0.001 | 0.001 | 0.07 | 0.000 |
+| K | 232 | 59% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
+| N | 259 | 45% | -0.02 | 0.04 | -0.002 | 0.001 | 0.001 | 0.07 | 0.000 |
 
 These are aggregate directional summaries, not universal steering rules. A control can reverse sign by mouth, coverage, S, or the other OS-SE controls. The next pass must stratify matched effects by the starting diagnostic state before promoting a rule.
 
@@ -37,21 +37,21 @@ These are aggregate directional summaries, not universal steering rules. A contr
 | S | 1 ≤ S < 2 | 229 | 34% | -0.40 |
 | S | coverage 45° | 161 | 43% | -0.08 |
 | K | coverage 35° | 16 | 56% | 0.54 |
-| K | high starting high_frequency_coverage_error_deg | 117 | 74% | 0.19 |
+| K | high starting high_frequency_coverage_error_deg | 116 | 74% | 0.19 |
 | K | coverage 25° | 15 | 40% | -0.19 |
-| K | high starting outward_rise_violation_db | 117 | 72% | 0.14 |
-| K | high starting profile_rms_error_db | 117 | 62% | 0.12 |
-| K | low starting minus_six_rms_error_deg | 116 | 70% | 0.11 |
-| K | high starting mean_containment | 117 | 62% | 0.07 |
-| K | high starting slice_energy_departure_db | 117 | 56% | 0.07 |
+| K | high starting outward_rise_violation_db | 116 | 72% | 0.13 |
+| K | high starting profile_rms_error_db | 116 | 62% | 0.12 |
+| K | low starting minus_six_rms_error_deg | 116 | 69% | 0.10 |
+| K | high starting mean_containment | 116 | 61% | 0.07 |
+| K | high starting slice_energy_departure_db | 116 | 57% | 0.07 |
 | N | coverage 25° | 14 | 14% | -1.54 |
 | N | coverage 35° | 16 | 25% | -0.68 |
-| N | low starting mean_containment | 130 | 42% | -0.06 |
-| N | high starting outward_rise_violation_db | 130 | 52% | 0.04 |
-| N | low starting slice_energy_departure_db | 130 | 41% | -0.04 |
-| N | low starting outward_rise_violation_db | 130 | 38% | -0.04 |
-| N | low starting high_frequency_coverage_error_deg | 130 | 38% | -0.04 |
-| N | low starting profile_rms_error_db | 130 | 39% | -0.04 |
+| N | low starting mean_containment | 129 | 43% | -0.05 |
+| N | high starting outward_rise_violation_db | 130 | 53% | 0.04 |
+| N | low starting slice_energy_departure_db | 129 | 41% | -0.04 |
+| N | low starting outward_rise_violation_db | 129 | 37% | -0.04 |
+| N | low starting high_frequency_coverage_error_deg | 129 | 38% | -0.04 |
+| N | low starting profile_rms_error_db | 129 | 40% | -0.03 |
 
 This table is a screening device. Coverage/S regimes are descriptive, while splits on a starting diagnostic are hypotheses that still need repetition across independent mouth/coverage cells and held-out confirmation.
 
@@ -60,7 +60,7 @@ This table is a screening device. Coverage/S regimes are descriptive, while spli
 | Control | Transition | Pairs | Score improves | Median score Δ |
 | --- | ---: | ---: | ---: | ---: |
 | K | 3 → 3.5 | 6 | 83% | 2.33 |
-| K | 3.5 → 3.75 | 4 | 100% | 0.60 |
+| K | 3.5 → 3.75 | 3 | 100% | 0.60 |
 | K | 3.5 → 4 | 21 | 86% | 1.03 |
 | K | 3.75 → 4 | 15 | 100% | 0.14 |
 | K | 4 → 4.25 | 29 | 59% | 0.07 |
@@ -100,7 +100,7 @@ This table is a screening device. Coverage/S regimes are descriptive, while spli
 | N | 7.5 → 8.75 | 6 | 33% | -0.14 |
 | N | 7.5 → 10 | 3 | 100% | 0.26 |
 | N | 7.5 → 12.5 | 3 | 0% | -1.05 |
-| N | 7.75 → 8.75 | 13 | 62% | 0.03 |
+| N | 7.75 → 8.75 | 12 | 67% | 0.04 |
 | N | 8.5 → 8.75 | 9 | 0% | -0.04 |
 | N | 8.75 → 9.75 | 9 | 11% | -0.06 |
 | N | 8.75 → 10 | 17 | 6% | -0.32 |
