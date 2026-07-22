@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "snapshot_completed_at": "2026-07-22T11:11:35.722737-07:00",
+  "snapshot_completed_at": "2026-07-22T11:16:35.995832-07:00",
   "provisional": true,
   "study_progress": {
     "program_status": "running",
@@ -13,15 +13,8 @@
     },
     "running_searches": [
       {
-        "search": "25deg/300x300-s-boundary-r02",
-        "phase": "BEM evaluation candidate-000",
-        "completed_candidates": 0,
-        "planned_candidates": 1,
-        "solver_workers": 10
-      },
-      {
-        "search": "25deg/450x450-s-boundary-r02",
-        "phase": "BEM evaluation candidate-000",
+        "search": "25deg/300x300-s-boundary-r03",
+        "phase": "BEM evaluation candidate-001",
         "completed_candidates": 0,
         "planned_candidates": 1,
         "solver_workers": 10
@@ -378,13 +371,14 @@
     ]
   },
   "search_states": {
-    "complete": 120,
+    "cancelled": 1,
+    "complete": 121,
     "geometry-rejected": 7,
-    "running": 2
+    "running": 1
   },
-  "unique_candidate_count": 836,
+  "unique_candidate_count": 837,
   "coverage_counts": {
-    "25": 120,
+    "25": 121,
     "30": 39,
     "35": 90,
     "40": 97,
@@ -409,15 +403,15 @@
     {
       "coverage_deg": 25.0,
       "mouth_mm": 300.0,
-      "sample_count": 17,
-      "minimum_s": 0.6999951296023326,
+      "sample_count": 18,
+      "minimum_s": 0.3999991547451315,
       "maximum_s": 4.148863798000764,
-      "best_s": 0.6999951296023326,
-      "best_length_mm": 234.359,
-      "best_score": 74.96241101322396,
+      "best_s": 0.3999991547451315,
+      "best_length_mm": 263.263,
+      "best_score": 75.2969256345192,
       "winner_at_sampled_boundary": true,
       "lower_score": null,
-      "upper_score": 74.85595530887474
+      "upper_score": 74.96241101322396
     },
     {
       "coverage_deg": 25.0,
@@ -932,24 +926,24 @@
   ],
   "matched_effects": {
     "s": {
-      "count": 512,
-      "score_improved_fraction": 0.314453125,
+      "count": 513,
+      "score_improved_fraction": 0.3138401559454191,
       "median_delta": {
-        "score": -0.4942101076507086,
-        "mean_containment": -0.447398496494273,
-        "profile_rms_error_db": 0.04079925320833,
-        "slice_energy_departure_db": 0.02810118962070507,
-        "outward_rise_violation_db": -0.01994628681265795,
-        "minus_six_rms_error_deg": 0.26529366751190064,
-        "high_frequency_coverage_error_deg": -0.37885307002520374
+        "score": -0.4921595154514904,
+        "mean_containment": -0.4505183197697278,
+        "profile_rms_error_db": 0.04078790763845319,
+        "slice_energy_departure_db": 0.027931139943910832,
+        "outward_rise_violation_db": -0.019621367737424733,
+        "minus_six_rms_error_deg": 0.2707091501081731,
+        "high_frequency_coverage_error_deg": -0.3763265654673802
       },
       "median_dominant_bunching_shift_octaves": 0.0,
       "strata": [
         {
           "stratum": "coverage 25\u00b0",
-          "count": 82,
-          "score_improved_fraction": 0.036585365853658534,
-          "median_score_delta": -1.606151003411071
+          "count": 83,
+          "score_improved_fraction": 0.03614457831325301,
+          "median_score_delta": -1.564057946198119
         },
         {
           "stratum": "coverage 30\u00b0",
@@ -983,9 +977,9 @@
         },
         {
           "stratum": "S < 1",
-          "count": 102,
-          "score_improved_fraction": 0.6862745098039216,
-          "median_score_delta": 1.4822527257771227
+          "count": 103,
+          "score_improved_fraction": 0.6796116504854369,
+          "median_score_delta": 1.481960674393335
         },
         {
           "stratum": "1 \u2264 S < 2",
@@ -1014,6 +1008,13 @@
           "count": 2,
           "score_improved_fraction": 1.0,
           "median_score_delta": 4.7237994701725725
+        },
+        {
+          "from": 0.4,
+          "to": 0.7,
+          "count": 1,
+          "score_improved_fraction": 0.0,
+          "median_score_delta": -0.33451462129524145
         },
         {
           "from": 0.5,

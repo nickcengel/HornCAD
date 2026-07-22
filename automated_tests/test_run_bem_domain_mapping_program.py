@@ -10,7 +10,7 @@ import yaml
 
 from app.tools.run_bem_domain_mapping_program import (
     ANGLES, MOUTHS, Proposal, SLOTS, materialize_cell_search, planned_slots,
-    snap_k_n, _candidate_geometry,
+    snap_k_n, _active_baseline_searches, _candidate_geometry,
 )
 
 
@@ -20,18 +20,14 @@ ROOT = Path(__file__).resolve().parents[1]
 class BemDomainMappingProgramTests(unittest.TestCase):
     def test_plan_has_four_slots_in_every_cell(self) -> None:
         slots = planned_slots()
-        self.assertEqual(len(slots), 110)
+        self.assertEqual(len(slots), 100)
         for angle in (30, 35, 40, 45, 50):
             for mouth in (250, 300, 350, 400, 450):
                 cell = [item for item in slots if
                         item["coverage_deg"] == angle and item["mouth_mm"] == mouth]
                 self.assertEqual(len(cell), 4)
                 self.assertEqual({item["batch"] for item in cell}, {1, 2})
-        for mouth in (250, 300, 350, 400, 450):
-            cell = [item for item in slots if
-                    item["coverage_deg"] == 25 and item["mouth_mm"] == mouth]
-            self.assertEqual(len(cell), 2)
-            self.assertEqual({item["batch"] for item in cell}, {1})
+        self.assertFalse(any(item["coverage_deg"] == 25 for item in slots))
         self.assertFalse(any(item["mouth_mm"] == 500 for item in slots))
 
     def test_foldover_spans_low_and_high_k_n_s(self) -> None:
@@ -39,6 +35,19 @@ class BemDomainMappingProgramTests(unittest.TestCase):
                                     ("high", "high", "high")))
         self.assertEqual(SLOTS[2], (("high", "low", "high"),
                                     ("low", "high", "low")))
+
+    def test_boundary_repair_excludes_retired_edges(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            for angle, mouth in ((25, 300), (30, 250), (50, 450), (50, 500)):
+                (root / f"{angle}deg" / f"{mouth}x{mouth}-s-grid").mkdir(
+                    parents=True)
+            selected = {
+                str(path.relative_to(root)) for path in _active_baseline_searches(root)
+            }
+        self.assertEqual(selected, {
+            "30deg/250x250-s-grid", "50deg/450x450-s-grid",
+        })
 
     def test_new_controls_snap_to_half_k_and_integer_n(self) -> None:
         self.assertEqual(snap_k_n(5.25, 8.75), (5.0, 9.0))

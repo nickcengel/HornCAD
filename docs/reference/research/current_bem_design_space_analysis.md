@@ -1,14 +1,14 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-22T11:11:35.722737-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-22T11:16:35.995832-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
-- 836 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: complete: 120, geometry-rejected: 7, running: 2.
+- 837 unique scored physical designs across 36 mouth/coverage cells.
+- Search states: cancelled: 1, complete: 121, geometry-rejected: 7, running: 1.
 - Study program: `boundary-repair` (running).
 - S-closure certificate: complete; closed: 31, geometry-limited: 5.
-- Candidate counts by coverage half-angle: 25°: 120, 30°: 39, 35°: 90, 40°: 97, 45°: 289, 50°: 201.
+- Candidate counts by coverage half-angle: 25°: 121, 30°: 39, 35°: 90, 40°: 97, 45°: 289, 50°: 201.
 
 The counts are evidence density, not evidence quality. Cross-angle conclusions remain provisional while the study program is running; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
 
@@ -18,9 +18,8 @@ Positive score deltas mean increasing the named control improved the surface sco
 
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-- Running: `25deg/300x300-s-boundary-r02` — BEM evaluation candidate-000; 0/1 candidates complete; 10 solver workers.
-- Running: `25deg/450x450-s-boundary-r02` — BEM evaluation candidate-000; 0/1 candidates complete; 10 solver workers.
-| S | 512 | 31% | -0.49 | -0.45 | 0.041 | 0.028 | -0.020 | 0.27 | 0.000 |
+- Running: `25deg/300x300-s-boundary-r03` — BEM evaluation candidate-001; 0/1 candidates complete; 10 solver workers.
+| S | 513 | 31% | -0.49 | -0.45 | 0.041 | 0.028 | -0.020 | 0.27 | 0.000 |
 | K | 232 | 59% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
 | N | 259 | 45% | -0.02 | 0.04 | -0.002 | 0.001 | 0.001 | 0.07 | 0.000 |
 
@@ -31,8 +30,8 @@ These are aggregate directional summaries, not universal steering rules. A contr
 | Control increase | Starting regime | Pairs | Score improves | Median score Δ |
 | --- | --- | ---: | ---: | ---: |
 | S | coverage 30° | 33 | 18% | -1.94 |
-| S | coverage 25° | 82 | 4% | -1.61 |
-| S | S < 1 | 102 | 69% | 1.48 |
+| S | coverage 25° | 83 | 4% | -1.56 |
+| S | S < 1 | 103 | 68% | 1.48 |
 | S | coverage 35° | 60 | 15% | -1.20 |
 | S | S ≥ 2 | 178 | 6% | -1.08 |
 | S | coverage 40° | 66 | 35% | -0.97 |
@@ -167,7 +166,7 @@ Assessment: **insufficient distributed evidence**. 10 remote candidates are comp
 | Coverage | Mouth | Samples | S extent | Best S | Best L mm | Score | Endpoint winner |
 | ---: | ---: | ---: | ---: | ---: | ---: | ---: | :---: |
 | 25° | 250 | 15 | 0.50–3.00 | 0.70 | 198.9 | 70.96 | no |
-| 25° | 300 | 17 | 0.70–4.15 | 0.70 | 234.4 | 74.96 | yes |
+| 25° | 300 | 18 | 0.40–4.15 | 0.40 | 263.3 | 75.30 | yes |
 | 25° | 350 | 16 | 0.30–4.12 | 0.50 | 290.3 | 80.08 | no |
 | 25° | 400 | 17 | 0.30–4.13 | 0.50 | 327.3 | 83.04 | no |
 | 25° | 450 | 11 | 0.70–4.10 | 0.70 | 338.0 | 83.57 | yes |

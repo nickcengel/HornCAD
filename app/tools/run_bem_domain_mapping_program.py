@@ -32,11 +32,11 @@ from .run_s_boundary_closure_program import (
 )
 
 
-ANGLES = (25, 30, 35, 40, 45, 50)
-MOUTHS = (250, 300, 350, 400, 450, 500)
 INTERIOR_ANGLES = (30, 35, 40, 45, 50)
 INTERIOR_MOUTHS = (250, 300, 350, 400, 450)
-RETAINED_EDGE_CELLS = tuple((25, mouth) for mouth in (250, 300, 350, 400, 450))
+ANGLES = INTERIOR_ANGLES
+MOUTHS = INTERIOR_MOUTHS
+RETAINED_EDGE_CELLS: tuple[tuple[int, int], ...] = ()
 S_BOUNDS = (0.05, 4.0)
 K_BOUNDS = (1.0, 7.0)
 N_BOUNDS = (2.0, 20.0)
@@ -425,9 +425,18 @@ def _search_status(path: Path) -> str:
         return "not-started"
 
 
+def _active_baseline_searches(root: Path) -> list[Path]:
+    """Return only baselines inside the active Phase 4 design envelope."""
+    return [
+        path for path in baseline_searches(root)
+        if int(path.parent.name.removesuffix("deg")) in INTERIOR_ANGLES
+        and int(path.name.split("x", 1)[0]) in INTERIOR_MOUTHS
+    ]
+
+
 def repair_s_closure(root: Path, slots: int = 2) -> dict[str, Any]:
     """Rebuild the certificate with geometry limits applied per direction."""
-    baselines = baseline_searches(root)
+    baselines = _active_baseline_searches(root)
     with ThreadPoolExecutor(max_workers=slots) as executor:
         results = list(executor.map(lambda path: close_baseline(root, path), baselines))
     results.sort(key=lambda item: item["baseline"])

@@ -29,11 +29,10 @@ length bracket.
 
 ## Equal-opportunity map
 
-Every one of the 25 interior mouth/coverage cells receives four remote
-candidates. The five 25-degree cells already completed or running at
-250–450 mm retain their two Batch-1 candidates as sparse edge sentinels. No
-Batch 2 is scheduled at 25 degrees, and no Phase-4 candidate is scheduled at a
-500 mm mouth. This yields 110 candidates total. Batch 2 is not materialized
+Every one of the 25 mouth/coverage cells receives four remote candidates.
+No Phase-4 candidate is scheduled at 25 degrees or at a 500 mm mouth. Existing
+results at those edges remain historical evidence only. This yields 100
+candidates total. Batch 2 is not materialized
 until Batch 1 results have entered the measured dataset.
 
 Candidate generation uses feasible symmetric points in:
@@ -78,7 +77,7 @@ suppresses outward rise without sacrificing containment.
 
 ## Completion
 
-Phase 4 is complete only when all 110 candidate slots are complete or carry an
+Phase 4 is complete only when all 100 candidate slots are complete or carry an
 explicit geometry/failure outcome. Reports expose planned and active slots,
 acquisition reasons, parameter values, nearest-evidence distance, and the
 one-point materiality rule. Compact response archives remain retained so new

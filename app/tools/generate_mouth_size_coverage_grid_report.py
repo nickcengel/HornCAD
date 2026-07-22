@@ -29,7 +29,7 @@ SUPPORTED_MOUTH_MIN_MM = 250.0
 SUPPORTED_MOUTH_MAX_MM = 500.0
 ACTIVE_PHASE_FOUR_ANGLES = frozenset((30, 35, 40, 45, 50))
 ACTIVE_PHASE_FOUR_MOUTHS = frozenset((250, 300, 350, 400, 450))
-ACTIVE_PHASE_FOUR_CANDIDATE_TOTAL = 110
+ACTIVE_PHASE_FOUR_CANDIDATE_TOTAL = 100
 
 
 LEGACY_RANKING_KEYS = (
@@ -548,12 +548,14 @@ def generate_report(project_root: Path, output: Path) -> Path:
         best_score_sort = "" if best_score is None else f"{best_score:.6f}"
         best_score_text = "—" if best_score is None else f"{best_score:.1f}%"
         is_edge_history = summary["coverage"] == 25 or summary["mouth"] == 500
+        is_running = summary["status"] == "running"
         summary_entries.append((
             status_order.get(summary["status"], 2), phase_order, summary["label"],
             f"{summary['coverage']:g}",
             "<tr data-subsearch-coverage-angle='{}' "
             f"data-subsearch-edge-history='{str(is_edge_history).lower()}'"
-            f"{' hidden' if is_edge_history else ''}>"
+            f" data-subsearch-running='{str(is_running).lower()}'"
+            f"{' hidden' if is_edge_history and not is_running else ''}>"
             f"<td data-sort='{phase_order}'>{html.escape(phase_label)}</td>"
             f"<td>{html.escape(summary['label'])}</td>"
             f"<td>{status_badge}</td>"
@@ -610,7 +612,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
             status_order.get(planned_status, 1), phase_order,
             str(item["label"]), angles,
             "<tr data-subsearch-coverage-angle='{}' "
-            "data-subsearch-edge-history='false'>"
+            "data-subsearch-edge-history='false' data-subsearch-running='false'>"
             f"<td data-sort='{phase_order}'>{html.escape(phase_label)}</td>"
             f"<td>{html.escape(str(item['label']))}{detail}</td>"
             f"<td><span class='badge pending'>{html.escape(planned_status)}</span></td>"
@@ -635,6 +637,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
                 1, 4, label, str(angle),
                 "<tr data-subsearch-coverage-angle='{}' "
                 f"data-subsearch-edge-history='{str(angle == 25 or mouth == 500).lower()}'"
+                " data-subsearch-running='false'"
                 f"{' hidden' if angle == 25 or mouth == 500 else ''}>"
                 "<td data-sort='4'>Phase 4 · remote domain mapping</td>"
                 f"<td>{html.escape(label)}</td>"
@@ -646,7 +649,9 @@ def generate_report(project_root: Path, output: Path) -> Path:
     summary_rows = [entry[4].format(html.escape(entry[3]))
                     for entry in summary_entries]
     visible_summary_count = sum(
-        "data-subsearch-edge-history='true'" not in row for row in summary_rows)
+        "data-subsearch-edge-history='true'" not in row or
+        "data-subsearch-running='true'" in row
+        for row in summary_rows)
 
     phase_display = {
         "baseline-and-s-closure": "Phase 1 · baseline / S closure",
@@ -790,7 +795,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <div class='learning-cards'>{learning_cards}</div>
 <p><strong>Phase 3 audit:</strong> {phase_three_audit['quarter_step_k_candidate_count']} quarter-step K candidates changed the selected winner by only {phase_three_audit['median_winner_advantage_over_nearby_k']:.3f} points at the median ({phase_three_audit['maximum_winner_advantage_over_nearby_k']:.3f} maximum) versus a nearby measured K at the same N. Future closure uses K ≥ 0.5 steps, N ≥ 1 steps, and moves to local S/length inside a 0.5-point score asymptote.</p>
 <p><strong>Coupled completion:</strong> {len(phase_three_audit['anchor_gains']) - len(coupled_practical_stops)} anchors converged; {len(coupled_practical_stops)} stopped at the three-round limit with less than 0.5 points available over its local-S center but without a formally bracketed length optimum.</p>
-<p><strong>Remote domain map:</strong> {html.escape(domain_status)} · {html.escape(domain_phase)} · {domain_total} candidates. Four candidates cover each of the 25 interior cells from 30°–50° and 250–450 mm; ten completed/running 25° Batch-1 candidates remain as sparse edge sentinels. No Phase-4 work is scheduled at 500 mm. Local exploitation requires at least a 1-point uncertainty-adjusted predicted gain.</p>
+<p><strong>Remote domain map:</strong> {html.escape(domain_status)} · {html.escape(domain_phase)} · {domain_total} candidates. Four candidates cover each of the 25 cells from 30°–50° and 250–450 mm. No Phase-4 work is scheduled at 25° or 500 mm. Local exploitation requires at least a 1-point uncertainty-adjusted predicted gain.</p>
 <p><strong>Wide-coverage hypothesis:</strong> current winners keep profile and slice-energy error comparatively smooth, but outward-rise violation increases with mouth/length ratio. Matched 45°/50° probes test whether longer, coarsely higher-K geometries reduce those angular shoulders without losing containment.</p>
 <h3>Remote-sample value</h3>
 <p><strong>{html.escape(str(domain_meta.get('assessment', 'insufficient distributed evidence')))}</strong> · {domain_meta.get('completed_remote_candidates', 0)} complete. Competitive: {domain_counts.get('new-cell-winner', 0) + domain_counts.get('competitive-remote', 0)}; diagnostic tradeoffs: {domain_counts.get('diagnostic-tradeoff', 0)}; boundary confirmations: {domain_counts.get('boundary-confirmation', 0)}; redundant near existing evidence: {domain_counts.get('redundant-near-existing', 0)}.</p>
@@ -946,7 +951,8 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
     Array.from(subsearchTable.tBodies[0].rows).forEach((row) => {{
       const angles = row.dataset.subsearchCoverageAngle.split(' ');
       const matchesAngle = subsearchAngle === 'all' || angles.includes(subsearchAngle);
-      const matchesHistory = showSubsearchEdgeHistory || row.dataset.subsearchEdgeHistory !== 'true';
+      const matchesHistory = showSubsearchEdgeHistory ||
+        row.dataset.subsearchEdgeHistory !== 'true' || row.dataset.subsearchRunning === 'true';
       row.hidden = !matchesAngle || !matchesHistory;
       if (!row.hidden) visible += 1;
     }});
