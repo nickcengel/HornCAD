@@ -5,7 +5,7 @@ Snapshot through `2026-07-22T11:16:35.995832-07:00`. This analysis is **provisio
 ## Evidence inventory
 
 - 837 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: cancelled: 1, complete: 121, geometry-rejected: 7, running: 1.
+- Search states: cancelled: 2, complete: 121, geometry-rejected: 7, running: 2.
 - Study program: `boundary-repair` (running).
 - S-closure certificate: complete; closed: 31, geometry-limited: 5.
 - Candidate counts by coverage half-angle: 25°: 121, 30°: 39, 35°: 90, 40°: 97, 45°: 289, 50°: 201.
@@ -18,7 +18,8 @@ Positive score deltas mean increasing the named control improved the surface sco
 
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-- Running: `25deg/300x300-s-boundary-r03` — BEM evaluation candidate-001; 0/1 candidates complete; 10 solver workers.
+- Running: `35deg/250x250-s-boundary-r02` — BEM evaluation candidate-000; 0/1 candidates complete; 10 solver workers.
+- Running: `35deg/300x300-s-boundary-r02` — BEM evaluation candidate-000; 0/1 candidates complete; 10 solver workers.
 | S | 513 | 31% | -0.49 | -0.45 | 0.041 | 0.028 | -0.020 | 0.27 | 0.000 |
 | K | 232 | 59% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
 | N | 259 | 45% | -0.02 | 0.04 | -0.002 | 0.001 | 0.001 | 0.07 | 0.000 |
