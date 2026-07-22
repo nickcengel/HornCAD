@@ -73,6 +73,8 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
         self.assertIn("data-subsearch-angle-filter='50'", report)
         self.assertIn("id='subsearch-filter-count'", report)
         self.assertIn("row.dataset.subsearchCoverageAngle.split(' ')", report)
+        self.assertIn("data-sort='number'>Date complete</th>", report)
+        self.assertRegex(report, r"<td data-sort='\d+\.\d{6}'>\d{1,2}-\d{2} \d{2}:\d{2}</td>")
         self.assertNotIn("<h2>Active ranking</h2>", report)
         self.assertNotIn("<h2>All results</h2>", report)
         self.assertIn("data-column-toggle='surface-score'", report)

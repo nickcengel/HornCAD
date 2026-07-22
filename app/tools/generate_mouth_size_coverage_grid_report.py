@@ -346,6 +346,11 @@ def generate_report(project_root: Path, output: Path) -> Path:
             if summary["report_path"] else "—"
         )
         status_badge = f"<span class='badge {html.escape(_ranking_class(summary))}'>{html.escape(summary['status'])}</span>"
+        completed_at = summary.get("completed_at_unix")
+        completed_sort = (f"{float(completed_at):.6f}"
+                          if isinstance(completed_at, (int, float)) else "")
+        completed_text = (datetime.fromtimestamp(float(completed_at)).astimezone().strftime(
+            "%-m-%d %H:%M") if isinstance(completed_at, (int, float)) else "—")
         summary_entries.append((
             status_order.get(summary["status"], 2), summary["label"],
             f"{summary['coverage']:g}",
@@ -353,6 +358,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
             "<td>{}</td>"
             f"<td>{html.escape(summary['label'])}</td>"
             f"<td>{status_badge}</td>"
+            f"<td data-sort='{completed_sort}'>{completed_text}</td>"
             f"<td>{summary['completed']}&nbsp;/<wbr> {summary['proposal_count']}</td>"
             f"<td>{report_link}</td>"
             "</tr>"
@@ -372,7 +378,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
             "<td>{}</td>"
             f"<td>{html.escape(str(item['label']))}{detail}</td>"
             f"<td><span class='badge pending'>{html.escape(planned_status)}</span></td>"
-            "<td>—</td><td>—</td>"
+            "<td data-sort=''>—</td><td>—</td><td>—</td>"
             "</tr>"
         ))
     summary_entries.sort(key=lambda item: (item[0], item[1]))
@@ -491,7 +497,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 <h2>Sub-searches</h2>
 <div class='angle-controls' aria-label='Filter sub-searches by coverage angle'>{subsearch_angle_filters}<span id='subsearch-filter-count' class='filter-count'>{len(summary_rows)} sub-searches</span></div>
 <table id='subsearch-table' class='sortable-table'>
-<thead><tr><th class='sortable' data-sort='number'>#</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Complete&nbsp;/ Proposed</th><th>Links</th></tr></thead>
+<thead><tr><th class='sortable' data-sort='number'>#</th><th class='sortable' data-sort='text'>Sub-search</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-sort='number'>Date complete</th><th class='sortable' data-sort='number'>Complete&nbsp;/ Proposed</th><th>Links</th></tr></thead>
 <tbody>{''.join(summary_rows)}</tbody>
 </table>
 </section>
