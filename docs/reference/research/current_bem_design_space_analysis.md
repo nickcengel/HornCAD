@@ -1,14 +1,14 @@
 # Current BEM design-space analysis
 
-Snapshot through `2026-07-22T01:07:52.600293-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
+Snapshot through `2026-07-22T09:28:01.465342-07:00`. This analysis is **provisional** and can be regenerated as solves finish.
 
 ## Evidence inventory
 
-- 589 unique scored physical designs across 36 mouth/coverage cells.
-- Search states: complete: 98, geometry-rejected: 7, running: 2.
+- 820 unique scored physical designs across 36 mouth/coverage cells.
+- Search states: complete: 112, geometry-rejected: 7, running: 1.
 - Study program: `coupled` (running).
 - S-closure certificate: complete; closed: 29, geometry-limited: 7.
-- Candidate counts by coverage half-angle: 25°: 110, 30°: 39, 35°: 90, 40°: 97, 45°: 172, 50°: 81.
+- Candidate counts by coverage half-angle: 25°: 110, 30°: 39, 35°: 90, 40°: 97, 45°: 289, 50°: 195.
 
 The counts are evidence density, not evidence quality. Cross-angle conclusions remain provisional while the study program is running; expected geometry rejections describe the admissible design boundary rather than missing solver evidence.
 
@@ -18,9 +18,9 @@ Positive score deltas mean increasing the named control improved the surface sco
 
 | Increase | Pairs | Score improves | Median score Δ | Containment Δ | Profile RMS Δ dB | Slice-energy Δ dB | Outward-rise Δ dB | -6 dB RMS Δ deg | Bunching shift oct |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| S | 426 | 34% | -0.55 | -0.60 | 0.043 | 0.021 | -0.006 | 0.38 | 0.000 |
-| K | 89 | 55% | 0.06 | -0.10 | 0.002 | 0.018 | -0.086 | 0.28 | 0.000 |
-| N | 90 | 38% | -0.24 | 0.07 | -0.003 | 0.015 | 0.000 | 0.16 | 0.000 |
+| S | 506 | 31% | -0.51 | -0.46 | 0.041 | 0.028 | -0.019 | 0.28 | 0.000 |
+| K | 232 | 59% | 0.06 | -0.06 | 0.003 | 0.018 | -0.068 | 0.28 | 0.000 |
+| N | 259 | 45% | -0.02 | 0.04 | -0.002 | 0.001 | 0.001 | 0.07 | 0.000 |
 
 These are aggregate directional summaries, not universal steering rules. A control can reverse sign by mouth, coverage, S, or the other OS-SE controls. The next pass must stratify matched effects by the starting diagnostic state before promoting a rule.
 
@@ -29,29 +29,29 @@ These are aggregate directional summaries, not universal steering rules. A contr
 | Control increase | Starting regime | Pairs | Score improves | Median score Δ |
 | --- | --- | ---: | ---: | ---: |
 | S | coverage 30° | 33 | 18% | -1.94 |
-| S | S < 1 | 95 | 73% | 1.82 |
 | S | coverage 25° | 82 | 4% | -1.61 |
+| S | S < 1 | 102 | 69% | 1.48 |
 | S | coverage 35° | 60 | 15% | -1.20 |
-| S | S ≥ 2 | 160 | 6% | -1.16 |
+| S | S ≥ 2 | 175 | 6% | -1.09 |
 | S | coverage 40° | 66 | 35% | -0.97 |
-| S | coverage 50° | 75 | 60% | 0.75 |
-| S | 1 ≤ S < 2 | 171 | 39% | -0.40 |
-| K | high starting high_frequency_coverage_error_deg | 45 | 80% | 0.58 |
+| S | 1 ≤ S < 2 | 229 | 34% | -0.40 |
+| S | coverage 45° | 161 | 43% | -0.08 |
 | K | coverage 35° | 16 | 56% | 0.54 |
-| K | high starting profile_rms_error_db | 45 | 60% | 0.25 |
+| K | high starting high_frequency_coverage_error_deg | 116 | 74% | 0.19 |
 | K | coverage 25° | 15 | 40% | -0.19 |
-| K | high starting minus_six_rms_error_deg | 45 | 40% | -0.14 |
-| K | high starting outward_rise_violation_db | 45 | 64% | 0.12 |
-| K | low starting minus_six_rms_error_deg | 44 | 70% | 0.11 |
-| K | low starting high_frequency_coverage_error_deg | 44 | 30% | -0.10 |
+| K | high starting outward_rise_violation_db | 116 | 72% | 0.13 |
+| K | high starting profile_rms_error_db | 116 | 62% | 0.12 |
+| K | low starting minus_six_rms_error_deg | 116 | 69% | 0.10 |
+| K | high starting mean_containment | 116 | 61% | 0.07 |
+| K | high starting slice_energy_departure_db | 116 | 57% | 0.07 |
 | N | coverage 25° | 14 | 14% | -1.54 |
-| N | high starting slice_energy_departure_db | 45 | 36% | -0.75 |
 | N | coverage 35° | 16 | 25% | -0.68 |
-| N | high starting minus_six_rms_error_deg | 45 | 33% | -0.63 |
-| N | high starting profile_rms_error_db | 45 | 42% | -0.54 |
-| N | low starting outward_rise_violation_db | 45 | 24% | -0.54 |
-| N | low starting mean_containment | 45 | 33% | -0.52 |
-| N | high starting high_frequency_coverage_error_deg | 45 | 44% | -0.31 |
+| N | low starting mean_containment | 129 | 43% | -0.05 |
+| N | high starting outward_rise_violation_db | 130 | 53% | 0.04 |
+| N | low starting slice_energy_departure_db | 129 | 41% | -0.04 |
+| N | low starting outward_rise_violation_db | 129 | 37% | -0.04 |
+| N | low starting high_frequency_coverage_error_deg | 129 | 38% | -0.04 |
+| N | low starting profile_rms_error_db | 129 | 40% | -0.03 |
 
 This table is a screening device. Coverage/S regimes are descriptive, while splits on a starting diagnostic are hypotheses that still need repetition across independent mouth/coverage cells and held-out confirmation.
 
@@ -60,28 +60,63 @@ This table is a screening device. Coverage/S regimes are descriptive, while spli
 | Control | Transition | Pairs | Score improves | Median score Δ |
 | --- | ---: | ---: | ---: | ---: |
 | K | 3 → 3.5 | 6 | 83% | 2.33 |
-| K | 3.5 → 4 | 19 | 84% | 0.99 |
-| K | 4 → 4.25 | 9 | 100% | 0.14 |
-| K | 4 → 4.5 | 20 | 45% | -0.04 |
-| K | 4.25 → 4.5 | 14 | 57% | 0.00 |
-| K | 4.5 → 4.75 | 8 | 0% | -0.13 |
-| K | 4.5 → 5 | 9 | 22% | -0.54 |
-| K | 4.75 → 5 | 3 | 0% | -0.21 |
-| K | 5 → 5.5 | 1 | 0% | -0.49 |
+| K | 3.5 → 3.75 | 3 | 100% | 0.60 |
+| K | 3.5 → 4 | 21 | 86% | 1.03 |
+| K | 3.75 → 4 | 15 | 100% | 0.14 |
+| K | 4 → 4.25 | 29 | 59% | 0.07 |
+| K | 4 → 4.5 | 26 | 58% | 0.22 |
+| K | 4.25 → 4.5 | 26 | 58% | 0.01 |
+| K | 4.25 → 4.75 | 1 | 100% | 1.12 |
+| K | 4.5 → 4.75 | 22 | 50% | 0.00 |
+| K | 4.5 → 5 | 18 | 44% | -0.10 |
+| K | 4.75 → 5 | 21 | 29% | -0.02 |
+| K | 4.75 → 5.25 | 2 | 100% | 1.07 |
+| K | 5 → 5.25 | 15 | 53% | 0.05 |
+| K | 5 → 5.5 | 7 | 57% | 0.14 |
+| K | 5.25 → 5.5 | 11 | 36% | -0.03 |
+| K | 5.25 → 5.75 | 2 | 100% | 0.50 |
+| K | 5.5 → 5.75 | 4 | 25% | -0.05 |
+| K | 5.5 → 6 | 2 | 50% | 0.06 |
+| K | 5.75 → 6 | 1 | 0% | -0.18 |
 | N | 2 → 5 | 6 | 100% | 14.82 |
-| N | 2.5 → 5 | 1 | 100% | 8.72 |
+| N | 2.5 → 5 | 4 | 100% | 9.92 |
+| N | 2.5 → 7.5 | 3 | 100% | 10.20 |
+| N | 3.75 → 6.25 | 4 | 100% | 3.47 |
+| N | 3.75 → 8.75 | 5 | 100% | 4.28 |
 | N | 5 → 5.5 | 3 | 100% | 0.31 |
-| N | 5 → 6.25 | 3 | 100% | 0.94 |
-| N | 5 → 10 | 21 | 43% | -0.25 |
+| N | 5 → 6.25 | 9 | 100% | 0.94 |
+| N | 5 → 7.5 | 4 | 100% | 1.85 |
+| N | 5 → 10 | 23 | 48% | -0.22 |
 | N | 5.5 → 6.25 | 3 | 100% | 0.22 |
-| N | 6.25 → 6.5 | 6 | 100% | 0.06 |
-| N | 6.5 → 7.5 | 6 | 50% | 0.06 |
-| N | 7.5 → 8.5 | 3 | 0% | -0.05 |
-| N | 7.5 → 8.75 | 3 | 0% | -0.27 |
-| N | 8.5 → 8.75 | 3 | 0% | -0.04 |
-| N | 8.75 → 10 | 6 | 0% | -0.38 |
+| N | 6.25 → 6.5 | 12 | 100% | 0.09 |
+| N | 6.25 → 6.75 | 2 | 100% | 0.09 |
+| N | 6.25 → 7.5 | 5 | 100% | 0.57 |
+| N | 6.25 → 8.75 | 2 | 100% | 0.62 |
+| N | 6.5 → 7.5 | 12 | 75% | 0.16 |
+| N | 6.75 → 7.5 | 2 | 100% | 0.11 |
+| N | 6.75 → 7.75 | 1 | 100% | 0.02 |
+| N | 7.5 → 7.75 | 11 | 100% | 0.04 |
+| N | 7.5 → 8.5 | 9 | 0% | -0.07 |
+| N | 7.5 → 8.75 | 6 | 33% | -0.14 |
+| N | 7.5 → 10 | 3 | 100% | 0.26 |
+| N | 7.5 → 12.5 | 3 | 0% | -1.05 |
+| N | 7.75 → 8.75 | 12 | 67% | 0.04 |
+| N | 8.5 → 8.75 | 9 | 0% | -0.04 |
+| N | 8.75 → 9.75 | 9 | 11% | -0.06 |
+| N | 8.75 → 10 | 17 | 6% | -0.32 |
+| N | 8.75 → 11.25 | 2 | 0% | -0.31 |
+| N | 8.75 → 13.75 | 5 | 0% | -0.81 |
+| N | 9.75 → 10 | 9 | 11% | -0.02 |
+| N | 10 → 10.25 | 3 | 100% | 0.01 |
+| N | 10 → 11.25 | 7 | 0% | -0.24 |
+| N | 10 → 12.5 | 9 | 0% | -0.67 |
 | N | 10 → 13 | 1 | 0% | -1.62 |
-| N | 10 → 15 | 19 | 0% | -1.71 |
+| N | 10 → 15 | 21 | 0% | -1.71 |
+| N | 10.25 → 11.25 | 3 | 67% | 0.02 |
+| N | 11.25 → 12.25 | 3 | 0% | -0.04 |
+| N | 11.25 → 13.75 | 4 | 0% | -0.69 |
+| N | 12.25 → 12.5 | 3 | 0% | -0.01 |
+| N | 12.5 → 15 | 4 | 0% | -0.71 |
 | N | 13 → 15 | 1 | 0% | -1.12 |
 | N | 15 → 20 | 5 | 0% | -1.38 |
 
@@ -119,7 +154,7 @@ The transition table is the current K/N conclusion: it is rebuilt from matched p
 | 40° | 500 | 10 | 0.50–4.00 | 1.75 | 200.1 | 85.38 | no |
 | 45° | 250 | 15 | 0.50–4.00 | 1.25 | 105.8 | 86.14 | no |
 | 45° | 300 | 19 | 0.50–3.00 | 1.67 | 115.0 | 87.57 | no |
-| 45° | 350 | 21 | 0.50–3.00 | 1.99 | 125.0 | 88.30 | no |
+| 45° | 350 | 22 | 0.50–3.00 | 1.99 | 125.0 | 88.30 | no |
 | 45° | 400 | 20 | 0.50–3.00 | 1.90 | 143.1 | 87.11 | no |
 | 45° | 450 | 19 | 0.50–3.00 | 2.00 | 156.6 | 85.16 | no |
 | 45° | 500 | 18 | 0.50–3.00 | 2.25 | 165.6 | 83.89 | no |

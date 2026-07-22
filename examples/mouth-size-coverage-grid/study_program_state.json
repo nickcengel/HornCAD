@@ -517,6 +517,36 @@
       "phase": "coupled",
       "task": "45deg/350x350-s-grid",
       "status": "started"
+    },
+    {
+      "time_unix": 1784719182.873322,
+      "phase": "coupled",
+      "task": "45deg/350x350-s-grid",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784719182.8739562,
+      "phase": "coupled",
+      "task": "50deg/400x400-s-grid",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784723468.197761,
+      "phase": "coupled",
+      "task": "45deg/400x400-s-grid",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784723468.198494,
+      "phase": "coupled",
+      "task": "50deg/250x250-s-grid",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784726880.320195,
+      "phase": "coupled",
+      "task": "50deg/250x250-s-grid",
+      "status": "complete"
     }
   ],
   "workers": 2,
