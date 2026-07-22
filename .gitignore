@@ -31,6 +31,8 @@ examples/mouth-size-coverage-grid/**/search_run.log
 examples/mouth-size-coverage-grid/**/search_state.json
 examples/mouth-size-coverage-grid/**/coverage_diagnostics.json
 examples/mouth-size-coverage-grid/**/finalist_comparison.html
+examples/mouth-size-coverage-grid/phase4_handoff_state.json
+examples/mouth-size-coverage-grid/phase4_batch2.log
 examples/mouth-size-coverage-grid/**/candidates/**/*
 !examples/mouth-size-coverage-grid/**/search_report.html
 !examples/mouth-size-coverage-grid/**/candidates/**/
