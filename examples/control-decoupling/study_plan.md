@@ -98,6 +98,13 @@ failure is isolated and cannot stall the other slot or the remaining searches.
 The runner records the failure and finishes all independent work before reporting
 the study blocked.
 
+Adjacent independent waves share one queue, so an odd search count does not cause
+an idle ten-core tail at every wave boundary. The only dependency barrier is after
+core axes and boundary sentinels, where their results decide whether conditional
+axis-closure probes run. After that decision, closure, factorial faces/corners,
+and locked validation remain ordered in the queue but may overlap at their tails.
+Only the final single-search tail can leave ten cores unused.
+
 The queue is restartable from the per-search ledgers. Completed searches are
 skipped, an interrupted running candidate is requeued, and a failed coordinate is
 retried once with the recovery mesh policy. An unresolved failure releases its

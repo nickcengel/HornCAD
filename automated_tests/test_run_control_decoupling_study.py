@@ -7,10 +7,17 @@ from unittest.mock import patch
 
 from app.tools.run_control_decoupling_study import (
     _load_frozen, _run_queue, _run_restartable_search, material_improvement,
+    SCHEDULER_GROUPS,
 )
 
 
 class ControlDecouplingRunnerTests(unittest.TestCase):
+    def test_scheduler_has_only_evidence_dependency_barrier(self) -> None:
+        self.assertEqual(SCHEDULER_GROUPS[0],
+                         ("core-axis", "boundary-sentinel"))
+        self.assertEqual(SCHEDULER_GROUPS[1][0], "axis-closure")
+        self.assertIn("locked-validation", SCHEDULER_GROUPS[1])
+
     def test_queue_keeps_running_after_one_search_fails(self) -> None:
         paths = [Path("one"), Path("two"), Path("three")]
         attempted = []

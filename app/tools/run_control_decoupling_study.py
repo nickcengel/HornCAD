@@ -26,6 +26,11 @@ from .run_bem_search import run_search
 
 
 RUNTIME_STATE = "runtime_state.json"
+SCHEDULER_GROUPS = (
+    ("core-axis", "boundary-sentinel"),
+    ("axis-closure", "two-factor-face", "three-factor-corner",
+     "locked-validation"),
+)
 
 
 def _write_json(path: Path, value: dict[str, Any]) -> None:
@@ -241,8 +246,9 @@ def run_study(root: Path, reviewed_sha256: str, slots: int = 2) -> dict[str, Any
     state_path = root / RUNTIME_STATE
 
     def record(path: Path, status: str, error: str | None) -> None:
-        item = {"time_unix": time.time(), "wave": state.get("wave"),
-                "search": str(path.relative_to(root)), "status": status}
+        relative = path.relative_to(root)
+        item = {"time_unix": time.time(), "wave": relative.parts[1],
+                "search": str(relative), "status": status}
         if error:
             item["error"] = error
         state["events"].append(item)
@@ -250,28 +256,33 @@ def run_study(root: Path, reviewed_sha256: str, slots: int = 2) -> dict[str, Any
         refresh_index(root)
 
     _write_json(state_path, state)
-    for wave in WAVES:
-        state["wave"] = wave
+    for group_index, waves in enumerate(SCHEDULER_GROUPS):
+        state["wave_group"] = list(waves)
         _write_json(state_path, state)
-        planned = [item for item in plan["searches"] if item["wave"] == wave]
-        if wave == "axis-closure":
-            decisions = state["axis_closure_decisions"]
-            retained = []
-            for item in planned:
-                decision = decisions.get(item["coordinate_ids"][0], {})
-                if decision.get("decision") == "run":
-                    retained.append(item)
-                else:
-                    state["skipped_searches"].append({
-                        "wave": wave, "search": item["path"],
-                        "coordinate_ids": item["coordinate_ids"],
-                        "reason": decision.get("decision", "closure not triggered"),
-                    })
-            planned = retained
+        planned = []
+        for wave in waves:
+            wave_items = [item for item in plan["searches"]
+                          if item["wave"] == wave]
+            if wave == "axis-closure":
+                decisions = state["axis_closure_decisions"]
+                retained = []
+                for item in wave_items:
+                    decision = decisions.get(item["coordinate_ids"][0], {})
+                    if decision.get("decision") == "run":
+                        retained.append(item)
+                    else:
+                        state["skipped_searches"].append({
+                            "wave": wave, "search": item["path"],
+                            "coordinate_ids": item["coordinate_ids"],
+                            "reason": decision.get(
+                                "decision", "closure not triggered"),
+                        })
+                wave_items = retained
+            planned.extend(wave_items)
         paths = [root / item["path"] for item in planned
                  if search_status(root / item["path"]) != "complete"]
         _run_queue(paths, slots, _run_restartable_search, record)
-        if wave == "boundary-sentinel":
+        if group_index == 0:
             state["axis_closure_decisions"] = axis_closure_decisions(
                 root, manifest)
             _write_json(state_path, state)
@@ -281,7 +292,7 @@ def run_study(root: Path, reviewed_sha256: str, slots: int = 2) -> dict[str, Any
     state.update(
         status="blocked" if failures else "complete",
         completed_at_unix=time.time(), failure_count=len(failures))
-    state.pop("wave", None)
+    state.pop("wave_group", None)
     _write_json(state_path, state)
     refresh_index(root)
     return state
