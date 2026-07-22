@@ -1672,6 +1672,11 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
             return True
         if retry_failed:
             return False
+        # A prescribed experiment records failed or rejected coordinates as
+        # outcomes. It must never substitute an optimizer proposal merely to
+        # reach a requested number of successful solves.
+        if search.get("fixed_design", False):
+            return state["proposal_count"] < search["max_evaluations"]
         closure_policy = search.get("adaptive_kn_closure", {})
         if (closure_policy.get("enabled", False) and
                 state["proposal_count"] >= search["initial_candidates"] + 1):

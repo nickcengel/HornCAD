@@ -135,6 +135,7 @@ class BemDomainMappingProgramTests(unittest.TestCase):
         self.assertEqual(search["max_evaluations"], 3)
         self.assertEqual(search["initial_candidates"], 2)
         self.assertFalse(search["adaptive_pruning"]["enabled"])
+        self.assertTrue(search["fixed_design"])
         self.assertEqual(search["domain_mapping"]["batch"], 1)
         self.assertEqual(len(search["domain_mapping"]["proposals"]), 3)
 

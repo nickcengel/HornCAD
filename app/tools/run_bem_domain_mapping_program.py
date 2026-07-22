@@ -477,7 +477,8 @@ def materialize_cell_search(root: Path, proposals: list[Proposal],
             encoding="utf-8"))["bem_candidate_search"]
         expected_design = ("face-centered-response-surface" if first.batch == 2
                            else "remote-maximin")
-        if existing.get("domain_mapping", {}).get("design") == expected_design:
+        if (existing.get("domain_mapping", {}).get("design") == expected_design
+                and (first.batch != 2 or existing.get("fixed_design") is True)):
             return output
         if (output / "search_state.json").exists():
             raise RuntimeError(
@@ -522,7 +523,8 @@ def materialize_cell_search(root: Path, proposals: list[Proposal],
         "sampling_stability_points": float(source.get("sampling_stability_points", 2)),
         "confirmation_points_per_octave": float(source.get(
             "confirmation_points_per_octave", 16)),
-        "adaptive_pruning": {"enabled": False}, "bounds": bounds,
+        "adaptive_pruning": {"enabled": False},
+        "fixed_design": True, "bounds": bounds,
         "initial_pool": [{
             "label": (f"domain map · {item.coordinate_label or item.slot} · "
                       f"{item.acquisition}"),

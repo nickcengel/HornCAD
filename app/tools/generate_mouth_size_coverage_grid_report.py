@@ -49,6 +49,8 @@ STUDY_PHASES = {
     "coupled local S": (3, "Phase 3 · coupled refinement"),
     "coupled length closure": (4, "Phase 4 · boundary repair / domain mapping"),
     "remote domain map": (4, "Phase 4 · remote domain mapping"),
+    "response-surface system identification": (
+        4, "Phase 4 · response-surface system identification"),
 }
 
 
@@ -126,6 +128,9 @@ def _search_summary(path: Path) -> dict[str, Any]:
     else:
         study_label = "original"
     config = yaml.safe_load(path.read_text(encoding="utf-8"))["bem_candidate_search"]
+    domain_design = config.get("domain_mapping", {}).get("design")
+    if domain_design == "face-centered-response-surface":
+        study_label = "response-surface system identification"
     seed_path = Path(config.get("seed_yaml", "project.yaml"))
     if not seed_path.is_absolute():
         seed_path = path.parent / seed_path
@@ -152,6 +157,9 @@ def _search_summary(path: Path) -> dict[str, Any]:
             "coupled length closure": " · coupled coarse length closure",
             "remote domain map": (
                 " · remote domain map " + mouth_dir.rsplit("-", 1)[-1].upper()),
+            "response-surface system identification": (
+                " · length/K/N response surface "
+                + mouth_dir.rsplit("-", 1)[-1].upper()),
         }.get(study_label, "")
     state_path = path.parent / "search_state.json"
     report_path = path.parent / "search_report.html"
@@ -177,7 +185,7 @@ def _search_summary(path: Path) -> dict[str, Any]:
         "failed": 0,
         "running": 0,
         "rejected": 0,
-        "proposal_count": 0,
+        "proposal_count": int(config.get("max_evaluations", 0)),
         "completed_at_unix": None,
         "candidates": [],
     }
@@ -345,7 +353,7 @@ def generate_report(project_root: Path, output: Path) -> Path:
             has_refinement = any(
                 item["status"] == "complete" and item["study"] in {
                     "adaptive K/N grid", "coupled K/N closure", "coupled local S",
-                    "remote domain map"}
+                    "remote domain map", "response-surface system identification"}
                 for item in cell_summaries)
             baseline_complete = any(
                 item["status"] == "complete" and item["study"] == "uniform S grid"
