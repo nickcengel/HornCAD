@@ -71,6 +71,19 @@ class RoundControlHeuristicTests(unittest.TestCase):
         self.assertEqual(
             audit["length_bracketed_at_outward_k_cells"], 13)
 
+    def test_short_length_closure_is_included(self):
+        result_path = (
+            ROOT / "examples/round-control-short-length-closure/results.json")
+        provenance = self.heuristics.artifact["provenance"]
+        self.assertEqual(
+            provenance["short_length_closure_results_sha256"],
+            hashlib.sha256(result_path.read_bytes()).hexdigest(),
+        )
+        audit = self.heuristics.artifact["audit"]["short_length_closure"]
+        self.assertEqual(audit["candidate_count"], 3)
+        self.assertEqual(audit["summary"]["bracketed_cells"], 3)
+        self.assertEqual(audit["summary"]["short_boundary_cells"], 0)
+
 
 if __name__ == "__main__":
     unittest.main()

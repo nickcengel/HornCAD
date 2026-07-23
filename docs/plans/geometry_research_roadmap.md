@@ -65,6 +65,9 @@ The subsequent 48-case
 [ridge-closure study](round_control_ridge_closure.md) is complete: all retained
 archives reproduced their diagnostics, 13 of 16 cells bracketed length at the
 outward K, and six cells promoted a K=1/K=7 result to the final measured seed.
+The three-case
+[short-length closure](round_control_short_length_closure.md) then bracketed
+the remaining K=1 length curves without requiring its conditional block.
 The measured heuristic includes the exact ridge-results hash and publishes
 per-cell closure status.
 The earlier central-grid handoff under

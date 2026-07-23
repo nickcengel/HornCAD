@@ -1,0 +1,44 @@
+{
+  "completed_at_unix": 1784845856.951586,
+  "events": [
+    {
+      "completed_at_unix": 1784845808.8226109,
+      "returncode": 0,
+      "search_yaml": "/Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/45deg-250mm/search.yaml",
+      "started_at_unix": 1784845662.434603,
+      "stderr_tail": "",
+      "stdout_tail": "Could not find Gmsh.Interactive plotting and shapes module not available.\nCould not find Gmsh.Interactive plotting and shapes module not available.\nNumCalc plan: 10 single-thread frequency processes; 0.426 GiB/process including headroom; 48.0 GiB limit; 49 pending\ncompleted 840.896415254 Hz in 32.29s\ncompleted 629.960524947 Hz in 32.32s\ncompleted 500.000000000 Hz in 32.34s\ncompleted 749.153538438 Hz in 32.43s\ncompleted 707.106781187 Hz in 32.42s\ncompleted 561.231024155 Hz in 32.70s\ncompleted 793.700525984 Hz in 32.76s\ncompleted 667.419927085 Hz in 32.96s\ncompleted 529.731547180 Hz in 33.21s\ncompleted 594.603557501 Hz in 33.37s\ncompleted 1000.000000000 Hz in 13.29s\ncompleted 1414.213562373 Hz in 12.50s\ncompleted 1334.839854170 Hz in 14.50s\ncompleted 1259.921049895 Hz in 14.84s\ncompleted 1498.307076877 Hz in 14.27s\ncompleted 1189.207115003 Hz in 15.18s\ncompleted 1059.463094359 Hz in 16.03s\ncompleted 2118.926188719 Hz in 12.38s\ncompleted 1587.401051968 Hz in 15.61s\ncompleted 890.898718140 Hz in 32.75s\ncompleted 943.874312682 Hz in 35.03s\ncompleted 1887.748625363 Hz in 24.12s\ncompleted 1781.797436281 Hz in 25.55s\ncompleted 2000.000000000 Hz in 25.47s\ncompleted 1681.792830507 Hz in 27.58s\ncompleted 1122.462048309 Hz in 41.06s\ncompleted 2378.414230005 Hz in 22.28s\ncompleted 2244.924096619 Hz in 36.97s\ncompleted 2828.427124746 Hz in 18.14s\ncompleted 2519.842099790 Hz in 24.94s\ncompleted 2669.679708340 Hz in 21.39s\ncompleted 3174.802103936 Hz in 23.48s\ncompleted 3363.585661015 Hz in 24.85s\ncompleted 4489.848193237 Hz in 12.58s\ncompleted 2996.614153753 Hz in 26.66s\ncompleted 4000.000000000 Hz in 16.25s\ncompleted 3563.594872561 Hz in 25.55s\ncompleted 3775.497250727 Hz in 34.12s\ncompleted 4237.852377437 Hz in 24.72s\ncompleted 5039.684199579 Hz in 24.10s\ncompleted 5339.359416680 Hz in 14.13s\ncompleted 5656.854249492 Hz in 13.18s\ncompleted 6727.171322030 Hz in 12.46s\ncompleted 4756.828460011 Hz in 31.62s\ncompleted 7127.189745123 Hz in 21.58s\ncompleted 5993.228307507 Hz in 22.61s\ncompleted 7550.994501454 Hz in 14.91s\ncompleted 6349.604207873 Hz in 24.39s\ncompleted 8000.000000000 Hz in 13.92s\nsearch report: /Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/45deg-250mm/search_report.html\nstatus: complete\n"
+    },
+    {
+      "completed_at_unix": 1784845815.7005131,
+      "returncode": 0,
+      "search_yaml": "/Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/40deg-250mm/search.yaml",
+      "started_at_unix": 1784845662.431371,
+      "stderr_tail": "",
+      "stdout_tail": "Could not find Gmsh.Interactive plotting and shapes module not available.\nCould not find Gmsh.Interactive plotting and shapes module not available.\nNumCalc plan: 10 single-thread frequency processes; 0.445 GiB/process including headroom; 48.0 GiB limit; 49 pending\ncompleted 529.731547180 Hz in 34.46s\ncompleted 840.896415254 Hz in 34.38s\ncompleted 707.106781187 Hz in 34.54s\ncompleted 749.153538438 Hz in 34.55s\ncompleted 793.700525984 Hz in 34.78s\ncompleted 629.960524947 Hz in 34.82s\ncompleted 561.231024155 Hz in 34.77s\ncompleted 667.419927085 Hz in 35.06s\ncompleted 500.000000000 Hz in 35.40s\ncompleted 594.603557501 Hz in 35.42s\ncompleted 1189.207115003 Hz in 13.56s\ncompleted 1000.000000000 Hz in 23.91s\ncompleted 1414.213562373 Hz in 24.81s\ncompleted 1334.839854170 Hz in 25.15s\ncompleted 1122.462048309 Hz in 25.49s\ncompleted 1059.463094359 Hz in 25.76s\ncompleted 890.898718140 Hz in 35.18s\ncompleted 943.874312682 Hz in 35.31s\ncompleted 1498.307076877 Hz in 35.16s\ncompleted 2118.926188719 Hz in 13.17s\ncompleted 1887.748625363 Hz in 19.66s\ncompleted 1681.792830507 Hz in 22.61s\ncompleted 1587.401051968 Hz in 35.20s\ncompleted 1781.797436281 Hz in 24.94s\ncompleted 2000.000000000 Hz in 26.33s\ncompleted 2519.842099790 Hz in 22.62s\ncompleted 1259.921049895 Hz in 59.92s\ncompleted 2828.427124746 Hz in 15.20s\ncompleted 2669.679708340 Hz in 24.43s\ncompleted 2378.414230005 Hz in 28.65s\ncompleted 3174.802103936 Hz in 15.01s\ncompleted 2244.924096619 Hz in 29.23s\ncompleted 3363.585661015 Hz in 13.81s\ncompleted 3563.594872561 Hz in 19.04s\ncompleted 3775.497250727 Hz in 17.12s\ncompleted 2996.614153753 Hz in 30.08s\ncompleted 4756.828460011 Hz in 13.29s\ncompleted 5339.359416680 Hz in 12.91s\ncompleted 4237.852377437 Hz in 24.30s\ncompleted 5039.684199579 Hz in 24.02s\ncompleted 5993.228307507 Hz in 17.02s\ncompleted 4489.848193237 Hz in 25.06s\ncompleted 5656.854249492 Hz in 24.34s\ncompleted 4000.000000000 Hz in 28.92s\ncompleted 6349.604207873 Hz in 14.84s\ncompleted 7550.994501454 Hz in 15.20s\ncompleted 7127.189745123 Hz in 17.06s\ncompleted 6727.171322030 Hz in 19.16s\ncompleted 8000.000000000 Hz in 11.21s\nsearch report: /Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/40deg-250mm/search_report.html\nstatus: complete\n"
+    },
+    {
+      "completed_at_unix": 1784845856.950678,
+      "returncode": 0,
+      "search_yaml": "/Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/35deg-300mm/search.yaml",
+      "started_at_unix": 1784845662.424427,
+      "stderr_tail": "",
+      "stdout_tail": "Could not find Gmsh.Interactive plotting and shapes module not available.\nCould not find Gmsh.Interactive plotting and shapes module not available.\nNumCalc plan: 10 single-thread frequency processes; 0.684 GiB/process including headroom; 48.0 GiB limit; 49 pending\ncompleted 793.700525984 Hz in 52.01s\ncompleted 840.896415254 Hz in 62.40s\ncompleted 629.960524947 Hz in 79.79s\ncompleted 529.731547180 Hz in 79.97s\ncompleted 707.106781187 Hz in 79.92s\ncompleted 500.000000000 Hz in 80.38s\ncompleted 749.153538438 Hz in 80.67s\ncompleted 667.419927085 Hz in 80.91s\ncompleted 561.231024155 Hz in 80.95s\ncompleted 890.898718140 Hz in 31.01s\ncompleted 943.874312682 Hz in 25.54s\ncompleted 1000.000000000 Hz in 23.03s\ncompleted 1259.921049895 Hz in 22.45s\ncompleted 1189.207115003 Hz in 24.86s\ncompleted 1414.213562373 Hz in 24.29s\ncompleted 594.603557501 Hz in 108.33s\ncompleted 1334.839854170 Hz in 29.74s\ncompleted 1059.463094359 Hz in 32.29s\ncompleted 1498.307076877 Hz in 29.74s\ncompleted 1122.462048309 Hz in 36.66s\ncompleted 1781.797436281 Hz in 21.86s\ncompleted 1587.401051968 Hz in 37.50s\ncompleted 2000.000000000 Hz in 20.77s\ncompleted 1887.748625363 Hz in 25.78s\ncompleted 2244.924096619 Hz in 20.31s\ncompleted 2378.414230005 Hz in 20.23s\ncompleted 2519.842099790 Hz in 21.05s\ncompleted 2669.679708340 Hz in 17.72s\ncompleted 2118.926188719 Hz in 26.32s\ncompleted 1681.792830507 Hz in 32.36s\ncompleted 2828.427124746 Hz in 16.23s\ncompleted 2996.614153753 Hz in 16.77s\ncompleted 3174.802103936 Hz in 16.48s\ncompleted 3563.594872561 Hz in 15.87s\ncompleted 3363.585661015 Hz in 16.22s\ncompleted 3775.497250727 Hz in 15.75s\ncompleted 4000.000000000 Hz in 15.67s\ncompleted 4237.852377437 Hz in 15.68s\ncompleted 4489.848193237 Hz in 15.80s\ncompleted 4756.828460011 Hz in 16.01s\ncompleted 5039.684199579 Hz in 15.99s\ncompleted 5339.359416680 Hz in 16.03s\ncompleted 5656.854249492 Hz in 15.95s\ncompleted 5993.228307507 Hz in 15.78s\ncompleted 6349.604207873 Hz in 15.78s\ncompleted 6727.171322030 Hz in 15.81s\ncompleted 7127.189745123 Hz in 15.90s\ncompleted 7550.994501454 Hz in 15.95s\ncompleted 8000.000000000 Hz in 16.72s\nsearch report: /Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/35deg-300mm/search_report.html\nstatus: complete\n"
+    }
+  ],
+  "failure_count": 0,
+  "scheduler": {
+    "configured_workers": {
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/35deg-300mm/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/40deg-250mm/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/45deg-250mm/search.yaml": 10
+    },
+    "numcalc_process_capacity": 20,
+    "queue_workers": 4,
+    "search_count": 3
+  },
+  "schema_version": 1,
+  "slot_directory": "/var/folders/x3/xj6bcbnn235gz39j4pl1tmrm0000gn/T/horncad-numcalc-slots-501",
+  "started_at_unix": 1784845662.423918,
+  "status": "complete"
+}

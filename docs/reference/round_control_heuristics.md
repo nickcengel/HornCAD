@@ -84,9 +84,11 @@ in 16 of these cells:
 - six final measured cell seeds therefore move to ridge-closure evidence.
 
 The six outward-K wins are useful registered-domain seeds, not proof of an
-unconstrained optimum beyond K=1 or K=7. Three short/low-K cells also retained a
-shorter-length boundary at their outward K. The artifact publishes these
-statuses per cell and keeps multi-point zones separate from single-point hints.
+unconstrained optimum beyond K=1 or K=7. A three-case follow-up tested one
+shorter length in each previously unbracketed K=1 cell. All three shorter cases
+lost, so the K=1 short branch is now length-bracketed in every tested cell; no
+conditional second step was needed. The artifact publishes these statuses per
+cell and keeps multi-point zones separate from single-point hints.
 
 ## H/V starting construction
 

@@ -1,0 +1,12 @@
+{
+  "candidate_count": 0,
+  "content_sha256": "3da83b4f7cbbfa896787985da68488b6c36a547d1340b14635203de64fff1808",
+  "initial_response_hashes": {
+    "short-closure-35deg-300mm-K1-N8-Lx0p8": "ffac9f0a704348d239093324b0306bfc8ad3f6ae7d07a65879accc9a03b2dfad",
+    "short-closure-40deg-250mm-K1-N8-Lx0p8": "af81f36f256cdfd91f8042a798bcfc610a623128a7f4899bf9b4444b7bd048ec",
+    "short-closure-45deg-250mm-K1-N8-Lx0p8": "e2742675045dc9598a01b5b76cbb862aa8af975e656cb3c52b78425b645438f2"
+  },
+  "rule": "schedule Lx0.7 only when Lx0.8 score exceeds Lx0.9",
+  "schema_version": 1,
+  "selected_cells": []
+}

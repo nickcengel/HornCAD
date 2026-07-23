@@ -16,6 +16,8 @@ INDEX = ROOT / "examples/control-decoupling/model_source/training_index.json"
 CHALLENGE = (
     ROOT / "examples/round-control-v2-validation/validation_results.json")
 RIDGE = ROOT / "examples/round-control-ridge-closure/results.json"
+SHORT_CLOSURE = (
+    ROOT / "examples/round-control-short-length-closure/results.json")
 OUTPUT = ROOT / "models/round_control_heuristics_v1"
 ANGLES = (30, 35, 40, 45, 50)
 MOUTHS = (250, 300, 350, 400, 450)
@@ -241,6 +243,19 @@ def _all_measured_rows(index: dict[str, Any]) -> list[dict[str, Any]]:
         "benchmark": False,
         "provenance": "ridge-closure",
     } for row in ridge["evidence"])
+    short_closure = _read(SHORT_CLOSURE)
+    rows.extend({
+        "id": row["id"],
+        "coverage_deg": row["coverage_deg"],
+        "mouth_mm": row["mouth_mm"],
+        "length_factor": row["length_factor"],
+        "k": row["k"],
+        "n": row["n"],
+        "s": row["derived_s"],
+        "responses": row["responses"],
+        "benchmark": False,
+        "provenance": "short-length-closure",
+    } for row in short_closure["evidence"])
     return rows
 
 
@@ -483,6 +498,7 @@ def _ridge_closure_audit(
 def build() -> dict[str, Any]:
     index = _read(INDEX)
     ridge_result = _read(RIDGE)
+    short_closure = _read(SHORT_CLOSURE)
     rows = _canonical_rows(index)
     length = _length_audit(rows)
     k_audit = _axis_audit(
@@ -584,6 +600,14 @@ def build() -> dict[str, Any]:
                 },
             },
             {
+                "id": "short-k1-length-brackets",
+                "action": (
+                    "use the measured Lx0.9 K=1/N=8 seed in the three "
+                    "formerly unbracketed short cells; Lx0.8 closed the "
+                    "short side in every case"),
+                "evidence": short_closure["summary"],
+            },
+            {
                 "id": "hv-flat-compromise",
                 "action": (
                     "for unequal H/V targets, combine independent axis seed "
@@ -608,6 +632,11 @@ def build() -> dict[str, Any]:
             "n": n_audit,
             "coupled_branches": branches,
             "ridge_closure": ridge,
+            "short_length_closure": {
+                "candidate_count": short_closure["candidate_count"],
+                "summary": short_closure["summary"],
+                "cells": short_closure["cells"],
+            },
             "observed_high_score_zones": zones,
         },
         "provenance": {
@@ -617,6 +646,10 @@ def build() -> dict[str, Any]:
             "challenge_results_sha256": _file_hash(CHALLENGE),
             "ridge_results": str(RIDGE.relative_to(ROOT)),
             "ridge_results_sha256": _file_hash(RIDGE),
+            "short_length_closure_results": str(
+                SHORT_CLOSURE.relative_to(ROOT)),
+            "short_length_closure_results_sha256":
+                _file_hash(SHORT_CLOSURE),
             "builder_sha256": _file_hash(Path(__file__)),
         },
     }
@@ -648,6 +681,8 @@ global score model.
   {ridge['outward_k_turned_over_cells']} cells.
 - The final measured cell best comes from ridge closure in
   {ridge['final_measured_best_from_ridge_cells']} of the 16 tested cells.
+- The three formerly unbracketed K=1 short-length curves were all bracketed
+  with three additional Lx0.8 measurements; no Lx0.7 cases were required.
 
 The H/V flat-length and sag outputs are starting constructions. No asymmetric or
 sagged BEM evidence is claimed. Sag is excluded from total score and these

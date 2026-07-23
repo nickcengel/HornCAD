@@ -1,0 +1,257 @@
+{
+  "candidate_count": 3,
+  "cells": {
+    "35deg-300mm": {
+      "bracketed": true,
+      "k": 1.0,
+      "n": 8.0,
+      "preferred_length_multiplier": 0.9,
+      "scores_by_length_multiplier": {
+        "0.8": 81.89960397111068,
+        "0.9": 83.45137612910739,
+        "1.0": 82.87706444547774
+      },
+      "status": "bracketed"
+    },
+    "40deg-250mm": {
+      "bracketed": true,
+      "k": 1.0,
+      "n": 8.0,
+      "preferred_length_multiplier": 0.9,
+      "scores_by_length_multiplier": {
+        "0.8": 82.4904182890406,
+        "0.9": 84.78166314035559,
+        "1.0": 83.68346633809927
+      },
+      "status": "bracketed"
+    },
+    "45deg-250mm": {
+      "bracketed": true,
+      "k": 1.0,
+      "n": 8.0,
+      "preferred_length_multiplier": 0.9,
+      "scores_by_length_multiplier": {
+        "0.8": 84.05616579293245,
+        "0.9": 85.83271778103645,
+        "1.0": 83.84382007611703
+      },
+      "status": "bracketed"
+    }
+  },
+  "content_sha256": "f5e53a49cb7b8fa8fdf0ed63a9612c466ec16e38f805ebc1cf074b77354cf156",
+  "evidence": [
+    {
+      "coverage_deg": 35,
+      "derived_s": 1.5754393671556264,
+      "id": "short-closure-35deg-300mm-K1-N8-Lx0p8",
+      "k": 1.0,
+      "length_factor": 0.6201974267968057,
+      "length_mm": 111.834,
+      "length_multiplier": 0.8,
+      "mouth_mm": 300,
+      "n": 8.0,
+      "response_path": "examples/round-control-short-length-closure/searches/initial/35deg-300mm/candidates/candidate-000/bem/responses.npz",
+      "response_sha256": "ffac9f0a704348d239093324b0306bfc8ad3f6ae7d07a65879accc9a03b2dfad",
+      "responses": {
+        "components": {
+          "crossover_loading": 50.433645915651816,
+          "excess_variation": 97.13801717314104,
+          "ripple": 97.6862399362047,
+          "shelf_stability": 95.58412892726017
+        },
+        "crossover": {
+          "frequency_hz": 750.0,
+          "magnitude": 0.40124681608874074,
+          "passes_target": false,
+          "shelf_ratio": 0.3550832505049056,
+          "target_ratio": 0.5
+        },
+        "error_references": {
+          "excess_variation_db_per_octave": 3.0,
+          "ripple_rms_db": 1.0,
+          "shelf_rms_db": 1.0,
+          "shelf_slope_db_per_octave": 1.0
+        },
+        "mean_containment": 81.01397802170386,
+        "minus_six_db_rms_error": 11.108485953096558,
+        "outward_rise_violation": 0.2914672622960541,
+        "overall_percent": 78.46534667447636,
+        "profile_rms_error": 1.6726754917390738,
+        "samples_per_octave": 48,
+        "score_weights": {
+          "crossover_loading": 0.4,
+          "excess_variation": 0.2,
+          "ripple": 0.3,
+          "shelf_stability": 0.1
+        },
+        "shelf": {
+          "lower_frequency_hz": 2449.4897427831793,
+          "reference_magnitude": 1.1300077250002458,
+          "reference_method": "10% trimmed geometric mean of upper half of logarithmic band",
+          "rms_deviation_db": 0.26413925194743576,
+          "slope_db_per_octave": -0.15376714308863557,
+          "upper_frequency_hz": 8000.0
+        },
+        "slice_energy_rms_departure": 0.9394712047670124,
+        "smoothness": {
+          "excess_variation_db_per_octave": 0.5149441744598566,
+          "reversal_count": 5,
+          "ripple_p95_db": 0.3510729203170882,
+          "ripple_rms_db": 0.15390136214093053
+        },
+        "status": "experimental",
+        "surface_score": 81.89960397111068,
+        "throat_impedance_score": 78.46534667447636
+      },
+      "stage": "initial",
+      "target_s": 0.7830192504883154
+    },
+    {
+      "coverage_deg": 40,
+      "derived_s": 1.851570265296409,
+      "id": "short-closure-40deg-250mm-K1-N8-Lx0p8",
+      "k": 1.0,
+      "length_factor": 0.6303944592604387,
+      "length_mm": 79.187,
+      "length_multiplier": 0.8,
+      "mouth_mm": 250,
+      "n": 8.0,
+      "response_path": "examples/round-control-short-length-closure/searches/initial/40deg-250mm/candidates/candidate-000/bem/responses.npz",
+      "response_sha256": "af81f36f256cdfd91f8042a798bcfc610a623128a7f4899bf9b4444b7bd048ec",
+      "responses": {
+        "components": {
+          "crossover_loading": 40.2982949761948,
+          "excess_variation": 97.16388484589316,
+          "ripple": 98.3987885170665,
+          "shelf_stability": 94.07516128867721
+        },
+        "crossover": {
+          "frequency_hz": 750.0,
+          "magnitude": 0.36052110109711916,
+          "passes_target": false,
+          "shelf_ratio": 0.3174046903252802,
+          "target_ratio": 0.5
+        },
+        "error_references": {
+          "excess_variation_db_per_octave": 3.0,
+          "ripple_rms_db": 1.0,
+          "shelf_rms_db": 1.0,
+          "shelf_slope_db_per_octave": 1.0
+        },
+        "mean_containment": 82.55506865472265,
+        "minus_six_db_rms_error": 12.353946498156281,
+        "outward_rise_violation": 0.16271818491950873,
+        "overall_percent": 74.47924764364423,
+        "profile_rms_error": 1.593270807905702,
+        "samples_per_octave": 48,
+        "score_weights": {
+          "crossover_loading": 0.4,
+          "excess_variation": 0.2,
+          "ripple": 0.3,
+          "shelf_stability": 0.1
+        },
+        "shelf": {
+          "lower_frequency_hz": 2449.4897427831793,
+          "reference_magnitude": 1.1358404966468918,
+          "reference_method": "10% trimmed geometric mean of upper half of logarithmic band",
+          "rms_deviation_db": 0.30533088020234367,
+          "slope_db_per_octave": 0.185368312875903,
+          "upper_frequency_hz": 8000.0
+        },
+        "slice_energy_rms_departure": 0.9446154166749792,
+        "smoothness": {
+          "excess_variation_db_per_octave": 0.5125435228845435,
+          "reversal_count": 3,
+          "ripple_p95_db": 0.2925345842948175,
+          "ripple_rms_db": 0.12756439458670618
+        },
+        "status": "experimental",
+        "surface_score": 82.4904182890406,
+        "throat_impedance_score": 74.47924764364423
+      },
+      "stage": "initial",
+      "target_s": 0.9237190903017322
+    },
+    {
+      "coverage_deg": 45,
+      "derived_s": 2.1737706860826638,
+      "id": "short-closure-45deg-250mm-K1-N8-Lx0p8",
+      "k": 1.0,
+      "length_factor": 0.6388634193835014,
+      "length_mm": 67.586,
+      "length_multiplier": 0.8,
+      "mouth_mm": 250,
+      "n": 8.0,
+      "response_path": "examples/round-control-short-length-closure/searches/initial/45deg-250mm/candidates/candidate-000/bem/responses.npz",
+      "response_sha256": "e2742675045dc9598a01b5b76cbb862aa8af975e656cb3c52b78425b645438f2",
+      "responses": {
+        "components": {
+          "crossover_loading": 31.569723125096587,
+          "excess_variation": 98.18257001506558,
+          "ripple": 99.334899162579,
+          "shelf_stability": 71.4709842186897
+        },
+        "crossover": {
+          "frequency_hz": 750.0,
+          "magnitude": 0.317377393793612,
+          "passes_target": false,
+          "shelf_ratio": 0.2809347038241119,
+          "target_ratio": 0.5
+        },
+        "error_references": {
+          "excess_variation_db_per_octave": 3.0,
+          "ripple_rms_db": 1.0,
+          "shelf_rms_db": 1.0,
+          "shelf_slope_db_per_octave": 1.0
+        },
+        "mean_containment": 85.42156433922166,
+        "minus_six_db_rms_error": 9.954302331047254,
+        "outward_rise_violation": 0.5519871620725474,
+        "overall_percent": 69.21197142369442,
+        "profile_rms_error": 1.5181822726593028,
+        "samples_per_octave": 48,
+        "score_weights": {
+          "crossover_loading": 0.4,
+          "excess_variation": 0.2,
+          "ripple": 0.3,
+          "shelf_stability": 0.1
+        },
+        "shelf": {
+          "lower_frequency_hz": 2449.4897427831793,
+          "reference_magnitude": 1.129719431146948,
+          "reference_method": "10% trimmed geometric mean of upper half of logarithmic band",
+          "rms_deviation_db": 0.5357655858496349,
+          "slope_db_per_octave": 0.7298589281978427,
+          "upper_frequency_hz": 8000.0
+        },
+        "slice_energy_rms_departure": 0.8552112207033502,
+        "smoothness": {
+          "excess_variation_db_per_octave": 0.40816231194998775,
+          "reversal_count": 3,
+          "ripple_p95_db": 0.2021664935926455,
+          "ripple_rms_db": 0.08182628226887358
+        },
+        "status": "experimental",
+        "surface_score": 84.05616579293245,
+        "throat_impedance_score": 69.21197142369442
+      },
+      "stage": "initial",
+      "target_s": 1.0863365190714132
+    }
+  ],
+  "hard_candidate_cap": 6,
+  "scheduler": {
+    "numcalc_process_capacity": 20,
+    "search_sharding": "one-candidate-per-search",
+    "type": "stage-aware-bem-queue"
+  },
+  "schema_version": 1,
+  "study_id": "round-control-short-length-closure-v1",
+  "summary": {
+    "bracketed_cells": 3,
+    "short_boundary_cells": 0,
+    "tested_cells": 3
+  },
+  "throat_impedance_used_in_decisions": false,
+  "throat_impedance_used_in_surface_score": false
+}

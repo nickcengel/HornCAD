@@ -25,6 +25,8 @@ global score model.
   10 cells.
 - The final measured cell best comes from ridge closure in
   6 of the 16 tested cells.
+- The three formerly unbracketed K=1 short-length curves were all bracketed
+  with three additional Lx0.8 measurements; no Lx0.7 cases were required.
 
 The H/V flat-length and sag outputs are starting constructions. No asymmetric or
 sagged BEM evidence is claimed. Sag is excluded from total score and these

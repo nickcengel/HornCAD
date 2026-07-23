@@ -783,7 +783,7 @@
           ],
           "competitive_point_count": 8,
           "confirmed_alternative_zone_count": 1,
-          "measured_count": 49,
+          "measured_count": 50,
           "single_point_alternative_hint_count": 0
         },
         "35deg-350mm": {
@@ -922,7 +922,7 @@
           ],
           "competitive_point_count": 4,
           "confirmed_alternative_zone_count": 2,
-          "measured_count": 42,
+          "measured_count": 43,
           "single_point_alternative_hint_count": 0
         },
         "40deg-300mm": {
@@ -1097,7 +1097,7 @@
           ],
           "competitive_point_count": 4,
           "confirmed_alternative_zone_count": 0,
-          "measured_count": 38,
+          "measured_count": 39,
           "single_point_alternative_hint_count": 2
         },
         "45deg-300mm": {
@@ -2162,6 +2162,52 @@
       "outward_k_turned_over_cells": 10,
       "outward_k_won_over_inner_k_cells": 6,
       "tested_cells": 16
+    },
+    "short_length_closure": {
+      "candidate_count": 3,
+      "cells": {
+        "35deg-300mm": {
+          "bracketed": true,
+          "k": 1.0,
+          "n": 8.0,
+          "preferred_length_multiplier": 0.9,
+          "scores_by_length_multiplier": {
+            "0.8": 81.89960397111068,
+            "0.9": 83.45137612910739,
+            "1.0": 82.87706444547774
+          },
+          "status": "bracketed"
+        },
+        "40deg-250mm": {
+          "bracketed": true,
+          "k": 1.0,
+          "n": 8.0,
+          "preferred_length_multiplier": 0.9,
+          "scores_by_length_multiplier": {
+            "0.8": 82.4904182890406,
+            "0.9": 84.78166314035559,
+            "1.0": 83.68346633809927
+          },
+          "status": "bracketed"
+        },
+        "45deg-250mm": {
+          "bracketed": true,
+          "k": 1.0,
+          "n": 8.0,
+          "preferred_length_multiplier": 0.9,
+          "scores_by_length_multiplier": {
+            "0.8": 84.05616579293245,
+            "0.9": 85.83271778103645,
+            "1.0": 83.84382007611703
+          },
+          "status": "bracketed"
+        }
+      },
+      "summary": {
+        "bracketed_cells": 3,
+        "short_boundary_cells": 0,
+        "tested_cells": 3
+      }
     }
   },
   "coupled_branch_seeds": {
@@ -2635,11 +2681,13 @@
   },
   "heuristic_id": "round_control_heuristics_v1",
   "provenance": {
-    "builder_sha256": "9f6cd7c81e03a3d2d592e5194299e4a14c3f8a77c6df9e6160f0611e3af6769a",
+    "builder_sha256": "b579db9cf7c6f552d1094e60c30d43540ab5d97e9149439481946e16ee341a4c",
     "challenge_results": "examples/round-control-v2-validation/validation_results.json",
     "challenge_results_sha256": "ac4b773c584dba1a70feaa8abbd8608c9ccdcffa35ea59c00c3638cb44d70dc4",
     "ridge_results": "examples/round-control-ridge-closure/results.json",
     "ridge_results_sha256": "387b255e5da33e396764a818a37b856cecd2fce8e1c118ddfd73d9faf4b8c7fa",
+    "short_length_closure_results": "examples/round-control-short-length-closure/results.json",
+    "short_length_closure_results_sha256": "e4c6ae235a622a8b81b3db28920779cec2e8ae8cd7efd1bb147aec713be57c9c",
     "training_index": "examples/control-decoupling/model_source/training_index.json",
     "training_index_sha256": "9f78e42e55bf8c81c995fb8357d4ff7207b6d77fe2a0e9b4a0e2f20c2ea74a75"
   },
@@ -2889,6 +2937,15 @@
         "outward_k_won_over_inner_k_cells": 6
       },
       "id": "respect-ridge-closure-status"
+    },
+    {
+      "action": "use the measured Lx0.9 K=1/N=8 seed in the three formerly unbracketed short cells; Lx0.8 closed the short side in every case",
+      "evidence": {
+        "bracketed_cells": 3,
+        "short_boundary_cells": 0,
+        "tested_cells": 3
+      },
+      "id": "short-k1-length-brackets"
     },
     {
       "action": "for unequal H/V targets, combine independent axis seed lengths using mouth-width/height score weights",

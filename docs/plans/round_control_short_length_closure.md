@@ -1,5 +1,23 @@
 # Round-control short-length closure
 
+## Completion status
+
+Completed after the three initial evaluations. In all three cells, the 0.8×
+length scored below the existing 0.9× point, so 0.9× is bracketed by 0.8× and
+1.0×. The conditional 0.7× block was not authorized or run.
+
+Scores:
+
+| Cell | 0.8× | 0.9× | 1.0× |
+| --- | ---: | ---: | ---: |
+| 35° / 300 mm | 81.90 | 83.45 | 82.88 |
+| 40° / 250 mm | 82.49 | 84.78 | 83.68 |
+| 45° / 250 mm | 84.06 | 85.83 | 83.84 |
+
+All three candidates ran as independent searches through the stage-aware
+20-process queue. Throat impedance was retained but was not used in the
+decision.
+
 ## Purpose
 
 Bracket the remaining three short/low-K length curves after ridge closure.
