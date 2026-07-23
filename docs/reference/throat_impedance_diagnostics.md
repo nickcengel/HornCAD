@@ -36,5 +36,8 @@ values are calibration hypotheses, not settled design criteria. Before using
 the score in an extension search, compare its separate components against known
 good and bad measured curves and adjust the references—not just the weights.
 
-The prototype lives in `app/tools/throat_impedance_diagnostics.py` and has no
-call site in production search or reporting code.
+The implementation lives in `app/tools/throat_impedance_diagnostics.py`. The
+round-control release pipeline now fits its overall percentage as an independent
+experimental response for future extension/throat-angle work. It remains absent
+from live search, candidate ranking, the radiation surface score, and
+primary/augmented model choice.

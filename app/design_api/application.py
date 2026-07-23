@@ -66,17 +66,12 @@ class DesignApplication:
 
     @classmethod
     def load(cls, model_directory: str | Path) -> DesignApplication:
-        """Load a released portable model.
-
-        The contract is intentionally present before the first model is fitted.
-        It fails clearly rather than pretending that study reports are a model.
-        """
+        """Load a released portable model."""
         model_path = Path(model_directory) / "model.json"
         if not model_path.is_file():
             raise FileNotFoundError(f"portable model not found: {model_path}")
-        raise ModelNotReadyError(
-            "model.json runtime is scaffolded but not implemented; complete the "
-            "round-control fitting/export pipeline before loading a release")
+        from .portable import PortableRoundControlBackend
+        return cls(PortableRoundControlBackend(model_path))
 
     def predict(self, design: DesignPoint) -> Prediction:
         return self._backend.predict(design)

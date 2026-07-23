@@ -174,5 +174,12 @@ BEM experiment is specified in `examples/control-decoupling/study_plan.md`,
 with its model export pipeline alongside it. The later cross-study geometry
 program is defined in `docs/plans/geometry_research_roadmap.md`.
 
+Released round-control prediction models are in
+`models/round_control_primary_v1/` and
+`models/round_control_augmented_v1/`. Load either with
+`DesignApplication.load()` from `app.design_api`. The augmented release keeps
+primary and augmented estimates side by side and uses the augmented estimate
+normally only in cells where locked validation is at least as good.
+
 `pyproject.toml` and `Makefile` remain at the root because Python packaging and
 standard build tools expect project metadata there.

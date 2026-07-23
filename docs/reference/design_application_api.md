@@ -7,11 +7,10 @@ study and later extension, mouth-shape, H/V, sag, and throat-angle models. Raw
 NPZ evidence feeds model fitting; application callers consume predictions,
 diagnoses, recommendations, and proposed confirmation experiments.
 
-The initial Python scaffold lives in `app.design_api`. It defines and validates
-the public inputs and outputs now. Loading and evaluating the first exported
-`model.json` will be implemented after the round-control model passes its release
-gates. Until then, `DesignApplication.load()` fails clearly rather than treating
-study reports as a released model.
+The Python implementation lives in `app.design_api`. It validates public inputs
+and outputs and loads the released primary or augmented round-control
+`model.json`. Prediction is implemented; diagnosis, improvement, automated
+design, and experiment selection remain deliberately deferred.
 
 ## Most common calls
 
@@ -43,6 +42,8 @@ print(prediction.surface_score.mean)
 print(prediction.diagnostics["slice_energy_rms_departure"])
 print(prediction.derived_geometry["s_horizontal"])
 print(prediction.support, prediction.nearest_evidence_ids)
+print(prediction.diagnostics["throat_impedance_score"])
+print(prediction.model_predictions)  # primary and augmented side by side
 ```
 
 `profile_length_mm` always means OS-SE profile length. Extension and sag are
@@ -110,6 +111,8 @@ experiments = app.select_experiments(
 
 Every predicted recommendation remains unconfirmed until BEM evaluates it.
 Support status, uncertainty, and nearest evidence must stay visible to callers.
+The experimental throat-impedance score remains independent and is not included
+in the radiation surface score or normal-model selection.
 
 ## General H/V and future geometry
 

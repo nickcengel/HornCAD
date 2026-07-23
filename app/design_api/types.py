@@ -131,6 +131,8 @@ class Prediction:
     model_id: str
     warnings: tuple[str, ...] = ()
     nearest_evidence_ids: tuple[str, ...] = ()
+    model_predictions: Mapping[str, Mapping[str, Estimate]] = field(
+        default_factory=dict)
 
     @property
     def surface_score(self) -> Estimate:
