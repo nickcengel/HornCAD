@@ -187,6 +187,7 @@ def render_index(root: Path, manifest: dict[str, Any],
             f"<td><a href='{html.escape(row['search_report'])}'>report</a></td></tr>")
 
     parent_rows = []
+    parent_items = []
     for role in ("primary", "secondary"):
         for cell, parent in sorted(manifest["parents"][role].items()):
             response = ROOT / parent["response_path"]
@@ -202,6 +203,17 @@ def render_index(root: Path, manifest: dict[str, Any],
                 source_search / str(report_file)
                 if report_file else source_search / "search_report.html"
             )
+            report_href = _relative(root, source_report)
+            parent_items.append({
+                "role": role,
+                "cell": cell,
+                "id": parent["id"],
+                "surface_score": float(
+                    parent["responses"]["surface_score"]),
+                "throat_impedance_score": float(
+                    parent["responses"]["throat_impedance_score"]),
+                "report": report_href,
+            })
             parent_rows.append(
                 f"<tr><td>{html.escape(role)}</td><td>{html.escape(cell)}</td>"
                 f"<td>{html.escape(parent['id'])}</td>"
@@ -210,7 +222,44 @@ def render_index(root: Path, manifest: dict[str, Any],
                 f"<td>{_number(parent['length_mm'],1)}</td>"
                 f"<td>{_number(parent['s'],3)}</td><td>{_number(parent['k'],1)}</td>"
                 f"<td>{_number(parent['n'],1)}</td>"
-                f"<td><a href='{html.escape(_relative(root, source_report))}'>candidate</a></td></tr>")
+                f"<td><a href='{html.escape(report_href)}'>candidate</a></td></tr>")
+
+    ranked_parents = sorted(
+        parent_items, key=lambda item: item["throat_impedance_score"])
+    parent_extremes = [
+        *((item, "lowest") for item in ranked_parents[:5]),
+        *((item, "highest") for item in reversed(ranked_parents[-5:])),
+    ]
+    plot_min = math.floor(
+        min(item["throat_impedance_score"]
+            for item, _ in parent_extremes) / 5) * 5
+    plot_max = math.ceil(
+        max(item["throat_impedance_score"]
+            for item, _ in parent_extremes) / 5) * 5
+    plot_ticks = "".join(
+        f"<span style='left:{(tick-plot_min)/(plot_max-plot_min)*100:.3f}%'>{tick}</span>"
+        for tick in range(int(plot_min), int(plot_max) + 1, 5)
+    )
+    impedance_rows = []
+    for item, group in parent_extremes:
+        score = item["throat_impedance_score"]
+        position = (score-plot_min) / (plot_max-plot_min) * 100
+        tooltip = (
+            f"{item['id']}\n{item['cell']} · {item['role']}\n"
+            f"Throat impedance: {score:.2f}\n"
+            f"Surface score: {item['surface_score']:.2f}\n"
+            f"Open report: {item['report']}"
+        )
+        impedance_rows.append(
+            f"<div class='impedance-row'><span class='impedance-label'>"
+            f"{html.escape(item['cell'])}<small>{html.escape(item['role'])}</small>"
+            f"</span><div class='impedance-track'>"
+            f"<a class='impedance-point {group}' "
+            f"style='left:{position:.3f}%' "
+            f"href='{html.escape(item['report'])}' "
+            f"title='{html.escape(tooltip)}' "
+            f"aria-label='{html.escape(tooltip)}'>"
+            f"<span>{score:.1f}</span></a></div></div>")
 
     coverages = (30, 35, 40, 45, 50)
     mouths = (250, 300, 350, 400, 450)
@@ -260,7 +309,7 @@ def render_index(root: Path, manifest: dict[str, Any],
     return f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}<meta name='viewport' content='width=device-width,initial-scale=1'>
 <title>Extension and throat-angle heuristic study</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#69d6c8;--good:#16856b;--warn:#b7791f;--bad:#b45353}}
-*{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}main{{width:100%;padding:20px}}h1,h2{{margin:0 0 12px}}p{{line-height:1.45}}a{{color:var(--accent)}}section{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding:8px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}th{{background:var(--panel-2);white-space:nowrap}}th.sortable{{cursor:pointer;user-select:none}}th.sortable::after{{content:' ↕';color:var(--muted)}}th.sortable[aria-sort='ascending']::after{{content:' ↑';color:var(--accent)}}th.sortable[aria-sort='descending']::after{{content:' ↓';color:var(--accent)}}.summary{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}.card{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}}.card strong{{display:block;font-size:1.4rem;margin-bottom:4px}}.badge{{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.9rem;text-transform:uppercase}}.badge.complete{{background:rgba(22,133,107,.18);color:#8de8cc}}.badge.running{{background:rgba(183,121,31,.2);color:#f6d39a}}.badge.failed{{background:rgba(180,83,83,.2);color:#ffb2b2}}.badge.pending{{background:rgba(148,163,189,.16);color:#c8d0d8}}.muted{{color:var(--muted)}}[hidden]{{display:none!important}}.column-controls,.angle-controls{{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}}.column-toggle,.angle-filter,.stage-filter{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true'],.angle-filter[aria-pressed='true'],.stage-filter[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}.show-more{{display:block;margin:14px auto 2px;border:1px solid var(--accent);border-radius:999px;padding:8px 16px;background:#173c39;color:var(--ink);cursor:pointer}}.design-map{{table-layout:fixed;min-width:1000px}}.design-cell{{min-width:150px;background:#17212a;border:1px solid var(--line)}}.design-cell>span{{display:block;margin-top:4px;font-size:.8rem;color:#c1cbd2;white-space:nowrap}}.design-score{{font-size:1.45rem}}code{{overflow-wrap:anywhere}}@media(max-width:900px){{.summary{{grid-template-columns:repeat(2,1fr)}}}}
+*{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}main{{width:100%;padding:20px}}h1,h2{{margin:0 0 12px}}p{{line-height:1.45}}a{{color:var(--accent)}}section{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding:8px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}th{{background:var(--panel-2);white-space:nowrap}}th.sortable{{cursor:pointer;user-select:none}}th.sortable::after{{content:' ↕';color:var(--muted)}}th.sortable[aria-sort='ascending']::after{{content:' ↑';color:var(--accent)}}th.sortable[aria-sort='descending']::after{{content:' ↓';color:var(--accent)}}.summary{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}.card{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}}.card strong{{display:block;font-size:1.4rem;margin-bottom:4px}}.badge{{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.9rem;text-transform:uppercase}}.badge.complete{{background:rgba(22,133,107,.18);color:#8de8cc}}.badge.running{{background:rgba(183,121,31,.2);color:#f6d39a}}.badge.failed{{background:rgba(180,83,83,.2);color:#ffb2b2}}.badge.pending{{background:rgba(148,163,189,.16);color:#c8d0d8}}.muted{{color:var(--muted)}}[hidden]{{display:none!important}}.column-controls,.angle-controls,.plot-legend{{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}}.legend-item{{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:.9rem}}.legend-dot{{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid #071015}}.column-toggle,.angle-filter,.stage-filter{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true'],.angle-filter[aria-pressed='true'],.stage-filter[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}.show-more{{display:block;margin:14px auto 2px;border:1px solid var(--accent);border-radius:999px;padding:8px 16px;background:#173c39;color:var(--ink);cursor:pointer}}.design-map{{table-layout:fixed;min-width:1000px}}.design-cell{{min-width:150px;background:#17212a;border:1px solid var(--line)}}.design-cell>span{{display:block;margin-top:4px;font-size:.8rem;color:#c1cbd2;white-space:nowrap}}.design-score{{font-size:1.45rem}}.impedance-plot{{min-width:760px;max-width:1150px;margin:18px auto 4px;padding:0 56px 0 190px}}.impedance-axis,.impedance-track{{position:relative;border-left:1px solid var(--line);border-right:1px solid var(--line);background:repeating-linear-gradient(to right,transparent 0,transparent calc(20% - 1px),var(--line-soft) calc(20% - 1px),var(--line-soft) 20%)}}.impedance-axis{{height:28px;border-bottom:1px solid var(--line)}}.impedance-axis span{{position:absolute;transform:translateX(-50%);top:8px;color:var(--muted);font-size:.78rem}}.impedance-row{{display:grid;grid-template-columns:180px 1fr;gap:10px;align-items:center;min-height:42px;margin-left:-190px}}.impedance-label{{text-align:right;font-size:.88rem}}.impedance-label small{{display:block;color:var(--muted)}}.impedance-track{{height:2px;background-color:var(--line);overflow:visible}}.impedance-point{{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;transform:translate(-50%,-50%);border:2px solid var(--bg);box-shadow:0 0 0 2px currentColor;z-index:2}}.impedance-point.lowest{{color:#e57373;background:#e57373}}.impedance-point.highest{{color:#58d68d;background:#58d68d}}.impedance-point span{{position:absolute;left:50%;top:-19px;transform:translateX(-50%);font-size:.75rem;color:var(--ink);white-space:nowrap}}code{{overflow-wrap:anywhere}}@media(max-width:900px){{.summary{{grid-template-columns:repeat(2,1fr)}}}}
 </style></head><body><main><h1>Extension and throat-angle heuristic study</h1>
 <p>Full 5×5 round-horn grid for deterministic extension and throat-angle design heuristics.</p>
 <p class='muted'>Throat impedance is reported as an experimental diagnostic in every report. It is not included in the surface score, ranking, heuristic fit, or validation gate.</p>
@@ -268,6 +317,7 @@ def render_index(root: Path, manifest: dict[str, Any],
 <section><h2>Project range</h2><table><tr><th>Coverage half-angles</th><th>Round mouths</th><th>Throat angles</th><th>Extensions</th><th>Initial / hard cap</th><th>Scheduler</th></tr><tr><td>30, 35, 40, 45, 50°</td><td>250, 300, 350, 400, 450 mm</td><td>0, 6, 12°</td><td>0, 20, 40, 60 mm</td><td>{manifest['initial_candidate_count']} / {manifest['hard_candidate_cap']}</td><td>{manifest['scheduler']['queue_workers']} workers · {manifest['scheduler']['numcalc_process_capacity']} total NumCalc processes</td></tr></table><p class='muted'>Coordinate SHA-256: <code>{manifest['coordinate_sha256']}</code> · Manifest SHA-256: <code>{_digest(manifest)}</code></p></section>
 <section><h2>Design map</h2><p class='muted'>Best measured surface score in each cell; its throat-impedance score is shown directly below it.</p><table class='design-map'><thead><tr><th>Mouth / coverage</th>{''.join(f'<th>{a}°</th>' for a in coverages)}</tr></thead><tbody>{''.join(grid_rows)}</tbody></table></section>
 <section><h2>Measured round parents</h2><p class='muted'>Frozen measured parents. Throat impedance was recorded but not used to select either parent set.</p><table class='sortable-table'><thead><tr><th data-sort='text'>Role</th><th data-sort='text'>Cell</th><th data-sort='text'>Parent</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score</th><th data-sort='number'>Length mm</th><th data-sort='number'>S</th><th data-sort='number'>K</th><th data-sort='number'>N</th><th>Report</th></tr></thead><tbody>{''.join(parent_rows)}</tbody></table></section>
+<section><h2>Measured-parent throat-impedance extremes</h2><p class='muted'>Five highest and five lowest measured parents ranked only by the experimental throat-impedance score. Hover a point for candidate details and its report link; click to open the candidate report. This plot does not affect surface ranking.</p><div class='plot-legend'><span class='legend-item'><i class='legend-dot' style='background:#58d68d'></i>Five highest</span><span class='legend-item'><i class='legend-dot' style='background:#e57373'></i>Five lowest</span></div><div class='impedance-plot'><div class='impedance-axis'>{plot_ticks}</div>{''.join(impedance_rows)}<p class='muted' style='text-align:center'>Experimental throat-impedance score</p></div></section>
 <section><h2>Candidates</h2><div class='column-controls'>{''.join(f"<button class='column-toggle' data-column-toggle='{key}' aria-pressed='{str(visible).lower()}'>{label}</button>" for key,label,visible in [('parent','Parent ID',True),('s','S',True),('containment','Containment',False),('profile','Profile RMS',False),('slice','Slice energy',False),('outward','Outward rise',False),('minus-six','−6 dB RMS',False)])}</div><div class='angle-controls'><button class='angle-filter' data-angle-filter='all' aria-pressed='true'>All coverages</button>{angle_buttons}<button class='stage-filter' data-stage-filter='all' aria-pressed='true'>All stages</button>{stage_buttons}<span id='candidate-count' class='muted'></span></div><table id='candidate-table' class='sortable-table'><thead><tr><th data-sort='text'>Candidate</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score</th><th data-sort='number'>Date</th><th data-sort='text'>Stage</th><th data-sort='number'>Coverage</th><th data-sort='number'>Mouth</th><th data-sort='text'>Parent role</th><th data-column='parent' data-sort='text'>Parent ID</th><th data-sort='number'>Throat angle</th><th data-sort='number'>Extension</th><th data-column='s' data-sort='number'>S</th><th data-sort='text'>Status</th><th data-column='containment' hidden data-sort='number'>Containment</th><th data-column='profile' hidden data-sort='number'>Profile RMS</th><th data-column='slice' hidden data-sort='number'>Slice energy</th><th data-column='outward' hidden data-sort='number'>Outward rise</th><th data-column='minus-six' hidden data-sort='number'>−6 dB RMS</th><th>Report</th></tr></thead><tbody>{''.join(candidate_rows)}</tbody></table><button id='candidate-show-more' class='show-more'>Show 25 more</button></section>
 <section><h2>Execution stages</h2><table class='sortable-table'><thead><tr><th data-sort='text'>Stage</th><th data-sort='number'>Candidates</th><th data-sort='number'>Complete</th><th data-sort='number'>Running</th><th data-sort='number'>Preflight</th><th data-sort='number'>Failed</th></tr></thead><tbody>{stage_rows}</tbody></table></section>
 <section><h2>Sub-searches</h2><p class='muted'>Each fixed candidate is an independently recoverable one-candidate search.</p><table class='sortable-table'><thead><tr><th data-sort='text'>Stage</th><th data-sort='number'>Coverage</th><th data-sort='number'>Mouth</th><th data-sort='number'>Throat angle</th><th data-sort='number'>Extension</th><th data-sort='text'>Status</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score</th><th>Report</th></tr></thead><tbody>{subsearch_rows}</tbody></table></section>
