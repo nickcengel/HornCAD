@@ -11,7 +11,10 @@ from app.tools.run_extension_throat_angle_study import (
     select_parents,
 )
 from app.tools.prepare_extension_throat_angle_study import candidate_design
-from app.tools.report_extension_throat_angle_study import render_index
+from app.tools.report_extension_throat_angle_study import (
+    _percent_change,
+    render_index,
+)
 
 
 class ExtensionThroatAngleStudyTests(unittest.TestCase):
@@ -46,6 +49,12 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         predicted = _formula_prediction(measured, 12, 40)
         self.assertEqual(predicted, measured[(12, 40)])
 
+    def test_candidate_change_is_percent_from_parent(self):
+        self.assertAlmostEqual(_percent_change(90.0, 75.0), 20.0)
+        self.assertAlmostEqual(_percent_change(60.0, 75.0), -20.0)
+        self.assertIsNone(_percent_change(None, 75.0))
+        self.assertIsNone(_percent_change(75.0, 0.0))
+
     def test_index_uses_established_sections_and_reports_impedance(self):
         manifest_path = Path(
             "examples/extension-throat-angle-heuristics/manifest.json")
@@ -78,6 +87,8 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
             output,
         )
         self.assertIn("<strong>development running</strong>study status", output)
+        self.assertIn("Surface Δ vs parent", output)
+        self.assertIn("Impedance Δ vs parent", output)
         self.assertIn(
             "Throat impedance: highest- and lowest-scoring parents", output)
         self.assertEqual(output.count("data-peak-normalized='1'"), 10)
