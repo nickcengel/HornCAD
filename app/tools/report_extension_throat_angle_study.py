@@ -14,6 +14,11 @@ from typing import Any
 
 import numpy as np
 
+from .throat_impedance_diagnostics import (
+    DIAGNOSTIC_VERSION,
+    throat_impedance_diagnostics,
+)
+
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -167,6 +172,26 @@ def render_index(root: Path, manifest: dict[str, Any],
     active = (progress.get("runtime_active", False) or running)
     refresh = "<meta http-equiv='refresh' content='30'>" if active else ""
 
+    parent_impedance_scores = {}
+    for role in ("primary", "secondary"):
+        for parent in manifest["parents"][role].values():
+            response = ROOT / parent["response_path"]
+            source_state = _read_json(
+                response.parents[3] / "search_state.json")
+            with np.load(response, allow_pickle=False) as archive:
+                frequencies = np.asarray(
+                    archive["frequencies_hz"], dtype=float)
+                impedance = np.asarray(archive["impedance"])
+            diagnostic = throat_impedance_diagnostics(
+                frequencies,
+                impedance,
+                float(source_state["crossover_hz"]),
+                float(source_state.get(
+                    "upper_frequency_hz", frequencies[-1])),
+            )
+            parent_impedance_scores[(role, parent["id"])] = float(
+                diagnostic["overall_percent"])
+
     candidate_rows = []
     for row in sorted(candidates, key=lambda item: (
             item["surface_score"] is not None,
@@ -175,7 +200,7 @@ def render_index(root: Path, manifest: dict[str, Any],
             row["surface_score"], row["parent_surface_score"])
         impedance_change = _percent_change(
             row["throat_impedance_score"],
-            row["parent_throat_impedance_score"])
+            parent_impedance_scores[(row["parent_role"], row["parent_id"])])
         label = html.escape(row["id"])
         if row["candidate_report"]:
             label = f"<a href='{html.escape(row['candidate_report'])}'>{label}</a>"
@@ -196,7 +221,8 @@ def render_index(root: Path, manifest: dict[str, Any],
             f"{_signed_percent(surface_change)}</td>"
             f"<td class='{'delta-positive' if impedance_change is not None and impedance_change > 0 else 'delta-negative' if impedance_change is not None and impedance_change < 0 else ''}' "
             f"data-sort='{_sort(impedance_change)}' "
-            f"title='Parent throat-impedance score: {_number(row['parent_throat_impedance_score'],2)}'>"
+            f"title='Parent throat-impedance score v{DIAGNOSTIC_VERSION}: "
+            f"{_number(parent_impedance_scores[(row['parent_role'], row['parent_id'])],2)}'>"
             f"{_signed_percent(impedance_change)}</td>"
             f"<td data-sort='{row['completed_at']}'>{_date(row['completed_at'])}</td>"
             f"<td>{html.escape(row['stage'])}</td>"
@@ -239,8 +265,8 @@ def render_index(root: Path, manifest: dict[str, Any],
                 "id": parent["id"],
                 "surface_score": float(
                     parent["responses"]["surface_score"]),
-                "throat_impedance_score": float(
-                    parent["responses"]["throat_impedance_score"]),
+                "throat_impedance_score": parent_impedance_scores[
+                    (role, parent["id"])],
                 "report": report_href,
                 "response_path": parent["response_path"],
             })
@@ -248,7 +274,7 @@ def render_index(root: Path, manifest: dict[str, Any],
                 f"<tr><td>{html.escape(role)}</td><td>{html.escape(cell)}</td>"
                 f"<td>{html.escape(parent['id'])}</td>"
                 f"<td>{_number(parent['responses']['surface_score'])}</td>"
-                f"<td>{_number(parent['responses']['throat_impedance_score'])}</td>"
+                f"<td>{_number(parent_impedance_scores[(role, parent['id'])])}</td>"
                 f"<td>{_number(parent['length_mm'],1)}</td>"
                 f"<td>{_number(parent['s'],3)}</td><td>{_number(parent['k'],1)}</td>"
                 f"<td>{_number(parent['n'],1)}</td>"
@@ -411,11 +437,11 @@ def render_index(root: Path, manifest: dict[str, Any],
 <section class='summary'><div class='card'><strong>{complete} / {len(candidates)}</strong>BEM complete</div><div class='card'><strong>{running}</strong>running searches</div><div class='card'><strong>{scored}</strong>scored candidates</div><div class='card'><strong>{html.escape(str(progress.get('study_status', manifest['status'])))}</strong>study status</div></section>
 <section><h2>Project range</h2><table><tr><th>Coverage half-angles</th><th>Round mouths</th><th>Throat angles</th><th>Extensions</th><th>Initial / hard cap</th><th>Scheduler</th></tr><tr><td>30, 35, 40, 45, 50°</td><td>250, 300, 350, 400, 450 mm</td><td>0, 6, 12°</td><td>0, 20, 40, 60 mm</td><td>{manifest['initial_candidate_count']} / {manifest['hard_candidate_cap']}</td><td>{manifest['scheduler']['queue_workers']} workers · {manifest['scheduler']['numcalc_process_capacity']} total NumCalc processes</td></tr></table><p class='muted'>Coordinate SHA-256: <code>{manifest['coordinate_sha256']}</code> · Manifest SHA-256: <code>{_digest(manifest)}</code></p></section>
 <section><h2>Design map</h2><p class='muted'>Best measured surface score in each cell; its throat-impedance score is shown directly below it.</p><table class='design-map'><thead><tr><th>Mouth / coverage</th>{''.join(f'<th>{a}°</th>' for a in coverages)}</tr></thead><tbody>{''.join(grid_rows)}</tbody></table></section>
-<section><h2>Measured round parents</h2><p class='muted'>Frozen measured parents. Throat impedance was recorded but not used to select either parent set.</p><table class='sortable-table'><thead><tr><th data-sort='text'>Role</th><th data-sort='text'>Cell</th><th data-sort='text'>Parent</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score</th><th data-sort='number'>Length mm</th><th data-sort='number'>S</th><th data-sort='number'>K</th><th data-sort='number'>N</th><th>Report</th></tr></thead><tbody>{''.join(parent_rows)}</tbody></table></section>
-<section><h2>Throat impedance: highest- and lowest-scoring parents</h2><p class='muted'>Complex throat-impedance magnitude versus frequency for the five lowest and five highest measured parents ranked by the experimental <em>throat-impedance diagnostic score</em>. Every curve is independently normalized so its peak magnitude equals 1. One continuous color scale covers all ten ranked curves, from worst overall in red through yellow to best overall in green. Hover a curve or legend entry to expose its candidate-report link; click to open it. Surface score is shown only as context.</p><div class='impedance-scale'><span>Worst impedance score</span><i></i><span>Best impedance score</span></div><div class='impedance-legend'>{''.join(impedance_legend)}</div><div class='impedance-frequency-plot'><svg viewBox='0 0 1100 470' role='img' aria-label='Normalized throat impedance magnitude versus frequency'><g class='impedance-grid'>{''.join(grid_lines)}</g><g>{''.join(impedance_curves)}</g><text class='axis-label' x='567' y='466' text-anchor='middle'>Frequency (Hz)</text><text class='axis-label' x='17' y='220' text-anchor='middle' transform='rotate(-90 17 220)'>Normalized |Z|</text></svg></div><p id='impedance-hover' class='impedance-hover muted'>Hover a curve or legend entry. Click any curve to open its candidate report.</p></section>
-<section><h2>Candidates</h2><div class='column-controls'>{''.join(f"<button class='column-toggle' data-column-toggle='{key}' aria-pressed='{str(visible).lower()}'>{label}</button>" for key,label,visible in [('parent','Parent ID',True),('s','S',True),('containment','Containment',False),('profile','Profile RMS',False),('slice','Slice energy',False),('outward','Outward rise',False),('minus-six','−6 dB RMS',False)])}</div><div class='angle-controls'><button class='angle-filter' data-angle-filter='all' aria-pressed='true'>All coverages</button>{angle_buttons}<button class='stage-filter' data-stage-filter='all' aria-pressed='true'>All stages</button>{stage_buttons}<span id='candidate-count' class='muted'></span></div><table id='candidate-table' class='sortable-table'><thead><tr><th data-sort='text'>Candidate</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score</th><th data-sort='number'>Surface Δ vs parent</th><th data-sort='number'>Impedance Δ vs parent</th><th data-sort='number'>Date</th><th data-sort='text'>Stage</th><th data-sort='number'>Coverage</th><th data-sort='number'>Mouth</th><th data-sort='text'>Parent role</th><th data-column='parent' data-sort='text'>Parent ID</th><th data-sort='number'>Throat angle</th><th data-sort='number'>Extension</th><th data-column='s' data-sort='number'>S</th><th data-sort='text'>Status</th><th data-column='containment' hidden data-sort='number'>Containment</th><th data-column='profile' hidden data-sort='number'>Profile RMS</th><th data-column='slice' hidden data-sort='number'>Slice energy</th><th data-column='outward' hidden data-sort='number'>Outward rise</th><th data-column='minus-six' hidden data-sort='number'>−6 dB RMS</th><th>Report</th></tr></thead><tbody>{''.join(candidate_rows)}</tbody></table><button id='candidate-show-more' class='show-more'>Show 25 more</button></section>
+<section><h2>Measured round parents</h2><p class='muted'>Frozen measured parents. Throat impedance was recorded but not used to select either parent set.</p><table class='sortable-table'><thead><tr><th data-sort='text'>Role</th><th data-sort='text'>Cell</th><th data-sort='text'>Parent</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score v{DIAGNOSTIC_VERSION}</th><th data-sort='number'>Length mm</th><th data-sort='number'>S</th><th data-sort='number'>K</th><th data-sort='number'>N</th><th>Report</th></tr></thead><tbody>{''.join(parent_rows)}</tbody></table></section>
+<section><h2>Throat impedance v{DIAGNOSTIC_VERSION}: highest- and lowest-scoring parents</h2><p class='muted'>Complex throat-impedance magnitude versus frequency for the five lowest and five highest measured parents ranked by the experimental <em>throat-impedance diagnostic score</em>. Every curve is independently normalized so its peak magnitude equals 1. One continuous color scale covers all ten ranked curves, from worst overall in red through yellow to best overall in green. Hover a curve or legend entry to expose its candidate-report link; click to open it. Surface score is shown only as context.</p><div class='impedance-scale'><span>Worst impedance score</span><i></i><span>Best impedance score</span></div><div class='impedance-legend'>{''.join(impedance_legend)}</div><div class='impedance-frequency-plot'><svg viewBox='0 0 1100 470' role='img' aria-label='Normalized throat impedance magnitude versus frequency'><g class='impedance-grid'>{''.join(grid_lines)}</g><g>{''.join(impedance_curves)}</g><text class='axis-label' x='567' y='466' text-anchor='middle'>Frequency (Hz)</text><text class='axis-label' x='17' y='220' text-anchor='middle' transform='rotate(-90 17 220)'>Normalized |Z|</text></svg></div><p id='impedance-hover' class='impedance-hover muted'>Hover a curve or legend entry. Click any curve to open its candidate report.</p></section>
+<section><h2>Candidates</h2><div class='column-controls'>{''.join(f"<button class='column-toggle' data-column-toggle='{key}' aria-pressed='{str(visible).lower()}'>{label}</button>" for key,label,visible in [('parent','Parent ID',True),('s','S',True),('containment','Containment',False),('profile','Profile RMS',False),('slice','Slice energy',False),('outward','Outward rise',False),('minus-six','−6 dB RMS',False)])}</div><div class='angle-controls'><button class='angle-filter' data-angle-filter='all' aria-pressed='true'>All coverages</button>{angle_buttons}<button class='stage-filter' data-stage-filter='all' aria-pressed='true'>All stages</button>{stage_buttons}<span id='candidate-count' class='muted'></span></div><table id='candidate-table' class='sortable-table'><thead><tr><th data-sort='text'>Candidate</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score v{DIAGNOSTIC_VERSION}</th><th data-sort='number'>Surface Δ vs parent</th><th data-sort='number'>Impedance Δ vs parent</th><th data-sort='number'>Date</th><th data-sort='text'>Stage</th><th data-sort='number'>Coverage</th><th data-sort='number'>Mouth</th><th data-sort='text'>Parent role</th><th data-column='parent' data-sort='text'>Parent ID</th><th data-sort='number'>Throat angle</th><th data-sort='number'>Extension</th><th data-column='s' data-sort='number'>S</th><th data-sort='text'>Status</th><th data-column='containment' hidden data-sort='number'>Containment</th><th data-column='profile' hidden data-sort='number'>Profile RMS</th><th data-column='slice' hidden data-sort='number'>Slice energy</th><th data-column='outward' hidden data-sort='number'>Outward rise</th><th data-column='minus-six' hidden data-sort='number'>−6 dB RMS</th><th>Report</th></tr></thead><tbody>{''.join(candidate_rows)}</tbody></table><button id='candidate-show-more' class='show-more'>Show 25 more</button></section>
 <section><h2>Execution stages</h2><table class='sortable-table'><thead><tr><th data-sort='text'>Stage</th><th data-sort='number'>Candidates</th><th data-sort='number'>Complete</th><th data-sort='number'>Running</th><th data-sort='number'>Preflight</th><th data-sort='number'>Failed</th></tr></thead><tbody>{stage_rows}</tbody></table></section>
-<section><h2>Sub-searches</h2><p class='muted'>Each fixed candidate is an independently recoverable one-candidate search.</p><table class='sortable-table'><thead><tr><th data-sort='text'>Stage</th><th data-sort='number'>Coverage</th><th data-sort='number'>Mouth</th><th data-sort='number'>Throat angle</th><th data-sort='number'>Extension</th><th data-sort='text'>Status</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score</th><th>Report</th></tr></thead><tbody>{subsearch_rows}</tbody></table></section>
+<section><h2>Sub-searches</h2><p class='muted'>Each fixed candidate is an independently recoverable one-candidate search.</p><table class='sortable-table'><thead><tr><th data-sort='text'>Stage</th><th data-sort='number'>Coverage</th><th data-sort='number'>Mouth</th><th data-sort='number'>Throat angle</th><th data-sort='number'>Extension</th><th data-sort='text'>Status</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score v{DIAGNOSTIC_VERSION}</th><th>Report</th></tr></thead><tbody>{subsearch_rows}</tbody></table></section>
 <script>(()=>{{document.querySelectorAll('[data-column-toggle]').forEach(b=>b.onclick=()=>{{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));document.querySelectorAll(`[data-column="${{b.dataset.columnToggle}}"]`).forEach(x=>x.hidden=!on);}});const table=document.getElementById('candidate-table'),more=document.getElementById('candidate-show-more'),count=document.getElementById('candidate-count');let angle='all',stage='all',limit=25;function filter(){{let match=0,shown=0;Array.from(table.tBodies[0].rows).forEach(r=>{{const ok=(angle==='all'||r.dataset.coverageAngle===angle)&&(stage==='all'||r.dataset.stage===stage);if(ok)match++;r.hidden=!(ok&&shown++<limit);}});shown=Math.min(match,limit);count.textContent=`Showing ${{shown}} of ${{match}}`;more.hidden=shown>=match;}}document.querySelectorAll('[data-angle-filter]').forEach(b=>b.onclick=()=>{{angle=b.dataset.angleFilter;limit=25;document.querySelectorAll('[data-angle-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));filter();}});document.querySelectorAll('[data-stage-filter]').forEach(b=>b.onclick=()=>{{stage=b.dataset.stageFilter;limit=25;document.querySelectorAll('[data-stage-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));filter();}});more.onclick=()=>{{limit+=25;filter();}};document.querySelectorAll('table.sortable-table').forEach(t=>{{const hs=Array.from(t.querySelectorAll('th[data-sort]'));let active=-1,dir='desc';hs.forEach(h=>{{h.classList.add('sortable');const sort=()=>{{const col=h.cellIndex;dir=active===col&&dir==='desc'?'asc':'desc';active=col;hs.forEach(x=>x.removeAttribute('aria-sort'));h.setAttribute('aria-sort',dir==='asc'?'ascending':'descending');const mul=dir==='asc'?1:-1,rows=Array.from(t.tBodies[0].rows);rows.sort((a,b)=>{{let x=a.cells[col]?.dataset.sort??a.cells[col]?.textContent??'',y=b.cells[col]?.dataset.sort??b.cells[col]?.textContent??'';if(h.dataset.sort==='number'){{x=Number(x);y=Number(y);x=Number.isFinite(x)?x:-Infinity;y=Number.isFinite(y)?y:-Infinity;}}return(x<y?-1:x>y?1:0)*mul;}});t.tBodies[0].replaceChildren(...rows);if(t===table)filter();}};h.onclick=sort;}});}});const hover=document.getElementById('impedance-hover');document.querySelectorAll('.impedance-curve-link').forEach(link=>{{const show=()=>{{hover.replaceChildren();const text=document.createElement('span');text.textContent=link.dataset.title+' — ';const open=document.createElement('a');open.href=link.getAttribute('href');open.textContent='open candidate report';hover.append(text,open);document.querySelectorAll('.impedance-curve-link').forEach(x=>x.classList.toggle('active',x.getAttribute('href')===link.getAttribute('href')));}};link.addEventListener('mouseenter',show);link.addEventListener('focus',show);}});filter();}})();</script></main></body></html>"""
 
 

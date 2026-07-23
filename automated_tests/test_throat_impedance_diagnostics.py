@@ -27,8 +27,18 @@ class ThroatImpedanceDiagnosticsTests(unittest.TestCase):
         result = throat_impedance_diagnostics(
             self.frequencies, magnitude.astype(complex), 500.0)
         self.assertTrue(result["crossover"]["passes_target"])
-        self.assertGreater(result["overall_percent"], 90.0)
+        self.assertGreater(result["overall_percent"], 75.0)
         self.assertLess(result["smoothness"]["ripple_rms_db"], 0.05)
+        self.assertEqual(result["diagnostic_version"], "2.0.0")
+        self.assertAlmostEqual(
+            result["score_weights"]["crossover_loading"], 0.80)
+        self.assertLess(
+            result["crossover"]["peak_normalized_magnitude"], 1.0)
+        self.assertGreater(
+            result["crossover"]["band"][
+                "peak_normalized_mean_magnitude"],
+            result["crossover"]["peak_normalized_magnitude"],
+        )
 
     def test_underloaded_crossover_is_penalized(self) -> None:
         ratio = self.frequencies / 500.0

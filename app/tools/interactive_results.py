@@ -16,10 +16,16 @@ import yaml
 
 try:
     from .surface_diagnostics import surface_diagnostics, surface_score
-    from .throat_impedance_diagnostics import throat_impedance_diagnostics
+    from .throat_impedance_diagnostics import (
+        DIAGNOSTIC_VERSION,
+        throat_impedance_diagnostics,
+    )
 except ImportError:
     from surface_diagnostics import surface_diagnostics, surface_score
-    from throat_impedance_diagnostics import throat_impedance_diagnostics
+    from throat_impedance_diagnostics import (
+        DIAGNOSTIC_VERSION,
+        throat_impedance_diagnostics,
+    )
 
 
 COLORS = ("#2563eb", "#dc2626", "#16a34a", "#9333ea")
@@ -221,7 +227,8 @@ def _impedance_diagnostic_table(
             f"<td>{float(components['shelf_stability']):.1f}%</td>",
         )) + "</tr>")
     return (
-        "<table><thead><tr><th>Run</th><th>Throat-impedance score</th>"
+        f"<table><thead><tr><th>Run</th><th>Throat-impedance score "
+        f"(v{DIAGNOSTIC_VERSION})</th>"
         "<th>Crossover loading</th><th>Ripple</th><th>Excess variation</th>"
         "<th>Shelf stability</th></tr></thead><tbody>"
         + "".join(rows) + "</tbody></table>"
@@ -1160,10 +1167,12 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 {_surface_diagnostic_tables(runs, surface_results)}
 <p class='hint'>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Containment integrates relative power inside the intended coverage half-angle. Profile error compares the in-window surface with a straight 0 to −6 dB angular falloff.</p>
 </section><section class='plot'>{surface_plot}</section>
-<section class='parameters'><h2>Experimental throat-impedance diagnostic</h2>
+<section class='parameters'><h2>Experimental throat-impedance diagnostic v{DIAGNOSTIC_VERSION}</h2>
 {_impedance_diagnostic_table(runs, impedance_results)}
-<p class='hint'>This score is reported for research comparison only. It is not
-part of the surface score or candidate ranking.</p></section>
+<p class='hint'>Crossover adequacy contributes 80% of this score; ripple,
+excess variation, and shelf stability contribute 10%, 7%, and 3%. This score
+is reported for research comparison only. It is not part of the surface score
+or candidate ranking.</p></section>
 </main><script>
 (() => {{
   let armed = null;

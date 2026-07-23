@@ -7,12 +7,18 @@ import numpy as np
 
 
 POINTS_PER_OCTAVE = 48
+DIAGNOSTIC_VERSION = "2.0.0"
 CROSSOVER_TARGET_RATIO = 0.5
+CROSSOVER_BAND_UPPER_RATIO = 2.0
+CROSSOVER_LOADING_WEIGHTS = {
+    "at_crossover": 0.50,
+    "crossover_band": 0.50,
+}
 SCORE_WEIGHTS = {
-    "crossover_loading": 0.40,
-    "ripple": 0.30,
-    "excess_variation": 0.20,
-    "shelf_stability": 0.10,
+    "crossover_loading": 0.80,
+    "ripple": 0.10,
+    "excess_variation": 0.07,
+    "shelf_stability": 0.03,
 }
 ERROR_REFERENCES = {
     "ripple_rms_db": 1.0,
@@ -103,14 +109,36 @@ def throat_impedance_diagnostics(
     magnitude_db = np.interp(
         log_frequency, np.log2(frequencies), 20.0 * np.log10(magnitude))
 
+    peak_magnitude = float(np.max(magnitude[frequencies <= upper]))
+    crossover_magnitude = float(np.interp(
+        np.log2(crossover), np.log2(frequencies), magnitude))
+    crossover_peak_ratio = crossover_magnitude / peak_magnitude
+    loading_band_lower = float(frequencies[0])
+    loading_band_upper = min(upper, crossover * CROSSOVER_BAND_UPPER_RATIO)
+    loading_band_octaves = float(
+        np.log2(loading_band_upper / loading_band_lower))
+    loading_count = max(
+        3, int(np.ceil(loading_band_octaves * points_per_octave)) + 1)
+    loading_log_frequency = np.linspace(
+        np.log2(loading_band_lower),
+        np.log2(loading_band_upper),
+        loading_count,
+    )
+    loading_magnitude = np.interp(
+        loading_log_frequency, np.log2(frequencies), magnitude)
+    loading_band_peak_ratio = float(
+        np.mean(loading_magnitude / peak_magnitude))
+    crossover_score = 100.0 * (
+        CROSSOVER_LOADING_WEIGHTS["at_crossover"] * crossover_peak_ratio
+        + CROSSOVER_LOADING_WEIGHTS["crossover_band"]
+        * loading_band_peak_ratio
+    )
+
     shelf_width_octaves = span_octaves / 2.0
     shelf_mask = log_frequency >= log_frequency[-1] - shelf_width_octaves
     shelf_reference_db = _trimmed_mean(magnitude_db[shelf_mask])
     shelf_reference = float(10.0 ** (shelf_reference_db / 20.0))
-    crossover_magnitude = float(10.0 ** (magnitude_db[0] / 20.0))
     crossover_ratio = crossover_magnitude / shelf_reference
-    crossover_fraction = min(1.0, crossover_ratio / CROSSOVER_TARGET_RATIO)
-    crossover_score = 100.0 * crossover_fraction ** 2
 
     monotone_baseline_db = _isotonic_non_decreasing(magnitude_db)
     ripple_db = magnitude_db - monotone_baseline_db
@@ -148,6 +176,7 @@ def throat_impedance_diagnostics(
     overall = float(sum(SCORE_WEIGHTS[name] * score
                         for name, score in components.items()))
     return {
+        "diagnostic_version": DIAGNOSTIC_VERSION,
         "status": "experimental",
         "overall_percent": overall,
         "components": components,
@@ -155,6 +184,15 @@ def throat_impedance_diagnostics(
             "frequency_hz": crossover,
             "magnitude": crossover_magnitude,
             "shelf_ratio": crossover_ratio,
+            "peak_magnitude": peak_magnitude,
+            "peak_normalized_magnitude": crossover_peak_ratio,
+            "band": {
+                "lower_frequency_hz": loading_band_lower,
+                "upper_frequency_hz": loading_band_upper,
+                "peak_normalized_mean_magnitude": loading_band_peak_ratio,
+                "samples_per_octave": points_per_octave,
+            },
+            "component_weights": CROSSOVER_LOADING_WEIGHTS,
             "target_ratio": CROSSOVER_TARGET_RATIO,
             "passes_target": crossover_ratio >= CROSSOVER_TARGET_RATIO,
         },

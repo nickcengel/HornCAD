@@ -3,6 +3,8 @@ from pathlib import Path
 import json
 import re
 
+import numpy as np
+
 from app.tools.run_extension_throat_angle_study import (
     DEVELOPMENT_STAGES,
     DIAGNOSTICS,
@@ -14,6 +16,9 @@ from app.tools.prepare_extension_throat_angle_study import candidate_design
 from app.tools.report_extension_throat_angle_study import (
     _percent_change,
     render_index,
+)
+from app.tools.throat_impedance_diagnostics import (
+    throat_impedance_diagnostics,
 )
 
 
@@ -55,6 +60,54 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertIsNone(_percent_change(None, 75.0))
         self.assertIsNone(_percent_change(75.0, 0.0))
 
+    def test_impedance_v2_preserves_reviewed_parent_order(self):
+        names = (
+            "250x250x84.633_45_K2_N8",
+            "250x250x89.754_50_K4_N11.25",
+            "450x450x151.574_50_K6_N8",
+            "250x250x122.757_35_K2_N8",
+            "400x400x140.92_50_K6_N8",
+            "450x450x159.689_50_K7_N8",
+            "250x250x139.546_30_K2_N4",
+            "350x350x235.546_30_K4_N8",
+            "400x400x291.235_30_K6_N8",
+            "450x450x333.689_30_K7_N8",
+        )
+        manifest = json.loads(Path(
+            "examples/extension-throat-angle-heuristics/manifest.json"
+        ).read_text(encoding="utf-8"))
+        scores = {}
+        for role in ("primary", "secondary"):
+            for parent in manifest["parents"][role].values():
+                response = Path(parent["response_path"])
+                state = json.loads(
+                    (response.parents[3] / "search_state.json").read_text(
+                        encoding="utf-8"))
+                candidate_id = response.parents[1].name
+                record = next(
+                    row for row in state["candidates"]
+                    if row["id"] == candidate_id)
+                name = Path(record["report_file"]).stem.removesuffix(
+                    "_Report")
+                if name not in names:
+                    continue
+                with np.load(response, allow_pickle=False) as archive:
+                    result = throat_impedance_diagnostics(
+                        archive["frequencies_hz"],
+                        archive["impedance"],
+                        state["crossover_hz"],
+                        state["upper_frequency_hz"],
+                    )
+                scores[name] = result["overall_percent"]
+        ordered = [scores[name] for name in names]
+        self.assertLess(ordered[0], ordered[1])
+        self.assertLess(max(ordered[:2]), min(ordered[2:6]))
+        self.assertLess(max(ordered[2:6]), ordered[6])
+        self.assertLess(ordered[6], ordered[7])
+        self.assertLess(ordered[7], min(ordered[8:]))
+        self.assertLessEqual(max(ordered[2:6]) - min(ordered[2:6]), 6.0)
+        self.assertLessEqual(abs(ordered[8] - ordered[9]), 3.0)
+
     def test_index_uses_established_sections_and_reports_impedance(self):
         manifest_path = Path(
             "examples/extension-throat-angle-heuristics/manifest.json")
@@ -90,7 +143,8 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertIn("Surface Δ vs parent", output)
         self.assertIn("Impedance Δ vs parent", output)
         self.assertIn(
-            "Throat impedance: highest- and lowest-scoring parents", output)
+            "Throat impedance v2.0.0: "
+            "highest- and lowest-scoring parents", output)
         self.assertEqual(output.count("data-peak-normalized='1'"), 10)
         self.assertEqual(output.count("class='impedance-curve'"), 10)
         self.assertEqual(output.count("class='impedance-hit'"), 10)
@@ -103,15 +157,8 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
             float(value) for value in re.findall(
                 r"data-impedance-score='([^']+)'", output)
         ]
-        all_scores = sorted(
-            float(parent["responses"]["throat_impedance_score"])
-            for role in ("primary", "secondary")
-            for parent in manifest["parents"][role].values()
-        )
-        expected_scores = all_scores[:5] + all_scores[-5:]
         self.assertEqual(len(plotted_scores), 10)
-        for actual, expected in zip(plotted_scores, expected_scores):
-            self.assertAlmostEqual(actual, expected, places=7)
+        self.assertEqual(plotted_scores, sorted(plotted_scores))
         self.assertEqual(
             [int(value) for value in re.findall(
                 r"data-color-rank='([^']+)'", output)],

@@ -555,12 +555,13 @@ def _measured_row(manifest: dict[str, Any],
 
 
 def _baseline(parent: dict[str, Any]) -> dict[str, Any]:
+    values, _, _ = _rescore(ROOT / parent["response_path"])
     return {
         "id": parent["id"],
         "throat_angle_deg": 6,
         "extension_mm": 0,
         "responses": {
-            key: float(parent["responses"][key]) for key in DIAGNOSTICS
+            key: float(values[key]) for key in DIAGNOSTICS
         },
         "response_path": parent["response_path"],
         "response_sha256": parent["response_sha256"],
