@@ -1,0 +1,142 @@
+{
+  "adaptive_pruned_count": 0,
+  "adaptive_pruned_proposals": [],
+  "candidates": [
+    {
+      "artifact_stem": "250x250x143.201_40_K2.5_N6",
+      "derived": {
+        "final_tenth_radial_growth_h": 0.14769568790593116,
+        "final_tenth_radial_growth_v": 0.14769568790593116,
+        "mouth_curvature_radius_h_mm": 9.572821718130784,
+        "mouth_curvature_radius_v_mm": 9.572821718130784,
+        "mouth_exit_angle_h_deg": 66.2067165321629,
+        "mouth_exit_angle_v_deg": 66.2067165321629,
+        "normalized_mouth_curvature_h": 0.07658257374504628,
+        "normalized_mouth_curvature_v": 0.07658257374504628,
+        "s_h": 0.07383299878096657,
+        "s_v": 0.07383299878096657
+      },
+      "id": "candidate-000",
+      "nearest_candidate_distance": Infinity,
+      "pareto": false,
+      "proposal_index": 0,
+      "proposal_source": "seed",
+      "status": "preflight",
+      "stl_file": "250x250x143.201_40_K2.5_N6_Surface.STL",
+      "values": {
+        "extension_mm": 0.0,
+        "k_h": 2.5,
+        "k_v": 2.5,
+        "length_mm": 143.201,
+        "n_h": 6.0,
+        "n_v": 6.0,
+        "osse_coverage_h_deg": 40.0,
+        "osse_coverage_v_deg": 40.0
+      }
+    }
+  ],
+  "configuration_hash": "d9ed16586c05555fa840c5f5179d1339ffb986c9b10209d699a2a27f7f7ee5c4",
+  "crossover_hz": 750.0,
+  "kn_closure": {},
+  "lower_frequency_hz": 500.0,
+  "max_evaluations": 1,
+  "phase": "initial candidates materialized",
+  "proposal_count": 1,
+  "rejected_count": 0,
+  "schema_version": 1,
+  "search": {
+    "adaptive_pruning": {
+      "enabled": false
+    },
+    "bounds": {
+      "extension_mm": [
+        -1e-06,
+        1e-06
+      ],
+      "k_h": [
+        2.499999,
+        2.500001
+      ],
+      "k_v": [
+        2.499999,
+        2.500001
+      ],
+      "length_mm": [
+        143.200999,
+        143.201001
+      ],
+      "n_h": [
+        5.999999,
+        6.000001
+      ],
+      "n_v": [
+        5.999999,
+        6.000001
+      ],
+      "osse_coverage_h_deg": [
+        39.999999,
+        40.000001
+      ],
+      "osse_coverage_v_deg": [
+        39.999999,
+        40.000001
+      ]
+    },
+    "confirmation_points_per_octave": 16.0,
+    "crossover_hz": 750.0,
+    "derived_s_bounds": [
+      0.049,
+      4.001
+    ],
+    "fixed_design": true,
+    "fixed_parameters": {
+      "n_h": 6.0,
+      "n_v": 6.0
+    },
+    "geometry_context": {
+      "mouth_height_mm": 250.0,
+      "mouth_width_mm": 250.0,
+      "n_h": 6.0,
+      "n_v": 6.0,
+      "throat_angle_deg": 6.0,
+      "throat_radius_mm": 12.7
+    },
+    "inferior_screen_probability": 0.97,
+    "initial_candidates": 0,
+    "intended_coverage_h_deg": 40.0,
+    "intended_coverage_v_deg": 40.0,
+    "lower_frequency_hz": 500.0,
+    "max_evaluations": 1,
+    "minimum_candidate_distance": 0.001,
+    "round_control_v2_validation": {
+      "coordinate_id": "v2-locked-40deg-250mm-L1.14-K2.5-N6",
+      "role": "fresh-locked-validation"
+    },
+    "sampling_stability_points": 2.0,
+    "seed_values": {
+      "extension_mm": 0.0,
+      "k_h": 2.5,
+      "k_v": 2.5,
+      "length_mm": 143.201,
+      "n_h": 6.0,
+      "n_v": 6.0,
+      "osse_coverage_h_deg": 40.0,
+      "osse_coverage_v_deg": 40.0
+    },
+    "seed_yaml": "project.yaml",
+    "solver": {
+      "angles": 91,
+      "elements_per_wavelength": 6,
+      "points_per_octave": 12,
+      "workers": 10
+    },
+    "upper_frequency_hz": 8000.0,
+    "version": 1
+  },
+  "search_yaml": "/Users/nickengel/Developer/HornCAD/examples/round-control-v2-validation/searches/40deg/250x250/search.yaml",
+  "seed_yaml": "/Users/nickengel/Developer/HornCAD/examples/round-control-v2-validation/searches/40deg/250x250/project.yaml",
+  "started_at_unix": 1784832517.689564,
+  "status": "preflight",
+  "surrogate_screened_count": 0,
+  "upper_frequency_hz": 8000.0
+}
