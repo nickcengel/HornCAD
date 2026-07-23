@@ -21,6 +21,9 @@ new BEM work.
   planned frequency-resolved learning and steering work.
 - [Design recommendation map](plans/design_recommendation_map.md): intended
   model-backed workflow beyond the released prediction-only API.
+- [Extension and throat-angle heuristic study](plans/extension_throat_angle_heuristic_study.md):
+  launch-gated full-grid paired study with 210 initial and 226 maximum new
+  evaluations.
 - [Horn design application API](reference/design_application_api.md): Python
   prediction inputs/outputs plus explicitly deferred diagnosis, recommendation,
   and experiment-selection operations.

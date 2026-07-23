@@ -55,71 +55,41 @@ The full-grid
 [unified-v2 challenge](../../examples/round-control-v2-validation/README.md)
 failed its release gates and identified jointly sparse L/K/N regions that must
 remain limited-support.
-The candidate design for Stage 2 is recorded in
-`examples/control-decoupling/model_source/extension_handoff.json`; it schedules
-no BEM and remains launch-gated.
+The earlier central-grid handoff under
+`examples/control-decoupling/model_source/extension_handoff.json` is superseded
+by the full-grid [extension and throat-angle heuristic study](extension_throat_angle_heuristic_study.md).
+That plan schedules no BEM and remains launch-gated until ridge closure and the
+resulting measured-heuristic rebuild are complete.
 
 ## Stage 2: conical extension and throat angle
 
-The detailed extension core uses:
+Stage 2 covers the complete 5×5 round baseline: 30–50 degrees in 5-degree
+steps and 250–450 mm in 50-mm steps. It measures extensions 0, 20, 40, and
+60 mm and throat angles 0, 6, and 12 degrees using a staged 210-case design,
+with a 16-case conditional validation block and an absolute cap of 226 new BEM
+evaluations.
 
-- coverage half-angles: 40 and 45 degrees;
-- mouth sizes: 250, 300, and 350 mm;
-- extension: 0, 20, 40, and 60 mm.
+The authoritative candidate allocation, fixed paired-effect formula, locked
+validation cells, error thresholds, geometry convention, and launch gates are
+defined in the
+[extension and throat-angle heuristic study](extension_throat_angle_heuristic_study.md).
+The study uses the final measured winner in every cell plus three secondary
+parents to test parent transfer. It reuses all compatible 6-degree,
+zero-extension responses.
 
-Use several deliberately different round-control parents per mouth/coverage
-cell. For each paired extension contrast, hold the parent's OSSE length, K, N,
-mouth, OSSE coverage, intended coverage, authored throat radius, and throat angle
-fixed. S remains derived and is recalculated and recorded after the extension
-changes the effective OSSE-profile throat radius. Test withheld parent/extension
-combinations and add simulations when the learned extension correction predicts
-poorly.
-
-The initial locked transfer sentinels use the four outer corners of the round
-baseline:
-
-- 30 degrees / 250 mm;
-- 30 degrees / 450 mm;
-- 50 degrees / 250 mm;
-- 50 degrees / 450 mm.
-
-At each sentinel, begin with one representative parent and a 40 mm extension
-paired with its retained zero-extension response. Do not rerun a compatible
-zero-extension parent already retained by the round study. Fit the initial
-extension correction using only the six core cells, freeze its predictions and
-diagnostic-specific acceptance thresholds, and then reveal the sentinel results.
-
-If all four sentinels satisfy the registered prediction-error limits, the model
-may report supported broader-domain predictions with uncertainty. If a sentinel
-fails, add 20 and 60 mm extension contrasts in that regime; add more varied
-parents there only if extension dependence remains unexplained. A reversal or
-shape change requires an explicit mouth/coverage interaction. Passing central
-validation alone must never be presented as evidence for the 30-degree, 50-degree,
-400 mm, or 450 mm outer domain.
-
-Throat angle is a sparse registered factor within this stage:
-
-- current throat angle;
-- one lower throat angle;
-- one higher throat angle.
-
-**The lower and higher throat-angle values must be tested with zero throat
-extension as well as with nonzero extension.** Throat angle is not to be treated
-only as a property of the conical extension. Zero-extension contrasts identify
-its direct effect on the OSSE horn; matched nonzero-extension contrasts identify
-any throat-angle × extension interaction. Do not launch a full extension ×
-throat-angle factorial unless these sparse contrasts demonstrate a material
-interaction.
-
-Throat impedance is an additional diagnostic output in this stage, not a
-replacement for the radiation-surface diagnostics.
+This is a deterministic design-heuristic study, not a surrogate-model expansion.
+Throat impedance is retained as a separate experimental diagnostic. It is not
+part of surface score, ranking, parent selection, or the conditional-expansion
+decision.
 
 ## Stage 3: fixed round-to-square mouth transformation
 
-Use the same 40/45-degree and 250/300/350-mm domain. Apply one precisely defined
-round-to-square mouth transformation; do not search multiple squareness controls
-in this stage. Hold throat geometry, OSSE controls, OSSE length, extension, and
-sag fixed in each paired contrast.
+Retain the full 5×5 round-baseline domain as the eventual scope. Apply one
+precisely defined round-to-square mouth transformation; do not search multiple
+squareness controls in this stage. Allocate dense contrasts economically and
+use locked full-domain transfer tests rather than redefining the supported
+domain around a central sub-grid. Hold throat geometry, OSSE controls, OSSE
+length, extension, and sag fixed in each paired contrast.
 
 Reuse representative parents from Stage 2 where practical, including parents
 with different diagnostic failure modes. Fit and validate a round-to-square
