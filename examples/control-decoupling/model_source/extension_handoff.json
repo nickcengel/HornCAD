@@ -1,0 +1,600 @@
+{
+  "bem_jobs_scheduled": 0,
+  "candidate_count": 52,
+  "candidates": [
+    {
+      "extension_mm": 0,
+      "id": "40d-250mm-L-1-K-1-N+0:extension-0mm:throat-6deg",
+      "parent_id": "40d-250mm-L-1-K-1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 20,
+      "id": "40d-250mm-L-1-K-1-N+0:extension-20mm:throat-6deg",
+      "parent_id": "40d-250mm-L-1-K-1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 40,
+      "id": "40d-250mm-L-1-K-1-N+0:extension-40mm:throat-6deg",
+      "parent_id": "40d-250mm-L-1-K-1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 60,
+      "id": "40d-250mm-L-1-K-1-N+0:extension-60mm:throat-6deg",
+      "parent_id": "40d-250mm-L-1-K-1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 0,
+      "id": "40d-250mm-L-1-K-1-N+0:extension-0mm:throat-4deg",
+      "parent_id": "40d-250mm-L-1-K-1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 0,
+      "id": "40d-250mm-L-1-K-1-N+0:extension-0mm:throat-8deg",
+      "parent_id": "40d-250mm-L-1-K-1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 40,
+      "id": "40d-250mm-L-1-K-1-N+0:extension-40mm:throat-4deg",
+      "parent_id": "40d-250mm-L-1-K-1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 40,
+      "id": "40d-250mm-L-1-K-1-N+0:extension-40mm:throat-8deg",
+      "parent_id": "40d-250mm-L-1-K-1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 0,
+      "id": "40d-300mm-L+0-K+0-N+0:extension-0mm:throat-6deg",
+      "parent_id": "40d-300mm-L+0-K+0-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 20,
+      "id": "40d-300mm-L+0-K+0-N+0:extension-20mm:throat-6deg",
+      "parent_id": "40d-300mm-L+0-K+0-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 40,
+      "id": "40d-300mm-L+0-K+0-N+0:extension-40mm:throat-6deg",
+      "parent_id": "40d-300mm-L+0-K+0-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 60,
+      "id": "40d-300mm-L+0-K+0-N+0:extension-60mm:throat-6deg",
+      "parent_id": "40d-300mm-L+0-K+0-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 0,
+      "id": "40d-300mm-L+0-K+0-N+0:extension-0mm:throat-4deg",
+      "parent_id": "40d-300mm-L+0-K+0-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 0,
+      "id": "40d-300mm-L+0-K+0-N+0:extension-0mm:throat-8deg",
+      "parent_id": "40d-300mm-L+0-K+0-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 40,
+      "id": "40d-300mm-L+0-K+0-N+0:extension-40mm:throat-4deg",
+      "parent_id": "40d-300mm-L+0-K+0-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 40,
+      "id": "40d-300mm-L+0-K+0-N+0:extension-40mm:throat-8deg",
+      "parent_id": "40d-300mm-L+0-K+0-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 0,
+      "id": "40d-350mm-L+1-K+1-N+0:extension-0mm:throat-6deg",
+      "parent_id": "40d-350mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 20,
+      "id": "40d-350mm-L+1-K+1-N+0:extension-20mm:throat-6deg",
+      "parent_id": "40d-350mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 40,
+      "id": "40d-350mm-L+1-K+1-N+0:extension-40mm:throat-6deg",
+      "parent_id": "40d-350mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 60,
+      "id": "40d-350mm-L+1-K+1-N+0:extension-60mm:throat-6deg",
+      "parent_id": "40d-350mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 0,
+      "id": "40d-350mm-L+1-K+1-N+0:extension-0mm:throat-4deg",
+      "parent_id": "40d-350mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 0,
+      "id": "40d-350mm-L+1-K+1-N+0:extension-0mm:throat-8deg",
+      "parent_id": "40d-350mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 40,
+      "id": "40d-350mm-L+1-K+1-N+0:extension-40mm:throat-4deg",
+      "parent_id": "40d-350mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 40,
+      "id": "40d-350mm-L+1-K+1-N+0:extension-40mm:throat-8deg",
+      "parent_id": "40d-350mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 0,
+      "id": "45d-250mm-L-1-K-1-N+0:extension-0mm:throat-6deg",
+      "parent_id": "45d-250mm-L-1-K-1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 20,
+      "id": "45d-250mm-L-1-K-1-N+0:extension-20mm:throat-6deg",
+      "parent_id": "45d-250mm-L-1-K-1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 40,
+      "id": "45d-250mm-L-1-K-1-N+0:extension-40mm:throat-6deg",
+      "parent_id": "45d-250mm-L-1-K-1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 60,
+      "id": "45d-250mm-L-1-K-1-N+0:extension-60mm:throat-6deg",
+      "parent_id": "45d-250mm-L-1-K-1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 0,
+      "id": "45d-250mm-L-1-K-1-N+0:extension-0mm:throat-4deg",
+      "parent_id": "45d-250mm-L-1-K-1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 0,
+      "id": "45d-250mm-L-1-K-1-N+0:extension-0mm:throat-8deg",
+      "parent_id": "45d-250mm-L-1-K-1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 40,
+      "id": "45d-250mm-L-1-K-1-N+0:extension-40mm:throat-4deg",
+      "parent_id": "45d-250mm-L-1-K-1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 40,
+      "id": "45d-250mm-L-1-K-1-N+0:extension-40mm:throat-8deg",
+      "parent_id": "45d-250mm-L-1-K-1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 0,
+      "id": "45d-300mm-L+1-K+1-N+0:extension-0mm:throat-6deg",
+      "parent_id": "45d-300mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 20,
+      "id": "45d-300mm-L+1-K+1-N+0:extension-20mm:throat-6deg",
+      "parent_id": "45d-300mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 40,
+      "id": "45d-300mm-L+1-K+1-N+0:extension-40mm:throat-6deg",
+      "parent_id": "45d-300mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 60,
+      "id": "45d-300mm-L+1-K+1-N+0:extension-60mm:throat-6deg",
+      "parent_id": "45d-300mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 0,
+      "id": "45d-300mm-L+1-K+1-N+0:extension-0mm:throat-4deg",
+      "parent_id": "45d-300mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 0,
+      "id": "45d-300mm-L+1-K+1-N+0:extension-0mm:throat-8deg",
+      "parent_id": "45d-300mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 40,
+      "id": "45d-300mm-L+1-K+1-N+0:extension-40mm:throat-4deg",
+      "parent_id": "45d-300mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 40,
+      "id": "45d-300mm-L+1-K+1-N+0:extension-40mm:throat-8deg",
+      "parent_id": "45d-300mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 0,
+      "id": "45d-350mm-L+1-K+1-N+0:extension-0mm:throat-6deg",
+      "parent_id": "45d-350mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 20,
+      "id": "45d-350mm-L+1-K+1-N+0:extension-20mm:throat-6deg",
+      "parent_id": "45d-350mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 40,
+      "id": "45d-350mm-L+1-K+1-N+0:extension-40mm:throat-6deg",
+      "parent_id": "45d-350mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 60,
+      "id": "45d-350mm-L+1-K+1-N+0:extension-60mm:throat-6deg",
+      "parent_id": "45d-350mm-L+1-K+1-N+0",
+      "stratum": "core-extension",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 0,
+      "id": "45d-350mm-L+1-K+1-N+0:extension-0mm:throat-4deg",
+      "parent_id": "45d-350mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 0,
+      "id": "45d-350mm-L+1-K+1-N+0:extension-0mm:throat-8deg",
+      "parent_id": "45d-350mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 40,
+      "id": "45d-350mm-L+1-K+1-N+0:extension-40mm:throat-4deg",
+      "parent_id": "45d-350mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 4
+    },
+    {
+      "extension_mm": 40,
+      "id": "45d-350mm-L+1-K+1-N+0:extension-40mm:throat-8deg",
+      "parent_id": "45d-350mm-L+1-K+1-N+0",
+      "stratum": "sparse-throat-angle",
+      "throat_angle_deg": 8
+    },
+    {
+      "extension_mm": 40,
+      "id": "30d-250mm-L-1-K-1-N-1:extension-40mm:throat-6deg",
+      "parent_id": "30d-250mm-L-1-K-1-N-1",
+      "stratum": "outer-transfer-sentinel",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 40,
+      "id": "30d-450mm-L+1-K+1-N+0:extension-40mm:throat-6deg",
+      "parent_id": "30d-450mm-L+1-K+1-N+0",
+      "stratum": "outer-transfer-sentinel",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 40,
+      "id": "historical:50deg/250x250-coupled-r01-kn:candidate-018:extension-40mm:throat-6deg",
+      "parent_id": "historical:50deg/250x250-coupled-r01-kn:candidate-018",
+      "stratum": "outer-transfer-sentinel",
+      "throat_angle_deg": 6
+    },
+    {
+      "extension_mm": 40,
+      "id": "50d-450mm-L+1-K+1-N+0:extension-40mm:throat-6deg",
+      "parent_id": "50d-450mm-L+1-K+1-N+0",
+      "stratum": "outer-transfer-sentinel",
+      "throat_angle_deg": 6
+    }
+  ],
+  "core_parents": [
+    {
+      "coverage_deg": 40,
+      "derived_s": 1.1627488089160904,
+      "id": "40d-250mm-L-1-K-1-N+0",
+      "k": 2.0,
+      "length_mm": 100.492,
+      "measured_diagnostics": {
+        "mean_containment": 84.72853802916447,
+        "minus_six_db_rms_error": 11.890138973241914,
+        "outward_rise_violation": 0.023262966105065806,
+        "profile_rms_error": 1.3684926251617773,
+        "slice_energy_rms_departure": 0.9462994689671422,
+        "surface_score": 84.59193537921826,
+        "throat_impedance_score": 78.44212489396968
+      },
+      "mouth_mm": 250,
+      "n": 8.0,
+      "response_sha256": "61e0fca287f54bb4514284aaad44ddfae66b4246db4ab9cf3b6d3719638ff6fa"
+    },
+    {
+      "coverage_deg": 40,
+      "derived_s": 0.7830371993405559,
+      "id": "40d-300mm-L+0-K+0-N+0",
+      "k": 4.0,
+      "length_mm": 147.665,
+      "measured_diagnostics": {
+        "mean_containment": 88.20934920133423,
+        "minus_six_db_rms_error": 8.628614339456277,
+        "outward_rise_violation": 0.24922475600533622,
+        "profile_rms_error": 1.2429015543997455,
+        "slice_energy_rms_departure": 0.8121421979327872,
+        "surface_score": 87.90948129309098,
+        "throat_impedance_score": 83.42267699899811
+      },
+      "mouth_mm": 300,
+      "n": 8.0,
+      "response_sha256": "4e34093dff1a3db8b4cde25b5309dce7c1913dd366573ff3d09bac3986e06ecc"
+    },
+    {
+      "coverage_deg": 40,
+      "derived_s": 0.790447543433925,
+      "id": "40d-350mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_mm": 182.53,
+      "measured_diagnostics": {
+        "mean_containment": 89.8482800728728,
+        "minus_six_db_rms_error": 7.2895368923631825,
+        "outward_rise_violation": 0.5540752629164788,
+        "profile_rms_error": 1.1823951278061706,
+        "slice_energy_rms_departure": 0.7069148601712495,
+        "surface_score": 88.91776149103157,
+        "throat_impedance_score": 86.53770892568105
+      },
+      "mouth_mm": 350,
+      "n": 8.0,
+      "response_sha256": "7c8feed892a50aefdb969b81b9899eae17f17ac494a4168fa202eaed64e50f9f"
+    },
+    {
+      "coverage_deg": 45,
+      "derived_s": 1.4290325372492843,
+      "id": "45d-250mm-L-1-K-1-N+0",
+      "k": 2.0,
+      "length_mm": 84.633,
+      "measured_diagnostics": {
+        "mean_containment": 87.14007056923225,
+        "minus_six_db_rms_error": 9.968971991182219,
+        "outward_rise_violation": 0.25967771900045544,
+        "profile_rms_error": 1.295964176261426,
+        "slice_energy_rms_departure": 0.8100615965784406,
+        "surface_score": 86.94802256740545,
+        "throat_impedance_score": 73.89429901007172
+      },
+      "mouth_mm": 250,
+      "n": 8.0,
+      "response_sha256": "2431c60973c24ba972d4c865a36c830f551350453a4c7d31384f31acf403ab3b"
+    },
+    {
+      "coverage_deg": 45,
+      "derived_s": 0.8961864481863893,
+      "id": "45d-300mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_mm": 138.0,
+      "measured_diagnostics": {
+        "mean_containment": 90.6813387254203,
+        "minus_six_db_rms_error": 9.065665782313996,
+        "outward_rise_violation": 0.3883065470227401,
+        "profile_rms_error": 1.2701976356891396,
+        "slice_energy_rms_departure": 0.7625857863120358,
+        "surface_score": 88.15319005195238,
+        "throat_impedance_score": 85.6858505704619
+      },
+      "mouth_mm": 300,
+      "n": 8.0,
+      "response_sha256": "02610be21ba78409941df430a206233f0cebcfcdd15c502c55888b8bd23fe1dd"
+    },
+    {
+      "coverage_deg": 45,
+      "derived_s": 1.0863365190714132,
+      "id": "45d-350mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_mm": 150.0,
+      "measured_diagnostics": {
+        "mean_containment": 91.09625116642958,
+        "minus_six_db_rms_error": 7.08620061772712,
+        "outward_rise_violation": 0.6391456791196617,
+        "profile_rms_error": 1.1699678231309285,
+        "slice_energy_rms_departure": 0.6463554302839765,
+        "surface_score": 89.38936624215944,
+        "throat_impedance_score": 80.74483520085309
+      },
+      "mouth_mm": 350,
+      "n": 8.0,
+      "response_sha256": "ae1f2846b7975898757a4fbdf8ac03a01aee29728635ab87b07c7fce164fb678"
+    }
+  ],
+  "factors": {
+    "coverage_deg": [
+      40,
+      45
+    ],
+    "extension_mm": [
+      0,
+      20,
+      40,
+      60
+    ],
+    "mouth_mm": [
+      250,
+      300,
+      350
+    ],
+    "throat_angle_deg": {
+      "contrasted_at_extension_mm": [
+        0,
+        40
+      ],
+      "current": 6,
+      "higher": 8,
+      "lower": 4
+    }
+  },
+  "outer_sentinel_parents": [
+    {
+      "coverage_deg": 30,
+      "derived_s": 0.44012682741979886,
+      "id": "30d-250mm-L-1-K-1-N-1",
+      "k": 2.0,
+      "length_mm": 139.546,
+      "measured_diagnostics": {
+        "mean_containment": 77.68851134206966,
+        "minus_six_db_rms_error": 16.14634195056529,
+        "outward_rise_violation": 0.04061806041690899,
+        "profile_rms_error": 1.8030427613846058,
+        "slice_energy_rms_departure": 1.137902990514114,
+        "surface_score": 77.51111619093584,
+        "throat_impedance_score": 92.97531778345392
+      },
+      "mouth_mm": 250,
+      "n": 4.0,
+      "response_sha256": "7a04cb681d5e0d5752b50d18d89036794670a44fa55e7598e5b6cabab3efa4da"
+    },
+    {
+      "coverage_deg": 30,
+      "derived_s": 0.48350137730870457,
+      "id": "30d-450mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_mm": 324.095,
+      "measured_diagnostics": {
+        "mean_containment": 88.00365035408326,
+        "minus_six_db_rms_error": 5.3523958612137434,
+        "outward_rise_violation": 0.5764131975454679,
+        "profile_rms_error": 1.2413166753948346,
+        "slice_energy_rms_departure": 0.7049124217071117,
+        "surface_score": 88.63412063612748,
+        "throat_impedance_score": 88.16213190675751
+      },
+      "mouth_mm": 450,
+      "n": 8.0,
+      "response_sha256": "ef551a9a2e9aee759dd8696ed50c6d6c8a32eb0a2afd81e5bf6779327db4e61c"
+    },
+    {
+      "coverage_deg": 50,
+      "derived_s": 1.7179747556793592,
+      "id": "historical:50deg/250x250-coupled-r01-kn:candidate-018",
+      "k": 4.0,
+      "length_mm": 89.754,
+      "measured_diagnostics": {
+        "mean_containment": 90.58301163501862,
+        "minus_six_db_rms_error": 10.51720660477221,
+        "outward_rise_violation": 0.2638877776671005,
+        "profile_rms_error": 1.2692691173581196,
+        "slice_energy_rms_departure": 0.7947067590779765,
+        "surface_score": 87.72986204096125,
+        "throat_impedance_score": 73.70605742140248
+      },
+      "mouth_mm": 250,
+      "n": 11.25,
+      "response_sha256": "3167a9d76573b2c50b21f2f0eeecda639c6aa48d4febf88d8f998359e6e3fed4"
+    },
+    {
+      "coverage_deg": 50,
+      "derived_s": 1.5096338300204195,
+      "id": "50d-450mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_mm": 151.574,
+      "measured_diagnostics": {
+        "mean_containment": 92.77946567654483,
+        "minus_six_db_rms_error": 6.685312994934656,
+        "outward_rise_violation": 1.2813864089242522,
+        "profile_rms_error": 1.321145770142067,
+        "slice_energy_rms_departure": 0.7501408825682556,
+        "surface_score": 85.2292392063453,
+        "throat_impedance_score": 71.40568928425449
+      },
+      "mouth_mm": 450,
+      "n": 8.0,
+      "response_sha256": "49cf642b4710b09bee59b7f9b00c6cbc767ceeb6131c607af4732168ec4fef94"
+    }
+  ],
+  "release_gates": {
+    "launch_authorized": false,
+    "launch_blocker": "review experimental impedance validation and preregister extension-specific acceptance thresholds before BEM",
+    "round_augmented_exported": true,
+    "round_primary_frozen_and_locked_validated": true,
+    "throat_impedance_archive_complete": true,
+    "throat_impedance_stored_diagnostic_role": "independent experimental output; excluded from surface score"
+  },
+  "schema_version": 1,
+  "status": "designed-not-scheduled"
+}
