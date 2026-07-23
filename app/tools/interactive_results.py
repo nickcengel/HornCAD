@@ -16,8 +16,10 @@ import yaml
 
 try:
     from .surface_diagnostics import surface_diagnostics, surface_score
+    from .throat_impedance_diagnostics import throat_impedance_diagnostics
 except ImportError:
     from surface_diagnostics import surface_diagnostics, surface_score
+    from throat_impedance_diagnostics import throat_impedance_diagnostics
 
 
 COLORS = ("#2563eb", "#dc2626", "#16a34a", "#9333ea")
@@ -180,6 +182,50 @@ def load_run(run_dir: Path, name: str | None = None) -> dict[str, Any]:
         "crossover_hz": crossover_frequency(yaml_path),
         "yaml": yaml_path,
     }
+
+
+def impedance_diagnostics(run: dict[str, Any]) -> dict[str, Any]:
+    normalized = run.get("normalized_impedance")
+    if normalized is None:
+        return {"status": "unavailable", "reason": "normalized impedance absent"}
+    frequencies = np.asarray(run["frequencies"], dtype=float)
+    crossover = run.get("crossover_hz")
+    if crossover is None or float(crossover) <= 0:
+        return {"status": "unavailable", "reason": "crossover frequency absent"}
+    return throat_impedance_diagnostics(
+        frequencies,
+        np.asarray(normalized),
+        float(crossover),
+        float(frequencies[-1]),
+    )
+
+
+def _impedance_diagnostic_table(
+        runs: list[dict[str, Any]],
+        results: dict[str, Any]) -> str:
+    rows = []
+    for run in runs:
+        result = results[run["name"]]
+        if result.get("status") != "experimental":
+            rows.append(
+                f"<tr><th>{html.escape(run['name'])}</th><td colspan='5'>"
+                f"{html.escape(result.get('reason', 'unavailable'))}</td></tr>")
+            continue
+        components = result["components"]
+        rows.append("<tr>" + "".join((
+            f"<th>{html.escape(run['name'])}</th>",
+            f"<td><strong>{float(result['overall_percent']):.1f}%</strong></td>",
+            f"<td>{float(components['crossover_loading']):.1f}%</td>",
+            f"<td>{float(components['ripple']):.1f}%</td>",
+            f"<td>{float(components['excess_variation']):.1f}%</td>",
+            f"<td>{float(components['shelf_stability']):.1f}%</td>",
+        )) + "</tr>")
+    return (
+        "<table><thead><tr><th>Run</th><th>Throat-impedance score</th>"
+        "<th>Crossover loading</th><th>Ripple</th><th>Excess variation</th>"
+        "<th>Shelf stability</th></tr></thead><tbody>"
+        + "".join(rows) + "</tbody></table>"
+    )
 
 
 def _positive_half_angle(angles: np.ndarray, levels: np.ndarray) -> np.ndarray:
@@ -1071,11 +1117,16 @@ def _embedded_stl_viewer(path: Path) -> str:
 def _write_html(path: Path, title: str, figure: go.Figure,
                 runs: list[dict[str, Any]], diagnostics: dict[str, Any] | None = None,
                 comparison: bool = False,
-                surface_results: dict[str, Any] | None = None) -> Path:
+                surface_results: dict[str, Any] | None = None,
+                impedance_results: dict[str, Any] | None = None) -> Path:
     if diagnostics is None:
         diagnostics = {run["name"]: coverage_diagnostics(run) for run in runs}
     if surface_results is None:
         surface_results = {run["name"]: surface_diagnostics(run) for run in runs}
+    if impedance_results is None:
+        impedance_results = {
+            run["name"]: impedance_diagnostics(run) for run in runs
+        }
     figure.update_layout(template="plotly_dark", paper_bgcolor="#121820",
                          plot_bgcolor="#161f29", font={"color": "#e5edf2"})
     plot = figure.to_html(full_html=False, include_plotlyjs=True,
@@ -1108,7 +1159,12 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 {_parameter_table(runs)}</section><section class='parameters'><h2>Surface diagnostics</h2>
 {_surface_diagnostic_tables(runs, surface_results)}
 <p class='hint'>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Containment integrates relative power inside the intended coverage half-angle. Profile error compares the in-window surface with a straight 0 to −6 dB angular falloff.</p>
-</section><section class='plot'>{surface_plot}</section></main><script>
+</section><section class='plot'>{surface_plot}</section>
+<section class='parameters'><h2>Experimental throat-impedance diagnostic</h2>
+{_impedance_diagnostic_table(runs, impedance_results)}
+<p class='hint'>This score is reported for research comparison only. It is not
+part of the surface score or candidate ranking.</p></section>
+</main><script>
 (() => {{
   let armed = null;
   const disarm = () => {{
@@ -1139,6 +1195,8 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
     diagnostics_path.write_text(json.dumps(diagnostics, indent=2) + "\n")
     surface_path = path.with_name("surface_diagnostics.json")
     surface_path.write_text(json.dumps(surface_results, indent=2) + "\n")
+    impedance_path = path.with_name("throat_impedance_diagnostics.json")
+    impedance_path.write_text(json.dumps(impedance_results, indent=2) + "\n")
     return path
 
 

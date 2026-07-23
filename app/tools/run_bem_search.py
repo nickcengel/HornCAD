@@ -27,6 +27,7 @@ try:
     from .generate_numcalc_review import generate_review
     from .interactive_results import coverage_diagnostics, load_run, single_report
     from .surface_diagnostics import surface_diagnostics, surface_score
+    from .throat_impedance_diagnostics import throat_impedance_diagnostics
     from .s_sensitivity_sampling import SPoint, interval_refinement_reason
     from .run_bem_suite import find_numcalc
     from .run_numcalc_sweep import ppo_frequency_grid, run_sweep
@@ -35,6 +36,7 @@ except ImportError:
     from generate_numcalc_review import generate_review
     from interactive_results import coverage_diagnostics, load_run, single_report
     from surface_diagnostics import surface_diagnostics, surface_score
+    from throat_impedance_diagnostics import throat_impedance_diagnostics
     from s_sensitivity_sampling import SPoint, interval_refinement_reason
     from run_bem_suite import find_numcalc
     from run_numcalc_sweep import ppo_frequency_grid, run_sweep
@@ -1185,8 +1187,12 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     kn_study = bool(
         search.get("adaptive_kn", {}).get("enabled", False) or
         search.get("adaptive_kn_closure", {}).get("enabled", False))
-    default_visible_columns = ({"surface-score", "k", "n"} if kn_study else {
-        "surface-score", "containment-mean", "profile-rms", "slice-rms"})
+    default_visible_columns = (
+        {"surface-score", "impedance-score", "k", "n"}
+        if kn_study else {
+            "surface-score", "impedance-score", "containment-mean",
+            "profile-rms", "slice-rms",
+        })
 
     def hidden_attribute(column: str) -> str:
         return "" if column in default_visible_columns else " hidden"
@@ -1203,6 +1209,16 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
         value = float(score["overall_percent"])
         return (f"<td data-column='surface-score' data-sort='{value:.6f}'>"
                 f"{value:.1f}%</td>")
+
+    def impedance_score_cell(record: dict[str, Any]) -> str:
+        result = record.get("throat_impedance_diagnostics", {})
+        value = result.get("overall_percent")
+        if not isinstance(value, (int, float)) or not math.isfinite(value):
+            return "<td data-column='impedance-score' data-sort=''>—</td>"
+        return (
+            f"<td data-column='impedance-score' data-sort='{float(value):.6f}'>"
+            f"{float(value):.1f}%</td>"
+        )
 
     def surface_cell(record: dict[str, Any], column: str,
                      path: tuple[str, ...], suffix: str = "",
@@ -1253,6 +1269,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"{stl_link}{report_link}</td>",
             f"<td data-sort='{html.escape(status)}'>{html.escape(status)}</td>",
             final_score_cell(record),
+            impedance_score_cell(record),
             surface_cell(record, "containment-mean",
                          ("containment", "mean_fraction"), "%", 100,
                          hidden="containment-mean" not in default_visible_columns),
@@ -1287,6 +1304,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     toggle_columns = tuple(
         (column, label, column in default_visible_columns) for column, label in (
         ("surface-score", "Final surface score"),
+        ("impedance-score", "Throat-impedance score"),
         ("containment-mean", "Mean containment H / V"),
         ("profile-rms", "Profile RMS error H / V"),
         ("outward-rise", "Outward-rise violation H / V"),
@@ -1336,7 +1354,7 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vert
 <p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
 <p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
-<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='containment-mean'{hidden_attribute('containment-mean')} data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms'{hidden_attribute('profile-rms')} data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise'{hidden_attribute('outward-rise')} data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms'{hidden_attribute('slice-rms')} data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms'{hidden_attribute('line-rms')} data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k'{hidden_attribute('k')} data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n'{hidden_attribute('n')} data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
+<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='impedance-score' data-sort='number'>Throat-impedance score</th><th class='sortable' data-column='containment-mean'{hidden_attribute('containment-mean')} data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms'{hidden_attribute('profile-rms')} data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise'{hidden_attribute('outward-rise')} data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms'{hidden_attribute('slice-rms')} data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms'{hidden_attribute('line-rms')} data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k'{hidden_attribute('k')} data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n'{hidden_attribute('n')} data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
 <section><p>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Existing completed searches retain their original selection history. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points. Adaptive K/N studies first measure the coarse field, then test axial and diagonal neighbors around each new winner. K/N is reported closed only after the winner is bracketed at the authored K and N resolution or reaches the accepted K=1 or N=2 lower limit.</p></section>
 <script>
 document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
@@ -1496,6 +1514,12 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
         diagnostics = coverage_diagnostics(run, fixed_grid, fixed_band=True)
         new_surface_diagnostics = surface_diagnostics(
             run, fixed_grid, fixed_band=True)
+        new_impedance_diagnostics = throat_impedance_diagnostics(
+            run["frequencies"],
+            run["normalized_impedance"],
+            search["crossover_hz"],
+            search["upper_frequency_hz"],
+        )
         report_path = candidate_dir / "bem" / f"{artifact_stem}_Report.html"
         single_report(run_dir, report_path, title=title,
                       evaluation_frequencies=fixed_grid, fixed_band=True,
@@ -1513,6 +1537,7 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
             completed_at_unix=time.time(),
             diagnostics=diagnostics,
             surface_diagnostics=new_surface_diagnostics,
+            throat_impedance_diagnostics=new_impedance_diagnostics,
             sampling_stability=stability,
             crossover_loading_percent=loading_percent,
             crossover_minimum_normalized_impedance=loading_minimum,

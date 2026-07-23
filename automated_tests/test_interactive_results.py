@@ -103,6 +103,10 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("Horn acoustic parameters", single_text)
             self.assertIn("report-schema: canonical-v11", single_text)
             self.assertIn("Surface diagnostics", single_text)
+            self.assertIn("Experimental throat-impedance diagnostic", single_text)
+            self.assertIn("Throat-impedance score", single_text)
+            self.assertTrue(
+                (single.parent / "throat_impedance_diagnostics.json").is_file())
             self.assertIn("Coverage-window containment", single_text)
             self.assertIn("Angular slice-energy departure", single_text)
             self.assertIn("Best: 100%", single_text)
@@ -141,6 +145,7 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("Normalized throat impedance magnitude", text)
             self.assertIn("Conical extension", text)
             self.assertIn("Surface diagnostics", text)
+            self.assertIn("Experimental throat-impedance diagnostic", text)
             self.assertIn("<strong>Evaluated band:</strong>", text)
             self.assertIn("<h3>A</h3>", text)
             self.assertIn("<h3>D</h3>", text)

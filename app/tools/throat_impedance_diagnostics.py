@@ -1,4 +1,4 @@
-"""Experimental, standalone diagnostics for normalized throat impedance."""
+"""Experimental diagnostics for normalized throat impedance."""
 from __future__ import annotations
 
 from typing import Any
@@ -71,9 +71,10 @@ def throat_impedance_diagnostics(
         points_per_octave: int = POINTS_PER_OCTAVE) -> dict[str, Any]:
     """Score magnitude loading and smoothness without assuming a filter slope.
 
-    This function is intentionally not connected to candidate ranking or reports.
-    It evaluates only the crossover-to-high-sweep band. Complex impedance is
-    accepted, but this provisional diagnostic operates on its magnitude.
+    This diagnostic is displayed in reports but remains disconnected from
+    candidate ranking and surface score. It evaluates only the
+    crossover-to-high-sweep band. Complex impedance is accepted, but this
+    provisional diagnostic operates on its magnitude.
     """
     frequencies = np.asarray(frequencies_hz, dtype=float)
     impedance = np.asarray(normalized_impedance)
