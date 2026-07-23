@@ -164,7 +164,7 @@ def render_index(root: Path, manifest: dict[str, Any],
     parent_rows = []
     for role in ("primary", "secondary"):
         for cell, parent in sorted(manifest["parents"][role].items()):
-            source_search = (ROOT / parent["response_path"]).parents[2]
+            source_search = (ROOT / parent["response_path"]).parents[3]
             parent_rows.append(
                 f"<tr><td>{html.escape(role)}</td><td>{html.escape(cell)}</td>"
                 f"<td>{html.escape(parent['id'])}</td>"

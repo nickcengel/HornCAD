@@ -1,6 +1,5 @@
 import unittest
 from pathlib import Path
-import tempfile
 import json
 
 from app.tools.run_extension_throat_angle_study import (
@@ -50,11 +49,10 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         manifest_path = Path(
             "examples/extension-throat-angle-heuristics/manifest.json")
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        with tempfile.TemporaryDirectory() as directory:
-            output = render_index(
-                Path(directory), manifest,
-                {"candidates": [], "stages": []},
-            )
+        output = render_index(
+            manifest_path.parent.resolve(), manifest,
+            {"candidates": [], "stages": []},
+        )
         for heading in (
             "Project range", "Design map", "Measured round parents",
             "Candidates", "Execution stages", "Sub-searches",
@@ -62,6 +60,12 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
             self.assertIn(heading, output)
         self.assertIn("Throat-impedance score", output)
         self.assertIn("not included in the surface score", output)
+        self.assertIn(
+            "../control-decoupling/searches/three-factor-corner/"
+            "30deg/250x250/search_report.html",
+            output,
+        )
+        self.assertNotIn("candidates/search_report.html", output)
 
 
 if __name__ == "__main__":
