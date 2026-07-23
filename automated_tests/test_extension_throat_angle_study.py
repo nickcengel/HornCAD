@@ -106,6 +106,16 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
                 r"data-color-rank='([^']+)'", output)],
             list(range(10)),
         )
+        hues = [
+            float(value) for value in re.findall(
+                r"class='impedance-curve' "
+                r"style='stroke:hsl\(([^ ]+)", output)
+        ]
+        self.assertEqual(len(hues), 10)
+        self.assertEqual(hues, sorted(hues))
+        self.assertEqual(hues[0], 0.0)
+        self.assertEqual(hues[-1], 120.0)
+        self.assertIn("One continuous color scale covers all ten", output)
         self.assertGreaterEqual(output.count("Open report:"), 20)
 
 
