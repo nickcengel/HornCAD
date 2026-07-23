@@ -154,18 +154,24 @@ and then be added back to the measured dataset.
 
 The initial physical-scale association pass is implemented by
 `python -m app.tools.analyze_bunching_physical_scales`. It extracts broad
-positive bunching peaks from retained NPZ surfaces, derives analytic OSSE length
-scales, ranks dimensionless-frequency collapse, and separately tests matched
-one-control frequency shifts. Its report deliberately labels these results as
-associations until prospective canonical results validate them.
+positive bunching peaks and negative depletion troughs from retained NPZ
+surfaces, derives analytic OSSE length scales, ranks their dimensionless-frequency
+collapse separately, and tests matched one-control shifts by aligning the complete
+curve. Full-curve alignment includes peaks and troughs without assuming that the
+dominant extremum retains its identity. The report deliberately labels these
+results as associations until prospective canonical results validate them.
 
 The current regenerable snapshot is
 [`examples/control-decoupling/analysis/bunching_physical_scales.md`](../../examples/control-decoupling/analysis/bunching_physical_scales.md),
 with complete machine-readable evidence beside it. Its initial hypotheses are:
 
 - mouth width/radius and throat-to-mouth radial growth give the best
-  cross-candidate collapse, but are mutually correlated and do not establish a
-  causal scale;
+  cross-candidate positive-peak collapse, but are mutually correlated and do
+  not establish a causal scale;
+- negative troughs behave differently: their best current collapse uses OSSE
+  length and related termination-from-throat distances, although the fitted
+  frequency/length slope remains far from the -1 expected for a simple inverse-
+  length mechanism;
 - matched OSSE-length changes currently do **not** support a simple inverse-OSSE-
   length translation of the complete energy-departure curve;
 - for matched K changes, the distance from the half-radial-growth point to the

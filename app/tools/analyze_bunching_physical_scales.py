@@ -45,12 +45,20 @@ class Observation:
     frequencies_hz: np.ndarray
     departure_db: np.ndarray
     peaks: tuple[dict[str, float | bool], ...]
+    troughs: tuple[dict[str, float | bool], ...]
     scales_mm: dict[str, float]
 
     @property
     def dominant_peak(self) -> dict[str, float | bool] | None:
         interior = [peak for peak in self.peaks if not peak["at_band_edge"]]
         return max(interior, key=lambda peak: float(peak["departure_db"]),
+                   default=None)
+
+    @property
+    def dominant_trough(self) -> dict[str, float | bool] | None:
+        interior = [trough for trough in self.troughs
+                    if not trough["at_band_edge"]]
+        return min(interior, key=lambda trough: float(trough["departure_db"]),
                    default=None)
 
 
@@ -94,13 +102,14 @@ def slice_energy_departure(
     return target, gaussian_filter1d(departure, sigma=sigma, mode="nearest")
 
 
-def find_bunching_peaks(frequencies_hz: np.ndarray,
-                        departure_db: np.ndarray) -> tuple[dict[str, float | bool], ...]:
-    """Find broad positive slice-energy departures on a uniform log grid."""
+def _find_bunching_extrema(
+        frequencies_hz: np.ndarray, departure_db: np.ndarray, sign: float,
+) -> tuple[dict[str, float | bool], ...]:
     spacing = max(1, round(
         MINIMUM_PEAK_SPACING_OCTAVES * RESAMPLE_POINTS_PER_OCTAVE))
+    transformed = sign * departure_db
     indices, properties = find_peaks(
-        departure_db, prominence=MINIMUM_PEAK_PROMINENCE_DB, distance=spacing)
+        transformed, prominence=MINIMUM_PEAK_PROMINENCE_DB, distance=spacing)
     records = [{
         "frequency_hz": float(frequencies_hz[index]),
         "departure_db": float(departure_db[index]),
@@ -108,15 +117,27 @@ def find_bunching_peaks(frequencies_hz: np.ndarray,
         "at_band_edge": False,
     } for position, index in enumerate(indices)]
     for index in (0, len(departure_db) - 1):
-        neighbor = departure_db[1] if index == 0 else departure_db[-2]
-        if departure_db[index] > neighbor and departure_db[index] > 0.0:
+        neighbor = transformed[1] if index == 0 else transformed[-2]
+        if transformed[index] > neighbor and transformed[index] > 0.0:
             records.append({
                 "frequency_hz": float(frequencies_hz[index]),
                 "departure_db": float(departure_db[index]),
-                "prominence_db": float(abs(departure_db[index] - neighbor)),
+                "prominence_db": float(abs(transformed[index] - neighbor)),
                 "at_band_edge": True,
             })
     return tuple(sorted(records, key=lambda item: float(item["frequency_hz"])))
+
+
+def find_bunching_peaks(frequencies_hz: np.ndarray,
+                        departure_db: np.ndarray) -> tuple[dict[str, float | bool], ...]:
+    """Find broad positive slice-energy departures on a uniform log grid."""
+    return _find_bunching_extrema(frequencies_hz, departure_db, 1.0)
+
+
+def find_bunching_troughs(frequencies_hz: np.ndarray,
+                          departure_db: np.ndarray) -> tuple[dict[str, float | bool], ...]:
+    """Find broad negative slice-energy departures on a uniform log grid."""
+    return _find_bunching_extrema(frequencies_hz, departure_db, -1.0)
 
 
 def _first_crossing(z: np.ndarray, values: np.ndarray, target: float) -> float:
@@ -226,6 +247,7 @@ def load_observation(npz_path: Path, root: Path) -> Observation | None:
         length_mm=float(g["length"]), k=float(basis["k"]), n=float(basis["n"]),
         s=float(basis.get("solved_s", math.nan)), frequencies_hz=frequencies,
         departure_db=departure, peaks=find_bunching_peaks(frequencies, departure),
+        troughs=find_bunching_troughs(frequencies, departure),
         scales_mm=physical_scales(config),
     )
 
@@ -254,16 +276,22 @@ def load_observations(root: Path) -> tuple[list[Observation], dict[str, int]]:
         item.coverage_deg, item.mouth_mm, item.length_mm, item.k, item.n)), counts
 
 
-def association_summary(observations: Iterable[Observation]) -> list[dict[str, Any]]:
-    observations = [item for item in observations if item.dominant_peak is not None]
+def association_summary(observations: Iterable[Observation],
+                        feature: str = "peak") -> list[dict[str, Any]]:
+    if feature not in {"peak", "trough"}:
+        raise ValueError("feature must be peak or trough")
+    attribute = "dominant_peak" if feature == "peak" else "dominant_trough"
+    observations = [item for item in observations
+                    if getattr(item, attribute) is not None]
     scale_names = sorted(set.intersection(*(
         set(item.scales_mm) for item in observations))) if observations else []
     output = []
     for name in scale_names:
         lengths = np.asarray([item.scales_mm[name] for item in observations])
-        peaks = np.asarray([
-            float(item.dominant_peak["frequency_hz"]) for item in observations])
-        log_length, log_frequency = np.log2(lengths), np.log2(peaks)
+        feature_frequencies = np.asarray([
+            float(getattr(item, attribute)["frequency_hz"])
+            for item in observations])
+        log_length, log_frequency = np.log2(lengths), np.log2(feature_frequencies)
         dimensionless = log_frequency + np.log2(lengths * 1e-3 / SOUND_SPEED_M_S)
         center = float(np.median(dimensionless))
         mad = float(np.median(np.abs(dimensionless - center)))
@@ -383,13 +411,14 @@ def matched_scale_summary(observations: Iterable[Observation]) -> list[dict[str,
 def analyze(root: Path) -> dict[str, Any]:
     observations, inventory = load_observations(root)
     association = association_summary(observations)
+    trough_association = association_summary(observations, "trough")
     matched = matched_scale_summary(observations)
     try:
         source_root = str(root.relative_to(Path.cwd()))
     except ValueError:
         source_root = str(root)
     return {
-        "schema_version": 1,
+        "schema_version": 2,
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source_root": source_root, "inventory": inventory,
         "method": {
@@ -402,12 +431,14 @@ def analyze(root: Path) -> dict[str, Any]:
             "minimum_translation_alignment_gain_fraction": MINIMUM_TRANSLATION_ALIGNMENT_GAIN,
             "interpretation": "association only; causal attribution requires repeatable matched-pair shifts and prospective validation",
         },
-        "association": association, "matched_pairs": matched,
+        "association": association, "trough_association": trough_association,
+        "matched_pairs": matched,
         "observations": [{
             "id": item.identifier, "report": item.report,
             "mouth_mm": item.mouth_mm, "coverage_deg": item.coverage_deg,
             "length_mm": item.length_mm, "k": item.k, "n": item.n, "s": item.s,
             "scales_mm": item.scales_mm, "peaks": list(item.peaks),
+            "troughs": list(item.troughs),
         } for item in observations],
     }
 
@@ -419,18 +450,19 @@ def _number(value: Any, digits: int = 3) -> str:
 def render_markdown(data: dict[str, Any]) -> str:
     inventory = data["inventory"]
     association = data["association"][:8]
+    trough_association = data["trough_association"][:8]
     lines = [
         "# Physical-scale energy-bunching analysis", "",
         f"Snapshot: `{data['generated_at']}`.", "",
         "## Scope", "",
         f"This initial analysis found {inventory['npz']} retained NPZ archives and "
         f"used {inventory['usable']} unique symmetric candidates. It tests whether "
-        "the dominant interior positive slice-energy departure becomes more stable "
+        "the dominant interior positive peak and negative trough become more stable "
         "when frequency is normalized by a measured physical length.", "",
         "A small collapse error is screening evidence, not proof of a resonance or "
         "causal mechanism. Matched one-control shifts are the stronger test; later "
         "completed canonical candidates serve as prospective validation.", "",
-        "## Cross-candidate dimensionless collapse", "",
+        "## Positive-peak dimensionless collapse", "",
         "| Physical scale | Candidates | MAD octaves | P10–P90 span | F–length slope | Spearman |",
         "| --- | ---: | ---: | ---: | ---: | ---: |",
     ]
@@ -441,9 +473,22 @@ def render_markdown(data: dict[str, Any]) -> str:
             f"{_number(item['dimensionless_p10_p90_span_octaves'])} | "
             f"{_number(item['log_frequency_vs_log_length_slope'])} | "
             f"{_number(item['spearman_log_length_frequency'])} |")
+    lines.extend(["", "## Negative-trough dimensionless collapse", "",
+                  "| Physical scale | Candidates | MAD octaves | P10–P90 span | F–length slope | Spearman |",
+                  "| --- | ---: | ---: | ---: | ---: | ---: |"])
+    for item in trough_association:
+        lines.append(
+            f"| {item['scale'].replace('_', ' ')} | {item['count']} | "
+            f"{_number(item['log2_dimensionless_mad'])} | "
+            f"{_number(item['dimensionless_p10_p90_span_octaves'])} | "
+            f"{_number(item['log_frequency_vs_log_length_slope'])} | "
+            f"{_number(item['spearman_log_length_frequency'])} |")
     lines.extend(["", "An inverse-length mechanism predicts an F–length slope "
                   "near -1. Collapse rank alone is insufficient when a scale is "
-                  "correlated with mouth, coverage, or OSSE length.", "",
+                  "correlated with mouth, coverage, or OSSE length. The matched "
+                  "translation below aligns the full curve, so it tests peaks and "
+                  "troughs together without assuming that one dominant extremum "
+                  "keeps the same identity.", "",
                   "## Matched one-control shifts", ""])
     for control in CONTROLS:
         rows = [item for item in data["matched_pairs"] if item["control"] == control][:6]
@@ -469,10 +514,10 @@ def render_markdown(data: dict[str, Any]) -> str:
         "matched-pair shift prediction over the no-shift baseline, the full curve "
         "aligns materially better after translation, the result repeats across "
         "independent mouth/coverage cells, and predicts candidates completed after "
-        "this snapshot. Endpoint peaks are retained in the JSON but excluded from "
-        "the dominant-feature fits because their true maxima may lie outside the "
+        "this snapshot. Endpoint peaks and troughs are retained in the JSON but "
+        "excluded from the dominant-feature fits because their true extrema may lie outside the "
         "simulated band.", "",
-        "The complete candidate peaks, physical scales, method constants, and all "
+        "The complete candidate peaks, troughs, physical scales, method constants, and all "
         "association rows are retained in `bunching_physical_scales.json`.", "",
     ])
     return "\n".join(lines)

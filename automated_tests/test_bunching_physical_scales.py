@@ -6,7 +6,7 @@ import numpy as np
 
 from app.tools.analyze_bunching_physical_scales import (
     Observation, association_summary, curve_translation, find_bunching_peaks,
-    physical_scales,
+    find_bunching_troughs, physical_scales,
 )
 
 
@@ -21,7 +21,7 @@ class BunchingPhysicalScaleTests(unittest.TestCase):
             identifier=identifier, report=None, mouth_mm=300,
             coverage_deg=40, length_mm=100, k=4, n=8, s=1,
             frequencies_hz=frequencies, departure_db=curve,
-            peaks=(), scales_mm={"osse_length": 100})
+            peaks=(), troughs=(), scales_mm={"osse_length": 100})
 
     def test_peak_finder_localizes_broad_positive_departure(self) -> None:
         frequencies = 500 * 2 ** np.linspace(0, 4, 193)
@@ -30,6 +30,15 @@ class BunchingPhysicalScaleTests(unittest.TestCase):
         interior = [peak for peak in peaks if not peak["at_band_edge"]]
         self.assertEqual(len(interior), 1)
         self.assertAlmostEqual(interior[0]["frequency_hz"], 2000, delta=1)
+
+    def test_trough_finder_localizes_broad_negative_departure(self) -> None:
+        frequencies = 500 * 2 ** np.linspace(0, 4, 193)
+        departure = -np.exp(-0.5 * (np.log2(frequencies / 3000) / 0.12) ** 2)
+        troughs = find_bunching_troughs(frequencies, departure)
+        interior = [trough for trough in troughs if not trough["at_band_edge"]]
+        self.assertEqual(len(interior), 1)
+        self.assertAlmostEqual(interior[0]["frequency_hz"], 3000, delta=25)
+        self.assertLess(interior[0]["departure_db"], 0)
 
     def test_physical_scales_use_osse_length_and_finite_features(self) -> None:
         config = {
@@ -62,6 +71,7 @@ class BunchingPhysicalScaleTests(unittest.TestCase):
                 departure_db=np.asarray([1.0]),
                 peaks=({"frequency_hz": frequency, "departure_db": 1.0,
                         "prominence_db": 1.0, "at_band_edge": False},),
+                troughs=(),
                 scales_mm={"controlled_scale": length,
                            "irrelevant_scale": 50 + index * 3},
             ))

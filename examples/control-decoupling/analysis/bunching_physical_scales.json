@@ -1,10 +1,10 @@
 {
-  "schema_version": 1,
-  "generated_at": "2026-07-23T01:15:19.484327+00:00",
+  "schema_version": 2,
+  "generated_at": "2026-07-23T01:46:15.314400+00:00",
   "source_root": "examples/control-decoupling",
   "inventory": {
-    "npz": 107,
-    "usable": 107,
+    "npz": 127,
+    "usable": 127,
     "asymmetric": 0,
     "unreadable": 0,
     "duplicates": 0
@@ -21,156 +21,311 @@
   },
   "association": [
     {
-      "scale": "radial_growth",
-      "count": 99,
-      "log2_dimensionless_mad": 0.3763750826005925,
-      "dimensionless_p10_p90_span_octaves": 1.4676715943529435,
-      "log_frequency_vs_log_length_slope": -0.620808202122383,
-      "spearman_log_length_frequency": -0.3240479739177976,
+      "scale": "mouth_radius",
+      "count": 119,
+      "log2_dimensionless_mad": 0.3956445883310842,
+      "dimensionless_p10_p90_span_octaves": 1.4461908140717101,
+      "log_frequency_vs_log_length_slope": -0.5907101218856908,
+      "spearman_log_length_frequency": -0.2856173983730923,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "mouth_width",
-      "count": 99,
-      "log2_dimensionless_mad": 0.3870722985057693,
+      "count": 119,
+      "log2_dimensionless_mad": 0.3956445883310842,
       "dimensionless_p10_p90_span_octaves": 1.4461908140717101,
-      "log_frequency_vs_log_length_slope": -0.6731305720134457,
-      "spearman_log_length_frequency": -0.3240479739177976,
+      "log_frequency_vs_log_length_slope": -0.5907101218856848,
+      "spearman_log_length_frequency": -0.2856173983730923,
       "expected_inverse_slope": -1.0
     },
     {
-      "scale": "mouth_radius",
-      "count": 99,
-      "log2_dimensionless_mad": 0.3870722985057693,
-      "dimensionless_p10_p90_span_octaves": 1.4461908140717101,
-      "log_frequency_vs_log_length_slope": -0.6731305720134273,
-      "spearman_log_length_frequency": -0.3240479739177976,
-      "expected_inverse_slope": -1.0
-    },
-    {
-      "scale": "half_radial_growth_from_throat",
-      "count": 99,
-      "log2_dimensionless_mad": 0.4596591399924499,
-      "dimensionless_p10_p90_span_octaves": 1.5523513775376565,
-      "log_frequency_vs_log_length_slope": -0.445575692705803,
-      "spearman_log_length_frequency": -0.26305991163762954,
+      "scale": "radial_growth",
+      "count": 119,
+      "log2_dimensionless_mad": 0.39564458833108596,
+      "dimensionless_p10_p90_span_octaves": 1.4676715943529435,
+      "log_frequency_vs_log_length_slope": -0.5461458007474462,
+      "spearman_log_length_frequency": -0.2856173983730923,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "wall_path_length",
-      "count": 99,
-      "log2_dimensionless_mad": 0.46239024853960764,
-      "dimensionless_p10_p90_span_octaves": 1.5922178426455822,
-      "log_frequency_vs_log_length_slope": -0.3856558698821236,
-      "spearman_log_length_frequency": -0.22560892847321193,
+      "count": 119,
+      "log2_dimensionless_mad": 0.4885172862639777,
+      "dimensionless_p10_p90_span_octaves": 1.6247468072862523,
+      "log_frequency_vs_log_length_slope": -0.24621436823754936,
+      "spearman_log_length_frequency": -0.14959794416047562,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "half_radial_growth_from_throat",
+      "count": 119,
+      "log2_dimensionless_mad": 0.5137942470809449,
+      "dimensionless_p10_p90_span_octaves": 1.6641512384358415,
+      "log_frequency_vs_log_length_slope": -0.2624799937706596,
+      "spearman_log_length_frequency": -0.1635435152262827,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "termination_10_from_throat",
-      "count": 99,
-      "log2_dimensionless_mad": 0.5790060156998358,
-      "dimensionless_p10_p90_span_octaves": 1.8871914952417537,
-      "log_frequency_vs_log_length_slope": 0.03293624238539609,
-      "spearman_log_length_frequency": 0.0389354910667785,
-      "expected_inverse_slope": -1.0
-    },
-    {
-      "scale": "osse_length",
-      "count": 99,
-      "log2_dimensionless_mad": 0.5836641385453536,
-      "dimensionless_p10_p90_span_octaves": 1.8741280857047316,
-      "log_frequency_vs_log_length_slope": 0.042095072213338594,
-      "spearman_log_length_frequency": 0.035550486418018654,
-      "expected_inverse_slope": -1.0
-    },
-    {
-      "scale": "termination_90_from_throat",
-      "count": 99,
-      "log2_dimensionless_mad": 0.5851715767366201,
-      "dimensionless_p10_p90_span_octaves": 1.8741280857047316,
-      "log_frequency_vs_log_length_slope": 0.04203417338091187,
-      "spearman_log_length_frequency": 0.0360341969278654,
+      "count": 119,
+      "log2_dimensionless_mad": 0.6024545319990651,
+      "dimensionless_p10_p90_span_octaves": 2.013068077833276,
+      "log_frequency_vs_log_length_slope": 0.15067491860500887,
+      "spearman_log_length_frequency": 0.1085202432576136,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "termination_50_from_throat",
-      "count": 99,
-      "log2_dimensionless_mad": 0.59674176533054,
-      "dimensionless_p10_p90_span_octaves": 1.874128085704731,
-      "log_frequency_vs_log_length_slope": 0.041056667360679464,
-      "spearman_log_length_frequency": 0.0360341969278654,
+      "count": 119,
+      "log2_dimensionless_mad": 0.6369048460263791,
+      "dimensionless_p10_p90_span_octaves": 1.9616731423856588,
+      "log_frequency_vs_log_length_slope": 0.15918154315263752,
+      "spearman_log_length_frequency": 0.10450631739236045,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "termination_90_from_throat",
+      "count": 119,
+      "log2_dimensionless_mad": 0.6379057879591521,
+      "dimensionless_p10_p90_span_octaves": 1.9387497275817913,
+      "log_frequency_vs_log_length_slope": 0.1590783427001138,
+      "spearman_log_length_frequency": 0.10613753127548906,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "osse_length",
+      "count": 119,
+      "log2_dimensionless_mad": 0.640631137633715,
+      "dimensionless_p10_p90_span_octaves": 1.9378545117156527,
+      "log_frequency_vs_log_length_slope": 0.15905292386419626,
+      "spearman_log_length_frequency": 0.10495505178330852,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "termination_90_to_mouth",
-      "count": 99,
-      "log2_dimensionless_mad": 0.6534036724420638,
-      "dimensionless_p10_p90_span_octaves": 2.200115674521249,
-      "log_frequency_vs_log_length_slope": 0.03295374196721188,
-      "spearman_log_length_frequency": 0.06683492937487687,
+      "count": 119,
+      "log2_dimensionless_mad": 0.7105674339972321,
+      "dimensionless_p10_p90_span_octaves": 2.16682636450654,
+      "log_frequency_vs_log_length_slope": 0.0853400641811916,
+      "spearman_log_length_frequency": 0.0961899758702965,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "termination_50_to_mouth",
-      "count": 99,
-      "log2_dimensionless_mad": 0.7414204258571004,
-      "dimensionless_p10_p90_span_octaves": 2.314443625998238,
-      "log_frequency_vs_log_length_slope": 0.02765964111850482,
-      "spearman_log_length_frequency": 0.07839680303293359,
+      "count": 119,
+      "log2_dimensionless_mad": 0.737208553889646,
+      "dimensionless_p10_p90_span_octaves": 2.3493746620780946,
+      "log_frequency_vs_log_length_slope": 0.06565640565596804,
+      "spearman_log_length_frequency": 0.09512861836555343,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "termination_10_to_mouth",
-      "count": 99,
-      "log2_dimensionless_mad": 0.7500125739560168,
-      "dimensionless_p10_p90_span_octaves": 2.4187065619514083,
-      "log_frequency_vs_log_length_slope": 0.027997842158781674,
-      "spearman_log_length_frequency": 0.08270853440782153,
+      "count": 119,
+      "log2_dimensionless_mad": 0.7372085538896584,
+      "dimensionless_p10_p90_span_octaves": 2.2843974818041755,
+      "log_frequency_vs_log_length_slope": 0.06572756199110566,
+      "spearman_log_length_frequency": 0.09765379444227436,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "mouth_curvature_radius",
-      "count": 99,
-      "log2_dimensionless_mad": 0.8278483367125897,
-      "dimensionless_p10_p90_span_octaves": 2.7382532701510733,
-      "log_frequency_vs_log_length_slope": -0.27894012060503454,
-      "spearman_log_length_frequency": -0.6921906569605795,
+      "count": 119,
+      "log2_dimensionless_mad": 0.7554166766178572,
+      "dimensionless_p10_p90_span_octaves": 2.7529574188126458,
+      "log_frequency_vs_log_length_slope": -0.26857161217137043,
+      "spearman_log_length_frequency": -0.673977768948275,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "half_radial_growth_to_mouth",
-      "count": 99,
-      "log2_dimensionless_mad": 0.8558039823054422,
-      "dimensionless_p10_p90_span_octaves": 3.2425616901138077,
-      "log_frequency_vs_log_length_slope": 0.44307626675461625,
-      "spearman_log_length_frequency": 0.558554663195029,
+      "count": 119,
+      "log2_dimensionless_mad": 0.942928941709722,
+      "dimensionless_p10_p90_span_octaves": 3.1966257872495767,
+      "log_frequency_vs_log_length_slope": 0.43529565940187454,
+      "spearman_log_length_frequency": 0.5721494596899279,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "max_curvature_from_throat",
-      "count": 99,
-      "log2_dimensionless_mad": 0.8839208646165524,
-      "dimensionless_p10_p90_span_octaves": 8.055492324204966,
-      "log_frequency_vs_log_length_slope": 0.0126432037304454,
-      "spearman_log_length_frequency": 0.08091489723992451,
+      "count": 119,
+      "log2_dimensionless_mad": 1.3827171788467965,
+      "dimensionless_p10_p90_span_octaves": 8.405307030242502,
+      "log_frequency_vs_log_length_slope": 0.02333285748558651,
+      "spearman_log_length_frequency": 0.14747806843318179,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "diameter_at_max_curvature",
-      "count": 99,
-      "log2_dimensionless_mad": 1.1499691041315057,
-      "dimensionless_p10_p90_span_octaves": 4.608151633101709,
-      "log_frequency_vs_log_length_slope": 0.03552106774629397,
-      "spearman_log_length_frequency": 0.18056625231171491,
+      "count": 119,
+      "log2_dimensionless_mad": 1.551259761437839,
+      "dimensionless_p10_p90_span_octaves": 4.7501231892658815,
+      "log_frequency_vs_log_length_slope": 0.053216072778379274,
+      "spearman_log_length_frequency": 0.23017478532957483,
       "expected_inverse_slope": -1.0
     },
     {
       "scale": "max_curvature_to_mouth",
-      "count": 99,
-      "log2_dimensionless_mad": 1.2509146188629643,
-      "dimensionless_p10_p90_span_octaves": 6.223882111831942,
-      "log_frequency_vs_log_length_slope": -0.07718088964661643,
-      "spearman_log_length_frequency": -0.40742619428628635,
+      "count": 119,
+      "log2_dimensionless_mad": 1.764370330342972,
+      "dimensionless_p10_p90_span_octaves": 6.202443051704598,
+      "log_frequency_vs_log_length_slope": -0.07581115681206667,
+      "spearman_log_length_frequency": -0.3417314622144154,
+      "expected_inverse_slope": -1.0
+    }
+  ],
+  "trough_association": [
+    {
+      "scale": "osse_length",
+      "count": 126,
+      "log2_dimensionless_mad": 0.36824330214955925,
+      "dimensionless_p10_p90_span_octaves": 1.5602209644456249,
+      "log_frequency_vs_log_length_slope": -0.3980065268984694,
+      "spearman_log_length_frequency": -0.2825195384372973,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "termination_90_from_throat",
+      "count": 126,
+      "log2_dimensionless_mad": 0.36880281206589594,
+      "dimensionless_p10_p90_span_octaves": 1.5607804743619607,
+      "log_frequency_vs_log_length_slope": -0.3975557359586108,
+      "spearman_log_length_frequency": -0.2771477490341432,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "termination_50_from_throat",
+      "count": 126,
+      "log2_dimensionless_mad": 0.38098578258994387,
+      "dimensionless_p10_p90_span_octaves": 1.577687556778181,
+      "log_frequency_vs_log_length_slope": -0.3904579155967777,
+      "spearman_log_length_frequency": -0.2724639082676025,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "termination_50_to_mouth",
+      "count": 126,
+      "log2_dimensionless_mad": 0.4196998492591488,
+      "dimensionless_p10_p90_span_octaves": 1.6881699196734123,
+      "log_frequency_vs_log_length_slope": -0.2760081475886198,
+      "spearman_log_length_frequency": -0.34572505891196986,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "termination_10_from_throat",
+      "count": 126,
+      "log2_dimensionless_mad": 0.42048283236909345,
+      "dimensionless_p10_p90_span_octaves": 1.518235384425381,
+      "log_frequency_vs_log_length_slope": -0.3267311062443386,
+      "spearman_log_length_frequency": -0.24500898000761057,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "termination_90_to_mouth",
+      "count": 126,
+      "log2_dimensionless_mad": 0.4231522035845465,
+      "dimensionless_p10_p90_span_octaves": 1.6130624216200724,
+      "log_frequency_vs_log_length_slope": -0.3232469643040527,
+      "spearman_log_length_frequency": -0.34414677560434626,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "half_radial_growth_to_mouth",
+      "count": 126,
+      "log2_dimensionless_mad": 0.44156223307788256,
+      "dimensionless_p10_p90_span_octaves": 1.7115372823717383,
+      "log_frequency_vs_log_length_slope": -0.40634928218016864,
+      "spearman_log_length_frequency": -0.5770724060407801,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "wall_path_length",
+      "count": 126,
+      "log2_dimensionless_mad": 0.4762090755589954,
+      "dimensionless_p10_p90_span_octaves": 1.517280114476506,
+      "log_frequency_vs_log_length_slope": -0.34898808223651995,
+      "spearman_log_length_frequency": -0.1664576552008618,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "half_radial_growth_from_throat",
+      "count": 126,
+      "log2_dimensionless_mad": 0.47708576705093986,
+      "dimensionless_p10_p90_span_octaves": 1.7681708426884475,
+      "log_frequency_vs_log_length_slope": -0.11078313048512134,
+      "spearman_log_length_frequency": -0.08217275365517472,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "termination_10_to_mouth",
+      "count": 126,
+      "log2_dimensionless_mad": 0.4807346100629264,
+      "dimensionless_p10_p90_span_octaves": 1.72278723648673,
+      "log_frequency_vs_log_length_slope": -0.2855565660521464,
+      "spearman_log_length_frequency": -0.34517596034677,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "mouth_width",
+      "count": 126,
+      "log2_dimensionless_mad": 0.48479974825724526,
+      "dimensionless_p10_p90_span_octaves": 1.3178238889971565,
+      "log_frequency_vs_log_length_slope": -0.3094283580869863,
+      "spearman_log_length_frequency": -0.12042913664438676,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "mouth_radius",
+      "count": 126,
+      "log2_dimensionless_mad": 0.48479974825724526,
+      "dimensionless_p10_p90_span_octaves": 1.3178238889971565,
+      "log_frequency_vs_log_length_slope": -0.30942835808697355,
+      "spearman_log_length_frequency": -0.12042913664438676,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "radial_growth",
+      "count": 126,
+      "log2_dimensionless_mad": 0.4893498855673952,
+      "dimensionless_p10_p90_span_octaves": 1.3235442962650215,
+      "log_frequency_vs_log_length_slope": -0.2851045539049516,
+      "spearman_log_length_frequency": -0.12042913664438676,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "diameter_at_max_curvature",
+      "count": 126,
+      "log2_dimensionless_mad": 0.7500975517800867,
+      "dimensionless_p10_p90_span_octaves": 4.308968749951792,
+      "log_frequency_vs_log_length_slope": 0.018580233570656645,
+      "spearman_log_length_frequency": -0.21437529635166375,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "max_curvature_from_throat",
+      "count": 126,
+      "log2_dimensionless_mad": 0.9102545602593066,
+      "dimensionless_p10_p90_span_octaves": 8.064426927836621,
+      "log_frequency_vs_log_length_slope": 0.011763323234913749,
+      "spearman_log_length_frequency": -0.12900118689883427,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "mouth_curvature_radius",
+      "count": 126,
+      "log2_dimensionless_mad": 1.432821679769937,
+      "dimensionless_p10_p90_span_octaves": 4.439633494428874,
+      "log_frequency_vs_log_length_slope": 0.140843128718353,
+      "spearman_log_length_frequency": 0.5047343410008035,
+      "expected_inverse_slope": -1.0
+    },
+    {
+      "scale": "max_curvature_to_mouth",
+      "count": 126,
+      "log2_dimensionless_mad": 2.6284873323815745,
+      "dimensionless_p10_p90_span_octaves": 6.929987500025241,
+      "log_frequency_vs_log_length_slope": 0.003285497948424788,
+      "spearman_log_length_frequency": 0.08589376788116423,
       "expected_inverse_slope": -1.0
     }
   ],
@@ -178,341 +333,341 @@
     {
       "control": "k",
       "scale": "half_radial_growth_to_mouth",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.16765153277566947,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.2906818005576596,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.2173137841823407,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": 0.16810288248432725,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
+    },
+    {
+      "control": "k",
+      "scale": "mouth_radius",
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.38541666666666796,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": 0.0,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
+    },
+    {
+      "control": "k",
+      "scale": "mouth_width",
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.38541666666666796,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": 0.0,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
+    },
+    {
+      "control": "k",
+      "scale": "osse_length",
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.38541666666666796,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": 0.0,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
+    },
+    {
+      "control": "k",
+      "scale": "radial_growth",
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.38541666666666796,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": 0.0,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
+    },
+    {
+      "control": "k",
+      "scale": "termination_10_from_throat",
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.38541666666666796,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": 0.0,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
+    },
+    {
+      "control": "k",
+      "scale": "termination_10_to_mouth",
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.38541666666666796,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": 0.0,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
+    },
+    {
+      "control": "k",
+      "scale": "termination_50_from_throat",
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.38541666666666796,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": 0.0,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
+    },
+    {
+      "control": "k",
+      "scale": "termination_50_to_mouth",
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.38541666666666796,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": 0.0,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
+    },
+    {
+      "control": "k",
+      "scale": "termination_90_from_throat",
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.38541666666666796,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": 0.0,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
+    },
+    {
+      "control": "k",
+      "scale": "termination_90_to_mouth",
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.38541666666666796,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": 0.0,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
+    },
+    {
+      "control": "k",
+      "scale": "wall_path_length",
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.4058456715248312,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": -0.020429004858163236,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
     },
     {
       "control": "k",
       "scale": "max_curvature_from_throat",
-      "pair_count": 11,
-      "cell_count": 8,
+      "pair_count": 13,
+      "cell_count": 10,
       "median_absolute_shift_error_octaves": 0.43683226412240694,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.021501069210922097,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
-    },
-    {
-      "control": "k",
-      "scale": "mouth_radius",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.45833333333332904,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.0,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
-    },
-    {
-      "control": "k",
-      "scale": "mouth_width",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.45833333333332904,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.0,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
-    },
-    {
-      "control": "k",
-      "scale": "osse_length",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.45833333333332904,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.0,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
-    },
-    {
-      "control": "k",
-      "scale": "radial_growth",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.45833333333332904,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.0,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
-    },
-    {
-      "control": "k",
-      "scale": "termination_10_from_throat",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.45833333333332904,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.0,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
-    },
-    {
-      "control": "k",
-      "scale": "termination_10_to_mouth",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.45833333333332904,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.0,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
-    },
-    {
-      "control": "k",
-      "scale": "termination_50_from_throat",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.45833333333332904,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.0,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
-    },
-    {
-      "control": "k",
-      "scale": "termination_50_to_mouth",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.45833333333332904,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.0,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
-    },
-    {
-      "control": "k",
-      "scale": "termination_90_from_throat",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.45833333333332904,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.0,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
-    },
-    {
-      "control": "k",
-      "scale": "termination_90_to_mouth",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.45833333333332904,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": 0.0,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": -0.05141559745573898,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
     },
     {
       "control": "k",
       "scale": "diameter_at_max_curvature",
-      "pair_count": 11,
-      "cell_count": 8,
+      "pair_count": 13,
+      "cell_count": 10,
       "median_absolute_shift_error_octaves": 0.46968780621827527,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": -0.011354472884946232,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
-    },
-    {
-      "control": "k",
-      "scale": "wall_path_length",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.4951828505557519,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": -0.036849517222422856,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": -0.08427113955160731,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
     },
     {
       "control": "k",
       "scale": "half_radial_growth_from_throat",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 0.679034076156135,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": -0.22070074282280594,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 0.6117541379535218,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": -0.2263374712868539,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
     },
     {
       "control": "k",
       "scale": "max_curvature_to_mouth",
-      "pair_count": 11,
-      "cell_count": 8,
+      "pair_count": 13,
+      "cell_count": 10,
       "median_absolute_shift_error_octaves": 1.6109139137507915,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": -1.1525805804174625,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": -1.2254972470841237,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
     },
     {
       "control": "k",
       "scale": "mouth_curvature_radius",
-      "pair_count": 11,
-      "cell_count": 8,
-      "median_absolute_shift_error_octaves": 1.9216631424807078,
-      "no_shift_baseline_error_octaves": 0.45833333333332904,
-      "improvement_over_no_shift_octaves": -1.4633298091473788,
-      "median_curve_alignment_gain_fraction": 0.2852116011378534
+      "pair_count": 13,
+      "cell_count": 10,
+      "median_absolute_shift_error_octaves": 1.8359319788613178,
+      "no_shift_baseline_error_octaves": 0.38541666666666796,
+      "improvement_over_no_shift_octaves": -1.45051531219465,
+      "median_curve_alignment_gain_fraction": 0.2555545569713472
     },
     {
       "control": "length_mm",
       "scale": "mouth_radius",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.3958333333333346,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.38541666666666263,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
       "improvement_over_no_shift_octaves": 0.0,
       "median_curve_alignment_gain_fraction": 0.254919230063834
     },
     {
       "control": "length_mm",
       "scale": "mouth_width",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.3958333333333346,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.38541666666666263,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
       "improvement_over_no_shift_octaves": 0.0,
       "median_curve_alignment_gain_fraction": 0.254919230063834
     },
     {
       "control": "length_mm",
       "scale": "radial_growth",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.3958333333333346,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.38541666666666263,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
       "improvement_over_no_shift_octaves": 0.0,
       "median_curve_alignment_gain_fraction": 0.254919230063834
     },
     {
       "control": "length_mm",
-      "scale": "wall_path_length",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.39908495662964805,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.003251623296313455,
+      "scale": "diameter_at_max_curvature",
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.38868144318527975,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.0032647765186171185,
       "median_curve_alignment_gain_fraction": 0.254919230063834
     },
     {
       "control": "length_mm",
-      "scale": "diameter_at_max_curvature",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.4176525155128539,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.02181918217951928,
+      "scale": "wall_path_length",
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.39908495662964805,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.013668289962985414,
       "median_curve_alignment_gain_fraction": 0.254919230063834
     },
     {
       "control": "length_mm",
       "scale": "half_radial_growth_from_throat",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.489670164315642,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.09383683098230738,
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.463436979594291,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.07802031292762834,
+      "median_curve_alignment_gain_fraction": 0.254919230063834
+    },
+    {
+      "control": "length_mm",
+      "scale": "osse_length",
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.5615114282206921,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.17609476155402948,
+      "median_curve_alignment_gain_fraction": 0.254919230063834
+    },
+    {
+      "control": "length_mm",
+      "scale": "termination_10_from_throat",
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.5615114282206921,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.17609476155402948,
+      "median_curve_alignment_gain_fraction": 0.254919230063834
+    },
+    {
+      "control": "length_mm",
+      "scale": "termination_50_from_throat",
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.5615114282206921,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.17609476155402948,
       "median_curve_alignment_gain_fraction": 0.254919230063834
     },
     {
       "control": "length_mm",
       "scale": "termination_90_from_throat",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.5198447615540254,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.12401142822069078,
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.5615114282206921,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.17609476155402948,
+      "median_curve_alignment_gain_fraction": 0.254919230063834
+    },
+    {
+      "control": "length_mm",
+      "scale": "termination_10_to_mouth",
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.5615114282206927,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.17609476155403003,
+      "median_curve_alignment_gain_fraction": 0.254919230063834
+    },
+    {
+      "control": "length_mm",
+      "scale": "termination_50_to_mouth",
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.5615114282206966,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.17609476155403392,
+      "median_curve_alignment_gain_fraction": 0.254919230063834
+    },
+    {
+      "control": "length_mm",
+      "scale": "termination_90_to_mouth",
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.5615114282207088,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.17609476155404613,
       "median_curve_alignment_gain_fraction": 0.254919230063834
     },
     {
       "control": "length_mm",
       "scale": "max_curvature_from_throat",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.5198447615540256,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.124011428220691,
-      "median_curve_alignment_gain_fraction": 0.254919230063834
-    },
-    {
-      "control": "length_mm",
-      "scale": "osse_length",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.5198447615540256,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.124011428220691,
-      "median_curve_alignment_gain_fraction": 0.254919230063834
-    },
-    {
-      "control": "length_mm",
-      "scale": "termination_10_from_throat",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.5198447615540256,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.124011428220691,
-      "median_curve_alignment_gain_fraction": 0.254919230063834
-    },
-    {
-      "control": "length_mm",
-      "scale": "termination_50_from_throat",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.5198447615540256,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.124011428220691,
-      "median_curve_alignment_gain_fraction": 0.254919230063834
-    },
-    {
-      "control": "length_mm",
-      "scale": "termination_10_to_mouth",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.5198447615540259,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.12401142822069133,
-      "median_curve_alignment_gain_fraction": 0.254919230063834
-    },
-    {
-      "control": "length_mm",
-      "scale": "termination_50_to_mouth",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.5198447615540277,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.12401142822069311,
-      "median_curve_alignment_gain_fraction": 0.254919230063834
-    },
-    {
-      "control": "length_mm",
-      "scale": "termination_90_to_mouth",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.5198447615541635,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.12401142822082889,
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.5719280948873589,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.18651142822069622,
       "median_curve_alignment_gain_fraction": 0.254919230063834
     },
     {
       "control": "length_mm",
       "scale": "max_curvature_to_mouth",
-      "pair_count": 17,
-      "cell_count": 14,
-      "median_absolute_shift_error_octaves": 0.8872787620784943,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.49144542874515973,
+      "pair_count": 21,
+      "cell_count": 16,
+      "median_absolute_shift_error_octaves": 0.8844246855866226,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.49900801891995994,
       "median_curve_alignment_gain_fraction": 0.254919230063834
     },
     {
       "control": "length_mm",
       "scale": "mouth_curvature_radius",
-      "pair_count": 17,
-      "cell_count": 14,
+      "pair_count": 21,
+      "cell_count": 16,
       "median_absolute_shift_error_octaves": 1.2144014055779104,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.8185680722445758,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.8289847389112478,
       "median_curve_alignment_gain_fraction": 0.254919230063834
     },
     {
       "control": "length_mm",
       "scale": "half_radial_growth_to_mouth",
-      "pair_count": 17,
-      "cell_count": 14,
+      "pair_count": 21,
+      "cell_count": 16,
       "median_absolute_shift_error_octaves": 1.3744143141222716,
-      "no_shift_baseline_error_octaves": 0.3958333333333346,
-      "improvement_over_no_shift_octaves": -0.978580980788937,
+      "no_shift_baseline_error_octaves": 0.38541666666666263,
+      "improvement_over_no_shift_octaves": -0.9889976474556089,
       "median_curve_alignment_gain_fraction": 0.254919230063834
     },
     {
@@ -734,6 +889,26 @@
           "prominence_db": 0.1793305059698592,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1944.3754992391325,
+          "departure_db": -0.1775391011556633,
+          "prominence_db": 0.22711067181416705,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 2709.9102022238153,
+          "departure_db": -0.16994786850679594,
+          "prominence_db": 0.1793305059698592,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -2.54057577273131,
+          "prominence_db": 0.0009109200774140014,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -776,6 +951,14 @@
           "departure_db": 1.6676431865873593,
           "prominence_db": 0.042489968265030154,
           "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 4239.136515185236,
+          "departure_db": -2.1065141227904984,
+          "prominence_db": 3.7741573093778578,
+          "at_band_edge": false
         }
       ]
     },
@@ -820,6 +1003,20 @@
           "prominence_db": 0.4463940407295264,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3364.9755841356573,
+          "departure_db": -1.5634122245265614,
+          "prominence_db": 1.1320318329646544,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.8777744322914334,
+          "prominence_db": 0.044138786223892446,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -863,6 +1060,20 @@
           "prominence_db": 0.1666759267771578,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 4178.389628016879,
+          "departure_db": -1.3405222636812935,
+          "prominence_db": 0.1666759267771578,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.69112749416136,
+          "prominence_db": 0.025034527509797844,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -898,6 +1109,14 @@
           "frequency_hz": 750.0,
           "departure_db": 2.969712574908871,
           "prominence_db": 0.02417563203002082,
+          "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -2.164356735506567,
+          "prominence_db": 0.01623964443182624,
           "at_band_edge": true
         }
       ]
@@ -943,6 +1162,20 @@
           "prominence_db": 0.1581208066476244,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3269.226282622155,
+          "departure_db": -0.8229405461207968,
+          "prominence_db": 0.1581208066476244,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -2.6332163155191655,
+          "prominence_db": 0.025534084682662606,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -985,6 +1218,14 @@
           "departure_db": 1.3200394487911415,
           "prominence_db": 0.1015763338124307,
           "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 4556.377952778575,
+          "departure_db": -2.264064247468909,
+          "prominence_db": 3.5841036962600508,
+          "at_band_edge": false
         }
       ]
     },
@@ -1035,6 +1276,32 @@
           "prominence_db": 0.2596663934787295,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1658.925923833945,
+          "departure_db": 0.12600733587669433,
+          "prominence_db": 0.2596663934787295,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 2246.284799297103,
+          "departure_db": 0.1430947830185674,
+          "prominence_db": 0.15567526041628818,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5908.158838462689,
+          "departure_db": -2.1400076982144016,
+          "prominence_db": 0.43449582335076653,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.7207819062783631,
+          "prominence_db": 0.007354786493570575,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -1076,6 +1343,14 @@
           "frequency_hz": 6924.769289620118,
           "departure_db": 2.084276936614353,
           "prominence_db": 0.570232593214528,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3513.8831937647446,
+          "departure_db": -2.0178200082712636,
+          "prominence_db": 4.102096944885616,
           "at_band_edge": false
         }
       ]
@@ -1121,6 +1396,20 @@
           "prominence_db": 1.1752973753569786,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2789.2782197900788,
+          "departure_db": -1.3313965361132771,
+          "prominence_db": 1.39644364327285,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.1102502681974058,
+          "prominence_db": 0.026797738814006378,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -1164,6 +1453,20 @@
           "prominence_db": 0.28481471832778826,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2789.2782197900788,
+          "departure_db": -1.0279026570911194,
+          "prominence_db": 0.28481471832778826,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.2042970638272736,
+          "prominence_db": 0.00088683592644756,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -1200,6 +1503,14 @@
           "departure_db": 2.8107982456596385,
           "prominence_db": 0.021214617491170262,
           "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 6442.626722166592,
+          "departure_db": -1.562143495904556,
+          "prominence_db": 0.33563200646249025,
+          "at_band_edge": false
         }
       ]
     },
@@ -1244,6 +1555,20 @@
           "prominence_db": 0.1772170077851143,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2709.9102022238153,
+          "departure_db": -0.49596507821021907,
+          "prominence_db": 0.1772170077851143,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.988700213345276,
+          "prominence_db": 0.010477000893770017,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -1285,6 +1610,14 @@
           "frequency_hz": 7336.335433664031,
           "departure_db": 3.216694192115127,
           "prominence_db": 0.47257790782139253,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3776.8493313099266,
+          "departure_db": -2.31544982072356,
+          "prominence_db": 4.983419113969552,
           "at_band_edge": false
         }
       ]
@@ -1336,6 +1669,26 @@
           "prominence_db": 0.4524472785243896,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1435.9599113899974,
+          "departure_db": 0.33651707344713033,
+          "prominence_db": 0.32134498151279933,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4968.560114490792,
+          "departure_db": -1.8559508996640723,
+          "prominence_db": 0.6369947427560838,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.6714034354323781,
+          "prominence_db": 0.013284577552342247,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -1385,6 +1738,14 @@
           "prominence_db": 0.0030948845821596738,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2998.0175772333314,
+          "departure_db": -1.902092148543773,
+          "prominence_db": 3.999500278261949,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -1426,6 +1787,20 @@
           "frequency_hz": 4622.6201661753175,
           "departure_db": 0.4755253337958817,
           "prominence_db": 1.2449912724894299,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2379.7902974018466,
+          "departure_db": -1.1758086275396296,
+          "prominence_db": 1.6513339613355114,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7231.205641494897,
+          "departure_db": -0.7694659386935481,
+          "prominence_db": 0.19812037993390152,
           "at_band_edge": false
         }
       ]
@@ -1477,6 +1852,20 @@
           "prominence_db": 0.07336893137707347,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2379.7902974018466,
+          "departure_db": -0.8917212427160108,
+          "prominence_db": 0.9640975587973567,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5823.494837422104,
+          "departure_db": -0.8183526691395229,
+          "prominence_db": 0.372718593331243,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -1519,6 +1908,14 @@
           "departure_db": 0.6876624328379815,
           "prominence_db": 0.10369595369521356,
           "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 5496.7985819456235,
+          "departure_db": -1.2520882246389506,
+          "prominence_db": 1.939750657476932,
+          "at_band_edge": false
         }
       ]
     },
@@ -1563,6 +1960,20 @@
           "prominence_db": 0.18990606968264914,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2312.0741273948156,
+          "departure_db": -0.3109826582547198,
+          "prominence_db": 0.18990606968264914,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5657.789158700551,
+          "departure_db": -1.7132265547515084,
+          "prominence_db": 0.7158552032013464,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -1604,6 +2015,14 @@
           "frequency_hz": 6169.607930126877,
           "departure_db": 4.050325727823481,
           "prominence_db": 3.688439331911148,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3222.3782230216034,
+          "departure_db": -2.3094815533664574,
+          "prominence_db": 4.549850130888613,
           "at_band_edge": false
         }
       ]
@@ -1655,6 +2074,26 @@
           "prominence_db": 0.5771092177281361,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1261.031993524962,
+          "departure_db": 0.5007904559451704,
+          "prominence_db": 0.8644525641719372,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4059.4948906464006,
+          "departure_db": -1.617198304566708,
+          "prominence_db": 0.5771092177281361,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6924.769289620118,
+          "departure_db": -1.9840349712882452,
+          "prominence_db": 0.32199181502625907,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -1691,6 +2130,14 @@
           "departure_db": 1.7525122267998294,
           "prominence_db": 0.0242999156796333,
           "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2151.0941280183806,
+          "departure_db": -1.2561448420201697,
+          "prominence_db": 3.008657068819999,
+          "at_band_edge": false
         }
       ]
     },
@@ -1741,6 +2188,26 @@
           "prominence_db": 0.2126497398896739,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2089.8854341964725,
+          "departure_db": -0.7058356722428054,
+          "prominence_db": 1.0959205724938461,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5188.42988514688,
+          "departure_db": -0.8457652054453682,
+          "prominence_db": 0.7860202362553083,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.2723947090797338,
+          "prominence_db": 0.0485614786053733,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -1783,6 +2250,26 @@
           "departure_db": -0.049063203604688556,
           "prominence_db": 0.26790552651148974,
           "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2089.8854341964725,
+          "departure_db": -0.3169687301161783,
+          "prominence_db": 0.26790552651148974,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4827.181329238018,
+          "departure_db": -1.3832327439370098,
+          "prominence_db": 1.3896593554821481,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.033599782055108086,
+          "prominence_db": 0.007905713430568034,
+          "at_band_edge": true
         }
       ]
     },
@@ -1833,6 +2320,20 @@
           "prominence_db": 0.021447438345856273,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2089.8854341964725,
+          "departure_db": -0.1835215054868978,
+          "prominence_db": 0.2020013391995933,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4622.6201661753175,
+          "departure_db": -1.7820025921386338,
+          "prominence_db": 2.314100016184165,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -1881,6 +2382,26 @@
           "departure_db": -0.9626478760671997,
           "prominence_db": 0.6418474273284445,
           "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2030.4184141351795,
+          "departure_db": 0.3675371255511868,
+          "prominence_db": 0.28560911104073705,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4622.6201661753175,
+          "departure_db": -1.6471507016367473,
+          "prominence_db": 0.6845028255695476,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.6044953033956442,
+          "prominence_db": 0.006761624836270741,
+          "at_band_edge": true
         }
       ]
     },
@@ -1931,6 +2452,20 @@
           "prominence_db": 0.012663744597339321,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2632.8005761538557,
+          "departure_db": -1.5184700313544974,
+          "prominence_db": 2.7411351034656106,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6924.769289620118,
+          "departure_db": 0.348531406558221,
+          "prominence_db": 0.24505022846618585,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -1980,6 +2515,26 @@
           "prominence_db": 0.6728977569097235,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1139.8477082104075,
+          "departure_db": 0.6160507016746558,
+          "prominence_db": 0.8513842672920341,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3616.7980220198124,
+          "departure_db": -1.4873627383587755,
+          "prominence_db": 0.6728977569097235,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6169.607930126877,
+          "departure_db": -1.7666778996733885,
+          "prominence_db": 0.708580124484389,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -2021,6 +2576,14 @@
           "frequency_hz": 6631.318771976281,
           "departure_db": 2.249766016173867,
           "prominence_db": 1.6468295130692547,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1916.5125703992392,
+          "departure_db": -1.2346891253744612,
+          "prominence_db": 2.599874684298282,
           "at_band_edge": false
         }
       ]
@@ -2072,6 +2635,26 @@
           "prominence_db": 0.8371963279287211,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1835.2966363611786,
+          "departure_db": -0.6410371759626197,
+          "prominence_db": 1.178741563132666,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4556.377952778575,
+          "departure_db": -0.6869380984768804,
+          "prominence_db": 0.8371963279287211,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.7310422458127941,
+          "prominence_db": 0.032193594498038935,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -2120,6 +2703,26 @@
           "departure_db": 0.2798707246033414,
           "prominence_db": 0.36738112512622884,
           "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1835.2966363611786,
+          "departure_db": -0.28408469160843974,
+          "prominence_db": 0.3072531875392024,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4239.136515185236,
+          "departure_db": -1.2534266588634826,
+          "prominence_db": 1.533297383466824,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.08751040052288744,
+          "prominence_db": 0.014350847106782263,
+          "at_band_edge": true
         }
       ]
     },
@@ -2170,6 +2773,20 @@
           "prominence_db": 0.017784467149359884,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1835.2966363611786,
+          "departure_db": -0.21277872082634536,
+          "prominence_db": 0.20884071771033239,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4118.513244614424,
+          "departure_db": -1.7268306986946882,
+          "prominence_db": 2.932429430845665,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -2217,6 +2834,20 @@
           "frequency_hz": 5496.7985819456235,
           "departure_db": -0.5864256290685019,
           "prominence_db": 0.6669957825741739,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1808.9968091935166,
+          "departure_db": 0.4468052640170105,
+          "prominence_db": 0.303837365611325,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4118.513244614424,
+          "departure_db": -1.461590645212076,
+          "prominence_db": 0.875165016143574,
           "at_band_edge": false
         }
       ]
@@ -2268,6 +2899,20 @@
           "prominence_db": 0.022198737411241343,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2312.0741273948156,
+          "departure_db": -1.5470593806070563,
+          "prominence_db": 3.024190671935844,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6169.607930126877,
+          "departure_db": 0.5352761187828059,
+          "prominence_db": 0.5485073947928063,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -2317,6 +2962,26 @@
           "prominence_db": 0.4957834555191664,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2030.4184141351795,
+          "departure_db": -0.3595201555719507,
+          "prominence_db": 0.4957834555191664,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 2955.055942277589,
+          "departure_db": -0.1798851972474032,
+          "prominence_db": 0.20358576808793727,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6924.769289620118,
+          "departure_db": -2.277200997167716,
+          "prominence_db": 0.1931959983613445,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -2358,6 +3023,14 @@
           "frequency_hz": 7551.202479477292,
           "departure_db": 3.756459281838364,
           "prominence_db": 0.20003974110065714,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3513.8831937647446,
+          "departure_db": -2.3221703317810163,
+          "prominence_db": 4.757643224543974,
           "at_band_edge": false
         }
       ]
@@ -2403,6 +3076,20 @@
           "prominence_db": 0.974170792396782,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3413.89677395557,
+          "departure_db": -1.6056484396013189,
+          "prominence_db": 1.913776289466315,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.6660429425317858,
+          "prominence_db": 0.07712378093437144,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -2445,6 +3132,20 @@
           "departure_db": -0.5703750718644754,
           "prominence_db": 0.5098035806727942,
           "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3463.5291971124134,
+          "departure_db": -1.3910581097121315,
+          "prominence_db": 0.8206830378476561,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.0801786525372696,
+          "prominence_db": 0.039117991013265074,
+          "at_band_edge": true
         }
       ]
     },
@@ -2489,6 +3190,20 @@
           "prominence_db": 0.24060905360404328,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3463.5291971124134,
+          "departure_db": -1.2836319316627676,
+          "prominence_db": 0.24546887851142474,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.278772106755386,
+          "prominence_db": 0.013072865876915918,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -2532,6 +3247,20 @@
           "prominence_db": 0.2408334567611491,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3364.9755841356573,
+          "departure_db": -0.7899399294997872,
+          "prominence_db": 0.2408334567611491,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -2.2602259336255965,
+          "prominence_db": 0.018621200476449218,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -2568,6 +3297,14 @@
           "departure_db": 2.7218472884333833,
           "prominence_db": 0.024483049946761426,
           "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 4178.389628016879,
+          "departure_db": -2.3835434032856115,
+          "prominence_db": 5.105390691718995,
+          "at_band_edge": false
         }
       ]
     },
@@ -2618,6 +3355,32 @@
           "prominence_db": 0.5758990736061969,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1732.3370638833578,
+          "departure_db": -0.1294992803365049,
+          "prominence_db": 0.5758990736061969,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 2414.3885195760754,
+          "departure_db": 0.07196609210633251,
+          "prominence_db": 0.13955833533661746,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5657.789158700551,
+          "departure_db": -1.9207387662588977,
+          "prominence_db": 0.8167333600666185,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.1148848084584997,
+          "prominence_db": 0.007403285828793571,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -2659,6 +3422,14 @@
           "frequency_hz": 6169.607930126877,
           "departure_db": 3.8600522125087346,
           "prominence_db": 3.463617589747039,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2912.709948168014,
+          "departure_db": -2.287381119329504,
+          "prominence_db": 4.196221305815438,
           "at_band_edge": false
         }
       ]
@@ -2704,6 +3475,20 @@
           "prominence_db": 1.8489950752709101,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2829.829720340104,
+          "departure_db": -1.426790522960633,
+          "prominence_db": 2.3013514061103866,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.9744341921211563,
+          "prominence_db": 0.019212101171026674,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -2745,6 +3530,14 @@
           "frequency_hz": 5114.07961034801,
           "departure_db": -0.09098799961444021,
           "prominence_db": 0.4206007511847641,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2870.9707727624345,
+          "departure_db": -1.209453823897117,
+          "prominence_db": 1.1184658242826768,
           "at_band_edge": false
         }
       ]
@@ -2790,6 +3583,14 @@
           "prominence_db": 0.03643895523356333,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2829.829720340104,
+          "departure_db": -1.1189474971868516,
+          "prominence_db": 1.225940453877256,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -2833,6 +3634,20 @@
           "prominence_db": 0.3030246944436751,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2789.2782197900788,
+          "departure_db": -0.538363991407989,
+          "prominence_db": 0.3030246944436751,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6442.626722166592,
+          "departure_db": -1.6602674179890617,
+          "prominence_db": 0.381558268819858,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -2874,6 +3689,14 @@
           "frequency_hz": 6442.626722166592,
           "departure_db": 5.123499159536228,
           "prominence_db": 4.600663366024714,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3463.5291971124134,
+          "departure_db": -2.5037209497354525,
+          "prominence_db": 4.5572523778073055,
           "at_band_edge": false
         }
       ]
@@ -2925,6 +3748,26 @@
           "prominence_db": 0.779294486859492,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1478.0163940653738,
+          "departure_db": 0.12634077175720493,
+          "prominence_db": 1.0560103210669114,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4556.377952778575,
+          "departure_db": -1.7118108703519406,
+          "prominence_db": 0.779294486859492,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.9096106015150527,
+          "prominence_db": 0.011848865510762696,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -2973,6 +3816,20 @@
           "departure_db": 1.5866298471956775,
           "prominence_db": 0.03290727872338306,
           "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2449.4897427831784,
+          "departure_db": -1.625109275085283,
+          "prominence_db": 3.21173912228096,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6169.607930126877,
+          "departure_db": 0.8455351823505266,
+          "prominence_db": 0.3040957235183508,
+          "at_band_edge": false
         }
       ]
     },
@@ -3023,6 +3880,20 @@
           "prominence_db": 0.03585178104764539,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2120.2689182580534,
+          "departure_db": -0.8888403322550604,
+          "prominence_db": 1.5692477056391223,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5823.494837422104,
+          "departure_db": -0.7737787796733177,
+          "prominence_db": 0.9364247399600706,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -3071,6 +3942,20 @@
           "departure_db": 0.6582560560183921,
           "prominence_db": 0.03811178938144599,
           "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2312.0741273948156,
+          "departure_db": -0.6000314714366232,
+          "prominence_db": 0.5346294882148164,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5263.861090197889,
+          "departure_db": -1.0810672631923537,
+          "prominence_db": 1.7393233192107458,
+          "at_band_edge": false
         }
       ]
     },
@@ -3121,6 +4006,20 @@
           "prominence_db": 0.054868960777445075,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2345.687868248464,
+          "departure_db": -0.5529380790773573,
+          "prominence_db": 0.24566530277754667,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5040.794776055233,
+          "departure_db": -1.475402406436253,
+          "prominence_db": 2.9027773690012344,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -3170,6 +4069,26 @@
           "prominence_db": 0.2323572239591135,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1944.3754992391325,
+          "departure_db": 0.037897921146513504,
+          "prominence_db": 0.40939480230917497,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5040.794776055233,
+          "departure_db": -1.6726233839445785,
+          "prominence_db": 0.8386292199759867,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.0663513879277053,
+          "prominence_db": 0.00789508798309324,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -3212,6 +4131,20 @@
           "departure_db": 2.617497223279315,
           "prominence_db": 3.1725880389372074,
           "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2449.4897427831784,
+          "departure_db": -1.8570203948766824,
+          "prominence_db": 3.757149925705529,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.5550908156578921,
+          "prominence_db": 0.00884516272775382,
+          "at_band_edge": true
         }
       ]
     },
@@ -3260,6 +4193,26 @@
           "frequency_hz": 4968.560114490792,
           "departure_db": -0.7498565079551318,
           "prominence_db": 0.8119105195052121,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1279.3653168973703,
+          "departure_db": 0.32815253517869547,
+          "prominence_db": 0.9742463859482394,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3722.7270261284098,
+          "departure_db": -1.561767027460344,
+          "prominence_db": 0.8119105195052121,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6536.291878698452,
+          "departure_db": -1.8511050629315116,
+          "prominence_db": 0.9825884806806655,
           "at_band_edge": false
         }
       ]
@@ -3311,6 +4264,20 @@
           "prominence_db": 1.5959166958860855,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1944.3754992391325,
+          "departure_db": -1.1686883349930266,
+          "prominence_db": 2.419214953763203,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4491.084991251541,
+          "departure_db": -0.42051199449215027,
+          "prominence_db": 0.3794773910096176,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -3359,6 +4326,26 @@
           "departure_db": 0.172638724785609,
           "prominence_db": 1.0520387855345046,
           "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1808.9968091935166,
+          "departure_db": -0.5414567694777055,
+          "prominence_db": 1.4148977520057051,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4622.6201661753175,
+          "departure_db": -0.8794000607488955,
+          "prominence_db": 1.0520387855345046,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.0001023066084818,
+          "prominence_db": 0.051352386070073974,
+          "at_band_edge": true
         }
       ]
     },
@@ -3409,6 +4396,26 @@
           "prominence_db": 0.6445085833464715,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1808.9968091935166,
+          "departure_db": -0.14214391846683933,
+          "prominence_db": 0.5157907319309574,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4363.2926075630985,
+          "departure_db": -1.360449726826455,
+          "prominence_db": 1.5698596823385524,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.43509862783437414,
+          "prominence_db": 0.014225899982629686,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -3458,6 +4465,20 @@
           "prominence_db": 0.026692803606942483,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1861.9788195979802,
+          "departure_db": 0.004962900312645022,
+          "prominence_db": 0.2095721304120961,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4239.136515185236,
+          "departure_db": -1.764501778773492,
+          "prominence_db": 2.364272813682102,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -3505,6 +4526,26 @@
           "frequency_hz": 5657.789158700551,
           "departure_db": -0.6737498000435159,
           "prominence_db": 0.8224514763381404,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1297.9651765254823,
+          "departure_db": 0.3369774298378064,
+          "prominence_db": 0.6333056511683379,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4178.389628016879,
+          "departure_db": -1.5528200701902564,
+          "prominence_db": 0.8790702701467404,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7127.582360757998,
+          "departure_db": -1.4962012763816563,
+          "prominence_db": 0.1860983898289108,
           "at_band_edge": false
         }
       ]
@@ -3556,6 +4597,20 @@
           "prominence_db": 0.21598203230956803,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2120.2689182580534,
+          "departure_db": -1.4177566170286868,
+          "prominence_db": 2.362739590451178,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5657.789158700551,
+          "departure_db": 0.40840662865099553,
+          "prominence_db": 0.41442349807932644,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -3604,6 +4659,32 @@
           "departure_db": -0.5533586717289252,
           "prominence_db": 0.9192408488797463,
           "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1123.5136741750014,
+          "departure_db": 0.4037937056492549,
+          "prominence_db": 0.6720777048382001,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3316.7554356687397,
+          "departure_db": -1.4725995206086715,
+          "prominence_db": 0.9192408488797463,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5740.04407273284,
+          "departure_db": -1.6273348854690883,
+          "prominence_db": 0.8827131672289167,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.8128965382175892,
+          "prominence_db": 0.0035548710877717493,
+          "at_band_edge": true
         }
       ]
     },
@@ -3654,6 +4735,20 @@
           "prominence_db": 2.1183256063614944,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1732.3370638833578,
+          "departure_db": -1.133140978674088,
+          "prominence_db": 2.025658121429737,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4001.3222705386834,
+          "departure_db": -0.436677917851253,
+          "prominence_db": 0.4454358075117565,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -3701,6 +4796,26 @@
           "frequency_hz": 5496.7985819456235,
           "departure_db": 0.46447684131109124,
           "prominence_db": 1.185833363797647,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1635.1534915108025,
+          "departure_db": -0.502801367604038,
+          "prominence_db": 1.5087786962709036,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4118.513244614424,
+          "departure_db": -0.7602540867496033,
+          "prominence_db": 1.2247309280606946,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7025.444003122864,
+          "departure_db": -0.7213565224865558,
+          "prominence_db": 0.5392513451274572,
           "at_band_edge": false
         }
       ]
@@ -3758,6 +4873,26 @@
           "prominence_db": 0.045574321076874424,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1635.1534915108025,
+          "departure_db": -0.1565965564491798,
+          "prominence_db": 0.5506897525470834,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3831.7584854593106,
+          "departure_db": -1.2986366129088656,
+          "prominence_db": 1.9029137261829243,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6727.7271994043,
+          "departure_db": -0.16817812977314373,
+          "prominence_db": 0.6879119661339159,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -3813,6 +4948,26 @@
           "prominence_db": 0.017064892160414402,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1683.0439680776153,
+          "departure_db": -0.10859514705288864,
+          "prominence_db": 0.250648903806918,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3776.8493313099266,
+          "departure_db": -1.7860427076757843,
+          "prominence_db": 3.070776243743707,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6350.303788673567,
+          "departure_db": 0.5766272898598075,
+          "prominence_db": 0.13564469177956084,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -3859,6 +5014,26 @@
         {
           "frequency_hz": 5040.794776055233,
           "departure_db": -0.3897535963378428,
+          "prominence_db": 0.8665025149028495,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1173.2316383693733,
+          "departure_db": 0.37741630105443974,
+          "prominence_db": 0.6543550091982533,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3722.7270261284098,
+          "departure_db": -1.4435902206465245,
+          "prominence_db": 1.1607302750871966,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6350.303788673567,
+          "departure_db": -1.2562561112406923,
           "prominence_db": 0.8665025149028495,
           "at_band_edge": false
         }
@@ -3911,6 +5086,26 @@
           "prominence_db": 1.358882702860209,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1889.0489177299426,
+          "departure_db": -1.4287552651847748,
+          "prominence_db": 2.524015448528616,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4897.3605766644,
+          "departure_db": 0.6122633253295156,
+          "prominence_db": 0.46891478626319416,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.26362251951636784,
+          "prominence_db": 0.06238615662903366,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -3952,6 +5147,20 @@
           "frequency_hz": 3616.7980220198124,
           "departure_db": 0.6901460626729301,
           "prominence_db": 1.13374935111377,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2151.0941280183806,
+          "departure_db": -0.44360328844083996,
+          "prominence_db": 1.13374935111377,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6259.303844143948,
+          "departure_db": -2.119367393305155,
+          "prominence_db": 0.65165438369793,
           "at_band_edge": false
         }
       ]
@@ -3997,6 +5206,14 @@
           "prominence_db": 1.7986473327005665,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3222.3782230216034,
+          "departure_db": -2.121116454758314,
+          "prominence_db": 4.172933530536775,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -4039,6 +5256,20 @@
           "departure_db": 0.5420083269748718,
           "prominence_db": 1.8464059984626244,
           "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3085.823701413593,
+          "departure_db": -1.3043976714877528,
+          "prominence_db": 1.8464059984626244,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.3456577899793825,
+          "prominence_db": 0.04847344760247552,
+          "at_band_edge": true
         }
       ]
     },
@@ -4083,6 +5314,20 @@
           "prominence_db": 0.8644914274220681,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3041.6038034367944,
+          "departure_db": -1.0809657584943304,
+          "prominence_db": 0.8644914274220681,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.2939686363651597,
+          "prominence_db": 0.012899974358707711,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -4124,6 +5369,20 @@
           "frequency_hz": 4622.6201661753175,
           "departure_db": -0.610710374580185,
           "prominence_db": 0.39502347856556774,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3041.6038034367944,
+          "departure_db": -1.0057338531457527,
+          "prominence_db": 0.39502347856556774,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6924.769289620118,
+          "departure_db": -1.3842273008684636,
+          "prominence_db": 0.17793693852206705,
           "at_band_edge": false
         }
       ]
@@ -4175,6 +5434,26 @@
           "prominence_db": 0.41495290663487683,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2059.9373458980285,
+          "departure_db": -0.44391892897756513,
+          "prominence_db": 0.41495290663487683,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 2955.055942277589,
+          "departure_db": -0.4206979333088145,
+          "prominence_db": 0.23614812649040923,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7025.444003122864,
+          "departure_db": -2.0944810420381135,
+          "prominence_db": 0.13801984072441442,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -4216,6 +5495,14 @@
           "frequency_hz": 6924.769289620118,
           "departure_db": 2.7791466946270518,
           "prominence_db": 1.2292487863511994,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3463.5291971124134,
+          "departure_db": -2.2021765509592157,
+          "prominence_db": 4.493931233470211,
           "at_band_edge": false
         }
       ]
@@ -4267,6 +5554,26 @@
           "prominence_db": 0.35383163888857805,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1783.0738589270293,
+          "departure_db": -0.24795940113374082,
+          "prominence_db": 1.2488212389400224,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5114.07961034801,
+          "departure_db": -1.835471285427915,
+          "prominence_db": 0.9762575192151262,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.2130454051013668,
+          "prominence_db": 0.04192766122274394,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -4316,6 +5623,14 @@
           "prominence_db": 0.020556114659217944,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2671.0771500913397,
+          "departure_db": -1.9650514641917163,
+          "prominence_db": 3.589251896865946,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -4357,6 +5672,20 @@
           "frequency_hz": 4300.766561807155,
           "departure_db": 1.0385090753237425,
           "prominence_db": 1.882045900596743,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2521.230549830607,
+          "departure_db": -1.1430479724931897,
+          "prominence_db": 2.1815570478169324,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6727.7271994043,
+          "departure_db": -0.8435368252730004,
+          "prominence_db": 0.4984361990687399,
           "at_band_edge": false
         }
       ]
@@ -4408,6 +5737,20 @@
           "prominence_db": 0.06154090449939398,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2521.230549830607,
+          "departure_db": -0.9427303088991917,
+          "prominence_db": 1.3078162770278334,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6081.1973598463765,
+          "departure_db": -0.7881730427006934,
+          "prominence_db": 0.9211904106356565,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -4456,6 +5799,20 @@
           "departure_db": 1.262551499669839,
           "prominence_db": 0.09137960916570353,
           "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2521.230549830607,
+          "departure_db": -0.9281211396627563,
+          "prominence_db": 0.562630954171207,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5657.789158700551,
+          "departure_db": -1.0206618333880937,
+          "prominence_db": 2.2832133330579327,
+          "at_band_edge": false
         }
       ]
     },
@@ -4506,6 +5863,26 @@
           "prominence_db": 0.4818099620190925,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1732.3370638833578,
+          "departure_db": -0.24178383378567025,
+          "prominence_db": 0.4818099620190925,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 2414.3885195760754,
+          "departure_db": -0.2365684835766771,
+          "prominence_db": 0.18440544352765487,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5740.04407273284,
+          "departure_db": -1.6757716685360733,
+          "prominence_db": 0.9714473834193867,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -4548,6 +5925,20 @@
           "departure_db": 3.6978940803011966,
           "prominence_db": 4.8402843283603385,
           "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2829.829720340104,
+          "departure_db": -2.1534350138279805,
+          "prominence_db": 3.970862471460976,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.1423902480591424,
+          "prominence_db": 0.07296728392332064,
+          "at_band_edge": true
         }
       ]
     },
@@ -4596,6 +5987,26 @@
           "frequency_hz": 5418.029379291142,
           "departure_db": -0.676607117115203,
           "prominence_db": 0.9658320214119263,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1478.0163940653738,
+          "departure_db": 0.13838103458875867,
+          "prominence_db": 1.1398383352201882,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4118.513244614424,
+          "departure_db": -1.6424391385271293,
+          "prominence_db": 0.9658320214119263,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7127.582360757998,
+          "departure_db": -1.8300585187819152,
+          "prominence_db": 0.2839234027509856,
           "at_band_edge": false
         }
       ]
@@ -4647,6 +6058,20 @@
           "prominence_db": 0.9562644826414344,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2214.0955058497,
+          "departure_db": -1.3183750149706668,
+          "prominence_db": 2.5253180453625816,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4968.560114490792,
+          "departure_db": -0.17089828663738588,
+          "prominence_db": 0.574988590131307,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -4696,6 +6121,26 @@
           "prominence_db": 0.8887388584833735,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1565.8606936655049,
+          "departure_db": -0.7747042051506579,
+          "prominence_db": 1.7859395364046893,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4968.560114490792,
+          "departure_db": -1.0129765912915918,
+          "prominence_db": 1.1852837660790572,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.7164316836959082,
+          "prominence_db": 0.058667931082063696,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -4744,6 +6189,26 @@
           "departure_db": 0.3010453150795557,
           "prominence_db": 0.733099281602889,
           "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1543.4218874277901,
+          "departure_db": -0.3731806071452254,
+          "prominence_db": 0.843756084911319,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4758.007751435556,
+          "departure_db": -1.3743892450678752,
+          "prominence_db": 1.6754345601474308,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.4320539665233333,
+          "prominence_db": 0.036870764449144944,
+          "at_band_edge": true
         }
       ]
     },
@@ -4800,6 +6265,26 @@
           "prominence_db": 0.3192082080648892,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1543.4218874277901,
+          "departure_db": -0.15394966470012855,
+          "prominence_db": 0.4213847122929273,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 2182.3674854398782,
+          "departure_db": -0.1215457577495885,
+          "prominence_db": 0.2114098520747616,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4556.377952778575,
+          "departure_db": -1.7101515557672564,
+          "prominence_db": 2.367365588706049,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -4849,6 +6334,26 @@
           "prominence_db": 0.9308780595206422,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1499.5043124062693,
+          "departure_db": -0.009561840336671288,
+          "prominence_db": 1.1156354873796464,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4556.377952778575,
+          "departure_db": -1.6255207517295913,
+          "prominence_db": 0.9308780595206422,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.7097962278614514,
+          "prominence_db": 0.012745805110198516,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -4890,6 +6395,20 @@
           "frequency_hz": 4363.2926075630985,
           "departure_db": 1.1505917830465227,
           "prominence_db": 0.9940731485627088,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2214.0955058497,
+          "departure_db": -1.395370978467311,
+          "prominence_db": 2.5459627615138336,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5994.053714308234,
+          "departure_db": 0.15651863448381387,
+          "prominence_db": 0.6134115940184921,
           "at_band_edge": false
         }
       ]
@@ -4941,6 +6460,26 @@
           "prominence_db": 1.1341752159666487,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1261.031993524962,
+          "departure_db": 0.18671687909434465,
+          "prominence_db": 0.8195445445641568,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3564.9692543999577,
+          "departure_db": -1.5570029619960732,
+          "prominence_db": 1.1341752159666487,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6169.607930126877,
+          "departure_db": -1.6174197224639646,
+          "prominence_db": 1.1607890319059586,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -4990,6 +6529,26 @@
           "prominence_db": 2.66477534880108,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1944.3754992391325,
+          "departure_db": -1.2662654159274631,
+          "prominence_db": 2.099013870498009,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4300.766561807155,
+          "departure_db": -0.1898248264304931,
+          "prominence_db": 0.6809453406750019,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.35848135930645975,
+          "prominence_db": 0.06024733275475558,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -5036,6 +6595,20 @@
         {
           "frequency_hz": 5823.494837422104,
           "departure_db": 0.5046005724907661,
+          "prominence_db": 1.3539950557945757,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1395.1001324468168,
+          "departure_db": -0.7129995433990184,
+          "prominence_db": 1.703460032437343,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4300.766561807155,
+          "departure_db": -0.8493944833038096,
           "prominence_db": 1.3539950557945757,
           "at_band_edge": false
         }
@@ -5093,6 +6666,26 @@
           "departure_db": 0.12164001455209368,
           "prominence_db": 0.061765697177044755,
           "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1375.1083275047663,
+          "departure_db": -0.35120467831241203,
+          "prominence_db": 0.8889118170245487,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4118.513244614424,
+          "departure_db": -1.2517577541484843,
+          "prominence_db": 1.947948358948449,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7127.582360757998,
+          "departure_db": -0.2678445900700084,
+          "prominence_db": 0.38948460462210205,
+          "at_band_edge": false
         }
       ]
     },
@@ -5155,6 +6748,32 @@
           "prominence_db": 0.0987645361753382,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1375.1083275047663,
+          "departure_db": -0.20327662811721947,
+          "prominence_db": 0.44155330344654975,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 1889.0489177299426,
+          "departure_db": -0.18583518592028742,
+          "prominence_db": 0.1680783400517644,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4001.3222705386834,
+          "departure_db": -1.6629399273474839,
+          "prominence_db": 2.887725059382625,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6924.769289620118,
+          "departure_db": 0.6124496116486466,
+          "prominence_db": 0.4648026979314879,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -5202,6 +6821,26 @@
           "frequency_hz": 5418.029379291142,
           "departure_db": -0.3164516545629682,
           "prominence_db": 0.9735703103552759,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1316.8354474064372,
+          "departure_db": 0.07427917343179667,
+          "prominence_db": 1.1023416012837566,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3943.9832649129053,
+          "departure_db": -1.4735206627671158,
+          "prominence_db": 1.1570690082041475,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6825.537246208304,
+          "departure_db": -1.290021964918244,
+          "prominence_db": 0.9209455900173978,
           "at_band_edge": false
         }
       ]
@@ -5252,6 +6891,26 @@
           "departure_db": 0.9226114908976086,
           "prominence_db": 0.5686885917304012,
           "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1972.6435090659843,
+          "departure_db": -1.4336925368243416,
+          "prominence_db": 2.525638522766155,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5188.42988514688,
+          "departure_db": 0.3539228991672075,
+          "prominence_db": 0.5686885917304012,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.24694331319581675,
+          "prominence_db": 0.09809439450820986,
+          "at_band_edge": true
         }
       ]
     },
@@ -5306,6 +6965,26 @@
           "frequency_hz": 6536.291878698452,
           "departure_db": -0.7344815227870786,
           "prominence_db": 0.193590854856296,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1045.2881413405937,
+          "departure_db": 0.23128388563434377,
+          "prominence_db": 0.46982397959815003,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3085.823701413593,
+          "departure_db": -1.4486866163633187,
+          "prominence_db": 1.1677768140893612,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5340.388940442415,
+          "departure_db": -1.6094469886370926,
+          "prominence_db": 0.874965465850014,
           "at_band_edge": false
         }
       ]
@@ -5363,6 +7042,26 @@
           "prominence_db": 0.036175585613426264,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1297.9651765254823,
+          "departure_db": -0.9435146450269467,
+          "prominence_db": 1.3870604668124313,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3669.3802943577443,
+          "departure_db": -0.8437856795454022,
+          "prominence_db": 1.0929848823208996,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6631.318771976281,
+          "departure_db": 0.3296843517914592,
+          "prominence_db": 0.802696153092638,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -5418,6 +7117,26 @@
           "prominence_db": 0.012645788346834053,
           "at_band_edge": true
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1225.1497324068002,
+          "departure_db": -0.6440383214974175,
+          "prominence_db": 1.2167791283859741,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3669.3802943577443,
+          "departure_db": -0.9503157097791717,
+          "prominence_db": 1.5732525012993075,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6350.303788673567,
+          "departure_db": -0.9254759233862011,
+          "prominence_db": 1.2285614813004821,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -5467,6 +7186,245 @@
           "prominence_db": 0.9711934243546113,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1207.5933191390839,
+          "departure_db": -0.24776207159306002,
+          "prominence_db": 1.0361675520169964,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3513.8831937647446,
+          "departure_db": -1.404518774058191,
+          "prominence_db": 2.177173478465468,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6081.1973598463765,
+          "departure_db": -0.45267332265829363,
+          "prominence_db": 0.9711934243546113,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/40deg/450x450/candidates/candidate-004",
+      "report": null,
+      "mouth_mm": 450.0,
+      "coverage_deg": 40.0,
+      "length_mm": 181.73,
+      "k": 4.0,
+      "n": 16.0,
+      "s": 3.080147255392556,
+      "scales_mm": {
+        "osse_length": 181.73,
+        "mouth_width": 450.0,
+        "mouth_radius": 225.0,
+        "radial_growth": 212.3,
+        "wall_path_length": 301.5931314320199,
+        "half_radial_growth_from_throat": 153.6014842291516,
+        "half_radial_growth_to_mouth": 28.128515770848395,
+        "max_curvature_from_throat": 1.77470703125,
+        "max_curvature_to_mouth": 179.95529296875,
+        "diameter_at_max_curvature": 25.816702337312208,
+        "mouth_curvature_radius": 1016.1078356054621,
+        "termination_10_from_throat": 165.7806830996912,
+        "termination_10_to_mouth": 15.949316900308787,
+        "termination_50_from_throat": 178.73999383365089,
+        "termination_50_to_mouth": 2.9900061663491044,
+        "termination_90_from_throat": 181.4244596497677,
+        "termination_90_to_mouth": 0.30554035023229176
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 0.8238666034115385,
+          "prominence_db": 0.021690357278015604,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2001.3224890886054,
+          "departure_db": 0.47744940058890484,
+          "prominence_db": 0.5769414633277558,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5040.794776055233,
+          "departure_db": 0.5682263768664026,
+          "prominence_db": 0.33344431280848924,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7231.205641494897,
+          "departure_db": 1.7396504294487198,
+          "prominence_db": 0.6221596111178256,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1190.2884895257355,
+          "departure_db": -0.09949206273885088,
+          "prominence_db": 0.5769414633277558,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3413.89677395557,
+          "departure_db": -1.8675364438202995,
+          "prominence_db": 2.691403047231838,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5908.158838462689,
+          "departure_db": 0.2347820640579134,
+          "prominence_db": 0.33344431280848924,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/40deg/450x450/candidates/candidate-005",
+      "report": null,
+      "mouth_mm": 450.0,
+      "coverage_deg": 40.0,
+      "length_mm": 181.73,
+      "k": 6.0,
+      "n": 8.0,
+      "s": 1.6279859911193284,
+      "scales_mm": {
+        "osse_length": 181.73,
+        "mouth_width": 450.0,
+        "mouth_radius": 225.0,
+        "radial_growth": 212.3,
+        "wall_path_length": 304.65107009925936,
+        "half_radial_growth_from_throat": 157.4897173599801,
+        "half_radial_growth_to_mouth": 24.2402826400199,
+        "max_curvature_from_throat": 1.77470703125,
+        "max_curvature_to_mouth": 179.95529296875,
+        "diameter_at_max_curvature": 25.802157846276202,
+        "mouth_curvature_radius": 801.2818370091578,
+        "termination_10_from_throat": 152.57488903331136,
+        "termination_10_to_mouth": 29.155110966688625,
+        "termination_50_from_throat": 176.67895677510145,
+        "termination_50_to_mouth": 5.051043224898535,
+        "termination_90_from_throat": 181.28379315528647,
+        "termination_90_to_mouth": 0.44620684471351524
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 0.9761892580731921,
+          "prominence_db": 0.02068145308958469,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 1972.6435090659843,
+          "departure_db": 1.5101032165593617,
+          "prominence_db": 1.3371938082835864,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4556.377952778575,
+          "departure_db": -0.26732031051008165,
+          "prominence_db": 1.0527170269540596,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1156.419212135146,
+          "departure_db": 0.1729094082757754,
+          "prominence_db": 0.8032798497974167,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3364.9755841356573,
+          "departure_db": -1.4537607591510082,
+          "prominence_db": 1.2278744377465802,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5908.158838462689,
+          "departure_db": -1.3200373374641412,
+          "prominence_db": 1.0527170269540596,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.31405406563832683,
+          "prominence_db": 0.019763429246460573,
+          "at_band_edge": true
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/40deg/450x450/candidates/candidate-006",
+      "report": null,
+      "mouth_mm": 450.0,
+      "coverage_deg": 40.0,
+      "length_mm": 218.076,
+      "k": 4.0,
+      "n": 8.0,
+      "s": 0.6893775796942244,
+      "scales_mm": {
+        "osse_length": 218.076,
+        "mouth_width": 450.0,
+        "mouth_radius": 225.0,
+        "radial_growth": 212.3,
+        "wall_path_length": 317.01939233379034,
+        "half_radial_growth_from_throat": 154.80444093375078,
+        "half_radial_growth_to_mouth": 63.27155906624921,
+        "max_curvature_from_throat": 2.1296484374999998,
+        "max_curvature_to_mouth": 215.94635156249998,
+        "diameter_at_max_curvature": 25.91051140189623,
+        "mouth_curvature_radius": 199.6487994226249,
+        "termination_10_from_throat": 183.08986683997364,
+        "termination_10_to_mouth": 34.986133160026355,
+        "termination_50_from_throat": 212.01474813012175,
+        "termination_50_to_mouth": 6.061251869878248,
+        "termination_90_from_throat": 217.54055178634377,
+        "termination_90_to_mouth": 0.535448213656224
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 0.7557642214089229,
+          "prominence_db": 0.02579671115910631,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2955.055942277589,
+          "departure_db": 0.7382174163148256,
+          "prominence_db": 0.661188181265648,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5576.71295876814,
+          "departure_db": 1.5768648385912658,
+          "prominence_db": 1.9826984404828447,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1707.5126488685733,
+          "departure_db": -1.1463928729165367,
+          "prominence_db": 1.9021570943254595,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4118.513244614424,
+          "departure_db": 0.07702923504917761,
+          "prominence_db": 0.661188181265648,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7336.335433664031,
+          "departure_db": -0.4058336018915789,
+          "prominence_db": 0.21471408695243344,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -5508,6 +7466,20 @@
           "frequency_hz": 2955.055942277589,
           "departure_db": 0.900587327733257,
           "prominence_db": 1.2709256970095586,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2182.3674854398782,
+          "departure_db": -0.37033836927630154,
+          "prominence_db": 1.2709256970095586,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5823.494837422104,
+          "departure_db": -2.0018641598696787,
+          "prominence_db": 1.0515317493377974,
           "at_band_edge": false
         }
       ]
@@ -5559,6 +7531,26 @@
           "prominence_db": 2.8815533261206894,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2345.687868248464,
+          "departure_db": -1.8258694766171462,
+          "prominence_db": 0.12520923105785142,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3222.3782230216034,
+          "departure_db": -1.8991335104558171,
+          "prominence_db": 3.603717804493984,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.27519841757717967,
+          "prominence_db": 0.07353037725262149,
+          "at_band_edge": true
+        }
       ]
     },
     {
@@ -5600,6 +7592,14 @@
           "frequency_hz": 4827.181329238018,
           "departure_db": 1.0460902605451934,
           "prominence_db": 2.2183430026802355,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2246.284799297103,
+          "departure_db": -1.2609062635149733,
+          "prominence_db": 2.3069965240601666,
           "at_band_edge": false
         }
       ]
@@ -5651,6 +7651,26 @@
           "prominence_db": 1.130440640171079,
           "at_band_edge": false
         }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2214.0955058497,
+          "departure_db": -0.9539121118700475,
+          "prominence_db": 1.130440640171079,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3085.823701413593,
+          "departure_db": -0.8029856356355478,
+          "prominence_db": 0.1275240671729745,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6825.537246208304,
+          "departure_db": -1.1363731399228016,
+          "prominence_db": 0.37655137967215724,
+          "at_band_edge": false
+        }
       ]
     },
     {
@@ -5698,6 +7718,1157 @@
           "frequency_hz": 3887.4659280615624,
           "departure_db": -0.09457737392858165,
           "prominence_db": 0.6994636911449131,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2214.0955058497,
+          "departure_db": -0.7717167380045549,
+          "prominence_db": 0.1955302197594886,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3130.686483705196,
+          "departure_db": -0.7940410650734948,
+          "prominence_db": 0.6994636911449131,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6442.626722166592,
+          "departure_db": -1.2403191230311386,
+          "prominence_db": 0.866889543158803,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/250x250/candidates/candidate-005",
+      "report": null,
+      "mouth_mm": 250.0,
+      "coverage_deg": 45.0,
+      "length_mm": 105.791,
+      "k": 6.0,
+      "n": 8.0,
+      "s": 1.3287098987391424,
+      "scales_mm": {
+        "osse_length": 105.791,
+        "mouth_width": 250.0,
+        "mouth_radius": 125.0,
+        "radial_growth": 112.3,
+        "wall_path_length": 167.64039657283297,
+        "half_radial_growth_from_throat": 89.76023228326902,
+        "half_radial_growth_to_mouth": 16.030767716730978,
+        "max_curvature_from_throat": 96.85455322265625,
+        "max_curvature_to_mouth": 8.936446777343747,
+        "diameter_at_max_curvature": 161.6476878211029,
+        "mouth_curvature_radius": 320.13989633441605,
+        "termination_10_from_throat": 88.818852614995,
+        "termination_10_to_mouth": 16.972147385005,
+        "termination_50_from_throat": 102.85062189068816,
+        "termination_50_to_mouth": 2.940378109311837,
+        "termination_90_from_throat": 105.53124834474723,
+        "termination_90_to_mouth": 0.2597516552527708
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 2.0716975711066463,
+          "prominence_db": 0.0180586383084278,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 3722.7270261284098,
+          "departure_db": 0.5014891774202068,
+          "prominence_db": 1.0890189899559517,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2151.0941280183806,
+          "departure_db": -0.5875298125357448,
+          "prominence_db": 1.0890189899559517,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6536.291878698452,
+          "departure_db": -1.927411875529112,
+          "prominence_db": 0.531969929788668,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/250x250/candidates/candidate-006",
+      "report": null,
+      "mouth_mm": 250.0,
+      "coverage_deg": 45.0,
+      "length_mm": 126.949,
+      "k": 4.0,
+      "n": 8.0,
+      "s": 0.3067396747117798,
+      "scales_mm": {
+        "osse_length": 126.949,
+        "mouth_width": 250.0,
+        "mouth_radius": 125.0,
+        "radial_growth": 112.3,
+        "wall_path_length": 174.17124964853366,
+        "half_radial_growth_from_throat": 83.77430934607749,
+        "half_radial_growth_to_mouth": 43.17469065392251,
+        "max_curvature_from_throat": 125.709263671875,
+        "max_curvature_to_mouth": 1.2397363281250051,
+        "diameter_at_max_curvature": 240.14553125846098,
+        "mouth_curvature_radius": 32.908413984962145,
+        "termination_10_from_throat": 106.58245522417786,
+        "termination_10_to_mouth": 20.366544775822135,
+        "termination_50_from_throat": 123.42055182766939,
+        "termination_50_to_mouth": 3.528448172330613,
+        "termination_90_from_throat": 126.63729850476236,
+        "termination_90_to_mouth": 0.31170149523764223
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 1.9593934005864333,
+          "prominence_db": 0.020130917778656165,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 6081.1973598463765,
+          "departure_db": 2.7535995516897787,
+          "prominence_db": 3.149863331076215,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 3176.201496788216,
+          "departure_db": -2.070366042525027,
+          "prominence_db": 4.029759443111461,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.39626377938643637,
+          "prominence_db": 0.14229327031981892,
+          "at_band_edge": true
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/300x300/candidates/candidate-001",
+      "report": null,
+      "mouth_mm": 300.0,
+      "coverage_deg": 45.0,
+      "length_mm": 92.0,
+      "k": 4.0,
+      "n": 8.0,
+      "s": 2.3838570114609765,
+      "scales_mm": {
+        "osse_length": 92.0,
+        "mouth_width": 300.0,
+        "mouth_radius": 150.0,
+        "radial_growth": 137.3,
+        "wall_path_length": 181.08919994215043,
+        "half_radial_growth_from_throat": 82.56977705175657,
+        "half_radial_growth_to_mouth": 9.430222948243426,
+        "max_curvature_from_throat": 0.8984375,
+        "max_curvature_to_mouth": 91.1015625,
+        "diameter_at_max_curvature": 25.604747496201696,
+        "mouth_curvature_radius": 851.5423307247444,
+        "termination_10_from_throat": 77.24035542323587,
+        "termination_10_to_mouth": 14.759644576764131,
+        "termination_50_from_throat": 89.44293195019723,
+        "termination_50_to_mouth": 2.5570680498027656,
+        "termination_90_from_throat": 91.77410977981819,
+        "termination_90_to_mouth": 0.22589022018181026
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 1.2799951441146575,
+          "prominence_db": 0.016342474661650286,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2449.4897427831784,
+          "departure_db": 1.6859216598960303,
+          "prominence_db": 1.7096829018332682,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6169.607930126877,
+          "departure_db": -0.6801962487672752,
+          "prominence_db": 1.112070378591146,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1732.3370638833578,
+          "departure_db": -0.023761241937237883,
+          "prominence_db": 1.3037563860518955,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4622.6201661753175,
+          "departure_db": -1.7922666273584213,
+          "prominence_db": 1.112070378591146,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -2.0002045118444536,
+          "prominence_db": 0.048623802680776596,
+          "at_band_edge": true
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/300x300/candidates/candidate-002",
+      "report": null,
+      "mouth_mm": 300.0,
+      "coverage_deg": 45.0,
+      "length_mm": 115.0,
+      "k": 2.0,
+      "n": 8.0,
+      "s": 0.8540213604128628,
+      "scales_mm": {
+        "osse_length": 115.0,
+        "mouth_width": 300.0,
+        "mouth_radius": 150.0,
+        "radial_growth": 137.3,
+        "wall_path_length": 185.93800073796766,
+        "half_radial_growth_from_throat": 80.921019247262,
+        "half_radial_growth_to_mouth": 34.078980752738005,
+        "max_curvature_from_throat": 1.123046875,
+        "max_curvature_to_mouth": 113.876953125,
+        "diameter_at_max_curvature": 25.685704614870446,
+        "mouth_curvature_radius": 159.4240001607618,
+        "termination_10_from_throat": 96.55044427904477,
+        "termination_10_to_mouth": 18.44955572095523,
+        "termination_50_from_throat": 111.8036649377465,
+        "termination_50_to_mouth": 3.196335062253496,
+        "termination_90_from_throat": 114.71763722477273,
+        "termination_90_to_mouth": 0.28236277522726994
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 1.2669882350679744,
+          "prominence_db": 0.019588125783974064,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 4178.389628016879,
+          "departure_db": 1.1460383772642335,
+          "prominence_db": 1.0733941637655462,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": 1.8183492353812136,
+          "prominence_db": 0.030641899677342765,
+          "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1944.3754992391325,
+          "departure_db": -1.4574496469319662,
+          "prominence_db": 2.7244378819999406,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5740.04407273284,
+          "departure_db": 0.0726442134986874,
+          "prominence_db": 1.0733941637655462,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/300x300/candidates/candidate-003",
+      "report": null,
+      "mouth_mm": 300.0,
+      "coverage_deg": 45.0,
+      "length_mm": 115.0,
+      "k": 4.0,
+      "n": 4.0,
+      "s": 0.6966198463899023,
+      "scales_mm": {
+        "osse_length": 115.0,
+        "mouth_width": 300.0,
+        "mouth_radius": 150.0,
+        "radial_growth": 137.3,
+        "wall_path_length": 189.29540352847218,
+        "half_radial_growth_from_throat": 88.5404976542357,
+        "half_radial_growth_to_mouth": 26.459502345764307,
+        "max_curvature_from_throat": 1.123046875,
+        "max_curvature_to_mouth": 113.876953125,
+        "diameter_at_max_curvature": 25.660898738586113,
+        "mouth_curvature_radius": 162.1725035012991,
+        "termination_10_from_throat": 79.81333009093197,
+        "termination_10_to_mouth": 35.18666990906803,
+        "termination_50_from_throat": 108.4903674188144,
+        "termination_50_to_mouth": 6.509632581185599,
+        "termination_90_from_throat": 114.50113231711902,
+        "termination_90_to_mouth": 0.4988676828809844
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 1.3683924209071066,
+          "prominence_db": 0.019932837597093966,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 3364.9755841356573,
+          "departure_db": 1.1677146454176839,
+          "prominence_db": 2.216062856315991,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1861.9788195979802,
+          "departure_db": -1.048348210898307,
+          "prominence_db": 2.216062856315991,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5576.71295876814,
+          "departure_db": -1.1245801167766616,
+          "prominence_db": 1.2544425527925325,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/300x300/candidates/candidate-000",
+      "report": null,
+      "mouth_mm": 300.0,
+      "coverage_deg": 45.0,
+      "length_mm": 115.0,
+      "k": 4.0,
+      "n": 8.0,
+      "s": 1.307828966147371,
+      "scales_mm": {
+        "osse_length": 115.0,
+        "mouth_width": 300.0,
+        "mouth_radius": 150.0,
+        "radial_growth": 137.3,
+        "wall_path_length": 191.32253005950946,
+        "half_radial_growth_from_throat": 93.07364445843461,
+        "half_radial_growth_to_mouth": 21.926355541565385,
+        "max_curvature_from_throat": 1.123046875,
+        "max_curvature_to_mouth": 113.876953125,
+        "diameter_at_max_curvature": 25.660898379719455,
+        "mouth_curvature_radius": 342.5470006704587,
+        "termination_10_from_throat": 96.55044427904477,
+        "termination_10_to_mouth": 18.44955572095523,
+        "termination_50_from_throat": 111.8036649377465,
+        "termination_50_to_mouth": 3.196335062253496,
+        "termination_90_from_throat": 114.71763722477273,
+        "termination_90_to_mouth": 0.28236277522726994
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 1.5552113526542617,
+          "prominence_db": 0.019458055879276515,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 3176.201496788216,
+          "departure_db": 0.6787953844080905,
+          "prominence_db": 1.367960620698555,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7442.993639454553,
+          "departure_db": 0.370111503909977,
+          "prominence_db": 0.13826666840112817,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1835.2966363611786,
+          "departure_db": -0.6891652362904646,
+          "prominence_db": 1.367960620698555,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5263.861090197889,
+          "departure_db": -1.3721387791227682,
+          "prominence_db": 1.742250283032745,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/300x300/candidates/candidate-004",
+      "report": null,
+      "mouth_mm": 300.0,
+      "coverage_deg": 45.0,
+      "length_mm": 115.0,
+      "k": 4.0,
+      "n": 16.0,
+      "s": 2.9397569217653605,
+      "scales_mm": {
+        "osse_length": 115.0,
+        "mouth_width": 300.0,
+        "mouth_radius": 150.0,
+        "radial_growth": 137.3,
+        "wall_path_length": 192.73684788924766,
+        "half_radial_growth_from_throat": 95.68549995520829,
+        "half_radial_growth_to_mouth": 19.314500044791714,
+        "max_curvature_from_throat": 1.123046875,
+        "max_curvature_to_mouth": 113.876953125,
+        "diameter_at_max_curvature": 25.660898379719455,
+        "mouth_curvature_radius": 594.8874771109937,
+        "termination_10_from_throat": 104.90716203414124,
+        "termination_10_to_mouth": 10.092837965858763,
+        "termination_50_from_throat": 113.10790343294917,
+        "termination_50_to_mouth": 1.892096567050828,
+        "termination_90_from_throat": 114.80665195467608,
+        "termination_90_to_mouth": 0.19334804532391558
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 1.6569467226877297,
+          "prominence_db": 0.01944254479703278,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2278.9420719305454,
+          "departure_db": -0.02943586553968043,
+          "prominence_db": 0.13109606897591036,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3130.686483705196,
+          "departure_db": 0.37030229637825973,
+          "prominence_db": 0.8551140533367183,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1835.2966363611786,
+          "departure_db": -0.4848117569584586,
+          "prominence_db": 0.8551140533367183,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 2595.072506070834,
+          "departure_db": -0.1605319345155908,
+          "prominence_db": 0.13109606897591036,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5114.07961034801,
+          "departure_db": -1.643335622405795,
+          "prominence_db": 2.554500679729519,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/300x300/candidates/candidate-005",
+      "report": null,
+      "mouth_mm": 300.0,
+      "coverage_deg": 45.0,
+      "length_mm": 115.0,
+      "k": 6.0,
+      "n": 8.0,
+      "s": 1.6502033557401823,
+      "scales_mm": {
+        "osse_length": 115.0,
+        "mouth_width": 300.0,
+        "mouth_radius": 150.0,
+        "radial_growth": 137.3,
+        "wall_path_length": 195.61887041434514,
+        "half_radial_growth_from_throat": 99.90599157019973,
+        "half_radial_growth_to_mouth": 15.094008429800269,
+        "max_curvature_from_throat": 1.123046875,
+        "max_curvature_to_mouth": 113.876953125,
+        "diameter_at_max_curvature": 25.65262469823537,
+        "mouth_curvature_radius": 524.9514960120142,
+        "termination_10_from_throat": 96.55044427904477,
+        "termination_10_to_mouth": 18.44955572095523,
+        "termination_50_from_throat": 111.8036649377465,
+        "termination_50_to_mouth": 3.196335062253496,
+        "termination_90_from_throat": 114.71763722477273,
+        "termination_90_to_mouth": 0.28236277522726994
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 1.59419820005281,
+          "prominence_db": 0.018604598255009153,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2998.0175772333314,
+          "departure_db": 1.1104799036156838,
+          "prominence_db": 1.4129005809733757,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6825.537246208304,
+          "departure_db": -0.7596504574922429,
+          "prominence_db": 0.5381932409952599,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1783.0738589270293,
+          "departure_db": -0.30242067735769185,
+          "prominence_db": 1.4129005809733757,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5040.794776055233,
+          "departure_db": -1.7687480754783123,
+          "prominence_db": 1.0090976179860693,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.2978436984875028,
+          "prominence_db": 0.051581368904695335,
+          "at_band_edge": true
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/300x300/candidates/candidate-006",
+      "report": null,
+      "mouth_mm": 300.0,
+      "coverage_deg": 45.0,
+      "length_mm": 138.0,
+      "k": 4.0,
+      "n": 8.0,
+      "s": 0.5751841024019583,
+      "scales_mm": {
+        "osse_length": 138.0,
+        "mouth_width": 300.0,
+        "mouth_radius": 150.0,
+        "radial_growth": 137.3,
+        "wall_path_length": 202.12760681895895,
+        "half_radial_growth_from_throat": 96.20254046253427,
+        "half_radial_growth_to_mouth": 41.79745953746573,
+        "max_curvature_from_throat": 1.34765625,
+        "max_curvature_to_mouth": 136.65234375,
+        "diameter_at_max_curvature": 25.71903399410877,
+        "mouth_curvature_radius": 95.77742230432995,
+        "termination_10_from_throat": 115.86053313485371,
+        "termination_10_to_mouth": 22.13946686514629,
+        "termination_50_from_throat": 134.1643979252958,
+        "termination_50_to_mouth": 3.8356020747042123,
+        "termination_90_from_throat": 137.66116466972727,
+        "termination_90_to_mouth": 0.3388353302727296
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 1.5933520982775238,
+          "prominence_db": 0.02211498688524749,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 4689.825431996855,
+          "departure_db": 1.482275724614892,
+          "prominence_db": 1.6353631242550835,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": 0.4320946834494883,
+          "prominence_db": 0.0677708852488989,
+          "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 2595.072506070834,
+          "departure_db": -1.4846327733263056,
+          "prominence_db": 2.9669084979411977,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6727.7271994043,
+          "departure_db": -0.15308739964019136,
+          "prominence_db": 0.5851820830896797,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/350x350/candidates/candidate-001",
+      "report": null,
+      "mouth_mm": 350.0,
+      "coverage_deg": 45.0,
+      "length_mm": 100.0,
+      "k": 4.0,
+      "n": 8.0,
+      "s": 2.7042026357932647,
+      "scales_mm": {
+        "osse_length": 100.0,
+        "mouth_width": 350.0,
+        "mouth_radius": 175.0,
+        "radial_growth": 162.3,
+        "wall_path_length": 208.6448057048621,
+        "half_radial_growth_from_throat": 90.52788248083391,
+        "half_radial_growth_to_mouth": 9.47211751916609,
+        "max_curvature_from_throat": 0.9765625,
+        "max_curvature_to_mouth": 99.0234375,
+        "diameter_at_max_curvature": 25.624053091889238,
+        "mouth_curvature_radius": 1181.5229954468307,
+        "termination_10_from_throat": 83.95690806873458,
+        "termination_10_to_mouth": 16.043091931265423,
+        "termination_50_from_throat": 97.22057820673608,
+        "termination_50_to_mouth": 2.7794217932639214,
+        "termination_90_from_throat": 99.75446715197627,
+        "termination_90_to_mouth": 0.24553284802372843
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 0.944288818946609,
+          "prominence_db": 0.0186327016043506,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2089.8854341964725,
+          "departure_db": 2.211223523795046,
+          "prominence_db": 2.2237324147802275,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5114.07961034801,
+          "departure_db": -0.38311026048142127,
+          "prominence_db": 1.2463580860340517,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1242.9613869398845,
+          "departure_db": -0.012508890985181532,
+          "prominence_db": 0.9567977099317905,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3831.7584854593106,
+          "departure_db": -1.6294683465154731,
+          "prominence_db": 1.2463580860340517,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6631.318771976281,
+          "departure_db": -1.7728814388744063,
+          "prominence_db": 1.0085295104915049,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/350x350/candidates/candidate-002",
+      "report": null,
+      "mouth_mm": 350.0,
+      "coverage_deg": 45.0,
+      "length_mm": 125.0,
+      "k": 2.0,
+      "n": 8.0,
+      "s": 1.1246097370337078,
+      "scales_mm": {
+        "osse_length": 125.0,
+        "mouth_width": 350.0,
+        "mouth_radius": 175.0,
+        "radial_growth": 162.3,
+        "wall_path_length": 213.81414525126115,
+        "half_radial_growth_from_throat": 91.93518898975192,
+        "half_radial_growth_to_mouth": 33.06481101024808,
+        "max_curvature_from_throat": 1.220703125,
+        "max_curvature_to_mouth": 123.779296875,
+        "diameter_at_max_curvature": 25.71523428991226,
+        "mouth_curvature_radius": 284.59873508383896,
+        "termination_10_from_throat": 104.94613508591821,
+        "termination_10_to_mouth": 20.053864914081785,
+        "termination_50_from_throat": 121.52572275842009,
+        "termination_50_to_mouth": 3.4742772415799124,
+        "termination_90_from_throat": 124.69308393997034,
+        "termination_90_to_mouth": 0.3069160600296641
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 0.8601297164062618,
+          "prominence_db": 0.022347367805493734,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 3413.89677395557,
+          "departure_db": 0.6318655497801331,
+          "prominence_db": 1.1624841157246157,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6350.303788673567,
+          "departure_db": 2.14705336001256,
+          "prominence_db": 2.4658323214266544,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1658.925923833945,
+          "departure_db": -1.2242473531924527,
+          "prominence_db": 2.0843770695987143,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4622.6201661753175,
+          "departure_db": -0.5306185659444825,
+          "prominence_db": 1.1624841157246157,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -0.3187789614140947,
+          "prominence_db": 0.0911298463226548,
+          "at_band_edge": true
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/350x350/candidates/candidate-003",
+      "report": null,
+      "mouth_mm": 350.0,
+      "coverage_deg": 45.0,
+      "length_mm": 125.0,
+      "k": 4.0,
+      "n": 4.0,
+      "s": 0.8287405924300889,
+      "scales_mm": {
+        "osse_length": 125.0,
+        "mouth_width": 350.0,
+        "mouth_radius": 175.0,
+        "radial_growth": 162.3,
+        "wall_path_length": 216.98911169159916,
+        "half_radial_growth_from_throat": 97.9335843462639,
+        "half_radial_growth_to_mouth": 27.0664156537361,
+        "max_curvature_from_throat": 1.220703125,
+        "max_curvature_to_mouth": 123.779296875,
+        "diameter_at_max_curvature": 25.68593136225787,
+        "mouth_curvature_radius": 240.8921556558922,
+        "termination_10_from_throat": 86.75361966405649,
+        "termination_10_to_mouth": 38.24638033594351,
+        "termination_50_from_throat": 117.9243124117548,
+        "termination_50_to_mouth": 7.075687588245202,
+        "termination_90_from_throat": 124.45775251860762,
+        "termination_90_to_mouth": 0.5422474813923799
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 0.9758203906363798,
+          "prominence_db": 0.022037682294025918,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2789.2782197900788,
+          "departure_db": 1.603529502677682,
+          "prominence_db": 2.441035696069016,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6081.1973598463765,
+          "departure_db": 0.4332656385698556,
+          "prominence_db": 1.4945939326950606,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1588.625723102123,
+          "departure_db": -0.8375061933913343,
+          "prominence_db": 1.8133265840277142,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4491.084991251541,
+          "departure_db": -1.061328294125205,
+          "prominence_db": 1.4945939326950606,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": -1.2863390548509854,
+          "prominence_db": 0.018034613302505775,
+          "at_band_edge": true
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/350x350/candidates/candidate-000",
+      "report": null,
+      "mouth_mm": 350.0,
+      "coverage_deg": 45.0,
+      "length_mm": 125.0,
+      "k": 4.0,
+      "n": 8.0,
+      "s": 1.5558714811515217,
+      "scales_mm": {
+        "osse_length": 125.0,
+        "mouth_width": 350.0,
+        "mouth_radius": 175.0,
+        "radial_growth": 162.3,
+        "wall_path_length": 219.46289228122524,
+        "half_radial_growth_from_throat": 103.52288070544189,
+        "half_radial_growth_to_mouth": 21.477119294558108,
+        "max_curvature_from_throat": 1.220703125,
+        "max_curvature_to_mouth": 123.779296875,
+        "diameter_at_max_curvature": 25.685930898204376,
+        "mouth_curvature_radius": 515.8475020462957,
+        "termination_10_from_throat": 104.94613508591821,
+        "termination_10_to_mouth": 20.053864914081785,
+        "termination_50_from_throat": 121.52572275842009,
+        "termination_50_to_mouth": 3.4742772415799124,
+        "termination_90_from_throat": 124.69308393997034,
+        "termination_90_to_mouth": 0.3069160600296641
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 1.1834206266161829,
+          "prominence_db": 0.02151220223752337,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2671.0771500913397,
+          "departure_db": 1.0674556504155421,
+          "prominence_db": 1.5001975927177509,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5994.053714308234,
+          "departure_db": 0.44535385397795313,
+          "prominence_db": 1.1705291642095816,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1565.8606936655049,
+          "departure_db": -0.43274194230220875,
+          "prominence_db": 1.5001975927177509,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4300.766561807155,
+          "departure_db": -1.4115959681877437,
+          "prominence_db": 1.8569498221656968,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/350x350/candidates/candidate-004",
+      "report": null,
+      "mouth_mm": 350.0,
+      "coverage_deg": 45.0,
+      "length_mm": 125.0,
+      "k": 4.0,
+      "n": 16.0,
+      "s": 3.4973104851518535,
+      "scales_mm": {
+        "osse_length": 125.0,
+        "mouth_width": 350.0,
+        "mouth_radius": 175.0,
+        "radial_growth": 162.3,
+        "wall_path_length": 221.1739311064748,
+        "half_radial_growth_from_throat": 107.0529304546289,
+        "half_radial_growth_to_mouth": 17.947069545371093,
+        "max_curvature_from_throat": 1.220703125,
+        "max_curvature_to_mouth": 123.779296875,
+        "diameter_at_max_curvature": 25.685930898204376,
+        "mouth_curvature_radius": 901.3632205528845,
+        "termination_10_from_throat": 114.02952395015353,
+        "termination_10_to_mouth": 10.970476049846468,
+        "termination_50_from_throat": 122.94337329668387,
+        "termination_50_to_mouth": 2.0566267033161267,
+        "termination_90_from_throat": 124.78983908116967,
+        "termination_90_to_mouth": 0.21016091883032573
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 1.2684462649428543,
+          "prominence_db": 0.021148999183659756,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2595.072506070834,
+          "departure_db": 0.6799138166733258,
+          "prominence_db": 0.9060008832870685,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6169.607930126877,
+          "departure_db": 0.6677625632608533,
+          "prominence_db": 0.5870922321506622,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": 0.2110912746773732,
+          "prominence_db": 0.0368234408994578,
+          "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1565.8606936655049,
+          "departure_db": -0.22608706661374273,
+          "prominence_db": 0.9060008832870685,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4239.136515185236,
+          "departure_db": -1.7584197428961583,
+          "prominence_db": 2.4261823061570116,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7442.993639454553,
+          "departure_db": 0.08067033111019112,
+          "prominence_db": 0.1304209435671821,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/350x350/candidates/candidate-005",
+      "report": null,
+      "mouth_mm": 350.0,
+      "coverage_deg": 45.0,
+      "length_mm": 125.0,
+      "k": 6.0,
+      "n": 8.0,
+      "s": 1.8892169410349313,
+      "scales_mm": {
+        "osse_length": 125.0,
+        "mouth_width": 350.0,
+        "mouth_radius": 175.0,
+        "radial_growth": 162.3,
+        "wall_path_length": 224.01473635463864,
+        "half_radial_growth_from_throat": 109.86274993941409,
+        "half_radial_growth_to_mouth": 15.137250060585913,
+        "max_curvature_from_throat": 1.220703125,
+        "max_curvature_to_mouth": 123.779296875,
+        "diameter_at_max_curvature": 25.676156212061784,
+        "mouth_curvature_radius": 739.4648626842899,
+        "termination_10_from_throat": 104.94613508591821,
+        "termination_10_to_mouth": 20.053864914081785,
+        "termination_50_from_throat": 121.52572275842009,
+        "termination_50_to_mouth": 3.4742772415799124,
+        "termination_90_from_throat": 124.69308393997034,
+        "termination_90_to_mouth": 0.3069160600296641
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 1.2675556566600656,
+          "prominence_db": 0.020904127579237874,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2521.230549830607,
+          "departure_db": 1.5541952042151124,
+          "prominence_db": 1.5831973628586549,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5576.71295876814,
+          "departure_db": -0.4506206394756547,
+          "prominence_db": 1.1297179473257304,
+          "at_band_edge": false
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1499.5043124062693,
+          "departure_db": -0.02900215864354254,
+          "prominence_db": 1.2965578153036081,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4178.389628016879,
+          "departure_db": -1.5889310442685642,
+          "prominence_db": 1.1383104047929096,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7336.335433664031,
+          "departure_db": -1.580338586801385,
+          "prominence_db": 0.1706741676618715,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/400x400/candidates/candidate-002",
+      "report": null,
+      "mouth_mm": 400.0,
+      "coverage_deg": 45.0,
+      "length_mm": 143.112,
+      "k": 2.0,
+      "n": 8.0,
+      "s": 1.0930801169866797,
+      "scales_mm": {
+        "osse_length": 143.112,
+        "mouth_width": 400.0,
+        "mouth_radius": 200.0,
+        "radial_growth": 187.3,
+        "wall_path_length": 245.28402635150513,
+        "half_radial_growth_from_throat": 103.6182354275136,
+        "half_radial_growth_to_mouth": 39.4937645724864,
+        "max_curvature_from_throat": 1.397578125,
+        "max_curvature_to_mouth": 141.714421875,
+        "diameter_at_max_curvature": 25.77062325223703,
+        "mouth_curvature_radius": 309.5990904653762,
+        "termination_10_from_throat": 120.15241027532734,
+        "termination_10_to_mouth": 22.959589724672654,
+        "termination_50_from_throat": 139.13431388322408,
+        "termination_50_to_mouth": 3.9776861167759137,
+        "termination_90_from_throat": 142.76061303053626,
+        "termination_90_to_mouth": 0.35138696946373216
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 0.4649053947320778,
+          "prominence_db": 0.024677299000529118,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2998.0175772333314,
+          "departure_db": 0.7904988615849076,
+          "prominence_db": 1.1736735721794733,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5496.7985819456235,
+          "departure_db": 2.4510492742644714,
+          "prominence_db": 2.690535435759677,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": 0.15918878247915513,
+          "prominence_db": 0.060828084231455054,
+          "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1456.8363979030307,
+          "departure_db": -1.2558318703220115,
+          "prominence_db": 1.7207372650540893,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 4059.4948906464006,
+          "departure_db": -0.3831747105945657,
+          "prominence_db": 1.1736735721794733,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 7231.205641494897,
+          "departure_db": -0.23948616149520568,
+          "prominence_db": 0.3986749439743608,
+          "at_band_edge": false
+        }
+      ]
+    },
+    {
+      "id": "searches/core-axis/45deg/400x400/candidates/candidate-000",
+      "report": null,
+      "mouth_mm": 400.0,
+      "coverage_deg": 45.0,
+      "length_mm": 143.112,
+      "k": 4.0,
+      "n": 8.0,
+      "s": 1.4877655844126625,
+      "scales_mm": {
+        "osse_length": 143.112,
+        "mouth_width": 400.0,
+        "mouth_radius": 200.0,
+        "radial_growth": 187.3,
+        "wall_path_length": 251.1545137286434,
+        "half_radial_growth_from_throat": 116.28991543647788,
+        "half_radial_growth_to_mouth": 26.82208456352211,
+        "max_curvature_from_throat": 1.397578125,
+        "max_curvature_to_mouth": 141.714421875,
+        "diameter_at_max_curvature": 25.732224790971344,
+        "mouth_curvature_radius": 544.0369065241332,
+        "termination_10_from_throat": 120.15241027532734,
+        "termination_10_to_mouth": 22.959589724672654,
+        "termination_50_from_throat": 139.13431388322408,
+        "termination_50_to_mouth": 3.9776861167759137,
+        "termination_90_from_throat": 142.76061303053626,
+        "termination_90_to_mouth": 0.35138696946373216
+      },
+      "peaks": [
+        {
+          "frequency_hz": 750.0,
+          "departure_db": 0.7914768027802674,
+          "prominence_db": 0.02300776469981436,
+          "at_band_edge": true
+        },
+        {
+          "frequency_hz": 2345.687868248464,
+          "departure_db": 1.0242392415036699,
+          "prominence_db": 1.5351441824863774,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 5340.388940442415,
+          "departure_db": 0.864812021879751,
+          "prominence_db": 1.2891935362866294,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 8000.000000000001,
+          "departure_db": 0.7472390901154757,
+          "prominence_db": 0.08474223485373988,
+          "at_band_edge": true
+        }
+      ],
+      "troughs": [
+        {
+          "frequency_hz": 1375.1083275047663,
+          "departure_db": -0.5109049409827076,
+          "prominence_db": 1.302381743762975,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 3776.8493313099266,
+          "departure_db": -1.312095141280195,
+          "prominence_db": 2.176907163159946,
+          "at_band_edge": false
+        },
+        {
+          "frequency_hz": 6631.318771976281,
+          "departure_db": -0.4243815144068784,
+          "prominence_db": 1.171620604522354,
           "at_band_edge": false
         }
       ]
