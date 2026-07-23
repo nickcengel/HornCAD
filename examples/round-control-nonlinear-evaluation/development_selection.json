@@ -1,0 +1,2269 @@
+{
+  "candidate_family": [
+    {
+      "id": "quadratic",
+      "method": "quadratic"
+    },
+    {
+      "id": "nearest",
+      "method": "neighbor",
+      "neighbors": 1
+    },
+    {
+      "id": "idw_k4_p2",
+      "method": "idw",
+      "neighbors": 4,
+      "power": 2.0
+    },
+    {
+      "id": "idw_k8_p2",
+      "method": "idw",
+      "neighbors": 8,
+      "power": 2.0
+    },
+    {
+      "id": "idw_k12_p2",
+      "method": "idw",
+      "neighbors": 12,
+      "power": 2.0
+    },
+    {
+      "id": "local_affine_k12",
+      "method": "local_affine",
+      "neighbors": 12,
+      "ridge": 0.01
+    },
+    {
+      "id": "local_affine_k20",
+      "method": "local_affine",
+      "neighbors": 20,
+      "ridge": 0.01
+    },
+    {
+      "bandwidth": 0.5,
+      "id": "quadratic_rbf_b0p5_r0p001",
+      "method": "quadratic_rbf",
+      "ridge": 0.001
+    },
+    {
+      "bandwidth": 0.75,
+      "id": "quadratic_rbf_b0p75_r0p001",
+      "method": "quadratic_rbf",
+      "ridge": 0.001
+    },
+    {
+      "bandwidth": 1.0,
+      "id": "quadratic_rbf_b1_r0p001",
+      "method": "quadratic_rbf",
+      "ridge": 0.001
+    },
+    {
+      "bandwidth": 0.75,
+      "id": "quadratic_rbf_b0p75_r0p01",
+      "method": "quadratic_rbf",
+      "ridge": 0.01
+    },
+    {
+      "bandwidth": 1.0,
+      "id": "quadratic_rbf_b1_r0p01",
+      "method": "quadratic_rbf",
+      "ridge": 0.01
+    },
+    {
+      "bandwidth": 1.5,
+      "id": "quadratic_rbf_b1p5_r0p01",
+      "method": "quadratic_rbf",
+      "ridge": 0.01
+    }
+  ],
+  "challenge_outcomes_loaded": false,
+  "comparison": {
+    "idw_k12_p2": {
+      "candidate": {
+        "id": "idw_k12_p2",
+        "method": "idw",
+        "neighbors": 12,
+        "power": 2.0
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.26647346041003944,
+          "selection_loss": 0.4097655026018343,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.5731681687671794
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.630183840015652,
+            "mean_signed": -0.01229066748692992,
+            "p90_absolute": 1.670417636504115,
+            "rmse": 1.0464221552311945
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.6807785461020492,
+            "mean_signed": -0.20551275506910266,
+            "p90_absolute": 1.6275181746251572,
+            "rmse": 1.1538933134547975
+          },
+          "outward_rise_violation": {
+            "mae": 0.2640986626227665,
+            "mean_signed": -0.11940720887712303,
+            "p90_absolute": 0.5535374710867258,
+            "rmse": 0.595849838782724
+          },
+          "profile_rms_error": {
+            "mae": 0.14978220283336288,
+            "mean_signed": -0.0687375024261146,
+            "p90_absolute": 0.365663469997686,
+            "rmse": 0.2781359758930251
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.12040431288029006,
+            "mean_signed": -0.04695049905749518,
+            "p90_absolute": 0.29331048906440954,
+            "rmse": 0.24260475061306452
+          },
+          "surface_score": {
+            "mae": 2.7495072350486507,
+            "mean_signed": 1.2677289110218806,
+            "p90_absolute": 6.661943059548276,
+            "rmse": 5.413390270855982
+          },
+          "throat_impedance_score": {
+            "mae": 1.8780910684066856,
+            "mean_signed": 0.5741047963003848,
+            "p90_absolute": 5.082566900756251,
+            "rmse": 3.275119918132875
+          }
+        }
+      },
+      "selection_loss": 0.5146100805868976,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.2856226062627545,
+          "selection_loss": 0.4193783119402533,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.5350228227099953
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.6916572573553732,
+            "mean_signed": 0.0006855387402503064,
+            "p90_absolute": 1.7093665967538696,
+            "rmse": 1.0819608052027028
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.7491579818375765,
+            "mean_signed": -0.2322762616481852,
+            "p90_absolute": 1.73572949056444,
+            "rmse": 1.187713173470176
+          },
+          "outward_rise_violation": {
+            "mae": 0.2823111632525928,
+            "mean_signed": -0.12464126278667578,
+            "p90_absolute": 0.5612116308991281,
+            "rmse": 0.6033030559392758
+          },
+          "profile_rms_error": {
+            "mae": 0.16156454304086978,
+            "mean_signed": -0.0724084779863255,
+            "p90_absolute": 0.36098840268776283,
+            "rmse": 0.2826104566499883
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.1264410804412894,
+            "mean_signed": -0.05050996969685677,
+            "p90_absolute": 0.28800829588050225,
+            "rmse": 0.24317571567478635
+          },
+          "surface_score": {
+            "mae": 2.9325351644721493,
+            "mean_signed": 1.339865181174507,
+            "p90_absolute": 6.871071208407083,
+            "rmse": 5.481522257842343
+          },
+          "throat_impedance_score": {
+            "mae": 1.9502642134142705,
+            "mean_signed": 0.5303337428469752,
+            "p90_absolute": 4.996542359895495,
+            "rmse": 3.242686931694261
+          }
+        }
+      }
+    },
+    "idw_k4_p2": {
+      "candidate": {
+        "id": "idw_k4_p2",
+        "method": "idw",
+        "neighbors": 4,
+        "power": 2.0
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.25741788025203677,
+          "selection_loss": 0.40378719380773054,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.5854772542227751
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.5656475488371592,
+            "mean_signed": 0.042632741986531615,
+            "p90_absolute": 1.4741228342801849,
+            "rmse": 0.9796360030275152
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.6295773652021655,
+            "mean_signed": -0.21452587554874122,
+            "p90_absolute": 1.6550205097519426,
+            "rmse": 1.0955002767814657
+          },
+          "outward_rise_violation": {
+            "mae": 0.2616251861934111,
+            "mean_signed": -0.10492907252364694,
+            "p90_absolute": 0.672892131826708,
+            "rmse": 0.5915640529138894
+          },
+          "profile_rms_error": {
+            "mae": 0.1437599761589996,
+            "mean_signed": -0.06169533307830104,
+            "p90_absolute": 0.38617073351443465,
+            "rmse": 0.26890981234901357
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.1183657023152119,
+            "mean_signed": -0.04281436708839072,
+            "p90_absolute": 0.301132930561304,
+            "rmse": 0.23831850476526176
+          },
+          "surface_score": {
+            "mae": 2.684163616131375,
+            "mean_signed": 1.1442620415031455,
+            "p90_absolute": 7.190430112168461,
+            "rmse": 5.293379828497316
+          },
+          "throat_impedance_score": {
+            "mae": 1.6610503559199807,
+            "mean_signed": 0.4958136286017046,
+            "p90_absolute": 4.457484411772739,
+            "rmse": 3.0337022429500258
+          }
+        }
+      },
+      "selection_loss": 0.5055282797782972,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.27328337252891893,
+          "selection_loss": 0.4069643438822667,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.5347238854133911
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.6145056422681737,
+            "mean_signed": 0.034282322430067444,
+            "p90_absolute": 1.4757198551920838,
+            "rmse": 0.9801475116370699
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.6921579963323305,
+            "mean_signed": -0.2246033045373757,
+            "p90_absolute": 1.678716712789099,
+            "rmse": 1.096495530527361
+          },
+          "outward_rise_violation": {
+            "mae": 0.27573584889923275,
+            "mean_signed": -0.11156504601105079,
+            "p90_absolute": 0.6788144279338356,
+            "rmse": 0.596290186402759
+          },
+          "profile_rms_error": {
+            "mae": 0.153858866121201,
+            "mean_signed": -0.06308224349048873,
+            "p90_absolute": 0.3717928907967745,
+            "rmse": 0.27218152745302787
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.12341181767986761,
+            "mean_signed": -0.045538744260386455,
+            "p90_absolute": 0.28532358280595427,
+            "rmse": 0.2380536435769961
+          },
+          "surface_score": {
+            "mae": 2.8316879629659195,
+            "mean_signed": 1.1917987595116808,
+            "p90_absolute": 7.105396929188369,
+            "rmse": 5.34955322999691
+          },
+          "throat_impedance_score": {
+            "mae": 1.724823358885871,
+            "mean_signed": 0.4406473943843959,
+            "p90_absolute": 4.400819909523285,
+            "rmse": 2.963913874616259
+          }
+        }
+      }
+    },
+    "idw_k8_p2": {
+      "candidate": {
+        "id": "idw_k8_p2",
+        "method": "idw",
+        "neighbors": 8,
+        "power": 2.0
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.2591892428997582,
+          "selection_loss": 0.402140126858908,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.571803535836599
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.5957566884711741,
+            "mean_signed": 0.015066298568895579,
+            "p90_absolute": 1.5765570764919419,
+            "rmse": 1.0028435751002385
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.655922159848916,
+            "mean_signed": -0.2145826036323141,
+            "p90_absolute": 1.6729440383917937,
+            "rmse": 1.1276548518525096
+          },
+          "outward_rise_violation": {
+            "mae": 0.25974605882016866,
+            "mean_signed": -0.11815079870336416,
+            "p90_absolute": 0.563322091717617,
+            "rmse": 0.5914490244504074
+          },
+          "profile_rms_error": {
+            "mae": 0.14518528408645515,
+            "mean_signed": -0.06882887949319262,
+            "p90_absolute": 0.3747231653792792,
+            "rmse": 0.2729424082150899
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.11753511113932462,
+            "mean_signed": -0.046989271213418726,
+            "p90_absolute": 0.2871480377337162,
+            "rmse": 0.23970801383318147
+          },
+          "surface_score": {
+            "mae": 2.684914586350809,
+            "mean_signed": 1.2664866222687368,
+            "p90_absolute": 6.965906535447168,
+            "rmse": 5.337797778016425
+          },
+          "throat_impedance_score": {
+            "mae": 1.8158524425442417,
+            "mean_signed": 0.5666133007132268,
+            "p90_absolute": 4.973310860047111,
+            "rmse": 3.205562943434593
+          }
+        }
+      },
+      "selection_loss": 0.5047217013803873,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.2777760958481788,
+          "selection_loss": 0.4103262980859175,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.5302008089509546
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.6608523260054385,
+            "mean_signed": 0.026407993527501623,
+            "p90_absolute": 1.634342260125952,
+            "rmse": 1.0366225322567386
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.717670148103277,
+            "mean_signed": -0.23837389893033356,
+            "p90_absolute": 1.767435057033346,
+            "rmse": 1.1454392396920599
+          },
+          "outward_rise_violation": {
+            "mae": 0.277657154544295,
+            "mean_signed": -0.12048534483817941,
+            "p90_absolute": 0.5894183936925967,
+            "rmse": 0.5969534051539467
+          },
+          "profile_rms_error": {
+            "mae": 0.15649951309642046,
+            "mean_signed": -0.07085096935703769,
+            "p90_absolute": 0.3822556519258287,
+            "rmse": 0.2761220077485523
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.12335439166385793,
+            "mean_signed": -0.04956294484316929,
+            "p90_absolute": 0.2858955320642481,
+            "rmse": 0.2392517725216803
+          },
+          "surface_score": {
+            "mae": 2.8624396422219127,
+            "mean_signed": 1.3102112987484567,
+            "p90_absolute": 6.720004493016614,
+            "rmse": 5.385433353504046
+          },
+          "throat_impedance_score": {
+            "mae": 1.8695770301674781,
+            "mean_signed": 0.5098076909448793,
+            "p90_absolute": 4.773086365308867,
+            "rmse": 3.15224677912118
+          }
+        }
+      }
+    },
+    "local_affine_k12": {
+      "candidate": {
+        "id": "local_affine_k12",
+        "method": "local_affine",
+        "neighbors": 12,
+        "ridge": 0.01
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.2673466228968456,
+          "selection_loss": 0.416922038155954,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.5983016610364338
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.1705900801810973,
+            "mean_signed": -0.08015938878566123,
+            "p90_absolute": 0.405738747990408,
+            "rmse": 0.2953080887948334
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.6399174524558462,
+            "mean_signed": 0.315427635015943,
+            "p90_absolute": 1.7004614957952138,
+            "rmse": 1.0258737396504258
+          },
+          "outward_rise_violation": {
+            "mae": 0.2822134680064922,
+            "mean_signed": 0.07426335722407033,
+            "p90_absolute": 0.7741476733335187,
+            "rmse": 0.538058910884564
+          },
+          "profile_rms_error": {
+            "mae": 0.15676630436791272,
+            "mean_signed": 0.06960647803131997,
+            "p90_absolute": 0.3915397979265697,
+            "rmse": 0.2627338129653175
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.13347151309653607,
+            "mean_signed": 0.04916664487282801,
+            "p90_absolute": 0.34065353468872683,
+            "rmse": 0.24461571638468907
+          },
+          "surface_score": {
+            "mae": 3.041075190330426,
+            "mean_signed": -1.197145580087607,
+            "p90_absolute": 8.075625662521318,
+            "rmse": 5.217235005467105
+          },
+          "throat_impedance_score": {
+            "mae": 1.2727718590828594,
+            "mean_signed": -0.3113695089016667,
+            "p90_absolute": 3.3101214567922344,
+            "rmse": 2.5152992414693127
+          }
+        }
+      },
+      "selection_loss": 0.5106611704631449,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.2600022797835798,
+          "selection_loss": 0.3749565292287633,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.45981699778073415
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.1753029427199537,
+            "mean_signed": -0.07663944955618311,
+            "p90_absolute": 0.4194392871853468,
+            "rmse": 0.30824603330969763
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.6236610406011197,
+            "mean_signed": 0.2911511633715969,
+            "p90_absolute": 1.5645251125005089,
+            "rmse": 0.9540031809739499
+          },
+          "outward_rise_violation": {
+            "mae": 0.2725293239788443,
+            "mean_signed": 0.0643170753049919,
+            "p90_absolute": 0.7338393491305054,
+            "rmse": 0.49772273691853947
+          },
+          "profile_rms_error": {
+            "mae": 0.15358282988060296,
+            "mean_signed": 0.06577308952706853,
+            "p90_absolute": 0.3760387666075151,
+            "rmse": 0.24288212766679046
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.12802700629351654,
+            "mean_signed": 0.042311091264173616,
+            "p90_absolute": 0.3307891644839788,
+            "rmse": 0.22313646595574452
+          },
+          "surface_score": {
+            "mae": 2.9779921584712796,
+            "mean_signed": -1.0940251107586438,
+            "p90_absolute": 7.590537301887732,
+            "rmse": 4.850991148642181
+          },
+          "throat_impedance_score": {
+            "mae": 1.2101285435325513,
+            "mean_signed": -0.37587390169769863,
+            "p90_absolute": 2.9879259145452894,
+            "rmse": 2.2450993743091643
+          }
+        }
+      }
+    },
+    "local_affine_k20": {
+      "candidate": {
+        "id": "local_affine_k20",
+        "method": "local_affine",
+        "neighbors": 20,
+        "ridge": 0.01
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.27816794505476033,
+          "selection_loss": 0.43345192852167014,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.6211359338676392
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.17780691292528006,
+            "mean_signed": -0.0637019779713437,
+            "p90_absolute": 0.4290616491157835,
+            "rmse": 0.3002440667372059
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.6670748066687038,
+            "mean_signed": 0.25512748129019325,
+            "p90_absolute": 1.6573572188836339,
+            "rmse": 1.0267852753844517
+          },
+          "outward_rise_violation": {
+            "mae": 0.2891250507128295,
+            "mean_signed": 0.07083222942533347,
+            "p90_absolute": 0.7460295230356152,
+            "rmse": 0.529360561386862
+          },
+          "profile_rms_error": {
+            "mae": 0.1655214675947979,
+            "mean_signed": 0.05954178889732097,
+            "p90_absolute": 0.3871208006789113,
+            "rmse": 0.26005497221587803
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.13824254158510163,
+            "mean_signed": 0.042155977202394036,
+            "p90_absolute": 0.32949716671851664,
+            "rmse": 0.24317856004859145
+          },
+          "surface_score": {
+            "mae": 3.178418021073402,
+            "mean_signed": -1.0394067860702971,
+            "p90_absolute": 7.541792809536404,
+            "rmse": 5.141073347755519
+          },
+          "throat_impedance_score": {
+            "mae": 1.3344829570761472,
+            "mean_signed": -0.29027589523906444,
+            "p90_absolute": 3.6474774239600243,
+            "rmse": 2.517547296065567
+          }
+        }
+      },
+      "selection_loss": 0.5306672719529978,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.27003175077765196,
+          "selection_loss": 0.3888613737253107,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.475318491790635
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.17891726677993675,
+            "mean_signed": -0.05678797879207361,
+            "p90_absolute": 0.4252814328899206,
+            "rmse": 0.30846199812824604
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.6517600453908262,
+            "mean_signed": 0.2184983833188238,
+            "p90_absolute": 1.6061828874149315,
+            "rmse": 0.9594724525481746
+          },
+          "outward_rise_violation": {
+            "mae": 0.278647324612186,
+            "mean_signed": 0.05254004417453096,
+            "p90_absolute": 0.7052440372000092,
+            "rmse": 0.4912235664169174
+          },
+          "profile_rms_error": {
+            "mae": 0.16183005134035058,
+            "mean_signed": 0.051177143510605275,
+            "p90_absolute": 0.3698956454336264,
+            "rmse": 0.24237931091681444
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.1324763139501551,
+            "mean_signed": 0.03209573007398786,
+            "p90_absolute": 0.31128197113831185,
+            "rmse": 0.22430070878277955
+          },
+          "surface_score": {
+            "mae": 3.105160351130767,
+            "mean_signed": -0.849541926948154,
+            "p90_absolute": 7.198336983057374,
+            "rmse": 4.812798914724309
+          },
+          "throat_impedance_score": {
+            "mae": 1.2664948924149306,
+            "mean_signed": -0.3139172341697754,
+            "p90_absolute": 3.441594968637584,
+            "rmse": 2.3303373699004233
+          }
+        }
+      }
+    },
+    "nearest": {
+      "candidate": {
+        "id": "nearest",
+        "method": "neighbor",
+        "neighbors": 1
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.3217698279814409,
+          "selection_loss": 0.5017433399196757,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.7198940477529392
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.8020037292124033,
+            "mean_signed": 0.036909722410960195,
+            "p90_absolute": 2.419820533854505,
+            "rmse": 1.332185498602834
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.7783546398538193,
+            "mean_signed": -0.20095655239561672,
+            "p90_absolute": 1.9454659756301294,
+            "rmse": 1.2134453457158936
+          },
+          "outward_rise_violation": {
+            "mae": 0.32680267952989805,
+            "mean_signed": -0.0945349237780871,
+            "p90_absolute": 0.9657447700901035,
+            "rmse": 0.7002563566679489
+          },
+          "profile_rms_error": {
+            "mae": 0.17999414738857988,
+            "mean_signed": -0.055663282993857185,
+            "p90_absolute": 0.46998947529349755,
+            "rmse": 0.31391990537489234
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.14331703832026163,
+            "mean_signed": -0.037957539689493204,
+            "p90_absolute": 0.35865382699982806,
+            "rmse": 0.2763991104960534
+          },
+          "surface_score": {
+            "mae": 3.310970454355297,
+            "mean_signed": 1.0216979025248154,
+            "p90_absolute": 9.370121181449619,
+            "rmse": 6.228277789813004
+          },
+          "throat_impedance_score": {
+            "mae": 1.965326240799765,
+            "mean_signed": 0.4410343331028631,
+            "p90_absolute": 5.545264321397326,
+            "rmse": 3.601414180864894
+          }
+        }
+      },
+      "selection_loss": 0.6316879680466662,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.34372447867118033,
+          "selection_loss": 0.519778512507962,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.7042161353471267
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.9261598610560309,
+            "mean_signed": 0.0009094489261228988,
+            "p90_absolute": 2.5790491612074735,
+            "rmse": 1.4455058947570911
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.8605710639875483,
+            "mean_signed": -0.19294663262871178,
+            "p90_absolute": 2.055871682445207,
+            "rmse": 1.2630791819678953
+          },
+          "outward_rise_violation": {
+            "mae": 0.34009544627571237,
+            "mean_signed": -0.1163719852656137,
+            "p90_absolute": 0.9516321195636719,
+            "rmse": 0.7160402182845779
+          },
+          "profile_rms_error": {
+            "mae": 0.19240213800462147,
+            "mean_signed": -0.05981636558502861,
+            "p90_absolute": 0.45636103455849614,
+            "rmse": 0.32218240679391225
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.15209551198018598,
+            "mean_signed": -0.04365461240260512,
+            "p90_absolute": 0.3481854281005798,
+            "rmse": 0.2853821247599571
+          },
+          "surface_score": {
+            "mae": 3.4793377294052497,
+            "mean_signed": 1.14520526125201,
+            "p90_absolute": 8.70214826111655,
+            "rmse": 6.345895539481386
+          },
+          "throat_impedance_score": {
+            "mae": 2.0357873234213932,
+            "mean_signed": 0.45874688760514776,
+            "p90_absolute": 5.510749709729572,
+            "rmse": 3.5874673978881986
+          }
+        }
+      }
+    },
+    "quadratic": {
+      "candidate": {
+        "id": "quadratic",
+        "method": "quadratic"
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.21048875107701884,
+          "selection_loss": 0.3161502043449797,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.4226458130718434
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.07464440646667884,
+            "mean_signed": -0.005289467955165375,
+            "p90_absolute": 0.1933591701609288,
+            "rmse": 0.1362569284672178
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.4246641600163348,
+            "mean_signed": 0.03553619321497657,
+            "p90_absolute": 1.0301510629230552,
+            "rmse": 0.713900872594901
+          },
+          "outward_rise_violation": {
+            "mae": 0.2596564739573501,
+            "mean_signed": 0.005659384163351431,
+            "p90_absolute": 0.6752095392370412,
+            "rmse": 0.47092031835536646
+          },
+          "profile_rms_error": {
+            "mae": 0.11231027343697408,
+            "mean_signed": 0.008701790580387845,
+            "p90_absolute": 0.26159196784072175,
+            "rmse": 0.1877148134694862
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.11347556441879698,
+            "mean_signed": 0.007566666182450288,
+            "p90_absolute": 0.25781722514600364,
+            "rmse": 0.20037286941570642
+          },
+          "surface_score": {
+            "mae": 2.2708812465905894,
+            "mean_signed": -0.1612015444943828,
+            "p90_absolute": 5.504490560085098,
+            "rmse": 3.8557731324421884
+          },
+          "throat_impedance_score": {
+            "mae": 1.1432270712199601,
+            "mean_signed": 0.00993092777412745,
+            "p90_absolute": 2.788846506044527,
+            "rmse": 2.1686982833996873
+          }
+        }
+      },
+      "selection_loss": 0.39201060907232016,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.20778291311649738,
+          "selection_loss": 0.30344161890936183,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.3826348231714578
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.0685722829998083,
+            "mean_signed": -0.0008800536980011544,
+            "p90_absolute": 0.16594686142469475,
+            "rmse": 0.12376279649271923
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.40739149576544637,
+            "mean_signed": -0.008455692275128532,
+            "p90_absolute": 0.9973616257111511,
+            "rmse": 0.6679654230120614
+          },
+          "outward_rise_violation": {
+            "mae": 0.24842158617164892,
+            "mean_signed": -0.011368382575260011,
+            "p90_absolute": 0.6126689971425286,
+            "rmse": 0.4246967881340864
+          },
+          "profile_rms_error": {
+            "mae": 0.11324453297069367,
+            "mean_signed": -0.001058290652051551,
+            "p90_absolute": 0.26027305440842624,
+            "rmse": 0.1850734304780957
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.11405378288888013,
+            "mean_signed": -0.00506055761882316,
+            "p90_absolute": 0.2637479467865953,
+            "rmse": 0.19498009371979774
+          },
+          "surface_score": {
+            "mae": 2.2644605377807845,
+            "mean_signed": 0.06889276140338281,
+            "p90_absolute": 5.373175991689931,
+            "rmse": 3.7163483126846133
+          },
+          "throat_impedance_score": {
+            "mae": 1.0656068778054835,
+            "mean_signed": -0.056103724399703084,
+            "p90_absolute": 2.656001536550608,
+            "rmse": 1.8453259153587345
+          }
+        }
+      }
+    },
+    "quadratic_rbf_b0p5_r0p001": {
+      "candidate": {
+        "bandwidth": 0.5,
+        "id": "quadratic_rbf_b0p5_r0p001",
+        "method": "quadratic_rbf",
+        "ridge": 0.001
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.1594887794155982,
+          "selection_loss": 0.26064660045229665,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.4046312841467938
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.061516432325550235,
+            "mean_signed": -0.006333764155694169,
+            "p90_absolute": 0.17994835693716746,
+            "rmse": 0.1279772285078907
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.3097752798726282,
+            "mean_signed": 0.041064500747281664,
+            "p90_absolute": 0.9426600454839024,
+            "rmse": 0.6533860814772517
+          },
+          "outward_rise_violation": {
+            "mae": 0.20369169784587296,
+            "mean_signed": 0.004800572935989607,
+            "p90_absolute": 0.6073236991816516,
+            "rmse": 0.4463909752946937
+          },
+          "profile_rms_error": {
+            "mae": 0.08159917984263153,
+            "mean_signed": 0.009229807453948129,
+            "p90_absolute": 0.24457477074902262,
+            "rmse": 0.17312358979621345
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.08568990078527892,
+            "mean_signed": 0.008678169573700469,
+            "p90_absolute": 0.22832664750404535,
+            "rmse": 0.18809198015681344
+          },
+          "surface_score": {
+            "mae": 1.7312773270756667,
+            "mean_signed": -0.16110433478998312,
+            "p90_absolute": 5.2783206089098735,
+            "rmse": 3.6061441624734676
+          },
+          "throat_impedance_score": {
+            "mae": 0.975661161679234,
+            "mean_signed": 0.03651965636461284,
+            "p90_absolute": 2.4584138818270542,
+            "rmse": 2.0886233440173134
+          }
+        }
+      },
+      "selection_loss": 0.3199585297877915,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.15397344870842763,
+          "selection_loss": 0.23724771734197925,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.33309707453420645
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.055327817777970925,
+            "mean_signed": -0.0014353515375594222,
+            "p90_absolute": 0.15559157266820883,
+            "rmse": 0.11177927724058632
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.28549353848452685,
+            "mean_signed": -0.00022896886551182117,
+            "p90_absolute": 0.8474443478390788,
+            "rmse": 0.5948351190087433
+          },
+          "outward_rise_violation": {
+            "mae": 0.19296696660786086,
+            "mean_signed": -0.018117342069091293,
+            "p90_absolute": 0.5217871519003008,
+            "rmse": 0.39343105254147015
+          },
+          "profile_rms_error": {
+            "mae": 0.08032104527116161,
+            "mean_signed": -0.0009760796176278388,
+            "p90_absolute": 0.22748814920856517,
+            "rmse": 0.16382312497252471
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.083386711754677,
+            "mean_signed": -0.004669752570152491,
+            "p90_absolute": 0.2189439624877014,
+            "rmse": 0.17884936773565632
+          },
+          "surface_score": {
+            "mae": 1.6978615409557345,
+            "mean_signed": 0.09379917114724856,
+            "p90_absolute": 4.850365693651063,
+            "rmse": 3.372039022056662
+          },
+          "throat_impedance_score": {
+            "mae": 0.9138691588021567,
+            "mean_signed": -0.056977172627512306,
+            "p90_absolute": 2.4643135931681917,
+            "rmse": 1.7474765538442674
+          }
+        }
+      }
+    },
+    "quadratic_rbf_b0p75_r0p001": {
+      "candidate": {
+        "bandwidth": 0.75,
+        "id": "quadratic_rbf_b0p75_r0p001",
+        "method": "quadratic_rbf",
+        "ridge": 0.001
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.1533681726219588,
+          "selection_loss": 0.2515502683993005,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.39272838310936675
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.05495066499497295,
+            "mean_signed": -0.0066900454984678715,
+            "p90_absolute": 0.16259889135034633,
+            "rmse": 0.11822268042951703
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.2852054196477346,
+            "mean_signed": 0.04447614607811836,
+            "p90_absolute": 0.8580034101838779,
+            "rmse": 0.6159415206572684
+          },
+          "outward_rise_violation": {
+            "mae": 0.2072312885534357,
+            "mean_signed": -0.002671348596332082,
+            "p90_absolute": 0.5918358954213506,
+            "rmse": 0.44487208578860826
+          },
+          "profile_rms_error": {
+            "mae": 0.07574768923224971,
+            "mean_signed": 0.00914921291054696,
+            "p90_absolute": 0.22520544130262635,
+            "rmse": 0.16481797149729974
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.0800221764684104,
+            "mean_signed": 0.007389629478640989,
+            "p90_absolute": 0.21803778270277685,
+            "rmse": 0.17842282701239143
+          },
+          "surface_score": {
+            "mae": 1.6798408041635278,
+            "mean_signed": -0.13236446001458363,
+            "p90_absolute": 5.125393805547369,
+            "rmse": 3.4973381158660413
+          },
+          "throat_impedance_score": {
+            "mae": 0.9786016019287712,
+            "mean_signed": 0.03992969158118732,
+            "p90_absolute": 2.621893628889612,
+            "rmse": 2.1317704359785834
+          }
+        }
+      },
+      "selection_loss": 0.30773862167555077,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.14649224985473333,
+          "selection_loss": 0.22475341310500097,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.3130446530010706
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.04814325691357842,
+            "mean_signed": -0.0020619317187631197,
+            "p90_absolute": 0.1363463579709418,
+            "rmse": 0.09947042146533151
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.25649969795741306,
+            "mean_signed": 0.006615648385427841,
+            "p90_absolute": 0.7291304766969956,
+            "rmse": 0.5466181854317562
+          },
+          "outward_rise_violation": {
+            "mae": 0.19924389560946512,
+            "mean_signed": -0.0222490928617369,
+            "p90_absolute": 0.5399810440979632,
+            "rmse": 0.398142143733805
+          },
+          "profile_rms_error": {
+            "mae": 0.07209569097935575,
+            "mean_signed": -0.00014698118449163393,
+            "p90_absolute": 0.20693646747647101,
+            "rmse": 0.15101864349430796
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.07592554407777571,
+            "mean_signed": -0.005000932788608789,
+            "p90_absolute": 0.19876846600651607,
+            "rmse": 0.16736762331373933
+          },
+          "surface_score": {
+            "mae": 1.6424247582538503,
+            "mean_signed": 0.08555830274919492,
+            "p90_absolute": 4.670829865077516,
+            "rmse": 3.2328139118406427
+          },
+          "throat_impedance_score": {
+            "mae": 0.9048031114217121,
+            "mean_signed": -0.04512341146169198,
+            "p90_absolute": 2.36058781935134,
+            "rmse": 1.8348051291714036
+          }
+        }
+      }
+    },
+    "quadratic_rbf_b0p75_r0p01": {
+      "candidate": {
+        "bandwidth": 0.75,
+        "id": "quadratic_rbf_b0p75_r0p01",
+        "method": "quadratic_rbf",
+        "ridge": 0.01
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.15801815295348012,
+          "selection_loss": 0.25658499190084993,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.39426735578947925
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.05544923935477199,
+            "mean_signed": -0.0061838845108910245,
+            "p90_absolute": 0.16449195395516392,
+            "rmse": 0.1195218052420867
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.2945850267373993,
+            "mean_signed": 0.04265020921809583,
+            "p90_absolute": 0.8826586019968073,
+            "rmse": 0.6270322001014975
+          },
+          "outward_rise_violation": {
+            "mae": 0.21201172858068218,
+            "mean_signed": -0.0027045518850865088,
+            "p90_absolute": 0.5957147457402073,
+            "rmse": 0.446293896608991
+          },
+          "profile_rms_error": {
+            "mae": 0.07846152967929435,
+            "mean_signed": 0.008599817960052995,
+            "p90_absolute": 0.23127503810789163,
+            "rmse": 0.16704100301728683
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.08275401362669642,
+            "mean_signed": 0.006951415142528217,
+            "p90_absolute": 0.2264019023476476,
+            "rmse": 0.18026362523236303
+          },
+          "surface_score": {
+            "mae": 1.7325262721113945,
+            "mean_signed": -0.12341046010312845,
+            "p90_absolute": 5.159871257919442,
+            "rmse": 3.5314639523673073
+          },
+          "throat_impedance_score": {
+            "mae": 0.953238109903359,
+            "mean_signed": 0.03964115466570364,
+            "p90_absolute": 2.4759117774642836,
+            "rmse": 2.097849828930545
+          }
+        }
+      },
+      "selection_loss": 0.3144893131825012,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.15211019552635635,
+          "selection_loss": 0.2316172851266049,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.31802835840099425
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.04861982464695567,
+            "mean_signed": -0.0022606176277654056,
+            "p90_absolute": 0.13702524826671833,
+            "rmse": 0.1015723509440546
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.268196906753792,
+            "mean_signed": 0.004312756160239739,
+            "p90_absolute": 0.7623198154389321,
+            "rmse": 0.5585107740937243
+          },
+          "outward_rise_violation": {
+            "mae": 0.2044598121305833,
+            "mean_signed": -0.02317807138416139,
+            "p90_absolute": 0.5350628294086459,
+            "rmse": 0.3999524903111746
+          },
+          "profile_rms_error": {
+            "mae": 0.07582311857301699,
+            "mean_signed": -0.0008646401129811886,
+            "p90_absolute": 0.21274122482080543,
+            "rmse": 0.15499256938153413
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.07918582717484299,
+            "mean_signed": -0.005629338162402159,
+            "p90_absolute": 0.19899779368768578,
+            "rmse": 0.1701899737110224
+          },
+          "surface_score": {
+            "mae": 1.7043413111027312,
+            "mean_signed": 0.10803412853535234,
+            "p90_absolute": 4.640309685317522,
+            "rmse": 3.2885479351025233
+          },
+          "throat_impedance_score": {
+            "mae": 0.8790806727611192,
+            "mean_signed": -0.02139253571821275,
+            "p90_absolute": 2.279920105677085,
+            "rmse": 1.799013543899456
+          }
+        }
+      }
+    },
+    "quadratic_rbf_b1_r0p001": {
+      "candidate": {
+        "bandwidth": 1.0,
+        "id": "quadratic_rbf_b1_r0p001",
+        "method": "quadratic_rbf",
+        "ridge": 0.001
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.1525622920685456,
+          "selection_loss": 0.2462255702961097,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.3746531129102563
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.05051511660593814,
+            "mean_signed": -0.006600877947372248,
+            "p90_absolute": 0.15425356674731608,
+            "rmse": 0.10920052395775544
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.2764448411542496,
+            "mean_signed": 0.05246009607391714,
+            "p90_absolute": 0.8225139476001435,
+            "rmse": 0.6005906326035418
+          },
+          "outward_rise_violation": {
+            "mae": 0.21510465155424702,
+            "mean_signed": -0.008200242150083551,
+            "p90_absolute": 0.6385260046266352,
+            "rmse": 0.44453671602733646
+          },
+          "profile_rms_error": {
+            "mae": 0.07344864889718745,
+            "mean_signed": 0.009628717839670946,
+            "p90_absolute": 0.2152343836413071,
+            "rmse": 0.15956848821271882
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.07732717532766718,
+            "mean_signed": 0.006365138872888956,
+            "p90_absolute": 0.21406009952639213,
+            "rmse": 0.16929693680567243
+          },
+          "surface_score": {
+            "mae": 1.6837251751553068,
+            "mean_signed": -0.12231998619980423,
+            "p90_absolute": 4.935707146027318,
+            "rmse": 3.428924850185644
+          },
+          "throat_impedance_score": {
+            "mae": 0.9833556796959776,
+            "mean_signed": 0.03546384259500749,
+            "p90_absolute": 2.5967969956975527,
+            "rmse": 2.2029003804367626
+          }
+        }
+      },
+      "selection_loss": 0.3019059482674108,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.14596319213280803,
+          "selection_loss": 0.22272151188520445,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.3070332790095857
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.044100595390590434,
+            "mean_signed": -0.002739869728834949,
+            "p90_absolute": 0.12342347828735004,
+            "rmse": 0.09101331199400149
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.24786199048601976,
+            "mean_signed": 0.009929225149517202,
+            "p90_absolute": 0.6961793919141324,
+            "rmse": 0.5181190974536786
+          },
+          "outward_rise_violation": {
+            "mae": 0.2097013322767811,
+            "mean_signed": -0.026328035188670267,
+            "p90_absolute": 0.5740491664285624,
+            "rmse": 0.4089106927692308
+          },
+          "profile_rms_error": {
+            "mae": 0.06880726587236771,
+            "mean_signed": 0.00016611073544026386,
+            "p90_absolute": 0.19365476319028996,
+            "rmse": 0.14269251005744557
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.07327450157506536,
+            "mean_signed": -0.005900354921363644,
+            "p90_absolute": 0.19979442394882316,
+            "rmse": 0.15872702745186698
+          },
+          "surface_score": {
+            "mae": 1.649167810119797,
+            "mean_signed": 0.0901269729915572,
+            "p90_absolute": 4.60848299919922,
+            "rmse": 3.163438699360558
+          },
+          "throat_impedance_score": {
+            "mae": 0.9172123213781973,
+            "mean_signed": -0.026161769784865167,
+            "p90_absolute": 2.3068688241384647,
+            "rmse": 1.9634784666168341
+          }
+        }
+      }
+    },
+    "quadratic_rbf_b1_r0p01": {
+      "candidate": {
+        "bandwidth": 1.0,
+        "id": "quadratic_rbf_b1_r0p01",
+        "method": "quadratic_rbf",
+        "ridge": 0.01
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.15843689922136425,
+          "selection_loss": 0.2536807929498727,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.38097557491403383
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.052049552597030584,
+            "mean_signed": -0.006211509856774403,
+            "p90_absolute": 0.15960184412977868,
+            "rmse": 0.11189066336151578
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.2966278244623741,
+            "mean_signed": 0.0502295078271358,
+            "p90_absolute": 0.8463424684292518,
+            "rmse": 0.6145207522237087
+          },
+          "outward_rise_violation": {
+            "mae": 0.21976901367376103,
+            "mean_signed": -0.006573165296726219,
+            "p90_absolute": 0.6333124034381881,
+            "rmse": 0.4459803311360464
+          },
+          "profile_rms_error": {
+            "mae": 0.07741593426434086,
+            "mean_signed": 0.009262173740873727,
+            "p90_absolute": 0.21676582899751395,
+            "rmse": 0.16272771107068748
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.08081563772938243,
+            "mean_signed": 0.006416288848893583,
+            "p90_absolute": 0.21414950849150532,
+            "rmse": 0.17237393975700868
+          },
+          "surface_score": {
+            "mae": 1.7375935304453456,
+            "mean_signed": -0.12230493195076736,
+            "p90_absolute": 4.983698097057387,
+            "rmse": 3.4534207186531956
+          },
+          "throat_impedance_score": {
+            "mae": 0.957062955720194,
+            "mean_signed": 0.03666587453526615,
+            "p90_absolute": 2.422856435056172,
+            "rmse": 2.127592569380988
+          }
+        }
+      },
+      "selection_loss": 0.3119568092931903,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.15300389944332904,
+          "selection_loss": 0.23310406537327036,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.3204006637197653
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.04538382378539352,
+            "mean_signed": -0.002539333441690458,
+            "p90_absolute": 0.12859102785188845,
+            "rmse": 0.09439821882513898
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.269188205585634,
+            "mean_signed": 0.009967902920295644,
+            "p90_absolute": 0.7186808296941861,
+            "rmse": 0.5398590611090062
+          },
+          "outward_rise_violation": {
+            "mae": 0.2125416935392182,
+            "mean_signed": -0.02591661583991384,
+            "p90_absolute": 0.5669245688459721,
+            "rmse": 0.40733215118259647
+          },
+          "profile_rms_error": {
+            "mae": 0.07455839149039988,
+            "mean_signed": -0.00011980825975076719,
+            "p90_absolute": 0.20986358741107566,
+            "rmse": 0.14967551517998215
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.07757385388620702,
+            "mean_signed": -0.006104792855695367,
+            "p90_absolute": 0.19879842203495857,
+            "rmse": 0.16366479431854936
+          },
+          "surface_score": {
+            "mae": 1.7273165537369892,
+            "mean_signed": 0.10592899764995027,
+            "p90_absolute": 4.637549568889043,
+            "rmse": 3.233759629923796
+          },
+          "throat_impedance_score": {
+            "mae": 0.8913772490967957,
+            "mean_signed": -0.01269863460822454,
+            "p90_absolute": 2.2327869973564005,
+            "rmse": 1.8545521323145948
+          }
+        }
+      }
+    },
+    "quadratic_rbf_b1p5_r0p01": {
+      "candidate": {
+        "bandwidth": 1.5,
+        "id": "quadratic_rbf_b1p5_r0p01",
+        "method": "quadratic_rbf",
+        "ridge": 0.01
+      },
+      "coordinate_grouped_cv": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 972,
+            "withheld": 262
+          },
+          {
+            "fold": 1,
+            "training": 983,
+            "withheld": 251
+          },
+          {
+            "fold": 2,
+            "training": 1005,
+            "withheld": 229
+          },
+          {
+            "fold": 3,
+            "training": 991,
+            "withheld": 243
+          },
+          {
+            "fold": 4,
+            "training": 985,
+            "withheld": 249
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.16730905528920717,
+          "selection_loss": 0.2655527278103329,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.3929746900845029
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.05040494618697558,
+            "mean_signed": -0.00507147124512006,
+            "p90_absolute": 0.14922049255655737,
+            "rmse": 0.10510378635354074
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.32120051256534254,
+            "mean_signed": 0.05367446542095979,
+            "p90_absolute": 0.8411963896108083,
+            "rmse": 0.6091000080280213
+          },
+          "outward_rise_violation": {
+            "mae": 0.23261528192658357,
+            "mean_signed": -0.008146707796224421,
+            "p90_absolute": 0.6024343477465995,
+            "rmse": 0.44897463794625475
+          },
+          "profile_rms_error": {
+            "mae": 0.083001537562678,
+            "mean_signed": 0.009800376556445596,
+            "p90_absolute": 0.22156191376728895,
+            "rmse": 0.1654163019021773
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.08421824554608537,
+            "mean_signed": 0.006640737769836934,
+            "p90_absolute": 0.22202985007129977,
+            "rmse": 0.17006185312275637
+          },
+          "surface_score": {
+            "mae": 1.8257480116875366,
+            "mean_signed": -0.13466603924148854,
+            "p90_absolute": 5.179173041982251,
+            "rmse": 3.4483532269436803
+          },
+          "throat_impedance_score": {
+            "mae": 0.9684809988368862,
+            "mean_signed": 0.020238511836937617,
+            "p90_absolute": 2.4671624430654133,
+            "rmse": 2.111361090282375
+          }
+        }
+      },
+      "selection_loss": 0.3272998498458777,
+      "spatial_checkerboard_audit": {
+        "folds": [
+          {
+            "fold": 0,
+            "training": 977,
+            "withheld": 257
+          },
+          {
+            "fold": 1,
+            "training": 966,
+            "withheld": 268
+          },
+          {
+            "fold": 2,
+            "training": 1008,
+            "withheld": 226
+          },
+          {
+            "fold": 3,
+            "training": 1006,
+            "withheld": 228
+          },
+          {
+            "fold": 4,
+            "training": 979,
+            "withheld": 255
+          }
+        ],
+        "normalized": {
+          "mean_equal_diagnostic_normalized_mae": 0.1609703826152627,
+          "selection_loss": 0.246988488142179,
+          "worst_cell_equal_diagnostic_normalized_mae": 0.34407242210766525
+        },
+        "row_count": 1234,
+        "summary": {
+          "mean_containment": {
+            "mae": 0.04453576130000728,
+            "mean_signed": -0.0025272032376007364,
+            "p90_absolute": 0.12404942891466963,
+            "rmse": 0.09069461266723257
+          },
+          "minus_six_db_rms_error": {
+            "mae": 0.2962172464370517,
+            "mean_signed": 0.0176651902400295,
+            "p90_absolute": 0.7410013320094239,
+            "rmse": 0.5394212583746967
+          },
+          "outward_rise_violation": {
+            "mae": 0.22197059641430078,
+            "mean_signed": -0.022064777826842123,
+            "p90_absolute": 0.5711370087671304,
+            "rmse": 0.4082909409587234
+          },
+          "profile_rms_error": {
+            "mae": 0.08071052624234296,
+            "mean_signed": 0.001510401949190437,
+            "p90_absolute": 0.2097400571965783,
+            "rmse": 0.15185689231032562
+          },
+          "slice_energy_rms_departure": {
+            "mae": 0.08083518757019159,
+            "mean_signed": -0.004576601601025079,
+            "p90_absolute": 0.20902301842088128,
+            "rmse": 0.16195788404663394
+          },
+          "surface_score": {
+            "mae": 1.7935092182197676,
+            "mean_signed": 0.06283638120443583,
+            "p90_absolute": 4.991237330740069,
+            "rmse": 3.202949960535739
+          },
+          "throat_impedance_score": {
+            "mae": 0.8850604382284095,
+            "mean_signed": -0.027818500542755146,
+            "p90_absolute": 2.241690456950055,
+            "rmse": 1.8101454859887156
+          }
+        }
+      }
+    }
+  },
+  "development_coordinate_count": 1234,
+  "development_row_count": 1234,
+  "diagnostic_scales": {
+    "mean_containment": 4.842420383938588,
+    "minus_six_db_rms_error": 4.5204311211221695,
+    "outward_rise_violation": 0.8064925938777914,
+    "profile_rms_error": 0.4651449321278647,
+    "slice_energy_rms_departure": 0.36989340541638915,
+    "surface_score": 8.013398067738251,
+    "throat_impedance_score": 10.894680004429219
+  },
+  "release_rule": "challenge must beat frozen quadratic by at least 20% on surface score MAE, p90 absolute error, and equal-diagnostic normalized MAE; no radiation diagnostic p90 may worsen by more than 10%; original v2 release gates are reported separately",
+  "schema_version": 1,
+  "selected_candidate": "quadratic_rbf_b1_r0p001",
+  "selection_rule": "minimum coordinate-grouped selection loss plus 0.25 times spatial-checkerboard selection loss; six radiation diagnostics only; throat impedance excluded",
+  "selection_sha256": "ce140f2570e1a366aebb195c54af17dc961975ad4e1e7659ebb29b168ae502f7",
+  "status": "development-selected-challenge-unread",
+  "throat_impedance_used_in_selection": false,
+  "training_index_sha256": "a4f89a6aac9817e5f77a0569fc9c362aff1fbf69f5b4942597ba1b76090ef99e"
+}
