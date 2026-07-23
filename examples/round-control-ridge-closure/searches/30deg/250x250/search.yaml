@@ -1,0 +1,77 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 30.0
+  intended_coverage_v_deg: 30.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 3
+  initial_candidates: 2
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  bounds:
+    length_mm:
+    - 113.091999
+    - 138.223001
+    extension_mm:
+    - -1.0e-06
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 29.999999
+    - 30.000001
+    osse_coverage_v_deg:
+    - 29.999999
+    - 30.000001
+    k_h:
+    - 0.999999
+    - 1.000001
+    k_v:
+    - 0.999999
+    - 1.000001
+    n_h:
+    - 3.999999
+    - 4.000001
+    n_v:
+    - 3.999999
+    - 4.000001
+  initial_pool:
+  - label: ridge-30deg-250mm-K1-N4-Lx1p0
+    values:
+      length_mm: 125.657
+      extension_mm: 0.0
+      osse_coverage_h_deg: 30.0
+      osse_coverage_v_deg: 30.0
+      k_h: 1.0
+      k_v: 1.0
+      n_h: 4.0
+      n_v: 4.0
+  - label: ridge-30deg-250mm-K1-N4-Lx1p1
+    values:
+      length_mm: 138.223
+      extension_mm: 0.0
+      osse_coverage_h_deg: 30.0
+      osse_coverage_v_deg: 30.0
+      k_h: 1.0
+      k_v: 1.0
+      n_h: 4.0
+      n_v: 4.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
+  round_control_ridge_closure:
+    role: measured-heuristic-ridge-closure
+    branch: short-low-k
+    candidate_ids:
+    - ridge-30deg-250mm-K1-N4-Lx0p9
+    - ridge-30deg-250mm-K1-N4-Lx1p0
+    - ridge-30deg-250mm-K1-N4-Lx1p1
+    throat_impedance_used_in_score: false

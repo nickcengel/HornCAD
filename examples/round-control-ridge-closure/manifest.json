@@ -1,0 +1,614 @@
+{
+  "bem_jobs_scheduled": 0,
+  "candidate_count": 48,
+  "freeze_sha256": "3b88e3fcce26dcf3c80174ebdd7de9edc720ced34ba95571f202a2ff0960b802",
+  "groups": [
+    {
+      "branch": "short-low-k",
+      "candidates": [
+        {
+          "derived_s": 0.6563098329018106,
+          "id": "ridge-30deg-250mm-K1-N4-Lx0p9",
+          "length_factor": 0.6483443404879838,
+          "length_mm": 113.092,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 0.48350656085629573,
+          "id": "ridge-30deg-250mm-K1-N4-Lx1p0",
+          "length_factor": 0.7203781416253898,
+          "length_mm": 125.657,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.34186307096779756,
+          "id": "ridge-30deg-250mm-K1-N4-Lx1p1",
+          "length_factor": 0.7924176756558431,
+          "length_mm": 138.223,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 30,
+      "k": 1.0,
+      "mouth_mm": 250,
+      "n": 4.0,
+      "reference_length_mm": 174.432,
+      "target_s": 0.48350137730870457,
+      "target_s_length_mm": 125.65741838649112
+    },
+    {
+      "branch": "short-low-k",
+      "candidates": [
+        {
+          "derived_s": 0.6568250210913819,
+          "id": "ridge-30deg-300mm-K1-N4-Lx0p9",
+          "length_factor": 0.6630868035590727,
+          "length_mm": 136.08,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 0.48349653299964296,
+          "id": "ridge-30deg-300mm-K1-N4-Lx1p0",
+          "length_factor": 0.7367631150656362,
+          "length_mm": 151.2,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.341517724291498,
+          "id": "ridge-30deg-300mm-K1-N4-Lx1p1",
+          "length_factor": 0.8104345538002747,
+          "length_mm": 166.319,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 30,
+      "k": 1.0,
+      "mouth_mm": 300,
+      "n": 4.0,
+      "reference_length_mm": 205.222,
+      "target_s": 0.48350137730870457,
+      "target_s_length_mm": 151.19953077745276
+    },
+    {
+      "branch": "short-low-k",
+      "candidates": [
+        {
+          "derived_s": 1.1345079255444286,
+          "id": "ridge-35deg-250mm-K1-N8-Lx0p9",
+          "length_factor": 0.6816143789997784,
+          "length_mm": 104.591,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 0.7830110874907275,
+          "id": "ridge-35deg-250mm-K1-N8-Lx1p0",
+          "length_factor": 0.757347861788512,
+          "length_mm": 116.212,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.4949702515995812,
+          "id": "ridge-35deg-250mm-K1-N8-Lx1p1",
+          "length_factor": 0.8330813445772454,
+          "length_mm": 127.833,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 35,
+      "k": 1.0,
+      "mouth_mm": 250,
+      "n": 8.0,
+      "reference_length_mm": 153.446,
+      "target_s": 0.7830192504883154,
+      "target_s_length_mm": 116.21170039210045
+    },
+    {
+      "branch": "short-low-k",
+      "candidates": [
+        {
+          "derived_s": 1.1354543253887186,
+          "id": "ridge-35deg-300mm-K1-N8-Lx0p9",
+          "length_factor": 0.697726264418811,
+          "length_mm": 125.814,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 0.7830182977736966,
+          "id": "ridge-35deg-300mm-K1-N8-Lx1p0",
+          "length_factor": 0.775249556344277,
+          "length_mm": 139.793,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.49434474518969573,
+          "id": "ridge-35deg-300mm-K1-N8-Lx1p1",
+          "length_factor": 0.8527728482697426,
+          "length_mm": 153.772,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 35,
+      "k": 1.0,
+      "mouth_mm": 300,
+      "n": 8.0,
+      "reference_length_mm": 180.32,
+      "target_s": 0.7830192504883154,
+      "target_s_length_mm": 139.792958038206
+    },
+    {
+      "branch": "short-low-k",
+      "candidates": [
+        {
+          "derived_s": 1.336537682157515,
+          "id": "ridge-40deg-250mm-K1-N8-Lx0p9",
+          "length_factor": 0.7091907813557298,
+          "length_mm": 89.085,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 0.9237283440414299,
+          "id": "ridge-40deg-250mm-K1-N8-Lx1p0",
+          "length_factor": 0.7879871034510211,
+          "length_mm": 98.983,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.5854219924270988,
+          "id": "ridge-40deg-250mm-K1-N8-Lx1p1",
+          "length_factor": 0.8667913863790153,
+          "length_mm": 108.882,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 40,
+      "k": 1.0,
+      "mouth_mm": 250,
+      "n": 8.0,
+      "reference_length_mm": 125.615,
+      "target_s": 0.9237190903017322,
+      "target_s_length_mm": 98.98324632326015
+    },
+    {
+      "branch": "short-low-k",
+      "candidates": [
+        {
+          "derived_s": 1.5701480190398627,
+          "id": "ridge-45deg-250mm-K1-N8-Lx0p9",
+          "length_factor": 0.7187189836564548,
+          "length_mm": 76.034,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 1.086347087026434,
+          "id": "ridge-45deg-250mm-K1-N8-Lx1p0",
+          "length_factor": 0.798574547929408,
+          "length_mm": 84.482,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.6899082729616607,
+          "id": "ridge-45deg-250mm-K1-N8-Lx1p1",
+          "length_factor": 0.8784301122023613,
+          "length_mm": 92.93,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 45,
+      "k": 1.0,
+      "mouth_mm": 250,
+      "n": 8.0,
+      "reference_length_mm": 105.791,
+      "target_s": 1.0863365190714132,
+      "target_s_length_mm": 84.48220486817576
+    },
+    {
+      "branch": "long-high-k",
+      "candidates": [
+        {
+          "derived_s": 0.7411318622475433,
+          "id": "ridge-30deg-400mm-K7-N8-Lx0p9",
+          "length_factor": 1.119519893199723,
+          "length_mm": 271.703,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 0.48349853971024925,
+          "id": "ridge-30deg-400mm-K7-N8-Lx1p0",
+          "length_factor": 1.2439141971849557,
+          "length_mm": 301.893,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.2698113581685301,
+          "id": "ridge-30deg-400mm-K7-N8-Lx1p1",
+          "length_factor": 1.3683043807891353,
+          "length_mm": 332.082,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 30,
+      "k": 7.0,
+      "mouth_mm": 400,
+      "n": 8.0,
+      "reference_length_mm": 242.696,
+      "target_s": 0.48350137730870457,
+      "target_s_length_mm": 301.89263326397986
+    },
+    {
+      "branch": "long-high-k",
+      "candidates": [
+        {
+          "derived_s": 0.7446725776154778,
+          "id": "ridge-30deg-450mm-K7-N8-Lx0p9",
+          "length_factor": 1.111970941835537,
+          "length_mm": 300.32,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 0.48350082056773264,
+          "id": "ridge-30deg-450mm-K7-N8-Lx1p0",
+          "length_factor": 1.2355236801084128,
+          "length_mm": 333.689,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.2672968238807578,
+          "id": "ridge-30deg-450mm-K7-N8-Lx1p1",
+          "length_factor": 1.3590764183812885,
+          "length_mm": 367.058,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 30,
+      "k": 7.0,
+      "mouth_mm": 450,
+      "n": 8.0,
+      "reference_length_mm": 270.079,
+      "target_s": 0.48350137730870457,
+      "target_s_length_mm": 333.68892146436735
+    },
+    {
+      "branch": "long-high-k",
+      "candidates": [
+        {
+          "derived_s": 1.1077535079177403,
+          "id": "ridge-35deg-400mm-K7-N8-Lx0p9",
+          "length_factor": 1.0708050872877797,
+          "length_mm": 214.191,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 0.783013140621831,
+          "id": "ridge-35deg-400mm-K7-N8-Lx1p0",
+          "length_factor": 1.1897834303197554,
+          "length_mm": 237.99,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.5135848014071959,
+          "id": "ridge-35deg-400mm-K7-N8-Lx1p1",
+          "length_factor": 1.3087567740516328,
+          "length_mm": 261.788,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 35,
+      "k": 7.0,
+      "mouth_mm": 400,
+      "n": 8.0,
+      "reference_length_mm": 200.028,
+      "target_s": 0.7830192504883154,
+      "target_s_length_mm": 237.98950622725795
+    },
+    {
+      "branch": "long-high-k",
+      "candidates": [
+        {
+          "derived_s": 1.112353367962863,
+          "id": "ridge-35deg-450mm-K7-N8-Lx0p9",
+          "length_factor": 1.0641829666034734,
+          "length_mm": 236.885,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 0.7830155224957924,
+          "id": "ridge-35deg-450mm-K7-N8-Lx1p0",
+          "length_factor": 1.1824275150720132,
+          "length_mm": 263.206,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.5103109346107135,
+          "id": "ridge-35deg-450mm-K7-N8-Lx1p1",
+          "length_factor": 1.3006675711372069,
+          "length_mm": 289.526,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 35,
+      "k": 7.0,
+      "mouth_mm": 450,
+      "n": 8.0,
+      "reference_length_mm": 222.598,
+      "target_s": 0.7830192504883154,
+      "target_s_length_mm": 263.2056710987355
+    },
+    {
+      "branch": "long-high-k",
+      "candidates": [
+        {
+          "derived_s": 1.2986755161655597,
+          "id": "ridge-40deg-350mm-K7-N8-Lx0p9",
+          "length_factor": 1.0724353748652273,
+          "length_mm": 163.126,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 0.9237193753156291,
+          "id": "ridge-40deg-350mm-K7-N8-Lx1p0",
+          "length_factor": 1.1915941304862334,
+          "length_mm": 181.251,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.6118957802257757,
+          "id": "ridge-40deg-350mm-K7-N8-Lx1p1",
+          "length_factor": 1.3107528861072395,
+          "length_mm": 199.376,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 40,
+      "k": 7.0,
+      "mouth_mm": 350,
+      "n": 8.0,
+      "reference_length_mm": 152.108,
+      "target_s": 0.9237190903017322,
+      "target_s_length_mm": 181.2510151741327
+    },
+    {
+      "branch": "long-high-k",
+      "candidates": [
+        {
+          "derived_s": 1.3109206124458501,
+          "id": "ridge-40deg-450mm-K7-N8-Lx0p9",
+          "length_factor": 1.1116381445000827,
+          "length_mm": 202.018,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 0.9237127035628547,
+          "id": "ridge-40deg-450mm-K7-N8-Lx1p0",
+          "length_factor": 1.2351565509271998,
+          "length_mm": 224.465,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.6031381358078796,
+          "id": "ridge-40deg-450mm-K7-N8-Lx1p1",
+          "length_factor": 1.3586694546855225,
+          "length_mm": 246.911,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 40,
+      "k": 7.0,
+      "mouth_mm": 450,
+      "n": 8.0,
+      "reference_length_mm": 181.73,
+      "target_s": 0.9237190903017322,
+      "target_s_length_mm": 224.46459125211283
+    },
+    {
+      "branch": "long-high-k",
+      "candidates": [
+        {
+          "derived_s": 1.5156144367772997,
+          "id": "ridge-45deg-300mm-K7-N8-Lx0p9",
+          "length_factor": 1.064495652173913,
+          "length_mm": 122.417,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 1.0863466418471148,
+          "id": "ridge-45deg-300mm-K7-N8-Lx1p0",
+          "length_factor": 1.1827652173913044,
+          "length_mm": 136.018,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.7282585110502916,
+          "id": "ridge-45deg-300mm-K7-N8-Lx1p1",
+          "length_factor": 1.3010434782608695,
+          "length_mm": 149.62,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 45,
+      "k": 7.0,
+      "mouth_mm": 300,
+      "n": 8.0,
+      "reference_length_mm": 115.0,
+      "target_s": 1.0863365190714132,
+      "target_s_length_mm": 136.0183526922272
+    },
+    {
+      "branch": "long-high-k",
+      "candidates": [
+        {
+          "derived_s": 1.5405230934905358,
+          "id": "ridge-45deg-450mm-K7-N8-Lx0p9",
+          "length_factor": 1.1021583652618137,
+          "length_mm": 172.598,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 1.0863265008152294,
+          "id": "ridge-45deg-450mm-K7-N8-Lx1p0",
+          "length_factor": 1.224623243933589,
+          "length_mm": 191.776,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.7103395371338557,
+          "id": "ridge-45deg-450mm-K7-N8-Lx1p1",
+          "length_factor": 1.347081736909323,
+          "length_mm": 210.953,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 45,
+      "k": 7.0,
+      "mouth_mm": 450,
+      "n": 8.0,
+      "reference_length_mm": 156.6,
+      "target_s": 1.0863365190714132,
+      "target_s_length_mm": 191.7755329740467
+    },
+    {
+      "branch": "long-high-k",
+      "candidates": [
+        {
+          "derived_s": 1.9075862605805918,
+          "id": "ridge-50deg-300mm-K7-N8-Lx0p9",
+          "length_factor": 1.0850300293904673,
+          "length_mm": 101.893,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 1.3926512159692253,
+          "id": "ridge-50deg-300mm-K7-N8-Lx1p0",
+          "length_factor": 1.2055841887805085,
+          "length_mm": 113.214,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.9631127439285425,
+          "id": "ridge-50deg-300mm-K7-N8-Lx1p1",
+          "length_factor": 1.3261383481705498,
+          "length_mm": 124.535,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 50,
+      "k": 7.0,
+      "mouth_mm": 300,
+      "n": 8.0,
+      "reference_length_mm": 93.908,
+      "target_s": 1.3926539371674904,
+      "target_s_length_mm": 113.21393421344735
+    },
+    {
+      "branch": "long-high-k",
+      "candidates": [
+        {
+          "derived_s": 1.9376029698500516,
+          "id": "ridge-50deg-450mm-K7-N8-Lx0p9",
+          "length_factor": 1.1378174678573691,
+          "length_mm": 143.72,
+          "length_multiplier": 0.9
+        },
+        {
+          "derived_s": 1.3926554170183927,
+          "id": "ridge-50deg-450mm-K7-N8-Lx1p0",
+          "length_factor": 1.2642425106086517,
+          "length_mm": 159.689,
+          "length_multiplier": 1.0
+        },
+        {
+          "derived_s": 0.9414979041445078,
+          "id": "ridge-50deg-450mm-K7-N8-Lx1p1",
+          "length_factor": 1.390667553359934,
+          "length_mm": 175.658,
+          "length_multiplier": 1.1
+        }
+      ],
+      "coverage_deg": 50,
+      "k": 7.0,
+      "mouth_mm": 450,
+      "n": 8.0,
+      "reference_length_mm": 126.312,
+      "target_s": 1.3926539371674904,
+      "target_s_length_mm": 159.6890478761389
+    }
+  ],
+  "hard_candidate_cap": 48,
+  "heuristics_input_sha256": "1e81cd0f46289f423fed6a0be38e000f50a6f2ebfcf85083025fe70e040630b7",
+  "implementation_sha256": "8e347c8ffb822dec5b4925a75ca43b1d583140aedeec994509c3113b0295bccd",
+  "outcomes_loaded": false,
+  "purpose": "close measured short/low-K and long/high-K round-control ridges for deterministic seed heuristics",
+  "schema_version": 1,
+  "search_count": 16,
+  "search_inputs": {
+    "30deg-250mm": {
+      "project_sha256": "8b7e3f6a36b54639c84d3d7cead723f77f0a95d8ba7b0f00c32a59a21615e31c",
+      "search_sha256": "24728fcd4b74389ec8270abf33069d179f2b5933b662c9d3a5ad602feefc6a15"
+    },
+    "30deg-300mm": {
+      "project_sha256": "613ae364af6c22897572edb1e163de58a32b9f648498e3dae6048bd8a73ab378",
+      "search_sha256": "7e70f57aa1f0038956dbfb4ad271d3c089861132f49b3dabb3cb6e1c589740cb"
+    },
+    "30deg-400mm": {
+      "project_sha256": "309eb55837d110f23324c9f8db60008d7bb1fd1787a2a555bb0e4c5790bb6e1c",
+      "search_sha256": "c5548811841095b3d8fd9e5691435cf0216cd6b885701c73deb6b333a48b100a"
+    },
+    "30deg-450mm": {
+      "project_sha256": "b75bce36deec153a656c239f443ba3f0fbf5cd62f796f0742c1b861c71280958",
+      "search_sha256": "d2c68069fa2736758ecad63dcc9f7e5e566a938d12ad8d86ec962e730407ceda"
+    },
+    "35deg-250mm": {
+      "project_sha256": "f01fba5ccb322f753127ce910710732839276d92a733d178d34a2ec780333b3b",
+      "search_sha256": "687c17f19b0d8c17fd3495e749b28ab52aaabf89a47778134701c84fe23403c2"
+    },
+    "35deg-300mm": {
+      "project_sha256": "7748e7e16cf18e8c11346f2fa74679ab4a9eec296d9bc680a9c0991cdf3f85a7",
+      "search_sha256": "b6ccf5f11d09db3c059eff472851af8e4e28b0f8e25292280d266c908366df10"
+    },
+    "35deg-400mm": {
+      "project_sha256": "bad421b835511c754904054fba470cf4f8bab0c4538fd65519d824dd3762c5b3",
+      "search_sha256": "86a895bc6169b9f0a67692c192de30e561682a487e98da61a62fcf3b7cf84860"
+    },
+    "35deg-450mm": {
+      "project_sha256": "8983e90be9bb73ce5f327d0b850784ecf92f5394e880dac5a3b3fe6be6266623",
+      "search_sha256": "32e45143e53368388ddb12f23f0fc45ec118150dcdf01303bc75255f0b4f5666"
+    },
+    "40deg-250mm": {
+      "project_sha256": "cc35b494a299d7627d1c605afe7073ef1554b64dd2412fc56641e45d72c5d474",
+      "search_sha256": "5f5c199db0dbf104e9081d752be7e853b123d9525178953b7e9b6f1615a05e56"
+    },
+    "40deg-350mm": {
+      "project_sha256": "fcb4d606432efc691f57af330fdb2c2f548c09f67505fa986cf088c68f409f04",
+      "search_sha256": "93df5980333d72e059ee1b6ea7c0eb2239b2eb7258e1073c2688b622835d95ef"
+    },
+    "40deg-450mm": {
+      "project_sha256": "91db089137381c63b23f1105bef94d6381e9acaf014bd1e7c170c071c5ed7c8c",
+      "search_sha256": "9ad2208a4aca9c4921a657e68db8d41bc1a647e79b3b40270829845a8b01abcd"
+    },
+    "45deg-250mm": {
+      "project_sha256": "d039bc7b53bc5db3c70656421650fc3d320a0b4c7d3a72332abee4c2bb86e0cb",
+      "search_sha256": "d66e9c0332ad59272673849aeed96bff0682c57306ce0ba3c7b72ff7436ce399"
+    },
+    "45deg-300mm": {
+      "project_sha256": "9b793f1bc917e3da7b5f0c57dfd949ae27b57ee8f1b4c19d8fe7569f85657452",
+      "search_sha256": "49a5ee487ea56e914176c0ee4724c2426ab6a7a59f6117c533475ef169a09dab"
+    },
+    "45deg-450mm": {
+      "project_sha256": "bcc91ceadbfc7c537deae445a30eae3b8e6461270886c0448703c29ba8acee55",
+      "search_sha256": "9dbe0b8de1791dab7f0eb304cde4a6b08f0fa5b2784e983bb6b36d5e7fe1715a"
+    },
+    "50deg-300mm": {
+      "project_sha256": "0e22f840157937978e262b31eca57a93a1d35c58661dfa65106f58118dd9602d",
+      "search_sha256": "a3400e3457677396c6f9a0bf983e4200b4116dbd2401f513fbffc1c01b32424a"
+    },
+    "50deg-450mm": {
+      "project_sha256": "da5c985dd4f965f11009e3cbc604deb3815cc2371ae389c66c8af4a1e178a76e",
+      "search_sha256": "22e0c80a81e037743bc3de49917dd5dcf82e93a5d60faf51d165405fbe4dc407"
+    }
+  },
+  "status": "frozen-not-run",
+  "throat_impedance": {
+    "included_in_candidate_selection": false,
+    "included_in_surface_score": false,
+    "retained": true
+  }
+}
