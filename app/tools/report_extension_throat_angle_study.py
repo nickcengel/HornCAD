@@ -12,6 +12,8 @@ import os
 from pathlib import Path
 from typing import Any
 
+import numpy as np
+
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -213,6 +215,7 @@ def render_index(root: Path, manifest: dict[str, Any],
                 "throat_impedance_score": float(
                     parent["responses"]["throat_impedance_score"]),
                 "report": report_href,
+                "response_path": parent["response_path"],
             })
             parent_rows.append(
                 f"<tr><td>{html.escape(role)}</td><td>{html.escape(cell)}</td>"
@@ -225,41 +228,106 @@ def render_index(root: Path, manifest: dict[str, Any],
                 f"<td><a href='{html.escape(report_href)}'>candidate</a></td></tr>")
 
     ranked_parents = sorted(
-        parent_items, key=lambda item: item["throat_impedance_score"])
+        parent_items, key=lambda item: item["surface_score"])
     parent_extremes = [
-        *((item, "lowest") for item in ranked_parents[:5]),
-        *((item, "highest") for item in reversed(ranked_parents[-5:])),
+        *((item, "lowest surface") for item in ranked_parents[:5]),
+        *((item, "highest surface") for item in reversed(ranked_parents[-5:])),
     ]
-    plot_min = math.floor(
-        min(item["throat_impedance_score"]
-            for item, _ in parent_extremes) / 5) * 5
-    plot_max = math.ceil(
-        max(item["throat_impedance_score"]
-            for item, _ in parent_extremes) / 5) * 5
-    plot_ticks = "".join(
-        f"<span style='left:{(tick-plot_min)/(plot_max-plot_min)*100:.3f}%'>{tick}</span>"
-        for tick in range(int(plot_min), int(plot_max) + 1, 5)
-    )
-    impedance_rows = []
+    curve_data = []
+    palettes = {
+        "highest surface": (
+            "#58d68d", "#69d6c8", "#4fc3f7", "#8bc34a", "#b2df8a"),
+        "lowest surface": (
+            "#e57373", "#ff8a65", "#ffb74d", "#ce93d8", "#ef9a9a"),
+    }
+    group_counts = {"highest surface": 0, "lowest surface": 0}
     for item, group in parent_extremes:
-        score = item["throat_impedance_score"]
-        position = (score-plot_min) / (plot_max-plot_min) * 100
+        with np.load(ROOT / item["response_path"], allow_pickle=False) as archive:
+            frequencies = np.asarray(archive["frequencies_hz"], dtype=float)
+            magnitude = np.abs(np.asarray(archive["impedance"]))
+        peak = float(np.max(magnitude))
+        if peak <= 0 or not np.isfinite(peak):
+            raise ValueError(f"{item['id']}: invalid throat-impedance peak")
+        color = palettes[group][group_counts[group]]
+        group_counts[group] += 1
+        curve_data.append({
+            **item,
+            "group": group,
+            "color": color,
+            "frequencies": frequencies,
+            "normalized": magnitude / peak,
+        })
+    frequency_min = min(float(np.min(item["frequencies"]))
+                        for item in curve_data)
+    frequency_max = max(float(np.max(item["frequencies"]))
+                        for item in curve_data)
+    plot_left, plot_top = 74.0, 20.0
+    plot_width, plot_height = 986.0, 400.0
+
+    def plot_x(frequency: float) -> float:
+        return plot_left + (
+            math.log2(frequency / frequency_min)
+            / math.log2(frequency_max / frequency_min) * plot_width)
+
+    def plot_y(value: float) -> float:
+        return plot_top + (1.0 - value) * plot_height
+
+    x_ticks = [
+        frequency for frequency in (500, 1000, 2000, 4000, 8000, 16000)
+        if frequency_min <= frequency <= frequency_max
+    ]
+    grid_lines = []
+    for value in (0.0, 0.25, 0.5, 0.75, 1.0):
+        y = plot_y(value)
+        grid_lines.append(
+            f"<line x1='{plot_left}' y1='{y:.2f}' "
+            f"x2='{plot_left+plot_width}' y2='{y:.2f}'/>"
+            f"<text x='{plot_left-10}' y='{y+4:.2f}' "
+            f"text-anchor='end'>{value:g}</text>")
+    for frequency in x_ticks:
+        x = plot_x(frequency)
+        label = (f"{frequency/1000:g}k"
+                 if frequency >= 1000 else str(frequency))
+        grid_lines.append(
+            f"<line x1='{x:.2f}' y1='{plot_top}' "
+            f"x2='{x:.2f}' y2='{plot_top+plot_height}'/>"
+            f"<text x='{x:.2f}' y='{plot_top+plot_height+23}' "
+            f"text-anchor='middle'>{label}</text>")
+
+    impedance_curves = []
+    impedance_legend = []
+    for item in curve_data:
+        points = " ".join(
+            f"{plot_x(float(frequency)):.2f},{plot_y(float(value)):.2f}"
+            for frequency, value in zip(
+                item["frequencies"], item["normalized"]))
         tooltip = (
             f"{item['id']}\n{item['cell']} · {item['role']}\n"
-            f"Throat impedance: {score:.2f}\n"
+            f"{item['group']}\n"
             f"Surface score: {item['surface_score']:.2f}\n"
+            f"Throat-impedance diagnostic: "
+            f"{item['throat_impedance_score']:.2f}\n"
+            "Each impedance magnitude curve is normalized to peak = 1\n"
             f"Open report: {item['report']}"
         )
-        impedance_rows.append(
-            f"<div class='impedance-row'><span class='impedance-label'>"
-            f"{html.escape(item['cell'])}<small>{html.escape(item['role'])}</small>"
-            f"</span><div class='impedance-track'>"
-            f"<a class='impedance-point {group}' "
-            f"style='left:{position:.3f}%' "
+        impedance_curves.append(
+            f"<a class='impedance-curve-link' "
             f"href='{html.escape(item['report'])}' "
+            "data-peak-normalized='1' "
+            f"data-title='{html.escape(tooltip)}' "
             f"title='{html.escape(tooltip)}' "
             f"aria-label='{html.escape(tooltip)}'>"
-            f"<span>{score:.1f}</span></a></div></div>")
+            f"<polyline class='impedance-hit' points='{points}'/>"
+            f"<polyline class='impedance-curve' "
+            f"style='stroke:{item['color']}' points='{points}'/></a>")
+        impedance_legend.append(
+            f"<a class='impedance-legend-item impedance-curve-link' "
+            f"href='{html.escape(item['report'])}' "
+            f"data-title='{html.escape(tooltip)}' "
+            f"title='{html.escape(tooltip)}'>"
+            f"<i style='background:{item['color']}'></i>"
+            f"<span>{html.escape(item['cell'])} · "
+            f"{item['surface_score']:.1f}</span></a>")
 
     coverages = (30, 35, 40, 45, 50)
     mouths = (250, 300, 350, 400, 450)
@@ -309,7 +377,7 @@ def render_index(root: Path, manifest: dict[str, Any],
     return f"""<!doctype html><html><head><meta charset='utf-8'>{refresh}<meta name='viewport' content='width=device-width,initial-scale=1'>
 <title>Extension and throat-angle heuristic study</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#69d6c8;--good:#16856b;--warn:#b7791f;--bad:#b45353}}
-*{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}main{{width:100%;padding:20px}}h1,h2{{margin:0 0 12px}}p{{line-height:1.45}}a{{color:var(--accent)}}section{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding:8px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}th{{background:var(--panel-2);white-space:nowrap}}th.sortable{{cursor:pointer;user-select:none}}th.sortable::after{{content:' ↕';color:var(--muted)}}th.sortable[aria-sort='ascending']::after{{content:' ↑';color:var(--accent)}}th.sortable[aria-sort='descending']::after{{content:' ↓';color:var(--accent)}}.summary{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}.card{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}}.card strong{{display:block;font-size:1.4rem;margin-bottom:4px}}.badge{{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.9rem;text-transform:uppercase}}.badge.complete{{background:rgba(22,133,107,.18);color:#8de8cc}}.badge.running{{background:rgba(183,121,31,.2);color:#f6d39a}}.badge.failed{{background:rgba(180,83,83,.2);color:#ffb2b2}}.badge.pending{{background:rgba(148,163,189,.16);color:#c8d0d8}}.muted{{color:var(--muted)}}[hidden]{{display:none!important}}.column-controls,.angle-controls,.plot-legend{{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}}.legend-item{{display:inline-flex;align-items:center;gap:5px;color:var(--muted);font-size:.9rem}}.legend-dot{{width:10px;height:10px;border-radius:50%;display:inline-block;border:1px solid #071015}}.column-toggle,.angle-filter,.stage-filter{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true'],.angle-filter[aria-pressed='true'],.stage-filter[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}.show-more{{display:block;margin:14px auto 2px;border:1px solid var(--accent);border-radius:999px;padding:8px 16px;background:#173c39;color:var(--ink);cursor:pointer}}.design-map{{table-layout:fixed;min-width:1000px}}.design-cell{{min-width:150px;background:#17212a;border:1px solid var(--line)}}.design-cell>span{{display:block;margin-top:4px;font-size:.8rem;color:#c1cbd2;white-space:nowrap}}.design-score{{font-size:1.45rem}}.impedance-plot{{min-width:760px;max-width:1150px;margin:18px auto 4px;padding:0 56px 0 190px}}.impedance-axis,.impedance-track{{position:relative;border-left:1px solid var(--line);border-right:1px solid var(--line);background:repeating-linear-gradient(to right,transparent 0,transparent calc(20% - 1px),var(--line-soft) calc(20% - 1px),var(--line-soft) 20%)}}.impedance-axis{{height:28px;border-bottom:1px solid var(--line)}}.impedance-axis span{{position:absolute;transform:translateX(-50%);top:8px;color:var(--muted);font-size:.78rem}}.impedance-row{{display:grid;grid-template-columns:180px 1fr;gap:10px;align-items:center;min-height:42px;margin-left:-190px}}.impedance-label{{text-align:right;font-size:.88rem}}.impedance-label small{{display:block;color:var(--muted)}}.impedance-track{{height:2px;background-color:var(--line);overflow:visible}}.impedance-point{{position:absolute;top:50%;width:14px;height:14px;border-radius:50%;transform:translate(-50%,-50%);border:2px solid var(--bg);box-shadow:0 0 0 2px currentColor;z-index:2}}.impedance-point.lowest{{color:#e57373;background:#e57373}}.impedance-point.highest{{color:#58d68d;background:#58d68d}}.impedance-point span{{position:absolute;left:50%;top:-19px;transform:translateX(-50%);font-size:.75rem;color:var(--ink);white-space:nowrap}}code{{overflow-wrap:anywhere}}@media(max-width:900px){{.summary{{grid-template-columns:repeat(2,1fr)}}}}
+*{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}main{{width:100%;padding:20px}}h1,h2{{margin:0 0 12px}}p{{line-height:1.45}}a{{color:var(--accent)}}section{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}}table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding:8px 10px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}}th{{background:var(--panel-2);white-space:nowrap}}th.sortable{{cursor:pointer;user-select:none}}th.sortable::after{{content:' ↕';color:var(--muted)}}th.sortable[aria-sort='ascending']::after{{content:' ↑';color:var(--accent)}}th.sortable[aria-sort='descending']::after{{content:' ↓';color:var(--accent)}}.summary{{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}}.card{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}}.card strong{{display:block;font-size:1.4rem;margin-bottom:4px}}.badge{{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.9rem;text-transform:uppercase}}.badge.complete{{background:rgba(22,133,107,.18);color:#8de8cc}}.badge.running{{background:rgba(183,121,31,.2);color:#f6d39a}}.badge.failed{{background:rgba(180,83,83,.2);color:#ffb2b2}}.badge.pending{{background:rgba(148,163,189,.16);color:#c8d0d8}}.muted{{color:var(--muted)}}[hidden]{{display:none!important}}.column-controls,.angle-controls{{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin:0 0 12px}}.column-toggle,.angle-filter,.stage-filter{{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}}.column-toggle[aria-pressed='true'],.angle-filter[aria-pressed='true'],.stage-filter[aria-pressed='true']{{border-color:var(--accent);color:var(--ink);background:#173c39}}.show-more{{display:block;margin:14px auto 2px;border:1px solid var(--accent);border-radius:999px;padding:8px 16px;background:#173c39;color:var(--ink);cursor:pointer}}.design-map{{table-layout:fixed;min-width:1000px}}.design-cell{{min-width:150px;background:#17212a;border:1px solid var(--line)}}.design-cell>span{{display:block;margin-top:4px;font-size:.8rem;color:#c1cbd2;white-space:nowrap}}.design-score{{font-size:1.45rem}}.impedance-groups{{display:flex;gap:18px;flex-wrap:wrap;margin:10px 0;color:var(--muted)}}.impedance-groups span{{display:inline-flex;align-items:center;gap:6px}}.impedance-groups i,.impedance-legend-item i{{width:11px;height:11px;border-radius:50%;display:inline-block;flex:none}}.impedance-legend{{display:grid;grid-template-columns:repeat(2,minmax(250px,1fr));gap:5px 14px;margin:10px 0}}.impedance-legend-item{{display:flex;align-items:center;gap:7px;padding:4px 7px;border:1px solid transparent;border-radius:5px;text-decoration:none;color:var(--muted)}}.impedance-legend-item:hover,.impedance-legend-item.active{{border-color:var(--accent);color:var(--ink);background:#173c39}}.impedance-frequency-plot{{min-width:760px;max-width:1200px;margin:auto}}.impedance-frequency-plot svg{{display:block;width:100%;height:auto;background:#0f151b;border:1px solid var(--line);border-radius:7px}}.impedance-grid line{{stroke:var(--line-soft);stroke-width:1}}.impedance-grid text,.axis-label{{fill:var(--muted);font:13px system-ui,sans-serif}}.impedance-curve{{fill:none;stroke-width:2.3;stroke-linejoin:round;stroke-linecap:round;opacity:.82}}.impedance-hit{{fill:none;stroke:transparent;stroke-width:12;pointer-events:stroke}}.impedance-curve-link:hover .impedance-curve,.impedance-curve-link.active .impedance-curve{{stroke-width:4.5;opacity:1}}.impedance-hover{{min-height:3.2em;white-space:pre-line;margin-bottom:0}}code{{overflow-wrap:anywhere}}@media(max-width:900px){{.summary{{grid-template-columns:repeat(2,1fr)}}.impedance-legend{{grid-template-columns:1fr}}}}
 </style></head><body><main><h1>Extension and throat-angle heuristic study</h1>
 <p>Full 5×5 round-horn grid for deterministic extension and throat-angle design heuristics.</p>
 <p class='muted'>Throat impedance is reported as an experimental diagnostic in every report. It is not included in the surface score, ranking, heuristic fit, or validation gate.</p>
@@ -317,11 +385,11 @@ def render_index(root: Path, manifest: dict[str, Any],
 <section><h2>Project range</h2><table><tr><th>Coverage half-angles</th><th>Round mouths</th><th>Throat angles</th><th>Extensions</th><th>Initial / hard cap</th><th>Scheduler</th></tr><tr><td>30, 35, 40, 45, 50°</td><td>250, 300, 350, 400, 450 mm</td><td>0, 6, 12°</td><td>0, 20, 40, 60 mm</td><td>{manifest['initial_candidate_count']} / {manifest['hard_candidate_cap']}</td><td>{manifest['scheduler']['queue_workers']} workers · {manifest['scheduler']['numcalc_process_capacity']} total NumCalc processes</td></tr></table><p class='muted'>Coordinate SHA-256: <code>{manifest['coordinate_sha256']}</code> · Manifest SHA-256: <code>{_digest(manifest)}</code></p></section>
 <section><h2>Design map</h2><p class='muted'>Best measured surface score in each cell; its throat-impedance score is shown directly below it.</p><table class='design-map'><thead><tr><th>Mouth / coverage</th>{''.join(f'<th>{a}°</th>' for a in coverages)}</tr></thead><tbody>{''.join(grid_rows)}</tbody></table></section>
 <section><h2>Measured round parents</h2><p class='muted'>Frozen measured parents. Throat impedance was recorded but not used to select either parent set.</p><table class='sortable-table'><thead><tr><th data-sort='text'>Role</th><th data-sort='text'>Cell</th><th data-sort='text'>Parent</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score</th><th data-sort='number'>Length mm</th><th data-sort='number'>S</th><th data-sort='number'>K</th><th data-sort='number'>N</th><th>Report</th></tr></thead><tbody>{''.join(parent_rows)}</tbody></table></section>
-<section><h2>Measured-parent throat-impedance extremes</h2><p class='muted'>Five highest and five lowest measured parents ranked only by the experimental throat-impedance score. Hover a point for candidate details and its report link; click to open the candidate report. This plot does not affect surface ranking.</p><div class='plot-legend'><span class='legend-item'><i class='legend-dot' style='background:#58d68d'></i>Five highest</span><span class='legend-item'><i class='legend-dot' style='background:#e57373'></i>Five lowest</span></div><div class='impedance-plot'><div class='impedance-axis'>{plot_ticks}</div>{''.join(impedance_rows)}<p class='muted' style='text-align:center'>Experimental throat-impedance score</p></div></section>
+<section><h2>Throat impedance: highest- and lowest-scoring parents</h2><p class='muted'>Complex throat-impedance magnitude versus frequency for the five highest and five lowest measured parents ranked by <em>surface score</em>. Every curve is independently normalized so its peak magnitude equals 1. Hover a curve or legend entry to expose its candidate-report link; click to open it. This diagnostic does not affect surface ranking.</p><div class='impedance-groups'><span><i style='background:#58d68d'></i>Five highest surface scores</span><span><i style='background:#e57373'></i>Five lowest surface scores</span></div><div class='impedance-legend'>{''.join(impedance_legend)}</div><div class='impedance-frequency-plot'><svg viewBox='0 0 1100 470' role='img' aria-label='Normalized throat impedance magnitude versus frequency'><g class='impedance-grid'>{''.join(grid_lines)}</g><g>{''.join(impedance_curves)}</g><text class='axis-label' x='567' y='466' text-anchor='middle'>Frequency (Hz)</text><text class='axis-label' x='17' y='220' text-anchor='middle' transform='rotate(-90 17 220)'>Normalized |Z|</text></svg></div><p id='impedance-hover' class='impedance-hover muted'>Hover a curve or legend entry. Click any curve to open its candidate report.</p></section>
 <section><h2>Candidates</h2><div class='column-controls'>{''.join(f"<button class='column-toggle' data-column-toggle='{key}' aria-pressed='{str(visible).lower()}'>{label}</button>" for key,label,visible in [('parent','Parent ID',True),('s','S',True),('containment','Containment',False),('profile','Profile RMS',False),('slice','Slice energy',False),('outward','Outward rise',False),('minus-six','−6 dB RMS',False)])}</div><div class='angle-controls'><button class='angle-filter' data-angle-filter='all' aria-pressed='true'>All coverages</button>{angle_buttons}<button class='stage-filter' data-stage-filter='all' aria-pressed='true'>All stages</button>{stage_buttons}<span id='candidate-count' class='muted'></span></div><table id='candidate-table' class='sortable-table'><thead><tr><th data-sort='text'>Candidate</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score</th><th data-sort='number'>Date</th><th data-sort='text'>Stage</th><th data-sort='number'>Coverage</th><th data-sort='number'>Mouth</th><th data-sort='text'>Parent role</th><th data-column='parent' data-sort='text'>Parent ID</th><th data-sort='number'>Throat angle</th><th data-sort='number'>Extension</th><th data-column='s' data-sort='number'>S</th><th data-sort='text'>Status</th><th data-column='containment' hidden data-sort='number'>Containment</th><th data-column='profile' hidden data-sort='number'>Profile RMS</th><th data-column='slice' hidden data-sort='number'>Slice energy</th><th data-column='outward' hidden data-sort='number'>Outward rise</th><th data-column='minus-six' hidden data-sort='number'>−6 dB RMS</th><th>Report</th></tr></thead><tbody>{''.join(candidate_rows)}</tbody></table><button id='candidate-show-more' class='show-more'>Show 25 more</button></section>
 <section><h2>Execution stages</h2><table class='sortable-table'><thead><tr><th data-sort='text'>Stage</th><th data-sort='number'>Candidates</th><th data-sort='number'>Complete</th><th data-sort='number'>Running</th><th data-sort='number'>Preflight</th><th data-sort='number'>Failed</th></tr></thead><tbody>{stage_rows}</tbody></table></section>
 <section><h2>Sub-searches</h2><p class='muted'>Each fixed candidate is an independently recoverable one-candidate search.</p><table class='sortable-table'><thead><tr><th data-sort='text'>Stage</th><th data-sort='number'>Coverage</th><th data-sort='number'>Mouth</th><th data-sort='number'>Throat angle</th><th data-sort='number'>Extension</th><th data-sort='text'>Status</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score</th><th>Report</th></tr></thead><tbody>{subsearch_rows}</tbody></table></section>
-<script>(()=>{{document.querySelectorAll('[data-column-toggle]').forEach(b=>b.onclick=()=>{{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));document.querySelectorAll(`[data-column="${{b.dataset.columnToggle}}"]`).forEach(x=>x.hidden=!on);}});const table=document.getElementById('candidate-table'),more=document.getElementById('candidate-show-more'),count=document.getElementById('candidate-count');let angle='all',stage='all',limit=25;function filter(){{let match=0,shown=0;Array.from(table.tBodies[0].rows).forEach(r=>{{const ok=(angle==='all'||r.dataset.coverageAngle===angle)&&(stage==='all'||r.dataset.stage===stage);if(ok)match++;r.hidden=!(ok&&shown++<limit);}});shown=Math.min(match,limit);count.textContent=`Showing ${{shown}} of ${{match}}`;more.hidden=shown>=match;}}document.querySelectorAll('[data-angle-filter]').forEach(b=>b.onclick=()=>{{angle=b.dataset.angleFilter;limit=25;document.querySelectorAll('[data-angle-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));filter();}});document.querySelectorAll('[data-stage-filter]').forEach(b=>b.onclick=()=>{{stage=b.dataset.stageFilter;limit=25;document.querySelectorAll('[data-stage-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));filter();}});more.onclick=()=>{{limit+=25;filter();}};document.querySelectorAll('table.sortable-table').forEach(t=>{{const hs=Array.from(t.querySelectorAll('th[data-sort]'));let active=-1,dir='desc';hs.forEach(h=>{{h.classList.add('sortable');const sort=()=>{{const col=h.cellIndex;dir=active===col&&dir==='desc'?'asc':'desc';active=col;hs.forEach(x=>x.removeAttribute('aria-sort'));h.setAttribute('aria-sort',dir==='asc'?'ascending':'descending');const mul=dir==='asc'?1:-1,rows=Array.from(t.tBodies[0].rows);rows.sort((a,b)=>{{let x=a.cells[col]?.dataset.sort??a.cells[col]?.textContent??'',y=b.cells[col]?.dataset.sort??b.cells[col]?.textContent??'';if(h.dataset.sort==='number'){{x=Number(x);y=Number(y);x=Number.isFinite(x)?x:-Infinity;y=Number.isFinite(y)?y:-Infinity;}}return(x<y?-1:x>y?1:0)*mul;}});t.tBodies[0].replaceChildren(...rows);if(t===table)filter();}};h.onclick=sort;}});}});filter();}})();</script></main></body></html>"""
+<script>(()=>{{document.querySelectorAll('[data-column-toggle]').forEach(b=>b.onclick=()=>{{const on=b.getAttribute('aria-pressed')!=='true';b.setAttribute('aria-pressed',String(on));document.querySelectorAll(`[data-column="${{b.dataset.columnToggle}}"]`).forEach(x=>x.hidden=!on);}});const table=document.getElementById('candidate-table'),more=document.getElementById('candidate-show-more'),count=document.getElementById('candidate-count');let angle='all',stage='all',limit=25;function filter(){{let match=0,shown=0;Array.from(table.tBodies[0].rows).forEach(r=>{{const ok=(angle==='all'||r.dataset.coverageAngle===angle)&&(stage==='all'||r.dataset.stage===stage);if(ok)match++;r.hidden=!(ok&&shown++<limit);}});shown=Math.min(match,limit);count.textContent=`Showing ${{shown}} of ${{match}}`;more.hidden=shown>=match;}}document.querySelectorAll('[data-angle-filter]').forEach(b=>b.onclick=()=>{{angle=b.dataset.angleFilter;limit=25;document.querySelectorAll('[data-angle-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));filter();}});document.querySelectorAll('[data-stage-filter]').forEach(b=>b.onclick=()=>{{stage=b.dataset.stageFilter;limit=25;document.querySelectorAll('[data-stage-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));filter();}});more.onclick=()=>{{limit+=25;filter();}};document.querySelectorAll('table.sortable-table').forEach(t=>{{const hs=Array.from(t.querySelectorAll('th[data-sort]'));let active=-1,dir='desc';hs.forEach(h=>{{h.classList.add('sortable');const sort=()=>{{const col=h.cellIndex;dir=active===col&&dir==='desc'?'asc':'desc';active=col;hs.forEach(x=>x.removeAttribute('aria-sort'));h.setAttribute('aria-sort',dir==='asc'?'ascending':'descending');const mul=dir==='asc'?1:-1,rows=Array.from(t.tBodies[0].rows);rows.sort((a,b)=>{{let x=a.cells[col]?.dataset.sort??a.cells[col]?.textContent??'',y=b.cells[col]?.dataset.sort??b.cells[col]?.textContent??'';if(h.dataset.sort==='number'){{x=Number(x);y=Number(y);x=Number.isFinite(x)?x:-Infinity;y=Number.isFinite(y)?y:-Infinity;}}return(x<y?-1:x>y?1:0)*mul;}});t.tBodies[0].replaceChildren(...rows);if(t===table)filter();}};h.onclick=sort;}});}});const hover=document.getElementById('impedance-hover');document.querySelectorAll('.impedance-curve-link').forEach(link=>{{const show=()=>{{hover.replaceChildren();const text=document.createElement('span');text.textContent=link.dataset.title+' — ';const open=document.createElement('a');open.href=link.getAttribute('href');open.textContent='open candidate report';hover.append(text,open);document.querySelectorAll('.impedance-curve-link').forEach(x=>x.classList.toggle('active',x.getAttribute('href')===link.getAttribute('href')));}};link.addEventListener('mouseenter',show);link.addEventListener('focus',show);}});filter();}})();</script></main></body></html>"""
 
 
 def refresh_index(root: Path) -> Path:

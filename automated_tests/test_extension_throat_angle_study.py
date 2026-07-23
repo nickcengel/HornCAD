@@ -77,10 +77,13 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
             output,
         )
         self.assertIn("<strong>development running</strong>study status", output)
-        self.assertIn("Measured-parent throat-impedance extremes", output)
-        self.assertEqual(output.count("class='impedance-point lowest'"), 5)
-        self.assertEqual(output.count("class='impedance-point highest'"), 5)
-        self.assertEqual(output.count("Open report:"), 20)
+        self.assertIn(
+            "Throat impedance: highest- and lowest-scoring parents", output)
+        self.assertEqual(output.count("data-peak-normalized='1'"), 10)
+        self.assertEqual(output.count("class='impedance-curve'"), 10)
+        self.assertEqual(output.count("class='impedance-hit'"), 10)
+        self.assertIn("ranked by <em>surface score</em>", output)
+        self.assertGreaterEqual(output.count("Open report:"), 20)
 
 
 if __name__ == "__main__":
