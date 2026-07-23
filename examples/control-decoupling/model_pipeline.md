@@ -1,19 +1,27 @@
 # Round-control model fitting and export pipeline
 
+## Release status
+
+The prediction-only v1 release is complete. Primary and augmented models,
+audited training indexes, validation results, provenance, model cards, and
+placeholder rule files are present under `models/`. Sections below describe the
+implemented prediction release and explicitly label capabilities deferred to a
+later version.
+
 ## Required outcome
 
-The control-decoupling study is incomplete until it produces a compact,
-executable model of symmetric, square, zero-extension OS-SE horns. Candidate
-reports and NPZ response surfaces are source evidence, not the primary study
-deliverable.
+The completed control-decoupling study produces compact, executable models of
+symmetric, square, zero-extension OS-SE horns. Candidate reports and NPZ
+response surfaces remain authoritative source evidence rather than the routine
+prediction interface.
 
 The exported model must answer:
 
 ```text
-F(mouth, coverage, body length, K, N)
+F(mouth, coverage, OSSE profile length, K, N)
     -> surface score and component diagnostics
     -> calibrated prediction uncertainty
-    -> local control effects and interactions
+    -> interpretable quadratic response fields
 ```
 
 S remains a derived geometry result. It must never be accepted as an independent
@@ -21,20 +29,36 @@ input coordinate.
 
 ## Portable deliverables
 
-The pipeline writes a versioned directory:
+The pipeline writes two versioned directories:
 
 ```text
-models/round_control_v1/
+models/round_control_primary_v1/
+├── model.json
+├── primary_freeze.json
+├── validation.json
+├── provenance.json
+├── rules.json
+├── training_index.json
+└── model_card.md
+
+models/round_control_augmented_v1/
 ├── model.json
 ├── validation.json
+├── provenance.json
 ├── rules.json
 ├── training_index.json
 └── model_card.md
 ```
 
-`model.json` is the executable artifact. It contains plain JSON numbers and
-arrays rather than Python pickles so the same model can run in Python and the
-browser. The other files document evidence, limitations, and interpretation.
+Each `model.json` is an executable plain-JSON artifact rather than a Python
+pickle, so Python and browser evaluators share the same coefficients. The
+primary model is canonical evidence only. The augmented model adds compatible,
+density-weighted historical evidence after primary validation and retains the
+primary prediction alongside it.
+
+`rules.json` is a release placeholder with no actionable rules because
+`diagnose()`, `improve()`, automated design, and experiment selection are
+deferred. The other files document evidence, limitations, and interpretation.
 
 The retained candidate `responses.npz` files remain the authoritative source for
 future diagnostics, but routine prediction and study design must not require
@@ -42,16 +66,19 @@ loading them.
 
 ## Provenance lock
 
-Every export records:
+The model and `provenance.json` record:
 
 - control-study manifest SHA-256;
 - execution-plan SHA-256;
 - diagnostic implementation/version hash;
-- solver/frequency fingerprint;
-- geometry implementation/version hash;
-- model schema version;
+- complete coordinate hash;
+- fitting implementation SHA-256;
 - fitting-code Git commit;
-- creation time and complete coordinate-ID list.
+- model, validation, and training-index hashes.
+
+The source audit separately records the uniform solver configuration and
+response-grid fingerprints, archive counts, diagnostic-reproduction tolerance,
+duplicate-response deduplication, and NumCalc cleanup result.
 
 Changing diagnostics creates a new model version. An old model must never be
 silently relabeled with newly calculated scores.
@@ -68,7 +95,7 @@ The primary fit includes only:
 It excludes:
 
 - locked validation coordinates;
-- `benchmarks.json` optimized historical benchmarks;
+- non-reference `benchmarks.json` optimized historical benchmarks;
 - geometry-rejected and geometry-redundant coordinates;
 - conditional closure coordinates unless a later model version explicitly
   declares an expanded-boundary fit;
@@ -87,20 +114,21 @@ frozen.
 
 ### Secondary augmented dataset
 
-A separately named augmented model may include compatible historical responses
-with source provenance and sampling weights. It cannot replace the primary model
-or fill missing canonical contrasts. Primary and augmented validation results
-must be reported separately.
+The separately named augmented v1 model includes compatible historical responses
+with source provenance and sampling weights. It does not replace the primary
+model or fill missing canonical contrasts. Primary and augmented validation
+results are reported separately.
 
 ### Training index
 
 `training_index.json` contains one row per response with:
 
 - coordinate ID and source path;
-- mouth, coverage, body length, reference length, length factor, K, N, and
+- mouth, coverage, OSSE profile length, reference length, length factor, K, N, and
   derived S;
 - response/diagnostic hashes;
-- inclusion role: fit, locked validation, external benchmark, or excluded;
+- inclusion role: `fit`, `locked_validation`, `historical_challenge`, or
+  `excluded`, plus a separate benchmark flag;
 - exclusion reason where applicable;
 - all fitted response values.
 
@@ -135,9 +163,9 @@ Each of the 25 mouth/coverage cells uses the same preregistered quadratic basis:
 1, L, K, N, L², K², N², L×K, L×N, K×N
 ```
 
-Here `L` is body-length factor relative to the registered cell reference length.
-L, K, and N are centered and scaled using constants stored in `model.json`.
-Physical values are always preserved in inputs and outputs.
+Here `L` is OSSE-profile-length factor relative to the registered cell reference
+length. L, K, and N are centered and scaled using constants stored in
+`model.json`. Physical values are always preserved in inputs and outputs.
 
 The canonical preflight established rank 10 in every cell. Fitting must fail
 closed if the completed dataset loses that rank. No term selection or stepwise
@@ -150,8 +178,7 @@ The cell export stores, for every response:
 - coefficient covariance;
 - residual covariance across responses;
 - observed input extent;
-- condition number and effective rank;
-- center prediction, gradient, and Hessian.
+- condition number and effective rank.
 
 Regularization is allowed only if numerical or validation evidence requires it.
 Its strength must be selected without locked validation data and recorded in the
@@ -163,20 +190,15 @@ The 25 cell-local coefficient sets form ten coefficient fields for each response
 over the 5×5 mouth/coverage grid. The cross-cell model interpolates those fields,
 not raw optimizer ranks.
 
-Candidate interpolators, in increasing complexity, are:
+V1 uses bilinear coefficient interpolation. Canonical leave-one-cell-out testing
+compares its coefficient-field error with a nearest-cell baseline; bilinear is
+retained because it wins that comparison. Off-grid mouth/coverage predictions
+are returned as limited-support with widened intervals. Values outside the
+sampled grid are explicitly extrapolated.
 
-1. bilinear coefficient interpolation;
-2. regularized tensor-product spline;
-3. a smooth Gaussian-process coefficient field.
-
-Use the simplest method that passes leave-one-cell-out testing. Complexity and
-hyperparameters are selected using only canonical fitting coordinates. If no
-method supports a requested region, the model must return high uncertainty or
-`unsupported`; it must not manufacture a confident recommendation.
-
-The reference-length field `L0(mouth, coverage)` is exported separately. A user
-body length is converted to length factor with this field before evaluating the
-control response.
+The reference-length field `L0(mouth, coverage)` is exported separately. A
+user's OSSE profile length is converted to length factor with this field before
+evaluating the control response.
 
 ## Geometry gate
 
@@ -188,24 +210,17 @@ existing OS-SE solver must:
 - reject disc-like or otherwise invalid geometry;
 - identify extrapolation beyond the sampled physical profile extent.
 
-`model.json` stores the sampled bounds and required geometry-policy version, but
+`model.json` stores the sampled bounds and fixed geometry-policy parameters, but
 the exact geometry implementation remains authoritative.
 
 ## Uncertainty
 
-Prediction uncertainty combines:
-
-- cell coefficient covariance;
-- local residual error;
-- cross-cell interpolation error;
-- distance outside the observed L/K/N support;
-- leave-one-cell-out error;
-- locked-validation calibration after model freeze.
-
-The API returns a point prediction plus calibrated intervals for every response.
-Intervals must widen near geometry boundaries and during extrapolation. Locked
-validation is used to calibrate and report uncertainty, never to refit the frozen
-primary model.
+V1 interval half-widths use the larger of the locked-validation 90th-percentile
+absolute error and 1.645 times the largest cell residual standard deviation.
+The API widens them for off-support L/K/N, mouth, or coverage values and labels
+the result extrapolated. Off-grid in-domain mouth/coverage interpolation is
+limited-support. Locked validation calibrates uncertainty but never refits the
+frozen primary model.
 
 ## Validation sequence
 
@@ -213,14 +228,14 @@ Validation occurs in this order:
 
 1. **Structural audit:** provenance hashes, unique coordinates, rank 10, finite
    coefficients, and deterministic rebuild.
-2. **Within-cell fit audit:** residual plots and influence diagnostics using only
-   fitting coordinates.
+2. **Within-cell fit audit:** rank, condition number, coefficients, covariance,
+   residual covariance, and support using only fitting coordinates.
 3. **Leave-one-cell-out audit:** predict omitted mouth/coverage cells to test
    coefficient interpolation.
 4. **Locked validation:** predict all 50 locked coordinates exactly once after
    model and interpolation choices are frozen.
-5. **Historical benchmark audit:** classify the 25 external optimized benchmarks
-   without adding them to the primary fit.
+5. **Historical benchmark audit:** report errors for all 25 external optimized
+   benchmarks without adding non-reference benchmarks to the primary fit.
 6. **Python/browser parity:** identical test vectors must agree within a recorded
    numerical tolerance.
 
@@ -236,10 +251,11 @@ both:
 
 This prevents model noise from becoming design advice.
 
-## Historical optimum audit
+## Deferred historical optimum classification
 
-For each benchmark and previous cell winner, evaluate the local gradient,
-curvature, model-supported search region, and uncertainty. Classify it as:
+The v1 validation reports prediction errors for every registered benchmark.
+Gradient/curvature classification remains deferred with `diagnose()` and
+`improve()`. A later version may classify each benchmark as:
 
 - supported optimum;
 - near-optimal;
@@ -250,12 +266,12 @@ curvature, model-supported search region, and uncertainty. Classify it as:
 A predicted replacement is a proposal, not a result. It requires confirmation
 BEM before replacing a benchmark.
 
-## Rule extraction
+## Deferred rule extraction
 
-`rules.json` is generated from the validated response field, not written from
-informal observations. The extractor samples the valid domain and evaluates
-finite practical changes in L, K, and N plus the analytic model gradient and
-curvature.
+V1 ships `rules.json` as an explicit empty placeholder. No rule is actionable.
+A later extractor must generate rules from the validated response field rather
+than informal observations, sampling finite practical L/K/N changes plus model
+gradient and curvature.
 
 A rule records:
 
@@ -274,10 +290,10 @@ available through prediction but are not promoted to prose guidance.
 
 ## Executable API
 
-Python and browser implementations expose equivalent operations:
+Python and browser implementations expose equivalent prediction evaluation.
 
-The concrete Python value types and façade are scaffolded in `app.design_api`
-and documented in
+The concrete Python value types and prediction façade are implemented in
+`app.design_api` and documented in
 [`docs/reference/design_application_api.md`](../../docs/reference/design_application_api.md).
 That consumer contract must remain stable as the round backend grows correction
 layers for later geometry studies.
@@ -296,9 +312,10 @@ select_experiments(domain, budget)
     -> points that reduce uncertainty or distinguish competing control models
 ```
 
-`improve` uses the complete diagnostic Jacobian and Hessian. It must not optimize
-surface score alone. Constraints and diagnostic tradeoffs remain visible in its
-output.
+Only `predict` is implemented in v1. The other operations deliberately raise
+`ModelNotReadyError`; their types remain reserved so later releases need not
+change callers. When implemented, `improve` must use the complete diagnostic
+Jacobian and Hessian rather than optimize surface score alone.
 
 ## Use by later geometry studies
 
@@ -320,9 +337,9 @@ conditional correction. The round model supplies baseline predictions, parent
 selection, compensating L/K/N directions, and uncertainty. New geometry studies
 must not silently retrain or overwrite the round-control model.
 
-## Required implementation commands
+## Implementation commands
 
-The implementation should provide idempotent commands equivalent to:
+The implementation provides idempotent commands equivalent to:
 
 ```text
 python -m app.tools.assemble_round_control_dataset
@@ -331,13 +348,13 @@ python -m app.tools.validate_round_control_model
 python -m app.tools.export_round_control_model
 ```
 
-They may share internal code, but the artifacts and failure boundaries remain
-separate. Re-running with identical inputs must produce numerically identical
-model content apart from explicitly excluded creation timestamps.
+They share one versioned implementation, but the artifacts and failure
+boundaries remain separate. Re-running with identical inputs produces
+byte-identical model, validation, and training-index content.
 
 ## Release gate
 
-`round_control_v1` is released only when:
+The primary and augmented v1 models are released only when:
 
 - every required coordinate has a terminal audited status;
 - all included NPZ archives validate;
@@ -347,10 +364,11 @@ model content apart from explicitly excluded creation timestamps.
 - uncertainty is calibrated conservatively enough to cover observed locked
   errors;
 - Python and browser predictions pass parity tests;
-- benchmarks are classified and any proposed replacements are clearly marked
-  unconfirmed;
+- all 25 benchmarks receive a separate prediction-error audit;
 - `model.json`, validation, rules, training index, and model card agree on all
   provenance hashes.
 
-Failure of a release gate produces a limited-support model and a documented next
-experiment. It must not be hidden by reporting only aggregate score accuracy.
+Rule extraction and optimum classification are not release gates for the
+prediction-only v1 model; their placeholder/deferred status must remain explicit.
+Failure of a prediction release gate produces a limited-support model and a
+documented next experiment rather than being hidden by aggregate score accuracy.

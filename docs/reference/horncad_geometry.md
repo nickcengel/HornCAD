@@ -6,10 +6,15 @@ This document describes the current browser app and Python STL exporter. Both im
 
 1. Open `app/browser/HornCAD.html` directly in a browser.
 2. Adjust the acoustic profile, mouth, body, and sampling controls.
-3. Export a `HornCAD-Surface-<WxHxL>.YAML` or `HornCAD-Body-<WxHxL>.YAML` file.
-4. Convert that configuration to STL with `python app/tools/export_horncad.py <file.YAML>`.
+3. Choose `Surface` or `Body`, then export
+   `HornCAD-<Mode>-<W>x<H>x<L>.YAML`.
+4. Convert that configuration to STL with
+   `python app/tools/export_horncad.py <project.YAML>`.
 
-The browser previews the acoustic surface. The Python exporter produces either that open surface or a printable body, according to `body.stl_export_mode` or the command-line `--mode` override.
+The browser previews the acoustic surface. The Python exporter produces either
+that open surface or a printable body according to `body.stl_export_mode`.
+`--mode surface` or `--mode body` overrides the YAML; `acoustic_surface` is a
+backward-compatible alias for `surface`.
 
 ## Coordinates and Dimensions
 
@@ -18,12 +23,15 @@ The browser previews the acoustic surface. The Python exporter produces either t
 - Lengths are millimetres and authored angles are degrees.
 - **Length** and `global.length` mean only the axial OSSE-profile length. They
   exclude the optional conical throat extension and mouth-sag distortion.
-- **Total length** means OSSE length + conical extension + the axial extent
-  added by mouth sag.
-- `global.measured_total_length` is informational and records the measured
-  axial span of the exported geometry. For an acoustic-surface export this is
-  the total length above; printable-body features can extend the measured body
-  span farther.
+- **Profile-plus-extension length** is OSSE length + conical extension. It is an
+  authored axial chain length, not necessarily the exported bounding-box depth.
+- Mouth sag is implemented as a local axial setback. It changes the exported
+  axial span; it is not an extra length that can be added algebraically.
+- `global.measured_total_length` is informational and records the actual
+  `max(z) - min(z)` span of the selected exported geometry. Surface/body mode,
+  sag, the mouth rear offset, and other body features can make this differ from
+  profile-plus-extension length. The exporter recomputes geometry rather than
+  trusting this stored value.
 - Coverage and throat angles are half-angles.
 
 ## Acoustic Basis Profiles
@@ -60,9 +68,9 @@ The mouth surface is curved by `global.mouth_sag`. Horizontal and vertical sag c
 - vertical only: vertical cylindrical curvature;
 - neither enabled, or zero sag: flat mouth.
 
-Sag changes the local axial position of a point; it does not replace the
-acoustic basis solve or alter the meaning of OSSE length. Its added axial extent
-contributes to total length.
+Sag subtracts a progressively applied local setback from the profile coordinate.
+It does not replace the acoustic basis solve or alter the meaning of OSSE
+length. Use the measured exported span when physical depth matters.
 
 ## Printable Body
 
@@ -87,6 +95,7 @@ horncad_config:
   version: 2
   units: mm
   global: {}
+  operating_intent: {}
   body: {}
   horizontal_basis: {}
   vertical_basis: {}
@@ -95,7 +104,12 @@ horncad_config:
   export: {}
 ```
 
-`global` contains acoustic dimensions and mouth curvature. `body` contains printable-shell and export-mode settings. The basis sections contain coverage, `k`, `n`, and the derived `s`. `section_modifier` stores the squareness and optional profile splines. `export` controls STL sampling.
+`global` contains acoustic dimensions and mouth curvature.
+`operating_intent` contains intended H/V coverage and the analysis-frequency
+band. `body` contains printable-shell and export-mode settings. The basis
+sections contain construction coverage, `k`, `n`, and derived `s`.
+`section_modifier` stores squareness and optional profile splines. `export`
+controls STL sampling.
 
 Derived values such as `effective_throat_radius`, `measured_total_length`, and `solved_s` are included for inspection. The exporter recomputes geometry from the authored inputs.
 
@@ -116,14 +130,45 @@ the constraint is evaluated independently for the horizontal and vertical axes.
 
 ## Sampling and Output
 
-The exporter adaptively distributes axial samples according to basis-profile curvature. Each ring uses the configured side-sample budget, with additional attention around squared-mouth corners. Output names are derived from mode and nominal dimensions:
+The exporter adaptively distributes axial samples according to basis-profile
+curvature. `export.stl_side_samples` is the nominal sample count per side, so a
+basic ring contains four times that many vertices, with additional refinement
+around squared-mouth corners.
+
+The browser and Python exporter use this basename:
 
 ```text
-HornCAD-Surface-<width>x<height>x<length>.STL
-HornCAD-Body-<width>x<height>x<length>.STL
+HornCAD-<Mode>-<W>x<H>x<L>
 ```
 
-Use `--output-dir` to change the destination and `--mode surface|body` to override the YAML mode.
+where:
+
+- `<Mode>` is exactly `Surface` or `Body`;
+- `W` and `H` are the nominal mouth dimensions rounded to whole millimetres;
+- `L` is `global.length`, the nominal OSSE-profile length rounded to a whole
+  millimetre—not measured span and not profile-plus-extension length.
+
+The browser writes `<basename>.YAML`; BEM-search export writes
+`<basename>-BEM-search.YAML`. The Python exporter writes `<basename>.STL`.
+Candidate-search artifacts intentionally use a different, analysis-specific
+stem:
+
+```text
+<W>x<H>x<L>[_E<extension>]_<coverage>_K<K>_N<N>
+```
+
+for symmetric axes, or
+
+```text
+<W>x<H>x<L>[_E<extension>]_H<h-coverage>_K<h-K>_N<h-N>_V<v-coverage>_K<v-K>_N<v-N>
+```
+
+for asymmetric axes. Candidate geometry and reports append `_Surface.STL` and
+`_Report.html`; `project.yaml` and `bem/responses.npz` keep fixed public names.
+
+Without `--output-dir`, the Python exporter writes to `app/tools/output/`.
+Use `--output-dir` to choose another directory. Accepted overrides are
+`--mode surface`, `--mode acoustic_surface` (alias), and `--mode body`.
 
 ## Source of Truth
 

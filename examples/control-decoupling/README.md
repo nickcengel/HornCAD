@@ -11,8 +11,9 @@ was approved, generated, completed, and converted into a portable model.
    manifest identity, resource policy, storage policy, and known limitations.
 2. [Study plan](study_plan.md) defines the registered domain, sampling design,
    execution order, terminal states, and analysis terms.
-3. [Model pipeline](model_pipeline.md) defines the fitting, validation,
-   rule-extraction, and `round_control_v1` export required after BEM completion.
+3. [Model pipeline](model_pipeline.md) defines the fitting, validation, and
+   portable exports released as `round_control_primary_v1` and
+   `round_control_augmented_v1`. Rule extraction remains explicitly deferred.
 4. The global [geometry research roadmap](../../docs/plans/geometry_research_roadmap.md)
    defines how this released baseline is later augmented with extension, throat
    angle, round-to-square morphing, separate H/V behavior, and sag.
@@ -27,7 +28,11 @@ than this manifest alone.
 - `benchmarks.json` registers external historical comparisons; benchmarks do not
   alter the experiment.
 - `runtime_state.json`, `index.html`, search reports, and candidate reports are
-  generated views of execution state and results.
+  generated views of the completed execution state and results.
+- `model_source/audit.json` and `model_source/training_index.json` provide the
+  audited bridge from retained responses to both released models.
+- `model_source/extension_handoff.json` records the next candidate design but
+  schedules no BEM.
 - Each retained completed candidate keeps its project YAML, STL, report, and
   compressed `bem/responses.npz` required for future diagnostics.
 - `analysis/bunching_physical_scales.md` is a regenerable snapshot testing

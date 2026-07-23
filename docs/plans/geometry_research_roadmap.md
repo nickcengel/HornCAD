@@ -8,13 +8,15 @@ augmentations, not one Cartesian search over every available control.
 
 - **Length** always means the axial length of the OSSE profile.
 - **Extension** is the separately authored conical throat extension length.
-- **Sag distortion** is the axial length change introduced by mouth sag.
-- **Total length** is OSSE length + extension + axial distortion from sag.
+- **Profile-plus-extension length** is OSSE length + extension.
+- **Sag distortion** is the local axial setback introduced by mouth sag.
+- **Measured exported span** is the actual `max(z) - min(z)` of a selected
+  surface or body export; it is not computed by adding sag to OSSE length.
 
-Length must never be renamed, redefined as total depth, or silently shortened to
+Length must never be renamed, redefined as exported depth, or silently shortened to
 compensate for extension or sag. Unless a registered contrast explicitly changes
 more than one quantity, adding extension holds OSSE length fixed and increases
-total length by the extension amount.
+profile-plus-extension length by the extension amount.
 
 ## General experimental policy
 
@@ -38,16 +40,19 @@ are predicted before their results are added to fitting. They are expanded only
 where prediction error is material. Until the sentinels pass, reports must label
 outer-cell predictions as extrapolations rather than supported behavior.
 
-## Stage 1: finish the round control study
+## Stage 1: frozen round control baseline
 
-Finish, fit, and validate the symmetric zero-extension study already registered
-under `examples/control-decoupling/`. Its portable model maps mouth, coverage,
-OSSE length, K, and N to the component diagnostics and surface score while
-reporting derived S. The validation and export requirements are defined in the
-control study's
+The symmetric zero-extension study under `examples/control-decoupling/` is
+complete, fitted, and validated. Its primary and augmented portable models map
+mouth, coverage, OSSE length, K, and N to component diagnostics and surface
+score while reporting derived S. The validation and export requirements are
+defined in the control study's
 [model pipeline](../../examples/control-decoupling/model_pipeline.md).
 
-This round baseline is frozen before any later geometry augmentation is fitted.
+The primary baseline is frozen before any later geometry augmentation is fitted.
+The candidate design for Stage 2 is recorded in
+`examples/control-decoupling/model_source/extension_handoff.json`; it schedules
+no BEM and remains launch-gated.
 
 ## Stage 2: conical extension and throat angle
 

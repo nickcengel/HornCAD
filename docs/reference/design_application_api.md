@@ -4,8 +4,9 @@
 
 This is the stable application boundary around the current control-decoupling
 study and later extension, mouth-shape, H/V, sag, and throat-angle models. Raw
-NPZ evidence feeds model fitting; application callers consume predictions,
-diagnoses, recommendations, and proposed confirmation experiments.
+NPZ evidence feeds model fitting. Version 1 callers consume predictions; the
+types reserve room for later diagnoses, recommendations, and proposed
+confirmation experiments.
 
 The Python implementation lives in `app.design_api`. It validates public inputs
 and outputs and loads the released primary or augmented round-control
@@ -28,7 +29,7 @@ Load a released model and predict one known design:
 ```python
 from app.design_api import DesignApplication, DesignPoint
 
-app = DesignApplication.load("models/round_control_v1")
+app = DesignApplication.load("models/round_control_augmented_v1")
 candidate = DesignPoint.round(
     mouth_mm=300,
     coverage_deg=40,
@@ -47,23 +48,25 @@ print(prediction.model_predictions)  # primary and augmented side by side
 ```
 
 `profile_length_mm` always means OS-SE profile length. Extension and sag are
-separate inputs. S and total length are solved geometry outputs.
+separate inputs. S and other supported geometry summaries are outputs. In the
+zero-extension, zero-sag v1 round model, `total_length_mm` equals
+`profile_length_mm`.
 
-Diagnose why a candidate behaves poorly:
+The augmented loader returns primary and augmented estimates side by side. Its
+normal estimate uses the augmented model only in cells where locked validation
+was at least as good; otherwise `prediction.model_id` identifies the selected
+primary estimate.
 
-```python
-diagnosis = app.diagnose(candidate)
+## Deferred operations
 
-for issue in diagnosis.issues:
-    print(issue)
-for control, effects in diagnosis.control_sensitivities.items():
-    print(control, effects)
-```
-
-Find related candidates predicted to improve specific diagnostics:
+The public types reserve diagnosis, improvement, automated design, and
+experiment selection, but the v1 backend does not implement them. Calls such as
+the following currently raise `ModelNotReadyError`:
 
 ```python
 from app.design_api import DesignConstraints, Objective
+
+diagnosis = app.diagnose(candidate)
 
 options = app.improve(
     candidate,
@@ -79,38 +82,10 @@ options = app.improve(
     ),
     limit=5,
 )
-
-for option in options:
-    print(option.prediction.design, option.expected_deltas, option.rationale)
 ```
 
-Generate designs from only mouth and coverage intent:
-
-```python
-from app.design_api import DesignIntent
-
-leaders = app.design(
-    DesignIntent.round(mouth_mm=350, coverage_deg=45),
-    constraints=DesignConstraints(profile_length_mm=(120, 220)),
-    limit=5,
-)
-```
-
-Choose the next BEM simulations for information rather than marginal score:
-
-```python
-experiments = app.select_experiments(
-    intents=(
-        DesignIntent.round(300, 40),
-        DesignIntent.round(350, 45),
-    ),
-    constraints=DesignConstraints(k=(2, 6), n=(3, 16)),
-    budget=12,
-)
-```
-
-Every predicted recommendation remains unconfirmed until BEM evaluates it.
-Support status, uncertainty, and nearest evidence must stay visible to callers.
+Future predicted recommendations will remain unconfirmed until BEM evaluates
+them. Support status, uncertainty, and nearest evidence must stay visible.
 The experimental throat-impedance score remains independent and is not included
 in the radiation surface score or normal-model selection.
 
@@ -147,14 +122,11 @@ backend changes from the round model to a layered model bundle.
 
 ## API separation
 
-- `Study` identifies authoritative evidence and eventually assembles rescored
-  datasets by declared role.
+- `Study` identifies authoritative evidence. The release pipeline assembles
+  rescored datasets by declared role.
 - `DesignApplication.predict()` evaluates a specified design.
-- `diagnose()` explains the predicted diagnostic state and local sensitivities.
-- `improve()` stays near a supplied design and exposes tradeoffs.
-- `design()` searches the supported domain for a mouth/coverage request.
-- `select_experiments()` proposes simulations that reduce uncertainty or test
-  competing control explanations.
+- `diagnose()`, `improve()`, `design()`, and `select_experiments()` are reserved
+  but deferred in v1.
 - The backend owns model evaluation, uncertainty, geometry gating, and layered
   correction models. Python and browser backends must produce equivalent
   outputs.

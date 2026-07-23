@@ -1,5 +1,12 @@
 # BEM design recommendation map
 
+## Status
+
+The released v1 API implements prediction, support labeling, intervals, derived
+geometry, and nearest evidence. Automated diagnosis, improvement, design search,
+rule extraction, and experiment selection remain future work governed by this
+plan.
+
 ## Intended workflow
 
 The user selects mouth width, mouth height, and intended horizontal/vertical
@@ -30,7 +37,7 @@ but their compact study records must remain available to the model.
 
 ## Recommendation model
 
-For the current symmetric square-mouth study, model every component diagnostic
+For the released symmetric square-mouth study, model every component diagnostic
 and score as a function of mouth size, coverage half-angle, OSSE length, K, and
 N, with derived S and normalized geometry available as secondary features and
 support checks. Rectangular and asymmetric designs require separate horizontal

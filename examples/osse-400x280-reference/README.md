@@ -30,8 +30,11 @@ python app/tools/run_bem_search.py \
   --output-dir examples/osse-400x280-reference/bem-search --dry-run
 ```
 
-Each report is accompanied by `coverage_diagnostics.json`, containing the
-automatic evaluated passband plus horizontal, vertical, and combined coverage
-Pattern Fit, Waist Control, Pattern Stability, Crossover Control, and HF Retention values. The FEM/BEM comparison recomputes
-both runs over their shared 839–5000 Hz band rather than comparing scores from
-different automatic passbands.
+Each retained solver report is accompanied by its legacy
+`coverage_diagnostics.json`, containing the automatic evaluated passband plus
+horizontal, vertical, and combined pattern-fit/pattern-stability/narrowing
+summaries. The FEM/BEM comparison recomputes both runs over their shared
+839–5000 Hz band rather than comparing values from different automatic
+passbands. Regenerating a report with the current `interactive_results.py` also
+writes the current suite described in
+[BEM surface diagnostics](../../docs/reference/bem_surface_diagnostics.md).

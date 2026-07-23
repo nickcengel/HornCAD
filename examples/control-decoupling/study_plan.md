@@ -20,7 +20,7 @@ OS-SE horns. Historical searches are evidence sources, not an execution queue.
   50 validation + 150 conditional closure probes = 950 coordinates. The actual
   new-BEM ceiling remains 800.
 
-Preflight currently classifies 25 coordinates as strictly
+Preflight classified 25 coordinates as strictly
 reusable, 184 as invalid geometry,
 89 as physically redundant, and
 566 as requiring BEM. A further
@@ -75,7 +75,7 @@ radial profile is recorded as geometry-redundant and receives no BEM solve.
 
 Reuse requires matching mouth, coverage, K, N, length within 0.25 mm, identical
 solver/frequency fingerprint, and a retained responses.npz archive. Reused
-responses will be rescored with the current diagnostics before final analysis.
+responses were rescored with the registered diagnostics before final analysis.
 
 ## Execution and completion policy
 
@@ -130,16 +130,17 @@ steering effects, and all pruning decisions.
 
 `manifest.json` is authoritative. `index.html` is generated from it.
 
-The required post-BEM fitting, validation, rule-extraction, and portable export
-contract is specified in [`model_pipeline.md`](model_pipeline.md). The study is
-not complete merely because all simulations have finished; release requires the
-validated `models/round_control_v1/` artifact defined there.
+The required post-BEM fitting, validation, and portable export contract is
+specified in [`model_pipeline.md`](model_pipeline.md). The completed study is
+released as the validated `models/round_control_primary_v1/` and
+`models/round_control_augmented_v1/` artifacts defined there. Rule extraction
+remains deferred behind the prediction-only release.
 
 The staged extension of this baseline through conical extension, throat angle,
 round-to-square morphing, separate H/V behavior, and sag is defined in
 [`geometry_research_roadmap.md`](../../docs/plans/geometry_research_roadmap.md).
-That roadmap also fixes the meanings of OSSE length and total length for all
-later studies.
+That roadmap also fixes the meanings of OSSE length, extension, mouth setback,
+and measured exported span for all later studies.
 
 ## Registered analysis
 

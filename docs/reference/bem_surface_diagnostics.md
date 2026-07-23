@@ -1,9 +1,8 @@
 # BEM surface diagnostics
 
-This document specifies the replacement diagnostic suite for HornCAD BEM
-angle-frequency reports. The first implementation is deliberately a shadow
-evaluation: it records and displays the new raw measurements without using an
-untested weighted total to select search candidates.
+This document specifies the implemented surface-diagnostic suite for HornCAD
+BEM angle-frequency reports. The raw measurements and calibrated weighted score
+are used by current BEM search and by the released round-control models.
 
 ## Scope and conventions
 
@@ -133,10 +132,9 @@ Synthetic surfaces must cover:
 - uniform, bunched, and depleted slice-energy traces;
 - smooth, wandering, and missing -6 dB crossings.
 
-Tests must also demonstrate stability under frequency decimation and angular
-resampling before any metric controls candidate selection.
+Regression tests cover frequency decimation and angular resampling stability.
 
-The active round study applying this score is specified in
+The completed round study applying this score is specified in
 [`examples/control-decoupling/study_plan.md`](../../examples/control-decoupling/study_plan.md).
 Earlier empirical trends are preserved as historical evidence in the
 [documentation archive](../archive/pre-control-decoupling-2026-07/README.md).

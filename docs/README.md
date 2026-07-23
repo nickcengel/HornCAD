@@ -12,13 +12,17 @@ new BEM work.
 - [BEM surface diagnostics](reference/bem_surface_diagnostics.md): implemented
   angle-frequency diagnostics and final surface score.
 - [Throat-impedance diagnostic](reference/throat_impedance_diagnostics.md):
-  isolated prototype for the extension study; not a live ranking input.
+  experimental model output for the extension study; neither a ranking input
+  nor part of the surface score.
 - [Frequency-energy bunching analysis](plans/frequency_energy_bunching_analysis.md):
   planned frequency-resolved learning and steering work.
 - [Design recommendation map](plans/design_recommendation_map.md): intended
-  model-backed user workflow after the current study validates.
+  model-backed workflow beyond the released prediction-only API.
 - [Horn design application API](reference/design_application_api.md): Python
-  inputs, predictions, diagnoses, recommendations, and experiment selection.
+  prediction inputs/outputs plus explicitly deferred diagnosis, recommendation,
+  and experiment-selection operations.
+- [Learning status](learning.md): released round-model status and the boundary
+  between validated evidence and later geometry learning.
 
 The canonical round study is documented with its artifacts rather than copied
 into this directory:
@@ -31,16 +35,21 @@ The cross-study [geometry research roadmap](plans/geometry_research_roadmap.md)
 is global because it governs the extension, mouth-shape, H/V, and sag studies
 that follow the round baseline.
 
-`examples/control-decoupling/manifest.json` is authoritative for the currently
-registered simulations. Generated reports describe live progress; prose from an
-older study must never add work to that manifest.
+`examples/control-decoupling/manifest.json` is authoritative for the completed
+registered simulations. Generated reports and `runtime_state.json` record their
+terminal execution state; prose from an older study must never add work to that
+manifest. Released portable models are
+`models/round_control_primary_v1/` and
+`models/round_control_augmented_v1/`.
 
 ## Current terminology
 
 - **Length** means only the axial OSSE-profile length.
 - **Extension** means the separately authored conical throat extension.
-- **Sag distortion** means the axial extent added by mouth sag.
-- **Total length** means OSSE length + extension + axial sag distortion.
+- **Profile-plus-extension length** means OSSE length + extension.
+- **Mouth sag** is a local axial setback, not an additive length.
+- **Measured exported span** means the actual `max(z) - min(z)` of the selected
+  surface or body export.
 - **S** is derived from the authored geometry; it is not an independent control
   in the round control-decoupling study.
 - Coverage values are half-angles.
