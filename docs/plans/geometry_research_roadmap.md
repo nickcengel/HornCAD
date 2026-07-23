@@ -30,6 +30,14 @@ useful OSSE lengths/S values, K/N regions, and distinct diagnostic behavior so t
 new effect is not mistaken for a winner-specific correction. Frequency-resolved
 diagnostics remain available alongside the final score.
 
+A densely sampled inner design region does not by itself authorize prediction at
+the outer cells of the round baseline. Each augmentation therefore uses a
+**core-plus-sentinel** design: detailed paired contrasts in the likely product
+region, plus sparse locked transfer tests at outer-domain cells. The outer tests
+are predicted before their results are added to fitting. They are expanded only
+where prediction error is material. Until the sentinels pass, reports must label
+outer-cell predictions as extrapolations rather than supported behavior.
+
 ## Stage 1: finish the round control study
 
 Finish, fit, and validate the symmetric zero-extension study already registered
@@ -43,17 +51,41 @@ This round baseline is frozen before any later geometry augmentation is fitted.
 
 ## Stage 2: conical extension and throat angle
 
-The initial extension domain uses:
+The detailed extension core uses:
 
 - coverage half-angles: 40 and 45 degrees;
 - mouth sizes: 250, 300, and 350 mm;
 - extension: 0, 20, 40, and 60 mm.
 
 Use several deliberately different round-control parents per mouth/coverage
-cell. For each paired extension contrast, hold the parent's OSSE length, S, K,
-N, mouth, coverage, and throat angle fixed. Test withheld parent/extension
+cell. For each paired extension contrast, hold the parent's OSSE length, K, N,
+mouth, OSSE coverage, intended coverage, authored throat radius, and throat angle
+fixed. S remains derived and is recalculated and recorded after the extension
+changes the effective OSSE-profile throat radius. Test withheld parent/extension
 combinations and add simulations when the learned extension correction predicts
 poorly.
+
+The initial locked transfer sentinels use the four outer corners of the round
+baseline:
+
+- 30 degrees / 250 mm;
+- 30 degrees / 450 mm;
+- 50 degrees / 250 mm;
+- 50 degrees / 450 mm.
+
+At each sentinel, begin with one representative parent and a 40 mm extension
+paired with its retained zero-extension response. Do not rerun a compatible
+zero-extension parent already retained by the round study. Fit the initial
+extension correction using only the six core cells, freeze its predictions and
+diagnostic-specific acceptance thresholds, and then reveal the sentinel results.
+
+If all four sentinels satisfy the registered prediction-error limits, the model
+may report supported broader-domain predictions with uncertainty. If a sentinel
+fails, add 20 and 60 mm extension contrasts in that regime; add more varied
+parents there only if extension dependence remains unexplained. A reversal or
+shape change requires an explicit mouth/coverage interaction. Passing central
+validation alone must never be presented as evidence for the 30-degree, 50-degree,
+400 mm, or 450 mm outer domain.
 
 Throat angle is a sparse registered factor within this stage:
 
@@ -81,7 +113,10 @@ sag fixed in each paired contrast.
 
 Reuse representative parents from Stage 2 where practical, including parents
 with different diagnostic failure modes. Fit and validate a round-to-square
-correction without conflating it with H/V aspect ratio.
+correction without conflating it with H/V aspect ratio. If that correction is
+intended for the full round-baseline domain, apply the same four outer-corner
+locked-sentinel policy: one matched round/square parent per corner first, followed
+by added transforms or parents only in cells where transfer fails.
 
 ## Stage 4: separate horizontal and vertical behavior
 
