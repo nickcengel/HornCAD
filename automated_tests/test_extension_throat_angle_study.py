@@ -1,6 +1,7 @@
 import unittest
 from pathlib import Path
 import json
+import re
 
 from app.tools.run_extension_throat_angle_study import (
     DEVELOPMENT_STAGES,
@@ -82,7 +83,29 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertEqual(output.count("data-peak-normalized='1'"), 10)
         self.assertEqual(output.count("class='impedance-curve'"), 10)
         self.assertEqual(output.count("class='impedance-hit'"), 10)
-        self.assertIn("ranked by <em>surface score</em>", output)
+        self.assertIn(
+            "ranked by the experimental "
+            "<em>throat-impedance diagnostic score</em>",
+            output,
+        )
+        plotted_scores = [
+            float(value) for value in re.findall(
+                r"data-impedance-score='([^']+)'", output)
+        ]
+        all_scores = sorted(
+            float(parent["responses"]["throat_impedance_score"])
+            for role in ("primary", "secondary")
+            for parent in manifest["parents"][role].values()
+        )
+        expected_scores = all_scores[:5] + all_scores[-5:]
+        self.assertEqual(len(plotted_scores), 10)
+        for actual, expected in zip(plotted_scores, expected_scores):
+            self.assertAlmostEqual(actual, expected, places=7)
+        self.assertEqual(
+            [int(value) for value in re.findall(
+                r"data-color-rank='([^']+)'", output)],
+            list(range(10)),
+        )
         self.assertGreaterEqual(output.count("Open report:"), 20)
 
 
