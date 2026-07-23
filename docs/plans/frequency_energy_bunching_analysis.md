@@ -155,23 +155,38 @@ and then be added back to the measured dataset.
 The initial physical-scale association pass is implemented by
 `python -m app.tools.analyze_bunching_physical_scales`. It extracts broad
 positive bunching peaks and negative depletion troughs from retained NPZ
-surfaces, derives analytic OSSE length scales, ranks their dimensionless-frequency
-collapse separately, and tests matched one-control shifts by aligning the complete
-curve. Full-curve alignment includes peaks and troughs without assuming that the
-dominant extremum retains its identity. The report deliberately labels these
-results as associations until prospective canonical results validate them.
+surfaces; derives axial, radial, wall-path, local area-flare, curvature, and
+termination-transition scales; and ranks their dimensionless-frequency collapse
+separately. It also tests linear peak/trough spacing for the inverse-length law
+expected from a simple round trip, compares the BEM curve with a lossless Webster
+one-dimensional reflection spectrum, and tests matched one-control shifts by
+aligning the complete curve. Full-curve alignment includes peaks and troughs
+without assuming that the dominant extremum retains its identity. The report
+deliberately labels these results as associations until prospective canonical
+results validate them.
 
 The current regenerable snapshot is
 [`examples/control-decoupling/analysis/bunching_physical_scales.md`](../../examples/control-decoupling/analysis/bunching_physical_scales.md),
-with complete machine-readable evidence beside it. Its initial hypotheses are:
+with complete machine-readable evidence beside it. The current 134-candidate
+snapshot supports these provisional conclusions:
 
-- mouth width/radius and throat-to-mouth radial growth give the best
-  cross-candidate positive-peak collapse, but are mutually correlated and do
-  not establish a causal scale;
-- negative troughs behave differently: their best current collapse uses OSSE
-  length and related termination-from-throat distances, although the fitted
-  frequency/length slope remains far from the -1 expected for a simple inverse-
-  length mechanism;
+- local minimum curvature radius now gives the best cross-candidate positive-
+  peak collapse, followed by mouth/radial dimensions. These scales remain
+  correlated, so this ranking does not establish causation;
+- negative troughs behave differently: mouth-zone area-flare length, OSSE
+  length, and related termination-from-throat distances lead the current
+  collapse, but their fitted frequency/length slopes remain far from the -1
+  expected for a simple inverse-length mechanism;
+- neither adjacent peak/trough spacing nor same-sign peak or trough spacing
+  follows a convincing inverse physical-length law. The apparent low scatter
+  for some mouth-normalized spacings is rejected because the fitted slopes are
+  near zero or even positive rather than near -1;
+- a lossless Webster plane-wave screen has median signed curve correlation
+  about 0.55 with the BEM slice-energy departure, and 56% of candidates have
+  absolute correlation at least 0.5. BEM negative troughs lie within one-sixth
+  octave of a Webster reflection trough in about three quarters of the current
+  candidates. This is meaningful evidence for axial impedance/reflection as
+  one contributor, not proof that it is the only mechanism;
 - matched OSSE-length changes currently do **not** support a simple inverse-OSSE-
   length translation of the complete energy-departure curve;
 - for matched K changes, the distance from the half-radial-growth point to the
@@ -183,6 +198,14 @@ These statements must be regenerated and prospectively checked as canonical
 factorial and locked-validation results arrive. A best alignment that lands on
 the allowed shift-search boundary is excluded rather than presented as a
 measured translation.
+
+The physical interpretation should therefore prioritize, in order: local
+area-flare/curvature changes as reflection generators, the distributed Webster
+impedance profile as a mechanism-level predictor, and mouth/aperture dimensions
+as radiation and diffraction scales. OSSE centerline length and the slightly
+longer wall path remain useful coordinates, but the present evidence does not
+support treating either as a standalone quarter-wave or round-trip resonator
+length.
 
 1. Persist the normalized per-frequency slice-energy curves and peak metadata.
 2. Add the candidate-report curve and target line.

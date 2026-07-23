@@ -6,7 +6,7 @@ import numpy as np
 
 from app.tools.analyze_bunching_physical_scales import (
     Observation, association_summary, curve_translation, find_bunching_peaks,
-    find_bunching_troughs, physical_scales,
+    find_bunching_troughs, physical_scales, spacing_association_summary,
 )
 
 
@@ -21,7 +21,7 @@ class BunchingPhysicalScaleTests(unittest.TestCase):
             identifier=identifier, report=None, mouth_mm=300,
             coverage_deg=40, length_mm=100, k=4, n=8, s=1,
             frequencies_hz=frequencies, departure_db=curve,
-            peaks=(), troughs=(), scales_mm={"osse_length": 100})
+            peaks=(), troughs=(), scales_mm={"osse_length": 100}, webster={})
 
     def test_peak_finder_localizes_broad_positive_departure(self) -> None:
         frequencies = 500 * 2 ** np.linspace(0, 4, 193)
@@ -51,6 +51,10 @@ class BunchingPhysicalScaleTests(unittest.TestCase):
         self.assertEqual(scales["osse_length"], 120)
         self.assertEqual(scales["mouth_width"], 300)
         self.assertGreater(scales["wall_path_length"], 120)
+        self.assertGreater(scales["termination_10_90_transition_length"], 0)
+        self.assertGreater(scales["minimum_area_flare_length"], 0)
+        self.assertGreater(scales["diameter_at_max_area_flare"], 0)
+        self.assertGreater(scales["high_curvature_zone_length"], 0)
         self.assertTrue(all(np.isfinite(value) and value > 0 for value in scales.values()))
 
     def test_curve_translation_recovers_feature_shift(self) -> None:
@@ -74,6 +78,7 @@ class BunchingPhysicalScaleTests(unittest.TestCase):
                 troughs=(),
                 scales_mm={"controlled_scale": length,
                            "irrelevant_scale": 50 + index * 3},
+                webster={},
             ))
         rows = {row["scale"]: row for row in association_summary(observations)}
         self.assertAlmostEqual(rows["controlled_scale"]["log2_dimensionless_mad"],
@@ -81,6 +86,29 @@ class BunchingPhysicalScaleTests(unittest.TestCase):
         self.assertAlmostEqual(
             rows["controlled_scale"]["log_frequency_vs_log_length_slope"],
             -1.0, places=12)
+
+    def test_linear_extremum_spacing_can_follow_inverse_length(self) -> None:
+        observations = []
+        for index, length in enumerate((80.0, 100.0, 125.0, 160.0)):
+            spacing = 100000.0 / length
+            peaks = tuple({
+                "frequency_hz": 1000.0 + feature * spacing,
+                "departure_db": 1.0,
+                "prominence_db": 1.0,
+                "at_band_edge": False,
+            } for feature in (0, 1, 2))
+            observations.append(Observation(
+                identifier=str(index), report=None, mouth_mm=300,
+                coverage_deg=40, length_mm=length, k=4, n=8, s=1,
+                frequencies_hz=np.asarray([500.0, 8000.0]),
+                departure_db=np.asarray([0.0, 0.0]), peaks=peaks, troughs=(),
+                scales_mm={"controlled_scale": length},
+                webster={},
+            ))
+        row = spacing_association_summary(observations, "peak_to_peak")[0]
+        self.assertAlmostEqual(row["log2_dimensionless_mad"], 0.0, places=12)
+        self.assertAlmostEqual(row["log_spacing_vs_log_length_slope"],
+                               -1.0, places=12)
 
 
 if __name__ == "__main__":

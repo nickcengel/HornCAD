@@ -31,7 +31,8 @@ than this manifest alone.
 - Each retained completed candidate keeps its project YAML, STL, report, and
   compressed `bem/responses.npz` required for future diagnostics.
 - `analysis/bunching_physical_scales.md` is a regenerable snapshot testing
-  associations between frequency-energy bunching and analytic geometry scales;
+  frequency-energy bunching against analytic geometry scales, extremum spacing,
+  matched control changes, and a one-dimensional Webster reflection screen;
   its JSON companion retains the full machine-readable evidence.
 
 Do not infer new queued work from an older report or planning document. Changes

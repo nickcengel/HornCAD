@@ -11,9 +11,6 @@ from pathlib import Path
 import json
 import math
 
-import matplotlib
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt
 import numpy as np
 from scipy.special import j1, struve
 
@@ -298,6 +295,10 @@ def write_results(
     medium: Medium,
     mouth_load: str,
 ) -> tuple[Path, Path, Path, Path]:
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+
     output_dir.mkdir(parents=True, exist_ok=True)
     stem = f"{yaml_path.stem}-Webster1D"
     csv_path = output_dir / f"{stem}.csv"
