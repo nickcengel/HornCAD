@@ -11,6 +11,9 @@ new BEM work.
   coordinate conventions, authored length, and export behavior.
 - [BEM surface diagnostics](reference/bem_surface_diagnostics.md): implemented
   angle-frequency diagnostics and final surface score.
+- [Stage-aware BEM scheduler](reference/bem_stage_aware_scheduler.md):
+  cross-process NumCalc capacity control that overlaps solver work with mesh,
+  diagnostic, and report stages in future multi-candidate studies.
 - [Throat-impedance diagnostic](reference/throat_impedance_diagnostics.md):
   experimental model output for the extension study; neither a ranking input
   nor part of the surface score.

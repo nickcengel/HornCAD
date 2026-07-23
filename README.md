@@ -143,6 +143,8 @@ Routine work starts with these commands:
 
 - `run_bem_suite.py` — complete free-air NumCalc BEM analysis.
 - `run_bem_search.py` — resumable constrained search for improved BEM candidates.
+- `run_stage_aware_bem_queue.py` — multi-search queue that keeps NumCalc cores
+  occupied while other candidates mesh or generate diagnostics.
 - `run_fem_suite.py` — complete interior FEM analysis.
 - `export_horncad.py` — acoustic-surface or printable-body STL export.
 - `interactive_results.py` — report regeneration and multi-horn comparison.
