@@ -51,7 +51,12 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         output = render_index(
             manifest_path.parent.resolve(), manifest,
-            {"candidates": [], "stages": []},
+            {
+                "candidates": [],
+                "stages": [],
+                "study_status": "development running",
+                "runtime_active": True,
+            },
         )
         for heading in (
             "Project range", "Design map", "Measured round parents",
@@ -62,10 +67,16 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertIn("not included in the surface score", output)
         self.assertIn(
             "../control-decoupling/searches/three-factor-corner/"
-            "30deg/250x250/search_report.html",
+            "30deg/250x250/candidates/candidate-000/bem/"
+            "250x250x139.546_30_K2_N4_Report.html",
             output,
         )
         self.assertNotIn("candidates/search_report.html", output)
+        self.assertNotIn(
+            "30deg/250x250/search_report.html",
+            output,
+        )
+        self.assertIn("<strong>development running</strong>study status", output)
 
 
 if __name__ == "__main__":

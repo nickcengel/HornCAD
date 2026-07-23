@@ -114,7 +114,32 @@ def build_progress(root: Path, manifest: dict[str, Any]) -> dict[str, Any]:
             "failed": sum(row["status"] in {
                 "failed", "error", "blocked", "geometry-rejected"} for row in rows),
         })
-    return {"candidates": candidates, "stages": stages}
+    runtime_labels = (
+        ("conditional validation",
+         root / "runtime-conditional-validation.json"),
+        ("locked validation", root / "runtime-locked-validation.json"),
+        ("development", root /
+         "runtime-primary-development-secondary-transfer.json"),
+    )
+    study_status = str(manifest.get("status", "not launched"))
+    runtime_active = False
+    for label, path in runtime_labels:
+        runtime = _read_json(path)
+        if not runtime:
+            continue
+        state = str(runtime.get("status", "unknown"))
+        study_status = f"{label} {state}"
+        runtime_active = state == "running"
+        break
+    if (root / "results.json").is_file():
+        study_status = "study complete"
+        runtime_active = False
+    return {
+        "candidates": candidates,
+        "stages": stages,
+        "study_status": study_status,
+        "runtime_active": runtime_active,
+    }
 
 
 def render_index(root: Path, manifest: dict[str, Any],
@@ -123,7 +148,7 @@ def render_index(root: Path, manifest: dict[str, Any],
     complete = sum(row["status"] == "complete" for row in candidates)
     running = sum(row["status"] == "running" for row in candidates)
     scored = sum(row["surface_score"] is not None for row in candidates)
-    active = running or any(row["status"] == "preflight" for row in candidates)
+    active = (progress.get("runtime_active", False) or running)
     refresh = "<meta http-equiv='refresh' content='30'>" if active else ""
 
     candidate_rows = []
@@ -164,7 +189,19 @@ def render_index(root: Path, manifest: dict[str, Any],
     parent_rows = []
     for role in ("primary", "secondary"):
         for cell, parent in sorted(manifest["parents"][role].items()):
-            source_search = (ROOT / parent["response_path"]).parents[3]
+            response = ROOT / parent["response_path"]
+            source_candidate = response.parents[1]
+            source_search = response.parents[3]
+            source_state = _read_json(source_search / "search_state.json")
+            source_record = next((
+                record for record in source_state.get("candidates", [])
+                if record.get("id") == source_candidate.name
+            ), {})
+            report_file = source_record.get("report_file")
+            source_report = (
+                source_search / str(report_file)
+                if report_file else source_search / "search_report.html"
+            )
             parent_rows.append(
                 f"<tr><td>{html.escape(role)}</td><td>{html.escape(cell)}</td>"
                 f"<td>{html.escape(parent['id'])}</td>"
@@ -173,7 +210,7 @@ def render_index(root: Path, manifest: dict[str, Any],
                 f"<td>{_number(parent['length_mm'],1)}</td>"
                 f"<td>{_number(parent['s'],3)}</td><td>{_number(parent['k'],1)}</td>"
                 f"<td>{_number(parent['n'],1)}</td>"
-                f"<td><a href='{html.escape(_relative(root, source_search / 'search_report.html'))}'>report</a></td></tr>")
+                f"<td><a href='{html.escape(_relative(root, source_report))}'>candidate</a></td></tr>")
 
     coverages = (30, 35, 40, 45, 50)
     mouths = (250, 300, 350, 400, 450)
@@ -227,7 +264,7 @@ def render_index(root: Path, manifest: dict[str, Any],
 </style></head><body><main><h1>Extension and throat-angle heuristic study</h1>
 <p>Full 5×5 round-horn grid for deterministic extension and throat-angle design heuristics.</p>
 <p class='muted'>Throat impedance is reported as an experimental diagnostic in every report. It is not included in the surface score, ranking, heuristic fit, or validation gate.</p>
-<section class='summary'><div class='card'><strong>{complete} / {len(candidates)}</strong>BEM complete</div><div class='card'><strong>{running}</strong>running searches</div><div class='card'><strong>{scored}</strong>scored candidates</div><div class='card'><strong>{html.escape(manifest['status'])}</strong>study status</div></section>
+<section class='summary'><div class='card'><strong>{complete} / {len(candidates)}</strong>BEM complete</div><div class='card'><strong>{running}</strong>running searches</div><div class='card'><strong>{scored}</strong>scored candidates</div><div class='card'><strong>{html.escape(str(progress.get('study_status', manifest['status'])))}</strong>study status</div></section>
 <section><h2>Project range</h2><table><tr><th>Coverage half-angles</th><th>Round mouths</th><th>Throat angles</th><th>Extensions</th><th>Initial / hard cap</th><th>Scheduler</th></tr><tr><td>30, 35, 40, 45, 50°</td><td>250, 300, 350, 400, 450 mm</td><td>0, 6, 12°</td><td>0, 20, 40, 60 mm</td><td>{manifest['initial_candidate_count']} / {manifest['hard_candidate_cap']}</td><td>{manifest['scheduler']['queue_workers']} workers · {manifest['scheduler']['numcalc_process_capacity']} total NumCalc processes</td></tr></table><p class='muted'>Coordinate SHA-256: <code>{manifest['coordinate_sha256']}</code> · Manifest SHA-256: <code>{_digest(manifest)}</code></p></section>
 <section><h2>Design map</h2><p class='muted'>Best measured surface score in each cell; its throat-impedance score is shown directly below it.</p><table class='design-map'><thead><tr><th>Mouth / coverage</th>{''.join(f'<th>{a}°</th>' for a in coverages)}</tr></thead><tbody>{''.join(grid_rows)}</tbody></table></section>
 <section><h2>Measured round parents</h2><p class='muted'>Frozen measured parents. Throat impedance was recorded but not used to select either parent set.</p><table class='sortable-table'><thead><tr><th data-sort='text'>Role</th><th data-sort='text'>Cell</th><th data-sort='text'>Parent</th><th data-sort='number'>Surface score</th><th data-sort='number'>Throat-impedance score</th><th data-sort='number'>Length mm</th><th data-sort='number'>S</th><th data-sort='number'>K</th><th data-sort='number'>N</th><th>Report</th></tr></thead><tbody>{''.join(parent_rows)}</tbody></table></section>
