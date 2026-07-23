@@ -1,5 +1,22 @@
 # Round-control ridge-closure study
 
+## Completion status
+
+Completed with all 48 registered responses retained and audited. Recalculation
+matched stored diagnostics within `1e-9`; all responses share the registered
+solver fingerprint; no disposable NumCalc work trees remain.
+
+Length was bracketed at the tested outward K in 13 of 16 cells. K=1/K=7 beat
+the compatible inner K=2/K=6 evidence in six cells and lost in ten. The six
+wins are registered-domain boundary seeds, not claimed unconstrained optima.
+Detailed per-cell results and response hashes are in `results.json`, and the
+released measured heuristic records that file's SHA-256.
+
+This run also exposed a scheduler-tail limitation: separate searches overlapped,
+but the last search processed its candidates sequentially. Future fixed studies
+must use the stage-aware queue with one candidate per schedulable search as
+required by `docs/reference/bem_stage_aware_scheduler.md`.
+
 ## Purpose
 
 The completed round study found competitive short/low-K and long/high-K

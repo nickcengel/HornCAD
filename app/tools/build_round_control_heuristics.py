@@ -15,6 +15,7 @@ ROOT = Path(__file__).resolve().parents[2]
 INDEX = ROOT / "examples/control-decoupling/model_source/training_index.json"
 CHALLENGE = (
     ROOT / "examples/round-control-v2-validation/validation_results.json")
+RIDGE = ROOT / "examples/round-control-ridge-closure/results.json"
 OUTPUT = ROOT / "models/round_control_heuristics_v1"
 ANGLES = (30, 35, 40, 45, 50)
 MOUTHS = (250, 300, 350, 400, 450)
@@ -227,6 +228,19 @@ def _all_measured_rows(index: dict[str, Any]) -> list[dict[str, Any]]:
         "benchmark": False,
         "provenance": "fresh-v2-locked",
     } for row in challenge["evidence"])
+    ridge = _read(RIDGE)
+    rows.extend({
+        "id": row["id"],
+        "coverage_deg": row["coverage_deg"],
+        "mouth_mm": row["mouth_mm"],
+        "length_factor": row["length_factor"],
+        "k": row["k"],
+        "n": row["n"],
+        "s": row["derived_s"],
+        "responses": row["responses"],
+        "benchmark": False,
+        "provenance": "ridge-closure",
+    } for row in ridge["evidence"])
     return rows
 
 
@@ -378,8 +392,97 @@ def _zone_audit(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
+def _ridge_closure_audit(
+    rows: list[dict[str, Any]],
+    ridge: dict[str, Any],
+) -> dict[str, Any]:
+    cells = {}
+    outward_k_wins = 0
+    final_best_from_ridge = 0
+    for cell_id, result in sorted(ridge["cells"].items()):
+        angle_text, mouth_text = cell_id.split("-")
+        angle = int(angle_text.removesuffix("deg"))
+        mouth = int(mouth_text.removesuffix("mm"))
+        outward_k = float(result["k"])
+        inner_k = 2.0 if outward_k == 1.0 else 6.0
+        n = float(result["n"])
+        selected = _cell(rows, angle, mouth)
+        ridge_rows = [
+            row for row in selected
+            if row.get("provenance") == "ridge-closure"
+        ]
+        inner_rows = [
+            row for row in selected
+            if row.get("provenance") != "ridge-closure"
+            and float(row["k"]) == inner_k
+            and float(row["n"]) == n
+        ]
+        if len(ridge_rows) != 3:
+            raise ValueError(f"{cell_id}: expected three ridge responses")
+        if not inner_rows:
+            raise ValueError(f"{cell_id}: missing K={inner_k:g}/N={n:g} evidence")
+        outward_best = max(
+            ridge_rows, key=lambda row: row["responses"]["surface_score"])
+        inner_best = max(
+            inner_rows, key=lambda row: row["responses"]["surface_score"])
+        final_best = max(
+            selected, key=lambda row: row["responses"]["surface_score"])
+        outward_score = float(outward_best["responses"]["surface_score"])
+        inner_score = float(inner_best["responses"]["surface_score"])
+        wins = outward_score > inner_score
+        outward_k_wins += wins
+        final_best_from_ridge += (
+            final_best.get("provenance") == "ridge-closure"
+        )
+        cells[cell_id] = {
+            "branch": result["branch"],
+            "outward_k": outward_k,
+            "inner_k": inner_k,
+            "n": n,
+            "length_bracketed_at_outward_k": bool(
+                result["length_bracketed"]),
+            "outward_best": {
+                "id": outward_best["id"],
+                "surface_score": outward_score,
+                "coordinate": _coordinate(outward_best),
+            },
+            "inner_best": {
+                "id": inner_best["id"],
+                "surface_score": inner_score,
+                "coordinate": _coordinate(inner_best),
+            },
+            "outward_minus_inner_score": outward_score-inner_score,
+            "registered_k_boundary_status": (
+                "best-measured-at-registered-k-boundary"
+                if wins else "turned-over-by-inner-k-evidence"
+            ),
+            "final_measured_best": {
+                "id": final_best["id"],
+                "surface_score": float(
+                    final_best["responses"]["surface_score"]),
+                "coordinate": _coordinate(final_best),
+                "provenance": final_best.get("provenance"),
+            },
+        }
+    return {
+        "tested_cells": len(cells),
+        "length_bracketed_at_outward_k_cells": sum(
+            row["length_bracketed_at_outward_k"] for row in cells.values()),
+        "outward_k_won_over_inner_k_cells": outward_k_wins,
+        "outward_k_turned_over_cells": len(cells)-outward_k_wins,
+        "final_measured_best_from_ridge_cells": final_best_from_ridge,
+        "cells": cells,
+        "interpretation": (
+            "closure is local to measured inner/outward K evidence; a winning "
+            "K=1 or K=7 point is a registered-domain boundary seed, not a "
+            "proven unconstrained optimum"
+        ),
+    }
+
+
 def build() -> dict[str, Any]:
     index = _read(INDEX)
+    ridge_result = _read(RIDGE)
     rows = _canonical_rows(index)
     length = _length_audit(rows)
     k_audit = _axis_audit(
@@ -387,7 +490,9 @@ def build() -> dict[str, Any]:
     n_audit = _axis_audit(
         rows, "n", {"length_factor": 1.0, "k": 4.0})
     branches = _branch_audit(rows)
-    zones = _zone_audit(_all_measured_rows(index))
+    measured_rows = _all_measured_rows(index)
+    zones = _zone_audit(measured_rows)
+    ridge = _ridge_closure_audit(measured_rows, ridge_result)
     artifact = {
         "schema_version": 1,
         "heuristic_id": "round_control_heuristics_v1",
@@ -464,6 +569,21 @@ def build() -> dict[str, Any]:
                 },
             },
             {
+                "id": "respect-ridge-closure-status",
+                "action": (
+                    "use the per-cell final measured seed; where K=1 or K=7 "
+                    "wins, label it a registered-domain boundary rather than "
+                    "an unconstrained optimum"),
+                "evidence": {
+                    "outward_k_won_over_inner_k_cells":
+                        ridge["outward_k_won_over_inner_k_cells"],
+                    "outward_k_turned_over_cells":
+                        ridge["outward_k_turned_over_cells"],
+                    "length_bracketed_at_outward_k_cells":
+                        ridge["length_bracketed_at_outward_k_cells"],
+                },
+            },
+            {
                 "id": "hv-flat-compromise",
                 "action": (
                     "for unequal H/V targets, combine independent axis seed "
@@ -487,6 +607,7 @@ def build() -> dict[str, Any]:
             "k": k_audit,
             "n": n_audit,
             "coupled_branches": branches,
+            "ridge_closure": ridge,
             "observed_high_score_zones": zones,
         },
         "provenance": {
@@ -494,6 +615,8 @@ def build() -> dict[str, Any]:
             "training_index_sha256": _file_hash(INDEX),
             "challenge_results": str(CHALLENGE.relative_to(ROOT)),
             "challenge_results_sha256": _file_hash(CHALLENGE),
+            "ridge_results": str(RIDGE.relative_to(ROOT)),
+            "ridge_results_sha256": _file_hash(RIDGE),
             "builder_sha256": _file_hash(Path(__file__)),
         },
     }
@@ -517,6 +640,14 @@ global score model.
 - {zones['confirmed_alternative_cell_count']} cells contain a measured
   competitive component outside the benchmark component; single-point hints
   are kept separate.
+- Ridge closure bracketed length at the outward K in
+  {ridge['length_bracketed_at_outward_k_cells']} of
+  {ridge['tested_cells']} tested cells.
+- The outward K=1/K=7 result beat the compatible inner-K evidence in
+  {ridge['outward_k_won_over_inner_k_cells']} cells and turned over in
+  {ridge['outward_k_turned_over_cells']} cells.
+- The final measured cell best comes from ridge closure in
+  {ridge['final_measured_best_from_ridge_cells']} of the 16 tested cells.
 
 The H/V flat-length and sag outputs are starting constructions. No asymmetric or
 sagged BEM evidence is claimed. Sag is excluded from total score and these

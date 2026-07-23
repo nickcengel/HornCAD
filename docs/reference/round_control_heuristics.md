@@ -62,22 +62,31 @@ N remains a secondary branch control. Start near N=8. Use N=4 as the first
 alternate when the measured nearest cell points that way. Do not spend an early
 candidate on N=16.
 
-## Alternate high-score zones
+## Alternate high-score zones and ridge closure
 
 The study did find competitive regions away from the selected benchmarks.
 Using a one-point score window and registered normalized L/K/N adjacency:
 
-- 11 of 25 cells contain a measured multi-point competitive component outside
+- 15 of 25 cells contain a measured multi-point competitive component outside
   the benchmark component;
 - the measured best lies outside the benchmark component in 18 cells;
 - nine cells beat their benchmark by more than one score point;
-- the largest gaps are 40°/450 mm (+3.92), 50°/450 mm (+2.66),
-  45°/450 mm (+2.33), and 35°/450 mm (+2.15).
+- the largest gaps are 40°/450 mm (+4.37), 50°/450 mm (+3.41),
+  45°/450 mm (+3.32), and 35°/450 mm (+2.98).
 
 This is evidence of real alternate zones, not merely model speculation.
-However, every non-benchmark measured best is on a sampled L/K/N boundary. The
-study therefore found these zones but did not prove their optima are bounded.
-The artifact keeps multi-point zones separate from single-point boundary hints.
+The 48-case ridge-closure study then tested K=1 or K=7 at three nearby lengths
+in 16 of these cells:
+
+- 13 of 16 cells bracketed length at the tested outward K;
+- the outward K beat compatible inner K=2/K=6 evidence in six cells;
+- the inner K remained better in ten cells;
+- six final measured cell seeds therefore move to ridge-closure evidence.
+
+The six outward-K wins are useful registered-domain seeds, not proof of an
+unconstrained optimum beyond K=1 or K=7. Three short/low-K cells also retained a
+shorter-length boundary at their outward K. The artifact publishes these
+statuses per cell and keeps multi-point zones separate from single-point hints.
 
 ## H/V starting construction
 
@@ -85,7 +94,8 @@ For a non-round target, apply the round evidence independently to the horizontal
 and vertical mouth/coverage pair:
 
 1. Bilinearly interpolate the registered reference-length table.
-2. Take L/K/N/S from the nearest measured cell winner as the axis seed.
+2. Take L/K/N/S from the nearest final measured cell winner, including ridge
+   closure where it won, as the axis seed.
 3. For a flat mouth, combine the two axis lengths using mouth width and height
    as weights, matching the surface-score plane weighting.
 4. As an alternative, set the common length to the longer axis seed and apply

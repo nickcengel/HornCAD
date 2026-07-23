@@ -14,9 +14,17 @@ global score model.
 - N=8 won 21 of 25; N=4 won
   4; N=16 won
   0.
-- 11 cells contain a measured
+- 15 cells contain a measured
   competitive component outside the benchmark component; single-point hints
   are kept separate.
+- Ridge closure bracketed length at the outward K in
+  13 of
+  16 tested cells.
+- The outward K=1/K=7 result beat the compatible inner-K evidence in
+  6 cells and turned over in
+  10 cells.
+- The final measured cell best comes from ridge closure in
+  6 of the 16 tested cells.
 
 The H/V flat-length and sag outputs are starting constructions. No asymmetric or
 sagged BEM evidence is claimed. Sag is excluded from total score and these

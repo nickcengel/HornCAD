@@ -19,19 +19,19 @@ parent is reused. It must not be simulated again.
 
 ## Launch gate
 
-This document and the dormant design builder may be committed while the
-round-control ridge-closure study runs. Nothing else may be prepared concurrently.
-In particular, do not select parents, create candidate projects, mesh geometry,
-run preflight, or schedule BEM until all of the following are true:
+The round-control ridge-closure study is complete, its 48 responses passed
+archive/diagnostic audit, and the measured round heuristic records the exact
+ridge-results hash. No extension candidates have been materialized or
+scheduled. Before a future launch:
 
-1. ridge closure has completed and its retained responses pass audit;
-2. the measured round heuristic has been rebuilt with those responses;
-3. the rebuilt heuristic records the ridge-results content hash;
-4. a primary and the required secondary measured parent have been frozen;
-5. the 210-case initial manifest and its coordinate hash have been reviewed.
+1. freeze a primary and the required secondary measured parent;
+2. write and review the 210-case initial manifest and its coordinate hash;
+3. run geometry-only feasibility checks;
+4. explicitly authorize BEM execution.
 
-The study builder must refuse to write a manifest while the ridge runtime state
-is not `complete`. Preparing this plan schedules zero simulations.
+The study builder still verifies the completed ridge state and matching
+heuristic provenance before writing a manifest. Preparing this plan schedules
+zero simulations.
 
 Execution must use the repository's stage-aware BEM queue and global NumCalc
 semaphore. Because candidates within one search are sequential, materialize this

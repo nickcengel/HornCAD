@@ -1,4 +1,5 @@
 from pathlib import Path
+import hashlib
 import unittest
 
 from app.design_api import DesignIntent, RoundControlHeuristics
@@ -57,6 +58,18 @@ class RoundControlHeuristicTests(unittest.TestCase):
     def test_outside_support_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "outside heuristic support"):
             self.heuristics.axis_length(500, 45)
+
+    def test_ridge_results_are_included_with_closure_status(self):
+        ridge_path = ROOT / "examples/round-control-ridge-closure/results.json"
+        provenance = self.heuristics.artifact["provenance"]
+        self.assertEqual(
+            provenance["ridge_results_sha256"],
+            hashlib.sha256(ridge_path.read_bytes()).hexdigest(),
+        )
+        audit = self.heuristics.artifact["audit"]["ridge_closure"]
+        self.assertEqual(audit["tested_cells"], 16)
+        self.assertEqual(
+            audit["length_bracketed_at_outward_k_cells"], 13)
 
 
 if __name__ == "__main__":

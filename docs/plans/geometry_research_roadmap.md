@@ -61,11 +61,17 @@ The full-grid
 [unified-v2 challenge](../../examples/round-control-v2-validation/README.md)
 failed its release gates and identified jointly sparse L/K/N regions that must
 remain limited-support.
+The subsequent 48-case
+[ridge-closure study](round_control_ridge_closure.md) is complete: all retained
+archives reproduced their diagnostics, 13 of 16 cells bracketed length at the
+outward K, and six cells promoted a K=1/K=7 result to the final measured seed.
+The measured heuristic includes the exact ridge-results hash and publishes
+per-cell closure status.
 The earlier central-grid handoff under
 `examples/control-decoupling/model_source/extension_handoff.json` is superseded
 by the full-grid [extension and throat-angle heuristic study](extension_throat_angle_heuristic_study.md).
-That plan schedules no BEM and remains launch-gated until ridge closure and the
-resulting measured-heuristic rebuild are complete.
+That plan schedules no BEM. Its evidence prerequisites are now satisfied, but
+parent freezing, manifest review, and an explicit future launch remain pending.
 
 ## Stage 2: conical extension and throat angle
 

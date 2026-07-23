@@ -1,6 +1,108 @@
 {
-  "events": [],
+  "completed_at_unix": 1784844794.266929,
+  "events": [
+    {
+      "id": "30deg-250mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784838804.7015371
+    },
+    {
+      "id": "30deg-300mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784838974.414117
+    },
+    {
+      "id": "35deg-250mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784839189.321613
+    },
+    {
+      "id": "35deg-300mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784839503.822761
+    },
+    {
+      "id": "40deg-250mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784839558.862185
+    },
+    {
+      "id": "45deg-250mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784839848.992689
+    },
+    {
+      "id": "30deg-400mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784840807.5008771
+    },
+    {
+      "id": "30deg-450mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784841253.9109812
+    },
+    {
+      "id": "35deg-400mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784841843.9895391
+    },
+    {
+      "id": "35deg-450mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784842402.8631418
+    },
+    {
+      "id": "40deg-350mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784842506.014633
+    },
+    {
+      "id": "45deg-300mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784842998.230525
+    },
+    {
+      "id": "40deg-450mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784843519.223076
+    },
+    {
+      "id": "50deg-300mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784843963.998698
+    },
+    {
+      "id": "45deg-450mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784844003.094068
+    },
+    {
+      "id": "50deg-450mm",
+      "returncode": 0,
+      "status": "complete",
+      "time_unix": 1784844794.222093
+    }
+  ],
+  "failures": [],
   "manifest_freeze_sha256": "3b88e3fcce26dcf3c80174ebdd7de9edc720ced34ba95571f202a2ff0960b802",
+  "scheduled_candidates": 48,
   "schema_version": 1,
-  "status": "not-started"
+  "slots": 2,
+  "started_at_unix": 1784838415.46174,
+  "status": "complete"
 }

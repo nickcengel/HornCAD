@@ -569,12 +569,12 @@
           "best_minus_benchmark_score": 1.7272426149907716,
           "best_to_benchmark_normalized_distance": 2.061547251110019,
           "competitive_component_sizes": [
-            2,
+            3,
             2
           ],
-          "competitive_point_count": 4,
+          "competitive_point_count": 5,
           "confirmed_alternative_zone_count": 2,
-          "measured_count": 37,
+          "measured_count": 40,
           "single_point_alternative_hint_count": 0
         },
         "30deg-300mm": {
@@ -605,11 +605,11 @@
           "best_to_benchmark_normalized_distance": 1.1347321767673493,
           "competitive_component_sizes": [
             4,
-            2
+            3
           ],
-          "competitive_point_count": 6,
+          "competitive_point_count": 7,
           "confirmed_alternative_zone_count": 1,
-          "measured_count": 36,
+          "measured_count": 39,
           "single_point_alternative_hint_count": 0
         },
         "30deg-350mm": {
@@ -673,12 +673,12 @@
           "best_minus_benchmark_score": 1.5779424011091407,
           "best_to_benchmark_normalized_distance": 1.4999972530824426,
           "competitive_component_sizes": [
-            2,
+            3,
             2
           ],
-          "competitive_point_count": 4,
+          "competitive_point_count": 5,
           "confirmed_alternative_zone_count": 2,
-          "measured_count": 31,
+          "measured_count": 34,
           "single_point_alternative_hint_count": 0
         },
         "30deg-450mm": {
@@ -695,25 +695,25 @@
           "benchmark_in_competitive_set": false,
           "best": {
             "coordinate": {
-              "k": 6.0,
-              "length_factor": 1.200000740524069,
+              "k": 7.0,
+              "length_factor": 1.2355236801084128,
               "n": 8.0,
-              "s": 0.48350137730870457
+              "s": 0.48350082056773264
             },
-            "id": "30d-450mm-L+1-K+1-N+0",
-            "surface_score": 88.63412063612748
+            "id": "ridge-30deg-450mm-K7-N8-Lx1p0",
+            "surface_score": 88.66045197918316
           },
           "best_in_benchmark_component": false,
           "best_is_sampled_boundary": true,
-          "best_minus_benchmark_score": 1.1710779260692874,
-          "best_to_benchmark_normalized_distance": 1.5000024684161017,
+          "best_minus_benchmark_score": 1.1974092691249751,
+          "best_to_benchmark_normalized_distance": 1.9714931136819245,
           "competitive_component_sizes": [
-            2,
+            4,
             2
           ],
-          "competitive_point_count": 4,
+          "competitive_point_count": 6,
           "confirmed_alternative_zone_count": 2,
-          "measured_count": 33,
+          "measured_count": 36,
           "single_point_alternative_hint_count": 0
         },
         "35deg-250mm": {
@@ -743,12 +743,12 @@
           "best_minus_benchmark_score": 1.5878355025962776,
           "best_to_benchmark_normalized_distance": 1.4999956553741391,
           "competitive_component_sizes": [
-            2,
+            4,
             1
           ],
-          "competitive_point_count": 3,
+          "competitive_point_count": 5,
           "confirmed_alternative_zone_count": 1,
-          "measured_count": 33,
+          "measured_count": 36,
           "single_point_alternative_hint_count": 1
         },
         "35deg-300mm": {
@@ -783,7 +783,7 @@
           ],
           "competitive_point_count": 8,
           "confirmed_alternative_zone_count": 1,
-          "measured_count": 46,
+          "measured_count": 49,
           "single_point_alternative_hint_count": 0
         },
         "35deg-350mm": {
@@ -849,11 +849,11 @@
           "best_to_benchmark_normalized_distance": 1.6007873054532775,
           "competitive_component_sizes": [
             4,
-            2
+            4
           ],
-          "competitive_point_count": 6,
+          "competitive_point_count": 8,
           "confirmed_alternative_zone_count": 1,
-          "measured_count": 50,
+          "measured_count": 53,
           "single_point_alternative_hint_count": 0
         },
         "35deg-450mm": {
@@ -870,24 +870,24 @@
           "benchmark_in_competitive_set": false,
           "best": {
             "coordinate": {
-              "k": 6.0,
-              "length_factor": 1.2000017969613384,
+              "k": 7.0,
+              "length_factor": 1.1824275150720132,
               "n": 8.0,
-              "s": 0.6544896829034982
+              "s": 0.7830155224957924
             },
-            "id": "35d-450mm-L+1-K+1-N+0",
-            "surface_score": 90.16413157941312
+            "id": "ridge-35deg-450mm-K7-N8-Lx1p0",
+            "surface_score": 90.99519371962188
           },
           "best_in_benchmark_component": false,
           "best_is_sampled_boundary": true,
-          "best_minus_benchmark_score": 2.1478769401808506,
-          "best_to_benchmark_normalized_distance": 1.5000059898860774,
+          "best_minus_benchmark_score": 2.9789390803896083,
+          "best_to_benchmark_normalized_distance": 1.8253752919286872,
           "competitive_component_sizes": [
-            4
+            2
           ],
-          "competitive_point_count": 4,
+          "competitive_point_count": 2,
           "confirmed_alternative_zone_count": 1,
-          "measured_count": 36,
+          "measured_count": 39,
           "single_point_alternative_hint_count": 0
         },
         "40deg-250mm": {
@@ -904,28 +904,26 @@
           "benchmark_in_competitive_set": false,
           "best": {
             "coordinate": {
-              "k": 2.0,
-              "length_factor": 0.8,
+              "k": 1.0,
+              "length_factor": 0.7091907813557298,
               "n": 8.0,
-              "s": 1.1627488089160904
+              "s": 1.336537682157515
             },
-            "id": "40d-250mm-L-1-K-1-N+0",
-            "surface_score": 84.59193537921826
+            "id": "ridge-40deg-250mm-K1-N8-Lx0p9",
+            "surface_score": 84.78166314035559
           },
           "best_in_benchmark_component": false,
-          "best_is_sampled_boundary": true,
-          "best_minus_benchmark_score": 1.1146983487447386,
-          "best_to_benchmark_normalized_distance": 1.4999999999999998,
+          "best_is_sampled_boundary": false,
+          "best_minus_benchmark_score": 1.3044261098820726,
+          "best_to_benchmark_normalized_distance": 2.1480805481201757,
           "competitive_component_sizes": [
             2,
-            1,
-            1,
-            1
+            2
           ],
-          "competitive_point_count": 5,
-          "confirmed_alternative_zone_count": 1,
-          "measured_count": 39,
-          "single_point_alternative_hint_count": 3
+          "competitive_point_count": 4,
+          "confirmed_alternative_zone_count": 2,
+          "measured_count": 42,
+          "single_point_alternative_hint_count": 0
         },
         "40deg-300mm": {
           "benchmark": {
@@ -989,13 +987,13 @@
           "best_minus_benchmark_score": 0.5939121125341842,
           "best_to_benchmark_normalized_distance": 1.5000087657335783,
           "competitive_component_sizes": [
-            2,
-            1
+            3,
+            2
           ],
-          "competitive_point_count": 3,
-          "confirmed_alternative_zone_count": 0,
-          "measured_count": 33,
-          "single_point_alternative_hint_count": 1
+          "competitive_point_count": 5,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 36,
+          "single_point_alternative_hint_count": 0
         },
         "40deg-400mm": {
           "benchmark": {
@@ -1046,24 +1044,24 @@
           "benchmark_in_competitive_set": false,
           "best": {
             "coordinate": {
-              "k": 6.0,
-              "length_factor": 1.2,
+              "k": 7.0,
+              "length_factor": 1.2351565509271998,
               "n": 8.0,
-              "s": 0.9237190903017322
+              "s": 0.9237127035628547
             },
-            "id": "40d-450mm-L+1-K+1-N+0",
-            "surface_score": 90.5308858887776
+            "id": "ridge-40deg-450mm-K7-N8-Lx1p0",
+            "surface_score": 90.9850405929164
           },
           "best_in_benchmark_component": false,
           "best_is_sampled_boundary": true,
-          "best_minus_benchmark_score": 3.9167966540152435,
-          "best_to_benchmark_normalized_distance": 1.4999999999999998,
+          "best_minus_benchmark_score": 4.370951358154045,
+          "best_to_benchmark_normalized_distance": 1.9703971899339021,
           "competitive_component_sizes": [
             2
           ],
           "competitive_point_count": 2,
           "confirmed_alternative_zone_count": 1,
-          "measured_count": 34,
+          "measured_count": 37,
           "single_point_alternative_hint_count": 0
         },
         "45deg-250mm": {
@@ -1099,7 +1097,7 @@
           ],
           "competitive_point_count": 4,
           "confirmed_alternative_zone_count": 0,
-          "measured_count": 35,
+          "measured_count": 38,
           "single_point_alternative_hint_count": 2
         },
         "45deg-300mm": {
@@ -1130,12 +1128,12 @@
           "best_to_benchmark_normalized_distance": 1.4999999999999998,
           "competitive_component_sizes": [
             6,
-            1
+            2
           ],
-          "competitive_point_count": 7,
-          "confirmed_alternative_zone_count": 0,
-          "measured_count": 42,
-          "single_point_alternative_hint_count": 1
+          "competitive_point_count": 8,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 45,
+          "single_point_alternative_hint_count": 0
         },
         "45deg-350mm": {
           "benchmark": {
@@ -1220,24 +1218,24 @@
           "benchmark_in_competitive_set": false,
           "best": {
             "coordinate": {
-              "k": 6.0,
-              "length_factor": 1.2,
+              "k": 7.0,
+              "length_factor": 1.224623243933589,
               "n": 8.0,
-              "s": 1.0497856165040584
+              "s": 1.0863265008152294
             },
-            "id": "45d-450mm-L+1-K+1-N+0",
-            "surface_score": 87.88277388410881
+            "id": "ridge-45deg-450mm-K7-N8-Lx1p0",
+            "surface_score": 88.87309502910865
           },
           "best_in_benchmark_component": false,
           "best_is_sampled_boundary": true,
-          "best_minus_benchmark_score": 2.3290585914548387,
-          "best_to_benchmark_normalized_distance": 1.4694961182371449,
+          "best_minus_benchmark_score": 3.319379736454678,
+          "best_to_benchmark_normalized_distance": 1.860200530915861,
           "competitive_component_sizes": [
             2
           ],
           "competitive_point_count": 2,
           "confirmed_alternative_zone_count": 1,
-          "measured_count": 54,
+          "measured_count": 57,
           "single_point_alternative_hint_count": 0
         },
         "50deg-250mm": {
@@ -1302,12 +1300,12 @@
           "best_to_benchmark_normalized_distance": 1.5000141983773612,
           "competitive_component_sizes": [
             4,
-            1
+            3
           ],
-          "competitive_point_count": 5,
-          "confirmed_alternative_zone_count": 0,
-          "measured_count": 35,
-          "single_point_alternative_hint_count": 1
+          "competitive_point_count": 7,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 38,
+          "single_point_alternative_hint_count": 0
         },
         "50deg-350mm": {
           "benchmark": {
@@ -1392,25 +1390,25 @@
           "benchmark_in_competitive_set": false,
           "best": {
             "coordinate": {
-              "k": 6.0,
-              "length_factor": 1.1999968332383306,
+              "k": 7.0,
+              "length_factor": 1.2642425106086517,
               "n": 8.0,
-              "s": 1.5096338300204195
+              "s": 1.3926554170183927
             },
-            "id": "50d-450mm-L+1-K+1-N+0",
-            "surface_score": 85.2292392063453
+            "id": "ridge-50deg-450mm-K7-N8-Lx1p0",
+            "surface_score": 85.97881888255189
           },
           "best_in_benchmark_component": false,
-          "best_is_sampled_boundary": true,
-          "best_minus_benchmark_score": 2.661118630091025,
-          "best_to_benchmark_normalized_distance": 1.4999894441741966,
+          "best_is_sampled_boundary": false,
+          "best_minus_benchmark_score": 3.4106983062976184,
+          "best_to_benchmark_normalized_distance": 2.0604860131335725,
           "competitive_component_sizes": [
-            1
+            2
           ],
-          "competitive_point_count": 1,
-          "confirmed_alternative_zone_count": 0,
-          "measured_count": 37,
-          "single_point_alternative_hint_count": 1
+          "competitive_point_count": 2,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 40,
+          "single_point_alternative_hint_count": 0
         }
       },
       "cells_with_confirmed_alternative_zones": [
@@ -1423,24 +1421,23 @@
         "35deg-400mm",
         "35deg-450mm",
         "40deg-250mm",
+        "40deg-350mm",
         "40deg-450mm",
-        "45deg-450mm"
+        "45deg-300mm",
+        "45deg-450mm",
+        "50deg-300mm",
+        "50deg-450mm"
       ],
       "cells_with_single_point_alternative_hints": [
         "35deg-250mm",
         "35deg-350mm",
-        "40deg-250mm",
         "40deg-300mm",
-        "40deg-350mm",
         "40deg-400mm",
         "45deg-250mm",
-        "45deg-300mm",
         "45deg-350mm",
-        "50deg-300mm",
-        "50deg-350mm",
-        "50deg-450mm"
+        "50deg-350mm"
       ],
-      "confirmed_alternative_cell_count": 11,
+      "confirmed_alternative_cell_count": 15,
       "definition": {
         "competitive_score_window": 1.0,
         "component_connection_distance": 1.1,
@@ -1459,10 +1456,10 @@
             0.45903395704967725,
             0.5481168596199129,
             0.4958070113007977,
-            0.48350137730870457
+            0.48350082056773264
           ],
           "maximum": 0.5481168596199129,
-          "median": 0.48350137730870457,
+          "median": 0.48350082056773264,
           "minimum": 0.44012682741979886
         },
         "35": {
@@ -1471,22 +1468,22 @@
             0.8993821014043046,
             0.7830192504883154,
             0.6694175455538521,
-            0.6544896829034982
+            0.7830155224957924
           ],
           "maximum": 0.8993821014043046,
           "median": 0.7830192504883154,
-          "minimum": 0.6544896829034982
+          "minimum": 0.6694175455538521
         },
         "40": {
           "cell_best_s": [
-            1.1627488089160904,
+            1.336537682157515,
             0.7830371993405559,
             0.790447543433925,
             0.9803933536734423,
-            0.9237190903017322
+            0.9237127035628547
           ],
-          "maximum": 1.1627488089160904,
-          "median": 0.9237190903017322,
+          "maximum": 1.336537682157515,
+          "median": 0.9237127035628547,
           "minimum": 0.7830371993405559
         },
         "45": {
@@ -1495,7 +1492,7 @@
             0.8961864481863893,
             1.0863365190714132,
             1.2802092720777547,
-            1.0497856165040584
+            1.0863265008152294
           ],
           "maximum": 1.4290325372492843,
           "median": 1.0863365190714132,
@@ -1507,14 +1504,664 @@
             1.2537736197316889,
             1.3926539371674904,
             1.363856803030943,
-            1.5096338300204195
+            1.3926554170183927
           ],
           "maximum": 1.7179747556793592,
           "median": 1.3926539371674904,
           "minimum": 1.2537736197316889
         }
       },
-      "single_point_hint_cell_count": 12
+      "single_point_hint_cell_count": 7
+    },
+    "ridge_closure": {
+      "cells": {
+        "30deg-250mm": {
+          "branch": "short-low-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8000022931572188,
+              "n": 4.0,
+              "s": 0.44012682741979886
+            },
+            "id": "30d-250mm-L-1-K-1-N-1",
+            "provenance": "canonical",
+            "surface_score": 77.51111619093584
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8000022931572188,
+              "n": 4.0,
+              "s": 0.44012682741979886
+            },
+            "id": "30d-250mm-L-1-K-1-N-1",
+            "surface_score": 77.51111619093584
+          },
+          "inner_k": 2.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 4.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 1.0,
+              "length_factor": 0.7203781416253898,
+              "n": 4.0,
+              "s": 0.48350656085629573
+            },
+            "id": "ridge-30deg-250mm-K1-N4-Lx1p0",
+            "surface_score": 77.3502252265865
+          },
+          "outward_k": 1.0,
+          "outward_minus_inner_score": -0.1608909643493348,
+          "registered_k_boundary_status": "turned-over-by-inner-k-evidence"
+        },
+        "30deg-300mm": {
+          "branch": "short-low-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.80000194910877,
+              "n": 4.0,
+              "s": 0.45903395704967725
+            },
+            "id": "30d-300mm-L-1-K-1-N-1",
+            "provenance": "canonical",
+            "surface_score": 81.58579113962435
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.80000194910877,
+              "n": 4.0,
+              "s": 0.45903395704967725
+            },
+            "id": "30d-300mm-L-1-K-1-N-1",
+            "surface_score": 81.58579113962435
+          },
+          "inner_k": 2.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 4.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 1.0,
+              "length_factor": 0.7367631150656362,
+              "n": 4.0,
+              "s": 0.48349653299964296
+            },
+            "id": "ridge-30deg-300mm-K1-N4-Lx1p0",
+            "surface_score": 81.48415071772648
+          },
+          "outward_k": 1.0,
+          "outward_minus_inner_score": -0.10164042189786926,
+          "registered_k_boundary_status": "turned-over-by-inner-k-evidence"
+        },
+        "30deg-400mm": {
+          "branch": "long-high-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.1999991759237896,
+              "n": 8.0,
+              "s": 0.4958070113007977
+            },
+            "id": "30d-400mm-L+1-K+1-N+0",
+            "provenance": "canonical",
+            "surface_score": 87.48214218136002
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.1999991759237896,
+              "n": 8.0,
+              "s": 0.4958070113007977
+            },
+            "id": "30d-400mm-L+1-K+1-N+0",
+            "surface_score": 87.48214218136002
+          },
+          "inner_k": 6.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.2439141971849557,
+              "n": 8.0,
+              "s": 0.48349853971024925
+            },
+            "id": "ridge-30deg-400mm-K7-N8-Lx1p0",
+            "surface_score": 87.19672360214537
+          },
+          "outward_k": 7.0,
+          "outward_minus_inner_score": -0.2854185792146495,
+          "registered_k_boundary_status": "turned-over-by-inner-k-evidence"
+        },
+        "30deg-450mm": {
+          "branch": "long-high-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.2355236801084128,
+              "n": 8.0,
+              "s": 0.48350082056773264
+            },
+            "id": "ridge-30deg-450mm-K7-N8-Lx1p0",
+            "provenance": "ridge-closure",
+            "surface_score": 88.66045197918316
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.200000740524069,
+              "n": 8.0,
+              "s": 0.48350137730870457
+            },
+            "id": "30d-450mm-L+1-K+1-N+0",
+            "surface_score": 88.63412063612748
+          },
+          "inner_k": 6.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.2355236801084128,
+              "n": 8.0,
+              "s": 0.48350082056773264
+            },
+            "id": "ridge-30deg-450mm-K7-N8-Lx1p0",
+            "surface_score": 88.66045197918316
+          },
+          "outward_k": 7.0,
+          "outward_minus_inner_score": 0.02633134305568774,
+          "registered_k_boundary_status": "best-measured-at-registered-k-boundary"
+        },
+        "35deg-250mm": {
+          "branch": "short-low-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8000013033901178,
+              "n": 8.0,
+              "s": 0.8567353864087573
+            },
+            "id": "35d-250mm-L-1-K-1-N+0",
+            "provenance": "canonical",
+            "surface_score": 81.32558495311523
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8000013033901178,
+              "n": 8.0,
+              "s": 0.8567353864087573
+            },
+            "id": "35d-250mm-L-1-K-1-N+0",
+            "surface_score": 81.32558495311523
+          },
+          "inner_k": 2.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 1.0,
+              "length_factor": 0.757347861788512,
+              "n": 8.0,
+              "s": 0.7830110874907275
+            },
+            "id": "ridge-35deg-250mm-K1-N8-Lx1p0",
+            "surface_score": 81.1390428120517
+          },
+          "outward_k": 1.0,
+          "outward_minus_inner_score": -0.1865421410635264,
+          "registered_k_boundary_status": "turned-over-by-inner-k-evidence"
+        },
+        "35deg-300mm": {
+          "branch": "short-low-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8,
+              "n": 8.0,
+              "s": 0.8993821014043046
+            },
+            "id": "35d-300mm-L-1-K-1-N+0",
+            "provenance": "canonical",
+            "surface_score": 85.36813001205712
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8,
+              "n": 8.0,
+              "s": 0.8993821014043046
+            },
+            "id": "35d-300mm-L-1-K-1-N+0",
+            "surface_score": 85.36813001205712
+          },
+          "inner_k": 2.0,
+          "length_bracketed_at_outward_k": false,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 1.0,
+              "length_factor": 0.697726264418811,
+              "n": 8.0,
+              "s": 1.1354543253887186
+            },
+            "id": "ridge-35deg-300mm-K1-N8-Lx0p9",
+            "surface_score": 83.45137612910739
+          },
+          "outward_k": 1.0,
+          "outward_minus_inner_score": -1.9167538829497346,
+          "registered_k_boundary_status": "turned-over-by-inner-k-evidence"
+        },
+        "35deg-400mm": {
+          "branch": "long-high-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2000019997200393,
+              "n": 8.0,
+              "s": 0.6694175455538521
+            },
+            "id": "35d-400mm-L+1-K+1-N+0",
+            "provenance": "canonical",
+            "surface_score": 89.29097824729433
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2000019997200393,
+              "n": 8.0,
+              "s": 0.6694175455538521
+            },
+            "id": "35d-400mm-L+1-K+1-N+0",
+            "surface_score": 89.29097824729433
+          },
+          "inner_k": 6.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.1897834303197554,
+              "n": 8.0,
+              "s": 0.783013140621831
+            },
+            "id": "ridge-35deg-400mm-K7-N8-Lx1p0",
+            "surface_score": 89.12122336529313
+          },
+          "outward_k": 7.0,
+          "outward_minus_inner_score": -0.16975488200120026,
+          "registered_k_boundary_status": "turned-over-by-inner-k-evidence"
+        },
+        "35deg-450mm": {
+          "branch": "long-high-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.1824275150720132,
+              "n": 8.0,
+              "s": 0.7830155224957924
+            },
+            "id": "ridge-35deg-450mm-K7-N8-Lx1p0",
+            "provenance": "ridge-closure",
+            "surface_score": 90.99519371962188
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2000017969613384,
+              "n": 8.0,
+              "s": 0.6544896829034982
+            },
+            "id": "35d-450mm-L+1-K+1-N+0",
+            "surface_score": 90.16413157941312
+          },
+          "inner_k": 6.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.1824275150720132,
+              "n": 8.0,
+              "s": 0.7830155224957924
+            },
+            "id": "ridge-35deg-450mm-K7-N8-Lx1p0",
+            "surface_score": 90.99519371962188
+          },
+          "outward_k": 7.0,
+          "outward_minus_inner_score": 0.8310621402087577,
+          "registered_k_boundary_status": "best-measured-at-registered-k-boundary"
+        },
+        "40deg-250mm": {
+          "branch": "short-low-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 1.0,
+              "length_factor": 0.7091907813557298,
+              "n": 8.0,
+              "s": 1.336537682157515
+            },
+            "id": "ridge-40deg-250mm-K1-N8-Lx0p9",
+            "provenance": "ridge-closure",
+            "surface_score": 84.78166314035559
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8,
+              "n": 8.0,
+              "s": 1.1627488089160904
+            },
+            "id": "40d-250mm-L-1-K-1-N+0",
+            "surface_score": 84.59193537921826
+          },
+          "inner_k": 2.0,
+          "length_bracketed_at_outward_k": false,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 1.0,
+              "length_factor": 0.7091907813557298,
+              "n": 8.0,
+              "s": 1.336537682157515
+            },
+            "id": "ridge-40deg-250mm-K1-N8-Lx0p9",
+            "surface_score": 84.78166314035559
+          },
+          "outward_k": 1.0,
+          "outward_minus_inner_score": 0.18972776113733403,
+          "registered_k_boundary_status": "best-measured-at-registered-k-boundary"
+        },
+        "40deg-350mm": {
+          "branch": "long-high-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.200002629710469,
+              "n": 8.0,
+              "s": 0.790447543433925
+            },
+            "id": "40d-350mm-L+1-K+1-N+0",
+            "provenance": "canonical",
+            "surface_score": 88.91776149103157
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.200002629710469,
+              "n": 8.0,
+              "s": 0.790447543433925
+            },
+            "id": "40d-350mm-L+1-K+1-N+0",
+            "surface_score": 88.91776149103157
+          },
+          "inner_k": 6.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.1915941304862334,
+              "n": 8.0,
+              "s": 0.9237193753156291
+            },
+            "id": "ridge-40deg-350mm-K7-N8-Lx1p0",
+            "surface_score": 88.51495893483312
+          },
+          "outward_k": 7.0,
+          "outward_minus_inner_score": -0.40280255619845207,
+          "registered_k_boundary_status": "turned-over-by-inner-k-evidence"
+        },
+        "40deg-450mm": {
+          "branch": "long-high-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.2351565509271998,
+              "n": 8.0,
+              "s": 0.9237127035628547
+            },
+            "id": "ridge-40deg-450mm-K7-N8-Lx1p0",
+            "provenance": "ridge-closure",
+            "surface_score": 90.9850405929164
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2,
+              "n": 8.0,
+              "s": 0.9237190903017322
+            },
+            "id": "40d-450mm-L+1-K+1-N+0",
+            "surface_score": 90.5308858887776
+          },
+          "inner_k": 6.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.2351565509271998,
+              "n": 8.0,
+              "s": 0.9237127035628547
+            },
+            "id": "ridge-40deg-450mm-K7-N8-Lx1p0",
+            "surface_score": 90.9850405929164
+          },
+          "outward_k": 7.0,
+          "outward_minus_inner_score": 0.45415470413880143,
+          "registered_k_boundary_status": "best-measured-at-registered-k-boundary"
+        },
+        "45deg-250mm": {
+          "branch": "short-low-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8000018905199875,
+              "n": 8.0,
+              "s": 1.4290325372492843
+            },
+            "id": "45d-250mm-L-1-K-1-N+0",
+            "provenance": "canonical",
+            "surface_score": 86.94802256740545
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8000018905199875,
+              "n": 8.0,
+              "s": 1.4290325372492843
+            },
+            "id": "45d-250mm-L-1-K-1-N+0",
+            "surface_score": 86.94802256740545
+          },
+          "inner_k": 2.0,
+          "length_bracketed_at_outward_k": false,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 1.0,
+              "length_factor": 0.7187189836564548,
+              "n": 8.0,
+              "s": 1.5701480190398627
+            },
+            "id": "ridge-45deg-250mm-K1-N8-Lx0p9",
+            "surface_score": 85.83271778103645
+          },
+          "outward_k": 1.0,
+          "outward_minus_inner_score": -1.1153047863689949,
+          "registered_k_boundary_status": "turned-over-by-inner-k-evidence"
+        },
+        "45deg-300mm": {
+          "branch": "long-high-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2,
+              "n": 8.0,
+              "s": 0.8961864481863893
+            },
+            "id": "45d-300mm-L+1-K+1-N+0",
+            "provenance": "canonical",
+            "surface_score": 88.15319005195238
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2,
+              "n": 8.0,
+              "s": 0.8961864481863893
+            },
+            "id": "45d-300mm-L+1-K+1-N+0",
+            "surface_score": 88.15319005195238
+          },
+          "inner_k": 6.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.1827652173913044,
+              "n": 8.0,
+              "s": 1.0863466418471148
+            },
+            "id": "ridge-45deg-300mm-K7-N8-Lx1p0",
+            "surface_score": 87.27767019062304
+          },
+          "outward_k": 7.0,
+          "outward_minus_inner_score": -0.8755198613293373,
+          "registered_k_boundary_status": "turned-over-by-inner-k-evidence"
+        },
+        "45deg-450mm": {
+          "branch": "long-high-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.224623243933589,
+              "n": 8.0,
+              "s": 1.0863265008152294
+            },
+            "id": "ridge-45deg-450mm-K7-N8-Lx1p0",
+            "provenance": "ridge-closure",
+            "surface_score": 88.87309502910865
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2,
+              "n": 8.0,
+              "s": 1.0497856165040584
+            },
+            "id": "45d-450mm-L+1-K+1-N+0",
+            "surface_score": 87.88277388410881
+          },
+          "inner_k": 6.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.224623243933589,
+              "n": 8.0,
+              "s": 1.0863265008152294
+            },
+            "id": "ridge-45deg-450mm-K7-N8-Lx1p0",
+            "surface_score": 88.87309502910865
+          },
+          "outward_k": 7.0,
+          "outward_minus_inner_score": 0.9903211449998395,
+          "registered_k_boundary_status": "best-measured-at-registered-k-boundary"
+        },
+        "50deg-300mm": {
+          "branch": "long-high-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2000042594880096,
+              "n": 8.0,
+              "s": 1.2537736197316889
+            },
+            "id": "50d-300mm-L+1-K+1-N+0",
+            "provenance": "canonical",
+            "surface_score": 87.66857388175707
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2000042594880096,
+              "n": 8.0,
+              "s": 1.2537736197316889
+            },
+            "id": "50d-300mm-L+1-K+1-N+0",
+            "surface_score": 87.66857388175707
+          },
+          "inner_k": 6.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.2055841887805085,
+              "n": 8.0,
+              "s": 1.3926512159692253
+            },
+            "id": "ridge-50deg-300mm-K7-N8-Lx1p0",
+            "surface_score": 87.33219463184558
+          },
+          "outward_k": 7.0,
+          "outward_minus_inner_score": -0.33637924991148793,
+          "registered_k_boundary_status": "turned-over-by-inner-k-evidence"
+        },
+        "50deg-450mm": {
+          "branch": "long-high-k",
+          "final_measured_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.2642425106086517,
+              "n": 8.0,
+              "s": 1.3926554170183927
+            },
+            "id": "ridge-50deg-450mm-K7-N8-Lx1p0",
+            "provenance": "ridge-closure",
+            "surface_score": 85.97881888255189
+          },
+          "inner_best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.1999968332383306,
+              "n": 8.0,
+              "s": 1.5096338300204195
+            },
+            "id": "50d-450mm-L+1-K+1-N+0",
+            "surface_score": 85.2292392063453
+          },
+          "inner_k": 6.0,
+          "length_bracketed_at_outward_k": true,
+          "n": 8.0,
+          "outward_best": {
+            "coordinate": {
+              "k": 7.0,
+              "length_factor": 1.2642425106086517,
+              "n": 8.0,
+              "s": 1.3926554170183927
+            },
+            "id": "ridge-50deg-450mm-K7-N8-Lx1p0",
+            "surface_score": 85.97881888255189
+          },
+          "outward_k": 7.0,
+          "outward_minus_inner_score": 0.7495796762065936,
+          "registered_k_boundary_status": "best-measured-at-registered-k-boundary"
+        }
+      },
+      "final_measured_best_from_ridge_cells": 6,
+      "interpretation": "closure is local to measured inner/outward K evidence; a winning K=1 or K=7 point is a registered-domain boundary seed, not a proven unconstrained optimum",
+      "length_bracketed_at_outward_k_cells": 13,
+      "outward_k_turned_over_cells": 10,
+      "outward_k_won_over_inner_k_cells": 6,
+      "tested_cells": 16
     }
   },
   "coupled_branch_seeds": {
@@ -1988,9 +2635,11 @@
   },
   "heuristic_id": "round_control_heuristics_v1",
   "provenance": {
-    "builder_sha256": "78d32adafcfb4e6c92c39e393e4bea50f4042c63b838ba1ce84c73585e0fdc96",
+    "builder_sha256": "9f6cd7c81e03a3d2d592e5194299e4a14c3f8a77c6df9e6160f0611e3af6769a",
     "challenge_results": "examples/round-control-v2-validation/validation_results.json",
     "challenge_results_sha256": "ac4b773c584dba1a70feaa8abbd8608c9ccdcffa35ea59c00c3638cb44d70dc4",
+    "ridge_results": "examples/round-control-ridge-closure/results.json",
+    "ridge_results_sha256": "387b255e5da33e396764a818a37b856cecd2fce8e1c118ddfd73d9faf4b8c7fa",
     "training_index": "examples/control-decoupling/model_source/training_index.json",
     "training_index_sha256": "9f78e42e55bf8c81c995fb8357d4ff7207b6d77fe2a0e9b4a0e2f20c2ea74a75"
   },
@@ -2105,10 +2754,10 @@
             0.45903395704967725,
             0.5481168596199129,
             0.4958070113007977,
-            0.48350137730870457
+            0.48350082056773264
           ],
           "maximum": 0.5481168596199129,
-          "median": 0.48350137730870457,
+          "median": 0.48350082056773264,
           "minimum": 0.44012682741979886
         },
         "35": {
@@ -2117,22 +2766,22 @@
             0.8993821014043046,
             0.7830192504883154,
             0.6694175455538521,
-            0.6544896829034982
+            0.7830155224957924
           ],
           "maximum": 0.8993821014043046,
           "median": 0.7830192504883154,
-          "minimum": 0.6544896829034982
+          "minimum": 0.6694175455538521
         },
         "40": {
           "cell_best_s": [
-            1.1627488089160904,
+            1.336537682157515,
             0.7830371993405559,
             0.790447543433925,
             0.9803933536734423,
-            0.9237190903017322
+            0.9237127035628547
           ],
-          "maximum": 1.1627488089160904,
-          "median": 0.9237190903017322,
+          "maximum": 1.336537682157515,
+          "median": 0.9237127035628547,
           "minimum": 0.7830371993405559
         },
         "45": {
@@ -2141,7 +2790,7 @@
             0.8961864481863893,
             1.0863365190714132,
             1.2802092720777547,
-            1.0497856165040584
+            1.0863265008152294
           ],
           "maximum": 1.4290325372492843,
           "median": 1.0863365190714132,
@@ -2153,7 +2802,7 @@
             1.2537736197316889,
             1.3926539371674904,
             1.363856803030943,
-            1.5096338300204195
+            1.3926554170183927
           ],
           "maximum": 1.7179747556793592,
           "median": 1.3926539371674904,
@@ -2213,25 +2862,33 @@
           "35deg-400mm",
           "35deg-450mm",
           "40deg-250mm",
+          "40deg-350mm",
           "40deg-450mm",
-          "45deg-450mm"
+          "45deg-300mm",
+          "45deg-450mm",
+          "50deg-300mm",
+          "50deg-450mm"
         ],
         "single_point_hint_cells": [
           "35deg-250mm",
           "35deg-350mm",
-          "40deg-250mm",
           "40deg-300mm",
-          "40deg-350mm",
           "40deg-400mm",
           "45deg-250mm",
-          "45deg-300mm",
           "45deg-350mm",
-          "50deg-300mm",
-          "50deg-350mm",
-          "50deg-450mm"
+          "50deg-350mm"
         ]
       },
       "id": "retain-alternative-zones"
+    },
+    {
+      "action": "use the per-cell final measured seed; where K=1 or K=7 wins, label it a registered-domain boundary rather than an unconstrained optimum",
+      "evidence": {
+        "length_bracketed_at_outward_k_cells": 13,
+        "outward_k_turned_over_cells": 10,
+        "outward_k_won_over_inner_k_cells": 6
+      },
+      "id": "respect-ridge-closure-status"
     },
     {
       "action": "for unequal H/V targets, combine independent axis seed lengths using mouth-width/height score weights",
@@ -2251,10 +2908,10 @@
         0.45903395704967725,
         0.5481168596199129,
         0.4958070113007977,
-        0.48350137730870457
+        0.48350082056773264
       ],
       "maximum": 0.5481168596199129,
-      "median": 0.48350137730870457,
+      "median": 0.48350082056773264,
       "minimum": 0.44012682741979886
     },
     "35": {
@@ -2263,22 +2920,22 @@
         0.8993821014043046,
         0.7830192504883154,
         0.6694175455538521,
-        0.6544896829034982
+        0.7830155224957924
       ],
       "maximum": 0.8993821014043046,
       "median": 0.7830192504883154,
-      "minimum": 0.6544896829034982
+      "minimum": 0.6694175455538521
     },
     "40": {
       "cell_best_s": [
-        1.1627488089160904,
+        1.336537682157515,
         0.7830371993405559,
         0.790447543433925,
         0.9803933536734423,
-        0.9237190903017322
+        0.9237127035628547
       ],
-      "maximum": 1.1627488089160904,
-      "median": 0.9237190903017322,
+      "maximum": 1.336537682157515,
+      "median": 0.9237127035628547,
       "minimum": 0.7830371993405559
     },
     "45": {
@@ -2287,7 +2944,7 @@
         0.8961864481863893,
         1.0863365190714132,
         1.2802092720777547,
-        1.0497856165040584
+        1.0863265008152294
       ],
       "maximum": 1.4290325372492843,
       "median": 1.0863365190714132,
@@ -2299,7 +2956,7 @@
         1.2537736197316889,
         1.3926539371674904,
         1.363856803030943,
-        1.5096338300204195
+        1.3926554170183927
       ],
       "maximum": 1.7179747556793592,
       "median": 1.3926539371674904,
