@@ -2101,7 +2101,7 @@
     }
   },
   "model_id": "round_control_augmented_v1",
-  "primary_validation_sha256": "a79a27c6df56ac875e7e7ee154bae6fcbc8e4efb48e1a7934ded013795b5ef20",
+  "primary_validation_sha256": "7ba464bec3652e0c22be14e280a469e9e34c96d152ef2ed8525fda30aa0cfa61",
   "schema_version": 1,
   "throat_impedance_used_in_model_choice": false
 }

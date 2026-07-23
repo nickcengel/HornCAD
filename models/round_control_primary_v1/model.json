@@ -26702,7 +26702,7 @@
   },
   "model_family": "round symmetric square zero-extension OS-SE",
   "model_id": "round_control_primary_v1",
-  "model_sha256": "f990608b17bb85173a7fdf614ced92e04f7323e5905ef660c7007748d0ffeb25",
+  "model_sha256": "b04a6b4acbfd64d614a2c886426ab85de9c980f7440ae93ab1d61a3ccd69587b",
   "mouth_grid_mm": [
     250,
     300,
@@ -26722,7 +26722,8 @@
     "coordinate_hash": "c13f0be3f3fea1188b529fb503a13f7d15e3d18e212ae9d38f6cbf87d525296c",
     "diagnostic_implementation_sha256": "3dc6e235625566f8ca94201f961f43d54cc53830ae839461694cee9a45d0f08b",
     "execution_plan_sha256": "297fe3b6060dcd37f0ccd65f16882edf0647f05760bf3e9e35e60cdd67d32fb2",
-    "fitting_implementation_sha256": "a582ca9b192b74520a18e71f88686224678f414acf5c2e40be0651da6fe40b7d",
+    "fitting_code_git_commit": "3df32ca32ad051a7657421d0aa2254674e565b9c",
+    "fitting_implementation_sha256": "1f1f172dda9612337b5dc73750d23746b2fc8132ee01affee9690a59e8af2a82",
     "manifest_sha256": "10a72a723327e5f2bf3331da893659e940f7a24b82b1000ca3fd2d3ab4012c52"
   },
   "reference_length_mm": {
