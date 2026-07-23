@@ -14,10 +14,12 @@ was approved, generated, completed, and converted into a portable model.
 3. [Model pipeline](model_pipeline.md) defines the fitting, validation, and
    portable exports released as `round_control_primary_v1` and
    `round_control_augmented_v1`, and the later
-   [unified-v2 plan](round_control_v2_plan.md) records why primary v1 remains
-   the sole production baseline. Rule extraction remains explicitly deferred.
+   [unified-v2 plan](round_control_v2_plan.md) records the failed quadratic
+   consolidation. A later nonlinear challenge also failed, so primary v1 is
+   retained only as an API-compatible reference estimator. Rule extraction
+   remains explicitly deferred.
 4. The global [geometry research roadmap](../../docs/plans/geometry_research_roadmap.md)
-   defines how this released baseline is later augmented with extension, throat
+   defines how measured round parents are later compared with extension, throat
    angle, round-to-square morphing, separate H/V behavior, and sag.
 
 The first three documents are study-specific provenance and must remain with the

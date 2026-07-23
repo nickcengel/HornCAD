@@ -182,13 +182,13 @@ BEM experiment is specified in `examples/control-decoupling/study_plan.md`,
 with its model export pipeline alongside it. The later cross-study geometry
 program is defined in `docs/plans/geometry_research_roadmap.md`.
 
-The released round-control production model is
-`models/round_control_primary_v1/`. Load it with
-`DesignApplication.load()` from `app.design_api`. The augmented v1 model
-remains available as a research comparison, but it is not the default
-production model. A targeted full-grid consolidation study did not meet its
-preregistered validation limits, so no round-control v2 model was released; see
-`examples/round-control-v2-validation/README.md`.
+The round-control API loads `models/round_control_primary_v1/` as a legacy
+reference estimator. It is not a validated global interpolation surrogate;
+future geometry studies must anchor comparisons to nearby measured round
+parents. Augmented v1 remains research comparison evidence. Both a targeted
+quadratic consolidation and a simulation-free nonlinear follow-up failed their
+locked challenges, so no v2 model was released; see
+`examples/round-control-nonlinear-evaluation/README.md`.
 
 `pyproject.toml` and `Makefile` remain at the root because Python packaging and
 standard build tools expect project metadata there.

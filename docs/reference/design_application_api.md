@@ -9,10 +9,16 @@ types reserve room for later diagnoses, recommendations, and proposed
 confirmation experiments.
 
 The Python implementation lives in `app.design_api`. It validates public inputs
-and outputs and can load either retained v1 artifact. Primary v1 is the sole
-production baseline; augmented v1 is a research comparison. Prediction is
-implemented; diagnosis, improvement, automated design, and experiment selection
-remain deliberately deferred.
+and outputs and can load either retained v1 artifact. Primary v1 is the
+API-compatible legacy reference estimator; augmented v1 is a research
+comparison. Neither passed validation as a dependable global interpolation
+foundation. Prediction is implemented with an explicit measured-parent warning;
+diagnosis, improvement, automated design, and experiment selection remain
+deliberately deferred.
+
+All v1 predictions now report `LIMITED` support, even at nominally in-domain
+coordinates. Out-of-range geometry continues to report `EXTRAPOLATED` or fail
+validation as appropriate.
 
 ## Most common calls
 

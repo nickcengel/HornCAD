@@ -21,12 +21,15 @@ class RoundControlModelTests(unittest.TestCase):
 
     def test_predict_exposes_seven_diagnostics_and_both_models(self):
         result = self.app.predict(DesignPoint.round(300, 40, 145, 4, 8))
-        self.assertEqual(result.support, SupportStatus.SUPPORTED)
+        self.assertEqual(result.support, SupportStatus.LIMITED)
         self.assertEqual(len(result.diagnostics), 7)
         self.assertIn("throat_impedance_score", result.diagnostics)
         self.assertEqual(set(result.model_predictions), {
             "round_control_primary_v1", "round_control_augmented_v1"})
         self.assertTrue(result.nearest_evidence_ids)
+        self.assertTrue(any(
+            "has not passed global interpolation validation" in warning
+            for warning in result.warnings))
 
     def test_invalid_geometry_is_rejected_and_extrapolation_is_visible(self):
         with self.assertRaisesRegex(ValueError, "invalid geometry"):

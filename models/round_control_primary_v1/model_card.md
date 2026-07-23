@@ -4,10 +4,11 @@ Portable quadratic response model for axisymmetric, round-mouth,
 zero-extension OS-SE horns over 250–450 mm mouth diameters and 30–50 degree
 coverage.
 
-This is the sole production round baseline. A later twelve-case full-grid
-challenge rejected all tested globally weighted quadratic replacements.
-Jointly sparse L/K/N combinations require limited-support labeling even when
-their individual controls lie within nominal bounds.
+This is retained as the API-compatible legacy round reference estimator. A
+later twelve-case full-grid challenge rejected all tested globally weighted
+quadratic replacements, and a frozen nonlinear follow-up was worse on that
+challenge. It is not a validated global interpolation surrogate. Future
+geometry studies must use nearby measured round parents.
 
 The six preregistered radiation diagnostics retain their original surface-score
 definition. `throat_impedance_score` is an experimental seventh prediction for

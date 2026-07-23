@@ -10,8 +10,10 @@ later version.
 
 The later [unified-v2 consolidation](round_control_v2_plan.md) retained the full
 5×5 domain and tested five global historical weights against twelve new locked
-BEM responses. None passed its release gates. Consequently, primary v1 is the
-sole production baseline; augmented v1 remains research comparison evidence.
+BEM responses. None passed its release gates. A later frozen nonlinear
+follow-up was also worse on the locked challenge. Consequently, primary v1 is
+an API-compatible legacy reference estimator, augmented v1 remains research
+comparison evidence, and later geometry studies require measured round parents.
 No v2 model was released.
 
 ## Required outcome

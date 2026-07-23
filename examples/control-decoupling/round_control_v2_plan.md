@@ -4,9 +4,10 @@
 
 Execution completed across the registered full-grid validation set. The frozen
 0.25 historical-weight candidate failed the release gates, as did every other
-frozen comparison candidate. No v2 model was released. Primary v1 is therefore
-the sole production round baseline; augmented v1 remains research comparison
-evidence. Detailed results are retained under
+frozen comparison candidate. No v2 model was released. A later frozen nonlinear
+follow-up was also worse on the same challenge. Primary v1 is retained only as
+an API-compatible reference estimator; augmented v1 remains research comparison
+evidence. Detailed quadratic results are retained under
 [`../round-control-v2-validation/`](../round-control-v2-validation/).
 
 ## Decision

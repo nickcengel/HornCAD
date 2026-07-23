@@ -4,7 +4,7 @@ This page identifies where current learning is recorded. It deliberately avoids
 copying coefficients and validation summaries already carried by versioned
 model artifacts.
 
-## Production round baseline
+## Round baseline evidence
 
 The completed canonical round study covers axisymmetric zero-extension horns at
 coverage half-angles 30, 35, 40, 45, and 50 degrees and round mouth diameters
@@ -13,16 +13,21 @@ It independently varies OSSE length, K, and N; S is derived. The registered
 design, completion rules, and analysis terms are in the
 [study plan](../examples/control-decoupling/study_plan.md).
 
-The primary v1 model is the sole production baseline. Augmented v1 remains a
-research comparison rather than a second production choice. A completed
+Primary v1 remains available as an API-compatible legacy reference estimator;
+augmented v1 remains research comparison evidence. A completed
 [unified-v2 validation](../examples/round-control-v2-validation/README.md)
 showed that no tested global historical weight made the ten-term quadratic
 accurate enough in jointly sparse L/K/N regions, so no v2 model was released.
+The subsequent
+[nonlinear evaluation](../examples/round-control-nonlinear-evaluation/README.md)
+also failed its locked challenge. Neither v1 model is therefore a validated
+global interpolation foundation.
 
 The full mouth/coverage grid remains in scope. Evidence-sparse joint control
 combinations are limited-support even when each individual control lies inside
-its nominal one-dimensional range. V1 implements prediction only; steering
-rules and recommendation operations remain deferred.
+its nominal one-dimensional range. Future geometry studies require measured
+round parents for paired comparisons. V1 implements provisional prediction
+only; steering rules and recommendation operations remain deferred.
 
 ## Prior evidence carried forward
 

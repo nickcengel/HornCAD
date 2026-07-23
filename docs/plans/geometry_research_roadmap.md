@@ -40,17 +40,17 @@ are predicted before their results are added to fitting. They are expanded only
 where prediction error is material. Until the sentinels pass, reports must label
 outer-cell predictions as extrapolations rather than supported behavior.
 
-## Stage 1: frozen round control baseline
+## Stage 1: measured round baseline
 
 The axisymmetric round-mouth zero-extension study under
-`examples/control-decoupling/` is complete, fitted, and validated. Primary v1
-is its sole production baseline and maps mouth diameter, coverage, OSSE length,
-K, and N to component diagnostics and surface score while reporting derived S.
-Augmented v1 is retained only as research comparison evidence. The validation
-and export requirements are defined in the control study's
+`examples/control-decoupling/` is complete. Its measured responses are the
+round baseline. Primary v1 remains an API-compatible reference estimator and
+augmented v1 remains comparison evidence, but neither is a validated global
+interpolator. Later stages use measured round parents. The validation and
+export requirements are defined in the control study's
 [model pipeline](../../examples/control-decoupling/model_pipeline.md).
 
-The primary baseline is frozen before any later geometry augmentation is fitted.
+The measured baseline archive is frozen before later geometry work.
 The full-grid
 [unified-v2 challenge](../../examples/round-control-v2-validation/README.md)
 failed its release gates and identified jointly sparse L/K/N regions that must

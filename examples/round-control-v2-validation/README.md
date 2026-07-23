@@ -49,10 +49,11 @@ radiation surface score.
 
 ## Production decision
 
-`round_control_primary_v1` is the sole production round baseline.
-`round_control_augmented_v1` remains a research comparison showing where
-historical evidence helped or hurt; it is not the foundation for later
-correction models.
+`round_control_primary_v1` was retained temporarily as the sole round baseline.
+A subsequent frozen nonlinear test was also worse on these challenge cases, so
+primary v1 is now classified as an API-compatible legacy reference estimator,
+not a validated global surrogate. `round_control_augmented_v1` remains research
+comparison evidence.
 
 The full 30–50° and 250–450 mm mouth-diameter grid remains of interest.
 Predictions in jointly sparse L/K/N regions must be labeled limited-support

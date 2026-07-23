@@ -5,8 +5,9 @@ zero-extension OS-SE horns over 250–450 mm mouth diameters and 30–50 degree
 coverage.
 
 This artifact is retained for research comparison and reproducibility. It is
-not the production baseline; new application work uses
-`round_control_primary_v1`.
+not a production baseline. `round_control_primary_v1` remains available only as
+the API-compatible legacy reference estimator; later geometry studies use
+measured round parents.
 
 The six preregistered radiation diagnostics retain their original surface-score
 definition. `throat_impedance_score` is an experimental seventh prediction for

@@ -158,7 +158,10 @@ class PortableRoundControlBackend:
                  ) -> tuple[SupportStatus, float, list[str]]:
         mouth = design.intent.mouth_width_mm
         coverage = design.intent.horizontal_coverage_deg
-        warnings = []
+        warnings = [
+            "round surrogate has not passed global interpolation validation; "
+            "use a nearby measured round parent for design decisions"
+        ]
         distance = 0.0
         for value, bounds, name in (
             (mouth, self.model["mouth_grid_mm"], "mouth"),
@@ -177,8 +180,8 @@ class PortableRoundControlBackend:
         if distance:
             return SupportStatus.EXTRAPOLATED, 1.0+distance, warnings
         evidence_distance = self._nearest_distance(design, reference)
-        limited = False
-        widening = 1.0
+        limited = True
+        widening = 1.25
         if evidence_distance > 0.75:
             limited = True
             widening = max(widening, 1.25 + evidence_distance - 0.75)
