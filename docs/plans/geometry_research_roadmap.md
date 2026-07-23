@@ -33,9 +33,11 @@ diagnostics remain available alongside the final score.
 ## Stage 1: finish the round control study
 
 Finish, fit, and validate the symmetric zero-extension study already registered
-in this directory. Its portable model maps mouth, coverage, OSSE length, S, K,
-and N to the component diagnostics and surface score. The validation and export
-requirements are defined in [model_pipeline.md](model_pipeline.md).
+under `examples/control-decoupling/`. Its portable model maps mouth, coverage,
+OSSE length, K, and N to the component diagnostics and surface score while
+reporting derived S. The validation and export requirements are defined in the
+control study's
+[model pipeline](../../examples/control-decoupling/model_pipeline.md).
 
 This round baseline is frozen before any later geometry augmentation is fitted.
 

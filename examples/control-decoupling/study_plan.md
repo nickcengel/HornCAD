@@ -137,8 +137,9 @@ validated `models/round_control_v1/` artifact defined there.
 
 The staged extension of this baseline through conical extension, throat angle,
 round-to-square morphing, separate H/V behavior, and sag is defined in
-[`geometry_research_roadmap.md`](geometry_research_roadmap.md). That roadmap also
-fixes the meanings of OSSE length and total length for all later studies.
+[`geometry_research_roadmap.md`](../../docs/plans/geometry_research_roadmap.md).
+That roadmap also fixes the meanings of OSSE length and total length for all
+later studies.
 
 ## Registered analysis
 

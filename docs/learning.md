@@ -37,7 +37,7 @@ locked validation before promoting a relationship into the exported model.
 
 Conical extension and throat angle, one fixed round-to-square transformation,
 separate H/V behavior, rectangular validation, and sag are staged in the
-[geometry research roadmap](../examples/control-decoupling/geometry_research_roadmap.md).
+[geometry research roadmap](plans/geometry_research_roadmap.md).
 Each stage adds one physical effect through paired contrasts and held-out
 prediction tests.
 

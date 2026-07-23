@@ -171,7 +171,8 @@ of its retained FEM and BEM results in its own README.
 
 The documentation authority map is in `docs/README.md`. The active canonical
 BEM experiment is specified in `examples/control-decoupling/study_plan.md`,
-with its model export pipeline and later geometry roadmap alongside it.
+with its model export pipeline alongside it. The later cross-study geometry
+program is defined in `docs/plans/geometry_research_roadmap.md`.
 
 `pyproject.toml` and `Makefile` remain at the root because Python packaging and
 standard build tools expect project metadata there.

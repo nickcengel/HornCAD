@@ -23,8 +23,11 @@ into this directory:
 
 - [registered study plan](../examples/control-decoupling/study_plan.md);
 - [model fitting and export pipeline](../examples/control-decoupling/model_pipeline.md);
-- [later geometry research roadmap](../examples/control-decoupling/geometry_research_roadmap.md);
 - [launch review](../examples/control-decoupling/launch_review.md).
+
+The cross-study [geometry research roadmap](plans/geometry_research_roadmap.md)
+is global because it governs the extension, mouth-shape, H/V, and sag studies
+that follow the round baseline.
 
 `examples/control-decoupling/manifest.json` is authoritative for the currently
 registered simulations. Generated reports describe live progress; prose from an

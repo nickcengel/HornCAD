@@ -291,7 +291,8 @@ output.
 ## Use by later geometry studies
 
 The experimental order and paired-study requirements for these augmentations are
-specified in [geometry_research_roadmap.md](geometry_research_roadmap.md).
+specified in
+[geometry_research_roadmap.md](../../docs/plans/geometry_research_roadmap.md).
 
 Later studies learn corrections relative to this frozen baseline:
 

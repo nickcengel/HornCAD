@@ -134,4 +134,4 @@ the two.
 The fitting, validation, and portable export contract is defined in
 [`examples/control-decoupling/model_pipeline.md`](../../examples/control-decoupling/model_pipeline.md).
 Later geometry corrections follow
-[`geometry_research_roadmap.md`](../../examples/control-decoupling/geometry_research_roadmap.md).
+[`geometry_research_roadmap.md`](geometry_research_roadmap.md).
