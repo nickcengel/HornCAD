@@ -1,0 +1,2961 @@
+{
+  "schema_version": 1,
+  "status": "complete",
+  "manifest_sha256": "d3e0c8e4be17cfba943f452d25e5a159c50b6949b3ae0815a3dd613fe6c1d1b5",
+  "started_at_unix": 1784756321.325994,
+  "slots": 2,
+  "events": [
+    {
+      "time_unix": 1784756321.3275268,
+      "wave": "core-axis",
+      "search": "searches/core-axis/30deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784756321.556532,
+      "wave": "core-axis",
+      "search": "searches/core-axis/30deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784757443.1429088,
+      "wave": "core-axis",
+      "search": "searches/core-axis/30deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784757443.387964,
+      "wave": "core-axis",
+      "search": "searches/core-axis/30deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784757952.919211,
+      "wave": "core-axis",
+      "search": "searches/core-axis/30deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784757953.1698618,
+      "wave": "core-axis",
+      "search": "searches/core-axis/30deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784759397.941974,
+      "wave": "core-axis",
+      "search": "searches/core-axis/30deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784759398.202327,
+      "wave": "core-axis",
+      "search": "searches/core-axis/30deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784760358.47557,
+      "wave": "core-axis",
+      "search": "searches/core-axis/30deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784760358.722143,
+      "wave": "core-axis",
+      "search": "searches/core-axis/35deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784761322.168482,
+      "wave": "core-axis",
+      "search": "searches/core-axis/35deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784761322.4233909,
+      "wave": "core-axis",
+      "search": "searches/core-axis/35deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784762096.523446,
+      "wave": "core-axis",
+      "search": "searches/core-axis/30deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784762096.7835038,
+      "wave": "core-axis",
+      "search": "searches/core-axis/35deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784762699.4924119,
+      "wave": "core-axis",
+      "search": "searches/core-axis/35deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784762699.7573261,
+      "wave": "core-axis",
+      "search": "searches/core-axis/35deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784763682.979014,
+      "wave": "core-axis",
+      "search": "searches/core-axis/35deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784763683.2463639,
+      "wave": "core-axis",
+      "search": "searches/core-axis/35deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784764755.8890471,
+      "wave": "core-axis",
+      "search": "searches/core-axis/35deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784764756.174082,
+      "wave": "core-axis",
+      "search": "searches/core-axis/40deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784765633.0981078,
+      "wave": "core-axis",
+      "search": "searches/core-axis/40deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784765633.3854709,
+      "wave": "core-axis",
+      "search": "searches/core-axis/40deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784766253.92259,
+      "wave": "core-axis",
+      "search": "searches/core-axis/35deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784766254.2146251,
+      "wave": "core-axis",
+      "search": "searches/core-axis/40deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784766860.410259,
+      "wave": "core-axis",
+      "search": "searches/core-axis/40deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784766860.707826,
+      "wave": "core-axis",
+      "search": "searches/core-axis/40deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784767698.0673459,
+      "wave": "core-axis",
+      "search": "searches/core-axis/40deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784767698.3686998,
+      "wave": "core-axis",
+      "search": "searches/core-axis/40deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784768714.8774111,
+      "wave": "core-axis",
+      "search": "searches/core-axis/40deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784768715.186922,
+      "wave": "core-axis",
+      "search": "searches/core-axis/45deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784769552.9346461,
+      "wave": "core-axis",
+      "search": "searches/core-axis/45deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784769553.2517052,
+      "wave": "core-axis",
+      "search": "searches/core-axis/45deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784770022.848332,
+      "wave": "core-axis",
+      "search": "searches/core-axis/40deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784770023.1614249,
+      "wave": "core-axis",
+      "search": "searches/core-axis/45deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784770599.194844,
+      "wave": "core-axis",
+      "search": "searches/core-axis/45deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784770599.528308,
+      "wave": "core-axis",
+      "search": "searches/core-axis/45deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784771383.628721,
+      "wave": "core-axis",
+      "search": "searches/core-axis/45deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784771383.961361,
+      "wave": "core-axis",
+      "search": "searches/core-axis/45deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784772426.142602,
+      "wave": "core-axis",
+      "search": "searches/core-axis/45deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784772426.4761531,
+      "wave": "core-axis",
+      "search": "searches/core-axis/50deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784773213.201163,
+      "wave": "core-axis",
+      "search": "searches/core-axis/50deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784773213.545718,
+      "wave": "core-axis",
+      "search": "searches/core-axis/50deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784773565.619659,
+      "wave": "core-axis",
+      "search": "searches/core-axis/45deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784773565.983915,
+      "wave": "core-axis",
+      "search": "searches/core-axis/50deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784774164.030328,
+      "wave": "core-axis",
+      "search": "searches/core-axis/50deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784774164.3860989,
+      "wave": "core-axis",
+      "search": "searches/core-axis/50deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784774480.167503,
+      "wave": "core-axis",
+      "search": "searches/core-axis/50deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784774480.526717,
+      "wave": "core-axis",
+      "search": "searches/core-axis/50deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784775521.1965172,
+      "wave": "core-axis",
+      "search": "searches/core-axis/50deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784775521.589172,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/30deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784775643.303869,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/30deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784775643.671861,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/30deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784775803.56005,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/30deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784775803.93551,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/30deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784775998.341631,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/30deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784775998.7014909,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/30deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784776229.2358441,
+      "wave": "core-axis",
+      "search": "searches/core-axis/50deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784776229.595149,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/30deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784776444.162009,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/30deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784776444.562589,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/35deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784776577.0787241,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/35deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784776577.480576,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/35deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784776750.3852448,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/35deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784776750.752445,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/35deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784776755.456564,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/30deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784776755.824248,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/35deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784777153.962312,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/35deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784777154.344002,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/35deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784777245.716183,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/35deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784777246.086754,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/40deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784777391.7835772,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/40deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784777392.16029,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/40deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784777600.460048,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/35deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784777600.841734,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/40deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784777650.333479,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/40deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784777650.712289,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/40deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784777967.380746,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/40deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784777967.75968,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/45deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784778074.109429,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/40deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784778074.493883,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/45deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784778138.3741271,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/45deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784778138.748557,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/45deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784778287.3569689,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/45deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784778287.75861,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/45deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784778448.0496929,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/45deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784778448.467678,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/50deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784778584.829215,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/50deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784778585.216465,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/50deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784778678.090888,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/45deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784778678.480504,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/50deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784778732.846698,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/50deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784778733.238563,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/50deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784778895.8322911,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/50deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784778896.2097769,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/50deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784778990.6582348,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/50deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784779196.797287,
+      "wave": "boundary-sentinel",
+      "search": "searches/boundary-sentinel/50deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784779198.049748,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/250x250-closure-K-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784779198.433718,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/250x250-closure-N-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784779363.209067,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/250x250-closure-N-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784779363.636362,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/300x300-closure-K-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784779372.294803,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/250x250-closure-K-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784779372.682165,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/300x300-closure-N-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784779613.963375,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/300x300-closure-N-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784779614.3572822,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/350x350-closure-K-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784779619.4260328,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/300x300-closure-K-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784779619.817951,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/400x400-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784779924.966788,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/350x350-closure-K-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784779925.356363,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/400x400-closure-K-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784779942.4486752,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/400x400-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784779942.840619,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/400x400-closure-N-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784780299.130591,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/400x400-closure-K-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784780299.527956,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/450x450-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784780318.572261,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/400x400-closure-N-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784780318.979585,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/450x450-closure-K-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784780659.651068,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/450x450-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784780660.053069,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/450x450-closure-N-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784780752.232526,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/450x450-closure-K-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784780752.6224508,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/300x300-closure-K-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784781001.784029,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/300x300-closure-K-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784781002.178266,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/350x350-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784781074.035915,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/450x450-closure-N-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784781074.433994,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/350x350-closure-K-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784781215.2762082,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/350x350-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784781215.674092,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/350x350-closure-N-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784781338.26771,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/350x350-closure-K-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784781338.684264,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/400x400-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784781454.269197,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/350x350-closure-N-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784781454.694509,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/400x400-closure-K-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784781618.277666,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/400x400-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784781618.69773,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/400x400-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784781776.775881,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/400x400-closure-K-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784781777.1632771,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/450x450-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784782058.99288,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/400x400-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784782059.4028292,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/450x450-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784782129.166303,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/450x450-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784782129.568091,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/250x250-closure-K-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784782272.454057,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/250x250-closure-K-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784782272.855615,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/300x300-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784782451.676907,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/300x300-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784782452.074317,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/300x300-closure-K-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784782571.583949,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/450x450-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784782571.9855292,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/350x350-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784782634.078569,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/300x300-closure-K-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784782634.479027,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/350x350-closure-K-low",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784782761.928968,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/350x350-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784782762.336113,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/350x350-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784782848.370453,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/350x350-closure-K-low",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784782848.764752,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/400x400-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784783039.222306,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/350x350-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784783039.624732,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/400x400-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784783097.8144152,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/400x400-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784783098.200821,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/450x450-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784783418.660641,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/450x450-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784783419.198828,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/450x450-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784783421.577259,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/400x400-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784783422.003953,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/300x300-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784783564.432353,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/300x300-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784783564.842852,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/350x350-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784783770.12421,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/350x350-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784783770.531549,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/350x350-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784783867.1281438,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/450x450-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784783867.536941,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/400x400-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784783990.878502,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/350x350-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784783991.3089259,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/400x400-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784784099.628437,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/400x400-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784784100.03877,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/450x450-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784784329.863959,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/400x400-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784784330.301431,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/450x450-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784784398.1667972,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/450x450-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784784398.5823958,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/300x300-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784784536.6994402,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/300x300-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784784537.104228,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/300x300-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784784709.691607,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/300x300-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784784710.112993,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/350x350-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784784733.3415182,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/450x450-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784784733.7704692,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/350x350-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784784893.736772,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/350x350-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784784894.155199,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/400x400-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784784939.586967,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/350x350-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784784940.0034711,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/400x400-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784785111.959379,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/400x400-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784785112.3773491,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/450x450-closure-K-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784785205.810861,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/400x400-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784785206.229871,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/450x450-closure-L-high",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784785398.7558641,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/450x450-closure-K-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784785399.1708102,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/30deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784785557.998282,
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/450x450-closure-L-high",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784785558.423769,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/30deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784786378.765804,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/30deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784786379.237903,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/30deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784787172.045884,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/30deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784787172.4819,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/30deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784788367.088161,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/30deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784788367.525679,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/30deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784790336.149667,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/30deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784790336.60573,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/35deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784791255.9165812,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/35deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784791256.461969,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/35deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784792423.9382489,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/30deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784792424.4406478,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/35deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784792550.651284,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/35deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784792551.116374,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/35deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784794160.707736,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/35deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784794161.2189271,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/35deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784795228.0433211,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/35deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784795228.522963,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/40deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784796068.029331,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/40deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784796068.513599,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/40deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784797385.570543,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/40deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784797386.062908,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/40deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784797430.206544,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/35deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784797430.732715,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/40deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784799246.5801358,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/40deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784799247.12462,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/40deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784799879.850256,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/40deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784799880.371825,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/45deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784800570.783066,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/45deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784800571.354811,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/45deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784801940.124816,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/45deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784801940.661749,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/45deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784802639.466516,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/40deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784802639.996792,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/45deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784803749.919806,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/45deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784803750.466938,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/45deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784804620.8503969,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/45deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784804621.434981,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/50deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784805263.87363,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/50deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784805264.435918,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/50deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784806526.447493,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/50deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784806527.00455,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/50deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784806592.1423109,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/45deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784806592.7351098,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/50deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784808206.101249,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/50deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784808206.684565,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/50deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784808651.626734,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/50deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784808652.209714,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/30deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784809200.523774,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/30deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784809201.107618,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/30deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784809981.291945,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/30deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784809981.890836,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/30deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784810876.316351,
+      "wave": "two-factor-face",
+      "search": "searches/two-factor-face/50deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784810876.904979,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/30deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784810949.7411442,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/30deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784810950.3789282,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/30deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784812470.111358,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/30deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784812470.7674701,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/35deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784812905.903646,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/30deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784812906.503648,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/35deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784812988.5057669,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/35deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784812989.113046,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/35deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784813628.071598,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/35deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784813628.6724968,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/35deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784814108.332982,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/35deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784814108.939741,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/35deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784815057.615019,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/35deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784815058.24444,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/40deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784815527.5915189,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/40deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784815528.272872,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/40deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784815786.936137,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/35deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784815787.574948,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/40deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784816182.948735,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/40deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784816183.59393,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/40deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784816798.629994,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/40deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784816799.2948322,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/40deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784817476.0922408,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/40deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784817476.7850292,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/45deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784818064.839705,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/45deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784818065.4822621,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/45deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784818517.1189241,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/40deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784818517.764701,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/45deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784818657.8789241,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/45deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784818658.5215812,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/45deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784819288.4152162,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/45deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784819289.066656,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/45deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784819630.2899892,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/45deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784819630.941018,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/50deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784820190.292353,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/50deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784820190.9610739,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/50deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784820510.950507,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/45deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784820511.685059,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/50deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784820725.775629,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/50deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784820726.4914188,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/50deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784821446.434592,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/50deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784821447.101942,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/50deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784821881.618478,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/50deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784821882.291404,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/30deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784822166.885515,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/30deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784822167.573002,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/30deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784822578.398871,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/30deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784822579.1294131,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/30deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784822946.026388,
+      "wave": "three-factor-corner",
+      "search": "searches/three-factor-corner/50deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784822946.748736,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/30deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784823071.144112,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/30deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784823071.821999,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/30deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784823621.786022,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/30deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784823622.477002,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/35deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784823803.472896,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/30deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784823804.152828,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/35deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784823898.944627,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/35deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784823899.636425,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/35deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784824181.149313,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/35deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784824181.863507,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/35deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784824352.870914,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/35deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784824353.595196,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/35deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784824747.220084,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/35deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784824747.9258199,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/40deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784825013.204382,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/40deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784825013.9037929,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/40deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784825084.451683,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/35deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784825085.145202,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/40deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784825348.155497,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/40deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784825348.8554409,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/40deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784825503.817068,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/40deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784825504.615087,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/40deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784825868.8386781,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/40deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784825869.535726,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/45deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784826115.041218,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/45deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784826115.75299,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/45deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784826158.738783,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/40deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784826159.437902,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/45deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784826408.673625,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/45deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784826409.37556,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/45deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784826553.3518028,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/45deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784826554.055868,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/45deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784826871.634274,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/45deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784826872.356085,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/50deg/250x250",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784827099.163382,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/50deg/250x250",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784827099.885262,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/50deg/300x300",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784827161.575089,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/45deg/450x450",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784827162.345613,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/50deg/350x350",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784827366.213846,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/50deg/300x300",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784827366.9351108,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/50deg/400x400",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784827533.675437,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/50deg/350x350",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784827534.379006,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/50deg/450x450",
+      "status": "started"
+    },
+    {
+      "time_unix": 1784827824.324838,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/50deg/400x400",
+      "status": "complete"
+    },
+    {
+      "time_unix": 1784828076.633638,
+      "wave": "locked-validation",
+      "search": "searches/locked-validation/50deg/450x450",
+      "status": "complete"
+    }
+  ],
+  "skipped_searches": [
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/250x250-closure-K-high",
+      "coordinate_ids": [
+        "30d-250mm-closure-K-high"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/300x300-closure-K-high",
+      "coordinate_ids": [
+        "30d-300mm-closure-K-high"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/350x350-closure-K-high",
+      "coordinate_ids": [
+        "30d-350mm-closure-K-high"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/30deg/350x350-closure-N-low",
+      "coordinate_ids": [
+        "30d-350mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/250x250-closure-K-high",
+      "coordinate_ids": [
+        "35d-250mm-closure-K-high"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/250x250-closure-N-low",
+      "coordinate_ids": [
+        "35d-250mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/300x300-closure-K-high",
+      "coordinate_ids": [
+        "35d-300mm-closure-K-high"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/300x300-closure-N-low",
+      "coordinate_ids": [
+        "35d-300mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/400x400-closure-N-low",
+      "coordinate_ids": [
+        "35d-400mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/450x450-closure-K-low",
+      "coordinate_ids": [
+        "35d-450mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/35deg/450x450-closure-N-low",
+      "coordinate_ids": [
+        "35d-450mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/250x250-closure-K-high",
+      "coordinate_ids": [
+        "40d-250mm-closure-K-high"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/250x250-closure-N-low",
+      "coordinate_ids": [
+        "40d-250mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/300x300-closure-N-low",
+      "coordinate_ids": [
+        "40d-300mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/350x350-closure-N-low",
+      "coordinate_ids": [
+        "40d-350mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/400x400-closure-K-low",
+      "coordinate_ids": [
+        "40d-400mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/400x400-closure-N-low",
+      "coordinate_ids": [
+        "40d-400mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/450x450-closure-K-low",
+      "coordinate_ids": [
+        "40d-450mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/40deg/450x450-closure-N-low",
+      "coordinate_ids": [
+        "40d-450mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/250x250-closure-K-high",
+      "coordinate_ids": [
+        "45d-250mm-closure-K-high"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/250x250-closure-K-low",
+      "coordinate_ids": [
+        "45d-250mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/250x250-closure-N-low",
+      "coordinate_ids": [
+        "45d-250mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/300x300-closure-K-low",
+      "coordinate_ids": [
+        "45d-300mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/300x300-closure-N-low",
+      "coordinate_ids": [
+        "45d-300mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/350x350-closure-K-low",
+      "coordinate_ids": [
+        "45d-350mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/350x350-closure-N-low",
+      "coordinate_ids": [
+        "45d-350mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/400x400-closure-K-low",
+      "coordinate_ids": [
+        "45d-400mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/400x400-closure-N-low",
+      "coordinate_ids": [
+        "45d-400mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/450x450-closure-K-low",
+      "coordinate_ids": [
+        "45d-450mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/45deg/450x450-closure-N-low",
+      "coordinate_ids": [
+        "45d-450mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/250x250-closure-K-high",
+      "coordinate_ids": [
+        "50d-250mm-closure-K-high"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/250x250-closure-K-low",
+      "coordinate_ids": [
+        "50d-250mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/250x250-closure-N-low",
+      "coordinate_ids": [
+        "50d-250mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/300x300-closure-K-low",
+      "coordinate_ids": [
+        "50d-300mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/300x300-closure-N-low",
+      "coordinate_ids": [
+        "50d-300mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/350x350-closure-K-low",
+      "coordinate_ids": [
+        "50d-350mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/350x350-closure-N-low",
+      "coordinate_ids": [
+        "50d-350mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/400x400-closure-K-low",
+      "coordinate_ids": [
+        "50d-400mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/400x400-closure-N-low",
+      "coordinate_ids": [
+        "50d-400mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/450x450-closure-K-low",
+      "coordinate_ids": [
+        "50d-450mm-closure-K-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    },
+    {
+      "wave": "axis-closure",
+      "search": "searches/axis-closure/50deg/450x450-closure-N-low",
+      "coordinate_ids": [
+        "50d-450mm-closure-N-low"
+      ],
+      "reason": "closed-at-inner-endpoint"
+    }
+  ],
+  "axis_closure_decisions": {
+    "30d-250mm-closure-K-low": {
+      "decision": "run",
+      "center": "30d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-250mm-L+0-K-1-N+0",
+      "score_change": -5.3334154267702445,
+      "material_diagnostic_improvement": true
+    },
+    "30d-250mm-closure-K-high": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "30d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-250mm-L+0-K+1-N+0",
+      "score_change": -1.2438278202162252,
+      "material_diagnostic_improvement": false
+    },
+    "30d-250mm-closure-N-low": {
+      "decision": "run",
+      "center": "30d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-250mm-L+0-K+0-N-1",
+      "score_change": 0.7166801113111774,
+      "material_diagnostic_improvement": false
+    },
+    "30d-300mm-closure-K-low": {
+      "decision": "run",
+      "center": "30d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-300mm-L+0-K-1-N+0",
+      "score_change": -11.344920461095981,
+      "material_diagnostic_improvement": true
+    },
+    "30d-300mm-closure-K-high": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "30d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-300mm-L+0-K+1-N+0",
+      "score_change": -2.410964930241903,
+      "material_diagnostic_improvement": false
+    },
+    "30d-300mm-closure-N-low": {
+      "decision": "run",
+      "center": "30d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-300mm-L+0-K+0-N-1",
+      "score_change": 0.21494496036918065,
+      "material_diagnostic_improvement": true
+    },
+    "30d-350mm-closure-K-low": {
+      "decision": "run",
+      "center": "30d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-350mm-L+0-K-1-N+0",
+      "score_change": -13.462803743030548,
+      "material_diagnostic_improvement": true
+    },
+    "30d-350mm-closure-K-high": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "30d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-350mm-L+0-K+1-N+0",
+      "score_change": -2.491418087928537,
+      "material_diagnostic_improvement": false
+    },
+    "30d-350mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "30d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-350mm-L+0-K+0-N-1",
+      "score_change": -0.754292108211942,
+      "material_diagnostic_improvement": false
+    },
+    "30d-400mm-closure-K-low": {
+      "decision": "run",
+      "center": "30d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-400mm-L+0-K-1-N+0",
+      "score_change": -8.03409381437163,
+      "material_diagnostic_improvement": true
+    },
+    "30d-400mm-closure-K-high": {
+      "decision": "run",
+      "center": "30d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-400mm-L+0-K+1-N+0",
+      "score_change": -3.84666289012587,
+      "material_diagnostic_improvement": true
+    },
+    "30d-400mm-closure-N-low": {
+      "decision": "run",
+      "center": "30d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-400mm-L+0-K+0-N-1",
+      "score_change": 0.426817322890372,
+      "material_diagnostic_improvement": true
+    },
+    "30d-450mm-closure-K-low": {
+      "decision": "run",
+      "center": "30d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-450mm-L+0-K-1-N+0",
+      "score_change": -10.96274660339995,
+      "material_diagnostic_improvement": true
+    },
+    "30d-450mm-closure-K-high": {
+      "decision": "run",
+      "center": "30d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-450mm-L+0-K+1-N+0",
+      "score_change": -3.1288871175400317,
+      "material_diagnostic_improvement": true
+    },
+    "30d-450mm-closure-N-low": {
+      "decision": "run",
+      "center": "30d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "30d-450mm-L+0-K+0-N-1",
+      "score_change": 0.03197511422604293,
+      "material_diagnostic_improvement": true
+    },
+    "35d-250mm-closure-K-high": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "35d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-250mm-L+0-K+1-N+0",
+      "score_change": -1.073039991654582,
+      "material_diagnostic_improvement": false
+    },
+    "35d-250mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "35d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-250mm-L+0-K+0-N-1",
+      "score_change": -0.7255444210538826,
+      "material_diagnostic_improvement": false
+    },
+    "35d-300mm-closure-K-low": {
+      "decision": "run",
+      "center": "35d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-300mm-L+0-K-1-N+0",
+      "score_change": -23.829600709297083,
+      "material_diagnostic_improvement": true
+    },
+    "35d-300mm-closure-K-high": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "35d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-300mm-L+0-K+1-N+0",
+      "score_change": -1.4638499104214588,
+      "material_diagnostic_improvement": false
+    },
+    "35d-300mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "35d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-300mm-L+0-K+0-N-1",
+      "score_change": -2.3865818691247114,
+      "material_diagnostic_improvement": false
+    },
+    "35d-350mm-closure-K-low": {
+      "decision": "run",
+      "center": "35d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-350mm-L+0-K-1-N+0",
+      "score_change": -8.47060595558483,
+      "material_diagnostic_improvement": true
+    },
+    "35d-350mm-closure-K-high": {
+      "decision": "run",
+      "center": "35d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-350mm-L+0-K+1-N+0",
+      "score_change": -2.262024641604711,
+      "material_diagnostic_improvement": true
+    },
+    "35d-350mm-closure-N-low": {
+      "decision": "run",
+      "center": "35d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-350mm-L+0-K+0-N-1",
+      "score_change": -0.24774999254182717,
+      "material_diagnostic_improvement": true
+    },
+    "35d-400mm-closure-L-high": {
+      "decision": "run",
+      "center": "35d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-400mm-boundary-L2",
+      "score_change": -20.95934400175706,
+      "material_diagnostic_improvement": true
+    },
+    "35d-400mm-closure-K-low": {
+      "decision": "run",
+      "center": "35d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-400mm-L+0-K-1-N+0",
+      "score_change": -9.39824331475478,
+      "material_diagnostic_improvement": true
+    },
+    "35d-400mm-closure-K-high": {
+      "decision": "run",
+      "center": "35d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-400mm-L+0-K+1-N+0",
+      "score_change": -4.342364000507345,
+      "material_diagnostic_improvement": true
+    },
+    "35d-400mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "35d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-400mm-L+0-K+0-N-1",
+      "score_change": -0.6055382404395999,
+      "material_diagnostic_improvement": false
+    },
+    "35d-450mm-closure-L-high": {
+      "decision": "run",
+      "center": "35d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-450mm-boundary-L2",
+      "score_change": -23.251272101018387,
+      "material_diagnostic_improvement": true
+    },
+    "35d-450mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "35d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-450mm-L+0-K-1-N+0",
+      "score_change": -10.790224443831704,
+      "material_diagnostic_improvement": false
+    },
+    "35d-450mm-closure-K-high": {
+      "decision": "run",
+      "center": "35d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-450mm-L+0-K+1-N+0",
+      "score_change": -2.724288278416438,
+      "material_diagnostic_improvement": true
+    },
+    "35d-450mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "35d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "35d-450mm-L+0-K+0-N-1",
+      "score_change": -0.792139879020084,
+      "material_diagnostic_improvement": false
+    },
+    "40d-250mm-closure-K-low": {
+      "decision": "run",
+      "center": "40d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-250mm-L+0-K-1-N+0",
+      "score_change": -16.25037690738941,
+      "material_diagnostic_improvement": true
+    },
+    "40d-250mm-closure-K-high": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "40d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-250mm-L+0-K+1-N+0",
+      "score_change": -2.368229965551521,
+      "material_diagnostic_improvement": false
+    },
+    "40d-250mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "40d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-250mm-L+0-K+0-N-1",
+      "score_change": -0.8585214947704287,
+      "material_diagnostic_improvement": false
+    },
+    "40d-300mm-closure-K-low": {
+      "decision": "run",
+      "center": "40d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-300mm-L+0-K-1-N+0",
+      "score_change": -18.37522984759596,
+      "material_diagnostic_improvement": true
+    },
+    "40d-300mm-closure-K-high": {
+      "decision": "run",
+      "center": "40d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-300mm-L+0-K+1-N+0",
+      "score_change": -2.1885763707034442,
+      "material_diagnostic_improvement": true
+    },
+    "40d-300mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "40d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-300mm-L+0-K+0-N-1",
+      "score_change": -2.5252868060994444,
+      "material_diagnostic_improvement": false
+    },
+    "40d-350mm-closure-L-high": {
+      "decision": "run",
+      "center": "40d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-350mm-boundary-L2",
+      "score_change": -21.536159210107584,
+      "material_diagnostic_improvement": true
+    },
+    "40d-350mm-closure-K-low": {
+      "decision": "run",
+      "center": "40d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-350mm-L+0-K-1-N+0",
+      "score_change": -8.705051085027577,
+      "material_diagnostic_improvement": true
+    },
+    "40d-350mm-closure-K-high": {
+      "decision": "run",
+      "center": "40d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-350mm-L+0-K+1-N+0",
+      "score_change": -4.088903769913642,
+      "material_diagnostic_improvement": true
+    },
+    "40d-350mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "40d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-350mm-L+0-K+0-N-1",
+      "score_change": -1.1651319194401424,
+      "material_diagnostic_improvement": false
+    },
+    "40d-400mm-closure-L-high": {
+      "decision": "run",
+      "center": "40d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-400mm-boundary-L2",
+      "score_change": -24.507005076218746,
+      "material_diagnostic_improvement": true
+    },
+    "40d-400mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "40d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-400mm-L+0-K-1-N+0",
+      "score_change": -10.7492888872099,
+      "material_diagnostic_improvement": false
+    },
+    "40d-400mm-closure-K-high": {
+      "decision": "run",
+      "center": "40d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-400mm-L+0-K+1-N+0",
+      "score_change": -2.734483419303217,
+      "material_diagnostic_improvement": true
+    },
+    "40d-400mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "40d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-400mm-L+0-K+0-N-1",
+      "score_change": -1.7776966172982895,
+      "material_diagnostic_improvement": false
+    },
+    "40d-450mm-closure-L-high": {
+      "decision": "run",
+      "center": "40d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-450mm-boundary-L2",
+      "score_change": -12.889014081301582,
+      "material_diagnostic_improvement": true
+    },
+    "40d-450mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "40d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-450mm-L+0-K-1-N+0",
+      "score_change": -9.119894471521661,
+      "material_diagnostic_improvement": false
+    },
+    "40d-450mm-closure-K-high": {
+      "decision": "run",
+      "center": "40d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-450mm-L+0-K+1-N+0",
+      "score_change": -2.363651620358567,
+      "material_diagnostic_improvement": true
+    },
+    "40d-450mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "40d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "40d-450mm-L+0-K+0-N-1",
+      "score_change": -1.6686269839085952,
+      "material_diagnostic_improvement": false
+    },
+    "45d-250mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "45d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-250mm-L+0-K-1-N+0",
+      "score_change": -16.81031097522157,
+      "material_diagnostic_improvement": false
+    },
+    "45d-250mm-closure-K-high": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "45d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-250mm-L+0-K+1-N+0",
+      "score_change": -2.667948939189813,
+      "material_diagnostic_improvement": false
+    },
+    "45d-250mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "45d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-250mm-L+0-K+0-N-1",
+      "score_change": -2.43142657521976,
+      "material_diagnostic_improvement": false
+    },
+    "45d-300mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "45d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-300mm-L+0-K-1-N+0",
+      "score_change": -7.267727897765695,
+      "material_diagnostic_improvement": false
+    },
+    "45d-300mm-closure-K-high": {
+      "decision": "run",
+      "center": "45d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-300mm-L+0-K+1-N+0",
+      "score_change": -2.9598110602922816,
+      "material_diagnostic_improvement": true
+    },
+    "45d-300mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "45d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-300mm-L+0-K+0-N-1",
+      "score_change": -1.8949751279231748,
+      "material_diagnostic_improvement": false
+    },
+    "45d-350mm-closure-L-high": {
+      "decision": "run",
+      "center": "45d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-350mm-boundary-L2",
+      "score_change": -14.048141778164677,
+      "material_diagnostic_improvement": true
+    },
+    "45d-350mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "45d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-350mm-L+0-K-1-N+0",
+      "score_change": -8.29287770336174,
+      "material_diagnostic_improvement": false
+    },
+    "45d-350mm-closure-K-high": {
+      "decision": "run",
+      "center": "45d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-350mm-L+0-K+1-N+0",
+      "score_change": -4.490401707894392,
+      "material_diagnostic_improvement": true
+    },
+    "45d-350mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "45d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-350mm-L+0-K+0-N-1",
+      "score_change": -2.917952731246544,
+      "material_diagnostic_improvement": false
+    },
+    "45d-400mm-closure-L-high": {
+      "decision": "run",
+      "center": "45d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-400mm-boundary-L2",
+      "score_change": -19.407346769513623,
+      "material_diagnostic_improvement": true
+    },
+    "45d-400mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "45d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-400mm-L+0-K-1-N+0",
+      "score_change": -9.90761629513895,
+      "material_diagnostic_improvement": false
+    },
+    "45d-400mm-closure-K-high": {
+      "decision": "run",
+      "center": "45d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-400mm-L+0-K+1-N+0",
+      "score_change": -2.0817680721149117,
+      "material_diagnostic_improvement": true
+    },
+    "45d-400mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "45d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-400mm-L+0-K+0-N-1",
+      "score_change": -3.0093339551579845,
+      "material_diagnostic_improvement": false
+    },
+    "45d-450mm-closure-L-high": {
+      "decision": "run",
+      "center": "45d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-450mm-boundary-L2",
+      "score_change": -16.26655407462613,
+      "material_diagnostic_improvement": true
+    },
+    "45d-450mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "45d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-450mm-L+0-K-1-N+0",
+      "score_change": -9.999900506032219,
+      "material_diagnostic_improvement": false
+    },
+    "45d-450mm-closure-K-high": {
+      "decision": "run",
+      "center": "45d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-450mm-L+0-K+1-N+0",
+      "score_change": -0.4341689020757542,
+      "material_diagnostic_improvement": true
+    },
+    "45d-450mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "45d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "45d-450mm-L+0-K+0-N-1",
+      "score_change": -3.005532717963149,
+      "material_diagnostic_improvement": false
+    },
+    "50d-250mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "50d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-250mm-L+0-K-1-N+0",
+      "score_change": -18.472217146467926,
+      "material_diagnostic_improvement": false
+    },
+    "50d-250mm-closure-K-high": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "50d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-250mm-L+0-K+1-N+0",
+      "score_change": -2.240373706498616,
+      "material_diagnostic_improvement": false
+    },
+    "50d-250mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "50d-250mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-250mm-L+0-K+0-N-1",
+      "score_change": -4.426530668387784,
+      "material_diagnostic_improvement": false
+    },
+    "50d-300mm-closure-L-high": {
+      "decision": "run",
+      "center": "50d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-300mm-boundary-L2",
+      "score_change": -15.586999339211388,
+      "material_diagnostic_improvement": true
+    },
+    "50d-300mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "50d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-300mm-L+0-K-1-N+0",
+      "score_change": -7.870893813759736,
+      "material_diagnostic_improvement": false
+    },
+    "50d-300mm-closure-K-high": {
+      "decision": "run",
+      "center": "50d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-300mm-L+0-K+1-N+0",
+      "score_change": -3.3634499876812356,
+      "material_diagnostic_improvement": true
+    },
+    "50d-300mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "50d-300mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-300mm-L+0-K+0-N-1",
+      "score_change": -3.342435849548991,
+      "material_diagnostic_improvement": false
+    },
+    "50d-350mm-closure-L-high": {
+      "decision": "run",
+      "center": "50d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-350mm-boundary-L2",
+      "score_change": -11.093029158426262,
+      "material_diagnostic_improvement": true
+    },
+    "50d-350mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "50d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-350mm-L+0-K-1-N+0",
+      "score_change": -8.198219830795423,
+      "material_diagnostic_improvement": false
+    },
+    "50d-350mm-closure-K-high": {
+      "decision": "run",
+      "center": "50d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-350mm-L+0-K+1-N+0",
+      "score_change": -3.697648421767539,
+      "material_diagnostic_improvement": true
+    },
+    "50d-350mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "50d-350mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-350mm-L+0-K+0-N-1",
+      "score_change": -4.403279910654035,
+      "material_diagnostic_improvement": false
+    },
+    "50d-400mm-closure-L-high": {
+      "decision": "run",
+      "center": "50d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-400mm-boundary-L2",
+      "score_change": -12.098631530001072,
+      "material_diagnostic_improvement": true
+    },
+    "50d-400mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "50d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-400mm-L+0-K-1-N+0",
+      "score_change": -8.833352024747228,
+      "material_diagnostic_improvement": false
+    },
+    "50d-400mm-closure-K-high": {
+      "decision": "run",
+      "center": "50d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-400mm-L+0-K+1-N+0",
+      "score_change": -1.2336813540646858,
+      "material_diagnostic_improvement": true
+    },
+    "50d-400mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "50d-400mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-400mm-L+0-K+0-N-1",
+      "score_change": -4.007303155973929,
+      "material_diagnostic_improvement": false
+    },
+    "50d-450mm-closure-L-high": {
+      "decision": "run",
+      "center": "50d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-450mm-boundary-L2",
+      "score_change": -8.685725654265156,
+      "material_diagnostic_improvement": true
+    },
+    "50d-450mm-closure-K-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "50d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-450mm-L+0-K-1-N+0",
+      "score_change": -8.224735429660754,
+      "material_diagnostic_improvement": false
+    },
+    "50d-450mm-closure-K-high": {
+      "decision": "run",
+      "center": "50d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-450mm-L+0-K+1-N+0",
+      "score_change": -1.1236261465201522,
+      "material_diagnostic_improvement": true
+    },
+    "50d-450mm-closure-N-low": {
+      "decision": "closed-at-inner-endpoint",
+      "center": "50d-450mm-L+0-K+0-N+0",
+      "inner_endpoint": "50d-450mm-L+0-K+0-N-1",
+      "score_change": -4.228701496358994,
+      "material_diagnostic_improvement": false
+    }
+  },
+  "completed_at_unix": 1784828077.331829,
+  "failure_count": 0
+}
