@@ -3377,6 +3377,63 @@
           }
         }
       },
+      "throat_impedance_diagnostics": {
+        "components": {
+          "crossover_loading": 50.413500748463,
+          "excess_variation": 85.06742469765152,
+          "ripple": 91.50507836748015,
+          "shelf_stability": 85.10309333679567
+        },
+        "crossover": {
+          "band": {
+            "lower_frequency_hz": 500.0,
+            "peak_normalized_mean_magnitude": 0.5358844499539632,
+            "samples_per_octave": 48,
+            "upper_frequency_hz": 1500.0
+          },
+          "component_weights": {
+            "at_crossover": 0.5,
+            "crossover_band": 0.5
+          },
+          "frequency_hz": 750.0,
+          "magnitude": 0.5744249533670076,
+          "passes_target": true,
+          "peak_magnitude": 1.2160086927050928,
+          "peak_normalized_magnitude": 0.4723855650152967,
+          "shelf_ratio": 0.5285543613915957,
+          "target_ratio": 0.5
+        },
+        "diagnostic_version": "2.0.0",
+        "error_references": {
+          "excess_variation_db_per_octave": 3.0,
+          "ripple_rms_db": 1.0,
+          "shelf_rms_db": 1.0,
+          "shelf_slope_db_per_octave": 1.0
+        },
+        "overall_percent": 57.989120964457896,
+        "samples_per_octave": 48,
+        "score_weights": {
+          "crossover_loading": 0.8,
+          "excess_variation": 0.07,
+          "ripple": 0.1,
+          "shelf_stability": 0.03
+        },
+        "shelf": {
+          "lower_frequency_hz": 2449.4897427831793,
+          "reference_magnitude": 1.0867850032580229,
+          "reference_method": "10% trimmed geometric mean of upper half of logarithmic band",
+          "rms_deviation_db": 0.3123085953413656,
+          "slope_db_per_octave": -0.5141337193123646,
+          "upper_frequency_hz": 8000.0
+        },
+        "smoothness": {
+          "excess_variation_db_per_octave": 1.2569180668824267,
+          "reversal_count": 11,
+          "ripple_p95_db": 0.6146888458227912,
+          "ripple_rms_db": 0.30468922049989977
+        },
+        "status": "experimental"
+      },
       "values": {
         "extension_mm": 0.0,
         "k_h": 2.0,
@@ -6763,6 +6820,63 @@
             ]
           }
         }
+      },
+      "throat_impedance_diagnostics": {
+        "components": {
+          "crossover_loading": 51.53336531182175,
+          "excess_variation": 78.04677301386437,
+          "ripple": 92.07940419730292,
+          "shelf_stability": 81.93597908919394
+        },
+        "crossover": {
+          "band": {
+            "lower_frequency_hz": 500.0,
+            "peak_normalized_mean_magnitude": 0.5323825999548788,
+            "samples_per_octave": 48,
+            "upper_frequency_hz": 1500.0
+          },
+          "component_weights": {
+            "at_crossover": 0.5,
+            "crossover_band": 0.5
+          },
+          "frequency_hz": 750.0,
+          "magnitude": 0.6002891469105471,
+          "passes_target": true,
+          "peak_magnitude": 1.2047111607943939,
+          "peak_normalized_magnitude": 0.49828470628155613,
+          "shelf_ratio": 0.5521839168610707,
+          "target_ratio": 0.5
+        },
+        "diagnostic_version": "2.0.0",
+        "error_references": {
+          "excess_variation_db_per_octave": 3.0,
+          "ripple_rms_db": 1.0,
+          "shelf_rms_db": 1.0,
+          "shelf_slope_db_per_octave": 1.0
+        },
+        "overall_percent": 58.355986152834014,
+        "samples_per_octave": 48,
+        "score_weights": {
+          "crossover_loading": 0.8,
+          "excess_variation": 0.07,
+          "ripple": 0.1,
+          "shelf_stability": 0.03
+        },
+        "shelf": {
+          "lower_frequency_hz": 2449.4897427831793,
+          "reference_magnitude": 1.087118129631399,
+          "reference_method": "10% trimmed geometric mean of upper half of logarithmic band",
+          "rms_deviation_db": 0.3557698584523572,
+          "slope_db_per_octave": -0.5757010682802994,
+          "upper_frequency_hz": 8000.0
+        },
+        "smoothness": {
+          "excess_variation_db_per_octave": 1.5910834673708825,
+          "reversal_count": 7,
+          "ripple_p95_db": 0.5158986865900799,
+          "ripple_rms_db": 0.2932902835285886
+        },
+        "status": "experimental"
       },
       "values": {
         "extension_mm": 0.0,
@@ -10151,6 +10265,63 @@
           }
         }
       },
+      "throat_impedance_diagnostics": {
+        "components": {
+          "crossover_loading": 74.47968280780984,
+          "excess_variation": 54.98147599145495,
+          "ripple": 81.44994860550912,
+          "shelf_stability": 92.61473541413
+        },
+        "crossover": {
+          "band": {
+            "lower_frequency_hz": 500.0,
+            "peak_normalized_mean_magnitude": 0.7514786053171787,
+            "samples_per_octave": 48,
+            "upper_frequency_hz": 1500.0
+          },
+          "component_weights": {
+            "at_crossover": 0.5,
+            "crossover_band": 0.5
+          },
+          "frequency_hz": 750.0,
+          "magnitude": 0.8929647468896602,
+          "passes_target": true,
+          "peak_magnitude": 1.209790730963451,
+          "peak_normalized_magnitude": 0.7381150508390178,
+          "shelf_ratio": 0.8663406353035576,
+          "target_ratio": 0.5
+        },
+        "diagnostic_version": "2.0.0",
+        "error_references": {
+          "excess_variation_db_per_octave": 3.0,
+          "ripple_rms_db": 1.0,
+          "shelf_rms_db": 1.0,
+          "shelf_slope_db_per_octave": 1.0
+        },
+        "overall_percent": 74.35588648862453,
+        "samples_per_octave": 48,
+        "score_weights": {
+          "crossover_loading": 0.8,
+          "excess_variation": 0.07,
+          "ripple": 0.1,
+          "shelf_stability": 0.03
+        },
+        "shelf": {
+          "lower_frequency_hz": 2449.4897427831793,
+          "reference_magnitude": 1.0307316897086025,
+          "reference_method": "10% trimmed geometric mean of upper half of logarithmic band",
+          "rms_deviation_db": 0.37472027143390324,
+          "slope_db_per_octave": -0.15873936808863837,
+          "upper_frequency_hz": 8000.0
+        },
+        "smoothness": {
+          "excess_variation_db_per_octave": 2.714617743942913,
+          "reversal_count": 10,
+          "ripple_p95_db": 1.0369658292978847,
+          "ripple_rms_db": 0.4772293566018897
+        },
+        "status": "experimental"
+      },
       "values": {
         "extension_mm": 0.0,
         "k_h": 6.0,
@@ -13537,6 +13708,63 @@
             ]
           }
         }
+      },
+      "throat_impedance_diagnostics": {
+        "components": {
+          "crossover_loading": 57.7722710764905,
+          "excess_variation": 33.71199889681982,
+          "ripple": 72.72661374520993,
+          "shelf_stability": 90.51187333046332
+        },
+        "crossover": {
+          "band": {
+            "lower_frequency_hz": 500.0,
+            "peak_normalized_mean_magnitude": 0.6765520669490195,
+            "samples_per_octave": 48,
+            "upper_frequency_hz": 1500.0
+          },
+          "component_weights": {
+            "at_crossover": 0.5,
+            "crossover_band": 0.5
+          },
+          "frequency_hz": 750.0,
+          "magnitude": 0.6105221855781168,
+          "passes_target": true,
+          "peak_magnitude": 1.27486042505758,
+          "peak_normalized_magnitude": 0.4788933545807904,
+          "shelf_ratio": 0.5986317914646122,
+          "target_ratio": 0.5
+        },
+        "diagnostic_version": "2.0.0",
+        "error_references": {
+          "excess_variation_db_per_octave": 3.0,
+          "ripple_rms_db": 1.0,
+          "shelf_rms_db": 1.0,
+          "shelf_slope_db_per_octave": 1.0
+        },
+        "overall_percent": 58.565674358404685,
+        "samples_per_octave": 48,
+        "score_weights": {
+          "crossover_loading": 0.8,
+          "excess_variation": 0.07,
+          "ripple": 0.1,
+          "shelf_stability": 0.03
+        },
+        "shelf": {
+          "lower_frequency_hz": 2449.4897427831793,
+          "reference_magnitude": 1.0198626171931389,
+          "reference_method": "10% trimmed geometric mean of upper half of logarithmic band",
+          "rms_deviation_db": 0.31242599852608893,
+          "slope_db_per_octave": -0.33487369619140794,
+          "upper_frequency_hz": 8000.0
+        },
+        "smoothness": {
+          "excess_variation_db_per_octave": 4.206747683819805,
+          "reversal_count": 14,
+          "ripple_p95_db": 1.2594281695004703,
+          "ripple_rms_db": 0.6123826083360921
+        },
+        "status": "experimental"
       },
       "values": {
         "extension_mm": 0.0,

@@ -10,6 +10,7 @@ import json
 import math
 import os
 from pathlib import Path
+import time
 from typing import Any
 
 import numpy as np
@@ -451,7 +452,9 @@ def refresh_index(root: Path) -> Path:
         raise RuntimeError(f"missing manifest: {root / 'manifest.json'}")
     output = render_index(root, manifest, build_progress(root, manifest))
     path = root / "index.html"
-    path.write_text(output, encoding="utf-8")
+    temporary = path.with_suffix(".html.tmp")
+    temporary.write_text(output, encoding="utf-8")
+    temporary.replace(path)
     return path
 
 
@@ -459,8 +462,23 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("root", type=Path, nargs="?",
                         default=Path("examples/extension-throat-angle-heuristics"))
+    parser.add_argument(
+        "--watch-seconds", type=float, default=0.0,
+        help="refresh repeatedly while any study runtime ledger is running",
+    )
     args = parser.parse_args()
-    refresh_index(args.root.resolve())
+    root = args.root.resolve()
+    if args.watch_seconds < 0:
+        parser.error("--watch-seconds must be nonnegative")
+    while True:
+        refresh_index(root)
+        active = any(
+            _read_json(path).get("status") == "running"
+            for path in root.glob("runtime-*.json")
+        )
+        if not active or args.watch_seconds == 0:
+            break
+        time.sleep(args.watch_seconds)
 
 
 if __name__ == "__main__":

@@ -165,6 +165,11 @@ to measured combinations rather than inventing broader confidence.
 
 ## Throat impedance
 
+Reports use throat-impedance diagnostic v2.0.0. Crossover adequacy is dominant
+(80% of the score); ripple, excess variation, and upper-shelf behavior are
+secondary checks. This diagnostic remains separate from the radiation surface
+score and does not alter candidate ranking by surface score.
+
 Record the current experimental throat-impedance diagnostic and its component
 measurements for every response. Report its paired changes and validation errors
 beside the radiation diagnostics. It remains excluded from surface score,
