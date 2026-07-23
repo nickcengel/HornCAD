@@ -135,6 +135,11 @@ contract is specified in [`model_pipeline.md`](model_pipeline.md). The study is
 not complete merely because all simulations have finished; release requires the
 validated `models/round_control_v1/` artifact defined there.
 
+The staged extension of this baseline through conical extension, throat angle,
+round-to-square morphing, separate H/V behavior, and sag is defined in
+[`geometry_research_roadmap.md`](geometry_research_roadmap.md). That roadmap also
+fixes the meanings of OSSE length and total length for all later studies.
+
 ## Registered analysis
 
 For each of the 25 cells, fit the same terms: intercept, L, K, N, L², K², N²,
