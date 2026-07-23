@@ -130,6 +130,11 @@ steering effects, and all pruning decisions.
 
 `manifest.json` is authoritative. `index.html` is generated from it.
 
+The required post-BEM fitting, validation, rule-extraction, and portable export
+contract is specified in [`model_pipeline.md`](model_pipeline.md). The study is
+not complete merely because all simulations have finished; release requires the
+validated `models/round_control_v1/` artifact defined there.
+
 ## Registered analysis
 
 For each of the 25 cells, fit the same terms: intercept, L, K, N, L², K², N²,
