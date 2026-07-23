@@ -270,6 +270,12 @@ available through prediction but are not promoted to prose guidance.
 
 Python and browser implementations expose equivalent operations:
 
+The concrete Python value types and façade are scaffolded in `app.design_api`
+and documented in
+[`docs/reference/design_application_api.md`](../../docs/reference/design_application_api.md).
+That consumer contract must remain stable as the round backend grows correction
+layers for later geometry studies.
+
 ```text
 predict(mouth, coverage, length, K, N)
     -> diagnostics, intervals, derived geometry, support status

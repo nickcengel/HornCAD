@@ -17,6 +17,8 @@ new BEM work.
   planned frequency-resolved learning and steering work.
 - [Design recommendation map](plans/design_recommendation_map.md): intended
   model-backed user workflow after the current study validates.
+- [Horn design application API](reference/design_application_api.md): Python
+  inputs, predictions, diagnoses, recommendations, and experiment selection.
 
 The canonical round study is documented with its artifacts rather than copied
 into this directory:
