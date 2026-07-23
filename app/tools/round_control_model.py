@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import subprocess
 from typing import Any, Iterable
 
 import numpy as np
@@ -67,6 +68,15 @@ def _digest_file(path: Path) -> str:
 
 def _content_hash(value: Any) -> str:
     return _digest_bytes(_canonical_json(value).encode())
+
+
+def _source_git_commit() -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "log", "-1", "--format=%H", "--", str(Path(__file__))],
+            text=True).strip()
+    except (OSError, subprocess.CalledProcessError):
+        return "unavailable"
 
 
 def _normalize_numbers(value: Any) -> Any:
@@ -595,6 +605,7 @@ def _base_model(model_id: str, cells: dict[str, Any],
                 training_index["diagnostic_implementation_sha256"],
             "coordinate_hash": training_index["coordinate_hash"],
             "fitting_implementation_sha256": _digest_file(Path(__file__)),
+            "fitting_code_git_commit": _source_git_commit(),
         },
     }
 
