@@ -152,6 +152,32 @@ and then be added back to the measured dataset.
 
 ## Suggested implementation sequence
 
+The initial physical-scale association pass is implemented by
+`python -m app.tools.analyze_bunching_physical_scales`. It extracts broad
+positive bunching peaks from retained NPZ surfaces, derives analytic OSSE length
+scales, ranks dimensionless-frequency collapse, and separately tests matched
+one-control frequency shifts. Its report deliberately labels these results as
+associations until prospective canonical results validate them.
+
+The current regenerable snapshot is
+[`examples/control-decoupling/analysis/bunching_physical_scales.md`](../../examples/control-decoupling/analysis/bunching_physical_scales.md),
+with complete machine-readable evidence beside it. Its initial hypotheses are:
+
+- mouth width/radius and throat-to-mouth radial growth give the best
+  cross-candidate collapse, but are mutually correlated and do not establish a
+  causal scale;
+- matched OSSE-length changes currently do **not** support a simple inverse-OSSE-
+  length translation of the complete energy-departure curve;
+- for matched K changes, the distance from the half-radial-growth point to the
+  mouth is the strongest provisional predictor of curve translation;
+- the present matched N evidence is sparse and its curvature association is too
+  weak to promote.
+
+These statements must be regenerated and prospectively checked as canonical
+factorial and locked-validation results arrive. A best alignment that lands on
+the allowed shift-search boundary is excluded rather than presented as a
+measured translation.
+
 1. Persist the normalized per-frequency slice-energy curves and peak metadata.
 2. Add the candidate-report curve and target line.
 3. Generate controlled local perturbations from completed coupled-search

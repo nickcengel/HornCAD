@@ -30,6 +30,9 @@ than this manifest alone.
   generated views of execution state and results.
 - Each retained completed candidate keeps its project YAML, STL, report, and
   compressed `bem/responses.npz` required for future diagnostics.
+- `analysis/bunching_physical_scales.md` is a regenerable snapshot testing
+  associations between frequency-energy bunching and analytic geometry scales;
+  its JSON companion retains the full machine-readable evidence.
 
 Do not infer new queued work from an older report or planning document. Changes
 to the registered experiment require an explicit revised manifest and launch
