@@ -121,6 +121,12 @@ Fit each response independently while retaining their residual covariance:
 The model must expose all six predictions. Surface score alone is insufficient
 for control advice.
 
+The release also exposes `throat_impedance_score` from the current experimental
+normalized-magnitude diagnostic as an independent seventh response. It is
+preparatory evidence for extension and throat-angle work: it does not alter the
+six-response surface score, model selection, benchmark ranking, or the choice
+between the primary and augmented model.
+
 ## Cell-local model
 
 Each of the 25 mouth/coverage cells uses the same preregistered quadratic basis:

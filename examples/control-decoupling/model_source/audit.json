@@ -1,0 +1,21 @@
+{
+  "canonical_npz_count": 611,
+  "canonical_response_duplicates": 0,
+  "conditional_closures_skipped": 41,
+  "coordinate_hash": "c13f0be3f3fea1188b529fb503a13f7d15e3d18e212ae9d38f6cbf87d525296c",
+  "diagnostic_implementation_sha256": "3dc6e235625566f8ca94201f961f43d54cc53830ae839461694cee9a45d0f08b",
+  "exact_response_duplicates_after_deduplication": 31,
+  "historical_npz_count": 904,
+  "maximum_stored_diagnostic_delta": 0.0,
+  "numcalc_work_tree_count": 0,
+  "response_grid_fingerprints": [
+    "e5eab8ab13db416f586b407b7067742bb3fbf250f6b629f13183b3c7a686a884"
+  ],
+  "schema_version": 1,
+  "searches_complete": 168,
+  "solver_configuration_fingerprints": [
+    "de32269866f4127211de44d7016a92b89e915575653441a74718793e24e3712f"
+  ],
+  "status": "passed",
+  "unresolved_failures": 0
+}
