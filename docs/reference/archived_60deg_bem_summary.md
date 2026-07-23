@@ -1,6 +1,6 @@
 # Archived 60-degree BEM study summary
 
-The square-mouth 60-degree study was completed as exploratory boundary work,
+The axisymmetric round-mouth 60-degree study was completed as exploratory boundary work,
 then removed from the active example set on 2026-07-21 when the then-supported
 design domain was formalized as 25 through 50 degrees half-coverage. The later
 canonical control study uses 30 through 50 degrees. The full reports, STL files,

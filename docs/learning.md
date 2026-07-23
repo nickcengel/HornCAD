@@ -4,19 +4,25 @@ This page identifies where current learning is recorded. It deliberately avoids
 copying coefficients and validation summaries already carried by versioned
 model artifacts.
 
-## Released round baseline
+## Production round baseline
 
-The completed canonical round study covers symmetric zero-extension horns at coverage
-half-angles 30, 35, 40, 45, and 50 degrees and square mouths 250 through 450 mm.
+The completed canonical round study covers axisymmetric zero-extension horns at
+coverage half-angles 30, 35, 40, 45, and 50 degrees and round mouth diameters
+250 through 450 mm.
 It independently varies OSSE length, K, and N; S is derived. The registered
 design, completion rules, and analysis terms are in the
 [study plan](../examples/control-decoupling/study_plan.md).
 
-The portable deliverable is not the raw candidate collection. The validated
-primary and augmented models, uncertainty records, and training provenance are
-specified by the [model pipeline](../examples/control-decoupling/model_pipeline.md).
-V1 implements prediction only; steering rules and recommendation operations are
-explicitly deferred.
+The primary v1 model is the sole production baseline. Augmented v1 remains a
+research comparison rather than a second production choice. A completed
+[unified-v2 validation](../examples/round-control-v2-validation/README.md)
+showed that no tested global historical weight made the ten-term quadratic
+accurate enough in jointly sparse L/K/N regions, so no v2 model was released.
+
+The full mouth/coverage grid remains in scope. Evidence-sparse joint control
+combinations are limited-support even when each individual control lies inside
+its nominal one-dimensional range. V1 implements prediction only; steering
+rules and recommendation operations remain deferred.
 
 ## Prior evidence carried forward
 

@@ -38,12 +38,18 @@ that follow the round baseline.
 `examples/control-decoupling/manifest.json` is authoritative for the completed
 registered simulations. Generated reports and `runtime_state.json` record their
 terminal execution state; prose from an older study must never add work to that
-manifest. Released portable models are
-`models/round_control_primary_v1/` and
-`models/round_control_augmented_v1/`.
+manifest. The production portable model is
+`models/round_control_primary_v1/`.
+`models/round_control_augmented_v1/` is retained research comparison evidence.
+The [unified-v2 challenge](../examples/round-control-v2-validation/README.md)
+failed its registered release gates, so there is no released v2 model.
 
 ## Current terminology
 
+- **Axisymmetric round mouth** means equal horizontal and vertical mouth
+  diameters with `mouth_squareness = 0`. Equal H/V dimensions alone must not be
+  described as a square mouth.
+- **Square mouth** is reserved for a future nonzero-squareness geometry study.
 - **Length** means only the axial OSSE-profile length.
 - **Extension** means the separately authored conical throat extension.
 - **Profile-plus-extension length** means OSSE length + extension.

@@ -1,7 +1,7 @@
 # Round control-decoupling study
 
 This directory contains the registered experiment and retained artifacts for the
-canonical symmetric, square, zero-extension OSSE control study. Its local
+canonical axisymmetric, round-mouth, zero-extension OSSE control study. Its local
 documents are kept with the data because they define how this particular dataset
 was approved, generated, completed, and converted into a portable model.
 
@@ -13,7 +13,9 @@ was approved, generated, completed, and converted into a portable model.
    execution order, terminal states, and analysis terms.
 3. [Model pipeline](model_pipeline.md) defines the fitting, validation, and
    portable exports released as `round_control_primary_v1` and
-   `round_control_augmented_v1`. Rule extraction remains explicitly deferred.
+   `round_control_augmented_v1`, and the later
+   [unified-v2 plan](round_control_v2_plan.md) records why primary v1 remains
+   the sole production baseline. Rule extraction remains explicitly deferred.
 4. The global [geometry research roadmap](../../docs/plans/geometry_research_roadmap.md)
    defines how this released baseline is later augmented with extension, throat
    angle, round-to-square morphing, separate H/V behavior, and sag.
@@ -33,6 +35,8 @@ than this manifest alone.
   audited bridge from retained responses to both released models.
 - `model_source/extension_handoff.json` records the next candidate design but
   schedules no BEM.
+- [`../round-control-v2-validation/`](../round-control-v2-validation/) contains
+  the twelve-case full-grid challenge that rejected the unified quadratic v2.
 - Each retained completed candidate keeps its project YAML, STL, report, and
   compressed `bem/responses.npz` required for future diagnostics.
 - `analysis/bunching_physical_scales.md` is a regenerable snapshot testing

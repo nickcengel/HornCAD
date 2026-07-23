@@ -37,11 +37,11 @@ but their compact study records must remain available to the model.
 
 ## Recommendation model
 
-For the released symmetric square-mouth study, model every component diagnostic
+For the released axisymmetric round-mouth study, model every component diagnostic
 and score as a function of mouth size, coverage half-angle, OSSE length, K, and
 N, with derived S and normalized geometry available as secondary features and
 support checks. Rectangular and asymmetric designs require separate horizontal
-and vertical inputs and should not be inferred from the square symmetric model
+and vertical inputs and should not be inferred from the axisymmetric round model
 without validation.
 
 The recommendation process should:

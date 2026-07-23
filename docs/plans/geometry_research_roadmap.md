@@ -42,14 +42,19 @@ outer-cell predictions as extrapolations rather than supported behavior.
 
 ## Stage 1: frozen round control baseline
 
-The symmetric zero-extension study under `examples/control-decoupling/` is
-complete, fitted, and validated. Its primary and augmented portable models map
-mouth, coverage, OSSE length, K, and N to component diagnostics and surface
-score while reporting derived S. The validation and export requirements are
-defined in the control study's
+The axisymmetric round-mouth zero-extension study under
+`examples/control-decoupling/` is complete, fitted, and validated. Primary v1
+is its sole production baseline and maps mouth diameter, coverage, OSSE length,
+K, and N to component diagnostics and surface score while reporting derived S.
+Augmented v1 is retained only as research comparison evidence. The validation
+and export requirements are defined in the control study's
 [model pipeline](../../examples/control-decoupling/model_pipeline.md).
 
 The primary baseline is frozen before any later geometry augmentation is fitted.
+The full-grid
+[unified-v2 challenge](../../examples/round-control-v2-validation/README.md)
+failed its release gates and identified jointly sparse L/K/N regions that must
+remain limited-support.
 The candidate design for Stage 2 is recorded in
 `examples/control-decoupling/model_source/extension_handoff.json`; it schedules
 no BEM and remains launch-gated.

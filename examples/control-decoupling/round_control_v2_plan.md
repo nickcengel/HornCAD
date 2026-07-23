@@ -1,5 +1,14 @@
 # Unified round-control v2 consolidation
 
+## Result
+
+Execution completed across the registered full-grid validation set. The frozen
+0.25 historical-weight candidate failed the release gates, as did every other
+frozen comparison candidate. No v2 model was released. Primary v1 is therefore
+the sole production round baseline; augmented v1 remains research comparison
+evidence. Detailed results are retained under
+[`../round-control-v2-validation/`](../round-control-v2-validation/).
+
 ## Decision
 
 The primary and augmented v1 artifacts remain immutable audit releases. They
@@ -7,11 +16,11 @@ answered whether compatible historical evidence improves a balanced canonical
 model, but their cell-by-cell production router is not the desired foundation
 for later geometry corrections.
 
-`round_control_v2` will be one continuous ten-term quadratic model over the full
-5×5 domain:
+The tested `round_control_v2` candidate family used one continuous ten-term
+quadratic model over the full 5×5 domain:
 
 - coverage half-angle: 30, 35, 40, 45, and 50 degrees;
-- square mouth: 250, 300, 350, 400, and 450 mm;
+- round mouth diameter: 250, 300, 350, 400, and 450 mm;
 - the existing supported L/K/N ranges and geometry gate.
 
 No mouth or coverage cell is removed merely because the first extension study

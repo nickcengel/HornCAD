@@ -8,10 +8,16 @@ placeholder rule files are present under `models/`. Sections below describe the
 implemented prediction release and explicitly label capabilities deferred to a
 later version.
 
+The later [unified-v2 consolidation](round_control_v2_plan.md) retained the full
+5×5 domain and tested five global historical weights against twelve new locked
+BEM responses. None passed its release gates. Consequently, primary v1 is the
+sole production baseline; augmented v1 remains research comparison evidence.
+No v2 model was released.
+
 ## Required outcome
 
 The completed control-decoupling study produces compact, executable models of
-symmetric, square, zero-extension OS-SE horns. Candidate reports and NPZ
+axisymmetric, round-mouth, zero-extension OS-SE horns. Candidate reports and NPZ
 response surfaces remain authoritative source evidence rather than the routine
 prediction interface.
 

@@ -43,8 +43,8 @@ exact materialized queue that must be reviewed before launch.
   tails; the only barrier is before evidence-gated axis closure.
 - Storage: validate and retain responses.npz, STL, and reports; delete each raw
   project-NumCalc work tree immediately after its candidate completes.
-- Domain: 30-50 degree coverage half-angle and 250-450 mm square mouths.
-- Geometry: symmetric, square, zero-extension round OS-SE horns only.
+- Domain: 30-50 degree coverage half-angle and 250-450 mm round mouth diameters.
+- Geometry: axisymmetric, round-mouth, zero-extension OS-SE horns only.
 
 | Ordered wave | Searches | Candidates |
 | --- | ---: | ---: |

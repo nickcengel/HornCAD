@@ -5,7 +5,7 @@ The supported study domain is 25° through 50° half-coverage. The exploratory
 work.
 
 The 30° study closes the interpolation gap between 25° and 35°. It uses the
-supported six 250--500 mm square mouths and the exact S coordinates 0.7, 1.0,
+supported six 250--500 mm round mouth diameters and the exact S coordinates 0.7, 1.0,
 1.3, 1.6, 1.9, 2.2, 2.5, 2.8, and 3.0 used by those neighboring studies.
 Adaptive pruning may omit a confidently declining intermediate tail, but the
 S=3.0 boundary sentinel is mandatory. All seven 30° searches must complete
@@ -35,7 +35,7 @@ certificate covering every active uniform-S baseline.
 
 ## Motivation
 
-The completed square-mouth survey sampled 25°, 35°, 45°, and 60°. Its best
+The completed axisymmetric round-mouth survey sampled 25°, 35°, 45°, and 60°. Its best
 derived S moved systematically upward with coverage: approximately 0.7 at 25°,
 0.7–1.3 at 35°, 1.7–2.2 at 45°, and 3.0 at 60°. The 25° and 60° optima landed
 on the original S boundaries, while the strongest scores clustered around 35°
@@ -59,7 +59,7 @@ less-promising 25° and 60° regions.
 ## Design
 
 - Intended symmetric half-coverages: 40° and 50°.
-- Square mouths: 250, 300, 350, 400, 450, and 500 mm.
+- Round mouth diameters: 250, 300, 350, 400, 450, and 500 mm.
 - Fixed profile controls: K=4, N=10, zero extension.
 - Fixed acoustic sweep and diagnostic definitions from the existing study.
 - Derived S targets: 0.5 through 4.0 in increments of 0.25.

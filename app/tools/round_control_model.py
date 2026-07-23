@@ -117,7 +117,8 @@ def _coordinates(config: dict[str, Any]) -> dict[str, float]:
         and math.isclose(float(config.get("section_modifier", {}).get(
             "mouth_squareness", 0.0)), 0.0, abs_tol=1e-6)
     ):
-        raise ValueError("response is not a symmetric square zero-extension horn")
+        raise ValueError(
+            "response is not an axisymmetric round-mouth zero-extension horn")
     coverage = float(intent.get("horizontal_coverage_deg",
                                 horizontal["coverage_deg"]))
     return {
@@ -573,7 +574,7 @@ def _base_model(model_id: str, cells: dict[str, Any],
     return {
         "schema_version": SCHEMA_VERSION,
         "model_id": model_id,
-        "model_family": "round symmetric square zero-extension OS-SE",
+        "model_family": "axisymmetric round-mouth zero-extension OS-SE",
         "diagnostics": list(DIAGNOSTICS),
         "preregistered_diagnostics": list(PREREGISTERED_DIAGNOSTICS),
         "experimental_diagnostics": {
@@ -981,8 +982,9 @@ def export_release(
         })
         card = f"""# {title}
 
-Portable quadratic response model for symmetric, square, zero-extension round
-OS-SE horns over 250–450 mm mouths and 30–50 degree coverage.
+Portable quadratic response model for axisymmetric, round-mouth,
+zero-extension OS-SE horns over 250–450 mm mouth diameters and 30–50 degree
+coverage.
 
 The six preregistered radiation diagnostics retain their original surface-score
 definition. `throat_impedance_score` is an experimental seventh prediction for

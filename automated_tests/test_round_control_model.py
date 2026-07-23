@@ -35,6 +35,14 @@ class RoundControlModelTests(unittest.TestCase):
         self.assertEqual(result.support, SupportStatus.EXTRAPOLATED)
         self.assertTrue(result.warnings)
 
+    def test_jointly_sparse_coordinate_is_limited_support(self):
+        result = self.app.predict(
+            DesignPoint.round(350, 30, 268.522, 2.5, 14))
+        self.assertEqual(result.support, SupportStatus.LIMITED)
+        self.assertTrue(any(
+            "distant from measured evidence" in warning
+            for warning in result.warnings))
+
     def test_model_declares_impedance_independent_of_score_and_choice(self):
         model = json.loads((AUGMENTED / "model.json").read_text())
         policy = model["experimental_diagnostics"]["throat_impedance_score"]

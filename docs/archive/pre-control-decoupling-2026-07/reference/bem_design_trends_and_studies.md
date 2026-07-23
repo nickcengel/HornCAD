@@ -194,7 +194,8 @@ The study must extend above K = 5 because the present optimum is censored by
 that boundary. Retain the individual score components to determine whether K
 eventually trades profile quality against another surface behavior.
 
-Primary output: bounded K and N optima for a representative square geometry.
+Primary output: bounded K and N optima for a representative axisymmetric
+round-mouth geometry with equal horizontal and vertical diameters.
 
 ### Study 3: measure the K x N x length interaction
 

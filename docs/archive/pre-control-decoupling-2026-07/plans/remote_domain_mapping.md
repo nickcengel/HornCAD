@@ -3,12 +3,13 @@
 ## Objective and domain
 
 The study must teach how physical length, K, and N affect every surface
-diagnostic across the useful symmetric, square, zero-extension horn domain. It
+diagnostic across the useful axisymmetric, round-mouth, zero-extension horn domain. It
 is not a local score optimizer. S is a derived OS-SE geometry result, not a
 fourth independent control.
 
 The active domain contains 25 mouth/coverage cells: half-coverage 30, 35, 40,
-45, and 50 degrees crossed with square mouths 250, 300, 350, 400, and 450 mm.
+45, and 50 degrees crossed with round mouth diameters 250, 300, 350, 400, and
+450 mm.
 The retained 25-degree and 500 mm results are historical edge evidence and
 receive no new work. Extensions, round-to-square morphing, and independently
 coupled horizontal/vertical curves remain later studies.

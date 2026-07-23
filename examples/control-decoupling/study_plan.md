@@ -1,12 +1,13 @@
 # Round-horn control-decoupling study
 
-This directory is the clean canonical study for symmetric, square, zero-extension
-OS-SE horns. Historical searches are evidence sources, not an execution queue.
+This directory is the clean canonical study for axisymmetric, round-mouth,
+zero-extension OS-SE horns. Historical searches are evidence sources, not an
+execution queue.
 
 ## Domain and registered design
 
 - Coverage half-angles: 30, 35, 40, 45, and 50 degrees.
-- Square mouths: 250, 300, 350, 400, and 450 mm.
+- Round mouth diameters: 250, 300, 350, 400, and 450 mm.
 - Independent controls: physical length, K, and N. S is recorded as derived.
 - Per cell: complete 3×3×3 factorial at length factors 0.80/1.00/1.20,
   K 2/4/6, and N 4/8/16.

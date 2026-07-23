@@ -9,9 +9,10 @@ types reserve room for later diagnoses, recommendations, and proposed
 confirmation experiments.
 
 The Python implementation lives in `app.design_api`. It validates public inputs
-and outputs and loads the released primary or augmented round-control
-`model.json`. Prediction is implemented; diagnosis, improvement, automated
-design, and experiment selection remain deliberately deferred.
+and outputs and can load either retained v1 artifact. Primary v1 is the sole
+production baseline; augmented v1 is a research comparison. Prediction is
+implemented; diagnosis, improvement, automated design, and experiment selection
+remain deliberately deferred.
 
 ## Most common calls
 
@@ -29,7 +30,7 @@ Load a released model and predict one known design:
 ```python
 from app.design_api import DesignApplication, DesignPoint
 
-app = DesignApplication.load("models/round_control_augmented_v1")
+app = DesignApplication.load("models/round_control_primary_v1")
 candidate = DesignPoint.round(
     mouth_mm=300,
     coverage_deg=40,
@@ -44,7 +45,7 @@ print(prediction.diagnostics["slice_energy_rms_departure"])
 print(prediction.derived_geometry["s_horizontal"])
 print(prediction.support, prediction.nearest_evidence_ids)
 print(prediction.diagnostics["throat_impedance_score"])
-print(prediction.model_predictions)  # primary and augmented side by side
+print(prediction.model_predictions)
 ```
 
 `profile_length_mm` always means OS-SE profile length. Extension and sag are
@@ -52,10 +53,9 @@ separate inputs. S and other supported geometry summaries are outputs. In the
 zero-extension, zero-sag v1 round model, `total_length_mm` equals
 `profile_length_mm`.
 
-The augmented loader returns primary and augmented estimates side by side. Its
-normal estimate uses the augmented model only in cells where locked validation
-was at least as good; otherwise `prediction.model_id` identifies the selected
-primary estimate.
+Loading augmented v1 still exposes its historical cell-router behavior for
+reproducibility, but new application work should load primary v1. The completed
+unified-v2 challenge did not justify replacing it.
 
 ## Deferred operations
 

@@ -1,6 +1,6 @@
 # Archived 200 mm BEM study summary
 
-The 200 x 200 mm square-mouth studies were removed from the active example set
+The 200 mm diameter axisymmetric round-mouth studies were removed from the active example set
 on 2026-07-21 when the then-supported mouth range was formalized as 250 through
 500 mm. The later canonical control study uses 250 through 450 mm. Full reports,
 STL files, search ledgers, and candidates remain

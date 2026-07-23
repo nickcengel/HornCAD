@@ -136,8 +136,8 @@ class PortableRoundControlBackend:
             and math.isclose(design.throat_angle_deg, 6.0)
         ):
             raise ValueError(
-                "round_control_v1 supports only symmetric square, zero-extension, "
-                "zero-sag, round-mouth designs with a 6 degree throat angle")
+                "round control supports only axisymmetric round-mouth, "
+                "zero-extension, zero-sag designs with a 6 degree throat angle")
         policy = self.model["geometry_policy"]
         geometry = _geometry(
             design.profile_length_mm, intent.mouth_width_mm,
@@ -176,22 +176,54 @@ class PortableRoundControlBackend:
                 warnings.append(f"{name} is above fitted support")
         if distance:
             return SupportStatus.EXTRAPOLATED, 1.0+distance, warnings
-        if mouth not in self.model["mouth_grid_mm"] or coverage not in \
-                self.model["coverage_grid_deg"]:
+        evidence_distance = self._nearest_distance(design, reference)
+        limited = False
+        widening = 1.0
+        if evidence_distance > 0.75:
+            limited = True
+            widening = max(widening, 1.25 + evidence_distance - 0.75)
+            warnings.append(
+                "joint L/K/N coordinate is distant from measured evidence "
+                f"(normalized distance {evidence_distance:.3g})")
+        if (mouth not in self.model["mouth_grid_mm"] or
+                coverage not in self.model["coverage_grid_deg"]):
+            limited = True
+            widening = max(widening, 1.25)
             warnings.append(
                 "mouth/coverage coefficient interpolation is not simulation-confirmed")
-            return SupportStatus.LIMITED, 1.25, warnings
+        if limited:
+            return SupportStatus.LIMITED, widening, warnings
         return SupportStatus.SUPPORTED, 1.0, warnings
 
-    def _nearest(self, design: DesignPoint, reference: float) -> tuple[str, ...]:
-        candidates = [row for row in self.index if row["role"] in {
-            "fit", "historical_challenge"} and row["reference_length_mm"]]
-        ranked = sorted(candidates, key=lambda row:
+    def _evidence(self) -> list[dict]:
+        return [row for row in self.index if row["role"] in {
+            "fit", "locked_validation", "historical_challenge"
+        } and row["reference_length_mm"]]
+
+    @staticmethod
+    def _evidence_distance(design: DesignPoint, reference: float,
+                           row: dict) -> float:
+        return math.sqrt(
             ((row["mouth_mm"]-design.intent.mouth_width_mm)/50)**2 +
-            ((row["coverage_deg"]-design.intent.horizontal_coverage_deg)/5)**2 +
-            ((row["length_factor"]-design.profile_length_mm/reference)/0.2)**2 +
+            ((row["coverage_deg"]-
+              design.intent.horizontal_coverage_deg)/5)**2 +
+            ((row["length_factor"]-
+              design.profile_length_mm/reference)/0.2)**2 +
             ((row["k"]-design.k_horizontal)/2)**2 +
             ((row["n"]-design.n_horizontal)/4)**2)
+
+    def _nearest_distance(self, design: DesignPoint, reference: float) -> float:
+        candidates = self._evidence()
+        if not candidates:
+            return math.inf
+        return min(
+            self._evidence_distance(design, reference, row)
+            for row in candidates)
+
+    def _nearest(self, design: DesignPoint, reference: float) -> tuple[str, ...]:
+        candidates = self._evidence()
+        ranked = sorted(candidates, key=lambda row:
+                        self._evidence_distance(design, reference, row))
         return tuple(row["id"] for row in ranked[:3])
 
     def predict(self, design: DesignPoint) -> Prediction:

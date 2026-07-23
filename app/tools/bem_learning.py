@@ -6,7 +6,12 @@ from pathlib import Path
 from typing import Any
 
 
-LEDGER_RELATIVE_PATH = Path("docs/reference/research/bem_learning_ledger.json")
+# The pre-control-decoupling scheduler still consumes this frozen policy when
+# replaying its archived program. The documentation archive moved the ledger;
+# keep the legacy tooling pointed at that audited, immutable location.
+LEDGER_RELATIVE_PATH = Path(
+    "docs/archive/pre-control-decoupling-2026-07/research/"
+    "bem_learning_ledger.json")
 
 
 def repository_root() -> Path:

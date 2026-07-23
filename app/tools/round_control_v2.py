@@ -216,7 +216,7 @@ def _base_model(index: dict[str, Any], cells: dict[str, Any],
     model = {
         "schema_version": 2,
         "model_id": model_id,
-        "model_family": "round symmetric square zero-extension OS-SE",
+        "model_family": "axisymmetric round-mouth zero-extension OS-SE",
         "diagnostics": list(DIAGNOSTICS),
         "preregistered_diagnostics": list(PREREGISTERED_DIAGNOSTICS),
         "experimental_diagnostics": {
@@ -907,8 +907,8 @@ def finalize() -> dict[str, Any]:
     })
     card = f"""# Round Control v2
 
-One unified portable quadratic response model for symmetric, square,
-zero-extension round OS-SE horns over the complete 250–450 mm mouth and
+One unified portable quadratic response model for axisymmetric, round-mouth,
+zero-extension OS-SE horns over the complete 250–450 mm mouth-diameter and
 30–50 degree coverage grid.
 
 The model uses one global historical-evidence weight
