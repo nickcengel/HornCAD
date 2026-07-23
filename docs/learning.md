@@ -29,6 +29,13 @@ its nominal one-dimensional range. Future geometry studies require measured
 round parents for paired comparisons. V1 implements provisional prediction
 only; steering rules and recommendation operations remain deferred.
 
+The completed study does provide measured seed rules independent of the failed
+global surrogate. The
+[round-control heuristic reference](reference/round_control_heuristics.md)
+publishes reference-length evidence, coupled length/K branches,
+coverage-conditioned S bands, alternate high-score zones, and an executable H/V
+length/sag starting construction.
+
 ## Prior evidence carried forward
 
 Earlier searches supplied hypotheses and experiment-design constraints:

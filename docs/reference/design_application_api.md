@@ -20,6 +20,19 @@ All v1 predictions now report `LIMITED` support, even at nominally in-domain
 coordinates. Out-of-range geometry continues to report `EXTRAPOLATED` or fail
 validation as appropriate.
 
+Measured seed generation is separate from score prediction:
+
+```python
+from app.design_api import DesignIntent, RoundControlHeuristics
+
+rules = RoundControlHeuristics.load("models/round_control_heuristics_v1")
+seed = rules.recommend(DesignIntent(400, 300, 50, 35))
+```
+
+This returns independent H/V measured-axis seeds, a flat weighted length, and a
+geometric cylindrical-sag alternative. See
+`docs/reference/round_control_heuristics.md`.
+
 ## Most common calls
 
 Open the current evidence source:

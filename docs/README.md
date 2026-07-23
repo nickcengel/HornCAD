@@ -48,6 +48,9 @@ The subsequent
 [nonlinear challenge](../examples/round-control-nonlinear-evaluation/README.md)
 also failed and closes further global round-surrogate work. Future studies use
 measured-parent comparisons.
+The [measured heuristic reference](reference/round_control_heuristics.md) is
+the maintained actionable output for length, K/N/S branch seeds, alternate
+high-score zones, and initial H/V length/sag reconciliation.
 
 ## Current terminology
 

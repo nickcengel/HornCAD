@@ -2,7 +2,7 @@
 
 ## Scope
 
-The supported square-horn study domain is 25 through 50 degrees half-coverage
+The supported axisymmetric round-mouth study domain is 25 through 50 degrees half-coverage
 and 250 through 500 mm mouth size.
 Earlier 60-degree results are retained only as a compact historical summary in
 `archived_60deg_bem_summary.md`; they are excluded from active examples,
@@ -27,7 +27,7 @@ Standalone BEM/FEM reference runs were reviewed as verification artifacts but
 were not treated as design sweeps. Repeated candidates in successive OSSE
 rounds were deduplicated when inferring trends.
 
-The square-horn studies provide controlled evidence. The rectangular OSSE
+The axisymmetric round-mouth studies provide controlled evidence. The rectangular OSSE
 search changes several variables together, so its results are hypotheses to
 test rather than general constraints.
 
@@ -61,7 +61,7 @@ violation, slice-energy departure, and -6 dB line error all worsened. Mean
 containment must therefore remain a supporting component rather than a length
 selection objective by itself.
 
-### K is strongly beneficial over the sampled square-horn range
+### K is strongly beneficial over the sampled round-mouth range
 
 The controlled 400 x 400 mm, 45-degree, 160 mm K/N field produced:
 
@@ -84,13 +84,13 @@ to 10 and most optima were N = 6 to 8. N = 2 was poor. N = 15 to 25 generally
 lost score, especially in otherwise short, high-performing designs. At long
 lengths the N effect became small because the length penalty dominated.
 
-For new square searches, initialize N near 7, concentrate early samples from 5
+For new round-mouth searches, initialize N near 7, concentrate early samples from 5
 through 10, and allocate few samples above 15 unless another variable changes
 the observed interaction.
 
 ### Mouth size interacts with coverage and operating band
 
-For 45-degree square designs over the 750--8000 Hz diagnostic band, the best
+For 45-degree round-mouth designs over the 750--8000 Hz diagnostic band, the best
 sampled scores were approximately:
 
 | Mouth | Best score |
@@ -131,11 +131,11 @@ Use these only inside the conditions supported by the sample set:
 
 - choose a coverage-dependent mouth/length range before optimizing secondary
   shape variables;
-- for 45-degree square designs, begin with mouth/length from 2.5 to 3.1;
+- for 45-degree round-mouth designs, begin with mouth/length from 2.5 to 3.1;
 - start K between 4 and 7, with explicit samples above the old K = 5 boundary;
 - start N between 5 and 10 and concentrate on N = 6 to 8;
 - deprioritize very long designs even when their mean containment is high;
-- keep square and rectangular constraints separate;
+- keep round-mouth and rectangular constraints separate;
 - do not yet constrain extension, throat geometry, mouth sag, squareness, or
   aspect ratio from the existing evidence.
 
@@ -227,7 +227,7 @@ result is not a coupled-search accident.
 
 ### Study 5: isolate extension
 
-For a small set of high-scoring square and rectangular candidates, test 0, 10,
+For a small set of high-scoring round-mouth and rectangular candidates, test 0, 10,
 20, and 40 mm extension in two separate experiments:
 
 1. hold horn-body length fixed;

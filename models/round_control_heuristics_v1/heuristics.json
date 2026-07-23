@@ -1,0 +1,2315 @@
+{
+  "audit": {
+    "canonical_factorial_rows": 492,
+    "coupled_branches": {
+      "cells": {
+        "30deg-250mm": {
+          "branches": {
+            "center": {
+              "s": 0.5481197406823648,
+              "surface_score": 76.26985722285096
+            },
+            "long_high_k": {
+              "s": 0.33763313370752146,
+              "surface_score": 73.9078356224532
+            },
+            "short_low_k": {
+              "s": 0.8262908624569753,
+              "surface_score": 76.56680374172869
+            }
+          },
+          "winner": "short_low_k"
+        },
+        "30deg-300mm": {
+          "branches": {
+            "center": {
+              "s": 0.548118681139852,
+              "surface_score": 81.07440694116329
+            },
+            "long_high_k": {
+              "s": 0.3194054583349916,
+              "surface_score": 78.6779640139003
+            },
+            "short_low_k": {
+              "s": 0.8617869682954766,
+              "surface_score": 80.87469984292272
+            }
+          },
+          "winner": "center"
+        },
+        "30deg-350mm": {
+          "branches": {
+            "center": {
+              "s": 0.5481168596199129,
+              "surface_score": 85.13149331622007
+            },
+            "long_high_k": {
+              "s": 0.3035106099513529,
+              "surface_score": 81.87169101817909
+            },
+            "short_low_k": {
+              "s": 0.8914956024760037,
+              "surface_score": 83.40496535175743
+            }
+          },
+          "winner": "center"
+        },
+        "30deg-400mm": {
+          "branches": {
+            "center": {
+              "s": 0.7830237261312591,
+              "surface_score": 86.63796709630859
+            },
+            "long_high_k": {
+              "s": 0.4958070113007977,
+              "surface_score": 87.48214218136002
+            },
+            "short_low_k": {
+              "s": 1.1914632945097419,
+              "surface_score": 83.88399667842376
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "30deg-450mm": {
+          "branches": {
+            "center": {
+              "s": 0.7830301138581987,
+              "surface_score": 88.43180467233735
+            },
+            "long_high_k": {
+              "s": 0.48350137730870457,
+              "surface_score": 88.63412063612748
+            },
+            "short_low_k": {
+              "s": 1.2136708183593408,
+              "surface_score": 84.47395302931159
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "35deg-250mm": {
+          "branches": {
+            "center": {
+              "s": 0.5481109892855204,
+              "surface_score": 80.05521873570481
+            },
+            "long_high_k": {
+              "s": 0.31474560129981277,
+              "surface_score": 75.98189576366084
+            },
+            "short_low_k": {
+              "s": 0.8567353864087573,
+              "surface_score": 81.32558495311523
+            }
+          },
+          "winner": "short_low_k"
+        },
+        "35deg-300mm": {
+          "branches": {
+            "center": {
+              "s": 0.5481147307203293,
+              "surface_score": 84.66292768451297
+            },
+            "long_high_k": {
+              "s": 0.2924532663276544,
+              "surface_score": 77.69194230076863
+            },
+            "short_low_k": {
+              "s": 0.8993821014043046,
+              "surface_score": 85.36813001205712
+            }
+          },
+          "winner": "short_low_k"
+        },
+        "35deg-350mm": {
+          "branches": {
+            "center": {
+              "s": 0.7830192504883154,
+              "surface_score": 87.38387679758262
+            },
+            "long_high_k": {
+              "s": 0.4801708869683916,
+              "surface_score": 86.84820622500568
+            },
+            "short_low_k": {
+              "s": 1.2079453683012424,
+              "surface_score": 85.71582578832347
+            }
+          },
+          "winner": "center"
+        },
+        "35deg-400mm": {
+          "branches": {
+            "center": {
+              "s": 1.0179333566780646,
+              "surface_score": 88.86341245189875
+            },
+            "long_high_k": {
+              "s": 0.6694175455538521,
+              "surface_score": 89.29097824729433
+            },
+            "short_low_k": {
+              "s": 1.5135421616572151,
+              "surface_score": 85.49507206809665
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "35deg-450mm": {
+          "branches": {
+            "center": {
+              "s": 1.0179332724018078,
+              "surface_score": 89.36436964243498
+            },
+            "long_high_k": {
+              "s": 0.6544896829034982,
+              "surface_score": 90.16413157941312
+            },
+            "short_low_k": {
+              "s": 1.5404619896086271,
+              "surface_score": 83.70667199057445
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "40deg-250mm": {
+          "branches": {
+            "center": {
+              "s": 0.783028764650869,
+              "surface_score": 83.7963156607718
+            },
+            "long_high_k": {
+              "s": 0.49583287996583614,
+              "surface_score": 80.92470670341798
+            },
+            "short_low_k": {
+              "s": 1.1627488089160904,
+              "surface_score": 84.59193537921826
+            }
+          },
+          "winner": "short_low_k"
+        },
+        "40deg-300mm": {
+          "branches": {
+            "center": {
+              "s": 0.7830371993405559,
+              "surface_score": 87.90948129309098
+            },
+            "long_high_k": {
+              "s": 0.4691764643491978,
+              "surface_score": 84.08428192383764
+            },
+            "short_low_k": {
+              "s": 1.2140247123721482,
+              "surface_score": 85.41080400899692
+            }
+          },
+          "winner": "center"
+        },
+        "40deg-350mm": {
+          "branches": {
+            "center": {
+              "s": 1.1745340140416378,
+              "surface_score": 88.81264258660242
+            },
+            "long_high_k": {
+              "s": 0.790447543433925,
+              "surface_score": 88.91776149103157
+            },
+            "short_low_k": {
+              "s": 1.7127195977970275,
+              "surface_score": 86.1667715851791
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "40deg-400mm": {
+          "branches": {
+            "center": {
+              "s": 1.1745381666122126,
+              "surface_score": 89.42759909180253
+            },
+            "long_high_k": {
+              "s": 0.7702069267059576,
+              "surface_score": 89.75386422838616
+            },
+            "short_low_k": {
+              "s": 1.7499578303573935,
+              "surface_score": 84.76365041840847
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "40deg-450mm": {
+          "branches": {
+            "center": {
+              "s": 1.370285335762612,
+              "surface_score": 87.86474729820807
+            },
+            "long_high_k": {
+              "s": 0.9237190903017322,
+              "surface_score": 90.5308858887776
+            },
+            "short_low_k": {
+              "s": 2.0119595274447772,
+              "surface_score": 82.38185493368363
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "45deg-250mm": {
+          "branches": {
+            "center": {
+              "s": 0.9787872103314061,
+              "surface_score": 86.22418527320363
+            },
+            "long_high_k": {
+              "s": 0.6382634306913749,
+              "surface_score": 83.41485630803699
+            },
+            "short_low_k": {
+              "s": 1.4290325372492843,
+              "surface_score": 86.94802256740545
+            }
+          },
+          "winner": "short_low_k"
+        },
+        "45deg-300mm": {
+          "branches": {
+            "center": {
+              "s": 1.307828966147371,
+              "surface_score": 87.95728753422117
+            },
+            "long_high_k": {
+              "s": 0.8961864481863893,
+              "surface_score": 88.15319005195238
+            },
+            "short_low_k": {
+              "s": 1.8719454321723688,
+              "surface_score": 85.86712919177981
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "45deg-350mm": {
+          "branches": {
+            "center": {
+              "s": 1.5558714811515217,
+              "surface_score": 88.33558884311668
+            },
+            "long_high_k": {
+              "s": 1.0863365190714132,
+              "surface_score": 89.38936624215944
+            },
+            "short_low_k": {
+              "s": 2.2134020903781413,
+              "surface_score": 85.27456098910312
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "45deg-400mm": {
+          "branches": {
+            "center": {
+              "s": 1.4877655844126625,
+              "surface_score": 87.78298515821072
+            },
+            "long_high_k": {
+              "s": 1.00249732732755,
+              "surface_score": 89.00338661597047
+            },
+            "short_low_k": {
+              "s": 2.178246040736444,
+              "surface_score": 82.43226483179211
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "45deg-450mm": {
+          "branches": {
+            "center": {
+              "s": 1.5660486367929032,
+              "surface_score": 86.0088483345692
+            },
+            "long_high_k": {
+              "s": 1.0497856165040584,
+              "surface_score": 87.88277388410881
+            },
+            "short_low_k": {
+              "s": 2.3083741871092394,
+              "surface_score": 80.68624936558498
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "50deg-250mm": {
+          "branches": {
+            "center": {
+              "s": 1.1745476315463608,
+              "surface_score": 87.42059945520978
+            },
+            "long_high_k": {
+              "s": 0.7748759016643053,
+              "surface_score": 84.17706953908785
+            },
+            "short_low_k": {
+              "s": 1.7030857195512399,
+              "surface_score": 86.19417438813925
+            }
+          },
+          "winner": "center"
+        },
+        "50deg-300mm": {
+          "branches": {
+            "center": {
+              "s": 1.7618249208338195,
+              "surface_score": 87.23994683871264
+            },
+            "long_high_k": {
+              "s": 1.2537736197316889,
+              "surface_score": 87.66857388175707
+            },
+            "short_low_k": {
+              "s": 2.4576197113696425,
+              "surface_score": 84.44821751231464
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "50deg-350mm": {
+          "branches": {
+            "center": {
+              "s": 1.9575387665291035,
+              "surface_score": 86.52457448360657
+            },
+            "long_high_k": {
+              "s": 1.3926539371674904,
+              "surface_score": 87.67373235470836
+            },
+            "short_low_k": {
+              "s": 2.748419778078657,
+              "surface_score": 82.08469974038312
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "50deg-400mm": {
+          "branches": {
+            "center": {
+              "s": 1.9575846113121378,
+              "surface_score": 84.47741704530785
+            },
+            "long_high_k": {
+              "s": 1.363856803030943,
+              "surface_score": 86.63275451798337
+            },
+            "short_low_k": {
+              "s": 2.8018836628706354,
+              "surface_score": 79.57340930516784
+            }
+          },
+          "winner": "long_high_k"
+        },
+        "50deg-450mm": {
+          "branches": {
+            "center": {
+              "s": 2.1533102877358457,
+              "surface_score": 82.8333604146447
+            },
+            "long_high_k": {
+              "s": 1.5096338300204195,
+              "surface_score": 85.2292392063453
+            },
+            "short_low_k": {
+              "s": 3.077903136806949,
+              "surface_score": 77.2990606776132
+            }
+          },
+          "winner": "long_high_k"
+        }
+      },
+      "definitions": {
+        "center": {
+          "k": 4.0,
+          "length_factor": 1.0,
+          "n": 8.0
+        },
+        "long_high_k": {
+          "k": 6.0,
+          "length_factor": 1.2,
+          "n": 8.0
+        },
+        "short_low_k": {
+          "k": 2.0,
+          "length_factor": 0.8,
+          "n": 8.0
+        }
+      },
+      "interpretation": "K=4 wins one-axis K comparisons, but coordinated length/K changes expose short/low-K and long/high-K competitive ridges",
+      "winning_cell_counts": {
+        "center": 5,
+        "long_high_k": 15,
+        "short_low_k": 5
+      }
+    },
+    "k": {
+      "cells": 25,
+      "fixed_coordinates": {
+        "length_factor": 1.0,
+        "n": 8.0
+      },
+      "median_surface_score_range": 9.90761629513895,
+      "p10_surface_score_range": 7.936173814004493,
+      "winning_value_counts": {
+        "4": 25
+      }
+    },
+    "length": {
+      "center_control_comparison": {
+        "cells": 25,
+        "cells_where_reference_length_won": 25,
+        "controls": {
+          "k": 4.0,
+          "n": 8.0
+        },
+        "direct_comparisons": 49,
+        "direct_comparisons_won": 49,
+        "median_surface_score_gain": 6.403230541926803,
+        "minimum_surface_score_gain": 2.012532993495796,
+        "p10_surface_score_gain": 3.6086713301142908
+      },
+      "interaction_audit": {
+        "complete_k_n_groups": 91,
+        "median_reference_margin_over_other_lengths": 3.000282980389386,
+        "reference_length_win_fraction": 0.5934065934065934,
+        "winning_length_factor_counts": {
+          "0.8": 19,
+          "1.0": 54,
+          "1.2": 18
+        }
+      },
+      "reference_length_mm": {
+        "30": {
+          "250": 174.432,
+          "300": 205.222,
+          "350": 235.546,
+          "400": 242.696,
+          "450": 270.079
+        },
+        "35": {
+          "250": 153.446,
+          "300": 180.32,
+          "350": 190.953,
+          "400": 200.028,
+          "450": 222.598
+        },
+        "40": {
+          "250": 125.615,
+          "300": 147.665,
+          "350": 152.108,
+          "400": 171.584,
+          "450": 181.73
+        },
+        "45": {
+          "250": 105.791,
+          "300": 115.0,
+          "350": 125.0,
+          "400": 143.112,
+          "450": 156.6
+        },
+        "50": {
+          "250": 89.754,
+          "300": 93.908,
+          "350": 104.077,
+          "400": 117.433,
+          "450": 126.312
+        }
+      }
+    },
+    "n": {
+      "cells": 25,
+      "fixed_coordinates": {
+        "k": 4.0,
+        "length_factor": 1.0
+      },
+      "median_surface_score_range": 3.0369225688240533,
+      "p10_surface_score_range": 1.823843405602338,
+      "winning_value_counts": {
+        "4": 4,
+        "8": 21
+      }
+    },
+    "observed_high_score_zones": {
+      "cells": {
+        "30deg-250mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 0.7000019350099873
+            },
+            "id": "30d-250mm-reference-K4-N10",
+            "surface_score": 75.78387357594507
+          },
+          "benchmark_in_competitive_set": false,
+          "best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8000022931572188,
+              "n": 4.0,
+              "s": 0.44012682741979886
+            },
+            "id": "30d-250mm-L-1-K-1-N-1",
+            "surface_score": 77.51111619093584
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 1.7272426149907716,
+          "best_to_benchmark_normalized_distance": 2.061547251110019,
+          "competitive_component_sizes": [
+            2,
+            2
+          ],
+          "competitive_point_count": 4,
+          "confirmed_alternative_zone_count": 2,
+          "measured_count": 37,
+          "single_point_alternative_hint_count": 0
+        },
+        "30deg-300mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 3.0,
+              "length_factor": 0.9774975392501779,
+              "n": 6.0,
+              "s": 0.36206502322872575
+            },
+            "id": "historical:30deg/300x300-learning-r01:candidate-000",
+            "surface_score": 81.08023265370099
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.80000194910877,
+              "n": 4.0,
+              "s": 0.45903395704967725
+            },
+            "id": "30d-300mm-L-1-K-1-N-1",
+            "surface_score": 81.58579113962435
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 0.5055584859233591,
+          "best_to_benchmark_normalized_distance": 1.1347321767673493,
+          "competitive_component_sizes": [
+            4,
+            2
+          ],
+          "competitive_point_count": 6,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 36,
+          "single_point_alternative_hint_count": 0
+        },
+        "30deg-350mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 0.6999982556145166
+            },
+            "id": "30d-350mm-reference-K4-N10",
+            "surface_score": 84.69277756491029
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 8.0,
+              "s": 0.5481168596199129
+            },
+            "id": "30d-350mm-L+0-K+0-N+0",
+            "surface_score": 85.13149331622007
+          },
+          "best_in_benchmark_component": true,
+          "best_is_sampled_boundary": false,
+          "best_minus_benchmark_score": 0.43871575130978613,
+          "best_to_benchmark_normalized_distance": 0.5,
+          "competitive_component_sizes": [
+            5
+          ],
+          "competitive_point_count": 5,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 30,
+          "single_point_alternative_hint_count": 0
+        },
+        "30deg-400mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 0.9999970494918665
+            },
+            "id": "30d-400mm-reference-K4-N10",
+            "surface_score": 85.90419978025088
+          },
+          "benchmark_in_competitive_set": false,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.1999991759237896,
+              "n": 8.0,
+              "s": 0.4958070113007977
+            },
+            "id": "30d-400mm-L+1-K+1-N+0",
+            "surface_score": 87.48214218136002
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 1.5779424011091407,
+          "best_to_benchmark_normalized_distance": 1.4999972530824426,
+          "competitive_component_sizes": [
+            2,
+            2
+          ],
+          "competitive_point_count": 4,
+          "confirmed_alternative_zone_count": 2,
+          "measured_count": 31,
+          "single_point_alternative_hint_count": 0
+        },
+        "30deg-450mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 1.0000052072371293
+            },
+            "id": "30d-450mm-reference-K4-N10",
+            "surface_score": 87.46304271005819
+          },
+          "benchmark_in_competitive_set": false,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.200000740524069,
+              "n": 8.0,
+              "s": 0.48350137730870457
+            },
+            "id": "30d-450mm-L+1-K+1-N+0",
+            "surface_score": 88.63412063612748
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 1.1710779260692874,
+          "best_to_benchmark_normalized_distance": 1.5000024684161017,
+          "competitive_component_sizes": [
+            2,
+            2
+          ],
+          "competitive_point_count": 4,
+          "confirmed_alternative_zone_count": 2,
+          "measured_count": 33,
+          "single_point_alternative_hint_count": 0
+        },
+        "35deg-250mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 0.6999907586295905
+            },
+            "id": "35d-250mm-reference-K4-N10",
+            "surface_score": 79.73774945051895
+          },
+          "benchmark_in_competitive_set": false,
+          "best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8000013033901178,
+              "n": 8.0,
+              "s": 0.8567353864087573
+            },
+            "id": "35d-250mm-L-1-K-1-N+0",
+            "surface_score": 81.32558495311523
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 1.5878355025962776,
+          "best_to_benchmark_normalized_distance": 1.4999956553741391,
+          "competitive_component_sizes": [
+            2,
+            1
+          ],
+          "competitive_point_count": 3,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 33,
+          "single_point_alternative_hint_count": 1
+        },
+        "35deg-300mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.5,
+              "length_factor": 1.0,
+              "n": 5.0,
+              "s": 0.38952861416317197
+            },
+            "id": "historical:35deg/300x300-kn-grid:candidate-011",
+            "surface_score": 84.8310059706318
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8,
+              "n": 8.0,
+              "s": 0.8993821014043046
+            },
+            "id": "35d-300mm-L-1-K-1-N+0",
+            "surface_score": 85.36813001205712
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 0.5371240414253293,
+          "best_to_benchmark_normalized_distance": 1.7677669529663687,
+          "competitive_component_sizes": [
+            6,
+            2
+          ],
+          "competitive_point_count": 8,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 46,
+          "single_point_alternative_hint_count": 0
+        },
+        "35deg-350mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 0.999991333662845
+            },
+            "id": "35d-350mm-reference-K4-N10",
+            "surface_score": 86.5046437900839
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 8.0,
+              "s": 0.7830192504883154
+            },
+            "id": "35d-350mm-L+0-K+0-N+0",
+            "surface_score": 87.38387679758262
+          },
+          "best_in_benchmark_component": true,
+          "best_is_sampled_boundary": false,
+          "best_minus_benchmark_score": 0.879233007498712,
+          "best_to_benchmark_normalized_distance": 0.5,
+          "competitive_component_sizes": [
+            4,
+            1
+          ],
+          "competitive_point_count": 5,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 35,
+          "single_point_alternative_hint_count": 1
+        },
+        "35deg-400mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 5.0,
+              "s": 0.6478565588262268
+            },
+            "id": "historical:35deg/400x400-kn-grid:candidate-003",
+            "surface_score": 89.06836775937916
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2000019997200393,
+              "n": 8.0,
+              "s": 0.6694175455538521
+            },
+            "id": "35d-400mm-L+1-K+1-N+0",
+            "surface_score": 89.29097824729433
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 0.22261048791517624,
+          "best_to_benchmark_normalized_distance": 1.6007873054532775,
+          "competitive_component_sizes": [
+            4,
+            2
+          ],
+          "competitive_point_count": 6,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 50,
+          "single_point_alternative_hint_count": 0
+        },
+        "35deg-450mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 1.2999992656809627
+            },
+            "id": "35d-450mm-reference-K4-N10",
+            "surface_score": 88.01625463923227
+          },
+          "benchmark_in_competitive_set": false,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2000017969613384,
+              "n": 8.0,
+              "s": 0.6544896829034982
+            },
+            "id": "35d-450mm-L+1-K+1-N+0",
+            "surface_score": 90.16413157941312
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 2.1478769401808506,
+          "best_to_benchmark_normalized_distance": 1.5000059898860774,
+          "competitive_component_sizes": [
+            4
+          ],
+          "competitive_point_count": 4,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 36,
+          "single_point_alternative_hint_count": 0
+        },
+        "40deg-250mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 1.0000034841688443
+            },
+            "id": "40d-250mm-reference-K4-N10",
+            "surface_score": 83.47723703047352
+          },
+          "benchmark_in_competitive_set": false,
+          "best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8,
+              "n": 8.0,
+              "s": 1.1627488089160904
+            },
+            "id": "40d-250mm-L-1-K-1-N+0",
+            "surface_score": 84.59193537921826
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 1.1146983487447386,
+          "best_to_benchmark_normalized_distance": 1.4999999999999998,
+          "competitive_component_sizes": [
+            2,
+            1,
+            1,
+            1
+          ],
+          "competitive_point_count": 5,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 39,
+          "single_point_alternative_hint_count": 3
+        },
+        "40deg-300mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 1.0000142560835625
+            },
+            "id": "40d-300mm-reference-K4-N10",
+            "surface_score": 87.43417117789323
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 8.0,
+              "s": 0.7830371993405559
+            },
+            "id": "40d-300mm-L+0-K+0-N+0",
+            "surface_score": 87.90948129309098
+          },
+          "best_in_benchmark_component": true,
+          "best_is_sampled_boundary": false,
+          "best_minus_benchmark_score": 0.47531011519774324,
+          "best_to_benchmark_normalized_distance": 0.5,
+          "competitive_component_sizes": [
+            3,
+            1
+          ],
+          "competitive_point_count": 4,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 36,
+          "single_point_alternative_hint_count": 1
+        },
+        "40deg-350mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 1.4999935626121603
+            },
+            "id": "40d-350mm-reference-K4-N10",
+            "surface_score": 88.32384937849739
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.200002629710469,
+              "n": 8.0,
+              "s": 0.790447543433925
+            },
+            "id": "40d-350mm-L+1-K+1-N+0",
+            "surface_score": 88.91776149103157
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 0.5939121125341842,
+          "best_to_benchmark_normalized_distance": 1.5000087657335783,
+          "competitive_component_sizes": [
+            2,
+            1
+          ],
+          "competitive_point_count": 3,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 33,
+          "single_point_alternative_hint_count": 1
+        },
+        "40deg-400mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.25,
+              "length_factor": 1.0,
+              "n": 6.5,
+              "s": 0.9803933536734423
+            },
+            "id": "historical:40deg/400x400-coupled-r01-kn:candidate-020",
+            "surface_score": 89.7738119515527
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 4.25,
+              "length_factor": 1.0,
+              "n": 6.5,
+              "s": 0.9803933536734423
+            },
+            "id": "historical:40deg/400x400-coupled-r01-kn:candidate-020",
+            "surface_score": 89.7738119515527
+          },
+          "best_in_benchmark_component": true,
+          "best_is_sampled_boundary": false,
+          "best_minus_benchmark_score": 0.0,
+          "best_to_benchmark_normalized_distance": 0.0,
+          "competitive_component_sizes": [
+            25,
+            1
+          ],
+          "competitive_point_count": 26,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 60,
+          "single_point_alternative_hint_count": 1
+        },
+        "40deg-450mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 1.7499869378094446
+            },
+            "id": "40d-450mm-reference-K4-N10",
+            "surface_score": 86.61408923476236
+          },
+          "benchmark_in_competitive_set": false,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2,
+              "n": 8.0,
+              "s": 0.9237190903017322
+            },
+            "id": "40d-450mm-L+1-K+1-N+0",
+            "surface_score": 90.5308858887776
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 3.9167966540152435,
+          "best_to_benchmark_normalized_distance": 1.4999999999999998,
+          "competitive_component_sizes": [
+            2
+          ],
+          "competitive_point_count": 2,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 34,
+          "single_point_alternative_hint_count": 0
+        },
+        "45deg-250mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 1.250005957351676
+            },
+            "id": "45d-250mm-reference-K4-N10",
+            "surface_score": 86.1425317604096
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 2.0,
+              "length_factor": 0.8000018905199875,
+              "n": 8.0,
+              "s": 1.4290325372492843
+            },
+            "id": "45d-250mm-L-1-K-1-N+0",
+            "surface_score": 86.94802256740545
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 0.8054908069958486,
+          "best_to_benchmark_normalized_distance": 1.4999936982832551,
+          "competitive_component_sizes": [
+            2,
+            1,
+            1
+          ],
+          "competitive_point_count": 4,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 35,
+          "single_point_alternative_hint_count": 2
+        },
+        "45deg-300mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 1.670224111661384
+            },
+            "id": "45d-300mm-reference-K4-N10",
+            "surface_score": 87.5681107283823
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2,
+              "n": 8.0,
+              "s": 0.8961864481863893
+            },
+            "id": "45d-300mm-L+1-K+1-N+0",
+            "surface_score": 88.15319005195238
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 0.5850793235700849,
+          "best_to_benchmark_normalized_distance": 1.4999999999999998,
+          "competitive_component_sizes": [
+            6,
+            1
+          ],
+          "competitive_point_count": 7,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 42,
+          "single_point_alternative_hint_count": 1
+        },
+        "45deg-350mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0302159999999998,
+              "n": 7.75,
+              "s": 1.3729981680253414
+            },
+            "id": "historical:45deg/350x350-coupled-r02-kn:candidate-024",
+            "surface_score": 88.63163581180699
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2,
+              "n": 8.0,
+              "s": 1.0863365190714132
+            },
+            "id": "45d-350mm-L+1-K+1-N+0",
+            "surface_score": 89.38936624215944
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 0.7577304303524528,
+          "best_to_benchmark_normalized_distance": 1.3132293845326495,
+          "competitive_component_sizes": [
+            14,
+            1
+          ],
+          "competitive_point_count": 15,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 110,
+          "single_point_alternative_hint_count": 1
+        },
+        "45deg-400mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 5.25,
+              "length_factor": 1.0734809100564593,
+              "n": 7.5,
+              "s": 1.2802092720777547
+            },
+            "id": "historical:45deg/400x400-coupled-r03-kn:candidate-002",
+            "surface_score": 89.20977556849073
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 5.25,
+              "length_factor": 1.0734809100564593,
+              "n": 7.5,
+              "s": 1.2802092720777547
+            },
+            "id": "historical:45deg/400x400-coupled-r03-kn:candidate-002",
+            "surface_score": 89.20977556849073
+          },
+          "best_in_benchmark_component": true,
+          "best_is_sampled_boundary": false,
+          "best_minus_benchmark_score": 0.0,
+          "best_to_benchmark_normalized_distance": 0.0,
+          "competitive_component_sizes": [
+            42
+          ],
+          "competitive_point_count": 42,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 139,
+          "single_point_alternative_hint_count": 0
+        },
+        "45deg-450mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.5,
+              "length_factor": 0.9678863346104726,
+              "n": 10.0,
+              "s": 2.3063521288514273
+            },
+            "id": "historical:45deg/450x450-kn-grid:candidate-002",
+            "surface_score": 85.55371529265398
+          },
+          "benchmark_in_competitive_set": false,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2,
+              "n": 8.0,
+              "s": 1.0497856165040584
+            },
+            "id": "45d-450mm-L+1-K+1-N+0",
+            "surface_score": 87.88277388410881
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 2.3290585914548387,
+          "best_to_benchmark_normalized_distance": 1.4694961182371449,
+          "competitive_component_sizes": [
+            2
+          ],
+          "competitive_point_count": 2,
+          "confirmed_alternative_zone_count": 1,
+          "measured_count": 54,
+          "single_point_alternative_hint_count": 0
+        },
+        "50deg-250mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 11.25,
+              "s": 1.7179747556793592
+            },
+            "id": "historical:50deg/250x250-coupled-r01-kn:candidate-018",
+            "surface_score": 87.72986204096125
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 11.25,
+              "s": 1.7179747556793592
+            },
+            "id": "historical:50deg/250x250-coupled-r01-kn:candidate-018",
+            "surface_score": 87.72986204096125
+          },
+          "best_in_benchmark_component": true,
+          "best_is_sampled_boundary": false,
+          "best_minus_benchmark_score": 0.0,
+          "best_to_benchmark_normalized_distance": 0.0,
+          "competitive_component_sizes": [
+            33
+          ],
+          "competitive_point_count": 33,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 62,
+          "single_point_alternative_hint_count": 0
+        },
+        "50deg-300mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 2.2500208662383803
+            },
+            "id": "50d-300mm-reference-K4-N10",
+            "surface_score": 87.27187944968756
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2000042594880096,
+              "n": 8.0,
+              "s": 1.2537736197316889
+            },
+            "id": "50d-300mm-L+1-K+1-N+0",
+            "surface_score": 87.66857388175707
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 0.39669443206950916,
+          "best_to_benchmark_normalized_distance": 1.5000141983773612,
+          "competitive_component_sizes": [
+            4,
+            1
+          ],
+          "competitive_point_count": 5,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 35,
+          "single_point_alternative_hint_count": 1
+        },
+        "50deg-350mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 2.4999663809253563
+            },
+            "id": "50d-350mm-reference-K4-N10",
+            "surface_score": 86.76026150706775
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.1999961566916801,
+              "n": 8.0,
+              "s": 1.3926539371674904
+            },
+            "id": "50d-350mm-L+1-K+1-N+0",
+            "surface_score": 87.67373235470836
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 0.9134708476406104,
+          "best_to_benchmark_normalized_distance": 1.499987189040652,
+          "competitive_component_sizes": [
+            1,
+            1
+          ],
+          "competitive_point_count": 2,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 35,
+          "single_point_alternative_hint_count": 1
+        },
+        "50deg-400mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 5.5,
+              "length_factor": 1.1341105140803691,
+              "n": 8.75,
+              "s": 1.7240822806131508
+            },
+            "id": "historical:50deg/400x400-coupled-r03-s:candidate-000",
+            "surface_score": 86.27764057075125
+          },
+          "benchmark_in_competitive_set": true,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.2000034061975764,
+              "n": 8.0,
+              "s": 1.363856803030943
+            },
+            "id": "50d-400mm-L+1-K+1-N+0",
+            "surface_score": 86.63275451798337
+          },
+          "best_in_benchmark_component": true,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 0.35511394723212675,
+          "best_to_benchmark_normalized_distance": 0.454095893825575,
+          "competitive_component_sizes": [
+            14
+          ],
+          "competitive_point_count": 14,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 128,
+          "single_point_alternative_hint_count": 0
+        },
+        "50deg-450mm": {
+          "benchmark": {
+            "coordinate": {
+              "k": 4.0,
+              "length_factor": 1.0,
+              "n": 10.0,
+              "s": 2.7499855528201036
+            },
+            "id": "50d-450mm-reference-K4-N10",
+            "surface_score": 82.56812057625427
+          },
+          "benchmark_in_competitive_set": false,
+          "best": {
+            "coordinate": {
+              "k": 6.0,
+              "length_factor": 1.1999968332383306,
+              "n": 8.0,
+              "s": 1.5096338300204195
+            },
+            "id": "50d-450mm-L+1-K+1-N+0",
+            "surface_score": 85.2292392063453
+          },
+          "best_in_benchmark_component": false,
+          "best_is_sampled_boundary": true,
+          "best_minus_benchmark_score": 2.661118630091025,
+          "best_to_benchmark_normalized_distance": 1.4999894441741966,
+          "competitive_component_sizes": [
+            1
+          ],
+          "competitive_point_count": 1,
+          "confirmed_alternative_zone_count": 0,
+          "measured_count": 37,
+          "single_point_alternative_hint_count": 1
+        }
+      },
+      "cells_with_confirmed_alternative_zones": [
+        "30deg-250mm",
+        "30deg-300mm",
+        "30deg-400mm",
+        "30deg-450mm",
+        "35deg-250mm",
+        "35deg-300mm",
+        "35deg-400mm",
+        "35deg-450mm",
+        "40deg-250mm",
+        "40deg-450mm",
+        "45deg-450mm"
+      ],
+      "cells_with_single_point_alternative_hints": [
+        "35deg-250mm",
+        "35deg-350mm",
+        "40deg-250mm",
+        "40deg-300mm",
+        "40deg-350mm",
+        "40deg-400mm",
+        "45deg-250mm",
+        "45deg-300mm",
+        "45deg-350mm",
+        "50deg-300mm",
+        "50deg-350mm",
+        "50deg-450mm"
+      ],
+      "confirmed_alternative_cell_count": 11,
+      "definition": {
+        "competitive_score_window": 1.0,
+        "component_connection_distance": 1.1,
+        "confirmed_zone_minimum_points": 2,
+        "distance_scaling": {
+          "k": 2.0,
+          "length_factor": 0.2,
+          "n": 4.0
+        },
+        "interpretation": "observed topology at sampled resolution; does not prove that unsampled zones are absent"
+      },
+      "s_guidance_by_coverage": {
+        "30": {
+          "cell_best_s": [
+            0.44012682741979886,
+            0.45903395704967725,
+            0.5481168596199129,
+            0.4958070113007977,
+            0.48350137730870457
+          ],
+          "maximum": 0.5481168596199129,
+          "median": 0.48350137730870457,
+          "minimum": 0.44012682741979886
+        },
+        "35": {
+          "cell_best_s": [
+            0.8567353864087573,
+            0.8993821014043046,
+            0.7830192504883154,
+            0.6694175455538521,
+            0.6544896829034982
+          ],
+          "maximum": 0.8993821014043046,
+          "median": 0.7830192504883154,
+          "minimum": 0.6544896829034982
+        },
+        "40": {
+          "cell_best_s": [
+            1.1627488089160904,
+            0.7830371993405559,
+            0.790447543433925,
+            0.9803933536734423,
+            0.9237190903017322
+          ],
+          "maximum": 1.1627488089160904,
+          "median": 0.9237190903017322,
+          "minimum": 0.7830371993405559
+        },
+        "45": {
+          "cell_best_s": [
+            1.4290325372492843,
+            0.8961864481863893,
+            1.0863365190714132,
+            1.2802092720777547,
+            1.0497856165040584
+          ],
+          "maximum": 1.4290325372492843,
+          "median": 1.0863365190714132,
+          "minimum": 0.8961864481863893
+        },
+        "50": {
+          "cell_best_s": [
+            1.7179747556793592,
+            1.2537736197316889,
+            1.3926539371674904,
+            1.363856803030943,
+            1.5096338300204195
+          ],
+          "maximum": 1.7179747556793592,
+          "median": 1.3926539371674904,
+          "minimum": 1.2537736197316889
+        }
+      },
+      "single_point_hint_cell_count": 12
+    }
+  },
+  "coupled_branch_seeds": {
+    "cells": {
+      "30deg-250mm": {
+        "branches": {
+          "center": {
+            "s": 0.5481197406823648,
+            "surface_score": 76.26985722285096
+          },
+          "long_high_k": {
+            "s": 0.33763313370752146,
+            "surface_score": 73.9078356224532
+          },
+          "short_low_k": {
+            "s": 0.8262908624569753,
+            "surface_score": 76.56680374172869
+          }
+        },
+        "winner": "short_low_k"
+      },
+      "30deg-300mm": {
+        "branches": {
+          "center": {
+            "s": 0.548118681139852,
+            "surface_score": 81.07440694116329
+          },
+          "long_high_k": {
+            "s": 0.3194054583349916,
+            "surface_score": 78.6779640139003
+          },
+          "short_low_k": {
+            "s": 0.8617869682954766,
+            "surface_score": 80.87469984292272
+          }
+        },
+        "winner": "center"
+      },
+      "30deg-350mm": {
+        "branches": {
+          "center": {
+            "s": 0.5481168596199129,
+            "surface_score": 85.13149331622007
+          },
+          "long_high_k": {
+            "s": 0.3035106099513529,
+            "surface_score": 81.87169101817909
+          },
+          "short_low_k": {
+            "s": 0.8914956024760037,
+            "surface_score": 83.40496535175743
+          }
+        },
+        "winner": "center"
+      },
+      "30deg-400mm": {
+        "branches": {
+          "center": {
+            "s": 0.7830237261312591,
+            "surface_score": 86.63796709630859
+          },
+          "long_high_k": {
+            "s": 0.4958070113007977,
+            "surface_score": 87.48214218136002
+          },
+          "short_low_k": {
+            "s": 1.1914632945097419,
+            "surface_score": 83.88399667842376
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "30deg-450mm": {
+        "branches": {
+          "center": {
+            "s": 0.7830301138581987,
+            "surface_score": 88.43180467233735
+          },
+          "long_high_k": {
+            "s": 0.48350137730870457,
+            "surface_score": 88.63412063612748
+          },
+          "short_low_k": {
+            "s": 1.2136708183593408,
+            "surface_score": 84.47395302931159
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "35deg-250mm": {
+        "branches": {
+          "center": {
+            "s": 0.5481109892855204,
+            "surface_score": 80.05521873570481
+          },
+          "long_high_k": {
+            "s": 0.31474560129981277,
+            "surface_score": 75.98189576366084
+          },
+          "short_low_k": {
+            "s": 0.8567353864087573,
+            "surface_score": 81.32558495311523
+          }
+        },
+        "winner": "short_low_k"
+      },
+      "35deg-300mm": {
+        "branches": {
+          "center": {
+            "s": 0.5481147307203293,
+            "surface_score": 84.66292768451297
+          },
+          "long_high_k": {
+            "s": 0.2924532663276544,
+            "surface_score": 77.69194230076863
+          },
+          "short_low_k": {
+            "s": 0.8993821014043046,
+            "surface_score": 85.36813001205712
+          }
+        },
+        "winner": "short_low_k"
+      },
+      "35deg-350mm": {
+        "branches": {
+          "center": {
+            "s": 0.7830192504883154,
+            "surface_score": 87.38387679758262
+          },
+          "long_high_k": {
+            "s": 0.4801708869683916,
+            "surface_score": 86.84820622500568
+          },
+          "short_low_k": {
+            "s": 1.2079453683012424,
+            "surface_score": 85.71582578832347
+          }
+        },
+        "winner": "center"
+      },
+      "35deg-400mm": {
+        "branches": {
+          "center": {
+            "s": 1.0179333566780646,
+            "surface_score": 88.86341245189875
+          },
+          "long_high_k": {
+            "s": 0.6694175455538521,
+            "surface_score": 89.29097824729433
+          },
+          "short_low_k": {
+            "s": 1.5135421616572151,
+            "surface_score": 85.49507206809665
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "35deg-450mm": {
+        "branches": {
+          "center": {
+            "s": 1.0179332724018078,
+            "surface_score": 89.36436964243498
+          },
+          "long_high_k": {
+            "s": 0.6544896829034982,
+            "surface_score": 90.16413157941312
+          },
+          "short_low_k": {
+            "s": 1.5404619896086271,
+            "surface_score": 83.70667199057445
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "40deg-250mm": {
+        "branches": {
+          "center": {
+            "s": 0.783028764650869,
+            "surface_score": 83.7963156607718
+          },
+          "long_high_k": {
+            "s": 0.49583287996583614,
+            "surface_score": 80.92470670341798
+          },
+          "short_low_k": {
+            "s": 1.1627488089160904,
+            "surface_score": 84.59193537921826
+          }
+        },
+        "winner": "short_low_k"
+      },
+      "40deg-300mm": {
+        "branches": {
+          "center": {
+            "s": 0.7830371993405559,
+            "surface_score": 87.90948129309098
+          },
+          "long_high_k": {
+            "s": 0.4691764643491978,
+            "surface_score": 84.08428192383764
+          },
+          "short_low_k": {
+            "s": 1.2140247123721482,
+            "surface_score": 85.41080400899692
+          }
+        },
+        "winner": "center"
+      },
+      "40deg-350mm": {
+        "branches": {
+          "center": {
+            "s": 1.1745340140416378,
+            "surface_score": 88.81264258660242
+          },
+          "long_high_k": {
+            "s": 0.790447543433925,
+            "surface_score": 88.91776149103157
+          },
+          "short_low_k": {
+            "s": 1.7127195977970275,
+            "surface_score": 86.1667715851791
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "40deg-400mm": {
+        "branches": {
+          "center": {
+            "s": 1.1745381666122126,
+            "surface_score": 89.42759909180253
+          },
+          "long_high_k": {
+            "s": 0.7702069267059576,
+            "surface_score": 89.75386422838616
+          },
+          "short_low_k": {
+            "s": 1.7499578303573935,
+            "surface_score": 84.76365041840847
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "40deg-450mm": {
+        "branches": {
+          "center": {
+            "s": 1.370285335762612,
+            "surface_score": 87.86474729820807
+          },
+          "long_high_k": {
+            "s": 0.9237190903017322,
+            "surface_score": 90.5308858887776
+          },
+          "short_low_k": {
+            "s": 2.0119595274447772,
+            "surface_score": 82.38185493368363
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "45deg-250mm": {
+        "branches": {
+          "center": {
+            "s": 0.9787872103314061,
+            "surface_score": 86.22418527320363
+          },
+          "long_high_k": {
+            "s": 0.6382634306913749,
+            "surface_score": 83.41485630803699
+          },
+          "short_low_k": {
+            "s": 1.4290325372492843,
+            "surface_score": 86.94802256740545
+          }
+        },
+        "winner": "short_low_k"
+      },
+      "45deg-300mm": {
+        "branches": {
+          "center": {
+            "s": 1.307828966147371,
+            "surface_score": 87.95728753422117
+          },
+          "long_high_k": {
+            "s": 0.8961864481863893,
+            "surface_score": 88.15319005195238
+          },
+          "short_low_k": {
+            "s": 1.8719454321723688,
+            "surface_score": 85.86712919177981
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "45deg-350mm": {
+        "branches": {
+          "center": {
+            "s": 1.5558714811515217,
+            "surface_score": 88.33558884311668
+          },
+          "long_high_k": {
+            "s": 1.0863365190714132,
+            "surface_score": 89.38936624215944
+          },
+          "short_low_k": {
+            "s": 2.2134020903781413,
+            "surface_score": 85.27456098910312
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "45deg-400mm": {
+        "branches": {
+          "center": {
+            "s": 1.4877655844126625,
+            "surface_score": 87.78298515821072
+          },
+          "long_high_k": {
+            "s": 1.00249732732755,
+            "surface_score": 89.00338661597047
+          },
+          "short_low_k": {
+            "s": 2.178246040736444,
+            "surface_score": 82.43226483179211
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "45deg-450mm": {
+        "branches": {
+          "center": {
+            "s": 1.5660486367929032,
+            "surface_score": 86.0088483345692
+          },
+          "long_high_k": {
+            "s": 1.0497856165040584,
+            "surface_score": 87.88277388410881
+          },
+          "short_low_k": {
+            "s": 2.3083741871092394,
+            "surface_score": 80.68624936558498
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "50deg-250mm": {
+        "branches": {
+          "center": {
+            "s": 1.1745476315463608,
+            "surface_score": 87.42059945520978
+          },
+          "long_high_k": {
+            "s": 0.7748759016643053,
+            "surface_score": 84.17706953908785
+          },
+          "short_low_k": {
+            "s": 1.7030857195512399,
+            "surface_score": 86.19417438813925
+          }
+        },
+        "winner": "center"
+      },
+      "50deg-300mm": {
+        "branches": {
+          "center": {
+            "s": 1.7618249208338195,
+            "surface_score": 87.23994683871264
+          },
+          "long_high_k": {
+            "s": 1.2537736197316889,
+            "surface_score": 87.66857388175707
+          },
+          "short_low_k": {
+            "s": 2.4576197113696425,
+            "surface_score": 84.44821751231464
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "50deg-350mm": {
+        "branches": {
+          "center": {
+            "s": 1.9575387665291035,
+            "surface_score": 86.52457448360657
+          },
+          "long_high_k": {
+            "s": 1.3926539371674904,
+            "surface_score": 87.67373235470836
+          },
+          "short_low_k": {
+            "s": 2.748419778078657,
+            "surface_score": 82.08469974038312
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "50deg-400mm": {
+        "branches": {
+          "center": {
+            "s": 1.9575846113121378,
+            "surface_score": 84.47741704530785
+          },
+          "long_high_k": {
+            "s": 1.363856803030943,
+            "surface_score": 86.63275451798337
+          },
+          "short_low_k": {
+            "s": 2.8018836628706354,
+            "surface_score": 79.57340930516784
+          }
+        },
+        "winner": "long_high_k"
+      },
+      "50deg-450mm": {
+        "branches": {
+          "center": {
+            "s": 2.1533102877358457,
+            "surface_score": 82.8333604146447
+          },
+          "long_high_k": {
+            "s": 1.5096338300204195,
+            "surface_score": 85.2292392063453
+          },
+          "short_low_k": {
+            "s": 3.077903136806949,
+            "surface_score": 77.2990606776132
+          }
+        },
+        "winner": "long_high_k"
+      }
+    },
+    "definitions": {
+      "center": {
+        "k": 4.0,
+        "length_factor": 1.0,
+        "n": 8.0
+      },
+      "long_high_k": {
+        "k": 6.0,
+        "length_factor": 1.2,
+        "n": 8.0
+      },
+      "short_low_k": {
+        "k": 2.0,
+        "length_factor": 0.8,
+        "n": 8.0
+      }
+    },
+    "interpretation": "K=4 wins one-axis K comparisons, but coordinated length/K changes expose short/low-K and long/high-K competitive ridges",
+    "winning_cell_counts": {
+      "center": 5,
+      "long_high_k": 15,
+      "short_low_k": 5
+    }
+  },
+  "domain": {
+    "coverage_half_angle_deg": [
+      30,
+      35,
+      40,
+      45,
+      50
+    ],
+    "geometry": "axisymmetric round-mouth, zero extension, 6 degree throat",
+    "mouth_mm": [
+      250,
+      300,
+      350,
+      400,
+      450
+    ]
+  },
+  "heuristic_id": "round_control_heuristics_v1",
+  "provenance": {
+    "builder_sha256": "78d32adafcfb4e6c92c39e393e4bea50f4042c63b838ba1ce84c73585e0fdc96",
+    "challenge_results": "examples/round-control-v2-validation/validation_results.json",
+    "challenge_results_sha256": "ac4b773c584dba1a70feaa8abbd8608c9ccdcffa35ea59c00c3638cb44d70dc4",
+    "training_index": "examples/control-decoupling/model_source/training_index.json",
+    "training_index_sha256": "9f78e42e55bf8c81c995fb8357d4ff7207b6d77fe2a0e9b4a0e2f20c2ea74a75"
+  },
+  "reference_length_mm": {
+    "30": {
+      "250": 174.432,
+      "300": 205.222,
+      "350": 235.546,
+      "400": 242.696,
+      "450": 270.079
+    },
+    "35": {
+      "250": 153.446,
+      "300": 180.32,
+      "350": 190.953,
+      "400": 200.028,
+      "450": 222.598
+    },
+    "40": {
+      "250": 125.615,
+      "300": 147.665,
+      "350": 152.108,
+      "400": 171.584,
+      "450": 181.73
+    },
+    "45": {
+      "250": 105.791,
+      "300": 115.0,
+      "350": 125.0,
+      "400": 143.112,
+      "450": 156.6
+    },
+    "50": {
+      "250": 89.754,
+      "300": 93.908,
+      "350": 104.077,
+      "400": 117.433,
+      "450": 126.312
+    }
+  },
+  "rules": [
+    {
+      "action": "start each axis at the tabulated/bilinearly interpolated reference OSSE length",
+      "evidence": {
+        "cells": 25,
+        "cells_where_reference_length_won": 25,
+        "controls": {
+          "k": 4.0,
+          "n": 8.0
+        },
+        "direct_comparisons": 49,
+        "direct_comparisons_won": 49,
+        "median_surface_score_gain": 6.403230541926803,
+        "minimum_surface_score_gain": 2.012532993495796,
+        "p10_surface_score_gain": 3.6086713301142908
+      },
+      "id": "reference-length-seed"
+    },
+    {
+      "action": "start K at 4; do not infer that larger K is better",
+      "evidence": {
+        "cells": 25,
+        "fixed_coordinates": {
+          "length_factor": 1.0,
+          "n": 8.0
+        },
+        "median_surface_score_range": 9.90761629513895,
+        "p10_surface_score_range": 7.936173814004493,
+        "winning_value_counts": {
+          "4": 25
+        }
+      },
+      "id": "k4-seed"
+    },
+    {
+      "action": "start N at 8; N=4 is the first alternate and N=16 is not an initial candidate",
+      "evidence": {
+        "cells": 25,
+        "fixed_coordinates": {
+          "k": 4.0,
+          "length_factor": 1.0
+        },
+        "median_surface_score_range": 3.0369225688240533,
+        "p10_surface_score_range": 1.823843405602338,
+        "winning_value_counts": {
+          "4": 4,
+          "8": 21
+        }
+      },
+      "id": "n8-seed"
+    },
+    {
+      "action": "after a material K/N change, preserve the coverage-level S seed first, then recheck at least \u00b110% length because the preferred length interacts with K/N",
+      "evidence": {
+        "complete_k_n_groups": 91,
+        "median_reference_margin_over_other_lengths": 3.000282980389386,
+        "reference_length_win_fraction": 0.5934065934065934,
+        "winning_length_factor_counts": {
+          "0.8": 19,
+          "1.0": 54,
+          "1.2": 18
+        }
+      },
+      "id": "recheck-length-after-control-change"
+    },
+    {
+      "action": "use the median S of measured cell winners as a physical ridge seed when K or N changes",
+      "evidence": {
+        "30": {
+          "cell_best_s": [
+            0.44012682741979886,
+            0.45903395704967725,
+            0.5481168596199129,
+            0.4958070113007977,
+            0.48350137730870457
+          ],
+          "maximum": 0.5481168596199129,
+          "median": 0.48350137730870457,
+          "minimum": 0.44012682741979886
+        },
+        "35": {
+          "cell_best_s": [
+            0.8567353864087573,
+            0.8993821014043046,
+            0.7830192504883154,
+            0.6694175455538521,
+            0.6544896829034982
+          ],
+          "maximum": 0.8993821014043046,
+          "median": 0.7830192504883154,
+          "minimum": 0.6544896829034982
+        },
+        "40": {
+          "cell_best_s": [
+            1.1627488089160904,
+            0.7830371993405559,
+            0.790447543433925,
+            0.9803933536734423,
+            0.9237190903017322
+          ],
+          "maximum": 1.1627488089160904,
+          "median": 0.9237190903017322,
+          "minimum": 0.7830371993405559
+        },
+        "45": {
+          "cell_best_s": [
+            1.4290325372492843,
+            0.8961864481863893,
+            1.0863365190714132,
+            1.2802092720777547,
+            1.0497856165040584
+          ],
+          "maximum": 1.4290325372492843,
+          "median": 1.0863365190714132,
+          "minimum": 0.8961864481863893
+        },
+        "50": {
+          "cell_best_s": [
+            1.7179747556793592,
+            1.2537736197316889,
+            1.3926539371674904,
+            1.363856803030943,
+            1.5096338300204195
+          ],
+          "maximum": 1.7179747556793592,
+          "median": 1.3926539371674904,
+          "minimum": 1.2537736197316889
+        }
+      },
+      "id": "coverage-s-seed"
+    },
+    {
+      "action": "carry the short/low-K, center, and long/high-K branches as distinct starts; do not optimize length or K alone",
+      "evidence": {
+        "winner_by_cell": {
+          "30deg-250mm": "short_low_k",
+          "30deg-300mm": "center",
+          "30deg-350mm": "center",
+          "30deg-400mm": "long_high_k",
+          "30deg-450mm": "long_high_k",
+          "35deg-250mm": "short_low_k",
+          "35deg-300mm": "short_low_k",
+          "35deg-350mm": "center",
+          "35deg-400mm": "long_high_k",
+          "35deg-450mm": "long_high_k",
+          "40deg-250mm": "short_low_k",
+          "40deg-300mm": "center",
+          "40deg-350mm": "long_high_k",
+          "40deg-400mm": "long_high_k",
+          "40deg-450mm": "long_high_k",
+          "45deg-250mm": "short_low_k",
+          "45deg-300mm": "long_high_k",
+          "45deg-350mm": "long_high_k",
+          "45deg-400mm": "long_high_k",
+          "45deg-450mm": "long_high_k",
+          "50deg-250mm": "center",
+          "50deg-300mm": "long_high_k",
+          "50deg-350mm": "long_high_k",
+          "50deg-400mm": "long_high_k",
+          "50deg-450mm": "long_high_k"
+        },
+        "winning_cell_counts": {
+          "center": 5,
+          "long_high_k": 15,
+          "short_low_k": 5
+        }
+      },
+      "id": "coupled-length-k-branches"
+    },
+    {
+      "action": "retain observed competitive components outside the benchmark component as alternate search starts",
+      "evidence": {
+        "confirmed_cells": [
+          "30deg-250mm",
+          "30deg-300mm",
+          "30deg-400mm",
+          "30deg-450mm",
+          "35deg-250mm",
+          "35deg-300mm",
+          "35deg-400mm",
+          "35deg-450mm",
+          "40deg-250mm",
+          "40deg-450mm",
+          "45deg-450mm"
+        ],
+        "single_point_hint_cells": [
+          "35deg-250mm",
+          "35deg-350mm",
+          "40deg-250mm",
+          "40deg-300mm",
+          "40deg-350mm",
+          "40deg-400mm",
+          "45deg-250mm",
+          "45deg-300mm",
+          "45deg-350mm",
+          "50deg-300mm",
+          "50deg-350mm",
+          "50deg-450mm"
+        ]
+      },
+      "id": "retain-alternative-zones"
+    },
+    {
+      "action": "for unequal H/V targets, combine independent axis seed lengths using mouth-width/height score weights",
+      "id": "hv-flat-compromise",
+      "status": "geometric seed; asymmetric acoustics unvalidated"
+    },
+    {
+      "action": "optionally shorten only the axis with the shorter seed length by using cylindrical sag equal to the axis-length difference",
+      "id": "hv-sag-compensation",
+      "status": "exact at principal mouth edges in current geometry; acoustic benefit unvalidated"
+    }
+  ],
+  "s_guidance_by_coverage": {
+    "30": {
+      "cell_best_s": [
+        0.44012682741979886,
+        0.45903395704967725,
+        0.5481168596199129,
+        0.4958070113007977,
+        0.48350137730870457
+      ],
+      "maximum": 0.5481168596199129,
+      "median": 0.48350137730870457,
+      "minimum": 0.44012682741979886
+    },
+    "35": {
+      "cell_best_s": [
+        0.8567353864087573,
+        0.8993821014043046,
+        0.7830192504883154,
+        0.6694175455538521,
+        0.6544896829034982
+      ],
+      "maximum": 0.8993821014043046,
+      "median": 0.7830192504883154,
+      "minimum": 0.6544896829034982
+    },
+    "40": {
+      "cell_best_s": [
+        1.1627488089160904,
+        0.7830371993405559,
+        0.790447543433925,
+        0.9803933536734423,
+        0.9237190903017322
+      ],
+      "maximum": 1.1627488089160904,
+      "median": 0.9237190903017322,
+      "minimum": 0.7830371993405559
+    },
+    "45": {
+      "cell_best_s": [
+        1.4290325372492843,
+        0.8961864481863893,
+        1.0863365190714132,
+        1.2802092720777547,
+        1.0497856165040584
+      ],
+      "maximum": 1.4290325372492843,
+      "median": 1.0863365190714132,
+      "minimum": 0.8961864481863893
+    },
+    "50": {
+      "cell_best_s": [
+        1.7179747556793592,
+        1.2537736197316889,
+        1.3926539371674904,
+        1.363856803030943,
+        1.5096338300204195
+      ],
+      "maximum": 1.7179747556793592,
+      "median": 1.3926539371674904,
+      "minimum": 1.2537736197316889
+    }
+  },
+  "schema_version": 1,
+  "seed_controls": {
+    "k": 4.0,
+    "n": 8.0
+  },
+  "status": "measured seed rules; not a score predictor"
+}

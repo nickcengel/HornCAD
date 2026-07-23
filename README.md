@@ -189,6 +189,9 @@ parents. Augmented v1 remains research comparison evidence. Both a targeted
 quadratic consolidation and a simulation-free nonlinear follow-up failed their
 locked challenges, so no v2 model was released; see
 `examples/round-control-nonlinear-evaluation/README.md`.
+Measured, non-predictive starting rules remain available in
+`models/round_control_heuristics_v1/` and are documented in
+`docs/reference/round_control_heuristics.md`.
 
 `pyproject.toml` and `Makefile` remain at the root because Python packaging and
 standard build tools expect project metadata there.

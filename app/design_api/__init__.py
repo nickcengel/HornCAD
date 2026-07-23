@@ -4,6 +4,12 @@ from .application import (
     DesignApplication, ModelBackend, ModelNotReadyError,
 )
 from .study import Study
+from .heuristics import (
+    AxisLengthSeed,
+    RoundControlHeuristics,
+    RoundControlSeed,
+    SagCompensationSeed,
+)
 from .types import (
     STANDARD_DIAGNOSTICS,
     DesignConstraints,
@@ -20,6 +26,7 @@ from .types import (
 
 __all__ = (
     "STANDARD_DIAGNOSTICS",
+    "AxisLengthSeed",
     "DesignApplication",
     "DesignConstraints",
     "DesignIntent",
@@ -32,6 +39,9 @@ __all__ = (
     "Objective",
     "Prediction",
     "Recommendation",
+    "RoundControlHeuristics",
+    "RoundControlSeed",
+    "SagCompensationSeed",
     "Study",
     "SupportStatus",
 )
