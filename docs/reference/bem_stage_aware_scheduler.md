@@ -31,3 +31,21 @@ The scheduler validates that each search has an explicit solver-worker count
 and that no individual search requests more processes than the global
 capacity. Its runtime ledger records each completed search and the tail of its
 captured output for failure diagnosis.
+
+## Required use in future studies
+
+All BEM studies prepared after the round-control ridge-closure study must use
+the stage-aware queue and shared NumCalc semaphore. A study-specific runner must
+not fall back to whole-search slot accounting.
+
+The queue overlaps separate search processes; it does not make candidates
+inside one search concurrent. A future study must therefore expose enough
+independent search work to occupy global capacity through the tail. Prefer one
+candidate per search for fixed registered designs. If candidates must share a
+search, the launch audit must demonstrate that at least two independent search
+streams remain until the final two candidates. A design that would leave the
+last search processing candidates sequentially fails scheduler preflight.
+
+The study runtime ledger must record the scheduler type, queue-worker count,
+global NumCalc capacity, and search-sharding policy. These are execution
+requirements only; they do not authorize extra candidates.

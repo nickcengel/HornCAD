@@ -32,6 +32,12 @@ useful OSSE lengths/S values, K/N regions, and distinct diagnostic behavior so t
 new effect is not mistaken for a winner-specific correction. Frequency-resolved
 diagnostics remain available alongside the final score.
 
+Every subsequent BEM stage uses the
+[stage-aware BEM scheduler](../reference/bem_stage_aware_scheduler.md) with the
+shared NumCalc capacity guard. Fixed designs are sharded at candidate
+granularity so the final candidates can overlap; a study may not revert to
+whole-search scheduling that leaves half the solver capacity idle at the tail.
+
 A densely sampled inner design region does not by itself authorize prediction at
 the outer cells of the round baseline. Each augmentation therefore uses a
 **core-plus-sentinel** design: detailed paired contrasts in the likely product

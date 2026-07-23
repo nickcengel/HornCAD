@@ -33,6 +33,13 @@ run preflight, or schedule BEM until all of the following are true:
 The study builder must refuse to write a manifest while the ridge runtime state
 is not `complete`. Preparing this plan schedules zero simulations.
 
+Execution must use the repository's stage-aware BEM queue and global NumCalc
+semaphore. Because candidates within one search are sequential, materialize this
+fixed design as one independently schedulable search per candidate. Record the
+queue-worker count, global NumCalc capacity, and sharding policy in the runtime
+ledger. Scheduler preflight must reject a layout that can leave the final
+candidates serialized in one search.
+
 ## Fixed geometry convention
 
 For a paired contrast, hold mouth diameter, intended and OSSE coverage, OSSE

@@ -220,6 +220,12 @@ def build_manifest() -> dict[str, Any]:
             "run all 16 conditional-validation cases if any locked radiation "
             "error exceeds its registered limit"
         ),
+        "required_scheduler": {
+            "type": "stage-aware-bem-queue",
+            "global_numcalc_semaphore": True,
+            "search_sharding": "one-candidate-per-search",
+            "whole_search_slot_fallback_allowed": False,
+        },
         "radiation_absolute_error_limits": RADIATION_ERROR_LIMITS,
         "throat_impedance": {
             "record": True,
