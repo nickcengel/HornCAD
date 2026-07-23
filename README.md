@@ -153,6 +153,8 @@ entry points.
 - `automated_tests/` — developer regression tests, not horn projects.
 - `docs/reference/` — maintained technical reference material.
 - `docs/plans/` — active implementation plans and unresolved design decisions.
+- `docs/archive/` — superseded plans and frozen research snapshots retained for
+  provenance, not current scheduling.
 
 The maintained example is
 `examples/osse-400x280-reference/`. It contains the project YAML, acoustic STL,
@@ -167,8 +169,9 @@ See `docs/reference/horncad_geometry.md` for geometry equations, coordinates,
 the YAML schema, and STL behavior. The example project documents the provenance
 of its retained FEM and BEM results in its own README.
 
-The planned BEM candidate-search workflow is recorded in
-`docs/plans/bem_candidate_search.md`.
+The documentation authority map is in `docs/README.md`. The active canonical
+BEM experiment is specified in `examples/control-decoupling/study_plan.md`,
+with its model export pipeline and later geometry roadmap alongside it.
 
 `pyproject.toml` and `Makefile` remain at the root because Python packaging and
 standard build tools expect project metadata there.

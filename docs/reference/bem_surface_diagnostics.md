@@ -136,6 +136,7 @@ Synthetic surfaces must cover:
 Tests must also demonstrate stability under frequency decimation and angular
 resampling before any metric controls candidate selection.
 
-Empirical trends found with this score and the studies proposed to close the
-remaining sampling gaps are recorded in
-[`bem_design_trends_and_studies.md`](bem_design_trends_and_studies.md).
+The active round study applying this score is specified in
+[`examples/control-decoupling/study_plan.md`](../../examples/control-decoupling/study_plan.md).
+Earlier empirical trends are preserved as historical evidence in the
+[documentation archive](../archive/pre-control-decoupling-2026-07/README.md).

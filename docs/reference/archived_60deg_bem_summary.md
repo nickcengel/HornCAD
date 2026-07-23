@@ -1,9 +1,10 @@
 # Archived 60-degree BEM study summary
 
 The square-mouth 60-degree study was completed as exploratory boundary work,
-then removed from the active example set on 2026-07-21 when the supported
-design domain was formalized as 25 through 50 degrees half-coverage. The full
-reports, STL files, search ledgers, and candidates remain recoverable from Git
+then removed from the active example set on 2026-07-21 when the then-supported
+design domain was formalized as 25 through 50 degrees half-coverage. The later
+canonical control study uses 30 through 50 degrees. The full reports, STL files,
+search ledgers, and candidates remain recoverable from Git
 history through commit `767ab3c26` and its ancestors. These results are not
 used for interpolation, ranking, or future search scheduling.
 

@@ -3,13 +3,14 @@
 ## Intended workflow
 
 The user selects mouth width, mouth height, and intended horizontal/vertical
-coverage. The system returns the best-supported length, K, N, derived S,
+coverage. The system returns the best-supported OSSE length, K, N, derived S,
 predicted surface score, uncertainty, closure status, and nearby alternatives.
 
-S is not an additional independent control once mouth, coverage, length, K, and
-N are fixed. The search model may use S as a convenient coordinate and derive
-length, but the delivered design must report both the physical length and the
-resulting S.
+S is not an additional independent control once mouth, coverage, OSSE length,
+K, and N are fixed. The canonical round model uses OSSE length, K, and N as its
+independent profile controls and reports the resulting S. A later internal model
+may use S as an additional derived feature, but it must not redefine length or
+invert S into a replacement authored length.
 
 ## Stored evidence
 
@@ -29,11 +30,11 @@ but their compact study records must remain available to the model.
 
 ## Recommendation model
 
-For the current symmetric square-mouth study, model score as a function of
-mouth size, coverage half-angle, S, K, and N. Convert the selected S/K/N point
-to physical length using the same HornCAD geometry equations used to generate
-the study. Rectangular and asymmetric designs require separate horizontal and
-vertical inputs and should not be inferred from the square symmetric model
+For the current symmetric square-mouth study, model every component diagnostic
+and score as a function of mouth size, coverage half-angle, OSSE length, K, and
+N, with derived S and normalized geometry available as secondary features and
+support checks. Rectangular and asymmetric designs require separate horizontal
+and vertical inputs and should not be inferred from the square symmetric model
 without validation.
 
 The recommendation process should:
@@ -125,6 +126,12 @@ the two.
 
 1. Exact lookup for measured closed mouth/coverage combinations.
 2. Validated interpolation between sampled mouth sizes and coverage angles.
-3. Continuous S/K/N optimization with uncertainty.
+3. Continuous OSSE-length/K/N optimization with derived-S support checks and
+   uncertainty.
 4. Confirmation simulations that update the measured dataset.
 5. Frequency-resolved heatmap and energy-curve prediction.
+
+The fitting, validation, and portable export contract is defined in
+[`examples/control-decoupling/model_pipeline.md`](../../examples/control-decoupling/model_pipeline.md).
+Later geometry corrections follow
+[`geometry_research_roadmap.md`](../../examples/control-decoupling/geometry_research_roadmap.md).

@@ -16,8 +16,14 @@ The browser previews the acoustic surface. The Python exporter produces either t
 - `z` follows the horn axis from the start of the OS-SE profile to the mouth.
 - `x` is horizontal and `y` is vertical.
 - Lengths are millimetres and authored angles are degrees.
-- `global.length` excludes the optional conical throat extension.
-- `global.measured_total_length` is informational and includes that extension.
+- **Length** and `global.length` mean only the axial OSSE-profile length. They
+  exclude the optional conical throat extension and mouth-sag distortion.
+- **Total length** means OSSE length + conical extension + the axial extent
+  added by mouth sag.
+- `global.measured_total_length` is informational and records the measured
+  axial span of the exported geometry. For an acoustic-surface export this is
+  the total length above; printable-body features can extend the measured body
+  span farther.
 - Coverage and throat angles are half-angles.
 
 ## Acoustic Basis Profiles
@@ -54,7 +60,9 @@ The mouth surface is curved by `global.mouth_sag`. Horizontal and vertical sag c
 - vertical only: vertical cylindrical curvature;
 - neither enabled, or zero sag: flat mouth.
 
-Sag changes the local axial position of a point; it does not replace the acoustic basis solve.
+Sag changes the local axial position of a point; it does not replace the
+acoustic basis solve or alter the meaning of OSSE length. Its added axial extent
+contributes to total length.
 
 ## Printable Body
 
