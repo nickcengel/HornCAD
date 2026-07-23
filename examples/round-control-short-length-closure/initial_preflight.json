@@ -1,0 +1,27 @@
+{
+  "scheduler": {
+    "configured_workers": {
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/35deg-300mm/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/40deg-250mm/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-short-length-closure/searches/initial/45deg-250mm/search.yaml": 10
+    },
+    "numcalc_process_capacity": 20,
+    "queue_workers": 4,
+    "search_count": 3
+  },
+  "searches": [
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-short-length-closure/searches/initial/35deg-300mm/search.yaml"
+    },
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-short-length-closure/searches/initial/40deg-250mm/search.yaml"
+    },
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-short-length-closure/searches/initial/45deg-250mm/search.yaml"
+    }
+  ],
+  "stage": "initial"
+}

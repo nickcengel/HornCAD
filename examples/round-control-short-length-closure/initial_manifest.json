@@ -1,0 +1,82 @@
+{
+  "candidate_count": 3,
+  "conditional_rule": "add Lx0.7 only where measured Lx0.8 surface score exceeds the retained Lx0.9 score",
+  "coordinates": [
+    {
+      "coverage_deg": 35,
+      "derived_s": 1.5754393671556264,
+      "id": "short-closure-35deg-300mm-K1-N8-Lx0p8",
+      "k": 1.0,
+      "length_factor": 0.6201974267968057,
+      "length_mm": 111.834,
+      "length_multiplier": 0.8,
+      "mouth_mm": 300,
+      "n": 8.0,
+      "target_s": 0.7830192504883154
+    },
+    {
+      "coverage_deg": 40,
+      "derived_s": 1.851570265296409,
+      "id": "short-closure-40deg-250mm-K1-N8-Lx0p8",
+      "k": 1.0,
+      "length_factor": 0.6303944592604387,
+      "length_mm": 79.187,
+      "length_multiplier": 0.8,
+      "mouth_mm": 250,
+      "n": 8.0,
+      "target_s": 0.9237190903017322
+    },
+    {
+      "coverage_deg": 45,
+      "derived_s": 2.1737706860826638,
+      "id": "short-closure-45deg-250mm-K1-N8-Lx0p8",
+      "k": 1.0,
+      "length_factor": 0.6388634193835014,
+      "length_mm": 67.586,
+      "length_multiplier": 0.8,
+      "mouth_mm": 250,
+      "n": 8.0,
+      "target_s": 1.0863365190714132
+    }
+  ],
+  "freeze_sha256": "94590b3775071f2633ff48a2bb054ada0195bd28a2a0140e6e496910eca89c82",
+  "hard_study_candidate_cap": 6,
+  "heuristics_sha256": "bf443d9fc4dc130ce016efe9c512822ddce16ca2e1e1ff33e52aa15f1a1e72af",
+  "inputs": {
+    "short-closure-35deg-300mm-K1-N8-Lx0p8": {
+      "project": "examples/round-control-short-length-closure/searches/initial/35deg-300mm/project.yaml",
+      "project_sha256": "e574172152e9faeab26db47893040b9692e7da69841eee7fabdbc7894357141b",
+      "search": "examples/round-control-short-length-closure/searches/initial/35deg-300mm/search.yaml",
+      "search_sha256": "ae0d517aac3b8e3448cbe47322cc9b6e5afe3bbdee34386098ccdd3cbfbd1c07"
+    },
+    "short-closure-40deg-250mm-K1-N8-Lx0p8": {
+      "project": "examples/round-control-short-length-closure/searches/initial/40deg-250mm/project.yaml",
+      "project_sha256": "9718f1480d8ec9ced54df7a33de799d595b4e087e9868ab1e32d7771ee4a2a78",
+      "search": "examples/round-control-short-length-closure/searches/initial/40deg-250mm/search.yaml",
+      "search_sha256": "a86a03453ef9812544e5c1fb40583a9b4e67a075a6223a3bfdca082991b38862"
+    },
+    "short-closure-45deg-250mm-K1-N8-Lx0p8": {
+      "project": "examples/round-control-short-length-closure/searches/initial/45deg-250mm/project.yaml",
+      "project_sha256": "8493957eb885dccec347646136f1368bece81007d4ba3108284deac49b4506b1",
+      "search": "examples/round-control-short-length-closure/searches/initial/45deg-250mm/search.yaml",
+      "search_sha256": "7cf789176a865ac1839f9f41bf2aa66cb2f3353a1395bd3b55b2d250a5f6d22f"
+    }
+  },
+  "ridge_manifest_sha256": "13e3c61602a5da22ae84001d6d8eed26ce64374b422cfec0b31f7bd6644f6a6c",
+  "ridge_results_sha256": "387b255e5da33e396764a818a37b856cecd2fce8e1c118ddfd73d9faf4b8c7fa",
+  "scheduler": {
+    "numcalc_process_capacity": 20,
+    "queue_workers": 4,
+    "search_sharding": "one-candidate-per-search",
+    "type": "stage-aware-bem-queue"
+  },
+  "schema_version": 1,
+  "stage": "initial",
+  "status": "frozen-not-run",
+  "study_id": "round-control-short-length-closure-v1",
+  "throat_impedance": {
+    "included_in_conditional_decision": false,
+    "included_in_surface_score": false,
+    "retained": true
+  }
+}

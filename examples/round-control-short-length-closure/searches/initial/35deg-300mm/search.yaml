@@ -1,0 +1,64 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 35.0
+  intended_coverage_v_deg: 35.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 1
+  initial_candidates: 1
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  bounds:
+    length_mm:
+    - 111.833999
+    - 111.834001
+    extension_mm:
+    - -1.0e-06
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 34.999999
+    - 35.000001
+    osse_coverage_v_deg:
+    - 34.999999
+    - 35.000001
+    k_h:
+    - 0.999999
+    - 1.000001
+    k_v:
+    - 0.999999
+    - 1.000001
+    n_h:
+    - 7.999999
+    - 8.000001
+    n_v:
+    - 7.999999
+    - 8.000001
+  initial_pool:
+  - label: short-closure-35deg-300mm-K1-N8-Lx0p8-schema-seed-duplicate
+    values:
+      length_mm: 111.834
+      extension_mm: 0.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 1.0
+      k_v: 1.0
+      n_h: 8.0
+      n_v: 8.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
+  round_control_short_length_closure:
+    role: measured-heuristic-short-length-closure
+    coordinate_id: short-closure-35deg-300mm-K1-N8-Lx0p8
+    k_hard_minimum: 1.0
+    throat_impedance_used_in_score: false
