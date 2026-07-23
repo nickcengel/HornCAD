@@ -1,0 +1,68 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 50.0
+  intended_coverage_v_deg: 50.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 1
+  initial_candidates: 1
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 112.689999
+    - 112.690001
+    extension_mm:
+    - 39.999999
+    - 40.000001
+    osse_coverage_h_deg:
+    - 49.999999
+    - 50.000001
+    osse_coverage_v_deg:
+    - 49.999999
+    - 50.000001
+    k_h:
+    - 5.999999
+    - 6.000001
+    k_v:
+    - 5.999999
+    - 6.000001
+    n_h:
+    - 7.999999
+    - 8.000001
+    n_v:
+    - 7.999999
+    - 8.000001
+  initial_pool:
+  - label: ext-angle-primary-development-50deg-300mm-primary-A6-E40-schema-seed-duplicate
+    values:
+      length_mm: 112.69
+      extension_mm: 40.0
+      osse_coverage_h_deg: 50.0
+      osse_coverage_v_deg: 50.0
+      k_h: 6.0
+      k_v: 6.0
+      n_h: 8.0
+      n_v: 8.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
+  extension_throat_angle_study:
+    coordinate_id: ext-angle-primary-development-50deg-300mm-primary-A6-E40
+    stage: primary-development
+    parent_id: 50d-300mm-L+1-K+1-N+0
+    parent_role: primary
+    throat_angle_deg: 6
+    throat_impedance_reported: true
+    throat_impedance_used_in_surface_score: false

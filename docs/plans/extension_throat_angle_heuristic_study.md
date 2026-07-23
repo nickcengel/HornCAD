@@ -21,17 +21,18 @@ parent is reused. It must not be simulated again.
 
 The round-control ridge-closure study is complete, its 48 responses passed
 archive/diagnostic audit, and the measured round heuristic records the exact
-ridge-results hash. No extension candidates have been materialized or
-scheduled. Before a future launch:
+ridge-results hash. The launch gate was completed on July 23, 2026:
 
-1. freeze a primary and the required secondary measured parent;
-2. write and review the 210-case initial manifest and its coordinate hash;
-3. run geometry-only feasibility checks;
-4. explicitly authorize BEM execution.
+1. primary parents were frozen in all 25 cells and distinct secondary parents
+   were frozen in the three transfer cells;
+2. the 210-case initial manifest and coordinate hash were frozen;
+3. all 210 candidates passed geometry-only feasibility checks;
+4. BEM execution was explicitly authorized.
 
-The study builder still verifies the completed ridge state and matching
-heuristic provenance before writing a manifest. Preparing this plan schedules
-zero simulations.
+The study runner verifies the completed ridge state, matching heuristic
+provenance, frozen input hashes, candidate cap, and stage-specific preflight
+marker before launching any BEM. Development and transfer results must be
+frozen before the locked stage can be read or run.
 
 Execution must use the repository's stage-aware BEM queue and global NumCalc
 semaphore. Because candidates within one search are sequential, materialize this
@@ -188,4 +189,7 @@ The design API should return measured or paired-rule provenance and warnings.
 It must not silently represent an unvalidated throat/extension combination as a
 confident prediction.
 
-No extension/throat-angle BEM is launched by this plan.
+The executable study and live index are retained at
+`examples/extension-throat-angle-heuristics/`. The index follows the repository
+study-report convention and shows throat impedance beside surface score without
+using it in ranking, fitting, or validation gates.

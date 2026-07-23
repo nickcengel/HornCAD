@@ -1,0 +1,56 @@
+<!doctype html><html><head><meta charset='utf-8'>
+<title>BEM candidate search</title><style>
+:root{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}
+*{box-sizing:border-box}body{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}main{width:100%;padding:20px}
+a{color:var(--accent-strong)}section{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin:14px 0;overflow-x:auto}table{border-collapse:collapse;width:100%;min-width:max-content}
+th,td{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vertical-align:top}th{background:var(--panel-2);white-space:nowrap}td.best{background:#173c39;color:#9af0df;font-weight:700}td.worst{background:#482321;color:#ffaaa3;font-weight:700}.summary{display:flex;gap:30px;flex-wrap:wrap}.summary p{color:var(--muted)}.summary strong{color:var(--ink)}
+.axis-pair{white-space:normal}.sortable{cursor:pointer;user-select:none}[hidden]{display:none!important}
+.column-controls{display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px}.column-toggle{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:var(--panel-2);color:var(--muted);cursor:pointer}.column-toggle[aria-pressed='true']{border-color:var(--accent);color:var(--ink);background:#173c39}
+</style></head><body><main><h1>BEM candidate search</h1><section class='summary'>
+<p><strong>Status</strong><br>preflight</p><p><strong>Phase</strong><br>initial candidates materialized</p>
+<p><strong>Progress</strong><br>0&nbsp;/<wbr> 1 evaluated</p>
+<p><strong>Rejected proposals</strong><br>0</p>
+<p><strong>Confidently inferior</strong><br>0</p>
+<p><strong>Adaptive skips</strong><br>0</p>
+<p><strong>S sensitivity policy</strong><br>Disabled</p>
+<p><strong>K/N closure</strong><br>not requested</p>
+<p><strong>Sweep band</strong><br>500–8000 Hz</p>
+<p><strong>Crossover</strong><br>750 Hz</p>
+<p><strong>Diagnostic band</strong><br>750–8000 Hz</p></section>
+<section><p><strong>Sampling policy:</strong> training uses 12 PPO. Seed, representative probes, and finalists require 16-PPO confirmation before final selection.</p></section>
+<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'><button type='button' class='column-toggle' data-column-toggle='surface-score' aria-pressed='true'>Final surface score</button><button type='button' class='column-toggle' data-column-toggle='impedance-score' aria-pressed='true'>Throat-impedance score</button><button type='button' class='column-toggle' data-column-toggle='containment-mean' aria-pressed='true'>Mean containment H / V</button><button type='button' class='column-toggle' data-column-toggle='profile-rms' aria-pressed='true'>Profile RMS error H / V</button><button type='button' class='column-toggle' data-column-toggle='outward-rise' aria-pressed='false'>Outward-rise violation H / V</button><button type='button' class='column-toggle' data-column-toggle='slice-rms' aria-pressed='true'>Slice-energy RMS departure H / V</button><button type='button' class='column-toggle' data-column-toggle='line-rms' aria-pressed='false'>−6 dB RMS error H / V</button><button type='button' class='column-toggle' data-column-toggle='length' aria-pressed='false'>Length mm</button><button type='button' class='column-toggle' data-column-toggle='length-mouth-ratio' aria-pressed='false'>Length-mouth ratio</button><button type='button' class='column-toggle' data-column-toggle='extension' aria-pressed='false'>Extension mm</button><button type='button' class='column-toggle' data-column-toggle='osse' aria-pressed='false'>OS-SE H / V</button><button type='button' class='column-toggle' data-column-toggle='k' aria-pressed='false'>K H / V</button><button type='button' class='column-toggle' data-column-toggle='s' aria-pressed='false'>S H / V</button><button type='button' class='column-toggle' data-column-toggle='n' aria-pressed='false'>N H / V</button><button type='button' class='column-toggle' data-column-toggle='trait' aria-pressed='false'>Distinguishing trait</button><button type='button' class='column-toggle' data-column-toggle='mouth-height' aria-pressed='false'>Mouth height</button><button type='button' class='column-toggle' data-column-toggle='mouth-width' aria-pressed='false'>Mouth width</button></div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='impedance-score' data-sort='number'>Throat-impedance score</th><th class='sortable' data-column='containment-mean' data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms' data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise' hidden data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms' data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms' hidden data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k' hidden data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n' hidden data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody><tr><td data-sort='250x250x122.757_E40_35_K2_N8'><a href='candidates/candidate-000/project.yaml'>250x250x122.757_E40_35_K2_N8</a> · <a href='candidates/candidate-000/250x250x122.757_E40_35_K2_N8_Surface.STL'>STL</a></td><td data-sort='Preflight'>Preflight</td><td data-column='surface-score' data-sort=''>—</td><td data-column='impedance-score' data-sort=''>—</td><td class='axis-pair' data-column='containment-mean' data-sort=''>—</td><td class='axis-pair' data-column='profile-rms' data-sort=''>—</td><td class='axis-pair' data-column='outward-rise' hidden data-sort=''>—</td><td class='axis-pair' data-column='slice-rms' data-sort=''>—</td><td class='axis-pair' data-column='line-rms' hidden data-sort=''>—</td><td data-column='length' hidden data-sort='122.757000'>122.8</td><td data-column='length-mouth-ratio' hidden data-sort='2.036544'>2.037</td><td data-column='extension' hidden data-sort='40.000000'>40.0</td><td class='axis-pair' data-column='osse' hidden data-sort='35.000000'>35.0&nbsp;/<wbr> 35.0</td><td class='axis-pair' data-column='k' hidden data-sort='2.000000'>2.00&nbsp;/<wbr> 2.00</td><td class='axis-pair' data-column='s' hidden data-sort='0.892514'>0.893&nbsp;/<wbr> 0.893</td><td class='axis-pair' data-column='n' hidden data-sort='8.000000'>8&nbsp;/<wbr> 8</td><td data-column='trait' hidden data-sort='Seed design'>Seed design</td><td data-column='mouth-height' hidden data-sort='250.000000'>250</td><td data-column='mouth-width' hidden data-sort='250.000000'>250</td></tr></tbody></table></section>
+<section><p>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Existing completed searches retain their original selection history. Proposals closer than normalized distance 0.001 to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points. Adaptive K/N studies first measure the coarse field, then test axial and diagonal neighbors around each new winner. K/N is reported closed only after the winner is bracketed at the authored K and N resolution or reaches the accepted K=1 or N=2 lower limit.</p></section>
+<script>
+document.querySelectorAll('[data-column-toggle]').forEach((button) => {
+  button.addEventListener('click', () => {
+    const visible = button.getAttribute('aria-pressed') !== 'true';
+    button.setAttribute('aria-pressed', String(visible));
+    document.querySelectorAll(`[data-column="${button.dataset.columnToggle}"]`).forEach((cell) => {
+      cell.hidden = !visible;
+    });
+  });
+});
+document.querySelectorAll('table.sortable-table').forEach((table) => {
+  const headers = Array.from(table.querySelectorAll('th[data-sort]'));
+  let active = -1;
+  let direction = 'desc';
+  headers.forEach((header, index) => header.addEventListener('click', () => {
+    direction = active === index && direction === 'desc' ? 'asc' : 'desc';
+    active = index;
+    const multiplier = direction === 'asc' ? 1 : -1;
+    const type = header.dataset.sort;
+    const rows = Array.from(table.tBodies[0].rows);
+    rows.sort((left, right) => {
+      const a = left.cells[index]?.dataset.sort ?? left.cells[index]?.textContent ?? '';
+      const b = right.cells[index]?.dataset.sort ?? right.cells[index]?.textContent ?? '';
+      if (type === 'number') {
+        const an = Number(a), bn = Number(b);
+        return ((Number.isFinite(an) ? an : -Infinity) - (Number.isFinite(bn) ? bn : -Infinity)) * multiplier;
+      }
+      return String(a).localeCompare(String(b), undefined, {numeric:true, sensitivity:'base'}) * multiplier;
+    });
+    table.tBodies[0].replaceChildren(...rows);
+    headers.forEach((item, itemIndex) => item.setAttribute('aria-sort', itemIndex === index ? (direction === 'asc' ? 'ascending' : 'descending') : 'none'));
+  }));
+});
+</script></main></body></html>
