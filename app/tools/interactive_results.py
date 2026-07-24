@@ -214,7 +214,7 @@ def _impedance_diagnostic_table(
         result = results[run["name"]]
         if result.get("status") != "experimental":
             rows.append(
-                f"<tr><th>{html.escape(run['name'])}</th><td colspan='5'>"
+                f"<tr><th>{html.escape(run['name'])}</th><td colspan='6'>"
                 f"{html.escape(result.get('reason', 'unavailable'))}</td></tr>")
             continue
         components = result["components"]
@@ -222,6 +222,7 @@ def _impedance_diagnostic_table(
             f"<th>{html.escape(run['name'])}</th>",
             f"<td><strong>{float(result['overall_percent']):.1f}%</strong></td>",
             f"<td>{float(components['crossover_loading']):.1f}%</td>",
+            f"<td>{float(components['peak_prominence']):.1f}%</td>",
             f"<td>{float(components['ripple']):.1f}%</td>",
             f"<td>{float(components['excess_variation']):.1f}%</td>",
             f"<td>{float(components['shelf_stability']):.1f}%</td>",
@@ -229,8 +230,8 @@ def _impedance_diagnostic_table(
     return (
         f"<table><thead><tr><th>Run</th><th>Throat-impedance score "
         f"(v{DIAGNOSTIC_VERSION})</th>"
-        "<th>Crossover loading</th><th>Ripple</th><th>Excess variation</th>"
-        "<th>Shelf stability</th></tr></thead><tbody>"
+        "<th>Crossover loading</th><th>Peak control</th><th>Ripple</th><th>Excess variation</th>"
+        "<th>Upper-shelf stability</th></tr></thead><tbody>"
         + "".join(rows) + "</tbody></table>"
     )
 
@@ -1169,8 +1170,9 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 </section><section class='plot'>{surface_plot}</section>
 <section class='parameters'><h2>Experimental throat-impedance diagnostic v{DIAGNOSTIC_VERSION}</h2>
 {_impedance_diagnostic_table(runs, impedance_results)}
-<p class='hint'>Crossover adequacy contributes 80% of this score; ripple,
-excess variation, and shelf stability contribute 10%, 7%, and 3%. This score
+<p class='hint'>Crossover adequacy contributes 60% of this score; peak
+prominence contributes 20%; ripple, excess variation, and upper-shelf
+stability contribute 10%, 7%, and 3%. This score
 is reported for research comparison only. It is not part of the surface score
 or candidate ranking.</p></section>
 </main><script>

@@ -106,7 +106,7 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertGreater(mouth, 450.0)
         self.assertAlmostEqual(mouth, 521.71131869, places=6)
 
-    def test_impedance_v2_1_preserves_reviewed_parent_order(self):
+    def test_impedance_v2_2_preserves_reviewed_parent_order(self):
         names = (
             "250x250x84.633_45_K2_N8",
             "250x250x89.754_50_K4_N11.25",
@@ -190,7 +190,7 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertIn("Impedance Δ vs parent", output)
         self.assertIn("S Δ vs parent", output)
         self.assertIn(
-            "Throat impedance v2.1.0: "
+            "Throat impedance v2.2.0: "
             "highest- and lowest-scoring parents", output)
         self.assertEqual(output.count("data-peak-normalized='1'"), 10)
         self.assertEqual(output.count("class='impedance-curve'"), 10)

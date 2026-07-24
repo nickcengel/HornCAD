@@ -7,7 +7,7 @@ import numpy as np
 
 
 POINTS_PER_OCTAVE = 48
-DIAGNOSTIC_VERSION = "2.1.0"
+DIAGNOSTIC_VERSION = "2.2.0"
 CROSSOVER_TARGET_RATIO = 0.5
 CROSSOVER_FULL_CREDIT_RATIO = 0.75
 CROSSOVER_BAND_UPPER_RATIO = 2.0
@@ -15,13 +15,16 @@ CROSSOVER_LOADING_WEIGHTS = {
     "at_crossover": 0.50,
     "crossover_band": 0.50,
 }
+PEAK_PROMINENCE_ALLOWANCE_DB = 1.5
 SCORE_WEIGHTS = {
-    "crossover_loading": 0.80,
+    "crossover_loading": 0.60,
+    "peak_prominence": 0.20,
     "ripple": 0.10,
     "excess_variation": 0.07,
     "shelf_stability": 0.03,
 }
 ERROR_REFERENCES = {
+    "peak_prominence_excess_db": 1.5,
     "ripple_rms_db": 1.0,
     "excess_variation_db_per_octave": 3.0,
     "shelf_rms_db": 1.0,
@@ -144,6 +147,10 @@ def throat_impedance_diagnostics(
     shelf_reference_db = _trimmed_mean(magnitude_db[shelf_mask])
     shelf_reference = float(10.0 ** (shelf_reference_db / 20.0))
     crossover_ratio = crossover_magnitude / shelf_reference
+    peak_to_shelf_db = float(
+        20.0 * np.log10(peak_magnitude / shelf_reference))
+    peak_prominence_excess_db = max(
+        0.0, peak_to_shelf_db - PEAK_PROMINENCE_ALLOWANCE_DB)
 
     monotone_baseline_db = _isotonic_non_decreasing(magnitude_db)
     ripple_db = magnitude_db - monotone_baseline_db
@@ -167,6 +174,9 @@ def throat_impedance_diagnostics(
 
     components = {
         "crossover_loading": crossover_score,
+        "peak_prominence": _inverse_error_score(
+            peak_prominence_excess_db,
+            ERROR_REFERENCES["peak_prominence_excess_db"]),
         "ripple": _inverse_error_score(
             ripple_rms_db, ERROR_REFERENCES["ripple_rms_db"]),
         "excess_variation": _inverse_error_score(
@@ -207,6 +217,7 @@ def throat_impedance_diagnostics(
             "passes_target": crossover_ratio >= CROSSOVER_TARGET_RATIO,
         },
         "shelf": {
+            "role": "upper-band stability only; not crossover bandwidth",
             "reference_magnitude": shelf_reference,
             "reference_method": (
                 "10% trimmed geometric mean of upper half of logarithmic band"),
@@ -214,6 +225,11 @@ def throat_impedance_diagnostics(
             "upper_frequency_hz": upper,
             "rms_deviation_db": shelf_rms_db,
             "slope_db_per_octave": shelf_slope,
+        },
+        "peak_prominence": {
+            "peak_to_shelf_db": peak_to_shelf_db,
+            "allowance_db": PEAK_PROMINENCE_ALLOWANCE_DB,
+            "excess_db": peak_prominence_excess_db,
         },
         "smoothness": {
             "ripple_rms_db": ripple_rms_db,
