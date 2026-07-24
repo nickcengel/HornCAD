@@ -72,8 +72,21 @@ def validate_queue(search_paths: list[Path], queue_workers: int,
     }
 
 
+def _search_state(search_path: Path) -> dict[str, Any] | None:
+    state_path = search_path.parent / "search_state.json"
+    if not state_path.is_file():
+        return None
+    value = json.loads(state_path.read_text(encoding="utf-8"))
+    return value if isinstance(value, dict) else None
+
+
 def _run_one(search_path: Path, environment: dict[str, str]) -> dict[str, Any]:
     started = time.time()
+    initial_state = _search_state(search_path)
+    retry_failed = bool(initial_state and any(
+        row.get("status") == "failed"
+        for row in initial_state.get("candidates", [])
+    ))
     command = [
         sys.executable,
         "-m",
@@ -84,6 +97,8 @@ def _run_one(search_path: Path, environment: dict[str, str]) -> dict[str, Any]:
         "--binary",
         str(WRAPPER),
     ]
+    if retry_failed:
+        command.append("--retry-failed")
     result = subprocess.run(
         command,
         cwd=ROOT,
@@ -91,13 +106,25 @@ def _run_one(search_path: Path, environment: dict[str, str]) -> dict[str, Any]:
         text=True,
         capture_output=True,
     )
+    final_state = _search_state(search_path)
+    state_status = final_state.get("status") if final_state else None
+    returncode = result.returncode
+    stderr = result.stderr
+    if returncode == 0 and state_status != "complete":
+        returncode = 2
+        stderr += (
+            f"\nsearch process exited successfully but state is "
+            f"{state_status!r}, not 'complete'\n"
+        )
     return {
         "search_yaml": str(search_path),
-        "returncode": result.returncode,
+        "returncode": returncode,
+        "retry_failed": retry_failed,
+        "search_status": state_status,
         "started_at_unix": started,
         "completed_at_unix": time.time(),
         "stdout_tail": result.stdout[-4000:],
-        "stderr_tail": result.stderr[-4000:],
+        "stderr_tail": stderr[-4000:],
     }
 
 

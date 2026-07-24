@@ -32,6 +32,15 @@ and that no individual search requests more processes than the global
 capacity. Its runtime ledger records each completed search and the tail of its
 captured output for failure diagnosis.
 
+Before launching a retained search, the queue inspects its search ledger. A
+failed retained candidate is automatically relaunched with the explicit
+`--retry-failed` recovery path, which raises the NumCalc iteration allowance
+without creating another proposal. A zero process exit is accepted only when
+the search ledger itself says `complete`; `stopped`, `failed`, or missing state
+is recorded as a queue failure. This prevents a fixed one-candidate search from
+being counted as successful merely because its report was written after solver
+non-convergence.
+
 ## Required use in future studies
 
 All BEM studies prepared after the round-control ridge-closure study must use
