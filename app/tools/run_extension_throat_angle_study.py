@@ -49,7 +49,7 @@ FROZEN_HEURISTIC = STUDY_ROOT / "frozen_paired_heuristic.json"
 DEVELOPMENT_STAGES = ("primary-development", "secondary-transfer")
 LOCKED_STAGE = "locked-validation"
 CONDITIONAL_STAGE = "conditional-validation"
-QUEUE_WORKERS = 4
+QUEUE_WORKERS = 8
 NUMCALC_PROCESSES = 20
 DIAGNOSTICS = (
     "surface_score",

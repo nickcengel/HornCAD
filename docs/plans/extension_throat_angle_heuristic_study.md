@@ -42,7 +42,9 @@ The restart command is:
 
 It discovers only incomplete retained searches, resumes their frequency work,
 applies bounded NumCalc iteration escalation, and refreshes the study index
-after each completed search. It is safe to repeat after interruption.
+after each completed search. It is safe to repeat after interruption. Execution
+uses eight orchestration workers so mesh/report phases overlap while the global
+NumCalc semaphore remains capped at twenty native processes.
 
 Execution must use the repository's stage-aware BEM queue and global NumCalc
 semaphore. Because candidates within one search are sequential, materialize this

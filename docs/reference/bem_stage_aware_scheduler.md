@@ -11,13 +11,15 @@ process runs through `app.tools.numcalc_slot_wrapper`, which acquires one
 cross-process file-lock slot. Operating-system locks are released automatically
 if a worker exits unexpectedly.
 
-For the normal two-by-ten-core workload, use four orchestration workers and a
-global capacity of twenty NumCalc processes:
+For fixed one-candidate studies with report and mesh preparation between native
+solves, use eight orchestration workers and a global capacity of twenty NumCalc
+processes. The extra orchestration workers prepare queued searches while the
+semaphore still caps native solver load:
 
 ```shell
 .venv/bin/python -m app.tools.run_stage_aware_bem_queue \
   --runtime-state examples/my-study/stage_aware_runtime.json \
-  --queue-workers 4 \
+  --queue-workers 8 \
   --numcalc-processes 20 \
   examples/my-study/searches/*/search.yaml
 ```
