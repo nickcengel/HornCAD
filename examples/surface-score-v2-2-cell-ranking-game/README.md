@@ -18,6 +18,10 @@ The public experiment contains blinded plot IDs and coverage data.
 `private_manifest.json` is the unblinding key and should not be inspected until
 ranking is complete.
 
+Heatmaps are rebuilt from the retained NPZ responses at 0.125 dB resolution
+from -24 through +4 dB. Zero is light neutral; positive response uses a
+red-to-purple range so it cannot be washed into the near-zero region.
+
 Rebuild without running BEM:
 
 ```bash

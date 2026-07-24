@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import hashlib
 import json
 import random
 from pathlib import Path
 from typing import Any
 
+import numpy as np
+
+from .generate_surface_score_rank_comparison import _grid_id
 from .report_round_control_parameter_maps import COVERAGES, MOUTHS
 from .report_round_control_parameter_maps_v2_1 import (
     DEFAULT_RIDGE_RESULTS,
@@ -22,6 +26,9 @@ ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_OUTPUT = ROOT / "examples/surface-score-v2-2-cell-ranking-game"
 SEED = 20260724
 PLOTS_PER_SCORE = 5
+HEATMAP_FLOOR_DB = -24.0
+HEATMAP_CEILING_DB = 4.0
+HEATMAP_STEP_DB = 0.125
 
 
 def _content_hash(value: Any) -> str:
@@ -68,6 +75,40 @@ def _population(
         grids,
         source["heatmap_encoding"],
     )
+
+
+def _plot_heatmap(
+    candidate: dict[str, Any],
+    grids: dict[str, dict[str, Any]],
+) -> tuple[str, str]:
+    source = ROOT / candidate["source_path"]
+    with np.load(source, allow_pickle=False) as data:
+        frequencies = np.asarray(data["frequencies_hz"], dtype=float)
+        all_angles = np.asarray(data["angles_deg"], dtype=float)
+        surface = np.asarray(data["horizontal_db"], dtype=float)
+    positive = all_angles >= 0
+    frequency_order = np.argsort(frequencies)
+    angle_order = np.argsort(all_angles[positive])
+    frequencies = frequencies[frequency_order]
+    angles = all_angles[positive][angle_order]
+    surface = surface[frequency_order][:, positive][:, angle_order]
+    grid_id = _grid_id(frequencies, angles)
+    grids.setdefault(grid_id, {
+        "frequencies_hz": frequencies.tolist(),
+        "angles_deg": angles.tolist(),
+        "rows": int(surface.shape[0]),
+        "columns": int(surface.shape[1]),
+    })
+    quantized = np.rint(
+        (
+            np.clip(surface, HEATMAP_FLOOR_DB, HEATMAP_CEILING_DB)
+            - HEATMAP_FLOOR_DB
+        ) / HEATMAP_STEP_DB
+    ).astype(np.uint8)
+    encoded = base64.b64encode(
+        quantized.tobytes(order="C")
+    ).decode("ascii")
+    return grid_id, encoded
 
 
 def select_cell_candidates(
@@ -124,7 +165,7 @@ def assemble(
     ridge_results_path: Path = DEFAULT_RIDGE_RESULTS,
     output: Path = DEFAULT_OUTPUT,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
-    population, grids, encoding = _population(
+    population, grids, _ = _population(
         source_path, ridge_results_path, output
     )
     rng = random.Random(SEED)
@@ -144,10 +185,11 @@ def assemble(
             plots = []
             for plot_number, candidate in enumerate(selected, 1):
                 plot_id = f"R{round_number:02d}-P{plot_number:02d}"
+                grid_id, heatmap = _plot_heatmap(candidate, grids)
                 plots.append({
                     "plot_id": plot_id,
-                    "grid_id": candidate["grid_id"],
-                    "heatmap_b64": candidate["heatmap_b64"],
+                    "grid_id": grid_id,
+                    "heatmap_b64": heatmap,
                 })
                 private_plots[plot_id] = {
                     key: candidate[key] for key in (
@@ -188,7 +230,12 @@ def assemble(
         "round_count": len(rounds),
         "plots_per_round": 10,
         "grids": grids,
-        "heatmap_encoding": encoding,
+        "heatmap_encoding": {
+            "floor_db": HEATMAP_FLOOR_DB,
+            "ceiling_db": HEATMAP_CEILING_DB,
+            "step_db": HEATMAP_STEP_DB,
+            "dtype": "uint8",
+        },
         "rounds": rounds,
     }
     public["content_sha256"] = _content_hash(public)
@@ -218,14 +265,16 @@ def render(public: dict[str, Any]) -> str:
 <title>Blinded per-cell surface ranking</title>
 <style>
 :root{{--bg:#0b1015;--panel:#121a22;--panel2:#17212b;--ink:#edf3f6;--muted:#9eacb6;--line:#2b3945;--accent:#72d9ca}}
-*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}}main{{max-width:1250px;margin:auto;padding:22px}}h1{{margin:0 0 8px}}p{{line-height:1.4}}button,select,textarea{{font:inherit}}button,select{{background:#1b2833;color:var(--ink);border:1px solid #456070;border-radius:7px;padding:8px 11px}}.muted{{color:var(--muted)}}.toolbar{{position:sticky;top:0;z-index:5;background:#0b1015ee;border-bottom:1px solid var(--line);padding:12px 0;display:flex;gap:9px;align-items:center;flex-wrap:wrap}}.toolbar .spacer{{flex:1}}.progress{{color:var(--accent);font-weight:700}}.cards{{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}}.card{{display:grid;grid-template-columns:44px 1fr;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;cursor:grab}}.card.dragging{{opacity:.35}}.rank{{font-size:1.5rem;font-weight:800;color:var(--accent);text-align:center;padding-top:9px}}canvas{{display:block;width:100%;height:auto;background:#0d151d;border-radius:7px}}.plot-id{{color:var(--muted);font-size:.75rem;margin-top:5px}}textarea{{width:100%;min-height:42px;margin-top:6px;resize:vertical;background:#0d151d;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px}}.move{{display:flex;gap:5px;margin-top:5px}}.move button{{padding:3px 8px}}.notice{{background:#17212b;border:1px solid var(--line);border-radius:9px;padding:10px;margin:12px 0}}@media(max-width:850px){{.cards{{grid-template-columns:1fr}}}}
+*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}}main{{max-width:1250px;margin:auto;padding:22px}}h1{{margin:0 0 8px}}p{{line-height:1.4}}button,select,textarea{{font:inherit}}button,select{{background:#1b2833;color:var(--ink);border:1px solid #456070;border-radius:7px;padding:8px 11px}}.muted{{color:var(--muted)}}.toolbar{{position:sticky;top:0;z-index:5;background:#0b1015ee;border-bottom:1px solid var(--line);padding:12px 0;display:flex;gap:9px;align-items:center;flex-wrap:wrap}}.toolbar .spacer{{flex:1}}.progress{{color:var(--accent);font-weight:700}}.cards{{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}}.card{{display:grid;grid-template-columns:44px 1fr;gap:10px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px;cursor:grab}}.card.dragging{{opacity:.35}}.rank{{font-size:1.5rem;font-weight:800;color:var(--accent);text-align:center;padding-top:9px}}canvas{{display:block;width:100%;height:auto;background:#0d151d;border-radius:7px}}.plot-id{{color:var(--muted);font-size:.75rem;margin-top:5px}}textarea{{width:100%;min-height:42px;margin-top:6px;resize:vertical;background:#0d151d;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:7px}}.move{{display:flex;gap:5px;margin-top:5px}}.move button{{padding:3px 8px}}.notice{{background:#17212b;border:1px solid var(--line);border-radius:9px;padding:10px;margin:12px 0}}.color-key{{display:grid;grid-template-columns:repeat(7,1fr);position:relative;padding-top:14px;margin-top:8px;color:var(--muted);font-size:.72rem;text-align:center}}.color-key i{{position:absolute;left:0;right:0;top:0;height:10px;border-radius:5px;background:linear-gradient(90deg,#07111c 0%,#164e73 42.9%,#12a594 64.3%,#f4d35e 75%,#ff8c42 82.1%,#f8f8f2 85.7%,#ef476f 89.3%,#b5179e 92.9%,#5a189a 100%)}}@media(max-width:850px){{.cards{{grid-template-columns:1fr}}}}
 </style></head><body><main>
 <h1>Blinded per-cell surface ranking</h1>
 <p class='muted'>Drag the ten plots into best-to-worst order. Candidate
 identity, score, and selection source remain hidden. Notes are optional and
 travel with each plot. Every change is saved locally in this browser.</p>
 <div class='notice'>One cell per round · normal logarithmic frequency scale ·
-intended coverage and −3/−6/−9 dB contours shown.</div>
+intended coverage and −3/−6/−9 dB contours shown.
+<div class='color-key'><i></i><span>−24</span><span>−12</span><span>−6</span>
+<span>−3</span><span>0</span><span>+2</span><span>+4 dB</span></div></div>
 <div class='toolbar'>
 <button id='previous' type='button'>← Previous</button>
 <label>Cell <select id='round-select'>{options}</select></label>
@@ -241,18 +290,20 @@ intended coverage and −3/−6/−9 dB contours shown.</div>
 <script>
 const EXP=JSON.parse(document.getElementById("experiment-data").textContent),KEY=`${{EXP.experiment_id}}:${{EXP.content_sha256}}`,select=document.getElementById("round-select"),cards=document.getElementById("cards");let current=1,dragged=null;
 function initial(){{return{{schema_version:1,experiment_id:EXP.experiment_id,experiment_content_sha256:EXP.content_sha256,orders:Object.fromEntries(EXP.rounds.map(r=>[String(r.round),r.plots.map(p=>p.plot_id)])),notes:{{}},completed_rounds:[],updated_at:null}}}}
-function valid(x){{if(!x||x.experiment_id!==EXP.experiment_id||x.experiment_content_sha256!==EXP.content_sha256||!Array.isArray(x.completed_rounds)||x.completed_rounds.some(n=>!Number.isInteger(n)||n<1||n>25))return false;for(const r of EXP.rounds){{const a=x.orders?.[String(r.round)],b=r.plots.map(p=>p.plot_id);if(!Array.isArray(a)||a.length!==10||a.some(id=>!b.includes(id))||new Set(a).size!==10)return false}}return true}}
-let state;try{{state=JSON.parse(localStorage.getItem(KEY))}}catch{{}}if(!valid(state))state=initial();
+function compatible(x){{if(!x||x.experiment_id!==EXP.experiment_id)return false;for(const r of EXP.rounds){{const a=x.orders?.[String(r.round)],b=r.plots.map(p=>p.plot_id);if(!Array.isArray(a)||a.length!==10||a.some(id=>!b.includes(id))||new Set(a).size!==10)return false}}return true}}
+function valid(x){{return compatible(x)&&x.experiment_content_sha256===EXP.content_sha256&&Array.isArray(x.completed_rounds)&&!x.completed_rounds.some(n=>!Number.isInteger(n)||n<1||n>25)}}
+function migrate(x){{if(!compatible(x))return null;return{{...x,experiment_content_sha256:EXP.content_sha256,completed_rounds:Array.isArray(x.completed_rounds)?x.completed_rounds:[]}}}}
+let state;try{{state=JSON.parse(localStorage.getItem(KEY))}}catch{{}}if(!valid(state)){{state=null;for(let i=0;i<localStorage.length&&!state;i++){{const k=localStorage.key(i);if(k?.startsWith(EXP.experiment_id+":")){{try{{state=migrate(JSON.parse(localStorage.getItem(k)))}}catch{{}}}}}}}}if(!valid(state))state=initial();
 function save(){{state.updated_at=new Date().toISOString();localStorage.setItem(KEY,JSON.stringify(state));progress()}}
 function progress(){{const done=new Set(state.completed_rounds);document.getElementById("progress").textContent=`Cell ${{current}} / 25 · ${{done.size}} complete`;document.getElementById("complete-button").textContent=done.has(current)?"Reopen cell":"Mark cell complete"}}
 function decode(plot){{const bytes=Uint8Array.from(atob(plot.heatmap_b64),c=>c.charCodeAt(0)),e=EXP.heatmap_encoding;return Array.from(bytes,x=>e.floor_db+x*e.step_db)}}
-function color(t){{t=Math.max(0,Math.min(1,t));const stops=[[8,16,25],[16,50,73],[22,97,104],[210,173,60],[248,241,189]],x=t*(stops.length-1),i=Math.min(stops.length-2,Math.floor(x)),f=x-i,a=stops[i],b=stops[i+1];return a.map((v,j)=>Math.round(v+(b[j]-v)*f))}}
+function color(value){{const stops=[[-24,[7,17,28]],[-12,[22,78,115]],[-6,[18,165,148]],[-3,[244,211,94]],[-1,[255,140,66]],[0,[248,248,242]],[1,[239,71,111]],[2,[181,23,158]],[4,[90,24,154]]];value=Math.max(stops[0][0],Math.min(stops.at(-1)[0],value));let i=0;while(i<stops.length-2&&value>stops[i+1][0])i++;const [x,a]=stops[i],[y,b]=stops[i+1],f=(value-x)/(y-x);return a.map((v,j)=>Math.round(v+(b[j]-v)*f))}}
 function crossing(a,b,l){{if((a-l)*(b-l)>0||a===b)return null;return(l-a)/(b-a)}}
 function contour(ctx,v,g,l,x0,y0,w,h){{const R=g.rows,C=g.columns;for(let r=0;r<R-1;r++)for(let c=0;c<C-1;c++){{const z=[v[r*C+c],v[(r+1)*C+c],v[(r+1)*C+c+1],v[r*C+c+1]],p=[],ed=[[0,1],[1,2],[2,3],[3,0]],xy=[[r,c],[r+1,c],[r+1,c+1],[r,c+1]];for(const [a,b] of ed){{const q=crossing(z[a],z[b],l);if(q!==null)p.push([xy[a][0]+q*(xy[b][0]-xy[a][0]),xy[a][1]+q*(xy[b][1]-xy[a][1])])}}if(p.length>=2){{ctx.beginPath();for(let i=0;i+1<p.length;i+=2){{const A=p[i],B=p[i+1];ctx.moveTo(x0+A[0]/(R-1)*w,y0+(1-A[1]/(C-1))*h);ctx.lineTo(x0+B[0]/(R-1)*w,y0+(1-B[1]/(C-1))*h)}}ctx.stroke()}}}}}}
-function draw(canvas,plot,coverage){{const ctx=canvas.getContext("2d"),g=EXP.grids[plot.grid_id],v=decode(plot),W=canvas.width,H=canvas.height,x0=52,y0=18,w=W-67,h=H-54;ctx.fillStyle="#0d151d";ctx.fillRect(0,0,W,H);const im=document.createElement("canvas");im.width=g.rows;im.height=g.columns;const ix=im.getContext("2d"),px=ix.createImageData(g.rows,g.columns);for(let r=0;r<g.rows;r++)for(let c=0;c<g.columns;c++){{const rgb=color(v[r*g.columns+c]/30+1),p=((g.columns-1-c)*g.rows+r)*4;px.data[p]=rgb[0];px.data[p+1]=rgb[1];px.data[p+2]=rgb[2];px.data[p+3]=255}}ix.putImageData(px,0,0);ctx.imageSmoothingEnabled=true;ctx.drawImage(im,x0,y0,w,h);const ma=g.angles_deg.at(-1),ty=y0+(1-coverage/ma)*h;ctx.save();ctx.strokeStyle="#69d6c8";ctx.lineWidth=1.7;ctx.setLineDash([7,5]);ctx.beginPath();ctx.moveTo(x0,ty);ctx.lineTo(x0+w,ty);ctx.stroke();ctx.restore();ctx.lineWidth=1.6;for(const [l,s] of [[-3,"#7fe7ff"],[-6,"#fff"],[-9,"#ffad5c"]]){{ctx.strokeStyle=s;contour(ctx,v,g,l,x0,y0,w,h)}}ctx.strokeStyle="#67808f";ctx.strokeRect(x0,y0,w,h);ctx.fillStyle="#aab8c1";ctx.font="11px system-ui";ctx.textAlign="center";const f=g.frequencies_hz;for(const q of [500,1000,2000,4000,8000])if(q>=f[0]&&q<=f.at(-1)){{const x=x0+(Math.log(q)-Math.log(f[0]))/(Math.log(f.at(-1))-Math.log(f[0]))*w;ctx.fillText(q>=1000?`${{q/1000}}k`:q,x,y0+h+16)}}ctx.textAlign="right";for(const a of [0,30,60,90])if(a<=ma)ctx.fillText(a+"°",x0-5,y0+(1-a/ma)*h+3)}}
+function draw(canvas,plot,coverage){{const ctx=canvas.getContext("2d"),g=EXP.grids[plot.grid_id],v=decode(plot),W=canvas.width,H=canvas.height,x0=52,y0=18,w=W-67,h=H-54;ctx.fillStyle="#0d151d";ctx.fillRect(0,0,W,H);const im=document.createElement("canvas");im.width=g.rows;im.height=g.columns;const ix=im.getContext("2d"),px=ix.createImageData(g.rows,g.columns);for(let r=0;r<g.rows;r++)for(let c=0;c<g.columns;c++){{const rgb=color(v[r*g.columns+c]),p=((g.columns-1-c)*g.rows+r)*4;px.data[p]=rgb[0];px.data[p+1]=rgb[1];px.data[p+2]=rgb[2];px.data[p+3]=255}}ix.putImageData(px,0,0);ctx.imageSmoothingEnabled=true;ctx.drawImage(im,x0,y0,w,h);const ma=g.angles_deg.at(-1),ty=y0+(1-coverage/ma)*h;ctx.save();ctx.strokeStyle="#69d6c8";ctx.lineWidth=1.7;ctx.setLineDash([7,5]);ctx.beginPath();ctx.moveTo(x0,ty);ctx.lineTo(x0+w,ty);ctx.stroke();ctx.restore();ctx.lineWidth=1.6;for(const [l,s] of [[-3,"#7fe7ff"],[-6,"#fff"],[-9,"#ffad5c"]]){{ctx.strokeStyle=s;contour(ctx,v,g,l,x0,y0,w,h)}}ctx.strokeStyle="#67808f";ctx.strokeRect(x0,y0,w,h);ctx.fillStyle="#aab8c1";ctx.font="11px system-ui";ctx.textAlign="center";const f=g.frequencies_hz;for(const q of [500,1000,2000,4000,8000])if(q>=f[0]&&q<=f.at(-1)){{const x=x0+(Math.log(q)-Math.log(f[0]))/(Math.log(f.at(-1))-Math.log(f[0]))*w;ctx.fillText(q>=1000?`${{q/1000}}k`:q,x,y0+h+16)}}ctx.textAlign="right";for(const a of [0,30,60,90])if(a<=ma)ctx.fillText(a+"°",x0-5,y0+(1-a/ma)*h+3)}}
 function move(id,delta){{const o=state.orders[String(current)],i=o.indexOf(id),j=Math.max(0,Math.min(9,i+delta));if(i===j)return;o.splice(i,1);o.splice(j,0,id);save();render()}}
 function render(){{const round=EXP.rounds[current-1],map=Object.fromEntries(round.plots.map(p=>[p.plot_id,p])),order=state.orders[String(current)];select.value=String(current);progress();cards.innerHTML=order.map((id,i)=>`<article class="card" draggable="true" data-id="${{id}}"><div><div class="rank">${{i+1}}</div><div class="move"><button type="button" data-up="${{id}}">↑</button><button type="button" data-down="${{id}}">↓</button></div></div><div><canvas width="520" height="250" data-plot="${{id}}"></canvas><div class="plot-id">${{id}}</div><textarea data-note="${{id}}" placeholder="Optional note for this plot">${{(state.notes[id]||"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll('"',"&quot;")}}</textarea></div></article>`).join("");document.querySelectorAll("canvas[data-plot]").forEach(c=>draw(c,map[c.dataset.plot],round.coverage_deg));document.querySelectorAll("textarea").forEach(t=>t.oninput=()=>{{state.notes[t.dataset.note]=t.value;save()}});document.querySelectorAll("[data-up]").forEach(b=>b.onclick=()=>move(b.dataset.up,-1));document.querySelectorAll("[data-down]").forEach(b=>b.onclick=()=>move(b.dataset.down,1));document.querySelectorAll(".card").forEach(c=>{{c.ondragstart=()=>{{dragged=c.dataset.id;c.classList.add("dragging")}};c.ondragend=()=>{{dragged=null;c.classList.remove("dragging")}};c.ondragover=e=>e.preventDefault();c.ondrop=e=>{{e.preventDefault();if(!dragged||dragged===c.dataset.id)return;const o=state.orders[String(current)],from=o.indexOf(dragged),to=o.indexOf(c.dataset.id);o.splice(from,1);o.splice(to,0,dragged);save();render()}}}})}}
-function go(n){{current=Math.max(1,Math.min(25,n));render();scrollTo({{top:0,behavior:"smooth"}})}}select.onchange=()=>go(+select.value);document.getElementById("previous").onclick=()=>go(current-1);document.getElementById("next").onclick=()=>go(current+1);document.getElementById("complete-button").onclick=()=>{{const done=new Set(state.completed_rounds);if(done.has(current))done.delete(current);else done.add(current);state.completed_rounds=[...done].sort((a,b)=>a-b);save();if(done.has(current)&&current<25)go(current+1);else render()}};document.getElementById("export-button").onclick=()=>{{save();if(state.completed_rounds.length<25&&!confirm(`Only ${{state.completed_rounds.length}} of 25 cells are marked complete. Export anyway?`))return;const blob=new Blob([JSON.stringify(state,null,2)+"\\n"],{{type:"application/json"}}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="surface_score_v2_2_cell_rankings.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}};document.getElementById("import-button").onclick=()=>document.getElementById("import-file").click();document.getElementById("import-file").onchange=async e=>{{const x=JSON.parse(await e.target.files[0].text());if(!valid(x)){{alert("This ranking file does not match the experiment.");return}}state=x;save();render()}};render();
+function go(n){{current=Math.max(1,Math.min(25,n));render();scrollTo({{top:0,behavior:"smooth"}})}}select.onchange=()=>go(+select.value);document.getElementById("previous").onclick=()=>go(current-1);document.getElementById("next").onclick=()=>go(current+1);document.getElementById("complete-button").onclick=()=>{{const done=new Set(state.completed_rounds);if(done.has(current))done.delete(current);else done.add(current);state.completed_rounds=[...done].sort((a,b)=>a-b);save();if(done.has(current)&&current<25)go(current+1);else render()}};document.getElementById("export-button").onclick=()=>{{save();if(state.completed_rounds.length<25&&!confirm(`Only ${{state.completed_rounds.length}} of 25 cells are marked complete. Export anyway?`))return;const blob=new Blob([JSON.stringify(state,null,2)+"\\n"],{{type:"application/json"}}),url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download="surface_score_v2_2_cell_rankings.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}};document.getElementById("import-button").onclick=()=>document.getElementById("import-file").click();document.getElementById("import-file").onchange=async e=>{{const x=migrate(JSON.parse(await e.target.files[0].text()));if(!x){{alert("This ranking file does not match the experiment.");return}}state=x;save();render()}};render();
 </script></main></body></html>"""
 
 

@@ -1,5 +1,5 @@
 {
-  "content_sha256": "f37e2505ff5df31f8dd72d6b07a7899dc72312ab29ad119ca732ab1c4ee4d1c6",
+  "content_sha256": "3937c443f223dd54b5a3b4dc2521fb5bab90a9665895a06260cba04c2399dc4d",
   "experiment_id": "surface-score-v2-2-cell-ranking-game",
   "plots": {
     "R01-P01": {
@@ -4254,6 +4254,6 @@
     }
   },
   "population_count": 1532,
-  "public_content_sha256": "b5f2e48c95e023a7a08cae9e6f4bcbb96b27e4c139051753e118058f78b125c5",
+  "public_content_sha256": "7cf1ecb21c3b37ab808ed36d41922bd0e44d5059837753cfa76b44d31b41aeb0",
   "schema_version": 1
 }
