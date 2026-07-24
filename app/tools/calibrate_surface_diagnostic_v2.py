@@ -14,8 +14,11 @@ from scipy.stats import spearmanr
 
 from .interactive_results import load_run
 from .surface_diagnostics import (
+    BEAMWIDTH_REFERENCE_SCALE,
     SURFACE_SCORE_V2_CANDIDATE_WEIGHTS,
+    beamwidth_quality_at_reference_scale,
     surface_diagnostics,
+    surface_score_v2,
 )
 
 
@@ -24,6 +27,7 @@ BOOTSTRAP_SAMPLES = 20_000
 BROAD_ROUNDS = tuple(range(1, 11))
 CLOSE_ROUNDS = tuple(range(11, 21))
 ALL_ROUNDS = BROAD_ROUNDS + CLOSE_ROUNDS
+REFERENCE_SCALES = (1.0, 1.5, 2.0, 2.5, 3.0)
 
 
 def _round_statistics(order: list[str], values: dict[str, float]) -> dict[str, float]:
@@ -94,6 +98,35 @@ def _candidate_selection(
     )
 
 
+def _reference_scale_selection(
+    per_round: dict[str, dict[str, dict[str, float]]],
+    training_rounds: set[int],
+) -> str:
+    broad = sorted(training_rounds.intersection(BROAD_ROUNDS))
+    close = sorted(training_rounds.intersection(CLOSE_ROUNDS))
+    candidates = [f"contour_forward_scale_{scale:g}" for scale in REFERENCE_SCALES]
+
+    def mean(metric: str, rounds: list[int], key: str) -> float:
+        return float(np.mean([
+            per_round[str(number)][metric][key] for number in rounds
+        ]))
+
+    v1_broad = mean("v1", broad, "spearman")
+    eligible = [
+        metric for metric in candidates
+        if mean(metric, broad, "spearman") >= v1_broad - 0.05
+    ]
+    return max(
+        eligible or candidates,
+        key=lambda metric: (
+            mean(metric, close, "spearman"),
+            mean(metric, close, "pairwise_agreement"),
+            mean(metric, broad, "spearman"),
+            metric,
+        ),
+    )
+
+
 def _load_scores(root: Path) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     state = json.loads((root / "rankings.json").read_text())
     if not state.get("complete"):
@@ -101,13 +134,33 @@ def _load_scores(root: Path) -> tuple[dict[str, Any], dict[str, Any], dict[str, 
     private = json.loads((root / "private_manifest.json").read_text())
     plot_scores: dict[str, Any] = {}
     for plot_id, item in sorted(private["plots"].items()):
-        result = surface_diagnostics(
-            load_run(Path(item["source_path"]).parent, item["candidate_id"])
-        )
+        run = load_run(Path(item["source_path"]).parent, item["candidate_id"])
+        result = surface_diagnostics(run)
         beamwidth = float(np.mean([
             result[plane]["beamwidth_quality"]["overall_percent"]
             for plane in ("horizontal", "vertical")
         ]))
+        sensitivity = {}
+        for scale in REFERENCE_SCALES:
+            variant = {
+                **result,
+                **{
+                    plane: {
+                        **result[plane],
+                        "beamwidth_quality": beamwidth_quality_at_reference_scale(
+                            result[plane]["contours"], scale
+                        ),
+                    }
+                    for plane in ("horizontal", "vertical")
+                },
+            }
+            sensitivity[f"contour_forward_scale_{scale:g}"] = float(
+                surface_score_v2(
+                    variant,
+                    run.get("mouth_dimensions_mm"),
+                    candidate_name="contour_forward",
+                )["overall_percent"]
+            )
         plot_scores[plot_id] = {
             "candidate_id": item["candidate_id"],
             "response_sha256": item["response_sha256"],
@@ -117,6 +170,7 @@ def _load_scores(root: Path) -> tuple[dict[str, Any], dict[str, Any], dict[str, 
                 name: float(score["overall_percent"])
                 for name, score in result["score_v2_candidates"].items()
             },
+            **sensitivity,
             "beamwidth_planes": {
                 plane: result[plane]["beamwidth_quality"]
                 for plane in ("horizontal", "vertical")
@@ -131,6 +185,7 @@ def calibrate(root: Path) -> dict[str, Any]:
         "v1",
         "beamwidth_quality",
         *SURFACE_SCORE_V2_CANDIDATE_WEIGHTS,
+        *[f"contour_forward_scale_{scale:g}" for scale in REFERENCE_SCALES],
     ]
     values = {
         metric: {
@@ -170,6 +225,28 @@ def calibrate(root: Path) -> dict[str, Any]:
         })
     selection_counts = Counter(fold["selected_candidate"] for fold in folds)
     final_candidate = _candidate_selection(per_round, set(ALL_ROUNDS))
+    scale_folds = []
+    for held_out in ALL_ROUNDS:
+        selected = _reference_scale_selection(
+            per_round, set(ALL_ROUNDS).difference({held_out})
+        )
+        scale_folds.append({
+            "held_out_round": held_out,
+            "cohort": "broad" if held_out in BROAD_ROUNDS else "close",
+            "selected_metric": selected,
+            **per_round[str(held_out)][selected],
+        })
+    scale_selection_counts = Counter(
+        fold["selected_metric"] for fold in scale_folds
+    )
+    selected_scale_metric = _reference_scale_selection(
+        per_round, set(ALL_ROUNDS)
+    )
+    selected_scale = float(selected_scale_metric.rsplit("_", 1)[-1])
+    if not np.isclose(selected_scale, BEAMWIDTH_REFERENCE_SCALE):
+        raise ValueError(
+            "active beamwidth reference scale does not match calibration selection"
+        )
     selected_summary = summaries[final_candidate]
     baseline = summaries["v1"]
     criteria = {
@@ -206,6 +283,13 @@ def calibrate(root: Path) -> dict[str, Any]:
             "folds": folds,
             "selection_counts": dict(sorted(selection_counts.items())),
         },
+        "reference_sensitivity": {
+            "scales": REFERENCE_SCALES,
+            "selected_scale": selected_scale,
+            "selected_metric": selected_scale_metric,
+            "folds": scale_folds,
+            "selection_counts": dict(sorted(scale_selection_counts.items())),
+        },
         "release_decision": {
             "selected_candidate": final_candidate,
             "criteria": criteria,
@@ -229,6 +313,12 @@ def write_report(root: Path, result: dict[str, Any]) -> Path:
         "smoothness": "V2 smoothness",
         "contour_forward": "V2 contour-forward",
     }
+    labels.update({
+        f"contour_forward_scale_{scale:g}": (
+            f"V2 contour-forward · reference scale {scale:g}×"
+        )
+        for scale in REFERENCE_SCALES
+    })
     summary_rows = []
     for metric in result["metrics"]:
         summary = result["summaries"][metric]
@@ -291,7 +381,9 @@ close-score rounds. Confidence intervals resample complete rounds.</p>
 <section><h2>Leave-one-round-out selection</h2><p>Candidate selections:
 <code>{html.escape(json.dumps(result['leave_one_round_out']['selection_counts'], sort_keys=True))}</code>.
 Each held-out round was evaluated with the candidate selected using the other
-19 rounds.</p></section>
+19 rounds.</p><p>Reference-scale selections:
+<code>{html.escape(json.dumps(result['reference_sensitivity']['selection_counts'], sort_keys=True))}</code>.
+The released scale is <strong>{result['reference_sensitivity']['selected_scale']:g}×</strong>.</p></section>
 <section><h2>Written qualitative checks</h2><table><thead><tr><th>Plot</th>
 <th>Candidate</th><th>Note</th></tr></thead><tbody>{''.join(notes)}</tbody></table></section>
 <p>Implementation SHA-256: <code>{result['implementation_sha256']}</code></p>

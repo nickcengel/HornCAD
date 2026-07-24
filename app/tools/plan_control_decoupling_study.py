@@ -843,10 +843,12 @@ steering effects, and all pruning decisions.
 ## Registered analysis
 
 For each of the 25 cells, fit the same terms: intercept, L, K, N, L², K², N²,
-L×K, L×N, and K×N. Fit each of the six outcomes separately: surface score,
-containment, profile error, slice-energy departure, outward rise, and the
-secondary −6 dB error. This distinguishes a score gain from the physical
-diagnostic tradeoff that produced it.
+L×K, L×N, and K×N. Fit each of the six originally registered outcomes
+separately: legacy surface score v1, containment, profile error, slice-energy
+departure, outward rise, and the secondary −6 dB error. This distinguishes a
+score gain from the physical diagnostic tradeoff that produced it. Surface
+score v2 was developed later and does not retroactively alter this
+preregistration.
 
 The second stage maps those cell-local coefficients across mouth and coverage,
 looking for effects that repeat rather than relying on one optimizer trace or one

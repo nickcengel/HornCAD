@@ -107,7 +107,10 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
             "Final surface score</th><th class='sortable' data-sort='number'>Date</th>",
             report,
         )
-        self.assertIn("Candidates are ranked by the final surface score", report)
+        self.assertIn(
+            "Candidates are ranked by the active score available in each stored diagnostic",
+            report,
+        )
         self.assertIn("<h2>Design map</h2>", report)
         self.assertIn("<h2>Provisional learning</h2>", report)
         self.assertIn("aggregate matched comparisons", report)

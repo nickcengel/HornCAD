@@ -17,11 +17,16 @@ BEAMWIDTH_COMPONENT_WEIGHTS = {
     "local_narrowing": 0.30,
     "high_frequency_adequacy": 0.15,
 }
-BEAMWIDTH_ERROR_REFERENCES = {
+BEAMWIDTH_BASE_ERROR_REFERENCES = {
     "multiscale_ripple": 0.04,
     "trend_complexity": 0.12,
     "local_narrowing": 0.06,
     "high_frequency_excess": 0.15,
+}
+BEAMWIDTH_REFERENCE_SCALE = 3.0
+BEAMWIDTH_ERROR_REFERENCES = {
+    key: value * BEAMWIDTH_REFERENCE_SCALE
+    for key, value in BEAMWIDTH_BASE_ERROR_REFERENCES.items()
 }
 HIGH_FREQUENCY_TARGET_DEADBAND = 0.10
 SURFACE_SCORE_WEIGHTS = {
@@ -61,6 +66,8 @@ SURFACE_SCORE_V2_CANDIDATE_WEIGHTS = {
         "beamwidth_quality": 0.40,
     },
 }
+ACTIVE_SURFACE_SCORE_VERSION = "v2"
+ACTIVE_SURFACE_SCORE_V2_CANDIDATE = "contour_forward"
 SURFACE_SCORE_ERROR_REFERENCES = {
     "profile_rms": 3.0,
     "slice_energy": 2.0,
@@ -224,8 +231,15 @@ def surface_score(
     result: dict[str, Any],
     mouth_dimensions_mm: dict[str, float] | None = None,
 ) -> dict[str, Any] | None:
-    """Return the active score; v1 remains active until v2 validation passes."""
-    return surface_score_v1(result, mouth_dimensions_mm)
+    """Return the released active surface score with legacy fallback."""
+    score = surface_score_v2(
+        result,
+        mouth_dimensions_mm,
+        candidate_name=ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
+    )
+    return score if score is not None else surface_score_v1(
+        result, mouth_dimensions_mm
+    )
 
 
 def _band_mean(x: np.ndarray, values: np.ndarray) -> float:
@@ -593,9 +607,55 @@ def _contour_diagnostics(
 
 
 def _beamwidth_quality(contours: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    return beamwidth_quality_at_reference_scale(
+        contours, BEAMWIDTH_REFERENCE_SCALE
+    )
+
+
+def beamwidth_quality_at_reference_scale(
+    contours: dict[str, dict[str, Any]],
+    reference_scale: float,
+) -> dict[str, Any]:
+    """Rescore retained raw contour metrics at a documented reference scale."""
+    if not np.isfinite(reference_scale) or reference_scale <= 0:
+        raise ValueError("beamwidth reference scale must be positive")
+    contour_results = {}
+    for key, contour in contours.items():
+        references = {
+            name: value * reference_scale
+            for name, value in BEAMWIDTH_BASE_ERROR_REFERENCES.items()
+        }
+        component_scores = {
+            "multiscale_ripple": _inverse_error_score(
+                contour["aggregate_ripple_rms_fraction"],
+                references["multiscale_ripple"],
+            ),
+            "trend_complexity": _inverse_error_score(
+                contour["trend_complexity_fraction_per_octave"],
+                references["trend_complexity"],
+            ),
+            "local_narrowing": _inverse_error_score(
+                contour["local_narrowing_fraction"],
+                references["local_narrowing"],
+            ),
+            "high_frequency_adequacy": _inverse_error_score(
+                contour["high_frequency_excess_fraction"],
+                references["high_frequency_excess"],
+            ),
+        }
+        shape_score = _weighted_geometric_score(
+            component_scores, BEAMWIDTH_COMPONENT_WEIGHTS
+        )
+        contour_results[key] = {
+            "component_scores": component_scores,
+            "shape_score_before_completeness": shape_score,
+            "overall_percent": (
+                shape_score * (1.0 - float(contour["missing_fraction"]))
+            ),
+        }
     scores = {
-        float(contour["level_db"]): float(contour["overall_percent"])
-        for contour in contours.values()
+        float(contours[key]["level_db"]): float(value["overall_percent"])
+        for key, value in contour_results.items()
     }
     return {
         "overall_percent": _weighted_geometric_score(
@@ -603,14 +663,18 @@ def _beamwidth_quality(contours: dict[str, dict[str, Any]]) -> dict[str, Any]:
         ),
         "contour_scores": {
             key: float(value["overall_percent"])
-            for key, value in contours.items()
+            for key, value in contour_results.items()
         },
         "contour_weights": {
             f"minus_{abs(int(level))}_db": weight
             for level, weight in CONTOUR_SCORE_WEIGHTS.items()
         },
         "component_weights": BEAMWIDTH_COMPONENT_WEIGHTS,
-        "error_reference_values": BEAMWIDTH_ERROR_REFERENCES,
+        "error_reference_values": {
+            name: value * reference_scale
+            for name, value in BEAMWIDTH_BASE_ERROR_REFERENCES.items()
+        },
+        "reference_scale": reference_scale,
         "high_frequency_target_deadband": HIGH_FREQUENCY_TARGET_DEADBAND,
     }
 

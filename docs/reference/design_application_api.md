@@ -76,6 +76,12 @@ Loading augmented v1 still exposes its historical cell-router behavior for
 reproducibility, but new application work should load primary v1. The completed
 unified-v2 challenge did not justify replacing it.
 
+The round-control models were trained against the originally registered surface
+score v1, so `prediction.surface_score` remains a v1 prediction. Current BEM
+reports and new measured-candidate ranking use surface score v2. The API does
+not silently reinterpret a v1 model output as v2; a future model release must
+add an explicitly named v2 response after rebuilding its training evidence.
+
 ## Deferred operations
 
 The public types reserve diagnosis, improvement, automated design, and

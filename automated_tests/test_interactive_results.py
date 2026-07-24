@@ -101,7 +101,7 @@ class InteractiveResultsTests(unittest.TestCase):
             surface_diagnostics = json.loads(
                 fixed.with_name("surface_diagnostics.json").read_text())
             self.assertIn("Horn acoustic parameters", single_text)
-            self.assertIn("report-schema: canonical-v11", single_text)
+            self.assertIn("report-schema: canonical-v12", single_text)
             self.assertIn("Surface diagnostics", single_text)
             self.assertIn("Experimental throat-impedance diagnostic", single_text)
             self.assertIn("Throat-impedance score", single_text)
@@ -111,8 +111,10 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("Angular slice-energy departure", single_text)
             self.assertIn("Best: 100%", single_text)
             self.assertGreaterEqual(single_text.count("Best: 0 dB"), 2)
-            self.assertIn(r"Target: 0\u00b0", single_text)
-            self.assertIn("Final surface score", single_text)
+            self.assertIn(r"Target: 1\u00d7", single_text)
+            self.assertIn("Active surface score v2", single_text)
+            self.assertIn("Legacy surface score v1", single_text)
+            self.assertIn("three-contour beamwidth quality", single_text)
             self.assertNotIn("1/3-oct", single_text)
             self.assertNotIn("Coverage Match", single_text)
             self.assertNotIn("Coverage Smoothness", single_text)
@@ -131,7 +133,9 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn('plot !== armed', single_text)
             self.assertIn('stopImmediatePropagation', single_text)
             # Plotly JSON escapes the Unicode minus sign in the trace names.
+            self.assertIn("Horizontal \\u22123 dB", single_text)
             self.assertIn("Horizontal \\u22126 dB", single_text)
+            self.assertIn("Horizontal \\u22129 dB", single_text)
             self.assertIn("Vertical \\u22126 dB", single_text)
             self.assertIn(r"Horizontal intended coverage \u00b150\u00b0", single_text)
             self.assertIn(r"Vertical intended coverage \u00b135\u00b0", single_text)
@@ -140,6 +144,13 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn('"layer":"above"', single_text)
             self.assertIn('"x0":600.0', single_text)
             self.assertGreaterEqual(single_text.count('"hoverinfo":"skip"'), 4)
+            candidate_surface = surface_diagnostics["Candidate A"]
+            self.assertEqual(candidate_surface["score"]["version"], "v2")
+            self.assertEqual(candidate_surface["score_v1"]["version"], "v1")
+            self.assertEqual(
+                {"minus_3_db", "minus_6_db", "minus_9_db"},
+                set(candidate_surface["horizontal"]["contours"]),
+            )
             text = compare.read_text()
             self.assertIn("color-scheme:dark", text)
             self.assertIn("Normalized throat impedance magnitude", text)

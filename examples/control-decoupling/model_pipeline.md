@@ -147,7 +147,7 @@ NPZ without embedding raw response surfaces in the model.
 
 Fit each response independently while retaining their residual covariance:
 
-1. surface score;
+1. legacy surface score v1;
 2. mean containment;
 3. profile RMS error;
 4. slice-energy RMS departure;
@@ -155,7 +155,9 @@ Fit each response independently while retaining their residual covariance:
 6. secondary minus-six-dB RMS error.
 
 The model must expose all six predictions. Surface score alone is insufficient
-for control advice.
+for control advice. The released round-control model retains its registered v1
+response; active report ranking uses surface score v2. A future model rebuild
+may add v2 explicitly but must not silently relabel the v1 response.
 
 The release also exposes `throat_impedance_score` from the current experimental
 normalized-magnitude diagnostic as an independent seventh response. It is

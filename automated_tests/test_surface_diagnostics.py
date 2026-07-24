@@ -5,6 +5,8 @@ import unittest
 import numpy as np
 
 from app.tools.surface_diagnostics import (
+    ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
+    ACTIVE_SURFACE_SCORE_VERSION,
     SURFACE_SCORE_WEIGHTS,
     surface_diagnostics,
     surface_score,
@@ -80,7 +82,12 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
 
     def test_v1_is_preserved_and_v2_candidates_are_reported(self) -> None:
         result = surface_diagnostics(self.make_run(self.ideal_surface()))
-        self.assertEqual(result["score"], result["score_v1"])
+        self.assertEqual("v2", result["score"]["version"])
+        self.assertEqual(ACTIVE_SURFACE_SCORE_VERSION, result["score"]["version"])
+        self.assertEqual(
+            ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
+            result["score"]["candidate_name"],
+        )
         self.assertEqual("v1", surface_score_v1(result)["version"])
         self.assertEqual("v2", surface_score_v2(result)["version"])
         self.assertEqual(
@@ -217,6 +224,38 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
         self.assertAlmostEqual(
             full["slice_energy_stability"]["rms_departure_db"],
             decimated["slice_energy_stability"]["rms_departure_db"], places=2)
+
+    def test_beamwidth_score_is_stable_under_frequency_and_angle_resampling(self) -> None:
+        frequencies = np.geomspace(500.0, 8000.0, 49)
+        x = np.linspace(0.0, 1.0, len(frequencies))
+        widths = 1.0 + 0.05 * np.sin(4 * np.pi * x)
+        full_surface = self.width_trace_surface(widths)
+        full_run = self.make_run(full_surface)
+        full = surface_diagnostics(full_run)["horizontal"][
+            "beamwidth_quality"
+        ]["overall_percent"]
+
+        decimated_run = dict(full_run)
+        for key in ("frequencies", "horizontal", "vertical"):
+            decimated_run[key] = np.asarray(full_run[key])[::2]
+        decimated = surface_diagnostics(decimated_run)["horizontal"][
+            "beamwidth_quality"
+        ]["overall_percent"]
+
+        coarse_surface = self.width_trace_surface(widths, angle_count=91)
+        coarse = surface_diagnostics(self.make_run(coarse_surface))["horizontal"][
+            "beamwidth_quality"
+        ]["overall_percent"]
+        self.assertAlmostEqual(full, decimated, delta=0.6)
+        self.assertAlmostEqual(full, coarse, delta=0.1)
+
+    def test_missing_contour_caps_beamwidth_quality(self) -> None:
+        surface = np.maximum(self.ideal_surface(), -2.0)
+        plane = surface_diagnostics(self.make_run(surface))["horizontal"]
+        self.assertEqual(
+            plane["contours"]["minus_3_db"]["overall_percent"], 0.0
+        )
+        self.assertEqual(plane["beamwidth_quality"]["overall_percent"], 0.0)
 
 
 if __name__ == "__main__":

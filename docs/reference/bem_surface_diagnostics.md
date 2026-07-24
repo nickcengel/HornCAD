@@ -2,7 +2,9 @@
 
 This document specifies the implemented surface-diagnostic suite for HornCAD
 BEM angle-frequency reports. The raw measurements and calibrated weighted score
-are used by current BEM search and by the released round-control models.
+are used by current BEM search. Surface score v2 is active; the former
+five-component score remains available as v1 for provenance and is still the
+response predicted by the released round-control models.
 
 ## Scope and conventions
 
@@ -83,18 +85,46 @@ express the departure in dB. A perfectly stable surface produces a flat
 The unsmoothed and multiscale results remain visible until retained-candidate
 data establishes which frequency scale is appropriate.
 
-## 4. Retained -6 dB line diagnostic
+## 4. Multiscale contour quality
 
-The -6 dB crossing remains a secondary description rather than the primary
-surface score. For each frequency record:
+At each frequency, follow the first outward-going -3, -6, and -9 dB crossings.
+Their nominal half-angles under the linear target profile are respectively
+`0.5 * coverage`, `coverage`, and `1.5 * coverage`. Divide each measured
+half-angle by its nominal value before comparing cells.
 
-- measured -6 dB half-angle;
-- signed error from intended coverage;
-- missing-crossing state;
-- local frequency-to-frequency movement of the crossing.
+Every contour records:
 
-Summaries include RMS coverage error, RMS line movement, missing-crossing
-fraction, worst error, and its frequency.
+- absolute and normalized width traces;
+- missing fraction and longest missing span;
+- RMS ripple relative to moving means at 1/12, 1/6, 1/3, 2/3, 1, and 2 octave;
+- low-frequency-to-high-frequency net trend;
+- slope variation after removing that net trend;
+- explanatory slope-reversal count;
+- asymmetric local-narrowing deficit at every scale;
+- upper-third-octave mean width and target error.
+
+A centered moving mean reproduces a linear trace, so smooth global widening or
+narrowing is not itself ripple. Slope variation penalizes bends and reversals.
+The local-narrowing term adds a stronger penalty for dips below the local smooth
+trace; widening still contributes to the symmetric ripple and trend terms.
+
+High-frequency width receives full credit within ±10% of nominal. Only excess
+outside that deadband is scored. Missing crossings multiply the contour score
+through completeness rather than disappearing into an average.
+
+Each contour score is the weighted geometric combination of:
+
+- 30% multiscale ripple, with 0.12 normalized width as its reference;
+- 25% trend complexity, with 0.36 width/octave as its reference;
+- 30% local narrowing, with 0.18 normalized width as its reference;
+- 15% high-frequency excess, with 0.45 normalized width as its reference.
+
+The -3, -6, and -9 dB contour scores combine geometrically at 25%, 50%, and 25%.
+The geometric combinations keep a serious localized failure from being hidden
+by unrelated good averages.
+
+The former -6 dB trace fields remain in JSON for compatibility, including RMS
+target error and raw movement in degrees per octave.
 
 ## Plane combination and final score
 
@@ -103,22 +133,23 @@ summaries use a geometric or root-mean-square combination appropriate to the
 quantity; no left/right asymmetry diagnostic exists because the negative-angle
 surface is a mirror.
 
-The calibrated final score uses these component weights:
+The active calibrated v2 score uses these component weights:
 
 - 30% in-window profile RMS error;
-- 25% slice-energy RMS departure;
-- 20% mean containment;
-- 15% outward-rise violation;
-- 10% secondary -6 dB line error.
+- 20% slice-energy RMS departure;
+- 5% mean containment;
+- 5% outward-rise violation;
+- 40% multiscale three-contour beamwidth quality.
 
 Mean containment contributes its percentage directly. Each error measurement
 uses `100 / (1 + (error / reference)^2)`, which gives 100 at zero error and 50
 at its reference value. Reference values are 3 dB for profile RMS, 2 dB for
-slice-energy departure, 2 dB for outward rise, and 20 degrees for the -6 dB
-line. Missing -6 dB crossings reduce that component in direct proportion to
-the missing fraction. Horizontal and vertical scores are combined using mouth
-width and height respectively. The worst one-third-octave containment summary
-remains internal and does not contribute to the score or public reports.
+slice-energy departure and 2 dB for outward rise. Horizontal and vertical
+scores are combined using mouth width and height respectively.
+
+The legacy v1 score is retained beside v2. It weights profile error 30%,
+slice-energy departure 25%, containment 20%, outward rise 15%, and -6 dB target
+error 10%. It must not be relabeled as v2.
 
 ## Validation
 
@@ -131,8 +162,29 @@ Synthetic surfaces must cover:
 - frequency-dependent beam narrowing;
 - uniform, bunched, and depleted slice-energy traces;
 - smooth, wandering, and missing -6 dB crossings.
+- smooth global contour slopes;
+- fine and broad contour ripple;
+- equal-amplitude local narrowing and widening;
+- independent -3 and -9 dB shoulder disturbances.
 
 Regression tests cover frequency decimation and angular resampling stability.
+
+The v2 release was calibrated against the completed 20-round, 200-plot blinded
+human ranking experiment. The initial 1× reference pass selected the
+preregistered contour-forward weighting in all 20 leave-one-round-out folds.
+The final sensitivity pass selected contour-forward in 19 folds and balanced in
+one; contour-forward remained the full-evidence release choice. Against v1,
+mean broad-round Spearman agreement increased from 0.818 to 0.879; close-round
+agreement increased from 0.052 to 0.459, with close-round pairwise agreement
+increasing from 52.0% to 67.8%. The initial references correctly ordered
+candidates but compressed real beamwidth-quality scores to 4–28%. The single
+documented 1×–3× sensitivity pass selected 3× in 15 held-out folds, 1.5× in
+four, and 1× in one; 3× was also the full-evidence selection. It restored an
+interpretable 22–74% measured range without changing the metric definitions or
+component weights. The frozen plan and complete
+calibration output are in
+[`surface_diagnostic_v2.md`](../plans/surface_diagnostic_v2.md) and the
+[`surface-diagnostic-ranking-experiment`](../../examples/surface-diagnostic-ranking-experiment/README.md).
 
 The completed round study applying this score is specified in
 [`examples/control-decoupling/study_plan.md`](../../examples/control-decoupling/study_plan.md).

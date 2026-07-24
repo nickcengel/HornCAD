@@ -1194,9 +1194,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
         search.get("adaptive_kn", {}).get("enabled", False) or
         search.get("adaptive_kn_closure", {}).get("enabled", False))
     default_visible_columns = (
-        {"surface-score", "impedance-score", "k", "n"}
+        {"surface-score", "beamwidth-score", "impedance-score", "k", "n"}
         if kn_study else {
-            "surface-score", "impedance-score", "containment-mean",
+            "surface-score", "beamwidth-score", "impedance-score", "containment-mean",
             "profile-rms", "slice-rms",
         })
 
@@ -1213,8 +1213,9 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
         if not score:
             return "<td data-column='surface-score' data-sort=''>—</td>"
         value = float(score["overall_percent"])
+        version = html.escape(str(score.get("version", "v1")))
         return (f"<td data-column='surface-score' data-sort='{value:.6f}'>"
-                f"{value:.1f}%</td>")
+                f"{value:.1f}% <small>{version}</small></td>")
 
     def impedance_score_cell(record: dict[str, Any]) -> str:
         result = record.get("throat_impedance_diagnostics", {})
@@ -1275,6 +1276,13 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"{stl_link}{report_link}</td>",
             f"<td data-sort='{html.escape(status)}'>{html.escape(status)}</td>",
             final_score_cell(record),
+            surface_cell(
+                record,
+                "beamwidth-score",
+                ("beamwidth_quality", "overall_percent"),
+                "%",
+                hidden="beamwidth-score" not in default_visible_columns,
+            ),
             impedance_score_cell(record),
             surface_cell(record, "containment-mean",
                          ("containment", "mean_fraction"), "%", 100,
@@ -1310,6 +1318,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     toggle_columns = tuple(
         (column, label, column in default_visible_columns) for column, label in (
         ("surface-score", "Final surface score"),
+        ("beamwidth-score", "Three-contour beamwidth quality H / V"),
         ("impedance-score",
          f"Throat-impedance score v{DIAGNOSTIC_VERSION}"),
         ("containment-mean", "Mean containment H / V"),
@@ -1361,8 +1370,8 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vert
 <p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
 <p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
-<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='impedance-score' data-sort='number'>Throat-impedance score v{DIAGNOSTIC_VERSION}</th><th class='sortable' data-column='containment-mean'{hidden_attribute('containment-mean')} data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms'{hidden_attribute('profile-rms')} data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise'{hidden_attribute('outward-rise')} data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms'{hidden_attribute('slice-rms')} data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms'{hidden_attribute('line-rms')} data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k'{hidden_attribute('k')} data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n'{hidden_attribute('n')} data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
-<section><p>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Existing completed searches retain their original selection history. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points. Adaptive K/N studies first measure the coarse field, then test axial and diagonal neighbors around each new winner. K/N is reported closed only after the winner is bracketed at the authored K and N resolution or reaches the accepted K=1 or N=2 lower limit.</p></section>
+<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='beamwidth-score'{hidden_attribute('beamwidth-score')} data-sort='number'>Three-contour beamwidth quality H&nbsp;/ V</th><th class='sortable' data-column='impedance-score' data-sort='number'>Throat-impedance score v{DIAGNOSTIC_VERSION}</th><th class='sortable' data-column='containment-mean'{hidden_attribute('containment-mean')} data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms'{hidden_attribute('profile-rms')} data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise'{hidden_attribute('outward-rise')} data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms'{hidden_attribute('slice-rms')} data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms'{hidden_attribute('line-rms')} data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k'{hidden_attribute('k')} data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n'{hidden_attribute('n')} data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
+<section><p>Surface score v2 weights profile RMS error 30%, slice-energy departure 20%, mean containment 5%, outward-rise violation 5%, and multiscale −3/−6/−9 dB beamwidth quality 40%. Existing completed searches retain their original selection history. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points. Adaptive K/N studies first measure the coarse field, then test axial and diagonal neighbors around each new winner. K/N is reported closed only after the winner is bracketed at the authored K and N resolution or reaches the accepted K=1 or N=2 lower limit.</p></section>
 <script>
 document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
   button.addEventListener('click', () => {{

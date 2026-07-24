@@ -96,11 +96,14 @@ point is counted as 90° rather than discarded. The upper bound is the final
 simulated frequency. This is a coverage-control bound, not a claim that an
 arbitrary horn has a classical length-derived cutoff frequency.
 
-Current reports also write `surface_diagnostics.json`. Its final surface score
+Current reports also write `surface_diagnostics.json`. Active surface score v2
 combines in-window profile error, slice-energy stability, mean containment,
-outward-rise violation, and the secondary −6 dB line. The four coverage-control
-scores above remain visible diagnostic views; they are not interchangeable with
-the surface-score components. See
+outward-rise violation, and multiscale -3/-6/-9 dB contour quality. Contour
+quality rewards simple smooth width trends, penalizes ripple from 1/12 through
+2-octave scales, adds an asymmetric local-narrowing penalty, and checks
+high-frequency width. Legacy surface score v1 remains in reports for provenance.
+The four coverage-control scores above remain visible diagnostic views; they are
+not interchangeable with the surface-score components. See
 [`docs/reference/bem_surface_diagnostics.md`](docs/reference/bem_surface_diagnostics.md)
 for the implemented definitions.
 

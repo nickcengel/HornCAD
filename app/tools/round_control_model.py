@@ -133,8 +133,12 @@ def _coordinates(config: dict[str, Any]) -> dict[str, float]:
     }
 
 
-def _response_values(diagnostics: dict[str, Any],
-                     impedance: dict[str, Any]) -> dict[str, float]:
+def _response_values(
+    diagnostics: dict[str, Any],
+    impedance: dict[str, Any],
+    *,
+    score_key: str = "score",
+) -> dict[str, float]:
     def mean_axis(path: tuple[str, ...]) -> float:
         values = []
         for axis in ("horizontal", "vertical"):
@@ -145,7 +149,7 @@ def _response_values(diagnostics: dict[str, Any],
         return sum(values) / 2.0
 
     return {
-        "surface_score": float(diagnostics["score"]["overall_percent"]),
+        "surface_score": float(diagnostics[score_key]["overall_percent"]),
         "mean_containment": 100.0 * mean_axis(("containment", "mean_fraction")),
         "profile_rms_error": mean_axis(
             ("distribution", "rms_profile_error_db")),
@@ -178,10 +182,14 @@ def _rescore(response: Path) -> tuple[dict[str, float], dict[str, Any], float]:
         stored_document = json.loads(stored_path.read_text(encoding="utf-8"))
         stored = next(iter(stored_document.values()))
         old = _response_values(stored, impedance)
-        new = _response_values(radiation, impedance)
+        new = _response_values(radiation, impedance, score_key="score_v1")
         maximum_delta = max(abs(old[name] - new[name])
                             for name in PREREGISTERED_DIAGNOSTICS)
-    return _response_values(radiation, impedance), impedance, maximum_delta
+    return (
+        _response_values(radiation, impedance, score_key="score_v1"),
+        impedance,
+        maximum_delta,
+    )
 
 
 def _validate_npz(path: Path) -> tuple[dict[str, Any], str]:

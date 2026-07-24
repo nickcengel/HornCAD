@@ -854,7 +854,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 </style></head><body><main>
 <h1>Mouth-size / coverage grid</h1>
 <p>Active Phase 4 envelope: 30°–50° half-coverage and 250–450 mm mouth size. Retained 25° and 500 mm results are edge history.</p>
-<p class='muted'>Candidates are ranked by the final surface score. Previous rank and previous diagnostic score are shown beside it for direct comparison. The final score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%.</p>
+<p class='muted'>Candidates are ranked by the active score available in each stored diagnostic. Previous rank and previous diagnostic score are shown beside it for direct comparison. Newly evaluated candidates use surface score v2: profile RMS error 30%, slice-energy departure 20%, mean containment 5%, outward-rise violation 5%, and multiscale −3/−6/−9 dB beamwidth quality 40%. Completed legacy searches retain their v1 selection history until deliberately rebuilt from retained responses.</p>
 <section class='summary'>
 <div class='card'><strong>{started}&nbsp;/<wbr> {total}</strong> started</div>
 <div class='card'><strong>{running}</strong> running sub-searches</div>

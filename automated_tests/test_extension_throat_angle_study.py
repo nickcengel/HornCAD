@@ -25,9 +25,33 @@ from app.tools.run_extension_s_matched_followup import (
     solve_parent_s_length,
     solve_parent_s_mouth,
 )
+from app.tools.round_control_model import _response_values
 
 
 class ExtensionThroatAngleStudyTests(unittest.TestCase):
+    def test_registered_study_response_can_remain_pinned_to_v1(self):
+        plane = {
+            "containment": {"mean_fraction": 0.8},
+            "distribution": {
+                "rms_profile_error_db": 1.0,
+                "rms_outward_rise_violation_db": 0.2,
+            },
+            "slice_energy_stability": {"rms_departure_db": 0.4},
+            "minus_six_line": {"rms_coverage_error_deg": 2.0},
+        }
+        diagnostics = {
+            "score": {"overall_percent": 91.0},
+            "score_v1": {"overall_percent": 73.0},
+            "horizontal": plane,
+            "vertical": plane,
+        }
+        values = _response_values(
+            diagnostics,
+            {"overall_percent": 82.0},
+            score_key="score_v1",
+        )
+        self.assertEqual(values["surface_score"], 73.0)
+
     def test_parent_selection_covers_full_grid_and_transfer_cells(self):
         parents = select_parents()
         self.assertEqual(len(parents["primary"]), 25)

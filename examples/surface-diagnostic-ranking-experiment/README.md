@@ -41,3 +41,17 @@ agreement statistics, candidate-report links, and every per-plot note.
 `private_manifest.json` contains the unblinding key and is intentionally never
 served by the experiment server. Rebuilding refuses to overwrite an existing
 `rankings.json`.
+
+## Surface diagnostic v2 outcome
+
+The completed rankings calibrated and validated the multiscale -3/-6/-9 dB
+beamwidth-quality diagnostic described in
+[`docs/plans/surface_diagnostic_v2.md`](../../docs/plans/surface_diagnostic_v2.md).
+The active contour-forward v2 score improved mean broad-round Spearman
+agreement from 0.818 to 0.879 and close-round agreement from 0.052 to 0.459.
+Close-round pairwise agreement improved from 52.0% to 67.8%.
+
+The complete machine-readable evidence is in
+[`surface_diagnostic_v2_calibration.json`](surface_diagnostic_v2_calibration.json);
+[`surface_diagnostic_v2_calibration.html`](surface_diagnostic_v2_calibration.html)
+is the readable release report.

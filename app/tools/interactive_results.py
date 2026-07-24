@@ -868,8 +868,19 @@ def _surface_diagnostic_tables(runs: list[dict[str, Any]],
             continue
         score = result.get("score") or surface_score(
             result, run.get("mouth_dimensions_mm"))
-        rows = [("Final surface score",
-                 value(score["overall_percent"], "%") if score else "—")]
+        legacy_score = result.get("score_v1")
+        score_version = score.get("version", "") if score else ""
+        rows = [
+            (
+                f"Active surface score {score_version}".strip(),
+                value(score["overall_percent"], "%") if score else "—",
+            ),
+            (
+                "Legacy surface score v1",
+                value(legacy_score["overall_percent"], "%")
+                if legacy_score else "—",
+            ),
+        ]
         for label, plane_name in (("Horizontal", "horizontal"),
                                   ("Vertical", "vertical")):
             plane = result[plane_name]
@@ -877,6 +888,7 @@ def _surface_diagnostic_tables(runs: list[dict[str, Any]],
             distribution = plane["distribution"]
             stability = plane["slice_energy_stability"]
             line = plane["minus_six_line"]
+            beamwidth = plane.get("beamwidth_quality", {})
             rows.extend((
                 (f"{label} mean containment",
                  value(containment["mean_fraction"], "%", 100)),
@@ -892,7 +904,32 @@ def _surface_diagnostic_tables(runs: list[dict[str, Any]],
                  value(line["rms_coverage_error_deg"], "°")),
                 (f"{label} missing −6 dB crossings",
                  value(line["missing_fraction"], "%", 100)),
+                (f"{label} three-contour beamwidth quality",
+                 value(beamwidth.get("overall_percent"), "%")),
             ))
+            for contour_key in ("minus_3_db", "minus_6_db", "minus_9_db"):
+                contour = plane.get("contours", {}).get(contour_key)
+                if not contour:
+                    continue
+                contour_label = f"{contour['level_db']:g} dB"
+                rows.extend((
+                    (f"{label} {contour_label} contour score",
+                     value(contour["overall_percent"], "%")),
+                    (f"{label} {contour_label} multiscale ripple",
+                     value(contour["aggregate_ripple_rms_fraction"], "%", 100)),
+                    (f"{label} {contour_label} trend complexity",
+                     value(
+                         contour["trend_complexity_fraction_per_octave"],
+                         "/oct", 100)),
+                    (f"{label} {contour_label} local narrowing",
+                     value(contour["local_narrowing_fraction"], "%", 100)),
+                    (f"{label} {contour_label} high-frequency width",
+                     value(
+                         contour["high_frequency_mean_normalized_width"],
+                         "× target")),
+                    (f"{label} {contour_label} missing crossings",
+                     value(contour["missing_fraction"], "%", 100)),
+                ))
         table_rows = "".join(
             f"<tr><th>{html.escape(label)}</th><td>{measurement}</td></tr>"
             for label, measurement in rows)
@@ -910,7 +947,7 @@ def _surface_diagnostic_plot(runs: list[dict[str, Any]],
         subplot_titles=("Coverage-window containment",
                         "In-window profile RMS error",
                         "Angular slice-energy departure",
-                        "−6 dB coverage-angle error"),
+                        "Normalized −3/−6/−9 dB contour width"),
         vertical_spacing=.07)
     dash = {"horizontal": "solid", "vertical": "dash"}
     for run_index, run in enumerate(runs):
@@ -940,16 +977,39 @@ def _surface_diagnostic_plot(runs: list[dict[str, Any]],
                 **common, y=traces["slice_energy_departure_db"], showlegend=False,
                 hovertemplate="%{x:.1f} Hz<br>%{y:.3f} dB<extra>" +
                               html.escape(name) + "</extra>"), row=3, col=1)
-            figure.add_trace(go.Scatter(
-                **common, y=traces["minus_six_error_deg"], showlegend=False,
-                hovertemplate="%{x:.1f} Hz<br>%{y:.3f}°<extra>" +
-                              html.escape(name) + "</extra>"), row=4, col=1)
+            contour_dash = {
+                "minus_3_db": "dot",
+                "minus_6_db": dash[plane_name],
+                "minus_9_db": "dashdot",
+            }
+            for contour_key, contour_label in (
+                ("minus_3_db", "−3 dB"),
+                ("minus_6_db", "−6 dB"),
+                ("minus_9_db", "−9 dB"),
+            ):
+                contour = result[plane_name].get("contours", {}).get(contour_key)
+                if not contour:
+                    continue
+                contour_name = f"{name} {contour_label}"
+                figure.add_trace(go.Scatter(
+                    x=contour["traces"]["frequencies_hz"],
+                    y=contour["traces"]["normalized_width"],
+                    mode="lines", name=contour_name,
+                    legendgroup=name, showlegend=False,
+                    line={
+                        "color": COLORS[run_index % len(COLORS)],
+                        "dash": contour_dash[contour_key],
+                        "width": 2.5 if contour_key == "minus_6_db" else 1.7,
+                    },
+                    hovertemplate="%{x:.1f} Hz<br>%{y:.3f}× target<extra>" +
+                                  html.escape(contour_name) + "</extra>"),
+                    row=4, col=1)
     reference_line = {"color": "#69d6c8", "dash": "dash", "width": 1.8}
     for row, value, label in (
         (1, 100, "Best: 100%"),
         (2, 0, "Best: 0 dB"),
         (3, 0, "Best: 0 dB"),
-        (4, 0, "Target: 0°"),
+        (4, 1, "Target: 1×"),
     ):
         figure.add_hline(
             y=value, row=row, col=1, line=reference_line,
@@ -961,7 +1021,7 @@ def _surface_diagnostic_plot(runs: list[dict[str, Any]],
     figure.update_yaxes(title_text="Contained power (%)", row=1, col=1)
     figure.update_yaxes(title_text="RMS error (dB)", rangemode="tozero", row=2, col=1)
     figure.update_yaxes(title_text="Departure (dB)", rangemode="tozero", row=3, col=1)
-    figure.update_yaxes(title_text="Angle error (degrees)", row=4, col=1)
+    figure.update_yaxes(title_text="Normalized width", row=4, col=1)
     figure.update_layout(
         height=980, hovermode="x unified", template="plotly_dark",
         paper_bgcolor="#121820", plot_bgcolor="#161f29",
@@ -1142,7 +1202,7 @@ def _write_html(path: Path, title: str, figure: go.Figure,
                                   "responsive": True})
     surface_plot = _surface_diagnostic_plot(runs, surface_results)
     stl_viewer = _embedded_stl_viewer(path)
-    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v11 -->
+    document = f"""<!doctype html><html><head><meta charset='utf-8'><!-- report-schema: canonical-v12 -->
 <title>{html.escape(title)}</title><style>
 :root{{color-scheme:dark;--bg:#0c1014;--panel:#121820;--panel-2:#161f29;--ink:#e5edf2;--muted:#94a3ad;--line:#2b3844;--line-soft:#22303b;--accent:#4db6a8;--accent-strong:#69d6c8}}
 *{{box-sizing:border-box}}body{{font-family:system-ui,sans-serif;margin:0;background:var(--bg);color:var(--ink)}}
@@ -1166,7 +1226,7 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Surface diagnostics</h2>
 {_surface_diagnostic_tables(runs, surface_results)}
-<p class='hint'>The final surface score weights profile RMS error 30%, slice-energy departure 25%, mean containment 20%, outward-rise violation 15%, and the secondary −6 dB line 10%. Containment integrates relative power inside the intended coverage half-angle. Profile error compares the in-window surface with a straight 0 to −6 dB angular falloff.</p>
+<p class='hint'>Surface score v2 weights profile RMS error 30%, slice-energy departure 20%, mean containment 5%, outward-rise violation 5%, and multiscale −3/−6/−9 dB beamwidth quality 40%. Beamwidth quality rewards simple smooth contour trends, penalizes ripple at 1/12 through 2-octave scales, applies an extra local-narrowing penalty, and requires adequate upper-third-octave width. The legacy v1 value remains visible for provenance.</p>
 </section><section class='plot'>{surface_plot}</section>
 <section class='parameters'><h2>Experimental throat-impedance diagnostic v{DIAGNOSTIC_VERSION}</h2>
 {_impedance_diagnostic_table(runs, impedance_results)}
@@ -1228,14 +1288,24 @@ def single_report(run_dir: Path, output: Path | None = None,
             coloraxis="coloraxis",
             hovertemplate="%{x:.1f} Hz<br>%{y:.1f}°<br>%{z:+.2f} dB<extra></extra>"),
             row=1, col=column)
-        figure.add_trace(go.Contour(
-            x=run["frequencies"], y=run["angles"], z=run[key].T,
-            contours={"start": -6, "end": -6, "size": 1, "coloring": "lines",
-                      "showlabels": True, "labelfont": {"color": "white"}},
-            line={"color": "white", "width": 3}, showscale=False,
-            name=f"{key.title()} −6 dB", showlegend=True,
-            hoverinfo="skip"),
-            row=1, col=column)
+        for level, dash, width in ((-3, "dot", 1.7), (-6, "solid", 3), (-9, "dash", 1.7)):
+            contour_label = f"\u2212{abs(level)} dB"
+            figure.add_trace(go.Contour(
+                x=run["frequencies"], y=run["angles"], z=run[key].T,
+                contours={
+                    "start": level,
+                    "end": level,
+                    "size": 1,
+                    "coloring": "lines",
+                    "showlabels": level == -6,
+                    "labelfont": {"color": "white"},
+                },
+                line={"color": "white", "width": width, "dash": dash},
+                showscale=False,
+                name=f"{key.title()} {contour_label}",
+                showlegend=True,
+                hoverinfo="skip"),
+                row=1, col=column)
         intended = run["intended_coverages"].get(key)
         if intended:
             start, stop = run["frequencies"][[0, -1]]
