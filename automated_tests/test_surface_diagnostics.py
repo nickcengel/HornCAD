@@ -9,10 +9,14 @@ from app.tools.surface_diagnostics import (
     ACTIVE_SURFACE_SCORE_VERSION,
     NARROW_COVERAGE_MINIMUM_V2_FRACTION,
     SURFACE_SCORE_WEIGHTS,
+    SURFACE_SCORE_V2_3_CONTAINMENT_THRESHOLD,
+    SURFACE_SCORE_V2_3_CORE_FRACTION,
+    SURFACE_SCORE_V2_3_OUTWARD_RISE_SCORE_THRESHOLD,
     surface_diagnostics,
     surface_score,
     surface_score_v1,
     surface_score_v2,
+    surface_score_v2_3,
 )
 
 
@@ -149,6 +153,46 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
         self.assertEqual("v2", original["version"])
         self.assertAlmostEqual(1.0, original["horizontal"]["v2_fraction"])
         self.assertFalse(original["narrow_coverage_adaptation"]["enabled"])
+
+    def test_v2_3_blends_v2_2_with_guarded_local_core(self) -> None:
+        result = surface_diagnostics(self.make_run(self.ideal_surface()))
+        score = surface_score_v2_3(result)
+        self.assertEqual("v2.3", score["version"])
+        self.assertAlmostEqual(
+            SURFACE_SCORE_V2_3_CORE_FRACTION, score["core_fraction"]
+        )
+        self.assertAlmostEqual(
+            1.0 - SURFACE_SCORE_V2_3_CORE_FRACTION,
+            score["baseline_fraction"],
+        )
+        self.assertEqual("within_guardrails",
+                         score["horizontal"]["guardrail_status"])
+        self.assertAlmostEqual(
+            (
+                score["baseline_fraction"]
+                * score["horizontal"]["baseline_v2_2_percent"]
+                + score["core_fraction"]
+                * score["horizontal"]["guarded_core_percent"]
+            ),
+            score["horizontal"]["overall_percent"],
+        )
+
+    def test_v2_3_guardrails_penalize_severe_window_failures(self) -> None:
+        surface = self.ideal_surface()
+        angles = np.linspace(0.0, 90.0, surface.shape[1])
+        surface[:, angles >= 35.0] = -0.25
+        result = surface_diagnostics(self.make_run(surface))
+        score = result["score_v2_3"]["horizontal"]
+        components = score["components"]
+        self.assertTrue(
+            components["mean_containment"]
+            < SURFACE_SCORE_V2_3_CONTAINMENT_THRESHOLD
+            or components["outward_rise"]
+            < SURFACE_SCORE_V2_3_OUTWARD_RISE_SCORE_THRESHOLD
+        )
+        self.assertEqual("penalized", score["guardrail_status"])
+        self.assertLess(score["guard_factor"], 1.0)
+        self.assertLess(score["guarded_core_percent"], score["core_percent"])
 
     def test_outside_lobe_reduces_containment(self) -> None:
         ideal = self.ideal_surface()

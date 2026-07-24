@@ -1,0 +1,1867 @@
+{
+  "baselines": {
+    "v1": {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 2.3,
+        "mean_pairwise_agreement": 0.8422222222222222,
+        "mean_spearman": 0.8181818181818181,
+        "top_1_matches": 5
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 5.8,
+        "mean_pairwise_agreement": 0.47333333333333333,
+        "mean_spearman": -0.07272727272727272,
+        "top_1_matches": 0
+      }
+    },
+    "v2_2": {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.6,
+        "mean_pairwise_agreement": 0.891111111111111,
+        "mean_spearman": 0.9018181818181817,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.24,
+        "mean_pairwise_agreement": 0.7075555555555556,
+        "mean_spearman": 0.5456969696969696,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.1,
+        "mean_pairwise_agreement": 0.6666666666666666,
+        "mean_spearman": 0.40242424242424235,
+        "top_1_matches": 6
+      }
+    },
+    "v2_3_core_without_guardrails": {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 2.2,
+        "mean_pairwise_agreement": 0.8555555555555555,
+        "mean_spearman": 0.835151515151515,
+        "top_1_matches": 5
+      },
+      "cell_in_sample": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 2.56,
+        "mean_pairwise_agreement": 0.7662222222222222,
+        "mean_spearman": 0.6678787878787878,
+        "top_1_matches": 10
+      },
+      "cell_leave_one_out": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 2.6,
+        "mean_pairwise_agreement": 0.7608888888888888,
+        "mean_spearman": 0.6528484848484848,
+        "top_1_matches": 10
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.2,
+        "mean_pairwise_agreement": 0.6977777777777778,
+        "mean_spearman": 0.47393939393939394,
+        "top_1_matches": 3
+      }
+    }
+  },
+  "calibration_script_sha256": "adbf2f77d64ad86bcf43f238df33ecd1e81364da5dab6cbccaec4b515dd2269d",
+  "core_components": [
+    "profile_rms",
+    "slice_energy",
+    "minus_six_line",
+    "beamwidth_quality"
+  ],
+  "core_weights": {
+    "beamwidth_quality": 0.1902570465079333,
+    "minus_six_line": 0.10722676459248746,
+    "profile_rms": 0.4086081157134467,
+    "slice_energy": 0.2939080731861326
+  },
+  "evidence": {
+    "broad": "10 prior rounds spanning v1 score deciles",
+    "cell": "25 mouth/coverage cells, 10 high-scoring candidates each",
+    "close": "10 prior rounds containing nearby v1 scores",
+    "total_pairwise_preferences": 2025,
+    "total_ranked_candidates": 450
+  },
+  "implementation_sha256": "e82fbdcf8a0283890dbde39500f59a99a3f6d0346e9fe9b564f82ea4e662fbb6",
+  "limitations": [
+    "The broad rankings previously influenced the v2 beamwidth component design and are not pristine independent validation.",
+    "The per-cell rankings fit the core weights; whole-cell cross-validation estimates rather than eliminates selection bias.",
+    "The ranking games forced total orders without confidence or ties.",
+    "The score remains experimental until a new blinded mixed-quality ranking set validates the frozen formula."
+  ],
+  "method": {
+    "core": "Four-component nonnegative sum-to-one pairwise-logistic fit on per-cell rankings.",
+    "guardrail": "Multiplicative one-sided power penalties below explicit containment and outward-rise score thresholds.",
+    "guardrail_formula": "(1-core_fraction)*v2.2 + core_fraction*core*min(1, containment/threshold)^containment_exponent*min(1, outward_score/threshold)^outward_exponent",
+    "promotion_constraint": "No population may lose more than 0.005 mean Spearman or pairwise agreement relative to v2.2.",
+    "selection": "Finite preregistered-style grid selected on broad rounds; lower thresholds and exponents break exact metric ties."
+  },
+  "paired_comparison_to_v2_2": {
+    "broad": {
+      "human_winner_score_rank": {
+        "bootstrap_95_percent_interval": [
+          0.0,
+          0.3
+        ],
+        "mean_delta": 0.1
+      },
+      "pairwise_agreement": {
+        "bootstrap_95_percent_interval": [
+          -0.015555555555555578,
+          0.004444444444444429
+        ],
+        "mean_delta": -0.004444444444444462
+      },
+      "spearman": {
+        "bootstrap_95_percent_interval": [
+          -0.018181818181818098,
+          0.00969696969696976
+        ],
+        "mean_delta": -0.003636363636363593
+      },
+      "top_1_match": {
+        "bootstrap_95_percent_interval": [
+          0.0,
+          0.0
+        ],
+        "mean_delta": 0.0
+      }
+    },
+    "cell": {
+      "human_winner_score_rank": {
+        "bootstrap_95_percent_interval": [
+          -0.4,
+          -0.04
+        ],
+        "mean_delta": -0.2
+      },
+      "pairwise_agreement": {
+        "bootstrap_95_percent_interval": [
+          0.008888888888888889,
+          0.026666666666666675
+        ],
+        "mean_delta": 0.017777777777777774
+      },
+      "spearman": {
+        "bootstrap_95_percent_interval": [
+          0.012606060606060595,
+          0.05478787878787879
+        ],
+        "mean_delta": 0.03345454545454546
+      },
+      "top_1_match": {
+        "bootstrap_95_percent_interval": [
+          0.0,
+          0.0
+        ],
+        "mean_delta": 0.0
+      }
+    },
+    "close": {
+      "human_winner_score_rank": {
+        "bootstrap_95_percent_interval": [
+          -0.7,
+          0.2
+        ],
+        "mean_delta": -0.2
+      },
+      "pairwise_agreement": {
+        "bootstrap_95_percent_interval": [
+          -0.0044444444444444176,
+          0.08000000000000002
+        ],
+        "mean_delta": 0.03333333333333334
+      },
+      "spearman": {
+        "bootstrap_95_percent_interval": [
+          0.008484848484848494,
+          0.18787878787878784
+        ],
+        "mean_delta": 0.08848484848484847
+      },
+      "top_1_match": {
+        "bootstrap_95_percent_interval": [
+          -0.3,
+          0.0
+        ],
+        "mean_delta": -0.1
+      }
+    }
+  },
+  "schema_version": 1,
+  "selected_candidate": {
+    "broad_in_sample": {
+      "groups": [
+        {
+          "group": 1,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.9333333333333333,
+          "spearman": 0.9515151515151514,
+          "top_1_match": true
+        },
+        {
+          "group": 2,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8888888888888888,
+          "spearman": 0.9272727272727272,
+          "top_1_match": true
+        },
+        {
+          "group": 3,
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.8666666666666667,
+          "spearman": 0.8787878787878788,
+          "top_1_match": false
+        },
+        {
+          "group": 4,
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.9333333333333333,
+          "spearman": 0.9636363636363635,
+          "top_1_match": false
+        },
+        {
+          "group": 5,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8222222222222222,
+          "spearman": 0.8060606060606059,
+          "top_1_match": true
+        },
+        {
+          "group": 6,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.9111111111111111,
+          "spearman": 0.9151515151515152,
+          "top_1_match": true
+        },
+        {
+          "group": 7,
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.8666666666666667,
+          "spearman": 0.8545454545454544,
+          "top_1_match": false
+        },
+        {
+          "group": 8,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8888888888888888,
+          "spearman": 0.9151515151515152,
+          "top_1_match": true
+        },
+        {
+          "group": 9,
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.8444444444444444,
+          "spearman": 0.8545454545454544,
+          "top_1_match": false
+        },
+        {
+          "group": 10,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.9111111111111111,
+          "spearman": 0.9151515151515152,
+          "top_1_match": true
+        }
+      ],
+      "summary": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      }
+    },
+    "broad_nested_guardrail_selection": {
+      "held_out_rounds": [
+        {
+          "group": 1,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.9111111111111111,
+          "selected_guardrail": {
+            "containment_exponent": 1.0,
+            "containment_threshold_percent": 85.0,
+            "outward_rise_exponent": 0.125,
+            "outward_rise_score_threshold_percent": 60.0,
+            "v2_3_core_fraction": 0.1
+          },
+          "spearman": 0.9393939393939393,
+          "top_1_match": true
+        },
+        {
+          "group": 2,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8666666666666667,
+          "selected_guardrail": {
+            "containment_exponent": 0.125,
+            "containment_threshold_percent": 90.0,
+            "outward_rise_exponent": 0.125,
+            "outward_rise_score_threshold_percent": 70.0,
+            "v2_3_core_fraction": 0.1
+          },
+          "spearman": 0.9030303030303028,
+          "top_1_match": true
+        },
+        {
+          "group": 3,
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.8666666666666667,
+          "selected_guardrail": {
+            "containment_exponent": 0.125,
+            "containment_threshold_percent": 75.0,
+            "outward_rise_exponent": 0.25,
+            "outward_rise_score_threshold_percent": 80.0,
+            "v2_3_core_fraction": 0.2
+          },
+          "spearman": 0.8787878787878788,
+          "top_1_match": false
+        },
+        {
+          "group": 4,
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.9333333333333333,
+          "selected_guardrail": {
+            "containment_exponent": 1.0,
+            "containment_threshold_percent": 85.0,
+            "outward_rise_exponent": 0.125,
+            "outward_rise_score_threshold_percent": 70.0,
+            "v2_3_core_fraction": 0.1
+          },
+          "spearman": 0.9636363636363635,
+          "top_1_match": false
+        },
+        {
+          "group": 5,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8444444444444444,
+          "selected_guardrail": {
+            "containment_exponent": 1.0,
+            "containment_threshold_percent": 85.0,
+            "outward_rise_exponent": 0.125,
+            "outward_rise_score_threshold_percent": 70.0,
+            "v2_3_core_fraction": 0.1
+          },
+          "spearman": 0.8424242424242423,
+          "top_1_match": true
+        },
+        {
+          "group": 6,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.9111111111111111,
+          "selected_guardrail": {
+            "containment_exponent": 1.0,
+            "containment_threshold_percent": 85.0,
+            "outward_rise_exponent": 0.125,
+            "outward_rise_score_threshold_percent": 70.0,
+            "v2_3_core_fraction": 0.1
+          },
+          "spearman": 0.9151515151515152,
+          "top_1_match": true
+        },
+        {
+          "group": 7,
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.8666666666666667,
+          "selected_guardrail": {
+            "containment_exponent": 1.0,
+            "containment_threshold_percent": 85.0,
+            "outward_rise_exponent": 0.125,
+            "outward_rise_score_threshold_percent": 70.0,
+            "v2_3_core_fraction": 0.1
+          },
+          "spearman": 0.8545454545454544,
+          "top_1_match": false
+        },
+        {
+          "group": 8,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8888888888888888,
+          "selected_guardrail": {
+            "containment_exponent": 1.0,
+            "containment_threshold_percent": 85.0,
+            "outward_rise_exponent": 0.125,
+            "outward_rise_score_threshold_percent": 70.0,
+            "v2_3_core_fraction": 0.1
+          },
+          "spearman": 0.9151515151515152,
+          "top_1_match": true
+        },
+        {
+          "group": 9,
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.8444444444444444,
+          "selected_guardrail": {
+            "containment_exponent": 1.0,
+            "containment_threshold_percent": 85.0,
+            "outward_rise_exponent": 0.125,
+            "outward_rise_score_threshold_percent": 70.0,
+            "v2_3_core_fraction": 0.1
+          },
+          "spearman": 0.8545454545454544,
+          "top_1_match": false
+        },
+        {
+          "group": 10,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.9111111111111111,
+          "selected_guardrail": {
+            "containment_exponent": 1.0,
+            "containment_threshold_percent": 85.0,
+            "outward_rise_exponent": 0.125,
+            "outward_rise_score_threshold_percent": 70.0,
+            "v2_3_core_fraction": 0.1
+          },
+          "spearman": 0.9151515151515152,
+          "top_1_match": true
+        }
+      ],
+      "selection_counts": {
+        "b0.1-c85-o60-ce1-oe0.125": 1,
+        "b0.1-c85-o70-ce1-oe0.125": 7,
+        "b0.1-c90-o70-ce0.125-oe0.125": 1,
+        "b0.2-c75-o80-ce0.125-oe0.25": 1
+      },
+      "summary": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8844444444444444,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      }
+    },
+    "cell_in_sample": {
+      "groups": [
+        {
+          "group": "30deg-250mm",
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.8222222222222222,
+          "spearman": 0.8060606060606059,
+          "top_1_match": false
+        },
+        {
+          "group": "35deg-250mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.9333333333333333,
+          "spearman": 0.9636363636363635,
+          "top_1_match": true
+        },
+        {
+          "group": "40deg-250mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8222222222222222,
+          "spearman": 0.7939393939393938,
+          "top_1_match": true
+        },
+        {
+          "group": "45deg-250mm",
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.6666666666666666,
+          "spearman": 0.3939393939393939,
+          "top_1_match": false
+        },
+        {
+          "group": "50deg-250mm",
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.5555555555555556,
+          "spearman": 0.2121212121212121,
+          "top_1_match": false
+        },
+        {
+          "group": "30deg-300mm",
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.7555555555555555,
+          "spearman": 0.6606060606060605,
+          "top_1_match": false
+        },
+        {
+          "group": "35deg-300mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8444444444444444,
+          "spearman": 0.8303030303030302,
+          "top_1_match": true
+        },
+        {
+          "group": "40deg-300mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.7333333333333333,
+          "spearman": 0.5515151515151515,
+          "top_1_match": true
+        },
+        {
+          "group": "45deg-300mm",
+          "human_winner_score_rank": 5,
+          "pairwise_agreement": 0.6222222222222222,
+          "spearman": 0.17575757575757575,
+          "top_1_match": false
+        },
+        {
+          "group": "50deg-300mm",
+          "human_winner_score_rank": 7,
+          "pairwise_agreement": 0.4444444444444444,
+          "spearman": -0.18787878787878787,
+          "top_1_match": false
+        },
+        {
+          "group": "30deg-350mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8666666666666667,
+          "spearman": 0.8909090909090909,
+          "top_1_match": true
+        },
+        {
+          "group": "35deg-350mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.6,
+          "spearman": 0.22424242424242422,
+          "top_1_match": true
+        },
+        {
+          "group": "40deg-350mm",
+          "human_winner_score_rank": 6,
+          "pairwise_agreement": 0.7333333333333333,
+          "spearman": 0.5757575757575757,
+          "top_1_match": false
+        },
+        {
+          "group": "45deg-350mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8444444444444444,
+          "spearman": 0.8424242424242423,
+          "top_1_match": true
+        },
+        {
+          "group": "50deg-350mm",
+          "human_winner_score_rank": 6,
+          "pairwise_agreement": 0.8,
+          "spearman": 0.7212121212121211,
+          "top_1_match": false
+        },
+        {
+          "group": "30deg-400mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.6888888888888889,
+          "spearman": 0.4787878787878787,
+          "top_1_match": true
+        },
+        {
+          "group": "35deg-400mm",
+          "human_winner_score_rank": 7,
+          "pairwise_agreement": 0.6666666666666666,
+          "spearman": 0.4545454545454545,
+          "top_1_match": false
+        },
+        {
+          "group": "40deg-400mm",
+          "human_winner_score_rank": 5,
+          "pairwise_agreement": 0.6,
+          "spearman": 0.34545454545454546,
+          "top_1_match": false
+        },
+        {
+          "group": "45deg-400mm",
+          "human_winner_score_rank": 5,
+          "pairwise_agreement": 0.8,
+          "spearman": 0.7939393939393938,
+          "top_1_match": false
+        },
+        {
+          "group": "50deg-400mm",
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.7777777777777778,
+          "spearman": 0.7818181818181817,
+          "top_1_match": false
+        },
+        {
+          "group": "30deg-450mm",
+          "human_winner_score_rank": 4,
+          "pairwise_agreement": 0.7333333333333333,
+          "spearman": 0.6969696969696969,
+          "top_1_match": false
+        },
+        {
+          "group": "35deg-450mm",
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.7333333333333333,
+          "spearman": 0.6727272727272726,
+          "top_1_match": false
+        },
+        {
+          "group": "40deg-450mm",
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.6666666666666666,
+          "spearman": 0.6,
+          "top_1_match": false
+        },
+        {
+          "group": "45deg-450mm",
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.8,
+          "spearman": 0.7575757575757575,
+          "top_1_match": false
+        },
+        {
+          "group": "50deg-450mm",
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.6222222222222222,
+          "spearman": 0.4424242424242424,
+          "top_1_match": false
+        }
+      ],
+      "summary": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.5791515151515151,
+        "top_1_matches": 8
+      }
+    },
+    "cell_leave_one_out_core_fit": {
+      "held_out_cells": [
+        {
+          "group": "30deg-250mm",
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.8222222222222222,
+          "spearman": 0.8060606060606059,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.1940841301917351,
+            "minus_six_line": 0.11353844017086082,
+            "profile_rms": 0.41315103708911033,
+            "slice_energy": 0.2792263925482939
+          }
+        },
+        {
+          "group": "35deg-250mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.9333333333333333,
+          "spearman": 0.9636363636363635,
+          "top_1_match": true,
+          "weights": {
+            "beamwidth_quality": 0.18937598311728485,
+            "minus_six_line": 0.11315122996400417,
+            "profile_rms": 0.40264630275869545,
+            "slice_energy": 0.2948264841600156
+          }
+        },
+        {
+          "group": "40deg-250mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8222222222222222,
+          "spearman": 0.7939393939393938,
+          "top_1_match": true,
+          "weights": {
+            "beamwidth_quality": 0.1874149302892676,
+            "minus_six_line": 0.11139587952073156,
+            "profile_rms": 0.4079230037185547,
+            "slice_energy": 0.2932661864714462
+          }
+        },
+        {
+          "group": "45deg-250mm",
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.6666666666666666,
+          "spearman": 0.3939393939393939,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.19576560781438207,
+            "minus_six_line": 0.13615693791802716,
+            "profile_rms": 0.3692239173478174,
+            "slice_energy": 0.2988535369197735
+          }
+        },
+        {
+          "group": "50deg-250mm",
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.5555555555555556,
+          "spearman": 0.2121212121212121,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.19027699309964274,
+            "minus_six_line": 0.10348177668187836,
+            "profile_rms": 0.4100850566432745,
+            "slice_energy": 0.29615617357520446
+          }
+        },
+        {
+          "group": "30deg-300mm",
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.7555555555555555,
+          "spearman": 0.6606060606060605,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.1880244370014545,
+            "minus_six_line": 0.1095281755947021,
+            "profile_rms": 0.41154897677278246,
+            "slice_energy": 0.290898410631061
+          }
+        },
+        {
+          "group": "35deg-300mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8222222222222222,
+          "spearman": 0.8060606060606059,
+          "top_1_match": true,
+          "weights": {
+            "beamwidth_quality": 0.1857574920461741,
+            "minus_six_line": 0.11259433965477705,
+            "profile_rms": 0.40446172272639114,
+            "slice_energy": 0.2971864455726577
+          }
+        },
+        {
+          "group": "40deg-300mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.7333333333333333,
+          "spearman": 0.5515151515151515,
+          "top_1_match": true,
+          "weights": {
+            "beamwidth_quality": 0.19112604427312083,
+            "minus_six_line": 0.10743896653916808,
+            "profile_rms": 0.4099468213587468,
+            "slice_energy": 0.2914881678289643
+          }
+        },
+        {
+          "group": "45deg-300mm",
+          "human_winner_score_rank": 5,
+          "pairwise_agreement": 0.6222222222222222,
+          "spearman": 0.17575757575757575,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.1867648332273896,
+            "minus_six_line": 0.10575204673324129,
+            "profile_rms": 0.4153520778997598,
+            "slice_energy": 0.29213104213960916
+          }
+        },
+        {
+          "group": "50deg-300mm",
+          "human_winner_score_rank": 8,
+          "pairwise_agreement": 0.4444444444444444,
+          "spearman": -0.19999999999999998,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.19394027091330018,
+            "minus_six_line": 0.16208216025297903,
+            "profile_rms": 0.3731402756049665,
+            "slice_energy": 0.2708372932287545
+          }
+        },
+        {
+          "group": "30deg-350mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8666666666666667,
+          "spearman": 0.8909090909090909,
+          "top_1_match": true,
+          "weights": {
+            "beamwidth_quality": 0.19191136266216308,
+            "minus_six_line": 0.1138507112546145,
+            "profile_rms": 0.39706133232507207,
+            "slice_energy": 0.2971765937581503
+          }
+        },
+        {
+          "group": "35deg-350mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.6,
+          "spearman": 0.22424242424242422,
+          "top_1_match": true,
+          "weights": {
+            "beamwidth_quality": 0.1913087425783456,
+            "minus_six_line": 0.10852776151838286,
+            "profile_rms": 0.40536018147363545,
+            "slice_energy": 0.2948033144296359
+          }
+        },
+        {
+          "group": "40deg-350mm",
+          "human_winner_score_rank": 6,
+          "pairwise_agreement": 0.7333333333333333,
+          "spearman": 0.5757575757575757,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.19265480316596525,
+            "minus_six_line": 0.09208077999694293,
+            "profile_rms": 0.4137656601492285,
+            "slice_energy": 0.30149875668786313
+          }
+        },
+        {
+          "group": "45deg-350mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8444444444444444,
+          "spearman": 0.8424242424242423,
+          "top_1_match": true,
+          "weights": {
+            "beamwidth_quality": 0.1836552894961271,
+            "minus_six_line": 0.11944523260399613,
+            "profile_rms": 0.4118029020954639,
+            "slice_energy": 0.2850965758044128
+          }
+        },
+        {
+          "group": "50deg-350mm",
+          "human_winner_score_rank": 6,
+          "pairwise_agreement": 0.8,
+          "spearman": 0.7212121212121211,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.19006234387870896,
+            "minus_six_line": 0.11040958778720744,
+            "profile_rms": 0.40779911741398533,
+            "slice_energy": 0.29172895092009826
+          }
+        },
+        {
+          "group": "30deg-400mm",
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.6888888888888889,
+          "spearman": 0.4787878787878787,
+          "top_1_match": true,
+          "weights": {
+            "beamwidth_quality": 0.19088372333121015,
+            "minus_six_line": 0.1060131002324369,
+            "profile_rms": 0.4040723780429773,
+            "slice_energy": 0.2990307983933757
+          }
+        },
+        {
+          "group": "35deg-400mm",
+          "human_winner_score_rank": 7,
+          "pairwise_agreement": 0.6666666666666666,
+          "spearman": 0.4545454545454545,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.1858036514901335,
+            "minus_six_line": 0.09363483885087011,
+            "profile_rms": 0.4290730872009066,
+            "slice_energy": 0.29148842245808976
+          }
+        },
+        {
+          "group": "40deg-400mm",
+          "human_winner_score_rank": 5,
+          "pairwise_agreement": 0.6,
+          "spearman": 0.34545454545454546,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.19252651628218298,
+            "minus_six_line": 0.08079043228527602,
+            "profile_rms": 0.42417911237864436,
+            "slice_energy": 0.30250393905389666
+          }
+        },
+        {
+          "group": "45deg-400mm",
+          "human_winner_score_rank": 5,
+          "pairwise_agreement": 0.8,
+          "spearman": 0.7939393939393938,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.18022689884659968,
+            "minus_six_line": 0.08968108522527093,
+            "profile_rms": 0.4363028986457222,
+            "slice_energy": 0.2937891172824073
+          }
+        },
+        {
+          "group": "50deg-400mm",
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.7555555555555555,
+          "spearman": 0.7454545454545454,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.17607064275022974,
+            "minus_six_line": 0.09436043062572598,
+            "profile_rms": 0.43935592847107374,
+            "slice_energy": 0.2902129981529706
+          }
+        },
+        {
+          "group": "30deg-450mm",
+          "human_winner_score_rank": 4,
+          "pairwise_agreement": 0.7333333333333333,
+          "spearman": 0.6969696969696969,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.1894725021587523,
+            "minus_six_line": 0.10360530314013608,
+            "profile_rms": 0.4188367558080852,
+            "slice_energy": 0.2880854388930265
+          }
+        },
+        {
+          "group": "35deg-450mm",
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.7333333333333333,
+          "spearman": 0.6727272727272726,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.1960201993362018,
+            "minus_six_line": 0.09346424004922059,
+            "profile_rms": 0.4102369984676051,
+            "slice_energy": 0.3002785621469726
+          }
+        },
+        {
+          "group": "40deg-450mm",
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.6666666666666666,
+          "spearman": 0.6,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.19240363777105007,
+            "minus_six_line": 0.09404252918981447,
+            "profile_rms": 0.41606411850921765,
+            "slice_energy": 0.29748971452991785
+          }
+        },
+        {
+          "group": "45deg-450mm",
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.8,
+          "spearman": 0.7575757575757575,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.20309175759735335,
+            "minus_six_line": 0.13104995381597997,
+            "profile_rms": 0.3712840802068587,
+            "slice_energy": 0.294574208379808
+          }
+        },
+        {
+          "group": "50deg-450mm",
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.6222222222222222,
+          "spearman": 0.4424242424242424,
+          "top_1_match": false,
+          "weights": {
+            "beamwidth_quality": 0.19870311867516827,
+            "minus_six_line": 0.08196621907565972,
+            "profile_rms": 0.41087929747849133,
+            "slice_energy": 0.3084513647706807
+          }
+        }
+      ],
+      "summary": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.08,
+        "mean_pairwise_agreement": 0.7235555555555557,
+        "mean_spearman": 0.5762424242424241,
+        "top_1_matches": 8
+      },
+      "weight_max": {
+        "beamwidth_quality": 0.20309175759735335,
+        "minus_six_line": 0.16208216025297903,
+        "profile_rms": 0.43935592847107374,
+        "slice_energy": 0.3084513647706807
+      },
+      "weight_mean": {
+        "beamwidth_quality": 0.1902930364797577,
+        "minus_six_line": 0.10752168634727617,
+        "profile_rms": 0.40854212162348263,
+        "slice_energy": 0.29364315554948345
+      },
+      "weight_min": {
+        "beamwidth_quality": 0.17607064275022974,
+        "minus_six_line": 0.08079043228527602,
+        "profile_rms": 0.3692239173478174,
+        "slice_energy": 0.2708372932287545
+      }
+    },
+    "close_transfer": {
+      "groups": [
+        {
+          "group": 11,
+          "human_winner_score_rank": 7,
+          "pairwise_agreement": 0.4444444444444444,
+          "spearman": -0.2606060606060606,
+          "top_1_match": false
+        },
+        {
+          "group": 12,
+          "human_winner_score_rank": 3,
+          "pairwise_agreement": 0.6888888888888889,
+          "spearman": 0.5393939393939393,
+          "top_1_match": false
+        },
+        {
+          "group": 13,
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.8,
+          "spearman": 0.7454545454545454,
+          "top_1_match": false
+        },
+        {
+          "group": 14,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.7555555555555555,
+          "spearman": 0.6848484848484848,
+          "top_1_match": true
+        },
+        {
+          "group": 15,
+          "human_winner_score_rank": 10,
+          "pairwise_agreement": 0.5777777777777777,
+          "spearman": 0.16363636363636364,
+          "top_1_match": false
+        },
+        {
+          "group": 16,
+          "human_winner_score_rank": 2,
+          "pairwise_agreement": 0.7111111111111111,
+          "spearman": 0.6242424242424242,
+          "top_1_match": false
+        },
+        {
+          "group": 17,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.6666666666666666,
+          "spearman": 0.3696969696969697,
+          "top_1_match": true
+        },
+        {
+          "group": 18,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8,
+          "spearman": 0.7454545454545454,
+          "top_1_match": true
+        },
+        {
+          "group": 19,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.8222222222222222,
+          "spearman": 0.7818181818181817,
+          "top_1_match": true
+        },
+        {
+          "group": 20,
+          "human_winner_score_rank": 1,
+          "pairwise_agreement": 0.7333333333333333,
+          "spearman": 0.5151515151515151,
+          "top_1_match": true
+        }
+      ],
+      "summary": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 2.9,
+        "mean_pairwise_agreement": 0.7,
+        "mean_spearman": 0.49090909090909085,
+        "top_1_matches": 5
+      }
+    },
+    "guardrail_triggers": {
+      "broad": {
+        "candidate_count": 100,
+        "containment_trigger_count": 6,
+        "either_trigger_count": 19,
+        "outward_rise_trigger_count": 13
+      },
+      "cell": {
+        "candidate_count": 250,
+        "containment_trigger_count": 0,
+        "either_trigger_count": 3,
+        "outward_rise_trigger_count": 3
+      },
+      "close": {
+        "candidate_count": 100,
+        "containment_trigger_count": 7,
+        "either_trigger_count": 24,
+        "outward_rise_trigger_count": 17
+      }
+    }
+  },
+  "selected_guardrail": {
+    "containment_exponent": 1.0,
+    "containment_threshold_percent": 75.0,
+    "outward_rise_exponent": 0.125,
+    "outward_rise_score_threshold_percent": 60.0,
+    "v2_3_core_fraction": 0.2
+  },
+  "status": "experimental_calibrated_not_independently_validated",
+  "study_id": "surface-score-v2-3-general-diagnostic-calibration",
+  "top_grid_candidates": [
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.5791515151515151,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 2.9,
+        "mean_pairwise_agreement": 0.7,
+        "mean_spearman": 0.49090909090909085,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 1.0,
+        "containment_threshold_percent": 75.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 1
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.5762424242424241,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 2.8,
+        "mean_pairwise_agreement": 0.6955555555555556,
+        "mean_spearman": 0.48606060606060614,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 1.0,
+        "containment_threshold_percent": 80.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 2
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.5757575757575757,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 2.8,
+        "mean_pairwise_agreement": 0.6933333333333334,
+        "mean_spearman": 0.4787878787878787,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 1.0,
+        "containment_threshold_percent": 80.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 70.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 3
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.5786666666666666,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 2.9,
+        "mean_pairwise_agreement": 0.6933333333333334,
+        "mean_spearman": 0.4739393939393938,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 1.0,
+        "containment_threshold_percent": 75.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 70.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 4
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7262222222222222,
+        "mean_spearman": 0.581090909090909,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6933333333333334,
+        "mean_spearman": 0.46424242424242423,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.25,
+        "containment_threshold_percent": 80.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 5
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.581090909090909,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6933333333333334,
+        "mean_spearman": 0.46424242424242423,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.125,
+        "containment_threshold_percent": 85.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 6
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.5781818181818181,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 2.9,
+        "mean_pairwise_agreement": 0.6933333333333334,
+        "mean_spearman": 0.4666666666666666,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.5,
+        "containment_threshold_percent": 80.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 7
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7244444444444444,
+        "mean_spearman": 0.5806060606060605,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6933333333333334,
+        "mean_spearman": 0.46424242424242423,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.25,
+        "containment_threshold_percent": 85.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 8
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.5791515151515151,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6933333333333334,
+        "mean_spearman": 0.46424242424242423,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.125,
+        "containment_threshold_percent": 80.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 9
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.5791515151515151,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6933333333333334,
+        "mean_spearman": 0.46424242424242423,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.25,
+        "containment_threshold_percent": 75.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 10
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.5791515151515151,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6933333333333334,
+        "mean_spearman": 0.46424242424242423,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.5,
+        "containment_threshold_percent": 75.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 11
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7262222222222223,
+        "mean_spearman": 0.582060606060606,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6888888888888889,
+        "mean_spearman": 0.4606060606060606,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.125,
+        "containment_threshold_percent": 85.0,
+        "outward_rise_exponent": 0.25,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 12
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7262222222222223,
+        "mean_spearman": 0.5791515151515152,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 2.9,
+        "mean_pairwise_agreement": 0.6888888888888889,
+        "mean_spearman": 0.46303030303030307,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.5,
+        "containment_threshold_percent": 80.0,
+        "outward_rise_exponent": 0.25,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 13
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333333,
+        "mean_spearman": 0.5815757575757575,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6888888888888889,
+        "mean_spearman": 0.4606060606060606,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.25,
+        "containment_threshold_percent": 85.0,
+        "outward_rise_exponent": 0.25,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 14
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7262222222222223,
+        "mean_spearman": 0.580121212121212,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6888888888888889,
+        "mean_spearman": 0.4606060606060606,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 1.0,
+        "containment_threshold_percent": 75.0,
+        "outward_rise_exponent": 0.25,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 15
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.727111111111111,
+        "mean_spearman": 0.582060606060606,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6866666666666666,
+        "mean_spearman": 0.4581818181818182,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.25,
+        "containment_threshold_percent": 80.0,
+        "outward_rise_exponent": 0.25,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 16
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7262222222222223,
+        "mean_spearman": 0.580121212121212,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6866666666666666,
+        "mean_spearman": 0.4581818181818182,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.5,
+        "containment_threshold_percent": 75.0,
+        "outward_rise_exponent": 0.25,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 17
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.08,
+        "mean_pairwise_agreement": 0.7235555555555557,
+        "mean_spearman": 0.5781818181818181,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.1,
+        "mean_pairwise_agreement": 0.6911111111111111,
+        "mean_spearman": 0.4593939393939393,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.125,
+        "containment_threshold_percent": 90.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 18
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7244444444444444,
+        "mean_spearman": 0.580121212121212,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6888888888888889,
+        "mean_spearman": 0.4545454545454545,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.25,
+        "containment_threshold_percent": 85.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 70.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 19
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7262222222222223,
+        "mean_spearman": 0.580121212121212,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6822222222222222,
+        "mean_spearman": 0.4545454545454545,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.125,
+        "containment_threshold_percent": 80.0,
+        "outward_rise_exponent": 0.25,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 20
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7262222222222223,
+        "mean_spearman": 0.5772121212121211,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 2.9,
+        "mean_pairwise_agreement": 0.6844444444444444,
+        "mean_spearman": 0.456969696969697,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 1.0,
+        "containment_threshold_percent": 80.0,
+        "outward_rise_exponent": 0.25,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 21
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.08,
+        "mean_pairwise_agreement": 0.720888888888889,
+        "mean_spearman": 0.5621818181818181,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 2.8,
+        "mean_pairwise_agreement": 0.6933333333333334,
+        "mean_spearman": 0.4715151515151515,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 1.0,
+        "containment_threshold_percent": 80.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 80.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 22
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.5776969696969697,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.0,
+        "mean_pairwise_agreement": 0.6866666666666666,
+        "mean_spearman": 0.4533333333333333,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.5,
+        "containment_threshold_percent": 80.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 70.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 23
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.04,
+        "mean_pairwise_agreement": 0.7253333333333335,
+        "mean_spearman": 0.5791515151515151,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.1,
+        "mean_pairwise_agreement": 0.6888888888888889,
+        "mean_spearman": 0.45090909090909087,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.125,
+        "containment_threshold_percent": 75.0,
+        "outward_rise_exponent": 0.125,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 24
+    },
+    {
+      "broad": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 1.7,
+        "mean_pairwise_agreement": 0.8866666666666665,
+        "mean_spearman": 0.8981818181818181,
+        "top_1_matches": 6
+      },
+      "cell": {
+        "group_count": 25,
+        "mean_human_winner_score_rank": 3.08,
+        "mean_pairwise_agreement": 0.7244444444444446,
+        "mean_spearman": 0.5791515151515152,
+        "top_1_matches": 8
+      },
+      "close": {
+        "group_count": 10,
+        "mean_human_winner_score_rank": 3.1,
+        "mean_pairwise_agreement": 0.6844444444444444,
+        "mean_spearman": 0.4496969696969697,
+        "top_1_matches": 5
+      },
+      "guardrail": {
+        "containment_exponent": 0.125,
+        "containment_threshold_percent": 90.0,
+        "outward_rise_exponent": 0.25,
+        "outward_rise_score_threshold_percent": 60.0,
+        "v2_3_core_fraction": 0.2
+      },
+      "rank": 25
+    }
+  ]
+}

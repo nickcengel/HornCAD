@@ -879,6 +879,7 @@ def _surface_diagnostic_tables(runs: list[dict[str, Any]],
         experimental_score = result.get(
             "score_v2_candidates", {}
         ).get(ACTIVE_SURFACE_SCORE_V2_CANDIDATE)
+        general_score = result.get("score_v2_3")
         rows = [
             (
                 "Primary surface score v1",
@@ -888,6 +889,11 @@ def _surface_diagnostic_tables(runs: list[dict[str, Any]],
                 "Experimental surface score v2.2",
                 value(experimental_score["overall_percent"], "%")
                 if experimental_score else "—",
+            ),
+            (
+                "Experimental general surface score v2.3",
+                value(general_score["overall_percent"], "%")
+                if general_score else "—",
             ),
         ]
         for label, plane_name in (("Horizontal", "horizontal"),

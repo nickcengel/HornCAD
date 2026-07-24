@@ -69,6 +69,17 @@ SURFACE_SCORE_V2_CANDIDATE_WEIGHTS = {
 ACTIVE_SURFACE_SCORE_VERSION = "v1"
 ACTIVE_SURFACE_SCORE_V2_CANDIDATE = "contour_forward"
 SURFACE_SCORE_V2_REVISION = "v2.2"
+SURFACE_SCORE_V2_3_CORE_WEIGHTS = {
+    "profile_rms": 0.4086081157134467,
+    "slice_energy": 0.2939080731861326,
+    "minus_six_line": 0.10722676459248746,
+    "beamwidth_quality": 0.1902570465079333,
+}
+SURFACE_SCORE_V2_3_CORE_FRACTION = 0.20
+SURFACE_SCORE_V2_3_CONTAINMENT_THRESHOLD = 75.0
+SURFACE_SCORE_V2_3_OUTWARD_RISE_SCORE_THRESHOLD = 60.0
+SURFACE_SCORE_V2_3_CONTAINMENT_EXPONENT = 1.0
+SURFACE_SCORE_V2_3_OUTWARD_RISE_EXPONENT = 0.125
 NARROW_COVERAGE_FULL_CORRECTION_DEG = 25.0
 NARROW_COVERAGE_NO_CORRECTION_DEG = 30.0
 NARROW_COVERAGE_MINIMUM_V2_FRACTION = 0.20
@@ -328,6 +339,106 @@ def surface_score_v2(
         "error_reference_values": {
             **SURFACE_SCORE_ERROR_REFERENCES,
             **BEAMWIDTH_ERROR_REFERENCES,
+        },
+    }
+
+
+def _surface_score_v2_3_guard_factor(
+    value: float, threshold: float, exponent: float
+) -> float:
+    ratio = min(1.0, max(0.0, float(value) / threshold))
+    return float(ratio ** exponent)
+
+
+def surface_score_v2_3(
+    result: dict[str, Any],
+    mouth_dimensions_mm: dict[str, float] | None = None,
+) -> dict[str, Any] | None:
+    """Blend v2.2 broad discrimination with a guarded local-ranking core."""
+    if result.get("status") != "available":
+        return None
+    baseline = surface_score_v2(
+        result,
+        mouth_dimensions_mm,
+        candidate_name="contour_forward",
+        revision="v2.2",
+    )
+    if baseline is None:
+        return None
+    axis_weights = _axis_weights(mouth_dimensions_mm)
+    planes: dict[str, Any] = {}
+    for plane_name in ("horizontal", "vertical"):
+        baseline_plane = baseline[plane_name]
+        components = baseline_plane["components"]
+        core_score = float(sum(
+            weight * components[key]
+            for key, weight in SURFACE_SCORE_V2_3_CORE_WEIGHTS.items()
+        ))
+        containment_factor = _surface_score_v2_3_guard_factor(
+            components["mean_containment"],
+            SURFACE_SCORE_V2_3_CONTAINMENT_THRESHOLD,
+            SURFACE_SCORE_V2_3_CONTAINMENT_EXPONENT,
+        )
+        outward_rise_factor = _surface_score_v2_3_guard_factor(
+            components["outward_rise"],
+            SURFACE_SCORE_V2_3_OUTWARD_RISE_SCORE_THRESHOLD,
+            SURFACE_SCORE_V2_3_OUTWARD_RISE_EXPONENT,
+        )
+        guard_factor = containment_factor * outward_rise_factor
+        guarded_core_score = core_score * guard_factor
+        overall = (
+            (1.0 - SURFACE_SCORE_V2_3_CORE_FRACTION)
+            * baseline_plane["overall_percent"]
+            + SURFACE_SCORE_V2_3_CORE_FRACTION * guarded_core_score
+        )
+        triggered = []
+        if containment_factor < 1.0:
+            triggered.append("mean_containment")
+        if outward_rise_factor < 1.0:
+            triggered.append("outward_rise")
+        planes[plane_name] = {
+            "overall_percent": float(overall),
+            "baseline_v2_2_percent": float(
+                baseline_plane["overall_percent"]
+            ),
+            "core_percent": core_score,
+            "guarded_core_percent": guarded_core_score,
+            "guard_factor": guard_factor,
+            "guardrail_status": (
+                "within_guardrails" if not triggered else "penalized"
+            ),
+            "triggered_guardrails": triggered,
+            "containment_factor": containment_factor,
+            "outward_rise_factor": outward_rise_factor,
+            "components": components,
+        }
+    overall = float(sum(
+        axis_weights[index] * planes[plane_name]["overall_percent"]
+        for index, plane_name in enumerate(("horizontal", "vertical"))
+    ))
+    return {
+        "version": "v2.3",
+        "status": "experimental_calibrated_not_independently_validated",
+        "overall_percent": overall,
+        "horizontal": planes["horizontal"],
+        "vertical": planes["vertical"],
+        "axis_weights": {
+            "horizontal": float(axis_weights[0]),
+            "vertical": float(axis_weights[1]),
+        },
+        "baseline_version": "v2.2",
+        "baseline_fraction": 1.0 - SURFACE_SCORE_V2_3_CORE_FRACTION,
+        "core_fraction": SURFACE_SCORE_V2_3_CORE_FRACTION,
+        "core_weights": SURFACE_SCORE_V2_3_CORE_WEIGHTS,
+        "guardrails": {
+            "containment_threshold_percent":
+                SURFACE_SCORE_V2_3_CONTAINMENT_THRESHOLD,
+            "containment_exponent":
+                SURFACE_SCORE_V2_3_CONTAINMENT_EXPONENT,
+            "outward_rise_score_threshold_percent":
+                SURFACE_SCORE_V2_3_OUTWARD_RISE_SCORE_THRESHOLD,
+            "outward_rise_exponent":
+                SURFACE_SCORE_V2_3_OUTWARD_RISE_EXPONENT,
         },
     }
 
@@ -927,5 +1038,8 @@ def surface_diagnostics(
         )
         for name, weights in SURFACE_SCORE_V2_CANDIDATE_WEIGHTS.items()
     }
+    result["score_v2_3"] = surface_score_v2_3(
+        result, run.get("mouth_dimensions_mm")
+    )
     result["score"] = surface_score(result, run.get("mouth_dimensions_mm"))
     return result

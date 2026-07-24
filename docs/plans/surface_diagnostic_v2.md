@@ -1,7 +1,8 @@
 # Surface diagnostic v2: multiscale contour quality
 
 Status: v2 completed and validated; v2.1 and v2.2 preference corrections
-calibrated on subsequent evidence; retained as experimental, not activated
+calibrated on subsequent evidence; superseded for general experimental review
+by the guarded v2.3 candidate; none activated as the primary score
 
 Validation outcome: the contour-forward top-level weighting passed every promotion
 criterion and was selected in all 20 initial leave-one-round-out folds. The
@@ -30,6 +31,13 @@ decisive winner choices without cell-specific rules. This calibration reduces
 agreement with the earlier non-tie pairs from 73.4% to 65.6%; both results are
 reported because the newer comparison directly tests the intended winner
 selection use.
+
+The later ten-candidate-per-cell ranking game showed that a four-component
+local fit improves high-score ordering but drops containment and outward-rise
+weights in that restricted pool. The v2.3 follow-up retains v2.2 as 80% of the
+general score, adds 20% of that local core, and applies explicit containment
+and outward-rise guardrails to the local branch. Its separate frozen plan is
+[`surface_diagnostic_v2_3.md`](surface_diagnostic_v2_3.md).
 
 ## Purpose
 

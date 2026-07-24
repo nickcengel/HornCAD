@@ -35,6 +35,23 @@ analysis with:
 .venv/bin/python -m app.tools.analyze_surface_score_v2_2_cell_rankings
 ```
 
+## General-purpose v2.3 follow-up
+
+The fitted local-ranking core was combined with v2.2 and explicit containment
+and outward-rise guardrails to produce the experimental general-purpose v2.3
+candidate. Rebuild its calibration with:
+
+```sh
+.venv/bin/python -m app.tools.calibrate_surface_score_v2_3
+```
+
+The machine-readable evidence is in
+[`surface_score_v2_3_calibration.json`](surface_score_v2_3_calibration.json);
+the readable result is
+[`surface_score_v2_3_calibration.md`](surface_score_v2_3_calibration.md); and
+the frozen formula, results, and validation limits are documented in the
+[v2.3 plan](../../docs/plans/surface_diagnostic_v2_3.md).
+
 Exploratory nonnegative component-weight fits and whole-cell cross-validation:
 
 ```bash

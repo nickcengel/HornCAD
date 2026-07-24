@@ -3,8 +3,8 @@
 This document specifies the implemented surface-diagnostic suite for HornCAD
 BEM angle-frequency reports. The raw measurements and calibrated weighted score
 are used by current BEM search. Surface score v1 remains primary for ranking and
-is the response predicted by the released round-control models. Surface score
-v2.2 is retained as an explicitly experimental side-by-side diagnostic.
+is the response predicted by the released round-control models. Surface scores
+v2.2 and v2.3 are retained as explicitly experimental side-by-side diagnostics.
 
 ## Scope and conventions
 
@@ -194,6 +194,35 @@ because the cell-winner task is the intended optimization use.
 
 V2.2 remains calibrated rather than independently validated. V1 remains the
 normal search-ranking score.
+
+### General-purpose guarded refinement in v2.3
+
+V2.3 combines two complementary results from the completed ranking studies.
+V2.2 retains stronger broad-range discrimination, while a four-component local
+fit improves ordering among high-scoring candidates. The local fit cannot
+stand alone because containment and outward-rise receive no weight in that
+restricted population.
+
+For each plane, v2.3 builds a local core from 40.8608% profile quality, 29.3908%
+slice-energy stability, 10.7227% full-band -6 dB target accuracy, and 19.0257%
+three-contour beamwidth quality. It applies one-sided soft guardrails below 75%
+mean containment and below a 60% outward-rise component score:
+
+`guarded_core = core * min(1, containment / 75) * min(1, outward_score / 60) ** 0.125`
+
+The final result is `80% * v2.2 + 20% * guarded_core`. Consequently, v2.2's
+continuous containment and outward-rise contributions remain present even
+when neither explicit guardrail triggers. The result records both factors and
+the names of any triggered guardrails.
+
+Against the existing evidence, v2.3 changes broad mean Spearman from 0.902 to
+0.898, close-score agreement from 0.402 to 0.491, and per-cell agreement from
+0.546 to 0.579. Pairwise agreement changes from 89.1% to 88.7%, 66.7% to 70.0%,
+and 70.8% to 72.5%, respectively. This satisfies the documented no-regression
+tolerance in every population, but the same evidence participated in
+calibration. V2.3 is experimental and does not replace v1 without new blinded
+validation. The complete design and limitations are in
+[`surface_diagnostic_v2_3.md`](../plans/surface_diagnostic_v2_3.md).
 
 ## Validation
 

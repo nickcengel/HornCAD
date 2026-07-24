@@ -128,10 +128,18 @@ a missing diagnostic term, explicit tie/confidence data, or both.
 
 ## Release interpretation
 
-The combined weights are a promising v2.3 candidate, not a validated release.
-The rankings were used to fit them, the candidate pool was selected using v1
+The combined weights were useful as a local-ranking core but failed as a
+standalone general score. The subsequent v2.3 development retains 80% of v2.2,
+adds 20% of the local core, and applies thresholded containment and
+outward-rise guardrails to that branch. This improves close-score and per-cell
+ordering while retaining broad agreement within the frozen 0.005 no-regression
+tolerance. See the
+[v2.3 plan and calibration](../../docs/plans/surface_diagnostic_v2_3.md).
+
+V2.3 remains experimental rather than independently validated. The rankings
+were used to fit or select its terms, the candidate pool was selected using v1
 and v2.2, and the game forced arbitrary distinctions where the user may have
-perceived ties. Whole-cell cross-validation reduces leakage but cannot provide
-independent validation.
+perceived ties. Whole-cell and whole-round cross-validation reduce leakage but
+cannot provide new evidence.
 
 Machine-readable details are in `analysis.json` and `weight_fit.json`.

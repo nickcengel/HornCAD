@@ -854,7 +854,7 @@ table{{border-collapse:collapse;width:100%;min-width:max-content}}th,td{{padding
 </style></head><body><main>
 <h1>Mouth-size / coverage grid</h1>
 <p>Active Phase 4 envelope: 30°–50° half-coverage and 250–450 mm mouth size. Retained 25° and 500 mm results are edge history.</p>
-<p class='muted'>Candidates are ranked by surface score v1. Previous rank and previous diagnostic score are shown beside it for direct comparison. Experimental surface score v2.2 and its multiscale −3/−6/−9 dB beamwidth quality remain side-by-side research outputs and do not alter selection.</p>
+<p class='muted'>Candidates are ranked by surface score v1. Previous rank and previous diagnostic score are shown beside it for direct comparison. Experimental surface scores v2.2 and v2.3 and multiscale −3/−6/−9 dB beamwidth quality remain side-by-side research outputs and do not alter selection.</p>
 <section class='summary'>
 <div class='card'><strong>{started}&nbsp;/<wbr> {total}</strong> started</div>
 <div class='card'><strong>{running}</strong> running sub-searches</div>
