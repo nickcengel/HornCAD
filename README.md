@@ -97,7 +97,7 @@ simulated frequency. This is a coverage-control bound, not a claim that an
 arbitrary horn has a classical length-derived cutoff frequency.
 
 Current reports also write `surface_diagnostics.json`. Surface score v1 remains
-the primary score and candidate-ranking basis. Experimental surface score v2 is
+the primary score and candidate-ranking basis. Experimental surface score v2.1 is
 retained beside it for comparison; it adds multiscale -3/-6/-9 dB contour
 quality, including smooth-width, ripple, local-narrowing, and high-frequency
 width checks, but does not alter selection.

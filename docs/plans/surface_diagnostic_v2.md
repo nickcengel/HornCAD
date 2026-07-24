@@ -1,6 +1,7 @@
 # Surface diagnostic v2: multiscale contour quality
 
-Status: completed and validated; retained as experimental, not activated
+Status: v2 completed and validated; v2.1 narrow-coverage correction calibrated
+on subsequent pairwise evidence; retained as experimental, not activated
 
 Validation outcome: the contour-forward top-level weighting passed every promotion
 criterion and was selected in all 20 initial leave-one-round-out folds. The
@@ -13,6 +14,13 @@ experimental 3× references produce a measured 22–74% range; final broad-round
 agreement is 0.879 and close-round agreement is 0.459. Formulas and component
 weights were not changed. This validation did not activate v2; v1 remains the
 primary score and ranking basis.
+
+Subsequent pairwise review found a coverage-specific failure: original v2
+agreed with only 13 of 25 non-tie judgments at 25 degrees, versus 19 of 25 for
+v1. Revision v2.1 restores full-band target adherence only below 30 degrees by
+blending 20% v2 / 80% v1 through 25 degrees and tapering to unmodified v2 at
+30 degrees. The recorded pairs are calibration evidence rather than an
+independent validation set; the original v2 comparison artifact is preserved.
 
 ## Purpose
 

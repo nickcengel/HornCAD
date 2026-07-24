@@ -3,6 +3,11 @@
 This standalone viewer ranks the same exact-response-deduplicated round-horn
 evidence independently with surface score v1 and v2.
 
+The completed selections subsequently calibrated the narrow-coverage
+correction in experimental surface score v2.1. The original comparison remains
+frozen: it records the evidence that exposed the 25-degree weakness rather than
+retroactively replacing its v2 scores.
+
 - The plot shows the v1 candidate at the selected rank by default.
 - Press and hold the plot to show the v2 candidate at that rank; release to
   restore v1.

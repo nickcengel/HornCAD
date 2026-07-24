@@ -68,6 +68,10 @@ SURFACE_SCORE_V2_CANDIDATE_WEIGHTS = {
 }
 ACTIVE_SURFACE_SCORE_VERSION = "v1"
 ACTIVE_SURFACE_SCORE_V2_CANDIDATE = "contour_forward"
+SURFACE_SCORE_V2_REVISION = "v2.1"
+NARROW_COVERAGE_FULL_CORRECTION_DEG = 25.0
+NARROW_COVERAGE_NO_CORRECTION_DEG = 30.0
+NARROW_COVERAGE_MINIMUM_V2_FRACTION = 0.20
 SURFACE_SCORE_ERROR_REFERENCES = {
     "profile_rms": 3.0,
     "slice_energy": 2.0,
@@ -154,8 +158,9 @@ def surface_score_v2(
     mouth_dimensions_mm: dict[str, float] | None = None,
     weights: dict[str, float] | None = None,
     candidate_name: str = "balanced",
+    adapt_narrow_coverage: bool = True,
 ) -> dict[str, Any] | None:
-    """Return a v2 score using multiscale three-contour beamwidth quality."""
+    """Return the experimental v2.1 multiscale contour surface score."""
     if result.get("status") != "available":
         return None
     selected_weights = (
@@ -180,6 +185,14 @@ def surface_score_v2(
         beamwidth = plane.get("beamwidth_quality")
         if not beamwidth:
             return None
+        line = plane["minus_six_line"]
+        line_score = _inverse_error_score(
+            line.get("rms_coverage_error_deg"),
+            SURFACE_SCORE_ERROR_REFERENCES["minus_six_line"],
+        )
+        line_score *= max(
+            0.0, 1.0 - float(line.get("missing_fraction", 0.0))
+        )
         components = {
             "profile_rms": _inverse_error_score(
                 plane["distribution"]["rms_profile_error_db"],
@@ -197,20 +210,51 @@ def surface_score_v2(
                 SURFACE_SCORE_ERROR_REFERENCES["outward_rise"],
             ),
             "beamwidth_quality": float(beamwidth["overall_percent"]),
+            "minus_six_line": line_score,
+        }
+        coverage = float(plane["coverage_half_angle_deg"])
+        v2_fraction = 1.0
+        if adapt_narrow_coverage:
+            v2_fraction = NARROW_COVERAGE_MINIMUM_V2_FRACTION + (
+                1.0 - NARROW_COVERAGE_MINIMUM_V2_FRACTION
+            ) * float(np.clip(
+                (
+                    coverage - NARROW_COVERAGE_FULL_CORRECTION_DEG
+                ) / (
+                    NARROW_COVERAGE_NO_CORRECTION_DEG
+                    - NARROW_COVERAGE_FULL_CORRECTION_DEG
+                ),
+                0.0,
+                1.0,
+            ))
+        effective_keys = (
+            "profile_rms",
+            "slice_energy",
+            "mean_containment",
+            "outward_rise",
+            "minus_six_line",
+            "beamwidth_quality",
+        )
+        effective_weights = {
+            key: v2_fraction * selected_weights.get(key, 0.0)
+            + (1.0 - v2_fraction) * SURFACE_SCORE_WEIGHTS.get(key, 0.0)
+            for key in effective_keys
         }
         planes[plane_name] = {
             "components": components,
             "overall_percent": float(sum(
-                selected_weights[key] * components[key]
-                for key in selected_weights
+                effective_weights[key] * components[key]
+                for key in effective_weights
             )),
+            "component_weights": effective_weights,
+            "v2_fraction": v2_fraction,
         }
     overall = float(sum(
         axis_weights[index] * planes[plane_name]["overall_percent"]
         for index, plane_name in enumerate(("horizontal", "vertical"))
     ))
     return {
-        "version": "v2",
+        "version": SURFACE_SCORE_V2_REVISION if adapt_narrow_coverage else "v2",
         "candidate_name": candidate_name,
         "overall_percent": overall,
         "horizontal": planes["horizontal"],
@@ -220,6 +264,13 @@ def surface_score_v2(
             "vertical": float(axis_weights[1]),
         },
         "component_weights": selected_weights,
+        "narrow_coverage_adaptation": {
+            "enabled": adapt_narrow_coverage,
+            "full_correction_through_deg":
+                NARROW_COVERAGE_FULL_CORRECTION_DEG,
+            "no_correction_from_deg": NARROW_COVERAGE_NO_CORRECTION_DEG,
+            "minimum_v2_fraction": NARROW_COVERAGE_MINIMUM_V2_FRACTION,
+        },
         "error_reference_values": {
             **SURFACE_SCORE_ERROR_REFERENCES,
             **BEAMWIDTH_ERROR_REFERENCES,

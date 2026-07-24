@@ -7,6 +7,7 @@ import numpy as np
 from app.tools.surface_diagnostics import (
     ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
     ACTIVE_SURFACE_SCORE_VERSION,
+    NARROW_COVERAGE_MINIMUM_V2_FRACTION,
     SURFACE_SCORE_WEIGHTS,
     surface_diagnostics,
     surface_score,
@@ -88,7 +89,7 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
         experimental = surface_score_v2(
             result, candidate_name=ACTIVE_SURFACE_SCORE_V2_CANDIDATE
         )
-        self.assertEqual("v2", experimental["version"])
+        self.assertEqual("v2.1", experimental["version"])
         self.assertEqual(
             ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
             experimental["candidate_name"],
@@ -97,6 +98,46 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
             {"conservative", "balanced", "smoothness", "contour_forward"},
             set(result["score_v2_candidates"]),
         )
+
+    def test_v2_narrow_coverage_restores_target_adherence(self) -> None:
+        result = surface_diagnostics(
+            self.make_run(self.ideal_surface(coverage=25.0), coverage=25.0)
+        )
+        plane = result["score_v2_candidates"]["contour_forward"]["horizontal"]
+        self.assertAlmostEqual(
+            NARROW_COVERAGE_MINIMUM_V2_FRACTION,
+            plane["v2_fraction"],
+        )
+        self.assertAlmostEqual(
+            0.08, plane["component_weights"]["beamwidth_quality"]
+        )
+        self.assertAlmostEqual(
+            0.08, plane["component_weights"]["minus_six_line"]
+        )
+
+    def test_v2_coverage_adaptation_ends_at_30_degrees(self) -> None:
+        result = surface_diagnostics(self.make_run(self.ideal_surface()))
+        plane = result["score_v2_candidates"]["contour_forward"]["horizontal"]
+        self.assertAlmostEqual(1.0, plane["v2_fraction"])
+        self.assertAlmostEqual(
+            0.40, plane["component_weights"]["beamwidth_quality"]
+        )
+        self.assertAlmostEqual(
+            0.0, plane["component_weights"]["minus_six_line"]
+        )
+
+    def test_original_v2_remains_reproducible(self) -> None:
+        result = surface_diagnostics(
+            self.make_run(self.ideal_surface(coverage=25.0), coverage=25.0)
+        )
+        original = surface_score_v2(
+            result,
+            candidate_name="contour_forward",
+            adapt_narrow_coverage=False,
+        )
+        self.assertEqual("v2", original["version"])
+        self.assertAlmostEqual(1.0, original["horizontal"]["v2_fraction"])
+        self.assertFalse(original["narrow_coverage_adaptation"]["enabled"])
 
     def test_outside_lobe_reduces_containment(self) -> None:
         ideal = self.ideal_surface()

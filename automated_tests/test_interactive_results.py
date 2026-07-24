@@ -113,7 +113,7 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertGreaterEqual(single_text.count("Best: 0 dB"), 2)
             self.assertIn(r"Target: 1\u00d7", single_text)
             self.assertIn("Primary surface score v1", single_text)
-            self.assertIn("Experimental surface score v2", single_text)
+            self.assertIn("Experimental surface score v2.1", single_text)
             self.assertIn("three-contour beamwidth quality", single_text)
             self.assertNotIn("1/3-oct", single_text)
             self.assertNotIn("Coverage Match", single_text)

@@ -15,7 +15,7 @@ from typing import Any
 import numpy as np
 
 from .interactive_results import load_run
-from .surface_diagnostics import surface_diagnostics
+from .surface_diagnostics import surface_diagnostics, surface_score_v2
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -109,9 +109,12 @@ def _score_candidate(
         raise ValueError(
             f"{row['id']}: recalculated v1 differs by {delta:g}"
         )
-    score_v2 = float(
-        diagnostics["score_v2_candidates"]["contour_forward"]["overall_percent"]
-    )
+    score_v2 = float(surface_score_v2(
+        diagnostics,
+        run.get("mouth_dimensions_mm"),
+        candidate_name="contour_forward",
+        adapt_narrow_coverage=False,
+    )["overall_percent"])
 
     frequencies = np.asarray(run["frequencies"], dtype=float)
     all_angles = np.asarray(run["angles"], dtype=float)

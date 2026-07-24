@@ -885,7 +885,7 @@ def _surface_diagnostic_tables(runs: list[dict[str, Any]],
                 value(score["overall_percent"], "%") if score else "—",
             ),
             (
-                "Experimental surface score v2",
+                "Experimental surface score v2.1",
                 value(experimental_score["overall_percent"], "%")
                 if experimental_score else "—",
             ),

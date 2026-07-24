@@ -159,6 +159,7 @@ def _load_scores(root: Path) -> tuple[dict[str, Any], dict[str, Any], dict[str, 
                     variant,
                     run.get("mouth_dimensions_mm"),
                     candidate_name="contour_forward",
+                    adapt_narrow_coverage=False,
                 )["overall_percent"]
             )
         plot_scores[plot_id] = {
@@ -167,8 +168,14 @@ def _load_scores(root: Path) -> tuple[dict[str, Any], dict[str, Any], dict[str, 
             "v1": float(result["score_v1"]["overall_percent"]),
             "beamwidth_quality": beamwidth,
             **{
-                name: float(score["overall_percent"])
-                for name, score in result["score_v2_candidates"].items()
+                name: float(surface_score_v2(
+                    result,
+                    run.get("mouth_dimensions_mm"),
+                    weights=weights,
+                    candidate_name=name,
+                    adapt_narrow_coverage=False,
+                )["overall_percent"])
+                for name, weights in SURFACE_SCORE_V2_CANDIDATE_WEIGHTS.items()
             },
             **sensitivity,
             "beamwidth_planes": {

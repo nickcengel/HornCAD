@@ -1,0 +1,138 @@
+{
+  "adaptation": {
+    "full_correction_through_deg": 25.0,
+    "minimum_v2_fraction": 0.2,
+    "no_correction_from_deg": 30.0
+  },
+  "comparison_sha256": "d04d957b45d70b9ed9fd91dba30eb8e76493f7bb96e95f6a3831e8b3f2da5a10",
+  "results": {
+    "25deg": {
+      "v1": {
+        "correct_pairs": 19,
+        "judged_pairs": 25,
+        "pairwise_agreement": 0.76
+      },
+      "v2": {
+        "correct_pairs": 13,
+        "judged_pairs": 25,
+        "pairwise_agreement": 0.52
+      },
+      "v2.1": {
+        "correct_pairs": 19,
+        "judged_pairs": 25,
+        "pairwise_agreement": 0.76
+      }
+    },
+    "30deg": {
+      "v1": {
+        "correct_pairs": 17,
+        "judged_pairs": 39,
+        "pairwise_agreement": 0.4358974358974359
+      },
+      "v2": {
+        "correct_pairs": 25,
+        "judged_pairs": 39,
+        "pairwise_agreement": 0.6410256410256411
+      },
+      "v2.1": {
+        "correct_pairs": 25,
+        "judged_pairs": 39,
+        "pairwise_agreement": 0.6410256410256411
+      }
+    },
+    "35deg": {
+      "v1": {
+        "correct_pairs": 21,
+        "judged_pairs": 40,
+        "pairwise_agreement": 0.525
+      },
+      "v2": {
+        "correct_pairs": 31,
+        "judged_pairs": 40,
+        "pairwise_agreement": 0.775
+      },
+      "v2.1": {
+        "correct_pairs": 31,
+        "judged_pairs": 40,
+        "pairwise_agreement": 0.775
+      }
+    },
+    "40deg": {
+      "v1": {
+        "correct_pairs": 18,
+        "judged_pairs": 35,
+        "pairwise_agreement": 0.5142857142857142
+      },
+      "v2": {
+        "correct_pairs": 25,
+        "judged_pairs": 35,
+        "pairwise_agreement": 0.7142857142857143
+      },
+      "v2.1": {
+        "correct_pairs": 25,
+        "judged_pairs": 35,
+        "pairwise_agreement": 0.7142857142857143
+      }
+    },
+    "45deg": {
+      "v1": {
+        "correct_pairs": 10,
+        "judged_pairs": 28,
+        "pairwise_agreement": 0.35714285714285715
+      },
+      "v2": {
+        "correct_pairs": 26,
+        "judged_pairs": 28,
+        "pairwise_agreement": 0.9285714285714286
+      },
+      "v2.1": {
+        "correct_pairs": 26,
+        "judged_pairs": 28,
+        "pairwise_agreement": 0.9285714285714286
+      }
+    },
+    "50deg": {
+      "v1": {
+        "correct_pairs": 6,
+        "judged_pairs": 9,
+        "pairwise_agreement": 0.6666666666666666
+      },
+      "v2": {
+        "correct_pairs": 7,
+        "judged_pairs": 9,
+        "pairwise_agreement": 0.7777777777777778
+      },
+      "v2.1": {
+        "correct_pairs": 7,
+        "judged_pairs": 9,
+        "pairwise_agreement": 0.7777777777777778
+      }
+    },
+    "all": {
+      "v1": {
+        "correct_pairs": 95,
+        "judged_pairs": 192,
+        "pairwise_agreement": 0.4947916666666667
+      },
+      "v2": {
+        "correct_pairs": 141,
+        "judged_pairs": 192,
+        "pairwise_agreement": 0.734375
+      },
+      "v2.1": {
+        "correct_pairs": 147,
+        "judged_pairs": 192,
+        "pairwise_agreement": 0.765625
+      }
+    }
+  },
+  "revision": "v2.1",
+  "schema_version": 1,
+  "selection_counts": {
+    "plot_1": 74,
+    "plot_2": 118,
+    "tie": 44
+  },
+  "selections_sha256": "0c9865a49daa7512f835f30c04ef79245d576c40f125d6b5d1820436689db751",
+  "status": "calibration_on_recorded_pairs_not_independent_validation"
+}

@@ -4,7 +4,7 @@ This document specifies the implemented surface-diagnostic suite for HornCAD
 BEM angle-frequency reports. The raw measurements and calibrated weighted score
 are used by current BEM search. Surface score v1 remains primary for ranking and
 is the response predicted by the released round-control models. Surface score
-v2 is retained as an explicitly experimental side-by-side diagnostic.
+v2.1 is retained as an explicitly experimental side-by-side diagnostic.
 
 ## Scope and conventions
 
@@ -133,7 +133,8 @@ summaries use a geometric or root-mean-square combination appropriate to the
 quantity; no left/right asymmetry diagnostic exists because the negative-angle
 surface is a mirror.
 
-The experimental calibrated v2 score uses these component weights:
+At coverage half-angles of 30 degrees and wider, the experimental calibrated
+v2.1 score uses these component weights:
 
 - 30% in-window profile RMS error;
 - 20% slice-energy RMS departure;
@@ -150,6 +151,26 @@ scores are combined using mouth width and height respectively.
 The legacy v1 score is retained beside v2. It weights profile error 30%,
 slice-energy departure 25%, containment 20%, outward rise 15%, and -6 dB target
 error 10%. It must not be relabeled as v2.
+
+### Narrow-coverage correction
+
+The subsequent blinded v1/v2 comparison contained 31 comparisons at 25 degrees,
+25 of which had a non-tie preference. Original v2 agreed with 13 of 25 (52%);
+v1 agreed with 19 of 25 (76%). Inspection showed that contour-forward v2 was
+over-tolerant of smooth, full-band displacement from the intended coverage
+line in this narrow cell.
+
+Revision v2.1 therefore blends the v1 and contour-forward v2 plane scores below
+30 degrees. The retained v2 fraction is 20% through 25 degrees, rises linearly
+to 100% at 30 degrees, and remains 100% above 30 degrees. Equivalently, the
+25-degree effective weights are 30% profile, 24% slice energy, 17%
+containment, 13% outward rise, 8% full-band -6 dB target accuracy, and 8%
+three-contour quality. This is the largest tested v2 fraction that retained the
+best observed 25-degree agreement. It raises agreement to 19 of 25 without
+changing scores at the existing 30–50 degree cells.
+
+This is calibration on the recorded comparison pairs, not independent
+validation. The original v2 scores and selections remain frozen as evidence.
 
 ## Validation
 
