@@ -27,3 +27,7 @@ Rebuild without running BEM:
 
 Surface score v1 remains the normal search-ranking score. This report is a
 side-by-side evaluation of the experimental v2.1 diagnostic.
+
+The completed per-cell human choices are retained in
+`human_winner_selections.json` and are bound to the exact `winners.json`
+content hash.

@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "study_id": "round-control-parameter-maps-v2-1-winner-comparison",
+  "winner_artifact_content_sha256": "b993bb93477fef58095efc4a3cc3591a6453e16c7fcbffd04cc6aaac74369023",
+  "recorded_date": "2026-07-24",
+  "order": {
+    "outer": "mouth_mm ascending",
+    "inner": "coverage_deg ascending",
+    "mouths_mm": [
+      250,
+      300,
+      350,
+      400,
+      450
+    ],
+    "coverages_deg": [
+      30,
+      35,
+      40,
+      45,
+      50
+    ]
+  },
+  "choice_meaning": {
+    "v1": "v1 winner preferred",
+    "v2.1": "v2.1 winner preferred",
+    "tie": "no meaningful preference"
+  },
+  "selections": {
+    "30deg-250mm": "v1",
+    "35deg-250mm": "v1",
+    "40deg-250mm": "v1",
+    "45deg-250mm": "tie",
+    "50deg-250mm": "tie",
+    "30deg-300mm": "v1",
+    "35deg-300mm": "v1",
+    "40deg-300mm": "tie",
+    "45deg-300mm": "tie",
+    "50deg-300mm": "v2.1",
+    "30deg-350mm": "v1",
+    "35deg-350mm": "tie",
+    "40deg-350mm": "tie",
+    "45deg-350mm": "tie",
+    "50deg-350mm": "tie",
+    "30deg-400mm": "tie",
+    "35deg-400mm": "v1",
+    "40deg-400mm": "v2.1",
+    "45deg-400mm": "v2.1",
+    "50deg-400mm": "tie",
+    "30deg-450mm": "v1",
+    "35deg-450mm": "tie",
+    "40deg-450mm": "tie",
+    "45deg-450mm": "v1",
+    "50deg-450mm": "v2.1"
+  },
+  "summary": {
+    "all_25_cells": {
+      "v1": 9,
+      "v2.1": 4,
+      "tie": 12
+    },
+    "19_cells_with_different_winners": {
+      "v1": 9,
+      "v2.1": 4,
+      "tie": 6
+    },
+    "6_cells_with_identical_winners": {
+      "v1": 0,
+      "v2.1": 0,
+      "tie": 6
+    }
+  }
+}
