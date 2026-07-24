@@ -106,7 +106,7 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertGreater(mouth, 450.0)
         self.assertAlmostEqual(mouth, 521.71131869, places=6)
 
-    def test_impedance_v2_2_preserves_reviewed_parent_order(self):
+    def test_impedance_v2_3_preserves_reviewed_parent_order(self):
         names = (
             "250x250x84.633_45_K2_N8",
             "250x250x89.754_50_K4_N11.25",
@@ -154,6 +154,24 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertLessEqual(max(ordered[2:6]) - min(ordered[2:6]), 6.5)
         self.assertLessEqual(abs(ordered[8] - ordered[9]), 3.0)
 
+    def test_impedance_v2_3_penalizes_local_peak_near_upper_shelf(self):
+        response = Path(
+            "examples/extension-throat-angle-heuristics/searches/"
+            "primary-development/30deg/300mm/primary-A12-E40/candidates/"
+            "candidate-000/bem/responses.npz")
+        with np.load(response, allow_pickle=False) as archive:
+            result = throat_impedance_diagnostics(
+                archive["frequencies_hz"],
+                archive["impedance"],
+                750.0,
+                8000.0,
+            )
+        peak = result["peak_prominence"]
+        self.assertLess(peak["peak_to_shelf_db"], 2.0)
+        self.assertGreater(peak["maximum_local_db"], 3.0)
+        self.assertLess(result["components"]["peak_prominence"], 50.0)
+        self.assertLess(result["overall_percent"], 75.0)
+
     def test_index_uses_established_sections_and_reports_impedance(self):
         manifest_path = Path(
             "examples/extension-throat-angle-heuristics/manifest.json")
@@ -190,7 +208,7 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertIn("Impedance Δ vs parent", output)
         self.assertIn("S Δ vs parent", output)
         self.assertIn(
-            "Throat impedance v2.2.0: "
+            "Throat impedance v2.3.0: "
             "highest- and lowest-scoring parents", output)
         self.assertEqual(output.count("data-peak-normalized='1'"), 10)
         self.assertEqual(output.count("class='impedance-curve'"), 10)

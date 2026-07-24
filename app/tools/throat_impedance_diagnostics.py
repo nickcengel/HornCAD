@@ -7,7 +7,7 @@ import numpy as np
 
 
 POINTS_PER_OCTAVE = 48
-DIAGNOSTIC_VERSION = "2.2.0"
+DIAGNOSTIC_VERSION = "2.3.0"
 CROSSOVER_TARGET_RATIO = 0.5
 CROSSOVER_FULL_CREDIT_RATIO = 0.75
 CROSSOVER_BAND_UPPER_RATIO = 2.0
@@ -16,6 +16,7 @@ CROSSOVER_LOADING_WEIGHTS = {
     "crossover_band": 0.50,
 }
 PEAK_PROMINENCE_ALLOWANCE_DB = 1.5
+LOCAL_PEAK_WINDOW_OCTAVES = 1.0
 SCORE_WEIGHTS = {
     "crossover_loading": 0.60,
     "peak_prominence": 0.20,
@@ -71,6 +72,47 @@ def _short_smooth(values: np.ndarray, points_per_octave: int) -> np.ndarray:
     half = width // 2
     padded = np.pad(values, (half, half), mode="edge")
     return np.convolve(padded, np.ones(width) / width, mode="valid")
+
+
+def _local_peak_prominence(
+        frequencies: np.ndarray,
+        magnitude: np.ndarray,
+        upper_frequency_hz: float,
+        points_per_octave: int) -> dict[str, float]:
+    """Measure the strongest interior peak against its higher local shoulder."""
+    span_octaves = float(np.log2(upper_frequency_hz / frequencies[0]))
+    count = max(3, int(np.ceil(span_octaves * points_per_octave)) + 1)
+    log_frequency = np.linspace(
+        np.log2(frequencies[0]), np.log2(upper_frequency_hz), count)
+    magnitude_db = np.interp(
+        log_frequency,
+        np.log2(frequencies),
+        20.0 * np.log10(magnitude),
+    )
+    smoothed_db = _short_smooth(magnitude_db, points_per_octave)
+    window = max(
+        1, int(round(LOCAL_PEAK_WINDOW_OCTAVES * points_per_octave)))
+    strongest = 0.0
+    strongest_frequency = 0.0
+    for index in range(1, len(smoothed_db) - 1):
+        if not (
+                smoothed_db[index] >= smoothed_db[index - 1]
+                and smoothed_db[index] > smoothed_db[index + 1]):
+            continue
+        left_minimum = float(np.min(
+            smoothed_db[max(0, index - window):index + 1]))
+        right_minimum = float(np.min(
+            smoothed_db[index:min(len(smoothed_db), index + window + 1)]))
+        prominence = float(
+            smoothed_db[index] - max(left_minimum, right_minimum))
+        if prominence > strongest:
+            strongest = prominence
+            strongest_frequency = float(2.0 ** log_frequency[index])
+    return {
+        "maximum_db": strongest,
+        "frequency_hz": strongest_frequency,
+        "window_octaves": LOCAL_PEAK_WINDOW_OCTAVES,
+    }
 
 
 def throat_impedance_diagnostics(
@@ -149,8 +191,14 @@ def throat_impedance_diagnostics(
     crossover_ratio = crossover_magnitude / shelf_reference
     peak_to_shelf_db = float(
         20.0 * np.log10(peak_magnitude / shelf_reference))
+    local_peak = _local_peak_prominence(
+        frequencies, magnitude, upper, points_per_octave)
+    effective_peak_prominence_db = max(
+        peak_to_shelf_db, local_peak["maximum_db"])
     peak_prominence_excess_db = max(
-        0.0, peak_to_shelf_db - PEAK_PROMINENCE_ALLOWANCE_DB)
+        0.0,
+        effective_peak_prominence_db - PEAK_PROMINENCE_ALLOWANCE_DB,
+    )
 
     monotone_baseline_db = _isotonic_non_decreasing(magnitude_db)
     ripple_db = magnitude_db - monotone_baseline_db
@@ -228,6 +276,10 @@ def throat_impedance_diagnostics(
         },
         "peak_prominence": {
             "peak_to_shelf_db": peak_to_shelf_db,
+            "maximum_local_db": local_peak["maximum_db"],
+            "local_peak_frequency_hz": local_peak["frequency_hz"],
+            "local_window_octaves": local_peak["window_octaves"],
+            "effective_db": effective_peak_prominence_db,
             "allowance_db": PEAK_PROMINENCE_ALLOWANCE_DB,
             "excess_db": peak_prominence_excess_db,
         },

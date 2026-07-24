@@ -29,7 +29,7 @@ class ThroatImpedanceDiagnosticsTests(unittest.TestCase):
         self.assertTrue(result["crossover"]["passes_target"])
         self.assertGreater(result["overall_percent"], 75.0)
         self.assertLess(result["smoothness"]["ripple_rms_db"], 0.05)
-        self.assertEqual(result["diagnostic_version"], "2.2.0")
+        self.assertEqual(result["diagnostic_version"], "2.3.0")
         self.assertAlmostEqual(
             result["score_weights"]["crossover_loading"], 0.60)
         self.assertLess(
@@ -104,6 +104,21 @@ class ThroatImpedanceDiagnosticsTests(unittest.TestCase):
         self.assertLess(result["overall_percent"], 65.0)
         self.assertGreater(
             result["peak_prominence"]["peak_to_shelf_db"], 6.0)
+
+    def test_local_peak_is_detected_when_upper_shelf_is_near_peak(self) -> None:
+        octave_offset = np.log2(self.frequencies / 500.0)
+        upper_shelf = 0.50 + 0.32 / (
+            1.0 + np.exp(-4.0 * (octave_offset - 2.0)))
+        local_peak = 0.50 * np.exp(
+            -0.5 * ((octave_offset - 1.0) / 0.14) ** 2)
+        magnitude = upper_shelf + local_peak
+        result = throat_impedance_diagnostics(
+            self.frequencies, magnitude, 500.0)
+        peak = result["peak_prominence"]
+        self.assertLess(peak["peak_to_shelf_db"], 2.0)
+        self.assertGreater(peak["maximum_local_db"], 3.0)
+        self.assertAlmostEqual(peak["effective_db"], peak["maximum_local_db"])
+        self.assertLess(result["components"]["peak_prominence"], 60.0)
 
     def test_rejects_nonpositive_impedance_magnitude(self) -> None:
         with self.assertRaises(ValueError):
