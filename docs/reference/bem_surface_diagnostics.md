@@ -4,7 +4,7 @@ This document specifies the implemented surface-diagnostic suite for HornCAD
 BEM angle-frequency reports. The raw measurements and calibrated weighted score
 are used by current BEM search. Surface score v1 remains primary for ranking and
 is the response predicted by the released round-control models. Surface score
-v2.1 is retained as an explicitly experimental side-by-side diagnostic.
+v2.2 is retained as an explicitly experimental side-by-side diagnostic.
 
 ## Scope and conventions
 
@@ -133,8 +133,8 @@ summaries use a geometric or root-mean-square combination appropriate to the
 quantity; no left/right asymmetry diagnostic exists because the negative-angle
 surface is a mirror.
 
-At coverage half-angles of 30 degrees and wider, the experimental calibrated
-v2.1 score uses these component weights:
+The contour-forward branch used by experimental revisions v2.1 and v2.2 has
+these component weights:
 
 - 30% in-window profile RMS error;
 - 20% slice-energy RMS departure;
@@ -171,6 +171,29 @@ changing scores at the existing 30–50 degree cells.
 
 This is calibration on the recorded comparison pairs, not independent
 validation. The original v2 scores and selections remain frozen as evidence.
+
+### Coverage-dependent correction in v2.2
+
+The later 25-cell winner comparison exposed that v2.1 still over-selected
+smooth but poorly targeted candidates in the 30–35 degree cells. All six cells
+with identical v1 and v2.1 winners were marked tie. Among the 19 genuinely
+different winners, the human choices were nine v1, four v2.1, and six ties.
+
+V2.2 blends the v1 plane score with the contour-forward v2 plane score using
+the coverage-dependent contour fraction
+
+`0.20 + 0.45 * clip((coverage - 25) / 25, 0, 1) ** 2`.
+
+The contour fractions at 25, 30, 35, 40, 45, and 50 degrees are respectively
+0.200, 0.218, 0.272, 0.362, 0.488, and 0.650. This smooth rule fits all 13
+decisive cell-winner preferences without cell-specific exceptions. It was
+selected from a documented 5-by-6 family after checking the earlier pairwise
+evidence. Agreement with those earlier 192 non-tie comparisons falls from
+73.4% for original v2 to 65.6% for v2.2; that tradeoff is retained explicitly
+because the cell-winner task is the intended optimization use.
+
+V2.2 remains calibrated rather than independently validated. V1 remains the
+normal search-ranking score.
 
 ## Validation
 

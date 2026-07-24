@@ -68,10 +68,15 @@ SURFACE_SCORE_V2_CANDIDATE_WEIGHTS = {
 }
 ACTIVE_SURFACE_SCORE_VERSION = "v1"
 ACTIVE_SURFACE_SCORE_V2_CANDIDATE = "contour_forward"
-SURFACE_SCORE_V2_REVISION = "v2.1"
+SURFACE_SCORE_V2_REVISION = "v2.2"
 NARROW_COVERAGE_FULL_CORRECTION_DEG = 25.0
 NARROW_COVERAGE_NO_CORRECTION_DEG = 30.0
 NARROW_COVERAGE_MINIMUM_V2_FRACTION = 0.20
+SURFACE_SCORE_V2_2_MINIMUM_COVERAGE_DEG = 25.0
+SURFACE_SCORE_V2_2_MAXIMUM_COVERAGE_DEG = 50.0
+SURFACE_SCORE_V2_2_MINIMUM_V2_FRACTION = 0.20
+SURFACE_SCORE_V2_2_MAXIMUM_V2_FRACTION = 0.65
+SURFACE_SCORE_V2_2_COVERAGE_EXPONENT = 2.0
 SURFACE_SCORE_ERROR_REFERENCES = {
     "profile_rms": 3.0,
     "slice_energy": 2.0,
@@ -98,6 +103,48 @@ def _axis_weights(
     if np.any(raw <= 0) or not np.all(np.isfinite(raw)):
         raw = np.ones(2)
     return raw / np.sum(raw)
+
+
+def surface_score_v2_fraction(
+    coverage_deg: float,
+    revision: str,
+) -> float:
+    """Return the contour-forward fraction for a surface-score revision."""
+    if revision == "v2":
+        return 1.0
+    if revision == "v2.1":
+        return float(
+            NARROW_COVERAGE_MINIMUM_V2_FRACTION
+            + (1.0 - NARROW_COVERAGE_MINIMUM_V2_FRACTION) * np.clip(
+                (
+                    coverage_deg - NARROW_COVERAGE_FULL_CORRECTION_DEG
+                ) / (
+                    NARROW_COVERAGE_NO_CORRECTION_DEG
+                    - NARROW_COVERAGE_FULL_CORRECTION_DEG
+                ),
+                0.0,
+                1.0,
+            )
+        )
+    if revision == "v2.2":
+        position = float(np.clip(
+            (
+                coverage_deg - SURFACE_SCORE_V2_2_MINIMUM_COVERAGE_DEG
+            ) / (
+                SURFACE_SCORE_V2_2_MAXIMUM_COVERAGE_DEG
+                - SURFACE_SCORE_V2_2_MINIMUM_COVERAGE_DEG
+            ),
+            0.0,
+            1.0,
+        ))
+        return float(
+            SURFACE_SCORE_V2_2_MINIMUM_V2_FRACTION
+            + (
+                SURFACE_SCORE_V2_2_MAXIMUM_V2_FRACTION
+                - SURFACE_SCORE_V2_2_MINIMUM_V2_FRACTION
+            ) * position ** SURFACE_SCORE_V2_2_COVERAGE_EXPONENT
+        )
+    raise ValueError(f"unknown surface-score revision: {revision}")
 
 
 def surface_score_v1(
@@ -159,8 +206,9 @@ def surface_score_v2(
     weights: dict[str, float] | None = None,
     candidate_name: str = "balanced",
     adapt_narrow_coverage: bool = True,
+    revision: str | None = None,
 ) -> dict[str, Any] | None:
-    """Return the experimental v2.1 multiscale contour surface score."""
+    """Return a reproducible revision of the experimental v2 surface score."""
     if result.get("status") != "available":
         return None
     selected_weights = (
@@ -213,20 +261,13 @@ def surface_score_v2(
             "minus_six_line": line_score,
         }
         coverage = float(plane["coverage_half_angle_deg"])
-        v2_fraction = 1.0
-        if adapt_narrow_coverage:
-            v2_fraction = NARROW_COVERAGE_MINIMUM_V2_FRACTION + (
-                1.0 - NARROW_COVERAGE_MINIMUM_V2_FRACTION
-            ) * float(np.clip(
-                (
-                    coverage - NARROW_COVERAGE_FULL_CORRECTION_DEG
-                ) / (
-                    NARROW_COVERAGE_NO_CORRECTION_DEG
-                    - NARROW_COVERAGE_FULL_CORRECTION_DEG
-                ),
-                0.0,
-                1.0,
-            ))
+        selected_revision = (
+            "v2" if not adapt_narrow_coverage
+            else revision or SURFACE_SCORE_V2_REVISION
+        )
+        v2_fraction = surface_score_v2_fraction(
+            coverage, selected_revision
+        )
         effective_keys = (
             "profile_rms",
             "slice_energy",
@@ -254,7 +295,7 @@ def surface_score_v2(
         for index, plane_name in enumerate(("horizontal", "vertical"))
     ))
     return {
-        "version": SURFACE_SCORE_V2_REVISION if adapt_narrow_coverage else "v2",
+        "version": selected_revision,
         "candidate_name": candidate_name,
         "overall_percent": overall,
         "horizontal": planes["horizontal"],
@@ -265,11 +306,24 @@ def surface_score_v2(
         },
         "component_weights": selected_weights,
         "narrow_coverage_adaptation": {
-            "enabled": adapt_narrow_coverage,
+            "enabled": selected_revision == "v2.1",
             "full_correction_through_deg":
                 NARROW_COVERAGE_FULL_CORRECTION_DEG,
             "no_correction_from_deg": NARROW_COVERAGE_NO_CORRECTION_DEG,
             "minimum_v2_fraction": NARROW_COVERAGE_MINIMUM_V2_FRACTION,
+        },
+        "coverage_adaptation": {
+            "enabled": selected_revision == "v2.2",
+            "minimum_coverage_deg":
+                SURFACE_SCORE_V2_2_MINIMUM_COVERAGE_DEG,
+            "maximum_coverage_deg":
+                SURFACE_SCORE_V2_2_MAXIMUM_COVERAGE_DEG,
+            "minimum_v2_fraction":
+                SURFACE_SCORE_V2_2_MINIMUM_V2_FRACTION,
+            "maximum_v2_fraction":
+                SURFACE_SCORE_V2_2_MAXIMUM_V2_FRACTION,
+            "coverage_exponent":
+                SURFACE_SCORE_V2_2_COVERAGE_EXPONENT,
         },
         "error_reference_values": {
             **SURFACE_SCORE_ERROR_REFERENCES,

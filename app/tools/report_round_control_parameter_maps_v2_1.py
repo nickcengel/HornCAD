@@ -22,7 +22,7 @@ from .generate_surface_score_rank_comparison import (
 )
 from .interactive_results import load_run
 from .report_round_control_parameter_maps import COVERAGES, MOUTHS, _color
-from .surface_diagnostics import surface_diagnostics
+from .surface_diagnostics import surface_diagnostics, surface_score_v2
 
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -110,9 +110,12 @@ def _ridge_candidates(
                 diagnostics["score_v1"]["overall_percent"]
             ),
             "score_v2_1": float(
-                diagnostics["score_v2_candidates"]["contour_forward"][
-                    "overall_percent"
-                ]
+                surface_score_v2(
+                    diagnostics,
+                    run.get("mouth_dimensions_mm"),
+                    candidate_name="contour_forward",
+                    revision="v2.1",
+                )["overall_percent"]
             ),
             "grid_id": grid_id,
             "heatmap_b64": _encode_heatmap(surface),

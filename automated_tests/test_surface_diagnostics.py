@@ -89,7 +89,7 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
         experimental = surface_score_v2(
             result, candidate_name=ACTIVE_SURFACE_SCORE_V2_CANDIDATE
         )
-        self.assertEqual("v2.1", experimental["version"])
+        self.assertEqual("v2.2", experimental["version"])
         self.assertEqual(
             ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
             experimental["candidate_name"],
@@ -115,16 +115,27 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
             0.08, plane["component_weights"]["minus_six_line"]
         )
 
-    def test_v2_coverage_adaptation_ends_at_30_degrees(self) -> None:
+    def test_v2_2_coverage_adaptation_rises_smoothly(self) -> None:
         result = surface_diagnostics(self.make_run(self.ideal_surface()))
         plane = result["score_v2_candidates"]["contour_forward"]["horizontal"]
-        self.assertAlmostEqual(1.0, plane["v2_fraction"])
+        self.assertAlmostEqual(0.218, plane["v2_fraction"])
         self.assertAlmostEqual(
-            0.40, plane["component_weights"]["beamwidth_quality"]
+            0.0872, plane["component_weights"]["beamwidth_quality"]
         )
         self.assertAlmostEqual(
-            0.0, plane["component_weights"]["minus_six_line"]
+            0.0782, plane["component_weights"]["minus_six_line"]
         )
+
+    def test_v2_1_remains_reproducible(self) -> None:
+        result = surface_diagnostics(self.make_run(self.ideal_surface()))
+        prior = surface_score_v2(
+            result,
+            candidate_name="contour_forward",
+            revision="v2.1",
+        )
+        self.assertEqual("v2.1", prior["version"])
+        self.assertAlmostEqual(1.0, prior["horizontal"]["v2_fraction"])
+        self.assertFalse(prior["coverage_adaptation"]["enabled"])
 
     def test_original_v2_remains_reproducible(self) -> None:
         result = surface_diagnostics(

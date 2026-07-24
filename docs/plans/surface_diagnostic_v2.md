@@ -1,7 +1,7 @@
 # Surface diagnostic v2: multiscale contour quality
 
-Status: v2 completed and validated; v2.1 narrow-coverage correction calibrated
-on subsequent pairwise evidence; retained as experimental, not activated
+Status: v2 completed and validated; v2.1 and v2.2 preference corrections
+calibrated on subsequent evidence; retained as experimental, not activated
 
 Validation outcome: the contour-forward top-level weighting passed every promotion
 criterion and was selected in all 20 initial leave-one-round-out folds. The
@@ -21,6 +21,15 @@ v1. Revision v2.1 restores full-band target adherence only below 30 degrees by
 blending 20% v2 / 80% v1 through 25 degrees and tapering to unmodified v2 at
 30 degrees. The recorded pairs are calibration evidence rather than an
 independent validation set; the original v2 comparison artifact is preserved.
+
+The subsequent 25-cell winner comparison showed that the v2.1 winners were
+still rejected in favor of v1 in nine cells and preferred in only four, with
+six different-winner ties. V2.2 uses a constrained quadratic coverage blend:
+20% contour-forward at 25 degrees, rising to 65% at 50 degrees. It fits all 13
+decisive winner choices without cell-specific rules. This calibration reduces
+agreement with the earlier non-tie pairs from 73.4% to 65.6%; both results are
+reported because the newer comparison directly tests the intended winner
+selection use.
 
 ## Purpose
 

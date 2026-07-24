@@ -1,0 +1,572 @@
+{
+  "candidate_family": {
+    "exponents": [
+      1.0,
+      1.5,
+      2.0,
+      2.5,
+      3.0
+    ],
+    "formula": "0.20 + (maximum - 0.20) * clip((coverage_deg - 25) / 25, 0, 1) ** exponent",
+    "maximum_v2_fractions": [
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75
+    ],
+    "selection_order": [
+      "winner decisive agreement descending",
+      "prior pair agreement descending",
+      "exponent ascending",
+      "maximum v2 fraction ascending"
+    ]
+  },
+  "candidates": [
+    {
+      "exponent": 1.0,
+      "maximum_v2_fraction": 0.5,
+      "prior_pair_preferences": {
+        "agreement": 0.6614583333333334,
+        "correct": 127,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.7692307692307693,
+        "decisive_correct": 10,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.10288658005263329,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 1.0,
+      "maximum_v2_fraction": 0.55,
+      "prior_pair_preferences": {
+        "agreement": 0.6614583333333334,
+        "correct": 127,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.7692307692307693,
+        "decisive_correct": 10,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.11798865695806408,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 1.0,
+      "maximum_v2_fraction": 0.6,
+      "prior_pair_preferences": {
+        "agreement": 0.6666666666666666,
+        "correct": 128,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.8461538461538461,
+        "decisive_correct": 11,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.1330907338635008,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 1.0,
+      "maximum_v2_fraction": 0.65,
+      "prior_pair_preferences": {
+        "agreement": 0.6666666666666666,
+        "correct": 128,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.9230769230769231,
+        "decisive_correct": 12,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.1481928107689304,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 1.0,
+      "maximum_v2_fraction": 0.7,
+      "prior_pair_preferences": {
+        "agreement": 0.6666666666666666,
+        "correct": 128,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.8461538461538461,
+        "decisive_correct": 11,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.16329488767436118,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 1.0,
+      "maximum_v2_fraction": 0.75,
+      "prior_pair_preferences": {
+        "agreement": 0.671875,
+        "correct": 129,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.7692307692307693,
+        "decisive_correct": 10,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.1783969645797896,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 1.5,
+      "maximum_v2_fraction": 0.5,
+      "prior_pair_preferences": {
+        "agreement": 0.640625,
+        "correct": 123,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.8461538461538461,
+        "decisive_correct": 11,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.10542922279957168,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 1.5,
+      "maximum_v2_fraction": 0.55,
+      "prior_pair_preferences": {
+        "agreement": 0.65625,
+        "correct": 126,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.8461538461538461,
+        "decisive_correct": 11,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.12095507349615531,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 1.5,
+      "maximum_v2_fraction": 0.6,
+      "prior_pair_preferences": {
+        "agreement": 0.6614583333333334,
+        "correct": 127,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.9230769230769231,
+        "decisive_correct": 12,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.13648092419274369,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 1.5,
+      "maximum_v2_fraction": 0.65,
+      "prior_pair_preferences": {
+        "agreement": 0.6614583333333334,
+        "correct": 127,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.9230769230769231,
+        "decisive_correct": 12,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.15200677488933204,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 1.5,
+      "maximum_v2_fraction": 0.7,
+      "prior_pair_preferences": {
+        "agreement": 0.6666666666666666,
+        "correct": 128,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.9230769230769231,
+        "decisive_correct": 12,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.16753262558591686,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 1.5,
+      "maximum_v2_fraction": 0.75,
+      "prior_pair_preferences": {
+        "agreement": 0.6614583333333334,
+        "correct": 127,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.8461538461538461,
+        "decisive_correct": 11,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.18305847628250524,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.0,
+      "maximum_v2_fraction": 0.5,
+      "prior_pair_preferences": {
+        "agreement": 0.625,
+        "correct": 120,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.8461538461538461,
+        "decisive_correct": 11,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.10623999400738882,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.0,
+      "maximum_v2_fraction": 0.55,
+      "prior_pair_preferences": {
+        "agreement": 0.6458333333333334,
+        "correct": 124,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.8461538461538461,
+        "decisive_correct": 11,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.12190097323860745,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.0,
+      "maximum_v2_fraction": 0.6,
+      "prior_pair_preferences": {
+        "agreement": 0.65625,
+        "correct": 126,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.9230769230769231,
+        "decisive_correct": 12,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.13756195246983202,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.0,
+      "maximum_v2_fraction": 0.65,
+      "prior_pair_preferences": {
+        "agreement": 0.65625,
+        "correct": 126,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 1.0,
+        "decisive_correct": 13,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.1532229317010542,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.0,
+      "maximum_v2_fraction": 0.7,
+      "prior_pair_preferences": {
+        "agreement": 0.65625,
+        "correct": 126,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 1.0,
+        "decisive_correct": 13,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.16888391093228114,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.0,
+      "maximum_v2_fraction": 0.75,
+      "prior_pair_preferences": {
+        "agreement": 0.65625,
+        "correct": 126,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 1.0,
+        "decisive_correct": 13,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.18454489016350095,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.5,
+      "maximum_v2_fraction": 0.5,
+      "prior_pair_preferences": {
+        "agreement": 0.6145833333333334,
+        "correct": 118,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.8461538461538461,
+        "decisive_correct": 11,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.10611340902257164,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.5,
+      "maximum_v2_fraction": 0.55,
+      "prior_pair_preferences": {
+        "agreement": 0.625,
+        "correct": 120,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.8461538461538461,
+        "decisive_correct": 11,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.12175329075632509,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.5,
+      "maximum_v2_fraction": 0.6,
+      "prior_pair_preferences": {
+        "agreement": 0.640625,
+        "correct": 123,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.9230769230769231,
+        "decisive_correct": 12,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.13739317249007735,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.5,
+      "maximum_v2_fraction": 0.65,
+      "prior_pair_preferences": {
+        "agreement": 0.6510416666666666,
+        "correct": 125,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 1.0,
+        "decisive_correct": 13,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.15303305422383318,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.5,
+      "maximum_v2_fraction": 0.7,
+      "prior_pair_preferences": {
+        "agreement": 0.6510416666666666,
+        "correct": 125,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 1.0,
+        "decisive_correct": 13,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.16867293595758662,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 2.5,
+      "maximum_v2_fraction": 0.75,
+      "prior_pair_preferences": {
+        "agreement": 0.65625,
+        "correct": 126,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 1.0,
+        "decisive_correct": 13,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.1843128176913401,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 3.0,
+      "maximum_v2_fraction": 0.5,
+      "prior_pair_preferences": {
+        "agreement": 0.609375,
+        "correct": 117,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.8461538461538461,
+        "decisive_correct": 11,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.1054664475392298,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 3.0,
+      "maximum_v2_fraction": 0.55,
+      "prior_pair_preferences": {
+        "agreement": 0.609375,
+        "correct": 117,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.8461538461538461,
+        "decisive_correct": 11,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.12099850235908842,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 3.0,
+      "maximum_v2_fraction": 0.6,
+      "prior_pair_preferences": {
+        "agreement": 0.6197916666666666,
+        "correct": 119,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 0.9230769230769231,
+        "decisive_correct": 12,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.13653055717895649,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 3.0,
+      "maximum_v2_fraction": 0.65,
+      "prior_pair_preferences": {
+        "agreement": 0.6458333333333334,
+        "correct": 124,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 1.0,
+        "decisive_correct": 13,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.15206261199881865,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 3.0,
+      "maximum_v2_fraction": 0.7,
+      "prior_pair_preferences": {
+        "agreement": 0.6510416666666666,
+        "correct": 125,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 1.0,
+        "decisive_correct": 13,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.16759466681868437,
+        "tie_count": 12
+      }
+    },
+    {
+      "exponent": 3.0,
+      "maximum_v2_fraction": 0.75,
+      "prior_pair_preferences": {
+        "agreement": 0.6510416666666666,
+        "correct": 125,
+        "count": 192
+      },
+      "winner_preferences": {
+        "decisive_agreement": 1.0,
+        "decisive_correct": 13,
+        "decisive_count": 13,
+        "identical_winner_ties": 6,
+        "mean_absolute_tie_score_gap": 0.18312672163854415,
+        "tie_count": 12
+      }
+    }
+  ],
+  "implemented_fractions": {
+    "25": 0.2,
+    "30": 0.21800000000000003,
+    "35": 0.272,
+    "40": 0.362,
+    "45": 0.4880000000000001,
+    "50": 0.65
+  },
+  "schema_version": 1,
+  "score_revision": "v2.2",
+  "selected": {
+    "exponent": 2.0,
+    "maximum_v2_fraction": 0.65,
+    "prior_pair_preferences": {
+      "agreement": 0.65625,
+      "correct": 126,
+      "count": 192
+    },
+    "winner_preferences": {
+      "decisive_agreement": 1.0,
+      "decisive_correct": 13,
+      "decisive_count": 13,
+      "identical_winner_ties": 6,
+      "mean_absolute_tie_score_gap": 0.1532229317010542,
+      "tie_count": 12
+    }
+  },
+  "source_hashes": {
+    "examples/round-control-parameter-maps-v2-1/human_winner_selections.json": "3a58744da2b5903a9db288cb4102b0b21f77b9a3b14958ccb7b8f5bc44d12655",
+    "examples/round-control-parameter-maps-v2-1/winners.json": "8960fe2142909136382a234e1f5f1fecbf08ff5ba94fecb30b42a09f22866145",
+    "examples/surface-score-v1-v2-rank-comparison/comparison.json": "d04d957b45d70b9ed9fd91dba30eb8e76493f7bb96e95f6a3831e8b3f2da5a10",
+    "examples/surface-score-v1-v2-rank-comparison/surface_score_v1_v2_selections.json": "0c9865a49daa7512f835f30c04ef79245d576c40f125d6b5d1820436689db751"
+  },
+  "status": "calibrated_not_independently_validated"
+}

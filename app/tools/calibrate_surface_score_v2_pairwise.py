@@ -15,12 +15,12 @@ from .surface_diagnostics import (
     NARROW_COVERAGE_FULL_CORRECTION_DEG,
     NARROW_COVERAGE_MINIMUM_V2_FRACTION,
     NARROW_COVERAGE_NO_CORRECTION_DEG,
-    SURFACE_SCORE_V2_REVISION,
 )
 
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_ROOT = ROOT / "examples/surface-score-v1-v2-rank-comparison"
+CALIBRATED_REVISION = "v2.1"
 
 
 def _file_hash(path: Path) -> str:
@@ -91,7 +91,7 @@ def calibrate(root: Path = DEFAULT_ROOT) -> dict[str, Any]:
             "scores": {
                 "v1": [float(row["score_v1"]) for row in candidates],
                 "v2": [float(row["score_v2"]) for row in candidates],
-                SURFACE_SCORE_V2_REVISION: [
+                CALIBRATED_REVISION: [
                     _revised_score(row) for row in candidates
                 ],
             },
@@ -106,7 +106,7 @@ def calibrate(root: Path = DEFAULT_ROOT) -> dict[str, Any]:
             for coverage in (25, 30, 35, 40, 45, 50)
         },
     }
-    metrics = ("v1", "v2", SURFACE_SCORE_V2_REVISION)
+    metrics = ("v1", "v2", CALIBRATED_REVISION)
     return {
         "schema_version": 1,
         "status": "calibration_on_recorded_pairs_not_independent_validation",
@@ -116,7 +116,7 @@ def calibrate(root: Path = DEFAULT_ROOT) -> dict[str, Any]:
             selection["choice"]
             for selection in selections["selections"].values()
         )),
-        "revision": SURFACE_SCORE_V2_REVISION,
+        "revision": CALIBRATED_REVISION,
         "adaptation": {
             "full_correction_through_deg":
                 NARROW_COVERAGE_FULL_CORRECTION_DEG,
