@@ -1,0 +1,26 @@
+{
+  "candidate_count": 6,
+  "scheduler": {
+    "configured_workers": {
+      "/Users/nickengel/Developer/HornCAD/examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/300mm/primary-A12-E40-Sparent/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/350mm/primary-A12-E0-Sparent/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/350mm/primary-A12-E40-Sparent/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/400mm/primary-A12-E0-Sparent/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/450mm/primary-A12-E0-Sparent/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/extension-throat-angle-heuristics/searches/s-matched-followup/35deg/400mm/primary-A12-E0-Sparent/search.yaml": 10
+    },
+    "numcalc_process_capacity": 20,
+    "queue_workers": 4,
+    "search_count": 6
+  },
+  "schema_version": 1,
+  "searches": [
+    "examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/450mm/primary-A12-E0-Sparent/search.yaml",
+    "examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/400mm/primary-A12-E0-Sparent/search.yaml",
+    "examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/350mm/primary-A12-E0-Sparent/search.yaml",
+    "examples/extension-throat-angle-heuristics/searches/s-matched-followup/35deg/400mm/primary-A12-E0-Sparent/search.yaml",
+    "examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/350mm/primary-A12-E40-Sparent/search.yaml",
+    "examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/300mm/primary-A12-E40-Sparent/search.yaml"
+  ],
+  "stage": "s-matched-followup"
+}

@@ -106,6 +106,20 @@ evaluate the four withheld combinations formed by throat angles 0 and 12 degrees
 and extensions 20 and 60 mm. These cases are never used to formulate or tune the
 frozen rule.
 
+### S-matched exploratory follow-up — 6 new evaluations
+
+Add six shorter versions of the worst completed development comparisons whose
+derived S fell below the measured parent S and whose surface score fell below
+the parent. Preserve mouth, coverage, K, N, throat angle, extension, and
+authored throat radius. Reduce only OSSE length until the generated geometry
+recovers the parent S within 1e-6.
+
+Select the four worst eligible losses overall plus the two worst eligible cases
+with nonzero extension. These are exploratory development evidence, not locked
+validation. They determine how much of the apparent throat-angle/extension
+penalty came from the induced loss of mouth termination. They increase the
+maximum study allocation from 226 to 232 simulations.
+
 ### D. Conditional edge-midpoint validation — at most 16 evaluations
 
 If any locked cell fails a registered radiation threshold, evaluate the same
@@ -119,8 +133,9 @@ four withheld combinations at:
 The conditional block is all-or-none. No other automatic follow-up is
 authorized.
 
-The initial count is 210 new BEM evaluations. The absolute maximum is 226,
-leaving 30 evaluations below the requested ceiling of 256. Geometry rejected
+The initial count is 210 new BEM evaluations, followed by six authorized
+S-matched exploratory cases. The absolute maximum is 232, leaving 24
+evaluations below the requested ceiling of 256. Geometry rejected
 before BEM is recorded as unavailable and is not silently replaced.
 
 ## Deterministic paired-effect rule

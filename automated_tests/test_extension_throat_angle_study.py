@@ -20,6 +20,10 @@ from app.tools.report_extension_throat_angle_study import (
 from app.tools.throat_impedance_diagnostics import (
     throat_impedance_diagnostics,
 )
+from app.tools.run_extension_s_matched_followup import (
+    select_followups,
+    solve_parent_s_length,
+)
 
 
 class ExtensionThroatAngleStudyTests(unittest.TestCase):
@@ -59,6 +63,34 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertAlmostEqual(_percent_change(60.0, 75.0), -20.0)
         self.assertIsNone(_percent_change(None, 75.0))
         self.assertIsNone(_percent_change(75.0, 0.0))
+
+    def test_s_matched_selection_reserves_extended_cases(self):
+        eligible = [
+            {
+                "id": f"case-{index}",
+                "surface_delta_points": float(index),
+                "extension_mm": 40 if index in (4, 5) else 0,
+            }
+            for index in range(6)
+        ]
+        selected = select_followups(eligible)
+        self.assertEqual(len(selected), 6)
+        self.assertGreaterEqual(
+            sum(row["extension_mm"] > 0 for row in selected), 2)
+
+    def test_s_matched_length_is_shorter_and_recovers_parent_s(self):
+        length = solve_parent_s_length(
+            original_length_mm=333.689,
+            effective_throat_radius_mm=12.7,
+            coverage_deg=30.0,
+            k=7.0,
+            n=8.0,
+            mouth_radius_mm=225.0,
+            throat_angle_deg=12.0,
+            target_s=0.483500820567733,
+        )
+        self.assertLess(length, 333.689)
+        self.assertAlmostEqual(length, 293.50631695, places=6)
 
     def test_impedance_v2_1_preserves_reviewed_parent_order(self):
         names = (
@@ -142,6 +174,7 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertIn("<strong>development running</strong>study status", output)
         self.assertIn("Surface Δ vs parent", output)
         self.assertIn("Impedance Δ vs parent", output)
+        self.assertIn("S Δ vs parent", output)
         self.assertIn(
             "Throat impedance v2.1.0: "
             "highest- and lowest-scoring parents", output)

@@ -232,6 +232,8 @@ def _candidate_directory(row: dict[str, Any]) -> Path:
     label = (
         f"{row['parent_role']}-A{row['throat_angle_deg']}"
         f"-E{row['extension_mm']}")
+    if row["stage"] == "s-matched-followup":
+        label += "-Sparent"
     return (
         STUDY_ROOT / "searches" / row["stage"]
         / f"{row['coverage_deg']}deg" / f"{mouth}mm" / label
@@ -243,7 +245,7 @@ def _search_document(row: dict[str, Any],
                          dict[str, Any], dict[str, float]]:
     coverage = float(row["coverage_deg"])
     values = {
-        "length_mm": float(parent["length_mm"]),
+        "length_mm": float(row.get("length_mm", parent["length_mm"])),
         "extension_mm": float(row["extension_mm"]),
         "osse_coverage_h_deg": coverage,
         "osse_coverage_v_deg": coverage,
@@ -307,7 +309,7 @@ def _geometry_metadata(
     config = project["horncad_config"]
     global_config = config["global"]
     effective_radius = float(global_config["effective_throat_radius"])
-    length = float(parent["length_mm"])
+    length = float(global_config["length"])
     coverage = float(row["coverage_deg"])
     k = float(parent["k"])
     n = float(parent["n"])
@@ -758,7 +760,7 @@ def prepare_conditional() -> dict[str, Any]:
     manifest["coordinates"].extend(materialized["coordinates"])
     manifest["inputs"].update(materialized["inputs"])
     manifest["candidate_count"] = len(manifest["coordinates"])
-    if manifest["candidate_count"] != MAX_CANDIDATES:
+    if manifest["candidate_count"] != manifest["hard_candidate_cap"]:
         raise ValueError("conditional materialization did not reach hard cap")
     # This is an authorized append whose exact abstract coordinates were
     # already covered by the original coordinate hash.
@@ -819,7 +821,7 @@ def analyze() -> dict[str, Any]:
         "schema_version": 1,
         "study_id": "extension-throat-angle-heuristics-v1",
         "candidate_count": len(measured),
-        "hard_candidate_cap": MAX_CANDIDATES,
+        "hard_candidate_cap": manifest["hard_candidate_cap"],
         "frozen_heuristic_sha256": frozen["freeze_sha256"],
         "evidence": sorted(measured, key=lambda row: row["id"]),
         "locked_validation": locked,
