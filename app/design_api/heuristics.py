@@ -110,8 +110,7 @@ class RoundControlHeuristics:
         nearest_angle = min(
             angles, key=lambda value: abs(value-coverage_deg)/5.0)
         source_cell = f"{nearest_angle:g}deg-{nearest_mouth:g}mm"
-        observed = self.artifact["audit"]["observed_high_score_zones"][
-            "cells"][source_cell]["best"]["coordinate"]
+        observed = self.artifact["active_measured_cell_seeds"][source_cell]
         s_table = self.artifact["s_guidance_by_coverage"]
         s_low = float(s_table[f"{angle_low:g}"]["median"])
         s_high = float(s_table[f"{angle_high:g}"]["median"])

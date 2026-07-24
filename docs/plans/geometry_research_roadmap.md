@@ -70,6 +70,14 @@ The three-case
 the remaining K=1 length curves without requiring its conditional block.
 The measured heuristic includes the exact ridge-results hash and publishes
 per-cell closure status.
+The bounded ten-case
+[wide-coverage closure](round_control_wide_coverage_closure.md) found only a
+0.268-point best local gain and strongly rejected the longer 50°/450 mm
+continuation. Its conditional infinite-baffle controls were deliberately not
+run. Mouth-edge diffraction is the leading provisional explanation for the
+remaining 45°/50° deficit, and no more round simulations are planned for this
+issue; the mechanism question moves forward into intended non-round and baffle
+geometry.
 The earlier central-grid handoff under
 `examples/control-decoupling/model_source/extension_handoff.json` is superseded
 by the full-grid [extension and throat-angle heuristic study](extension_throat_angle_heuristic_study.md).

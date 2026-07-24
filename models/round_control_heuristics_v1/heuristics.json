@@ -1,5 +1,563 @@
 {
+  "active_measured_cell_seeds": {
+    "30deg-250mm": {
+      "id": "30d-250mm-L+0-K+1-N-1",
+      "k": 6.0,
+      "length_factor": 1.0,
+      "length_mm": 174.432,
+      "n": 4.0,
+      "response_sha256": "a63a43be47c82cfbd1065454bc76350f40df38f3b5adccb76d294f6a0122827c",
+      "s": 0.4006979823817254,
+      "source_path": "examples/control-decoupling/searches/two-factor-face/30deg/250x250/candidates/candidate-004/bem/responses.npz",
+      "surface_score_v2_3": 74.21415076095897
+    },
+    "30deg-300mm": {
+      "id": "30d-300mm-L+0-K+0-N+0",
+      "k": 4.0,
+      "length_factor": 1.0,
+      "length_mm": 205.222,
+      "n": 8.0,
+      "response_sha256": "c4feb5a8ae0f2362c4f608ef00c4aeedea078092f3bb90ce5864b88676881916",
+      "s": 0.548118681139852,
+      "source_path": "examples/control-decoupling/searches/core-axis/30deg/300x300/candidates/candidate-000/bem/responses.npz",
+      "surface_score_v2_3": 78.49445915738688
+    },
+    "30deg-350mm": {
+      "id": "30d-350mm-L+0-K+0-N+0",
+      "k": 4.0,
+      "length_factor": 1.0,
+      "length_mm": 235.546,
+      "n": 8.0,
+      "response_sha256": "6b7c101cafc5deabb26bf71591310310c9ce643cbd0a6289c8375ba1578f8e03",
+      "s": 0.5481168596199129,
+      "source_path": "examples/control-decoupling/searches/core-axis/30deg/350x350/candidates/candidate-000/bem/responses.npz",
+      "surface_score_v2_3": 82.32962821422925
+    },
+    "30deg-400mm": {
+      "id": "30d-400mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_factor": 1.1999991759237896,
+      "length_mm": 291.235,
+      "n": 8.0,
+      "response_sha256": "b5f721c11d58c68e1ebbf516b3f4ba342f7f1c942bda7398c747434cddf50244",
+      "s": 0.4958070113007977,
+      "source_path": "examples/control-decoupling/searches/two-factor-face/30deg/400x400/candidates/candidate-008/bem/responses.npz",
+      "surface_score_v2_3": 85.12302342307952
+    },
+    "30deg-450mm": {
+      "id": "ridge-30deg-450mm-K7-N8-Lx1p0",
+      "k": 7.0,
+      "length_factor": 1.2355236801084128,
+      "length_mm": 333.689,
+      "n": 8.0,
+      "response_sha256": "b3eb5119cd572cf5b622ffa4167e630b8295f78807889143e468a57791e25fd4",
+      "s": 0.48350082056773264,
+      "source_path": "examples/round-control-ridge-closure/searches/30deg/450x450/candidates/candidate-001/bem/responses.npz",
+      "surface_score_v2_3": 86.59788518861623
+    },
+    "35deg-250mm": {
+      "id": "35d-250mm-L-1-K-1-N+0",
+      "k": 2.0,
+      "length_factor": 0.8000013033901178,
+      "length_mm": 122.757,
+      "n": 8.0,
+      "response_sha256": "af2f6aacf79632dceb550d7d14098b103f93fd42bf86069e86c7712c7ff331a6",
+      "s": 0.8567353864087573,
+      "source_path": "examples/control-decoupling/searches/two-factor-face/35deg/250x250/candidates/candidate-000/bem/responses.npz",
+      "surface_score_v2_3": 78.20720534612573
+    },
+    "35deg-300mm": {
+      "id": "35d-300mm-L-1-K-1-N+0",
+      "k": 2.0,
+      "length_factor": 0.8,
+      "length_mm": 144.256,
+      "n": 8.0,
+      "response_sha256": "4ab93fa27397993d49253fd82f7b32a065f7cecc645cb8042319c31eecae9ed7",
+      "s": 0.8993821014043046,
+      "source_path": "examples/control-decoupling/searches/two-factor-face/35deg/300x300/candidates/candidate-000/bem/responses.npz",
+      "surface_score_v2_3": 82.06009523151485
+    },
+    "35deg-350mm": {
+      "id": "35d-350mm-L+0-K+0-N+0",
+      "k": 4.0,
+      "length_factor": 1.0,
+      "length_mm": 190.953,
+      "n": 8.0,
+      "response_sha256": "7c769867db5e4a85a4ab42a25c55b282bc10e1b4a67c21d08ffa0deb4c296b08",
+      "s": 0.7830192504883154,
+      "source_path": "examples/control-decoupling/searches/core-axis/35deg/350x350/candidates/candidate-000/bem/responses.npz",
+      "surface_score_v2_3": 84.89220409550796
+    },
+    "35deg-400mm": {
+      "id": "35d-400mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_factor": 1.2000019997200393,
+      "length_mm": 240.034,
+      "n": 8.0,
+      "response_sha256": "cc0a0178eb5506ee626d9c1f88522166a0d4e04cae8f34dabc3d15ff782ac807",
+      "s": 0.6694175455538521,
+      "source_path": "examples/control-decoupling/searches/two-factor-face/35deg/400x400/candidates/candidate-008/bem/responses.npz",
+      "surface_score_v2_3": 86.75791752118002
+    },
+    "35deg-450mm": {
+      "id": "ridge-35deg-450mm-K7-N8-Lx1p0",
+      "k": 7.0,
+      "length_factor": 1.1824275150720132,
+      "length_mm": 263.206,
+      "n": 8.0,
+      "response_sha256": "481c2ff9c910919487d8e2ff1518f734b3ac860485c2497be49baa01dcae3435",
+      "s": 0.7830155224957924,
+      "source_path": "examples/round-control-ridge-closure/searches/35deg/450x450/candidates/candidate-001/bem/responses.npz",
+      "surface_score_v2_3": 88.7130526393789
+    },
+    "40deg-250mm": {
+      "id": "ridge-40deg-250mm-K1-N8-Lx0p9",
+      "k": 1.0,
+      "length_factor": 0.7091907813557298,
+      "length_mm": 89.085,
+      "n": 8.0,
+      "response_sha256": "d82a4efe785128bc8a95f8b03c4b9f05e2741feb2b3a3e7cf2a85ae6bc69f846",
+      "s": 1.336537682157515,
+      "source_path": "examples/round-control-ridge-closure/searches/40deg/250x250/candidates/candidate-000/bem/responses.npz",
+      "surface_score_v2_3": 80.46609664610776
+    },
+    "40deg-300mm": {
+      "id": "40d-300mm-L+0-K+0-N+0",
+      "k": 4.0,
+      "length_factor": 1.0,
+      "length_mm": 147.665,
+      "n": 8.0,
+      "response_sha256": "4e34093dff1a3db8b4cde25b5309dce7c1913dd366573ff3d09bac3986e06ecc",
+      "s": 0.7830371993405559,
+      "source_path": "examples/control-decoupling/searches/core-axis/40deg/300x300/candidates/candidate-000/bem/responses.npz",
+      "surface_score_v2_3": 84.04663718910928
+    },
+    "40deg-350mm": {
+      "id": "40d-350mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_factor": 1.200002629710469,
+      "length_mm": 182.53,
+      "n": 8.0,
+      "response_sha256": "7c8feed892a50aefdb969b81b9899eae17f17ac494a4168fa202eaed64e50f9f",
+      "s": 0.790447543433925,
+      "source_path": "examples/control-decoupling/searches/two-factor-face/40deg/350x350/candidates/candidate-008/bem/responses.npz",
+      "surface_score_v2_3": 85.92239062605748
+    },
+    "40deg-400mm": {
+      "id": "40d-400mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_factor": 1.200001165609847,
+      "length_mm": 205.901,
+      "n": 8.0,
+      "response_sha256": "2f9f46c2c152ef26ee5af7c092fa4a91da36fc2ba6d223839438ccaf2678a654",
+      "s": 0.7702069267059576,
+      "source_path": "examples/control-decoupling/searches/two-factor-face/40deg/400x400/candidates/candidate-008/bem/responses.npz",
+      "surface_score_v2_3": 86.97178946544965
+    },
+    "40deg-450mm": {
+      "id": "ridge-40deg-450mm-K7-N8-Lx1p0",
+      "k": 7.0,
+      "length_factor": 1.2351565509271998,
+      "length_mm": 224.465,
+      "n": 8.0,
+      "response_sha256": "03b557b777c515a59e9d1c7a10003659a20396bd9a6a279e5d04c7ba12306bfd",
+      "s": 0.9237127035628547,
+      "source_path": "examples/round-control-ridge-closure/searches/40deg/450x450/candidates/candidate-001/bem/responses.npz",
+      "surface_score_v2_3": 87.58830058449215
+    },
+    "45deg-250mm": {
+      "id": "45d-250mm-L-1-K-1-N+1",
+      "k": 2.0,
+      "length_factor": 0.8000018905199875,
+      "length_mm": 84.633,
+      "n": 16.0,
+      "response_sha256": "f28182e36b2961890ac92e8b8ac0e88cc3df4facd81029500e29901d16ae025a",
+      "s": 3.212200067094334,
+      "source_path": "examples/control-decoupling/searches/three-factor-corner/45deg/250x250/candidates/candidate-001/bem/responses.npz",
+      "surface_score_v2_3": 81.72686804342263
+    },
+    "45deg-300mm": {
+      "id": "45d-300mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_factor": 1.2,
+      "length_mm": 138.0,
+      "n": 8.0,
+      "response_sha256": "02610be21ba78409941df430a206233f0cebcfcdd15c502c55888b8bd23fe1dd",
+      "s": 0.8961864481863893,
+      "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/300x300/candidates/candidate-008/bem/responses.npz",
+      "surface_score_v2_3": 83.23869425292881
+    },
+    "45deg-350mm": {
+      "id": "45d-350mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_factor": 1.2,
+      "length_mm": 150.0,
+      "n": 8.0,
+      "response_sha256": "ae1f2846b7975898757a4fbdf8ac03a01aee29728635ab87b07c7fce164fb678",
+      "s": 1.0863365190714132,
+      "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/bem/responses.npz",
+      "surface_score_v2_3": 84.31996356572766
+    },
+    "45deg-400mm": {
+      "id": "45d-400mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_factor": 1.1999972049863046,
+      "length_mm": 171.734,
+      "n": 8.0,
+      "response_sha256": "bd127bf9dd55da832c7a9914d610a481158d70b172391a66e5677a7f91a6e652",
+      "s": 1.00249732732755,
+      "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/400x400/candidates/candidate-007/bem/responses.npz",
+      "surface_score_v2_3": 85.93397420488073
+    },
+    "45deg-450mm": {
+      "id": "ridge-45deg-450mm-K7-N8-Lx1p0",
+      "k": 7.0,
+      "length_factor": 1.224623243933589,
+      "length_mm": 191.776,
+      "n": 8.0,
+      "response_sha256": "8c6c8c936b439b0c96d380cd7e95b748657c29cfb20c9f41fe0db36dbfdb2a4f",
+      "s": 1.0863265008152294,
+      "source_path": "examples/round-control-ridge-closure/searches/45deg/450x450/candidates/candidate-001/bem/responses.npz",
+      "surface_score_v2_3": 84.86948292071921
+    },
+    "50deg-250mm": {
+      "id": "historical:50deg/250x250-coupled-r01-kn:candidate-004",
+      "k": 4.0,
+      "length_factor": 1.0,
+      "length_mm": 89.754,
+      "n": 15.0,
+      "response_sha256": "d52f858a7ad2e9d493bd08714bc21dc5c550a916164f2c1e1bcc1ff0d5c80d4e",
+      "s": 2.4341024024320124,
+      "source_path": "examples/mouth-size-coverage-grid/50deg/250x250-coupled-r01-kn/candidates/candidate-004/bem/responses.npz",
+      "surface_score_v2_3": 81.74592790910174
+    },
+    "50deg-300mm": {
+      "id": "50d-300mm-L+1-K+1-N+0",
+      "k": 6.0,
+      "length_factor": 1.2000042594880096,
+      "length_mm": 112.69,
+      "n": 8.0,
+      "response_sha256": "25a692c5cfb565224aaeaef97608f9d92b6f13460737d3d9f22e024e3c3bd84e",
+      "s": 1.2537736197316889,
+      "source_path": "examples/control-decoupling/searches/two-factor-face/50deg/300x300/candidates/candidate-008/bem/responses.npz",
+      "surface_score_v2_3": 80.72095342744606
+    },
+    "50deg-350mm": {
+      "id": "wide-closure-50deg-350mm-k-low-L124p892-K5p5-N8p0",
+      "k": 5.5,
+      "length_factor": 1.1999961566916801,
+      "length_mm": 124.892,
+      "n": 8.0,
+      "response_sha256": "2fbd169ec2a28c713ab4c0115f065094ca4638b905a5da36a134c28f05fc5f59",
+      "s": 1.3075676401678449,
+      "source_path": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-k-low-L124p892-K5p5-N8p0/candidates/candidate-000/bem/responses.npz",
+      "surface_score_v2_3": 80.7903795894516
+    },
+    "50deg-400mm": {
+      "id": "historical:50deg/400x400-coupled-length-closure-r01:candidate-000",
+      "k": 5.5,
+      "length_factor": 1.19738914955762,
+      "length_mm": 140.613,
+      "n": 8.75,
+      "response_sha256": "2a953bc623a08c5639200d15027f9b487e559dd286d37ec5a47ff8aee1a0a457",
+      "s": 1.4240701886786786,
+      "source_path": "examples/mouth-size-coverage-grid/50deg/400x400-coupled-length-closure-r01/candidates/candidate-000/bem/responses.npz",
+      "surface_score_v2_3": 81.62095103811589
+    },
+    "50deg-450mm": {
+      "id": "ridge-50deg-450mm-K7-N8-Lx1p1",
+      "k": 7.0,
+      "length_factor": 1.390667553359934,
+      "length_mm": 175.658,
+      "n": 8.0,
+      "response_sha256": "daf6e9bc176da3ab033477112b61e03bd40bb5d9ab633f62765941fe21ff4b0e",
+      "s": 0.9414979041445078,
+      "source_path": "examples/round-control-ridge-closure/searches/50deg/450x450/candidates/candidate-002/bem/responses.npz",
+      "surface_score_v2_3": 79.63001343915451
+    }
+  },
+  "active_surface_score_version": "v2.3",
   "audit": {
+    "active_surface_v2_3_cell_seeds": {
+      "cell_count": 25,
+      "cells": {
+        "30deg-250mm": {
+          "id": "30d-250mm-L+0-K+1-N-1",
+          "k": 6.0,
+          "length_factor": 1.0,
+          "length_mm": 174.432,
+          "n": 4.0,
+          "response_sha256": "a63a43be47c82cfbd1065454bc76350f40df38f3b5adccb76d294f6a0122827c",
+          "s": 0.4006979823817254,
+          "source_path": "examples/control-decoupling/searches/two-factor-face/30deg/250x250/candidates/candidate-004/bem/responses.npz",
+          "surface_score_v2_3": 74.21415076095897
+        },
+        "30deg-300mm": {
+          "id": "30d-300mm-L+0-K+0-N+0",
+          "k": 4.0,
+          "length_factor": 1.0,
+          "length_mm": 205.222,
+          "n": 8.0,
+          "response_sha256": "c4feb5a8ae0f2362c4f608ef00c4aeedea078092f3bb90ce5864b88676881916",
+          "s": 0.548118681139852,
+          "source_path": "examples/control-decoupling/searches/core-axis/30deg/300x300/candidates/candidate-000/bem/responses.npz",
+          "surface_score_v2_3": 78.49445915738688
+        },
+        "30deg-350mm": {
+          "id": "30d-350mm-L+0-K+0-N+0",
+          "k": 4.0,
+          "length_factor": 1.0,
+          "length_mm": 235.546,
+          "n": 8.0,
+          "response_sha256": "6b7c101cafc5deabb26bf71591310310c9ce643cbd0a6289c8375ba1578f8e03",
+          "s": 0.5481168596199129,
+          "source_path": "examples/control-decoupling/searches/core-axis/30deg/350x350/candidates/candidate-000/bem/responses.npz",
+          "surface_score_v2_3": 82.32962821422925
+        },
+        "30deg-400mm": {
+          "id": "30d-400mm-L+1-K+1-N+0",
+          "k": 6.0,
+          "length_factor": 1.1999991759237896,
+          "length_mm": 291.235,
+          "n": 8.0,
+          "response_sha256": "b5f721c11d58c68e1ebbf516b3f4ba342f7f1c942bda7398c747434cddf50244",
+          "s": 0.4958070113007977,
+          "source_path": "examples/control-decoupling/searches/two-factor-face/30deg/400x400/candidates/candidate-008/bem/responses.npz",
+          "surface_score_v2_3": 85.12302342307952
+        },
+        "30deg-450mm": {
+          "id": "ridge-30deg-450mm-K7-N8-Lx1p0",
+          "k": 7.0,
+          "length_factor": 1.2355236801084128,
+          "length_mm": 333.689,
+          "n": 8.0,
+          "response_sha256": "b3eb5119cd572cf5b622ffa4167e630b8295f78807889143e468a57791e25fd4",
+          "s": 0.48350082056773264,
+          "source_path": "examples/round-control-ridge-closure/searches/30deg/450x450/candidates/candidate-001/bem/responses.npz",
+          "surface_score_v2_3": 86.59788518861623
+        },
+        "35deg-250mm": {
+          "id": "35d-250mm-L-1-K-1-N+0",
+          "k": 2.0,
+          "length_factor": 0.8000013033901178,
+          "length_mm": 122.757,
+          "n": 8.0,
+          "response_sha256": "af2f6aacf79632dceb550d7d14098b103f93fd42bf86069e86c7712c7ff331a6",
+          "s": 0.8567353864087573,
+          "source_path": "examples/control-decoupling/searches/two-factor-face/35deg/250x250/candidates/candidate-000/bem/responses.npz",
+          "surface_score_v2_3": 78.20720534612573
+        },
+        "35deg-300mm": {
+          "id": "35d-300mm-L-1-K-1-N+0",
+          "k": 2.0,
+          "length_factor": 0.8,
+          "length_mm": 144.256,
+          "n": 8.0,
+          "response_sha256": "4ab93fa27397993d49253fd82f7b32a065f7cecc645cb8042319c31eecae9ed7",
+          "s": 0.8993821014043046,
+          "source_path": "examples/control-decoupling/searches/two-factor-face/35deg/300x300/candidates/candidate-000/bem/responses.npz",
+          "surface_score_v2_3": 82.06009523151485
+        },
+        "35deg-350mm": {
+          "id": "35d-350mm-L+0-K+0-N+0",
+          "k": 4.0,
+          "length_factor": 1.0,
+          "length_mm": 190.953,
+          "n": 8.0,
+          "response_sha256": "7c769867db5e4a85a4ab42a25c55b282bc10e1b4a67c21d08ffa0deb4c296b08",
+          "s": 0.7830192504883154,
+          "source_path": "examples/control-decoupling/searches/core-axis/35deg/350x350/candidates/candidate-000/bem/responses.npz",
+          "surface_score_v2_3": 84.89220409550796
+        },
+        "35deg-400mm": {
+          "id": "35d-400mm-L+1-K+1-N+0",
+          "k": 6.0,
+          "length_factor": 1.2000019997200393,
+          "length_mm": 240.034,
+          "n": 8.0,
+          "response_sha256": "cc0a0178eb5506ee626d9c1f88522166a0d4e04cae8f34dabc3d15ff782ac807",
+          "s": 0.6694175455538521,
+          "source_path": "examples/control-decoupling/searches/two-factor-face/35deg/400x400/candidates/candidate-008/bem/responses.npz",
+          "surface_score_v2_3": 86.75791752118002
+        },
+        "35deg-450mm": {
+          "id": "ridge-35deg-450mm-K7-N8-Lx1p0",
+          "k": 7.0,
+          "length_factor": 1.1824275150720132,
+          "length_mm": 263.206,
+          "n": 8.0,
+          "response_sha256": "481c2ff9c910919487d8e2ff1518f734b3ac860485c2497be49baa01dcae3435",
+          "s": 0.7830155224957924,
+          "source_path": "examples/round-control-ridge-closure/searches/35deg/450x450/candidates/candidate-001/bem/responses.npz",
+          "surface_score_v2_3": 88.7130526393789
+        },
+        "40deg-250mm": {
+          "id": "ridge-40deg-250mm-K1-N8-Lx0p9",
+          "k": 1.0,
+          "length_factor": 0.7091907813557298,
+          "length_mm": 89.085,
+          "n": 8.0,
+          "response_sha256": "d82a4efe785128bc8a95f8b03c4b9f05e2741feb2b3a3e7cf2a85ae6bc69f846",
+          "s": 1.336537682157515,
+          "source_path": "examples/round-control-ridge-closure/searches/40deg/250x250/candidates/candidate-000/bem/responses.npz",
+          "surface_score_v2_3": 80.46609664610776
+        },
+        "40deg-300mm": {
+          "id": "40d-300mm-L+0-K+0-N+0",
+          "k": 4.0,
+          "length_factor": 1.0,
+          "length_mm": 147.665,
+          "n": 8.0,
+          "response_sha256": "4e34093dff1a3db8b4cde25b5309dce7c1913dd366573ff3d09bac3986e06ecc",
+          "s": 0.7830371993405559,
+          "source_path": "examples/control-decoupling/searches/core-axis/40deg/300x300/candidates/candidate-000/bem/responses.npz",
+          "surface_score_v2_3": 84.04663718910928
+        },
+        "40deg-350mm": {
+          "id": "40d-350mm-L+1-K+1-N+0",
+          "k": 6.0,
+          "length_factor": 1.200002629710469,
+          "length_mm": 182.53,
+          "n": 8.0,
+          "response_sha256": "7c8feed892a50aefdb969b81b9899eae17f17ac494a4168fa202eaed64e50f9f",
+          "s": 0.790447543433925,
+          "source_path": "examples/control-decoupling/searches/two-factor-face/40deg/350x350/candidates/candidate-008/bem/responses.npz",
+          "surface_score_v2_3": 85.92239062605748
+        },
+        "40deg-400mm": {
+          "id": "40d-400mm-L+1-K+1-N+0",
+          "k": 6.0,
+          "length_factor": 1.200001165609847,
+          "length_mm": 205.901,
+          "n": 8.0,
+          "response_sha256": "2f9f46c2c152ef26ee5af7c092fa4a91da36fc2ba6d223839438ccaf2678a654",
+          "s": 0.7702069267059576,
+          "source_path": "examples/control-decoupling/searches/two-factor-face/40deg/400x400/candidates/candidate-008/bem/responses.npz",
+          "surface_score_v2_3": 86.97178946544965
+        },
+        "40deg-450mm": {
+          "id": "ridge-40deg-450mm-K7-N8-Lx1p0",
+          "k": 7.0,
+          "length_factor": 1.2351565509271998,
+          "length_mm": 224.465,
+          "n": 8.0,
+          "response_sha256": "03b557b777c515a59e9d1c7a10003659a20396bd9a6a279e5d04c7ba12306bfd",
+          "s": 0.9237127035628547,
+          "source_path": "examples/round-control-ridge-closure/searches/40deg/450x450/candidates/candidate-001/bem/responses.npz",
+          "surface_score_v2_3": 87.58830058449215
+        },
+        "45deg-250mm": {
+          "id": "45d-250mm-L-1-K-1-N+1",
+          "k": 2.0,
+          "length_factor": 0.8000018905199875,
+          "length_mm": 84.633,
+          "n": 16.0,
+          "response_sha256": "f28182e36b2961890ac92e8b8ac0e88cc3df4facd81029500e29901d16ae025a",
+          "s": 3.212200067094334,
+          "source_path": "examples/control-decoupling/searches/three-factor-corner/45deg/250x250/candidates/candidate-001/bem/responses.npz",
+          "surface_score_v2_3": 81.72686804342263
+        },
+        "45deg-300mm": {
+          "id": "45d-300mm-L+1-K+1-N+0",
+          "k": 6.0,
+          "length_factor": 1.2,
+          "length_mm": 138.0,
+          "n": 8.0,
+          "response_sha256": "02610be21ba78409941df430a206233f0cebcfcdd15c502c55888b8bd23fe1dd",
+          "s": 0.8961864481863893,
+          "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/300x300/candidates/candidate-008/bem/responses.npz",
+          "surface_score_v2_3": 83.23869425292881
+        },
+        "45deg-350mm": {
+          "id": "45d-350mm-L+1-K+1-N+0",
+          "k": 6.0,
+          "length_factor": 1.2,
+          "length_mm": 150.0,
+          "n": 8.0,
+          "response_sha256": "ae1f2846b7975898757a4fbdf8ac03a01aee29728635ab87b07c7fce164fb678",
+          "s": 1.0863365190714132,
+          "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/bem/responses.npz",
+          "surface_score_v2_3": 84.31996356572766
+        },
+        "45deg-400mm": {
+          "id": "45d-400mm-L+1-K+1-N+0",
+          "k": 6.0,
+          "length_factor": 1.1999972049863046,
+          "length_mm": 171.734,
+          "n": 8.0,
+          "response_sha256": "bd127bf9dd55da832c7a9914d610a481158d70b172391a66e5677a7f91a6e652",
+          "s": 1.00249732732755,
+          "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/400x400/candidates/candidate-007/bem/responses.npz",
+          "surface_score_v2_3": 85.93397420488073
+        },
+        "45deg-450mm": {
+          "id": "ridge-45deg-450mm-K7-N8-Lx1p0",
+          "k": 7.0,
+          "length_factor": 1.224623243933589,
+          "length_mm": 191.776,
+          "n": 8.0,
+          "response_sha256": "8c6c8c936b439b0c96d380cd7e95b748657c29cfb20c9f41fe0db36dbfdb2a4f",
+          "s": 1.0863265008152294,
+          "source_path": "examples/round-control-ridge-closure/searches/45deg/450x450/candidates/candidate-001/bem/responses.npz",
+          "surface_score_v2_3": 84.86948292071921
+        },
+        "50deg-250mm": {
+          "id": "historical:50deg/250x250-coupled-r01-kn:candidate-004",
+          "k": 4.0,
+          "length_factor": 1.0,
+          "length_mm": 89.754,
+          "n": 15.0,
+          "response_sha256": "d52f858a7ad2e9d493bd08714bc21dc5c550a916164f2c1e1bcc1ff0d5c80d4e",
+          "s": 2.4341024024320124,
+          "source_path": "examples/mouth-size-coverage-grid/50deg/250x250-coupled-r01-kn/candidates/candidate-004/bem/responses.npz",
+          "surface_score_v2_3": 81.74592790910174
+        },
+        "50deg-300mm": {
+          "id": "50d-300mm-L+1-K+1-N+0",
+          "k": 6.0,
+          "length_factor": 1.2000042594880096,
+          "length_mm": 112.69,
+          "n": 8.0,
+          "response_sha256": "25a692c5cfb565224aaeaef97608f9d92b6f13460737d3d9f22e024e3c3bd84e",
+          "s": 1.2537736197316889,
+          "source_path": "examples/control-decoupling/searches/two-factor-face/50deg/300x300/candidates/candidate-008/bem/responses.npz",
+          "surface_score_v2_3": 80.72095342744606
+        },
+        "50deg-350mm": {
+          "id": "wide-closure-50deg-350mm-k-low-L124p892-K5p5-N8p0",
+          "k": 5.5,
+          "length_factor": 1.1999961566916801,
+          "length_mm": 124.892,
+          "n": 8.0,
+          "response_sha256": "2fbd169ec2a28c713ab4c0115f065094ca4638b905a5da36a134c28f05fc5f59",
+          "s": 1.3075676401678449,
+          "source_path": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-k-low-L124p892-K5p5-N8p0/candidates/candidate-000/bem/responses.npz",
+          "surface_score_v2_3": 80.7903795894516
+        },
+        "50deg-400mm": {
+          "id": "historical:50deg/400x400-coupled-length-closure-r01:candidate-000",
+          "k": 5.5,
+          "length_factor": 1.19738914955762,
+          "length_mm": 140.613,
+          "n": 8.75,
+          "response_sha256": "2a953bc623a08c5639200d15027f9b487e559dd286d37ec5a47ff8aee1a0a457",
+          "s": 1.4240701886786786,
+          "source_path": "examples/mouth-size-coverage-grid/50deg/400x400-coupled-length-closure-r01/candidates/candidate-000/bem/responses.npz",
+          "surface_score_v2_3": 81.62095103811589
+        },
+        "50deg-450mm": {
+          "id": "ridge-50deg-450mm-K7-N8-Lx1p1",
+          "k": 7.0,
+          "length_factor": 1.390667553359934,
+          "length_mm": 175.658,
+          "n": 8.0,
+          "response_sha256": "daf6e9bc176da3ab033477112b61e03bd40bb5d9ab633f62765941fe21ff4b0e",
+          "s": 0.9414979041445078,
+          "source_path": "examples/round-control-ridge-closure/searches/50deg/450x450/candidates/candidate-002/bem/responses.npz",
+          "surface_score_v2_3": 79.63001343915451
+        }
+      }
+    },
     "canonical_factorial_rows": 492,
     "coupled_branches": {
       "cells": {
@@ -2208,6 +2766,37 @@
         "short_boundary_cells": 0,
         "tested_cells": 3
       }
+    },
+    "wide_coverage_closure": {
+      "best_initial_candidate": {
+        "coverage_deg": 50,
+        "derived_s": 1.3075676401678449,
+        "id": "wide-closure-50deg-350mm-k-low-L124p892-K5p5-N8p0",
+        "k": 5.5,
+        "length_mm": 124.892,
+        "mouth_mm": 350,
+        "n": 8.0,
+        "surface_delta_points": 0.2682255128970894,
+        "surface_score_v2_3": 80.7903795894516
+      },
+      "completed_candidate_count": 10,
+      "composite_used_in_decision": false,
+      "conditional_candidate_count": 0,
+      "conditional_status": "declined-by-user-not-run",
+      "content_sha256": "201446ab6dbd25f13277b57d4489fe3e15f7a90e70f3a1f40b35a9b9ecaeab00",
+      "decision": "Do not pursue additional simulations on this issue at this time.",
+      "decision_date": "2026-07-24",
+      "forward_action": "carry the measured cell map forward and proceed to intended non-round H/V, corner, sag, and baffle geometry",
+      "hard_candidate_cap": 12,
+      "initial_improvement_threshold_reached": false,
+      "initial_results": "examples/round-control-wide-coverage-closure/initial_results.json",
+      "initial_results_sha256": "3ac42fc2e0076d578db859e820c8732073a4b663635402a3ee5f8cae88305d80",
+      "leading_provisional_mechanism": "mouth-edge diffraction: wider coverage sends more acoustic energy to the lip, and the measured disturbance follows aperture-scaled frequency rather than a simple axial-length scale",
+      "ranking_authority": "surface_score_v2.3",
+      "schema_version": 1,
+      "status": "complete-initial-user-stopped",
+      "study_id": "round-control-wide-coverage-closure-v1",
+      "throat_impedance_used_in_decision": false
     }
   },
   "coupled_branch_seeds": {
@@ -2681,7 +3270,9 @@
   },
   "heuristic_id": "round_control_heuristics_v1",
   "provenance": {
-    "builder_sha256": "b579db9cf7c6f552d1094e60c30d43540ab5d97e9149439481946e16ee341a4c",
+    "active_surface_v2_3_winners": "examples/round-control-parameter-maps-v2-3/winners.json",
+    "active_surface_v2_3_winners_sha256": "39829efdde01ce484b7df4826175bec5619aa26c603e543ce64d3ee92d27157d",
+    "builder_sha256": "cc0dee3ddfe93eccd868821cfa329537a8ca7dd0fd4beaaa0a6d58a9322d06c8",
     "challenge_results": "examples/round-control-v2-validation/validation_results.json",
     "challenge_results_sha256": "ac4b773c584dba1a70feaa8abbd8608c9ccdcffa35ea59c00c3638cb44d70dc4",
     "ridge_results": "examples/round-control-ridge-closure/results.json",
@@ -2689,7 +3280,9 @@
     "short_length_closure_results": "examples/round-control-short-length-closure/results.json",
     "short_length_closure_results_sha256": "e4c6ae235a622a8b81b3db28920779cec2e8ae8cd7efd1bb147aec713be57c9c",
     "training_index": "examples/control-decoupling/model_source/training_index.json",
-    "training_index_sha256": "9f78e42e55bf8c81c995fb8357d4ff7207b6d77fe2a0e9b4a0e2f20c2ea74a75"
+    "training_index_sha256": "9f78e42e55bf8c81c995fb8357d4ff7207b6d77fe2a0e9b4a0e2f20c2ea74a75",
+    "wide_coverage_closure_results": "examples/round-control-wide-coverage-closure/results.json",
+    "wide_coverage_closure_results_sha256": "9ade0f9d8244dbc1959169e7b7ef6d8e5351dc4231188daa680c33977694f683"
   },
   "reference_length_mm": {
     "30": {
@@ -2794,67 +3387,32 @@
       "id": "recheck-length-after-control-change"
     },
     {
-      "action": "use the median S of measured cell winners as a physical ridge seed when K or N changes",
+      "action": "use the median S of active surface-v2.3 measured cell winners as a physical ridge seed when K or N changes",
       "evidence": {
         "30": {
-          "cell_best_s": [
-            0.44012682741979886,
-            0.45903395704967725,
-            0.5481168596199129,
-            0.4958070113007977,
-            0.48350082056773264
-          ],
-          "maximum": 0.5481168596199129,
-          "median": 0.48350082056773264,
-          "minimum": 0.44012682741979886
+          "maximum": 0.548118681139852,
+          "median": 0.4958070113007977,
+          "minimum": 0.4006979823817254
         },
         "35": {
-          "cell_best_s": [
-            0.8567353864087573,
-            0.8993821014043046,
-            0.7830192504883154,
-            0.6694175455538521,
-            0.7830155224957924
-          ],
           "maximum": 0.8993821014043046,
           "median": 0.7830192504883154,
           "minimum": 0.6694175455538521
         },
         "40": {
-          "cell_best_s": [
-            1.336537682157515,
-            0.7830371993405559,
-            0.790447543433925,
-            0.9803933536734423,
-            0.9237127035628547
-          ],
           "maximum": 1.336537682157515,
-          "median": 0.9237127035628547,
-          "minimum": 0.7830371993405559
+          "median": 0.790447543433925,
+          "minimum": 0.7702069267059576
         },
         "45": {
-          "cell_best_s": [
-            1.4290325372492843,
-            0.8961864481863893,
-            1.0863365190714132,
-            1.2802092720777547,
-            1.0863265008152294
-          ],
-          "maximum": 1.4290325372492843,
-          "median": 1.0863365190714132,
+          "maximum": 3.212200067094334,
+          "median": 1.0863265008152294,
           "minimum": 0.8961864481863893
         },
         "50": {
-          "cell_best_s": [
-            1.7179747556793592,
-            1.2537736197316889,
-            1.3926539371674904,
-            1.363856803030943,
-            1.3926554170183927
-          ],
-          "maximum": 1.7179747556793592,
-          "median": 1.3926539371674904,
-          "minimum": 1.2537736197316889
+          "maximum": 2.4341024024320124,
+          "median": 1.3075676401678449,
+          "minimum": 0.9414979041445078
         }
       },
       "id": "coverage-s-seed"
@@ -2930,7 +3488,7 @@
       "id": "retain-alternative-zones"
     },
     {
-      "action": "use the per-cell final measured seed; where K=1 or K=7 wins, label it a registered-domain boundary rather than an unconstrained optimum",
+      "action": "use the active surface-v2.3 per-cell measured seed; where K=1 or K=7 wins, label it a registered-domain boundary rather than an unconstrained optimum",
       "evidence": {
         "length_bracketed_at_outward_k_cells": 13,
         "outward_k_turned_over_cells": 10,
@@ -2948,6 +3506,16 @@
       "id": "short-k1-length-brackets"
     },
     {
+      "action": "do not spend more round-horn simulations on the current 45/50-degree deficit; carry mouth-edge diffraction as the leading provisional mechanism into intended non-round and baffle geometry",
+      "evidence": {
+        "best_improvement_points": 0.2682255128970894,
+        "completed_candidates": 10,
+        "conditional_status": "declined-by-user-not-run"
+      },
+      "id": "wide-coverage-mouth-edge-hypothesis",
+      "status": "working physical hypothesis; infinite-baffle controls were deliberately not run"
+    },
+    {
       "action": "for unequal H/V targets, combine independent axis seed lengths using mouth-width/height score weights",
       "id": "hv-flat-compromise",
       "status": "geometric seed; asymmetric acoustics unvalidated"
@@ -2960,64 +3528,29 @@
   ],
   "s_guidance_by_coverage": {
     "30": {
-      "cell_best_s": [
-        0.44012682741979886,
-        0.45903395704967725,
-        0.5481168596199129,
-        0.4958070113007977,
-        0.48350082056773264
-      ],
-      "maximum": 0.5481168596199129,
-      "median": 0.48350082056773264,
-      "minimum": 0.44012682741979886
+      "maximum": 0.548118681139852,
+      "median": 0.4958070113007977,
+      "minimum": 0.4006979823817254
     },
     "35": {
-      "cell_best_s": [
-        0.8567353864087573,
-        0.8993821014043046,
-        0.7830192504883154,
-        0.6694175455538521,
-        0.7830155224957924
-      ],
       "maximum": 0.8993821014043046,
       "median": 0.7830192504883154,
       "minimum": 0.6694175455538521
     },
     "40": {
-      "cell_best_s": [
-        1.336537682157515,
-        0.7830371993405559,
-        0.790447543433925,
-        0.9803933536734423,
-        0.9237127035628547
-      ],
       "maximum": 1.336537682157515,
-      "median": 0.9237127035628547,
-      "minimum": 0.7830371993405559
+      "median": 0.790447543433925,
+      "minimum": 0.7702069267059576
     },
     "45": {
-      "cell_best_s": [
-        1.4290325372492843,
-        0.8961864481863893,
-        1.0863365190714132,
-        1.2802092720777547,
-        1.0863265008152294
-      ],
-      "maximum": 1.4290325372492843,
-      "median": 1.0863365190714132,
+      "maximum": 3.212200067094334,
+      "median": 1.0863265008152294,
       "minimum": 0.8961864481863893
     },
     "50": {
-      "cell_best_s": [
-        1.7179747556793592,
-        1.2537736197316889,
-        1.3926539371674904,
-        1.363856803030943,
-        1.3926554170183927
-      ],
-      "maximum": 1.7179747556793592,
-      "median": 1.3926539371674904,
-      "minimum": 1.2537736197316889
+      "maximum": 2.4341024024320124,
+      "median": 1.3075676401678449,
+      "minimum": 0.9414979041445078
     }
   },
   "schema_version": 1,
@@ -3025,5 +3558,5 @@
     "k": 4.0,
     "n": 8.0
   },
-  "status": "measured seed rules; not a score predictor"
+  "status": "surface-v2.3 measured seed rules; not a score predictor"
 }

@@ -18,6 +18,10 @@ CHALLENGE = (
 RIDGE = ROOT / "examples/round-control-ridge-closure/results.json"
 SHORT_CLOSURE = (
     ROOT / "examples/round-control-short-length-closure/results.json")
+ACTIVE_WINNERS = (
+    ROOT / "examples/round-control-parameter-maps-v2-3/winners.json")
+WIDE_CLOSURE = (
+    ROOT / "examples/round-control-wide-coverage-closure/results.json")
 OUTPUT = ROOT / "models/round_control_heuristics_v1"
 ANGLES = (30, 35, 40, 45, 50)
 MOUTHS = (250, 300, 350, 400, 450)
@@ -40,6 +44,43 @@ def _write(path: Path, value: Any) -> None:
 
 def _file_hash(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _active_winner_seeds(
+    winners: dict[str, Any],
+    reference_lengths: dict[str, dict[str, float]],
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    if winners.get("score_version") != "v2.3":
+        raise ValueError("active winner map must use surface score v2.3")
+    cells: dict[str, Any] = {}
+    by_coverage: dict[str, list[float]] = defaultdict(list)
+    for angle in ANGLES:
+        for mouth in MOUTHS:
+            cell_id = f"{angle}deg-{mouth}mm"
+            row = winners["cells"][cell_id]["v2_3_winner"]
+            reference = float(reference_lengths[str(angle)][str(mouth)])
+            seed = {
+                "id": row["id"],
+                "length_mm": float(row["length_mm"]),
+                "length_factor": float(row["length_mm"])/reference,
+                "k": float(row["k"]),
+                "n": float(row["n"]),
+                "s": float(row["s"]),
+                "surface_score_v2_3": float(row["score_v2_3"]),
+                "source_path": row["source_path"],
+                "response_sha256": row["response_sha256"],
+            }
+            cells[cell_id] = seed
+            by_coverage[str(angle)].append(seed["s"])
+    s_guidance = {
+        angle: {
+            "minimum": float(min(values)),
+            "median": float(np.median(values)),
+            "maximum": float(max(values)),
+        }
+        for angle, values in by_coverage.items()
+    }
+    return cells, s_guidance
 
 
 def _canonical_rows(index: dict[str, Any]) -> list[dict[str, Any]]:
@@ -499,6 +540,8 @@ def build() -> dict[str, Any]:
     index = _read(INDEX)
     ridge_result = _read(RIDGE)
     short_closure = _read(SHORT_CLOSURE)
+    active_winners = _read(ACTIVE_WINNERS)
+    wide_closure = _read(WIDE_CLOSURE)
     rows = _canonical_rows(index)
     length = _length_audit(rows)
     k_audit = _axis_audit(
@@ -509,10 +552,13 @@ def build() -> dict[str, Any]:
     measured_rows = _all_measured_rows(index)
     zones = _zone_audit(measured_rows)
     ridge = _ridge_closure_audit(measured_rows, ridge_result)
+    active_seeds, active_s_guidance = _active_winner_seeds(
+        active_winners, length["reference_length_mm"])
     artifact = {
         "schema_version": 1,
         "heuristic_id": "round_control_heuristics_v1",
-        "status": "measured seed rules; not a score predictor",
+        "status": (
+            "surface-v2.3 measured seed rules; not a score predictor"),
         "domain": {
             "mouth_mm": list(MOUTHS),
             "coverage_half_angle_deg": list(ANGLES),
@@ -522,7 +568,9 @@ def build() -> dict[str, Any]:
         "seed_controls": {"k": 4.0, "n": 8.0},
         "reference_length_mm": length["reference_length_mm"],
         "coupled_branch_seeds": branches,
-        "s_guidance_by_coverage": zones["s_guidance_by_coverage"],
+        "active_surface_score_version": "v2.3",
+        "active_measured_cell_seeds": active_seeds,
+        "s_guidance_by_coverage": active_s_guidance,
         "rules": [
             {
                 "id": "reference-length-seed",
@@ -555,9 +603,9 @@ def build() -> dict[str, Any]:
             {
                 "id": "coverage-s-seed",
                 "action": (
-                    "use the median S of measured cell winners as a physical "
-                    "ridge seed when K or N changes"),
-                "evidence": zones["s_guidance_by_coverage"],
+                    "use the median S of active surface-v2.3 measured cell "
+                    "winners as a physical ridge seed when K or N changes"),
+                "evidence": active_s_guidance,
             },
             {
                 "id": "coupled-length-k-branches",
@@ -587,9 +635,9 @@ def build() -> dict[str, Any]:
             {
                 "id": "respect-ridge-closure-status",
                 "action": (
-                    "use the per-cell final measured seed; where K=1 or K=7 "
-                    "wins, label it a registered-domain boundary rather than "
-                    "an unconstrained optimum"),
+                    "use the active surface-v2.3 per-cell measured seed; "
+                    "where K=1 or K=7 wins, label it a registered-domain "
+                    "boundary rather than an unconstrained optimum"),
                 "evidence": {
                     "outward_k_won_over_inner_k_cells":
                         ridge["outward_k_won_over_inner_k_cells"],
@@ -606,6 +654,26 @@ def build() -> dict[str, Any]:
                     "formerly unbracketed short cells; Lx0.8 closed the "
                     "short side in every case"),
                 "evidence": short_closure["summary"],
+            },
+            {
+                "id": "wide-coverage-mouth-edge-hypothesis",
+                "action": (
+                    "do not spend more round-horn simulations on the current "
+                    "45/50-degree deficit; carry mouth-edge diffraction as "
+                    "the leading provisional mechanism into intended "
+                    "non-round and baffle geometry"),
+                "status": (
+                    "working physical hypothesis; infinite-baffle controls "
+                    "were deliberately not run"),
+                "evidence": {
+                    "completed_candidates":
+                        wide_closure["completed_candidate_count"],
+                    "best_improvement_points":
+                        wide_closure["best_initial_candidate"][
+                            "surface_delta_points"],
+                    "conditional_status":
+                        wide_closure["conditional_status"],
+                },
             },
             {
                 "id": "hv-flat-compromise",
@@ -637,6 +705,11 @@ def build() -> dict[str, Any]:
                 "summary": short_closure["summary"],
                 "cells": short_closure["cells"],
             },
+            "active_surface_v2_3_cell_seeds": {
+                "cell_count": len(active_seeds),
+                "cells": active_seeds,
+            },
+            "wide_coverage_closure": wide_closure,
             "observed_high_score_zones": zones,
         },
         "provenance": {
@@ -650,6 +723,14 @@ def build() -> dict[str, Any]:
                 SHORT_CLOSURE.relative_to(ROOT)),
             "short_length_closure_results_sha256":
                 _file_hash(SHORT_CLOSURE),
+            "active_surface_v2_3_winners": str(
+                ACTIVE_WINNERS.relative_to(ROOT)),
+            "active_surface_v2_3_winners_sha256":
+                _file_hash(ACTIVE_WINNERS),
+            "wide_coverage_closure_results": str(
+                WIDE_CLOSURE.relative_to(ROOT)),
+            "wide_coverage_closure_results_sha256":
+                _file_hash(WIDE_CLOSURE),
             "builder_sha256": _file_hash(Path(__file__)),
         },
     }
@@ -683,6 +764,11 @@ global score model.
   {ridge['final_measured_best_from_ridge_cells']} of the 16 tested cells.
 - The three formerly unbracketed K=1 short-length curves were all bracketed
   with three additional Lx0.8 measurements; no Lx0.7 cases were required.
+- Active exact-cell seeds now come from the complete surface-v2.3 winner map.
+- The ten-case wide-coverage closure found only a
+  {wide_closure['best_initial_candidate']['surface_delta_points']:.3f}-point
+  improvement. Further round cases and the conditional infinite-baffle controls
+  were deliberately not run.
 
 The H/V flat-length and sag outputs are starting constructions. No asymmetric or
 sagged BEM evidence is claimed. Sag is excluded from total score and these

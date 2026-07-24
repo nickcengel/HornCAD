@@ -32,6 +32,9 @@ DEFAULT_CALIBRATION = (
     / "examples/surface-score-v2-2-cell-ranking-game"
     / "surface_score_v2_3_calibration.json"
 )
+DEFAULT_WIDE_CLOSURE_RESULTS = (
+    ROOT / "examples/round-control-wide-coverage-closure/initial_results.json"
+)
 
 
 def _score_candidate(row: dict[str, Any]) -> float:
@@ -88,6 +91,7 @@ def assemble(
     source_path: Path = DEFAULT_SOURCE,
     ridge_results_path: Path = DEFAULT_RIDGE_RESULTS,
     calibration_path: Path = DEFAULT_CALIBRATION,
+    wide_closure_results_path: Path | None = DEFAULT_WIDE_CLOSURE_RESULTS,
     output: Path = DEFAULT_OUTPUT,
     *,
     workers: int = 8,
@@ -100,6 +104,11 @@ def assemble(
     }
     for row in _ridge_candidates(ridge_results_path, output, grids):
         candidates_by_hash[row["response_sha256"]] = row
+    if (wide_closure_results_path is not None
+            and wide_closure_results_path.is_file()):
+        for row in _ridge_candidates(
+                wide_closure_results_path, output, grids):
+            candidates_by_hash[row["response_sha256"]] = row
     population = _score_population(
         sorted(candidates_by_hash.values(), key=lambda row: row["id"]),
         workers,
@@ -192,6 +201,15 @@ def assemble(
         "heatmap_encoding": source["heatmap_encoding"],
         "cells": cells,
     }
+    if (wide_closure_results_path is not None
+            and wide_closure_results_path.is_file()):
+        artifact["sources"].append({
+            "path": str(wide_closure_results_path.relative_to(ROOT)),
+            "sha256": _file_hash(wide_closure_results_path),
+            "content_sha256": json.loads(
+                wide_closure_results_path.read_text(encoding="utf-8")
+            )["content_sha256"],
+        })
     artifact["content_sha256"] = _content_hash(artifact)
     return artifact
 
@@ -245,6 +263,7 @@ def write(
     source: Path = DEFAULT_SOURCE,
     ridge_results: Path = DEFAULT_RIDGE_RESULTS,
     calibration: Path = DEFAULT_CALIBRATION,
+    wide_closure_results: Path | None = DEFAULT_WIDE_CLOSURE_RESULTS,
     output: Path = DEFAULT_OUTPUT,
     *,
     workers: int = 8,
@@ -253,6 +272,7 @@ def write(
         source,
         ridge_results,
         calibration,
+        wide_closure_results,
         output,
         workers=workers,
     )
@@ -276,6 +296,11 @@ def main() -> None:
     parser.add_argument(
         "--calibration", type=Path, default=DEFAULT_CALIBRATION
     )
+    parser.add_argument(
+        "--wide-closure-results",
+        type=Path,
+        default=DEFAULT_WIDE_CLOSURE_RESULTS,
+    )
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument(
         "--workers",
@@ -289,6 +314,7 @@ def main() -> None:
         args.source.resolve(),
         args.ridge_results.resolve(),
         args.calibration.resolve(),
+        args.wide_closure_results.resolve(),
         args.output.resolve(),
         workers=args.workers,
     ))

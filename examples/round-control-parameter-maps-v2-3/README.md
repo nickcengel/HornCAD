@@ -1,9 +1,9 @@
 # Round-control parameter maps ranked by surface score v2.3
 
 This standalone report selects the highest measured surface score
-v2.3 in each of the 25 round-control mouth/coverage cells. It uses all 1,532
-unique retained responses: the frozen 1,484-response comparison population plus
-all 48 ridge-closure responses.
+v2.3 in each of the 25 round-control mouth/coverage cells. It uses all 1,542
+unique retained responses: the frozen 1,484-response comparison population,
+all 48 ridge-closure responses, and the 10-candidate wide-coverage closure.
 
 The report contains:
 

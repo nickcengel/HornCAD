@@ -1,0 +1,325 @@
+{
+  "candidate_count": 10,
+  "conditional_rule": {
+    "improvement_branch": "confirm or bracket the strongest measured direction",
+    "improvement_threshold_points": 1.5,
+    "maximum_candidates": 2,
+    "no_improvement_branch": "matched infinite-planar-baffle mechanism comparison for 35deg/450mm and 50deg/450mm, only after equivalent preflight"
+  },
+  "coordinates": [
+    {
+      "coverage_deg": 45,
+      "derived_s": 1.2996324227881797,
+      "id": "wide-closure-45deg-350mm-length-low-L142p5-K6p0-N8p0",
+      "incumbent": {
+        "id": "45d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 150.0,
+        "n": 8.0,
+        "response_sha256": "ae1f2846b7975898757a4fbdf8ac03a01aee29728635ab87b07c7fce164fb678",
+        "s": 1.0863365190714132,
+        "score_v2_3": 84.31996356572766,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "k": 6.0,
+      "length_mm": 142.5,
+      "mouth_mm": 350,
+      "n": 8.0,
+      "role": "length-low",
+      "stage": "initial"
+    },
+    {
+      "coverage_deg": 45,
+      "derived_s": 0.8920504097930261,
+      "id": "wide-closure-45deg-350mm-length-high-L157p5-K6p0-N8p0",
+      "incumbent": {
+        "id": "45d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 150.0,
+        "n": 8.0,
+        "response_sha256": "ae1f2846b7975898757a4fbdf8ac03a01aee29728635ab87b07c7fce164fb678",
+        "s": 1.0863365190714132,
+        "score_v2_3": 84.31996356572766,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "k": 6.0,
+      "length_mm": 157.5,
+      "mouth_mm": 350,
+      "n": 8.0,
+      "role": "length-high",
+      "stage": "initial"
+    },
+    {
+      "coverage_deg": 45,
+      "derived_s": 1.0151444618764724,
+      "id": "wide-closure-45deg-350mm-k-low-L150p0-K5p5-N8p0",
+      "incumbent": {
+        "id": "45d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 150.0,
+        "n": 8.0,
+        "response_sha256": "ae1f2846b7975898757a4fbdf8ac03a01aee29728635ab87b07c7fce164fb678",
+        "s": 1.0863365190714132,
+        "score_v2_3": 84.31996356572766,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "k": 5.5,
+      "length_mm": 150.0,
+      "mouth_mm": 350,
+      "n": 8.0,
+      "role": "k-low",
+      "stage": "initial"
+    },
+    {
+      "coverage_deg": 45,
+      "derived_s": 1.1537305321838176,
+      "id": "wide-closure-45deg-350mm-k-high-L150p0-K6p5-N8p0",
+      "incumbent": {
+        "id": "45d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 150.0,
+        "n": 8.0,
+        "response_sha256": "ae1f2846b7975898757a4fbdf8ac03a01aee29728635ab87b07c7fce164fb678",
+        "s": 1.0863365190714132,
+        "score_v2_3": 84.31996356572766,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "k": 6.5,
+      "length_mm": 150.0,
+      "mouth_mm": 350,
+      "n": 8.0,
+      "role": "k-high",
+      "stage": "initial"
+    },
+    {
+      "coverage_deg": 50,
+      "derived_s": 1.6485763311103099,
+      "id": "wide-closure-50deg-350mm-length-low-L118p647-K6p0-N8p0",
+      "incumbent": {
+        "id": "50d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 124.892,
+        "n": 8.0,
+        "response_sha256": "ed9d3057dea7c3ffb5615deb80079a57a6b67f72508a0c43334215e4e1c144c1",
+        "s": 1.3926539371674904,
+        "score_v2_3": 80.52215407655451,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "k": 6.0,
+      "length_mm": 118.647,
+      "mouth_mm": 350,
+      "n": 8.0,
+      "role": "length-low",
+      "stage": "initial"
+    },
+    {
+      "coverage_deg": 50,
+      "derived_s": 1.1595355020274023,
+      "id": "wide-closure-50deg-350mm-length-high-L131p137-K6p0-N8p0",
+      "incumbent": {
+        "id": "50d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 124.892,
+        "n": 8.0,
+        "response_sha256": "ed9d3057dea7c3ffb5615deb80079a57a6b67f72508a0c43334215e4e1c144c1",
+        "s": 1.3926539371674904,
+        "score_v2_3": 80.52215407655451,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "k": 6.0,
+      "length_mm": 131.137,
+      "mouth_mm": 350,
+      "n": 8.0,
+      "role": "length-high",
+      "stage": "initial"
+    },
+    {
+      "coverage_deg": 50,
+      "derived_s": 1.3075676401678449,
+      "id": "wide-closure-50deg-350mm-k-low-L124p892-K5p5-N8p0",
+      "incumbent": {
+        "id": "50d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 124.892,
+        "n": 8.0,
+        "response_sha256": "ed9d3057dea7c3ffb5615deb80079a57a6b67f72508a0c43334215e4e1c144c1",
+        "s": 1.3926539371674904,
+        "score_v2_3": 80.52215407655451,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "k": 5.5,
+      "length_mm": 124.892,
+      "mouth_mm": 350,
+      "n": 8.0,
+      "role": "k-low",
+      "stage": "initial"
+    },
+    {
+      "coverage_deg": 50,
+      "derived_s": 1.4731651186368495,
+      "id": "wide-closure-50deg-350mm-k-high-L124p892-K6p5-N8p0",
+      "incumbent": {
+        "id": "50d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 124.892,
+        "n": 8.0,
+        "response_sha256": "ed9d3057dea7c3ffb5615deb80079a57a6b67f72508a0c43334215e4e1c144c1",
+        "s": 1.3926539371674904,
+        "score_v2_3": 80.52215407655451,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "k": 6.5,
+      "length_mm": 124.892,
+      "mouth_mm": 350,
+      "n": 8.0,
+      "role": "k-high",
+      "stage": "initial"
+    },
+    {
+      "coverage_deg": 50,
+      "derived_s": 0.5617150480667009,
+      "id": "wide-closure-50deg-450mm-length-high-1p2-L191p627-K7p0-N8p0",
+      "incumbent": {
+        "id": "ridge-50deg-450mm-K7-N8-Lx1p1",
+        "k": 7.0,
+        "length_mm": 175.658,
+        "n": 8.0,
+        "response_sha256": "daf6e9bc176da3ab033477112b61e03bd40bb5d9ab633f62765941fe21ff4b0e",
+        "s": 0.9414979041445078,
+        "score_v2_3": 79.63001343915451,
+        "source_path": "examples/round-control-ridge-closure/searches/50deg/450x450/candidates/candidate-002/bem/responses.npz"
+      },
+      "k": 7.0,
+      "length_mm": 191.627,
+      "mouth_mm": 450,
+      "n": 8.0,
+      "role": "length-high-1p2",
+      "stage": "initial"
+    },
+    {
+      "coverage_deg": 50,
+      "derived_s": 0.2375447898680969,
+      "id": "wide-closure-50deg-450mm-length-high-1p3-L207p596-K7p0-N8p0",
+      "incumbent": {
+        "id": "ridge-50deg-450mm-K7-N8-Lx1p1",
+        "k": 7.0,
+        "length_mm": 175.658,
+        "n": 8.0,
+        "response_sha256": "daf6e9bc176da3ab033477112b61e03bd40bb5d9ab633f62765941fe21ff4b0e",
+        "s": 0.9414979041445078,
+        "score_v2_3": 79.63001343915451,
+        "source_path": "examples/round-control-ridge-closure/searches/50deg/450x450/candidates/candidate-002/bem/responses.npz"
+      },
+      "k": 7.0,
+      "length_mm": 207.596,
+      "mouth_mm": 450,
+      "n": 8.0,
+      "role": "length-high-1p3",
+      "stage": "initial"
+    }
+  ],
+  "freeze_sha256": "f652eea6413c1a3a643575887e593f8bc0f662f2d265d1c4a5d58a0c9fa9dc3b",
+  "hard_candidate_cap": 12,
+  "inputs": {
+    "wide-closure-45deg-350mm-k-high-L150p0-K6p5-N8p0": {
+      "project": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-k-high-L150p0-K6p5-N8p0/project.yaml",
+      "project_sha256": "0df7955bb1c3324255821d16034cb2ab3f1b610be8585dc26f7bbb3418d1a115",
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-k-high-L150p0-K6p5-N8p0/search.yaml",
+      "search_sha256": "52d2d7725e491cba9c3ba5a8721056d0541f4ff5417ca02bd2cbb7114325dda2",
+      "source_project": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/project.yaml",
+      "source_project_sha256": "a733a1bcb554cdba6a7282ba38e3ccf46517480cc99ed55a9f724f9d1179f359"
+    },
+    "wide-closure-45deg-350mm-k-low-L150p0-K5p5-N8p0": {
+      "project": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-k-low-L150p0-K5p5-N8p0/project.yaml",
+      "project_sha256": "610b46668eb02373a302ea179594acf0fd8484cfd6f12ffc872d8ef5c277ca3a",
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-k-low-L150p0-K5p5-N8p0/search.yaml",
+      "search_sha256": "6e4686391f4ff3d514e97dbd90227460f1e862547400e08551a63dbeeeec5666",
+      "source_project": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/project.yaml",
+      "source_project_sha256": "a733a1bcb554cdba6a7282ba38e3ccf46517480cc99ed55a9f724f9d1179f359"
+    },
+    "wide-closure-45deg-350mm-length-high-L157p5-K6p0-N8p0": {
+      "project": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-length-high-L157p5-K6p0-N8p0/project.yaml",
+      "project_sha256": "cc14ca47ec315cc48657e33a8267cdc69db357555aeb947f307b0c4272b9c158",
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-length-high-L157p5-K6p0-N8p0/search.yaml",
+      "search_sha256": "7e24116eb7f5c9a6700c0764d62ea22f803373a06ad7972b079957c500f7155b",
+      "source_project": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/project.yaml",
+      "source_project_sha256": "a733a1bcb554cdba6a7282ba38e3ccf46517480cc99ed55a9f724f9d1179f359"
+    },
+    "wide-closure-45deg-350mm-length-low-L142p5-K6p0-N8p0": {
+      "project": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-length-low-L142p5-K6p0-N8p0/project.yaml",
+      "project_sha256": "ec0c9aa66b9c62f7723a5bd4db85b17f91b168f970c88fa4b7142f1412ca749f",
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-length-low-L142p5-K6p0-N8p0/search.yaml",
+      "search_sha256": "3b81508fb8a06ceda8949505168ad11e9a51e063fa88b1639ca78dc846e5e2a8",
+      "source_project": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/project.yaml",
+      "source_project_sha256": "a733a1bcb554cdba6a7282ba38e3ccf46517480cc99ed55a9f724f9d1179f359"
+    },
+    "wide-closure-50deg-350mm-k-high-L124p892-K6p5-N8p0": {
+      "project": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-k-high-L124p892-K6p5-N8p0/project.yaml",
+      "project_sha256": "6f6dbdbe90432a80f8de68183b62381b4e427e3305044b475aa69c8f9b977452",
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-k-high-L124p892-K6p5-N8p0/search.yaml",
+      "search_sha256": "3a7634ea407b413ba894900648b03ce9c3a30f2ba36c74cc6718a419ea5d5654",
+      "source_project": "examples/control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/project.yaml",
+      "source_project_sha256": "429da8cba40ec8167066a5b5a1ab9ebbb1f759b2bdad11f027362dca8bd144e6"
+    },
+    "wide-closure-50deg-350mm-k-low-L124p892-K5p5-N8p0": {
+      "project": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-k-low-L124p892-K5p5-N8p0/project.yaml",
+      "project_sha256": "58e919fc1701d031b76d5ef6af46f82fbeb2952afe052c0d2f8bc581036fc26f",
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-k-low-L124p892-K5p5-N8p0/search.yaml",
+      "search_sha256": "9f78e20569529647036949ba6f0d3009a60d931e6ffbc51923aee4fc274b323e",
+      "source_project": "examples/control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/project.yaml",
+      "source_project_sha256": "429da8cba40ec8167066a5b5a1ab9ebbb1f759b2bdad11f027362dca8bd144e6"
+    },
+    "wide-closure-50deg-350mm-length-high-L131p137-K6p0-N8p0": {
+      "project": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-length-high-L131p137-K6p0-N8p0/project.yaml",
+      "project_sha256": "fe4f6c68b478f051177c6b7338d97de6f1b48a44f58ebc9a70785b7f5130c10e",
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-length-high-L131p137-K6p0-N8p0/search.yaml",
+      "search_sha256": "968660bde975d282eccf18a887e50a3b9f38e2a4098184ca583fbea51fde5737",
+      "source_project": "examples/control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/project.yaml",
+      "source_project_sha256": "429da8cba40ec8167066a5b5a1ab9ebbb1f759b2bdad11f027362dca8bd144e6"
+    },
+    "wide-closure-50deg-350mm-length-low-L118p647-K6p0-N8p0": {
+      "project": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-length-low-L118p647-K6p0-N8p0/project.yaml",
+      "project_sha256": "ff9728ad5aca6a451764ecbbe03473437d6852b0a25e9effd7e01cec864108d2",
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-length-low-L118p647-K6p0-N8p0/search.yaml",
+      "search_sha256": "d6c5300cd5d5bc9ce566c099b9d7dc7803b596574ae40bc387bc312e33dc86b4",
+      "source_project": "examples/control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/project.yaml",
+      "source_project_sha256": "429da8cba40ec8167066a5b5a1ab9ebbb1f759b2bdad11f027362dca8bd144e6"
+    },
+    "wide-closure-50deg-450mm-length-high-1p2-L191p627-K7p0-N8p0": {
+      "project": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-450mm-length-high-1p2-L191p627-K7p0-N8p0/project.yaml",
+      "project_sha256": "8db68007f536fed067e97816e9eee395e9882e32b29ef7313caced1129a2cc0b",
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-450mm-length-high-1p2-L191p627-K7p0-N8p0/search.yaml",
+      "search_sha256": "4fa5a5b952f83e3f949170a2be380a0780a25a96159e902d7da049a24b6b7cce",
+      "source_project": "examples/round-control-ridge-closure/searches/50deg/450x450/candidates/candidate-002/project.yaml",
+      "source_project_sha256": "85b9841d3aad59acb6864484cdc28bcf5c1b6e6a66b4739b2e36dc00f9bac8bb"
+    },
+    "wide-closure-50deg-450mm-length-high-1p3-L207p596-K7p0-N8p0": {
+      "project": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-450mm-length-high-1p3-L207p596-K7p0-N8p0/project.yaml",
+      "project_sha256": "7d4b3bfb3c9e7598a407e79d21983096d7474f847d2fcc01282341dfb7b07378",
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-450mm-length-high-1p3-L207p596-K7p0-N8p0/search.yaml",
+      "search_sha256": "6ca84c396a3b068912e0505bf1abad897c3eb18bb8c7d5d8c9225816854d04ee",
+      "source_project": "examples/round-control-ridge-closure/searches/50deg/450x450/candidates/candidate-002/project.yaml",
+      "source_project_sha256": "85b9841d3aad59acb6864484cdc28bcf5c1b6e6a66b4739b2e36dc00f9bac8bb"
+    }
+  },
+  "plan": "docs/plans/round_control_wide_coverage_closure.md",
+  "plan_sha256": "673bb86aa79b5824bc322f6ab30b6b3524eb41a0e1c4ee0836e23f7d82a285b2",
+  "ranking": {
+    "authoritative_diagnostic": "surface_score_v2.3",
+    "composite_is_authoritative": false,
+    "throat_impedance_is_authoritative": false
+  },
+  "scheduler": {
+    "configured_workers_per_search": 10,
+    "numcalc_process_capacity": 20,
+    "queue_workers": 4,
+    "search_sharding": "one-candidate-per-search",
+    "type": "stage-aware-bem-queue"
+  },
+  "schema_version": 1,
+  "stage": "initial",
+  "status": "frozen-not-run",
+  "study_id": "round-control-wide-coverage-closure-v1",
+  "winners": "examples/round-control-parameter-maps-v2-3/winners.json",
+  "winners_sha256": "eb61b5641900f91ce268c03514b849268a3ab64311f63990da40152266accbad"
+}

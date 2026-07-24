@@ -1,0 +1,62 @@
+{
+  "scheduler": {
+    "configured_workers": {
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-k-high-L150p0-K6p5-N8p0/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-k-low-L150p0-K5p5-N8p0/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-length-high-L157p5-K6p0-N8p0/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-length-low-L142p5-K6p0-N8p0/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-k-high-L124p892-K6p5-N8p0/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-k-low-L124p892-K5p5-N8p0/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-length-high-L131p137-K6p0-N8p0/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-length-low-L118p647-K6p0-N8p0/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-450mm-length-high-1p2-L191p627-K7p0-N8p0/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-450mm-length-high-1p3-L207p596-K7p0-N8p0/search.yaml": 10
+    },
+    "numcalc_process_capacity": 20,
+    "queue_workers": 4,
+    "search_count": 10
+  },
+  "searches": [
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-length-low-L142p5-K6p0-N8p0/search.yaml"
+    },
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-length-high-L157p5-K6p0-N8p0/search.yaml"
+    },
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-k-low-L150p0-K5p5-N8p0/search.yaml"
+    },
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-45deg-350mm-k-high-L150p0-K6p5-N8p0/search.yaml"
+    },
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-length-low-L118p647-K6p0-N8p0/search.yaml"
+    },
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-length-high-L131p137-K6p0-N8p0/search.yaml"
+    },
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-k-low-L124p892-K5p5-N8p0/search.yaml"
+    },
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-350mm-k-high-L124p892-K6p5-N8p0/search.yaml"
+    },
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-450mm-length-high-1p2-L191p627-K7p0-N8p0/search.yaml"
+    },
+    {
+      "candidate_count": 1,
+      "search": "examples/round-control-wide-coverage-closure/searches/initial/wide-closure-50deg-450mm-length-high-1p3-L207p596-K7p0-N8p0/search.yaml"
+    }
+  ],
+  "stage": "initial"
+}

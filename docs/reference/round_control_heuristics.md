@@ -8,7 +8,9 @@ starting configurations and preserves observed alternate high-score zones.
 
 The portable artifact is
 `models/round_control_heuristics_v1/heuristics.json`. Its builder recomputes
-every count below from retained evidence.
+every count below from retained evidence. Exact-cell starting configurations
+come from the current surface-score v2.3 winner map; the older v1 selections
+remain only as historical audit evidence.
 
 ## Rules supported directly by the canonical factorial
 
@@ -47,11 +49,11 @@ winner in each mouth cell falls in these coverage-dependent bands:
 
 | Coverage | Minimum winner S | Median winner S | Maximum winner S |
 |---|---:|---:|---:|
-| 30° | 0.44 | 0.48 | 0.55 |
-| 35° | 0.65 | 0.78 | 0.90 |
-| 40° | 0.78 | 0.92 | 1.16 |
-| 45° | 0.90 | 1.09 | 1.43 |
-| 50° | 1.25 | 1.39 | 1.72 |
+| 30° | 0.40 | 0.50 | 0.55 |
+| 35° | 0.67 | 0.78 | 0.90 |
+| 40° | 0.77 | 0.79 | 1.34 |
+| 45° | 0.90 | 1.09 | 3.21 |
+| 50° | 0.94 | 1.31 | 2.43 |
 
 This is more useful than a universal K or length rule. When K or N changes,
 solve length to preserve the interpolated coverage-level S seed, then measure
@@ -90,14 +92,30 @@ lost, so the K=1 short branch is now length-bracketed in every tested cell; no
 conditional second step was needed. The artifact publishes these statuses per
 cell and keeps multi-point zones separate from single-point hints.
 
+The later ten-case
+[wide-coverage closure](../plans/round_control_wide_coverage_closure.md)
+tested the most valuable remaining L/K seams in selected 45° and 50° cells.
+Its best gain was only 0.268 surface-v2.3 points. At 50°/450 mm, extending the
+K=7/N=8 ridge from L=175.658 mm to 191.627 and 207.596 mm reduced score by
+9.944 and 29.793 points. The two conditional infinite-baffle controls were
+deliberately not run.
+
+The leading working explanation for the residual wide-coverage deficit is
+mouth-edge diffraction: wider coverage carries more acoustic energy to the lip,
+and the principal disturbance follows an aperture-scaled frequency. This is a
+working hypothesis consistent with measured scaling, not a demonstrated causal
+separation. No
+additional round-horn simulations are currently planned; the question carries
+forward into intended non-round and baffle geometry.
+
 ## H/V starting construction
 
 For a non-round target, apply the round evidence independently to the horizontal
 and vertical mouth/coverage pair:
 
 1. Bilinearly interpolate the registered reference-length table.
-2. Take L/K/N/S from the nearest final measured cell winner, including ridge
-   closure where it won, as the axis seed.
+2. Take L/K/N/S from the nearest surface-v2.3 measured cell winner, including
+   ridge and wide-coverage closure evidence where it won, as the axis seed.
 3. For a flat mouth, combine the two axis lengths using mouth width and height
    as weights, matching the surface-score plane weighting.
 4. As an alternative, set the common length to the longer axis seed and apply
@@ -123,10 +141,10 @@ seed = rules.recommend(DesignIntent(400, 300, 50, 35))
 
 For this example, the measured-axis seeds are approximately:
 
-- horizontal: 140.92 mm, K=6, N=8;
+- horizontal: 140.61 mm, K=5.5, N=8.75;
 - vertical: 144.26 mm, K=2, N=8;
-- flat weighted compromise: 142.35 mm;
-- alternative: 144.26 mm common length with 3.34 mm horizontal-only sag.
+- flat weighted compromise: 142.17 mm;
+- alternative: 144.26 mm common length with 3.64 mm horizontal-only sag.
 
 If K/N are changed deliberately, preserve the S seed first:
 

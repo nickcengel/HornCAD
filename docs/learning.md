@@ -34,7 +34,19 @@ global surrogate. The
 [round-control heuristic reference](reference/round_control_heuristics.md)
 publishes reference-length evidence, coupled length/K branches,
 coverage-conditioned S bands, alternate high-score zones, and an executable H/V
-length/sag starting construction.
+length/sag starting construction. Its exact-cell seeds now use the diagnostic-
+of-record surface-v2.3 winner map.
+
+A bounded ten-case
+[wide-coverage closure](plans/round_control_wide_coverage_closure.md)
+found at most a 0.268-point local improvement in the selected 45°/50° seams;
+the long 50°/450 mm continuation lost 9.944 and 29.793 points. The project
+owner chose not to run the two conditional infinite-baffle controls. The
+leading provisional explanation is mouth-edge diffraction—wider coverage sends
+more energy to the lip, with the disturbance tracking aperture-scaled
+frequency—but causality has not been isolated. No further round simulations
+are planned for this issue. The measured map and this mechanism hypothesis
+carry into intended non-round H/V, corner, sag, and baffle geometry.
 
 ## Prior evidence carried forward
 

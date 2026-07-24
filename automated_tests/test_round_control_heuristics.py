@@ -19,8 +19,9 @@ class RoundControlHeuristicTests(unittest.TestCase):
     def test_exact_grid_length_is_preserved(self):
         seed = self.heuristics.axis_length(400, 50)
         self.assertAlmostEqual(seed.reference_length_mm, 117.433)
-        self.assertAlmostEqual(seed.profile_length_mm, 1.2*117.433, places=3)
-        self.assertEqual(seed.k, 6.0)
+        self.assertAlmostEqual(seed.profile_length_mm, 140.613, places=3)
+        self.assertEqual(seed.k, 5.5)
+        self.assertEqual(seed.n, 8.75)
 
     def test_bilinear_axis_seed_is_bounded(self):
         seed = self.heuristics.axis_length(325, 37.5)
@@ -83,6 +84,29 @@ class RoundControlHeuristicTests(unittest.TestCase):
         self.assertEqual(audit["candidate_count"], 3)
         self.assertEqual(audit["summary"]["bracketed_cells"], 3)
         self.assertEqual(audit["summary"]["short_boundary_cells"], 0)
+
+    def test_active_seeds_use_v2_3_winner_map_and_wide_closure(self):
+        winners_path = (
+            ROOT / "examples/round-control-parameter-maps-v2-3/winners.json")
+        wide_path = (
+            ROOT / "examples/round-control-wide-coverage-closure/results.json")
+        provenance = self.heuristics.artifact["provenance"]
+        self.assertEqual(
+            provenance["active_surface_v2_3_winners_sha256"],
+            hashlib.sha256(winners_path.read_bytes()).hexdigest(),
+        )
+        self.assertEqual(
+            provenance["wide_coverage_closure_results_sha256"],
+            hashlib.sha256(wide_path.read_bytes()).hexdigest(),
+        )
+        seed = self.heuristics.axis_length(350, 50)
+        self.assertAlmostEqual(seed.profile_length_mm, 124.892)
+        self.assertEqual(seed.k, 5.5)
+        self.assertEqual(
+            self.heuristics.artifact["audit"]["wide_coverage_closure"][
+                "conditional_status"],
+            "declined-by-user-not-run",
+        )
 
 
 if __name__ == "__main__":

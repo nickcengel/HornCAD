@@ -27,6 +27,11 @@ global score model.
   6 of the 16 tested cells.
 - The three formerly unbracketed K=1 short-length curves were all bracketed
   with three additional Lx0.8 measurements; no Lx0.7 cases were required.
+- Active exact-cell seeds now come from the complete surface-v2.3 winner map.
+- The ten-case wide-coverage closure found only a
+  0.268-point
+  improvement. Further round cases and the conditional infinite-baffle controls
+  were deliberately not run.
 
 The H/V flat-length and sag outputs are starting constructions. No asymmetric or
 sagged BEM evidence is claimed. Sag is excluded from total score and these
