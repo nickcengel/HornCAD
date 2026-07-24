@@ -92,6 +92,14 @@ class SurfaceScoreRankComparisonTests(unittest.TestCase):
         self.assertIn("−3 dB", document)
         self.assertIn("−6 dB", document)
         self.assertIn("−9 dB", document)
+        self.assertIn("Which plot is better?", document)
+        self.assertIn('data-choice="plot_1"', document)
+        self.assertIn('data-choice="plot_2"', document)
+        self.assertIn('data-choice="tie"', document)
+        self.assertIn("localStorage.setItem", document)
+        self.assertIn("Export selections JSON", document)
+        self.assertIn("Import selections JSON", document)
+        self.assertIn("artifact_content_sha256", document)
 
     def test_write_is_deterministic(self):
         artifact = self.artifact()

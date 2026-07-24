@@ -10,6 +10,10 @@ evidence independently with surface score v1 and v2.
 - Quantile buttons jump through the complete selected population.
 - Mouth and coverage selectors rank globally, by either coordinate, or within
   an exact 5×5 cell.
+- Preference buttons record whether plot 1, plot 2, or neither is clearly
+  better. Optional notes are stored with the exact candidate pair.
+- Selections autosave in browser storage and can be exported or imported as
+  JSON for reproducible analysis.
 
 Every candidate card links to its original report. The viewer uses the same
 frequency, angle, and color viewport for both sides and overlays the −3, −6,
@@ -19,6 +23,12 @@ Rebuild from retained NPZ responses without running BEM:
 
 ```shell
 .venv/bin/python -m app.tools.generate_surface_score_rank_comparison
+```
+
+After changing only the viewer UI, rebuild HTML without rescoring NPZ:
+
+```shell
+.venv/bin/python -m app.tools.generate_surface_score_rank_comparison --render-only
 ```
 
 The frozen implementation plan is

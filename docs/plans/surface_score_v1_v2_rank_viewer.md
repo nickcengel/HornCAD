@@ -38,6 +38,10 @@ result, model, or active BEM process.
   and color scale so the toggle is a direct visual comparison.
 - Show the active candidate ID, geometry, score, provenance, and report link
   outside the press target.
+- Record plot-1, plot-2, or tie/uncertain preference plus an optional note for
+  the exact filter, rank, candidate IDs, and response hashes.
+- Autosave selections in browser-local storage and provide JSON export/import
+  tied to the comparison artifact hash for later analysis.
 
 ## Verification
 
@@ -46,5 +50,7 @@ result, model, or active BEM process.
 - Both rankings must contain the same evidence set.
 - The viewer must clamp rank navigation to its valid range and restore v1
   after pointer release, pointer cancellation, loss of focus, and Escape.
+- Preference exports must retain score-version semantics, exact response
+  hashes, filter coordinates, ranks, notes, and artifact hash.
 - Generation and tests use no BEM and do not write inside the active
   extension/throat-angle study.

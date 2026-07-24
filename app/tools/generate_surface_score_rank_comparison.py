@@ -208,7 +208,7 @@ def _document(artifact: dict[str, Any]) -> str:
 <title>Surface score v1 / v2 rank comparison</title>
 <style>
 :root{{--bg:#0b1015;--panel:#121a22;--panel2:#17222c;--ink:#e8f0f4;--muted:#9badb8;--line:#2b3a46;--v1:#79c5ff;--v2:#ffb45e;--accent:#69d6c8}}
-*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,sans-serif}}main{{max-width:1280px;margin:auto;padding:18px}}h1{{font-size:1.55rem;margin:0 0 5px}}p{{margin:6px 0}}.muted{{color:var(--muted)}}.controls,.filters,.rank-strip,.quantiles{{display:flex;gap:8px;align-items:center;flex-wrap:wrap}}.filters{{margin:14px 0}}label{{color:var(--muted)}}select,button{{border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:8px;padding:7px 10px;font:inherit}}button{{cursor:pointer}}button:hover,button:focus-visible,button.active{{border-color:var(--accent);outline:none}}button:disabled{{opacity:.35;cursor:default}}.rank-strip{{margin:10px 0}}.rank-strip button{{min-width:34px;padding:5px}}.viewer{{position:relative;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden;user-select:none;touch-action:none}}canvas{{display:block;width:100%;height:min(67vh,720px)}}.hold-label{{position:absolute;left:14px;top:12px;background:#071018dd;border:1px solid var(--line);border-radius:999px;padding:5px 10px;pointer-events:none}}.hold-label.v1{{color:var(--v1)}}.hold-label.v2{{color:var(--v2)}}.meta-grid{{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}}.card{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}}.card.v1{{border-top:3px solid var(--v1)}}.card.v2{{border-top:3px solid var(--v2)}}.card h2{{font-size:1rem;margin:0 0 7px}}.score{{font-size:1.65rem;font-weight:700}}a{{color:var(--accent)}}code{{overflow-wrap:anywhere}}.legend{{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0;color:var(--muted)}}.swatch{{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:5px}}@media(max-width:720px){{.meta-grid{{grid-template-columns:1fr}}canvas{{height:55vh}}}}
+*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,sans-serif}}main{{max-width:1280px;margin:auto;padding:18px}}h1{{font-size:1.55rem;margin:0 0 5px}}p{{margin:6px 0}}.muted{{color:var(--muted)}}.controls,.filters,.rank-strip,.quantiles{{display:flex;gap:8px;align-items:center;flex-wrap:wrap}}.filters{{margin:14px 0}}label{{color:var(--muted)}}select,button{{border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:8px;padding:7px 10px;font:inherit}}button{{cursor:pointer}}button:hover,button:focus-visible,button.active{{border-color:var(--accent);outline:none}}button:disabled{{opacity:.35;cursor:default}}.rank-strip{{margin:10px 0}}.rank-strip button{{min-width:34px;padding:5px}}.viewer{{position:relative;border:1px solid var(--line);border-radius:12px;background:var(--panel);overflow:hidden;user-select:none;touch-action:none}}canvas{{display:block;width:100%;height:min(67vh,720px)}}.hold-label{{position:absolute;left:14px;top:12px;background:#071018dd;border:1px solid var(--line);border-radius:999px;padding:5px 10px;pointer-events:none}}.hold-label.v1{{color:var(--v1)}}.hold-label.v2{{color:var(--v2)}}.meta-grid{{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}}.card{{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}}.card.v1{{border-top:3px solid var(--v1)}}.card.v2{{border-top:3px solid var(--v2)}}.card h2{{font-size:1rem;margin:0 0 7px}}.score{{font-size:1.65rem;font-weight:700}}a{{color:var(--accent)}}code{{overflow-wrap:anywhere}}.legend{{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0;color:var(--muted)}}.swatch{{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:5px}}.preference{{margin:12px 0;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px}}.preference h2{{font-size:1rem;margin:0 0 9px}}.preference-buttons{{display:flex;gap:8px;flex-wrap:wrap}}.preference-buttons button{{flex:1;min-width:150px}}.preference-buttons button.selected{{border-color:var(--accent);background:#173c39}}textarea{{width:100%;min-height:70px;margin-top:9px;padding:8px;border:1px solid var(--line);border-radius:8px;background:#0d151d;color:var(--ink);font:inherit;resize:vertical}}.record-tools{{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:9px}}@media(max-width:720px){{.meta-grid{{grid-template-columns:1fr}}canvas{{height:55vh}}}}
 </style></head><body><main>
 <h1>Surface score v1 / v2 rank comparison</h1>
 <p class="muted">{count} unique retained round-horn responses. Rankings are independent within the selected mouth/coverage population.</p>
@@ -229,6 +229,19 @@ def _document(artifact: dict[str, Any]) -> str:
 <canvas id="plot"></canvas><div id="hold-label" class="hold-label v1">v1</div>
 </div>
 <div class="legend"><span><i class="swatch" style="background:#7fe7ff"></i>−3 dB</span><span><i class="swatch" style="background:#fff"></i>−6 dB</span><span><i class="swatch" style="background:#ffad5c"></i>−9 dB</span></div>
+<section class="preference"><h2>Which plot is better?</h2>
+<div class="preference-buttons">
+<button type="button" data-choice="plot_1">1 · Default plot better</button>
+<button type="button" data-choice="tie">Tie / too close</button>
+<button type="button" data-choice="plot_2">2 · Hold plot better</button>
+</div>
+<textarea id="preference-note" placeholder="Optional note for this comparison"></textarea>
+<div class="record-tools"><strong id="selection-status">Not ranked</strong>
+<span id="selection-summary" class="muted"></span>
+<button id="export-selections" type="button">Export selections JSON</button>
+<button id="import-selections" type="button">Import selections JSON</button>
+<input id="selection-file" type="file" accept="application/json" hidden></div>
+<p class="muted">Shortcuts: 1 = default plot, 0 = tie, 2 = hold plot. Selections autosave in this browser.</p></section>
 <div class="meta-grid"><section id="v1-card" class="card v1"></section><section id="v2-card" class="card v2"></section></div>
 <p class="muted">Exact-response deduplication: SHA-256. Heat maps are stored at 0.25 dB resolution from −30 to 0 dB. Content hash: <code>{html.escape(artifact["content_sha256"])}</code>.</p>
 </main><script id="comparison-data" type="application/json">{payload}</script>
@@ -237,6 +250,8 @@ const data=JSON.parse(document.getElementById("comparison-data").textContent);
 const byId=new Map(data.candidates.map(x=>[x.id,x]));
 const grids=data.grids, encoding=data.heatmap_encoding;
 let filtered=[],rank=1,held=false,spaceHeld=false;
+const storageKey=`surface-score-comparison:${{data.content_sha256}}`;
+let record=JSON.parse(localStorage.getItem(storageKey)||"null")||{{schema_version:1,experiment_id:data.study_id,artifact_content_sha256:data.content_sha256,selections:{{}}}};
 const canvas=document.getElementById("plot"),ctx=canvas.getContext("2d");
 const viewer=document.getElementById("viewer"),holdLabel=document.getElementById("hold-label");
 const mouth=document.getElementById("mouth"),coverage=document.getElementById("coverage");
@@ -252,6 +267,32 @@ function applyFilter(){{
  rank=1; rebuildButtons(); render();
 }}
 function topLimit(){{return Math.min(data.top_rank_count,filtered.length)}}
+function currentPair(){{
+ if(!filtered.length)return null;
+ const lists=rankings(),a=lists.v1[rank-1],b=lists.v2[rank-1];
+ const mouthFilter=mouth.value||"all",coverageFilter=coverage.value||"all";
+ const key=[mouthFilter,coverageFilter,rank,a.response_sha256,b.response_sha256].join("|");
+ return {{key,a,b,mouth_filter:mouthFilter,coverage_filter:coverageFilter}};
+}}
+function saveRecord(){{
+ record.updated_at=new Date().toISOString();
+ localStorage.setItem(storageKey,JSON.stringify(record));
+ renderPreference();
+}}
+function renderPreference(){{
+ const pair=currentPair(),selection=pair?record.selections[pair.key]:null;
+ document.querySelectorAll("[data-choice]").forEach(button=>button.classList.toggle("selected",selection?.choice===button.dataset.choice));
+ document.getElementById("preference-note").value=selection?.note||"";
+ document.getElementById("selection-status").textContent=selection?.choice?`Recorded: ${{selection.choice.replace("plot_1","plot 1").replace("plot_2","plot 2")}}`:"Not ranked";
+ const decided=Object.values(record.selections).filter(value=>["plot_1","plot_2","tie"].includes(value.choice)).length;
+ document.getElementById("selection-summary").textContent=`${{decided}} recorded comparison${{decided===1?"":"s"}}`;
+}}
+function choose(choice){{
+ const pair=currentPair();if(!pair)return;
+ const prior=record.selections[pair.key]||{{}};
+ record.selections[pair.key]={{...prior,choice,note:document.getElementById("preference-note").value,filter:{{mouth_mm:pair.mouth_filter,coverage_deg:pair.coverage_filter}},rank,plot_1:{{score_version:"v1",id:pair.a.id,response_sha256:pair.a.response_sha256,score:pair.a.score_v1}},plot_2:{{score_version:"v2",id:pair.b.id,response_sha256:pair.b.response_sha256,score:pair.b.score_v2}},recorded_at:new Date().toISOString()}};
+ saveRecord();
+}}
 function rebuildButtons(){{
  const strip=document.getElementById("rank-strip");strip.textContent="";
  for(let n=1;n<=topLimit();n++){{const b=document.createElement("button");b.textContent=n;b.onclick=()=>{{rank=n;render()}};strip.append(b)}}
@@ -295,13 +336,19 @@ function render(){{
  document.getElementById("rank-label").textContent=`Rank ${{rank}} of ${{filtered.length}}`;document.getElementById("population").textContent=`${{filtered.length}} unique responses`;
  document.getElementById("higher").disabled=rank===1;document.getElementById("lower").disabled=rank===filtered.length;
  [...document.querySelectorAll("#rank-strip button")].forEach((b,i)=>b.classList.toggle("active",i+1===rank));
+ renderPreference();
 }}
 function hold(value){{held=value;render()}}
 viewer.addEventListener("pointerdown",e=>{{viewer.setPointerCapture(e.pointerId);hold(true)}});
 viewer.addEventListener("pointerup",()=>hold(false));viewer.addEventListener("pointercancel",()=>hold(false));viewer.addEventListener("lostpointercapture",()=>{{if(held)hold(false)}});
 document.getElementById("higher").onclick=()=>{{rank--;render()}};document.getElementById("lower").onclick=()=>{{rank++;render()}};
 for(const select of [mouth,coverage])select.onchange=applyFilter;
-addEventListener("keydown",e=>{{if(e.key==="ArrowUp"||e.key==="ArrowLeft"){{rank--;render();e.preventDefault()}}else if(e.key==="ArrowDown"||e.key==="ArrowRight"){{rank++;render();e.preventDefault()}}else if(e.code==="Space"&&!spaceHeld){{spaceHeld=true;render();e.preventDefault()}}else if(e.key==="Escape"){{held=spaceHeld=false;render()}}}});
+document.querySelectorAll("[data-choice]").forEach(button=>button.onclick=()=>choose(button.dataset.choice));
+document.getElementById("preference-note").addEventListener("change",event=>{{const pair=currentPair();if(!pair)return;const prior=record.selections[pair.key];if(prior){{prior.note=event.target.value;saveRecord()}}}});
+document.getElementById("export-selections").onclick=()=>{{const blob=new Blob([JSON.stringify(record,null,2)+"\\n"],{{type:"application/json"}}),url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download="surface_score_v1_v2_selections.json";link.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}};
+document.getElementById("import-selections").onclick=()=>document.getElementById("selection-file").click();
+document.getElementById("selection-file").onchange=async event=>{{const file=event.target.files[0];if(!file)return;const imported=JSON.parse(await file.text());if(imported.artifact_content_sha256!==data.content_sha256){{alert("Selection file belongs to a different comparison artifact.");return}}record=imported;saveRecord();event.target.value=""}};
+addEventListener("keydown",e=>{{if((e.target.tagName==="TEXTAREA"||e.target.tagName==="INPUT")&&e.key!=="Escape")return;if(e.key==="1"){{choose("plot_1");e.preventDefault()}}else if(e.key==="0"){{choose("tie");e.preventDefault()}}else if(e.key==="2"){{choose("plot_2");e.preventDefault()}}else if(e.key==="ArrowUp"||e.key==="ArrowLeft"){{rank--;render();e.preventDefault()}}else if(e.key==="ArrowDown"||e.key==="ArrowRight"){{rank++;render();e.preventDefault()}}else if(e.code==="Space"&&!spaceHeld){{spaceHeld=true;render();e.preventDefault()}}else if(e.key==="Escape"){{held=spaceHeld=false;render()}}}});
 addEventListener("keyup",e=>{{if(e.code==="Space"){{spaceHeld=false;render();e.preventDefault()}}}});addEventListener("blur",()=>{{held=spaceHeld=false;render()}});addEventListener("resize",render);
 applyFilter();
 </script></body></html>"""
@@ -324,14 +371,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--index", type=Path, default=DEFAULT_INDEX)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
     parser.add_argument("--maximum-evidence", type=int)
+    parser.add_argument(
+        "--render-only",
+        action="store_true",
+        help="rebuild HTML from the existing comparison JSON without rescoring NPZ",
+    )
     return parser.parse_args()
 
 
 def main() -> None:
     args = parse_args()
-    artifact = assemble(
-        args.index, args.output, maximum_evidence=args.maximum_evidence
-    )
+    if args.render_only:
+        artifact = json.loads(
+            (args.output / "comparison.json").read_text(encoding="utf-8")
+        )
+    else:
+        artifact = assemble(
+            args.index, args.output, maximum_evidence=args.maximum_evidence
+        )
     _, report = write(args.output, artifact)
     print(report)
 
