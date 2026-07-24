@@ -16,7 +16,7 @@ benchmark ranking, or primary/augmented model choice.
 
 The impedance response stored in this v1 model was fitted to the legacy
 throat-impedance diagnostic. It is not comparable to the current diagnostic
-v2.0.0 values shown in regenerated BEM reports and must not be used for current
+v2.1.0 values shown in regenerated BEM reports and must not be used for current
 impedance decisions. Rebuilding this model response is deferred; the radiation
 responses are unaffected.
 

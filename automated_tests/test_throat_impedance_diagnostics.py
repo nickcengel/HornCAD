@@ -29,7 +29,7 @@ class ThroatImpedanceDiagnosticsTests(unittest.TestCase):
         self.assertTrue(result["crossover"]["passes_target"])
         self.assertGreater(result["overall_percent"], 75.0)
         self.assertLess(result["smoothness"]["ripple_rms_db"], 0.05)
-        self.assertEqual(result["diagnostic_version"], "2.0.0")
+        self.assertEqual(result["diagnostic_version"], "2.1.0")
         self.assertAlmostEqual(
             result["score_weights"]["crossover_loading"], 0.80)
         self.assertLess(
@@ -47,6 +47,35 @@ class ThroatImpedanceDiagnosticsTests(unittest.TestCase):
             self.frequencies, magnitude, 500.0)
         self.assertFalse(result["crossover"]["passes_target"])
         self.assertLess(result["components"]["crossover_loading"], 70.0)
+
+    def test_crossover_loading_saturates_at_seventy_five_percent(self) -> None:
+        magnitude = np.full_like(self.frequencies, 0.75)
+        magnitude[-1] = 1.0
+        result = throat_impedance_diagnostics(
+            self.frequencies, magnitude, 500.0)
+        self.assertAlmostEqual(
+            result["components"]["crossover_loading"], 100.0)
+        self.assertAlmostEqual(
+            result["crossover"]["full_credit_ratio"], 0.75)
+        self.assertAlmostEqual(
+            result["crossover"]["subscores"]["at_crossover_percent"], 100.0)
+        self.assertAlmostEqual(
+            result["crossover"]["subscores"]["crossover_band_percent"], 100.0)
+
+    def test_crossover_loading_has_no_benefit_above_seventy_five_percent(
+            self) -> None:
+        at_threshold = np.full_like(self.frequencies, 0.75)
+        at_threshold[-1] = 1.0
+        above_threshold = np.full_like(self.frequencies, 0.90)
+        above_threshold[-1] = 1.0
+        threshold_result = throat_impedance_diagnostics(
+            self.frequencies, at_threshold, 500.0)
+        above_result = throat_impedance_diagnostics(
+            self.frequencies, above_threshold, 500.0)
+        self.assertEqual(
+            threshold_result["components"]["crossover_loading"],
+            above_result["components"]["crossover_loading"],
+        )
 
     def test_repeated_peaks_and_troughs_reduce_smoothness(self) -> None:
         ratio = self.frequencies / 500.0

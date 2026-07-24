@@ -3379,7 +3379,7 @@
       },
       "throat_impedance_diagnostics": {
         "components": {
-          "crossover_loading": 29.664168382328516,
+          "crossover_loading": 39.55222450977135,
           "excess_variation": 97.94955713450442,
           "ripple": 98.61619130076828,
           "shelf_stability": 92.23027086142942
@@ -3396,21 +3396,26 @@
             "crossover_band": 0.5
           },
           "frequency_hz": 750.0,
+          "full_credit_ratio": 0.75,
           "magnitude": 0.3235529343266459,
           "passes_target": false,
           "peak_magnitude": 1.2060687487114274,
           "peak_normalized_magnitude": 0.2682707222721194,
           "shelf_ratio": 0.2821500503504342,
+          "subscores": {
+            "at_crossover_percent": 35.76942963628259,
+            "crossover_band_percent": 43.33501938326012
+          },
           "target_ratio": 0.5
         },
-        "diagnostic_version": "2.0.0",
+        "diagnostic_version": "2.1.0",
         "error_references": {
           "excess_variation_db_per_octave": 3.0,
           "ripple_rms_db": 1.0,
           "shelf_rms_db": 1.0,
           "shelf_slope_db_per_octave": 1.0
         },
-        "overall_percent": 43.21633096119783,
+        "overall_percent": 51.126775863152105,
         "samples_per_octave": 48,
         "score_weights": {
           "crossover_loading": 0.8,
@@ -6823,7 +6828,7 @@
       },
       "throat_impedance_diagnostics": {
         "components": {
-          "crossover_loading": 34.58660899652995,
+          "crossover_loading": 46.11547866203992,
           "excess_variation": 94.73526327076426,
           "ripple": 96.16592468081683,
           "shelf_stability": 90.4935417960244
@@ -6840,21 +6845,26 @@
             "crossover_band": 0.5
           },
           "frequency_hz": 750.0,
+          "full_credit_ratio": 0.75,
           "magnitude": 0.3688933081973849,
           "passes_target": false,
           "peak_magnitude": 1.2073257450686057,
           "peak_normalized_magnitude": 0.3055457979788402,
           "shelf_ratio": 0.32535960832820005,
+          "subscores": {
+            "at_crossover_percent": 40.739439730512025,
+            "crossover_band_percent": 51.49151759356783
+          },
           "target_ratio": 0.5
         },
-        "diagnostic_version": "2.0.0",
+        "diagnostic_version": "2.1.0",
         "error_references": {
           "excess_variation_db_per_octave": 3.0,
           "ripple_rms_db": 1.0,
           "shelf_rms_db": 1.0,
           "shelf_slope_db_per_octave": 1.0
         },
-        "overall_percent": 46.63215434813988,
+        "overall_percent": 55.85525008054785,
         "samples_per_octave": 48,
         "score_weights": {
           "crossover_loading": 0.8,
@@ -10267,7 +10277,7 @@
       },
       "throat_impedance_diagnostics": {
         "components": {
-          "crossover_loading": 28.76605988365627,
+          "crossover_loading": 38.35474651154169,
           "excess_variation": 96.0980778832269,
           "ripple": 97.48544608292784,
           "shelf_stability": 91.2867853147902
@@ -10284,21 +10294,26 @@
             "crossover_band": 0.5
           },
           "frequency_hz": 750.0,
+          "full_credit_ratio": 0.75,
           "magnitude": 0.317931824041468,
           "passes_target": false,
           "peak_magnitude": 1.2250206098999972,
           "peak_normalized_magnitude": 0.2595318164217841,
           "shelf_ratio": 0.27528988767262563,
+          "subscores": {
+            "at_crossover_percent": 34.60424218957121,
+            "crossover_band_percent": 42.10525083351217
+          },
           "target_ratio": 0.5
         },
-        "diagnostic_version": "2.0.0",
+        "diagnostic_version": "2.1.0",
         "error_references": {
           "excess_variation_db_per_octave": 3.0,
           "ripple_rms_db": 1.0,
           "shelf_rms_db": 1.0,
           "shelf_slope_db_per_octave": 1.0
         },
-        "overall_percent": 42.22686152648739,
+        "overall_percent": 49.89781082879573,
         "samples_per_octave": 48,
         "score_weights": {
           "crossover_loading": 0.8,
@@ -13711,7 +13726,7 @@
       },
       "throat_impedance_diagnostics": {
         "components": {
-          "crossover_loading": 29.02201090342785,
+          "crossover_loading": 38.6960145379038,
           "excess_variation": 96.40409713745576,
           "ripple": 97.6695814217149,
           "shelf_stability": 89.64643542134067
@@ -13728,21 +13743,26 @@
             "crossover_band": 0.5
           },
           "frequency_hz": 750.0,
+          "full_credit_ratio": 0.75,
           "magnitude": 0.3218976493741855,
           "passes_target": false,
           "peak_magnitude": 1.2183109256005522,
           "peak_normalized_magnitude": 0.26421633641306286,
           "shelf_ratio": 0.2786270167252945,
+          "subscores": {
+            "at_crossover_percent": 35.228844855075046,
+            "crossover_band_percent": 42.16318422073255
+          },
           "target_ratio": 0.5
         },
-        "diagnostic_version": "2.0.0",
+        "diagnostic_version": "2.1.0",
         "error_references": {
           "excess_variation_db_per_octave": 3.0,
           "ripple_rms_db": 1.0,
           "shelf_rms_db": 1.0,
           "shelf_slope_db_per_octave": 1.0
         },
-        "overall_percent": 42.422246727175896,
+        "overall_percent": 50.16144963475666,
         "samples_per_octave": 48,
         "score_weights": {
           "crossover_loading": 0.8,
@@ -17155,7 +17175,7 @@
       },
       "throat_impedance_diagnostics": {
         "components": {
-          "crossover_loading": 39.60876554049134,
+          "crossover_loading": 52.81168738732178,
           "excess_variation": 91.3450700378928,
           "ripple": 93.79133725206572,
           "shelf_stability": 94.13793278169493
@@ -17172,21 +17192,26 @@
             "crossover_band": 0.5
           },
           "frequency_hz": 750.0,
+          "full_credit_ratio": 0.75,
           "magnitude": 0.42924976080156985,
           "passes_target": false,
           "peak_magnitude": 1.2308020153433643,
           "peak_normalized_magnitude": 0.3487561406712675,
           "shelf_ratio": 0.38341578296279666,
+          "subscores": {
+            "at_crossover_percent": 46.500818756169,
+            "crossover_band_percent": 59.12255601847457
+          },
           "target_ratio": 0.5
         },
-        "diagnostic_version": "2.0.0",
+        "diagnostic_version": "2.1.0",
         "error_references": {
           "excess_variation_db_per_octave": 3.0,
           "ripple_rms_db": 1.0,
           "shelf_rms_db": 1.0,
           "shelf_slope_db_per_octave": 1.0
         },
-        "overall_percent": 50.28443904370299,
+        "overall_percent": 60.84677652116734,
         "samples_per_octave": 48,
         "score_weights": {
           "crossover_loading": 0.8,
@@ -20599,7 +20624,7 @@
       },
       "throat_impedance_diagnostics": {
         "components": {
-          "crossover_loading": 27.94532265705478,
+          "crossover_loading": 37.26043020940638,
           "excess_variation": 92.51673545053507,
           "ripple": 95.7659311915101,
           "shelf_stability": 91.30325961438868
@@ -20616,21 +20641,26 @@
             "crossover_band": 0.5
           },
           "frequency_hz": 750.0,
+          "full_credit_ratio": 0.75,
           "magnitude": 0.30758765128425514,
           "passes_target": false,
           "peak_magnitude": 1.2428184699112828,
           "peak_normalized_magnitude": 0.24749201812732308,
           "shelf_ratio": 0.26698557730578565,
+          "subscores": {
+            "at_crossover_percent": 32.99893575030974,
+            "crossover_band_percent": 41.52192466850301
+          },
           "target_ratio": 0.5
         },
-        "diagnostic_version": "2.0.0",
+        "diagnostic_version": "2.1.0",
         "error_references": {
           "excess_variation_db_per_octave": 3.0,
           "ripple_rms_db": 1.0,
           "shelf_rms_db": 1.0,
           "shelf_slope_db_per_octave": 1.0
         },
-        "overall_percent": 41.14812051476395,
+        "overall_percent": 48.60020655664523,
         "samples_per_octave": 48,
         "score_weights": {
           "crossover_loading": 0.8,
@@ -24043,7 +24073,7 @@
       },
       "throat_impedance_diagnostics": {
         "components": {
-          "crossover_loading": 34.148128343541586,
+          "crossover_loading": 45.53083779138878,
           "excess_variation": 92.68635503595176,
           "ripple": 93.31424496436718,
           "shelf_stability": 79.02786464198792
@@ -24060,21 +24090,26 @@
             "crossover_band": 0.5
           },
           "frequency_hz": 750.0,
+          "full_credit_ratio": 0.75,
           "magnitude": 0.38032696466680527,
           "passes_target": false,
           "peak_magnitude": 1.2560761260531783,
           "peak_normalized_magnitude": 0.30278974082714427,
           "shelf_ratio": 0.33167389558597177,
+          "subscores": {
+            "at_crossover_percent": 40.37196544361923,
+            "crossover_band_percent": 50.689710139158315
+          },
           "target_ratio": 0.5
         },
-        "diagnostic_version": "2.0.0",
+        "diagnostic_version": "2.1.0",
         "error_references": {
           "excess_variation_db_per_octave": 3.0,
           "ripple_rms_db": 1.0,
           "shelf_rms_db": 1.0,
           "shelf_slope_db_per_octave": 1.0
         },
-        "overall_percent": 45.50880796304625,
+        "overall_percent": 54.614975521324,
         "samples_per_octave": 48,
         "score_weights": {
           "crossover_loading": 0.8,
@@ -27487,7 +27522,7 @@
       },
       "throat_impedance_diagnostics": {
         "components": {
-          "crossover_loading": 34.40901181601312,
+          "crossover_loading": 45.878682421350824,
           "excess_variation": 93.38616478549244,
           "ripple": 93.64036068965818,
           "shelf_stability": 79.43746855364557
@@ -27504,21 +27539,26 @@
             "crossover_band": 0.5
           },
           "frequency_hz": 750.0,
+          "full_credit_ratio": 0.75,
           "magnitude": 0.3836703760575875,
           "passes_target": false,
           "peak_magnitude": 1.2482070637717124,
           "peak_normalized_magnitude": 0.30737718700152933,
           "shelf_ratio": 0.334313267527202,
+          "subscores": {
+            "at_crossover_percent": 40.98362493353724,
+            "crossover_band_percent": 50.773739909164405
+          },
           "target_ratio": 0.5
         },
-        "diagnostic_version": "2.0.0",
+        "diagnostic_version": "2.1.0",
         "error_references": {
           "excess_variation_db_per_octave": 3.0,
           "ripple_rms_db": 1.0,
           "shelf_rms_db": 1.0,
           "shelf_slope_db_per_octave": 1.0
         },
-        "overall_percent": 45.81140111337015,
+        "overall_percent": 54.98713759764032,
         "samples_per_octave": 48,
         "score_weights": {
           "crossover_loading": 0.8,
@@ -30931,7 +30971,7 @@
       },
       "throat_impedance_diagnostics": {
         "components": {
-          "crossover_loading": 41.03534379854597,
+          "crossover_loading": 54.713791731394636,
           "excess_variation": 92.28691652019104,
           "ripple": 94.40308640652087,
           "shelf_stability": 87.89080828816991
@@ -30948,21 +30988,26 @@
             "crossover_band": 0.5
           },
           "frequency_hz": 750.0,
+          "full_credit_ratio": 0.75,
           "magnitude": 0.4470601599949264,
           "passes_target": false,
           "peak_magnitude": 1.2159746298913285,
           "peak_normalized_magnitude": 0.36765582850596157,
           "shelf_ratio": 0.3980549334057508,
+          "subscores": {
+            "at_crossover_percent": 49.02077713412821,
+            "crossover_band_percent": 60.40680632866107
+          },
           "target_ratio": 0.5
         },
-        "diagnostic_version": "2.0.0",
+        "diagnostic_version": "2.1.0",
         "error_references": {
           "excess_variation_db_per_octave": 3.0,
           "ripple_rms_db": 1.0,
           "shelf_rms_db": 1.0,
           "shelf_slope_db_per_octave": 1.0
         },
-        "overall_percent": 51.36539208454734,
+        "overall_percent": 62.308150430826274,
         "samples_per_octave": 48,
         "score_weights": {
           "crossover_loading": 0.8,

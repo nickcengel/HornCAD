@@ -60,7 +60,7 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertIsNone(_percent_change(None, 75.0))
         self.assertIsNone(_percent_change(75.0, 0.0))
 
-    def test_impedance_v2_preserves_reviewed_parent_order(self):
+    def test_impedance_v2_1_preserves_reviewed_parent_order(self):
         names = (
             "250x250x84.633_45_K2_N8",
             "250x250x89.754_50_K4_N11.25",
@@ -105,7 +105,7 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertLess(max(ordered[2:6]), ordered[6])
         self.assertLess(ordered[6], ordered[7])
         self.assertLess(ordered[7], min(ordered[8:]))
-        self.assertLessEqual(max(ordered[2:6]) - min(ordered[2:6]), 6.0)
+        self.assertLessEqual(max(ordered[2:6]) - min(ordered[2:6]), 6.5)
         self.assertLessEqual(abs(ordered[8] - ordered[9]), 3.0)
 
     def test_index_uses_established_sections_and_reports_impedance(self):
@@ -143,7 +143,7 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         self.assertIn("Surface Δ vs parent", output)
         self.assertIn("Impedance Δ vs parent", output)
         self.assertIn(
-            "Throat impedance v2.0.0: "
+            "Throat impedance v2.1.0: "
             "highest- and lowest-scoring parents", output)
         self.assertEqual(output.count("data-peak-normalized='1'"), 10)
         self.assertEqual(output.count("class='impedance-curve'"), 10)

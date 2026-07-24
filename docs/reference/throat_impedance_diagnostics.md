@@ -4,7 +4,7 @@ This experimental diagnostic is reported by BEM candidate, search, and study
 reports, but remains isolated from the radiation surface score and candidate
 ranking.
 
-Version 2.0.0 uses the complete retained impedance sweep. A constant magnitude
+Version 2.1.0 uses the complete retained impedance sweep. A constant magnitude
 is ideal, but the diagnostic accepts a smooth high-pass-like rise. It does not
 prescribe a filter order or slope.
 
@@ -25,9 +25,11 @@ normalizes the magnitude over the retained sweep and averages two measurements:
   through one octave above crossover.
 
 Each contributes half of the crossover-loading component. The component is
-continuous and does not saturate at the former 50% shelf-ratio target. The
-historical crossover-to-shelf ratio and its 50% pass flag remain visible as
-supporting measurements, not as the score transfer function.
+linear through 75% of the retained sweep peak and saturates there. Therefore,
+75% or more earns full credit for the relevant point or band measurement and
+there is no scoring benefit above it. The historical crossover-to-shelf ratio
+and its 50% pass flag remain visible as supporting measurements, not as the
+score transfer function.
 
 Smoothness is measured after fitting the best non-decreasing curve in dB on a
 fixed 48-point-per-octave grid. This removes an arbitrary smooth high-pass trend

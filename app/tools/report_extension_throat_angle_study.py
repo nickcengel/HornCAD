@@ -91,14 +91,33 @@ def _record(root: Path, manifest: dict[str, Any],
     surface = record.get("surface_diagnostics", {})
     report_file = record.get("report_file")
     status = str(record.get("status", state.get("status", "not-started")))
+    impedance_score = (
+        record.get("throat_impedance_diagnostics") or {}).get(
+            "overall_percent")
+    response = (
+        search / "candidates" / str(record.get("id", "candidate-000"))
+        / "bem" / "responses.npz"
+    )
+    if status == "complete" and response.is_file():
+        try:
+            with np.load(response, allow_pickle=False) as archive:
+                diagnostic = throat_impedance_diagnostics(
+                    np.asarray(archive["frequencies_hz"], dtype=float),
+                    np.asarray(archive["impedance"]),
+                    float(state["crossover_hz"]),
+                    float(state.get(
+                        "upper_frequency_hz",
+                        archive["frequencies_hz"][-1])),
+                )
+            impedance_score = diagnostic["overall_percent"]
+        except (KeyError, OSError, ValueError):
+            pass
     if status == "not-started" and (search / "project.yaml").is_file():
         status = "planned"
     return {
         "status": status,
         "surface_score": (surface.get("score") or {}).get("overall_percent"),
-        "throat_impedance_score": (
-            record.get("throat_impedance_diagnostics") or {}).get(
-                "overall_percent"),
+        "throat_impedance_score": impedance_score,
         "containment": _mean_axis(surface, ("containment", "mean_fraction")),
         "profile_rms": _mean_axis(
             surface, ("distribution", "rms_profile_error_db")),

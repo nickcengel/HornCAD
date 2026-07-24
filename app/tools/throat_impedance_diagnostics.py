@@ -7,8 +7,9 @@ import numpy as np
 
 
 POINTS_PER_OCTAVE = 48
-DIAGNOSTIC_VERSION = "2.0.0"
+DIAGNOSTIC_VERSION = "2.1.0"
 CROSSOVER_TARGET_RATIO = 0.5
+CROSSOVER_FULL_CREDIT_RATIO = 0.75
 CROSSOVER_BAND_UPPER_RATIO = 2.0
 CROSSOVER_LOADING_WEIGHTS = {
     "at_crossover": 0.50,
@@ -128,10 +129,14 @@ def throat_impedance_diagnostics(
         loading_log_frequency, np.log2(frequencies), magnitude)
     loading_band_peak_ratio = float(
         np.mean(loading_magnitude / peak_magnitude))
+    crossover_point_score = min(
+        crossover_peak_ratio / CROSSOVER_FULL_CREDIT_RATIO, 1.0)
+    crossover_band_score = min(
+        loading_band_peak_ratio / CROSSOVER_FULL_CREDIT_RATIO, 1.0)
     crossover_score = 100.0 * (
-        CROSSOVER_LOADING_WEIGHTS["at_crossover"] * crossover_peak_ratio
+        CROSSOVER_LOADING_WEIGHTS["at_crossover"] * crossover_point_score
         + CROSSOVER_LOADING_WEIGHTS["crossover_band"]
-        * loading_band_peak_ratio
+        * crossover_band_score
     )
 
     shelf_width_octaves = span_octaves / 2.0
@@ -193,6 +198,11 @@ def throat_impedance_diagnostics(
                 "samples_per_octave": points_per_octave,
             },
             "component_weights": CROSSOVER_LOADING_WEIGHTS,
+            "full_credit_ratio": CROSSOVER_FULL_CREDIT_RATIO,
+            "subscores": {
+                "at_crossover_percent": 100.0 * crossover_point_score,
+                "crossover_band_percent": 100.0 * crossover_band_score,
+            },
             "target_ratio": CROSSOVER_TARGET_RATIO,
             "passes_target": crossover_ratio >= CROSSOVER_TARGET_RATIO,
         },
