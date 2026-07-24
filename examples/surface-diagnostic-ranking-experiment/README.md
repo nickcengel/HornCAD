@@ -12,7 +12,9 @@ coordinates remain hidden until all rounds are locked.
 Drag each round into best-to-worst order. Every plot also has an optional notes
 field. Notes are keyed to the blinded plot ID, remain attached when a card is
 moved, autosave with the order, and appear beside the revealed candidate in the
-final report.
+final report. Because these are axisymmetric round horns, each card shows one
+coverage surface. Frequency uses the ordinary logarithmic Hz scale; angle is
+normalized only so every target edge remains at ±1 without revealing coverage.
 
 Build:
 

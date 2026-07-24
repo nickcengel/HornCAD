@@ -173,10 +173,7 @@ def _plot_surface(row: dict[str, Any], destination: Path) -> None:
     with np.load(source, allow_pickle=False) as data:
         frequencies = np.asarray(data["frequencies_hz"], dtype=float)
         angles = np.asarray(data["angles_deg"], dtype=float)
-        planes = [
-            np.asarray(data["horizontal_db"], dtype=float),
-            np.asarray(data["vertical_db"], dtype=float),
-        ]
+        surface = np.asarray(data["horizontal_db"], dtype=float)
     order = np.argsort(frequencies)
     frequencies = frequencies[order]
     lower = max(_crossover_hz(source.parent, frequencies), float(frequencies[0]))
@@ -184,44 +181,49 @@ def _plot_surface(row: dict[str, Any], destination: Path) -> None:
     frequencies = frequencies[keep]
     if len(frequencies) < 2:
         raise ValueError(f"insufficient frequencies at or above crossover: {source}")
-    log_position = (
-        np.log2(frequencies / frequencies[0])
-        / np.log2(frequencies[-1] / frequencies[0])
-    )
     normalized_angles = angles / coverage
     destination.parent.mkdir(parents=True, exist_ok=True)
-    figure, axes = plt.subplots(1, 2, figsize=(9.2, 3.25), sharex=True, sharey=True)
-    for axis, plane, label in zip(axes, planes, ("View A", "View B"), strict=True):
-        values = plane[order][keep]
-        axis.pcolormesh(
-            log_position,
-            normalized_angles,
-            values.T,
-            shading="auto",
-            cmap=colormap,
-            vmin=-30,
-            vmax=3,
-            rasterized=True,
-        )
-        axis.contour(
-            log_position,
-            normalized_angles,
-            values.T,
-            levels=[-6],
-            colors=["white"],
-            linewidths=1.2,
-        )
-        axis.axhline(-1, color="#00ffff", linestyle="--", linewidth=1.25)
-        axis.axhline(1, color="#00ffff", linestyle="--", linewidth=1.25)
-        axis.axhline(0, color="white", alpha=0.35, linewidth=0.7)
-        axis.set_title(label, fontsize=10)
-        axis.set_xlim(0, 1)
-        axis.set_ylim(-1.8, 1.8)
-        axis.set_xticks([0, 0.25, 0.5, 0.75, 1])
-        axis.set_yticks([-1.5, -1, -0.5, 0, 0.5, 1, 1.5])
-        axis.grid(color="white", alpha=0.12, linewidth=0.5)
-    axes[0].set_ylabel("Normalized angle (target edge = ±1)")
-    figure.supxlabel("Normalized crossover-to-upper frequency band", fontsize=9)
+    figure, axis = plt.subplots(figsize=(8.1, 3.55))
+    values = surface[order][keep]
+    axis.pcolormesh(
+        frequencies,
+        normalized_angles,
+        values.T,
+        shading="auto",
+        cmap=colormap,
+        vmin=-30,
+        vmax=3,
+        rasterized=True,
+    )
+    axis.contour(
+        frequencies,
+        normalized_angles,
+        values.T,
+        levels=[-6],
+        colors=["white"],
+        linewidths=1.2,
+    )
+    axis.axhline(-1, color="#00ffff", linestyle="--", linewidth=1.25)
+    axis.axhline(1, color="#00ffff", linestyle="--", linewidth=1.25)
+    axis.axhline(0, color="white", alpha=0.35, linewidth=0.7)
+    axis.set_xscale("log")
+    axis.set_xlim(float(frequencies[0]), float(frequencies[-1]))
+    tick_candidates = (100, 200, 500, 1000, 2000, 5000, 10000, 20000, 50000)
+    ticks = [
+        value
+        for value in tick_candidates
+        if frequencies[0] <= value <= frequencies[-1]
+    ]
+    axis.set_xticks(ticks)
+    axis.set_xticklabels(
+        [f"{value / 1000:g}k" if value >= 1000 else str(value) for value in ticks]
+    )
+    axis.tick_params(axis="x", which="minor", labelbottom=False)
+    axis.set_ylim(-1.8, 1.8)
+    axis.set_yticks([-1.5, -1, -0.5, 0, 0.5, 1, 1.5])
+    axis.set_xlabel("Frequency (Hz)")
+    axis.set_ylabel("Normalized angle (target edge = ±1)")
+    axis.grid(color="white", alpha=0.12, linewidth=0.5)
     figure.tight_layout()
     figure.savefig(destination, dpi=150, bbox_inches="tight", facecolor="white")
     plt.close(figure)
@@ -503,6 +505,13 @@ def build_experiment(index_path: Path, output: Path, seed: int) -> None:
     (output / "index.html").write_text(WIDGET_HTML)
 
 
+def refresh_plots(output: Path) -> None:
+    """Regenerate plot images without changing assignments or saved responses."""
+    private = json.loads((output / "private_manifest.json").read_text())
+    for plot_id, row in private["plots"].items():
+        _plot_surface(row, output / "plots" / f"{plot_id}.png")
+
+
 class ExperimentHandler(BaseHTTPRequestHandler):
     root: Path
 
@@ -619,6 +628,8 @@ def parse_args() -> argparse.Namespace:
     server.add_argument("--port", type=int, default=8765)
     report = subparsers.add_parser("report")
     report.add_argument("output", type=Path)
+    refresh = subparsers.add_parser("refresh-plots")
+    refresh.add_argument("output", type=Path)
     return parser.parse_args()
 
 
@@ -628,10 +639,12 @@ def main() -> None:
         build_experiment(args.index, args.output, args.seed)
     elif args.command == "serve":
         serve(args.output, args.host, args.port)
-    else:
+    elif args.command == "report":
         state = json.loads((args.output / "rankings.json").read_text())
         private = json.loads((args.output / "private_manifest.json").read_text())
         print(build_report(args.output, state, private))
+    else:
+        refresh_plots(args.output)
 
 
 WIDGET_HTML = r"""<!doctype html>
