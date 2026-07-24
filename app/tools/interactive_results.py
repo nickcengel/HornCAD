@@ -15,13 +15,21 @@ from plotly.subplots import make_subplots
 import yaml
 
 try:
-    from .surface_diagnostics import surface_diagnostics, surface_score
+    from .surface_diagnostics import (
+        ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
+        surface_diagnostics,
+        surface_score,
+    )
     from .throat_impedance_diagnostics import (
         DIAGNOSTIC_VERSION,
         throat_impedance_diagnostics,
     )
 except ImportError:
-    from surface_diagnostics import surface_diagnostics, surface_score
+    from surface_diagnostics import (
+        ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
+        surface_diagnostics,
+        surface_score,
+    )
     from throat_impedance_diagnostics import (
         DIAGNOSTIC_VERSION,
         throat_impedance_diagnostics,
@@ -868,17 +876,18 @@ def _surface_diagnostic_tables(runs: list[dict[str, Any]],
             continue
         score = result.get("score") or surface_score(
             result, run.get("mouth_dimensions_mm"))
-        legacy_score = result.get("score_v1")
-        score_version = score.get("version", "") if score else ""
+        experimental_score = result.get(
+            "score_v2_candidates", {}
+        ).get(ACTIVE_SURFACE_SCORE_V2_CANDIDATE)
         rows = [
             (
-                f"Active surface score {score_version}".strip(),
+                "Primary surface score v1",
                 value(score["overall_percent"], "%") if score else "—",
             ),
             (
-                "Legacy surface score v1",
-                value(legacy_score["overall_percent"], "%")
-                if legacy_score else "—",
+                "Experimental surface score v2",
+                value(experimental_score["overall_percent"], "%")
+                if experimental_score else "—",
             ),
         ]
         for label, plane_name in (("Horizontal", "horizontal"),
@@ -1226,7 +1235,7 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Surface diagnostics</h2>
 {_surface_diagnostic_tables(runs, surface_results)}
-<p class='hint'>Surface score v2 weights profile RMS error 30%, slice-energy departure 20%, mean containment 5%, outward-rise violation 5%, and multiscale −3/−6/−9 dB beamwidth quality 40%. Beamwidth quality rewards simple smooth contour trends, penalizes ripple at 1/12 through 2-octave scales, applies an extra local-narrowing penalty, and requires adequate upper-third-octave width. The legacy v1 value remains visible for provenance.</p>
+<p class='hint'>Surface score v1 remains the primary score and candidate-ranking basis. Experimental v2 is shown only for side-by-side study; it adds multiscale −3/−6/−9 dB beamwidth quality and does not alter selection.</p>
 </section><section class='plot'>{surface_plot}</section>
 <section class='parameters'><h2>Experimental throat-impedance diagnostic v{DIAGNOSTIC_VERSION}</h2>
 {_impedance_diagnostic_table(runs, impedance_results)}

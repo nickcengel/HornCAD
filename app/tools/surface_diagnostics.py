@@ -66,7 +66,7 @@ SURFACE_SCORE_V2_CANDIDATE_WEIGHTS = {
         "beamwidth_quality": 0.40,
     },
 }
-ACTIVE_SURFACE_SCORE_VERSION = "v2"
+ACTIVE_SURFACE_SCORE_VERSION = "v1"
 ACTIVE_SURFACE_SCORE_V2_CANDIDATE = "contour_forward"
 SURFACE_SCORE_ERROR_REFERENCES = {
     "profile_rms": 3.0,
@@ -231,15 +231,8 @@ def surface_score(
     result: dict[str, Any],
     mouth_dimensions_mm: dict[str, float] | None = None,
 ) -> dict[str, Any] | None:
-    """Return the released active surface score with legacy fallback."""
-    score = surface_score_v2(
-        result,
-        mouth_dimensions_mm,
-        candidate_name=ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
-    )
-    return score if score is not None else surface_score_v1(
-        result, mouth_dimensions_mm
-    )
+    """Return the active v1 score; v2 remains experimental side-by-side."""
+    return surface_score_v1(result, mouth_dimensions_mm)
 
 
 def _band_mean(x: np.ndarray, values: np.ndarray) -> float:

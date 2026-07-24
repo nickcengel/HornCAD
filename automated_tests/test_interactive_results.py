@@ -112,8 +112,8 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("Best: 100%", single_text)
             self.assertGreaterEqual(single_text.count("Best: 0 dB"), 2)
             self.assertIn(r"Target: 1\u00d7", single_text)
-            self.assertIn("Active surface score v2", single_text)
-            self.assertIn("Legacy surface score v1", single_text)
+            self.assertIn("Primary surface score v1", single_text)
+            self.assertIn("Experimental surface score v2", single_text)
             self.assertIn("three-contour beamwidth quality", single_text)
             self.assertNotIn("1/3-oct", single_text)
             self.assertNotIn("Coverage Match", single_text)
@@ -145,7 +145,7 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn('"x0":600.0', single_text)
             self.assertGreaterEqual(single_text.count('"hoverinfo":"skip"'), 4)
             candidate_surface = surface_diagnostics["Candidate A"]
-            self.assertEqual(candidate_surface["score"]["version"], "v2")
+            self.assertEqual(candidate_surface["score"]["version"], "v1")
             self.assertEqual(candidate_surface["score_v1"]["version"], "v1")
             self.assertEqual(
                 {"minus_3_db", "minus_6_db", "minus_9_db"},

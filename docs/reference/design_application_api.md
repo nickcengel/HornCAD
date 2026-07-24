@@ -78,9 +78,10 @@ unified-v2 challenge did not justify replacing it.
 
 The round-control models were trained against the originally registered surface
 score v1, so `prediction.surface_score` remains a v1 prediction. Current BEM
-reports and new measured-candidate ranking use surface score v2. The API does
-not silently reinterpret a v1 model output as v2; a future model release must
-add an explicitly named v2 response after rebuilding its training evidence.
+reports and measured-candidate ranking also remain v1-primary. Experimental v2
+is a separately labeled comparison output only. The API does not silently
+reinterpret a v1 model output as v2; a future model release must add an
+explicitly named v2 response after rebuilding its training evidence.
 
 ## Deferred operations
 

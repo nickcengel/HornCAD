@@ -155,9 +155,10 @@ Fit each response independently while retaining their residual covariance:
 6. secondary minus-six-dB RMS error.
 
 The model must expose all six predictions. Surface score alone is insufficient
-for control advice. The released round-control model retains its registered v1
-response; active report ranking uses surface score v2. A future model rebuild
-may add v2 explicitly but must not silently relabel the v1 response.
+for control advice. The released round-control model and active report ranking
+retain the registered v1 response. Experimental v2 remains a side-by-side
+diagnostic only; a future model rebuild may add it explicitly but must not
+silently relabel the v1 response.
 
 The release also exposes `throat_impedance_score` from the current experimental
 normalized-magnitude diagnostic as an independent seventh response. It is

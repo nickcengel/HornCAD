@@ -108,7 +108,7 @@ class MouthSizeCoverageGridReportTests(unittest.TestCase):
             report,
         )
         self.assertIn(
-            "Candidates are ranked by the active score available in each stored diagnostic",
+            "Candidates are ranked by surface score v1",
             report,
         )
         self.assertIn("<h2>Design map</h2>", report)

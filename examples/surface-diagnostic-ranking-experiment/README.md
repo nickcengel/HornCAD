@@ -47,7 +47,7 @@ served by the experiment server. Rebuilding refuses to overwrite an existing
 The completed rankings calibrated and validated the multiscale -3/-6/-9 dB
 beamwidth-quality diagnostic described in
 [`docs/plans/surface_diagnostic_v2.md`](../../docs/plans/surface_diagnostic_v2.md).
-The active contour-forward v2 score improved mean broad-round Spearman
+The selected experimental contour-forward v2 score improved mean broad-round Spearman
 agreement from 0.818 to 0.879 and close-round agreement from 0.052 to 0.459.
 Close-round pairwise agreement improved from 52.0% to 67.8%.
 

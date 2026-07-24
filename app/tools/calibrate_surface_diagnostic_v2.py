@@ -293,7 +293,9 @@ def calibrate(root: Path) -> dict[str, Any]:
         "release_decision": {
             "selected_candidate": final_candidate,
             "criteria": criteria,
-            "promote_v2": all(criteria.values()),
+            "passes_promotion_criteria": all(criteria.values()),
+            "promote_v2": False,
+            "activation_status": "not-activated; v1 remains primary",
         },
         "plot_scores": plot_scores,
         "notes": state.get("notes", {}),
@@ -368,9 +370,11 @@ font-weight:700}}.fail{{color:var(--bad);font-weight:700}}code{{font-size:.92em}
 </style></head><body><main><h1>Surface diagnostic v2 calibration</h1>
 <p>Completed 20-round blinded ranking experiment; ten broad-range and ten
 close-score rounds. Confidence intervals resample complete rounds.</p>
-<section><h2>Release decision</h2><p>Selected preregistered candidate:
-<strong>{html.escape(chosen)}</strong>. Decision:
-<strong>{'PROMOTE V2' if result['release_decision']['promote_v2'] else 'RETAIN V1'}</strong>.</p>
+<section><h2>Validation outcome</h2><p>Selected preregistered candidate:
+<strong>{html.escape(chosen)}</strong>. The candidate
+<strong>{'passes' if result['release_decision']['passes_promotion_criteria'] else 'does not pass'}</strong>
+the registered comparison criteria. Activation status:
+<strong>NOT ACTIVATED — V1 REMAINS PRIMARY</strong>.</p>
 <table>{criteria_rows}</table></section>
 <section><h2>Agreement summary</h2><table><thead><tr><th>Metric</th>
 <th>Broad ρ</th><th>Broad pairs</th><th>Close ρ</th><th>Close pairs</th>
@@ -383,7 +387,7 @@ close-score rounds. Confidence intervals resample complete rounds.</p>
 Each held-out round was evaluated with the candidate selected using the other
 19 rounds.</p><p>Reference-scale selections:
 <code>{html.escape(json.dumps(result['reference_sensitivity']['selection_counts'], sort_keys=True))}</code>.
-The released scale is <strong>{result['reference_sensitivity']['selected_scale']:g}×</strong>.</p></section>
+The selected experimental scale is <strong>{result['reference_sensitivity']['selected_scale']:g}×</strong>.</p></section>
 <section><h2>Written qualitative checks</h2><table><thead><tr><th>Plot</th>
 <th>Candidate</th><th>Note</th></tr></thead><tbody>{''.join(notes)}</tbody></table></section>
 <p>Implementation SHA-256: <code>{result['implementation_sha256']}</code></p>

@@ -82,14 +82,17 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
 
     def test_v1_is_preserved_and_v2_candidates_are_reported(self) -> None:
         result = surface_diagnostics(self.make_run(self.ideal_surface()))
-        self.assertEqual("v2", result["score"]["version"])
+        self.assertEqual("v1", result["score"]["version"])
         self.assertEqual(ACTIVE_SURFACE_SCORE_VERSION, result["score"]["version"])
+        self.assertEqual("v1", surface_score_v1(result)["version"])
+        experimental = surface_score_v2(
+            result, candidate_name=ACTIVE_SURFACE_SCORE_V2_CANDIDATE
+        )
+        self.assertEqual("v2", experimental["version"])
         self.assertEqual(
             ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
-            result["score"]["candidate_name"],
+            experimental["candidate_name"],
         )
-        self.assertEqual("v1", surface_score_v1(result)["version"])
-        self.assertEqual("v2", surface_score_v2(result)["version"])
         self.assertEqual(
             {"conservative", "balanced", "smoothness", "contour_forward"},
             set(result["score_v2_candidates"]),

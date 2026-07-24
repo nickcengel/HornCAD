@@ -1,17 +1,18 @@
 # Surface diagnostic v2: multiscale contour quality
 
-Status: completed and released
+Status: completed and validated; retained as experimental, not activated
 
-Release outcome: the contour-forward top-level weighting passed every promotion
+Validation outcome: the contour-forward top-level weighting passed every promotion
 criterion and was selected in all 20 initial leave-one-round-out folds. The
 initial reference values preserved useful ordering but compressed all measured
 beamwidth-quality scores into 4–28%. As permitted below, one uniform reference
 sensitivity pass evaluated 1×, 1.5×, 2×, 2.5×, and 3× values with nested held-out
 round selection. The 3× scale was selected in 15 held-out folds and by the
-complete evidence; 1.5× was selected in four folds and 1× in one. The released
-3× references produce a measured 22–74% range; final broad-round Spearman
+complete evidence; 1.5× was selected in four folds and 1× in one. The selected
+experimental 3× references produce a measured 22–74% range; final broad-round Spearman
 agreement is 0.879 and close-round agreement is 0.459. Formulas and component
-weights were not changed.
+weights were not changed. This validation did not activate v2; v1 remains the
+primary score and ranking basis.
 
 ## Purpose
 

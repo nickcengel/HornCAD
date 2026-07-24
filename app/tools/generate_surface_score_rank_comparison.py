@@ -109,7 +109,9 @@ def _score_candidate(
         raise ValueError(
             f"{row['id']}: recalculated v1 differs by {delta:g}"
         )
-    score_v2 = float(diagnostics["score"]["overall_percent"])
+    score_v2 = float(
+        diagnostics["score_v2_candidates"]["contour_forward"]["overall_percent"]
+    )
 
     frequencies = np.asarray(run["frequencies"], dtype=float)
     all_angles = np.asarray(run["angles"], dtype=float)

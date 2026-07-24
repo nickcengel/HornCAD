@@ -2,9 +2,9 @@
 
 This document specifies the implemented surface-diagnostic suite for HornCAD
 BEM angle-frequency reports. The raw measurements and calibrated weighted score
-are used by current BEM search. Surface score v2 is active; the former
-five-component score remains available as v1 for provenance and is still the
-response predicted by the released round-control models.
+are used by current BEM search. Surface score v1 remains primary for ranking and
+is the response predicted by the released round-control models. Surface score
+v2 is retained as an explicitly experimental side-by-side diagnostic.
 
 ## Scope and conventions
 
@@ -133,7 +133,7 @@ summaries use a geometric or root-mean-square combination appropriate to the
 quantity; no left/right asymmetry diagnostic exists because the negative-angle
 surface is a mirror.
 
-The active calibrated v2 score uses these component weights:
+The experimental calibrated v2 score uses these component weights:
 
 - 30% in-window profile RMS error;
 - 20% slice-energy RMS departure;
@@ -173,7 +173,7 @@ The v2 release was calibrated against the completed 20-round, 200-plot blinded
 human ranking experiment. The initial 1× reference pass selected the
 preregistered contour-forward weighting in all 20 leave-one-round-out folds.
 The final sensitivity pass selected contour-forward in 19 folds and balanced in
-one; contour-forward remained the full-evidence release choice. Against v1,
+one; contour-forward remained the full-evidence validation choice. Against v1,
 mean broad-round Spearman agreement increased from 0.818 to 0.879; close-round
 agreement increased from 0.052 to 0.459, with close-round pairwise agreement
 increasing from 52.0% to 67.8%. The initial references correctly ordered
