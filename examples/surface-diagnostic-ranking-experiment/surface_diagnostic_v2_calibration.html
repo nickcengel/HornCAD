@@ -1,0 +1,33 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Surface diagnostic v2 calibration</title>
+<style>
+:root{--ink:#172033;--muted:#64748b;--line:#cbd5e1;--paper:#f8fafc;--good:#047857;--bad:#b91c1c}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);
+font:15px/1.45 system-ui,sans-serif}main{max-width:1180px;margin:auto;padding:32px}
+section{background:white;border:1px solid var(--line);border-radius:12px;padding:20px;margin:20px 0;
+overflow:auto}table{border-collapse:collapse;width:100%}th,td{padding:8px 10px;
+border-bottom:1px solid var(--line);text-align:left;vertical-align:top}.pass{color:var(--good);
+font-weight:700}.fail{color:var(--bad);font-weight:700}code{font-size:.92em}
+</style></head><body><main><h1>Surface diagnostic v2 calibration</h1>
+<p>Completed 20-round blinded ranking experiment; ten broad-range and ten
+close-score rounds. Confidence intervals resample complete rounds.</p>
+<section><h2>Release decision</h2><p>Selected preregistered candidate:
+<strong>contour_forward</strong>. Decision:
+<strong>PROMOTE V2</strong>.</p>
+<table><tr><th>close mean spearman at least 0 25</th><td class='pass'>PASS</td></tr><tr><th>close better than v1</th><td class='pass'>PASS</td></tr><tr><th>close pairwise above 0 60</th><td class='pass'>PASS</td></tr><tr><th>broad drop no more than 0 05</th><td class='pass'>PASS</td></tr></table></section>
+<section><h2>Agreement summary</h2><table><thead><tr><th>Metric</th>
+<th>Broad ρ</th><th>Broad pairs</th><th>Close ρ</th><th>Close pairs</th>
+<th>All ρ</th><th>All pairs</th></tr></thead><tbody><tr><th>Surface score v1</th><td>+0.818</td><td>84.2%</td><td>+0.052</td><td>52.0%</td><td>+0.435</td><td>68.1%</td></tr><tr><th>Beamwidth quality alone</th><td>+0.765</td><td>81.1%</td><td>+0.470</td><td>68.2%</td><td>+0.618</td><td>74.7%</td></tr><tr><th>V2 conservative</th><td>+0.824</td><td>84.4%</td><td>+0.256</td><td>59.8%</td><td>+0.540</td><td>72.1%</td></tr><tr><th>V2 balanced</th><td>+0.842</td><td>85.8%</td><td>+0.279</td><td>60.7%</td><td>+0.561</td><td>73.2%</td></tr><tr><th>V2 smoothness</th><td>+0.851</td><td>86.4%</td><td>+0.268</td><td>60.0%</td><td>+0.559</td><td>73.2%</td></tr><tr><th>V2 contour-forward</th><td>+0.868</td><td>86.9%</td><td>+0.372</td><td>63.8%</td><td>+0.620</td><td>75.3%</td></tr></tbody></table></section>
+<section><h2>Per-round v1 versus selected v2</h2><table><thead><tr><th>Round</th>
+<th>Type</th><th>V1 ρ</th><th>V2 ρ</th><th>V1 pairs</th><th>V2 pairs</th>
+</tr></thead><tbody><tr><th>1</th><td>Broad</td><td>+0.891</td><td>+0.939</td><td>88.9%</td><td>91.1%</td></tr><tr><th>2</th><td>Broad</td><td>+0.842</td><td>+0.903</td><td>84.4%</td><td>88.9%</td></tr><tr><th>3</th><td>Broad</td><td>+0.770</td><td>+0.855</td><td>80.0%</td><td>86.7%</td></tr><tr><th>4</th><td>Broad</td><td>+0.976</td><td>+0.976</td><td>95.6%</td><td>95.6%</td></tr><tr><th>5</th><td>Broad</td><td>+0.576</td><td>+0.709</td><td>71.1%</td><td>77.8%</td></tr><tr><th>6</th><td>Broad</td><td>+0.879</td><td>+0.903</td><td>86.7%</td><td>88.9%</td></tr><tr><th>7</th><td>Broad</td><td>+0.758</td><td>+0.794</td><td>82.2%</td><td>82.2%</td></tr><tr><th>8</th><td>Broad</td><td>+0.891</td><td>+0.927</td><td>88.9%</td><td>91.1%</td></tr><tr><th>9</th><td>Broad</td><td>+0.758</td><td>+0.830</td><td>80.0%</td><td>82.2%</td></tr><tr><th>10</th><td>Broad</td><td>+0.842</td><td>+0.842</td><td>84.4%</td><td>84.4%</td></tr><tr><th>11</th><td>Close</td><td>-0.539</td><td>-0.345</td><td>33.3%</td><td>35.6%</td></tr><tr><th>12</th><td>Close</td><td>-0.455</td><td>+0.394</td><td>31.1%</td><td>64.4%</td></tr><tr><th>13</th><td>Close</td><td>+0.309</td><td>+0.636</td><td>66.7%</td><td>71.1%</td></tr><tr><th>14</th><td>Close</td><td>+0.406</td><td>+0.721</td><td>64.4%</td><td>77.8%</td></tr><tr><th>15</th><td>Close</td><td>-0.055</td><td>+0.006</td><td>48.9%</td><td>51.1%</td></tr><tr><th>16</th><td>Close</td><td>-0.055</td><td>+0.576</td><td>46.7%</td><td>66.7%</td></tr><tr><th>17</th><td>Close</td><td>-0.236</td><td>+0.115</td><td>40.0%</td><td>55.6%</td></tr><tr><th>18</th><td>Close</td><td>+0.600</td><td>+0.358</td><td>66.7%</td><td>62.2%</td></tr><tr><th>19</th><td>Close</td><td>+0.430</td><td>+0.915</td><td>68.9%</td><td>86.7%</td></tr><tr><th>20</th><td>Close</td><td>+0.115</td><td>+0.345</td><td>53.3%</td><td>66.7%</td></tr></tbody></table></section>
+<section><h2>Leave-one-round-out selection</h2><p>Candidate selections:
+<code>{&quot;contour_forward&quot;: 20}</code>.
+Each held-out round was evaluated with the candidate selected using the other
+19 rounds.</p></section>
+<section><h2>Written qualitative checks</h2><table><thead><tr><th>Plot</th>
+<th>Candidate</th><th>Note</th></tr></thead><tbody><tr><th>R01-P07</th><td>35d-300mm-L+0-K+1-N+0</td><td>narrowing bad</td></tr><tr><th>R01-P02</th><td>historical:45deg/350x350-canonical-s:candidate-001</td><td> narrowing around 4.5k and ~1.8k and energy build up at 6.5k isnt good.
+but overall fit is decent</td></tr><tr><th>R01-P03</th><td>45d-400mm-L+1-K+1-N-1</td><td>energy at 3k and narrowing between 1-2k and narrowing at high f isnt good.</td></tr><tr><th>R01-P10</th><td>30d-450mm-L+1-K+1-N+0</td><td>narrows at 2k but smooth</td></tr><tr><th>R19-P07</th><td>30d-400mm-L+1-K+1-N+0</td><td>basically perfect. a tiny bit too narrow. happy to give up angle accuraccy for smoothness</td></tr></tbody></table></section>
+<p>Implementation SHA-256: <code>8f8774b6b7f38a5f450d2db0e4391da60ceac93ce51d7f970b1bb13b5a34da17</code></p>
+</main></body></html>
