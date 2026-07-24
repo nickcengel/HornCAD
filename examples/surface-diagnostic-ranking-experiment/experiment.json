@@ -1,0 +1,908 @@
+{
+  "schema_version": 1,
+  "experiment_id": "79d8d75417b4a45b",
+  "round_count": 20,
+  "plots_per_round": 10,
+  "rounds": [
+    {
+      "round": 1,
+      "plots": [
+        {
+          "plot_id": "R01-P01",
+          "image": "/plot/R01-P01.png"
+        },
+        {
+          "plot_id": "R01-P02",
+          "image": "/plot/R01-P02.png"
+        },
+        {
+          "plot_id": "R01-P03",
+          "image": "/plot/R01-P03.png"
+        },
+        {
+          "plot_id": "R01-P04",
+          "image": "/plot/R01-P04.png"
+        },
+        {
+          "plot_id": "R01-P05",
+          "image": "/plot/R01-P05.png"
+        },
+        {
+          "plot_id": "R01-P06",
+          "image": "/plot/R01-P06.png"
+        },
+        {
+          "plot_id": "R01-P07",
+          "image": "/plot/R01-P07.png"
+        },
+        {
+          "plot_id": "R01-P08",
+          "image": "/plot/R01-P08.png"
+        },
+        {
+          "plot_id": "R01-P09",
+          "image": "/plot/R01-P09.png"
+        },
+        {
+          "plot_id": "R01-P10",
+          "image": "/plot/R01-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 2,
+      "plots": [
+        {
+          "plot_id": "R02-P01",
+          "image": "/plot/R02-P01.png"
+        },
+        {
+          "plot_id": "R02-P02",
+          "image": "/plot/R02-P02.png"
+        },
+        {
+          "plot_id": "R02-P03",
+          "image": "/plot/R02-P03.png"
+        },
+        {
+          "plot_id": "R02-P04",
+          "image": "/plot/R02-P04.png"
+        },
+        {
+          "plot_id": "R02-P05",
+          "image": "/plot/R02-P05.png"
+        },
+        {
+          "plot_id": "R02-P06",
+          "image": "/plot/R02-P06.png"
+        },
+        {
+          "plot_id": "R02-P07",
+          "image": "/plot/R02-P07.png"
+        },
+        {
+          "plot_id": "R02-P08",
+          "image": "/plot/R02-P08.png"
+        },
+        {
+          "plot_id": "R02-P09",
+          "image": "/plot/R02-P09.png"
+        },
+        {
+          "plot_id": "R02-P10",
+          "image": "/plot/R02-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 3,
+      "plots": [
+        {
+          "plot_id": "R03-P01",
+          "image": "/plot/R03-P01.png"
+        },
+        {
+          "plot_id": "R03-P02",
+          "image": "/plot/R03-P02.png"
+        },
+        {
+          "plot_id": "R03-P03",
+          "image": "/plot/R03-P03.png"
+        },
+        {
+          "plot_id": "R03-P04",
+          "image": "/plot/R03-P04.png"
+        },
+        {
+          "plot_id": "R03-P05",
+          "image": "/plot/R03-P05.png"
+        },
+        {
+          "plot_id": "R03-P06",
+          "image": "/plot/R03-P06.png"
+        },
+        {
+          "plot_id": "R03-P07",
+          "image": "/plot/R03-P07.png"
+        },
+        {
+          "plot_id": "R03-P08",
+          "image": "/plot/R03-P08.png"
+        },
+        {
+          "plot_id": "R03-P09",
+          "image": "/plot/R03-P09.png"
+        },
+        {
+          "plot_id": "R03-P10",
+          "image": "/plot/R03-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 4,
+      "plots": [
+        {
+          "plot_id": "R04-P01",
+          "image": "/plot/R04-P01.png"
+        },
+        {
+          "plot_id": "R04-P02",
+          "image": "/plot/R04-P02.png"
+        },
+        {
+          "plot_id": "R04-P03",
+          "image": "/plot/R04-P03.png"
+        },
+        {
+          "plot_id": "R04-P04",
+          "image": "/plot/R04-P04.png"
+        },
+        {
+          "plot_id": "R04-P05",
+          "image": "/plot/R04-P05.png"
+        },
+        {
+          "plot_id": "R04-P06",
+          "image": "/plot/R04-P06.png"
+        },
+        {
+          "plot_id": "R04-P07",
+          "image": "/plot/R04-P07.png"
+        },
+        {
+          "plot_id": "R04-P08",
+          "image": "/plot/R04-P08.png"
+        },
+        {
+          "plot_id": "R04-P09",
+          "image": "/plot/R04-P09.png"
+        },
+        {
+          "plot_id": "R04-P10",
+          "image": "/plot/R04-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 5,
+      "plots": [
+        {
+          "plot_id": "R05-P01",
+          "image": "/plot/R05-P01.png"
+        },
+        {
+          "plot_id": "R05-P02",
+          "image": "/plot/R05-P02.png"
+        },
+        {
+          "plot_id": "R05-P03",
+          "image": "/plot/R05-P03.png"
+        },
+        {
+          "plot_id": "R05-P04",
+          "image": "/plot/R05-P04.png"
+        },
+        {
+          "plot_id": "R05-P05",
+          "image": "/plot/R05-P05.png"
+        },
+        {
+          "plot_id": "R05-P06",
+          "image": "/plot/R05-P06.png"
+        },
+        {
+          "plot_id": "R05-P07",
+          "image": "/plot/R05-P07.png"
+        },
+        {
+          "plot_id": "R05-P08",
+          "image": "/plot/R05-P08.png"
+        },
+        {
+          "plot_id": "R05-P09",
+          "image": "/plot/R05-P09.png"
+        },
+        {
+          "plot_id": "R05-P10",
+          "image": "/plot/R05-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 6,
+      "plots": [
+        {
+          "plot_id": "R06-P01",
+          "image": "/plot/R06-P01.png"
+        },
+        {
+          "plot_id": "R06-P02",
+          "image": "/plot/R06-P02.png"
+        },
+        {
+          "plot_id": "R06-P03",
+          "image": "/plot/R06-P03.png"
+        },
+        {
+          "plot_id": "R06-P04",
+          "image": "/plot/R06-P04.png"
+        },
+        {
+          "plot_id": "R06-P05",
+          "image": "/plot/R06-P05.png"
+        },
+        {
+          "plot_id": "R06-P06",
+          "image": "/plot/R06-P06.png"
+        },
+        {
+          "plot_id": "R06-P07",
+          "image": "/plot/R06-P07.png"
+        },
+        {
+          "plot_id": "R06-P08",
+          "image": "/plot/R06-P08.png"
+        },
+        {
+          "plot_id": "R06-P09",
+          "image": "/plot/R06-P09.png"
+        },
+        {
+          "plot_id": "R06-P10",
+          "image": "/plot/R06-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 7,
+      "plots": [
+        {
+          "plot_id": "R07-P01",
+          "image": "/plot/R07-P01.png"
+        },
+        {
+          "plot_id": "R07-P02",
+          "image": "/plot/R07-P02.png"
+        },
+        {
+          "plot_id": "R07-P03",
+          "image": "/plot/R07-P03.png"
+        },
+        {
+          "plot_id": "R07-P04",
+          "image": "/plot/R07-P04.png"
+        },
+        {
+          "plot_id": "R07-P05",
+          "image": "/plot/R07-P05.png"
+        },
+        {
+          "plot_id": "R07-P06",
+          "image": "/plot/R07-P06.png"
+        },
+        {
+          "plot_id": "R07-P07",
+          "image": "/plot/R07-P07.png"
+        },
+        {
+          "plot_id": "R07-P08",
+          "image": "/plot/R07-P08.png"
+        },
+        {
+          "plot_id": "R07-P09",
+          "image": "/plot/R07-P09.png"
+        },
+        {
+          "plot_id": "R07-P10",
+          "image": "/plot/R07-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 8,
+      "plots": [
+        {
+          "plot_id": "R08-P01",
+          "image": "/plot/R08-P01.png"
+        },
+        {
+          "plot_id": "R08-P02",
+          "image": "/plot/R08-P02.png"
+        },
+        {
+          "plot_id": "R08-P03",
+          "image": "/plot/R08-P03.png"
+        },
+        {
+          "plot_id": "R08-P04",
+          "image": "/plot/R08-P04.png"
+        },
+        {
+          "plot_id": "R08-P05",
+          "image": "/plot/R08-P05.png"
+        },
+        {
+          "plot_id": "R08-P06",
+          "image": "/plot/R08-P06.png"
+        },
+        {
+          "plot_id": "R08-P07",
+          "image": "/plot/R08-P07.png"
+        },
+        {
+          "plot_id": "R08-P08",
+          "image": "/plot/R08-P08.png"
+        },
+        {
+          "plot_id": "R08-P09",
+          "image": "/plot/R08-P09.png"
+        },
+        {
+          "plot_id": "R08-P10",
+          "image": "/plot/R08-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 9,
+      "plots": [
+        {
+          "plot_id": "R09-P01",
+          "image": "/plot/R09-P01.png"
+        },
+        {
+          "plot_id": "R09-P02",
+          "image": "/plot/R09-P02.png"
+        },
+        {
+          "plot_id": "R09-P03",
+          "image": "/plot/R09-P03.png"
+        },
+        {
+          "plot_id": "R09-P04",
+          "image": "/plot/R09-P04.png"
+        },
+        {
+          "plot_id": "R09-P05",
+          "image": "/plot/R09-P05.png"
+        },
+        {
+          "plot_id": "R09-P06",
+          "image": "/plot/R09-P06.png"
+        },
+        {
+          "plot_id": "R09-P07",
+          "image": "/plot/R09-P07.png"
+        },
+        {
+          "plot_id": "R09-P08",
+          "image": "/plot/R09-P08.png"
+        },
+        {
+          "plot_id": "R09-P09",
+          "image": "/plot/R09-P09.png"
+        },
+        {
+          "plot_id": "R09-P10",
+          "image": "/plot/R09-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 10,
+      "plots": [
+        {
+          "plot_id": "R10-P01",
+          "image": "/plot/R10-P01.png"
+        },
+        {
+          "plot_id": "R10-P02",
+          "image": "/plot/R10-P02.png"
+        },
+        {
+          "plot_id": "R10-P03",
+          "image": "/plot/R10-P03.png"
+        },
+        {
+          "plot_id": "R10-P04",
+          "image": "/plot/R10-P04.png"
+        },
+        {
+          "plot_id": "R10-P05",
+          "image": "/plot/R10-P05.png"
+        },
+        {
+          "plot_id": "R10-P06",
+          "image": "/plot/R10-P06.png"
+        },
+        {
+          "plot_id": "R10-P07",
+          "image": "/plot/R10-P07.png"
+        },
+        {
+          "plot_id": "R10-P08",
+          "image": "/plot/R10-P08.png"
+        },
+        {
+          "plot_id": "R10-P09",
+          "image": "/plot/R10-P09.png"
+        },
+        {
+          "plot_id": "R10-P10",
+          "image": "/plot/R10-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 11,
+      "plots": [
+        {
+          "plot_id": "R11-P01",
+          "image": "/plot/R11-P01.png"
+        },
+        {
+          "plot_id": "R11-P02",
+          "image": "/plot/R11-P02.png"
+        },
+        {
+          "plot_id": "R11-P03",
+          "image": "/plot/R11-P03.png"
+        },
+        {
+          "plot_id": "R11-P04",
+          "image": "/plot/R11-P04.png"
+        },
+        {
+          "plot_id": "R11-P05",
+          "image": "/plot/R11-P05.png"
+        },
+        {
+          "plot_id": "R11-P06",
+          "image": "/plot/R11-P06.png"
+        },
+        {
+          "plot_id": "R11-P07",
+          "image": "/plot/R11-P07.png"
+        },
+        {
+          "plot_id": "R11-P08",
+          "image": "/plot/R11-P08.png"
+        },
+        {
+          "plot_id": "R11-P09",
+          "image": "/plot/R11-P09.png"
+        },
+        {
+          "plot_id": "R11-P10",
+          "image": "/plot/R11-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 12,
+      "plots": [
+        {
+          "plot_id": "R12-P01",
+          "image": "/plot/R12-P01.png"
+        },
+        {
+          "plot_id": "R12-P02",
+          "image": "/plot/R12-P02.png"
+        },
+        {
+          "plot_id": "R12-P03",
+          "image": "/plot/R12-P03.png"
+        },
+        {
+          "plot_id": "R12-P04",
+          "image": "/plot/R12-P04.png"
+        },
+        {
+          "plot_id": "R12-P05",
+          "image": "/plot/R12-P05.png"
+        },
+        {
+          "plot_id": "R12-P06",
+          "image": "/plot/R12-P06.png"
+        },
+        {
+          "plot_id": "R12-P07",
+          "image": "/plot/R12-P07.png"
+        },
+        {
+          "plot_id": "R12-P08",
+          "image": "/plot/R12-P08.png"
+        },
+        {
+          "plot_id": "R12-P09",
+          "image": "/plot/R12-P09.png"
+        },
+        {
+          "plot_id": "R12-P10",
+          "image": "/plot/R12-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 13,
+      "plots": [
+        {
+          "plot_id": "R13-P01",
+          "image": "/plot/R13-P01.png"
+        },
+        {
+          "plot_id": "R13-P02",
+          "image": "/plot/R13-P02.png"
+        },
+        {
+          "plot_id": "R13-P03",
+          "image": "/plot/R13-P03.png"
+        },
+        {
+          "plot_id": "R13-P04",
+          "image": "/plot/R13-P04.png"
+        },
+        {
+          "plot_id": "R13-P05",
+          "image": "/plot/R13-P05.png"
+        },
+        {
+          "plot_id": "R13-P06",
+          "image": "/plot/R13-P06.png"
+        },
+        {
+          "plot_id": "R13-P07",
+          "image": "/plot/R13-P07.png"
+        },
+        {
+          "plot_id": "R13-P08",
+          "image": "/plot/R13-P08.png"
+        },
+        {
+          "plot_id": "R13-P09",
+          "image": "/plot/R13-P09.png"
+        },
+        {
+          "plot_id": "R13-P10",
+          "image": "/plot/R13-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 14,
+      "plots": [
+        {
+          "plot_id": "R14-P01",
+          "image": "/plot/R14-P01.png"
+        },
+        {
+          "plot_id": "R14-P02",
+          "image": "/plot/R14-P02.png"
+        },
+        {
+          "plot_id": "R14-P03",
+          "image": "/plot/R14-P03.png"
+        },
+        {
+          "plot_id": "R14-P04",
+          "image": "/plot/R14-P04.png"
+        },
+        {
+          "plot_id": "R14-P05",
+          "image": "/plot/R14-P05.png"
+        },
+        {
+          "plot_id": "R14-P06",
+          "image": "/plot/R14-P06.png"
+        },
+        {
+          "plot_id": "R14-P07",
+          "image": "/plot/R14-P07.png"
+        },
+        {
+          "plot_id": "R14-P08",
+          "image": "/plot/R14-P08.png"
+        },
+        {
+          "plot_id": "R14-P09",
+          "image": "/plot/R14-P09.png"
+        },
+        {
+          "plot_id": "R14-P10",
+          "image": "/plot/R14-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 15,
+      "plots": [
+        {
+          "plot_id": "R15-P01",
+          "image": "/plot/R15-P01.png"
+        },
+        {
+          "plot_id": "R15-P02",
+          "image": "/plot/R15-P02.png"
+        },
+        {
+          "plot_id": "R15-P03",
+          "image": "/plot/R15-P03.png"
+        },
+        {
+          "plot_id": "R15-P04",
+          "image": "/plot/R15-P04.png"
+        },
+        {
+          "plot_id": "R15-P05",
+          "image": "/plot/R15-P05.png"
+        },
+        {
+          "plot_id": "R15-P06",
+          "image": "/plot/R15-P06.png"
+        },
+        {
+          "plot_id": "R15-P07",
+          "image": "/plot/R15-P07.png"
+        },
+        {
+          "plot_id": "R15-P08",
+          "image": "/plot/R15-P08.png"
+        },
+        {
+          "plot_id": "R15-P09",
+          "image": "/plot/R15-P09.png"
+        },
+        {
+          "plot_id": "R15-P10",
+          "image": "/plot/R15-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 16,
+      "plots": [
+        {
+          "plot_id": "R16-P01",
+          "image": "/plot/R16-P01.png"
+        },
+        {
+          "plot_id": "R16-P02",
+          "image": "/plot/R16-P02.png"
+        },
+        {
+          "plot_id": "R16-P03",
+          "image": "/plot/R16-P03.png"
+        },
+        {
+          "plot_id": "R16-P04",
+          "image": "/plot/R16-P04.png"
+        },
+        {
+          "plot_id": "R16-P05",
+          "image": "/plot/R16-P05.png"
+        },
+        {
+          "plot_id": "R16-P06",
+          "image": "/plot/R16-P06.png"
+        },
+        {
+          "plot_id": "R16-P07",
+          "image": "/plot/R16-P07.png"
+        },
+        {
+          "plot_id": "R16-P08",
+          "image": "/plot/R16-P08.png"
+        },
+        {
+          "plot_id": "R16-P09",
+          "image": "/plot/R16-P09.png"
+        },
+        {
+          "plot_id": "R16-P10",
+          "image": "/plot/R16-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 17,
+      "plots": [
+        {
+          "plot_id": "R17-P01",
+          "image": "/plot/R17-P01.png"
+        },
+        {
+          "plot_id": "R17-P02",
+          "image": "/plot/R17-P02.png"
+        },
+        {
+          "plot_id": "R17-P03",
+          "image": "/plot/R17-P03.png"
+        },
+        {
+          "plot_id": "R17-P04",
+          "image": "/plot/R17-P04.png"
+        },
+        {
+          "plot_id": "R17-P05",
+          "image": "/plot/R17-P05.png"
+        },
+        {
+          "plot_id": "R17-P06",
+          "image": "/plot/R17-P06.png"
+        },
+        {
+          "plot_id": "R17-P07",
+          "image": "/plot/R17-P07.png"
+        },
+        {
+          "plot_id": "R17-P08",
+          "image": "/plot/R17-P08.png"
+        },
+        {
+          "plot_id": "R17-P09",
+          "image": "/plot/R17-P09.png"
+        },
+        {
+          "plot_id": "R17-P10",
+          "image": "/plot/R17-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 18,
+      "plots": [
+        {
+          "plot_id": "R18-P01",
+          "image": "/plot/R18-P01.png"
+        },
+        {
+          "plot_id": "R18-P02",
+          "image": "/plot/R18-P02.png"
+        },
+        {
+          "plot_id": "R18-P03",
+          "image": "/plot/R18-P03.png"
+        },
+        {
+          "plot_id": "R18-P04",
+          "image": "/plot/R18-P04.png"
+        },
+        {
+          "plot_id": "R18-P05",
+          "image": "/plot/R18-P05.png"
+        },
+        {
+          "plot_id": "R18-P06",
+          "image": "/plot/R18-P06.png"
+        },
+        {
+          "plot_id": "R18-P07",
+          "image": "/plot/R18-P07.png"
+        },
+        {
+          "plot_id": "R18-P08",
+          "image": "/plot/R18-P08.png"
+        },
+        {
+          "plot_id": "R18-P09",
+          "image": "/plot/R18-P09.png"
+        },
+        {
+          "plot_id": "R18-P10",
+          "image": "/plot/R18-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 19,
+      "plots": [
+        {
+          "plot_id": "R19-P01",
+          "image": "/plot/R19-P01.png"
+        },
+        {
+          "plot_id": "R19-P02",
+          "image": "/plot/R19-P02.png"
+        },
+        {
+          "plot_id": "R19-P03",
+          "image": "/plot/R19-P03.png"
+        },
+        {
+          "plot_id": "R19-P04",
+          "image": "/plot/R19-P04.png"
+        },
+        {
+          "plot_id": "R19-P05",
+          "image": "/plot/R19-P05.png"
+        },
+        {
+          "plot_id": "R19-P06",
+          "image": "/plot/R19-P06.png"
+        },
+        {
+          "plot_id": "R19-P07",
+          "image": "/plot/R19-P07.png"
+        },
+        {
+          "plot_id": "R19-P08",
+          "image": "/plot/R19-P08.png"
+        },
+        {
+          "plot_id": "R19-P09",
+          "image": "/plot/R19-P09.png"
+        },
+        {
+          "plot_id": "R19-P10",
+          "image": "/plot/R19-P10.png"
+        }
+      ]
+    },
+    {
+      "round": 20,
+      "plots": [
+        {
+          "plot_id": "R20-P01",
+          "image": "/plot/R20-P01.png"
+        },
+        {
+          "plot_id": "R20-P02",
+          "image": "/plot/R20-P02.png"
+        },
+        {
+          "plot_id": "R20-P03",
+          "image": "/plot/R20-P03.png"
+        },
+        {
+          "plot_id": "R20-P04",
+          "image": "/plot/R20-P04.png"
+        },
+        {
+          "plot_id": "R20-P05",
+          "image": "/plot/R20-P05.png"
+        },
+        {
+          "plot_id": "R20-P06",
+          "image": "/plot/R20-P06.png"
+        },
+        {
+          "plot_id": "R20-P07",
+          "image": "/plot/R20-P07.png"
+        },
+        {
+          "plot_id": "R20-P08",
+          "image": "/plot/R20-P08.png"
+        },
+        {
+          "plot_id": "R20-P09",
+          "image": "/plot/R20-P09.png"
+        },
+        {
+          "plot_id": "R20-P10",
+          "image": "/plot/R20-P10.png"
+        }
+      ]
+    }
+  ]
+}

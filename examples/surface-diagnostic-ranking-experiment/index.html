@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blinded coverage-surface ranking</title>
+<style>
+:root{--ink:#172033;--muted:#64748b;--line:#cbd5e1;--paper:#f1f5f9;
+--accent:#0f766e;--danger:#b91c1c} *{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.45 system-ui,sans-serif}
+header{position:sticky;top:0;z-index:5;background:rgba(248,250,252,.96);
+border-bottom:1px solid var(--line);padding:14px 24px;backdrop-filter:blur(8px)}
+header>div,main{max-width:1180px;margin:auto} h1{font-size:21px;margin:0 0 3px}
+.subhead,.status{color:var(--muted)} main{padding:22px}
+.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}
+button{border:1px solid var(--line);border-radius:8px;padding:9px 13px;background:white;
+font:inherit;cursor:pointer} button.primary{background:var(--accent);border-color:var(--accent);
+color:white;font-weight:650} button:disabled{opacity:.45;cursor:not-allowed}
+.cards{display:grid;gap:14px}.card{display:grid;grid-template-columns:48px minmax(0,1fr) 300px;
+gap:14px;align-items:start;background:white;border:1px solid var(--line);border-radius:12px;
+padding:12px;box-shadow:0 1px 2px #0f172a10}.card.dragging{opacity:.35}
+.rank{font-size:22px;font-weight:750;text-align:center;padding-top:8px}.rank small{display:block;
+font-size:11px;color:var(--muted);font-weight:500}.plot-id{font-size:12px;color:var(--muted);
+margin-bottom:5px}.card img{display:block;width:100%;height:auto;border:1px solid #e2e8f0;
+border-radius:6px}.note label{display:block;font-size:12px;font-weight:700;margin-bottom:5px}
+textarea{display:block;width:100%;min-height:118px;resize:vertical;border:1px solid var(--line);
+border-radius:7px;padding:9px;font:inherit}.move{display:flex;gap:6px;margin-top:8px}
+.save{font-size:12px;color:var(--muted)} .locked{color:var(--accent);font-weight:700}
+.error{color:var(--danger)} .complete{background:white;border:1px solid var(--line);
+border-radius:12px;padding:28px;text-align:center}
+@media(max-width:850px){.card{grid-template-columns:40px minmax(0,1fr)}.note{grid-column:2}}
+</style></head><body>
+<header><div><h1>Blinded coverage-surface ranking</h1>
+<div class="subhead">Drag into best-to-worst order. Plot notes are optional and will appear in the final report.</div>
+</div></header><main><div id="app">Loading…</div></main>
+<script>
+let experiment, state, currentRound=1, saveTimer, dragged=null;
+const app=document.querySelector("#app");
+const esc=value=>String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]));
+async function load(){
+  [experiment,state]=await Promise.all([
+    fetch("/api/experiment").then(r=>r.json()),fetch("/api/state").then(r=>r.json())
+  ]);
+  currentRound=[...Array(experiment.round_count)].map((_,i)=>i+1)
+    .find(n=>!state.locked_rounds.includes(n))||experiment.round_count;
+  render();
+}
+function plotsFor(round){
+  const byId=Object.fromEntries(experiment.rounds[round-1].plots.map(p=>[p.plot_id,p]));
+  return state.orders[String(round)].map(id=>byId[id]);
+}
+function render(){
+  if(state.complete){
+    app.innerHTML=`<div class="complete"><h2>All rankings are locked</h2>
+      <p>Your ordering and per-plot notes are recorded.</p>
+      <p><a href="/final-report" target="_blank">Open the unblinded comparison report</a></p></div>`;
+    return;
+  }
+  const locked=state.locked_rounds.includes(currentRound);
+  const cards=plotsFor(currentRound).map((plot,index)=>`<article class="card"
+    draggable="${!locked}" data-id="${plot.plot_id}">
+    <div class="rank">${index+1}<small>${index===0?"BEST":index===9?"WORST":""}</small></div>
+    <div><div class="plot-id">${esc(plot.plot_id)}</div><img src="${plot.image}"
+      alt="Blinded coverage surface ${esc(plot.plot_id)}" draggable="false"></div>
+    <div class="note"><label for="note-${plot.plot_id}">Notes for this plot</label>
+      <textarea id="note-${plot.plot_id}" data-note="${plot.plot_id}" maxlength="5000"
+      placeholder="Optional observations…" ${locked?"disabled":""}>${esc(state.notes[plot.plot_id]||"")}</textarea>
+      <div class="move"><button data-up="${plot.plot_id}" ${locked||index===0?"disabled":""}>↑ Up</button>
+      <button data-down="${plot.plot_id}" ${locked||index===9?"disabled":""}>↓ Down</button></div></div>
+    </article>`).join("");
+  app.innerHTML=`<div class="toolbar"><div><strong>Round ${currentRound} of ${experiment.round_count}</strong>
+    <span class="status"> · ${state.locked_rounds.length} locked</span><div id="save" class="save">Saved</div></div>
+    <div><button id="previous" ${currentRound===1?"disabled":""}>Previous</button>
+    <button id="next" ${currentRound===experiment.round_count?"disabled":""}>Next</button>
+    <button id="lock" class="primary" ${locked?"disabled":""}>${locked?"Round locked":"Lock this ranking"}</button></div></div>
+    <div class="cards">${cards}</div>`;
+  bind();
+}
+function bind(){
+  document.querySelector("#previous").onclick=()=>{currentRound--;render()};
+  document.querySelector("#next").onclick=()=>{currentRound++;render()};
+  document.querySelector("#lock").onclick=lockRound;
+  document.querySelectorAll("[data-note]").forEach(field=>{
+    field.oninput=()=>{state.notes[field.dataset.note]=field.value;scheduleSave()};
+  });
+  document.querySelectorAll("[data-up]").forEach(button=>button.onclick=()=>move(button.dataset.up,-1));
+  document.querySelectorAll("[data-down]").forEach(button=>button.onclick=()=>move(button.dataset.down,1));
+  document.querySelectorAll(".card[draggable=true]").forEach(card=>{
+    card.ondragstart=()=>{dragged=card.dataset.id;card.classList.add("dragging")};
+    card.ondragend=()=>{dragged=null;card.classList.remove("dragging")};
+    card.ondragover=event=>event.preventDefault();
+    card.ondrop=event=>{event.preventDefault();if(dragged&&dragged!==card.dataset.id){
+      const order=state.orders[String(currentRound)],from=order.indexOf(dragged),to=order.indexOf(card.dataset.id);
+      order.splice(to,0,order.splice(from,1)[0]);render();scheduleSave();
+    }};
+  });
+}
+function move(id,delta){
+  const order=state.orders[String(currentRound)],from=order.indexOf(id),to=from+delta;
+  if(to<0||to>=order.length)return;[order[from],order[to]]=[order[to],order[from]];
+  render();scheduleSave();
+}
+function scheduleSave(){
+  clearTimeout(saveTimer);const label=document.querySelector("#save");
+  if(label)label.textContent="Unsaved changes…";
+  saveTimer=setTimeout(save,450);
+}
+async function save(){
+  clearTimeout(saveTimer);
+  const response=await fetch("/api/state",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(state)});
+  const result=await response.json();
+  if(!response.ok){const label=document.querySelector("#save");if(label){label.textContent=result.error;
+    label.classList.add("error")}throw new Error(result.error)}
+  state=result;const label=document.querySelector("#save");if(label)label.textContent="Saved";
+}
+async function lockRound(){
+  if(!confirm("Lock this best-to-worst order and its notes? It cannot be edited afterward."))return;
+  if(!state.locked_rounds.includes(currentRound))state.locked_rounds.push(currentRound);
+  await save();
+  currentRound=[...Array(experiment.round_count)].map((_,i)=>i+1)
+    .find(n=>!state.locked_rounds.includes(n))||experiment.round_count;
+  render();
+}
+load().catch(error=>{app.innerHTML=`<p class="error">${esc(error)}</p>`});
+</script></body></html>
