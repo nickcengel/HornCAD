@@ -288,6 +288,13 @@ def run_followup(*, wait_for_development: bool = False) -> dict[str, Any]:
         ROOT / manifest["inputs"][row["id"]]["search"]
         for row in manifest["coordinates"] if row["stage"] == STAGE
     ]
+    manifest["s_matched_followup"]["status"] = "running"
+    manifest["freeze_sha256"] = _content_hash({
+        key: value for key, value in manifest.items()
+        if key != "freeze_sha256"
+    })
+    _write_json(MANIFEST, manifest)
+    refresh_index(STUDY_ROOT)
     result = run_queue(
         paths,
         RUNTIME,

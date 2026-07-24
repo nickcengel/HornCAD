@@ -160,6 +160,7 @@ def build_progress(root: Path, manifest: dict[str, Any]) -> dict[str, Any]:
         ("conditional validation",
          root / "runtime-conditional-validation.json"),
         ("locked validation", root / "runtime-locked-validation.json"),
+        ("S-matched follow-up", root / "runtime-s-matched-followup.json"),
         ("development", root /
          "runtime-primary-development-secondary-transfer.json"),
     )
@@ -506,6 +507,12 @@ def main() -> None:
         active = any(
             _read_json(path).get("status") == "running"
             for path in root.glob("runtime-*.json")
+        )
+        manifest = _read_json(root / "manifest.json")
+        followup = manifest.get("s_matched_followup", {})
+        active = active or (
+            isinstance(followup, dict)
+            and followup.get("status") in {"preflight", "running"}
         )
         if not active or args.watch_seconds == 0:
             break
