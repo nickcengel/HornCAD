@@ -23,6 +23,10 @@ from scipy.stats import norm, qmc
 import yaml
 
 try:
+    from .composite_diagnostics import (
+        COMPOSITE_SCORE_VERSION,
+        composite_surface_impedance_score,
+    )
     from .export_horncad import solved_s, termination_metrics
     from .generate_numcalc_review import generate_review
     from .interactive_results import coverage_diagnostics, load_run, single_report
@@ -35,6 +39,10 @@ try:
     from .run_bem_suite import find_numcalc
     from .run_numcalc_sweep import ppo_frequency_grid, run_sweep
 except ImportError:
+    from composite_diagnostics import (
+        COMPOSITE_SCORE_VERSION,
+        composite_surface_impedance_score,
+    )
     from export_horncad import solved_s, termination_metrics
     from generate_numcalc_review import generate_review
     from interactive_results import coverage_diagnostics, load_run, single_report
@@ -438,10 +446,10 @@ def _record_surface_score(record: dict[str, Any],
                           search: dict[str, Any]) -> float | None:
     result = record.get("surface_diagnostics", {})
     dimensions = search.get("geometry_context", {})
-    score = result.get("score") or surface_score(result, {
+    score = surface_score(result, {
         "horizontal": dimensions.get("mouth_width_mm", 0),
         "vertical": dimensions.get("mouth_height_mm", 0),
-    })
+    }) or result.get("score")
     if not score:
         return None
     value = float(score["overall_percent"])
@@ -1194,10 +1202,11 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
         search.get("adaptive_kn", {}).get("enabled", False) or
         search.get("adaptive_kn_closure", {}).get("enabled", False))
     default_visible_columns = (
-        {"surface-score", "beamwidth-score", "impedance-score", "k", "n"}
+        {"surface-score", "composite-score", "beamwidth-score",
+         "impedance-score", "k", "n"}
         if kn_study else {
-            "surface-score", "beamwidth-score", "impedance-score", "containment-mean",
-            "profile-rms", "slice-rms",
+            "surface-score", "composite-score", "beamwidth-score",
+            "impedance-score", "containment-mean", "profile-rms", "slice-rms",
         })
 
     def hidden_attribute(column: str) -> str:
@@ -1208,14 +1217,31 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
         record["pareto"] = index in pareto
     def final_score_cell(record: dict[str, Any]) -> str:
         result = record.get("surface_diagnostics", {})
-        score = result.get("score") or surface_score(result, {
-            "horizontal": mouth_width, "vertical": mouth_height})
+        score = surface_score(result, {
+            "horizontal": mouth_width, "vertical": mouth_height
+        }) or result.get("score")
         if not score:
             return "<td data-column='surface-score' data-sort=''>—</td>"
         value = float(score["overall_percent"])
         version = html.escape(str(score.get("version", "v1")))
         return (f"<td data-column='surface-score' data-sort='{value:.6f}'>"
                 f"{value:.1f}% <small>{version}</small></td>")
+
+    def composite_score_cell(record: dict[str, Any]) -> str:
+        surface = surface_score(record.get("surface_diagnostics", {}), {
+            "horizontal": mouth_width, "vertical": mouth_height,
+        })
+        composite = composite_surface_impedance_score(
+            surface,
+            record.get("throat_impedance_diagnostics"),
+        )
+        if not composite:
+            return "<td data-column='composite-score' data-sort=''>—</td>"
+        value = float(composite["overall_percent"])
+        return (
+            f"<td data-column='composite-score' data-sort='{value:.6f}'>"
+            f"{value:.1f}% <small>v{COMPOSITE_SCORE_VERSION}</small></td>"
+        )
 
     def impedance_score_cell(record: dict[str, Any]) -> str:
         result = record.get("throat_impedance_diagnostics", {})
@@ -1276,6 +1302,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
             f"{stl_link}{report_link}</td>",
             f"<td data-sort='{html.escape(status)}'>{html.escape(status)}</td>",
             final_score_cell(record),
+            composite_score_cell(record),
             surface_cell(
                 record,
                 "beamwidth-score",
@@ -1318,6 +1345,7 @@ def write_report(output_dir: Path, state: dict[str, Any]) -> Path:
     toggle_columns = tuple(
         (column, label, column in default_visible_columns) for column, label in (
         ("surface-score", "Final surface score"),
+        ("composite-score", "Composite surface + impedance score"),
         ("beamwidth-score", "Three-contour beamwidth quality H / V"),
         ("impedance-score",
          f"Throat-impedance score v{DIAGNOSTIC_VERSION}"),
@@ -1370,8 +1398,8 @@ th,td{{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;vert
 <p><strong>Crossover</strong><br>{crossover_frequency:g} Hz</p>
 <p><strong>Diagnostic band</strong><br>{crossover_frequency:g}–{upper_frequency:g} Hz</p></section>
 <section><p><strong>Sampling policy:</strong> training uses {search.get('solver', {}).get('points_per_octave', 12):g} PPO. Seed, representative probes, and finalists require {search.get('confirmation_points_per_octave', 20):g}-PPO confirmation before final selection.</p></section>
-<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Final surface score</th><th class='sortable' data-column='beamwidth-score'{hidden_attribute('beamwidth-score')} data-sort='number'>Three-contour beamwidth quality H&nbsp;/ V</th><th class='sortable' data-column='impedance-score' data-sort='number'>Throat-impedance score v{DIAGNOSTIC_VERSION}</th><th class='sortable' data-column='containment-mean'{hidden_attribute('containment-mean')} data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms'{hidden_attribute('profile-rms')} data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise'{hidden_attribute('outward-rise')} data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms'{hidden_attribute('slice-rms')} data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms'{hidden_attribute('line-rms')} data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k'{hidden_attribute('k')} data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n'{hidden_attribute('n')} data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
-<section><p>Surface score v1 remains the primary score and candidate-ranking basis. Experimental surface score v2.2, the guarded general-purpose v2.3 refinement, and multiscale −3/−6/−9 dB beamwidth quality are retained only for side-by-side study. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points. Adaptive K/N studies first measure the coarse field, then test axial and diagonal neighbors around each new winner. K/N is reported closed only after the winner is bracketed at the authored K and N resolution or reaches the accepted K=1 or N=2 lower limit.</p></section>
+<section><h2>Candidates</h2><div class='column-controls' aria-label='Candidate table columns'>{column_toggles}</div><table class='sortable-table'><thead><tr><th class='sortable' data-sort='text'>Candidate</th><th class='sortable' data-sort='text'>Status</th><th class='sortable' data-column='surface-score' data-sort='number'>Surface score v2.3</th><th class='sortable' data-column='composite-score' data-sort='number'>Composite 75 / 25</th><th class='sortable' data-column='beamwidth-score'{hidden_attribute('beamwidth-score')} data-sort='number'>Three-contour beamwidth quality H&nbsp;/ V</th><th class='sortable' data-column='impedance-score' data-sort='number'>Throat-impedance score v{DIAGNOSTIC_VERSION}</th><th class='sortable' data-column='containment-mean'{hidden_attribute('containment-mean')} data-sort='number'>Mean containment H&nbsp;/ V</th><th class='sortable' data-column='profile-rms'{hidden_attribute('profile-rms')} data-sort='number'>Profile RMS error H&nbsp;/ V</th><th class='sortable' data-column='outward-rise'{hidden_attribute('outward-rise')} data-sort='number'>Outward-rise violation H&nbsp;/ V</th><th class='sortable' data-column='slice-rms'{hidden_attribute('slice-rms')} data-sort='number'>Slice-energy RMS departure H&nbsp;/ V</th><th class='sortable' data-column='line-rms'{hidden_attribute('line-rms')} data-sort='number'>−6 dB RMS error H&nbsp;/ V</th><th class='sortable' data-column='length' hidden data-sort='number'>Length mm</th><th class='sortable' data-column='length-mouth-ratio' hidden data-sort='number'>Length-mouth ratio</th><th class='sortable' data-column='extension' hidden data-sort='number'>Extension mm</th><th class='sortable' data-column='osse' hidden data-sort='number'>OS-SE H&nbsp;/ V</th><th class='sortable' data-column='k'{hidden_attribute('k')} data-sort='number'>K H&nbsp;/ V</th><th class='sortable' data-column='s' hidden data-sort='number'>S H&nbsp;/ V</th><th class='sortable' data-column='n'{hidden_attribute('n')} data-sort='number'>N H&nbsp;/ V</th><th class='sortable' data-column='trait' hidden data-sort='text'>Distinguishing trait</th><th class='sortable' data-column='mouth-height' hidden data-sort='number'>Mouth height</th><th class='sortable' data-column='mouth-width' hidden data-sort='number'>Mouth width</th></tr></thead><tbody>{''.join(rows)}</tbody></table></section>
+<section><p>Surface score v2.3 is the diagnostic of record and the sole candidate-ranking basis. Composite score v{COMPOSITE_SCORE_VERSION} is reported as 75% surface v2.3 plus 25% throat impedance v{DIAGNOSTIC_VERSION}, but it does not affect ranking. Surface v1 and v2.2 remain reproducible historical comparisons. Proposals closer than normalized distance {state['search'].get('minimum_candidate_distance', DEFAULT_MINIMUM_CANDIDATE_DISTANCE):g} to a retained candidate are rejected without retaining their data. Uniform S sweeps may skip a declining tail only after five measured points. Adaptive K/N studies first measure the coarse field, then test axial and diagonal neighbors around each new winner. K/N is reported closed only after the winner is bracketed at the authored K and N resolution or reaches the accepted K=1 or N=2 lower limit.</p></section>
 <script>
 document.querySelectorAll('[data-column-toggle]').forEach((button) => {{
   button.addEventListener('click', () => {{
@@ -1536,6 +1564,10 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
             search["crossover_hz"],
             search["upper_frequency_hz"],
         )
+        new_composite_diagnostics = composite_surface_impedance_score(
+            new_surface_diagnostics.get("score"),
+            new_impedance_diagnostics,
+        )
         report_path = candidate_dir / "bem" / f"{artifact_stem}_Report.html"
         single_report(run_dir, report_path, title=title,
                       evaluation_frequencies=fixed_grid, fixed_band=True,
@@ -1554,6 +1586,7 @@ def evaluate_candidate(record: dict[str, Any], candidate_dir: Path,
             diagnostics=diagnostics,
             surface_diagnostics=new_surface_diagnostics,
             throat_impedance_diagnostics=new_impedance_diagnostics,
+            composite_diagnostics=new_composite_diagnostics,
             sampling_stability=stability,
             crossover_loading_percent=loading_percent,
             crossover_minimum_normalized_impedance=loading_minimum,

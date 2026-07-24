@@ -5016,7 +5016,7 @@
     "s-matched-followup": 6,
     "secondary-transfer": 15
   },
-  "freeze_sha256": "e2ef05b6ba7223900419c5b67721e8b89461b07d6211d0fdebe6024f3b797d21",
+  "freeze_sha256": "5e6fb860aef9c204ffc70d8c55980ca38b61ed2ac9c10475a7a46cc7c5a584df",
   "hard_candidate_cap": 232,
   "implementation_sha256": "f1614ea6b7995b8aacb0ae20827f7a927cfd75f52cb41d35e272e3293738e729",
   "initial_candidate_count": 210,
@@ -7272,7 +7272,7 @@
       "ext-angle-primary-development-30deg-350mm-primary-A12-E40",
       "ext-angle-primary-development-30deg-300mm-primary-A12-E40"
     ],
-    "status": "preflight",
+    "status": "complete",
     "strategy_version": 2
   },
   "scheduler": {

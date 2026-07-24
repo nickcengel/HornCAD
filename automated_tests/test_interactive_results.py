@@ -103,7 +103,8 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("Horn acoustic parameters", single_text)
             self.assertIn("report-schema: canonical-v12", single_text)
             self.assertIn("Surface diagnostics", single_text)
-            self.assertIn("Experimental throat-impedance diagnostic", single_text)
+            self.assertIn("Throat-impedance diagnostic", single_text)
+            self.assertIn("Composite surface + impedance score", single_text)
             self.assertIn("Throat-impedance score", single_text)
             self.assertTrue(
                 (single.parent / "throat_impedance_diagnostics.json").is_file())
@@ -112,8 +113,10 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("Best: 100%", single_text)
             self.assertGreaterEqual(single_text.count("Best: 0 dB"), 2)
             self.assertIn(r"Target: 1\u00d7", single_text)
-            self.assertIn("Primary surface score v1", single_text)
-            self.assertIn("Experimental surface score v2.2", single_text)
+            self.assertIn(
+                "Surface score v2.3 · diagnostic of record", single_text)
+            self.assertIn("Surface score v1 · legacy", single_text)
+            self.assertIn("Surface score v2.2 · historical", single_text)
             self.assertIn("three-contour beamwidth quality", single_text)
             self.assertNotIn("1/3-oct", single_text)
             self.assertNotIn("Coverage Match", single_text)
@@ -145,7 +148,8 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn('"x0":600.0', single_text)
             self.assertGreaterEqual(single_text.count('"hoverinfo":"skip"'), 4)
             candidate_surface = surface_diagnostics["Candidate A"]
-            self.assertEqual(candidate_surface["score"]["version"], "v1")
+            self.assertEqual(candidate_surface["score"]["version"], "v2.3")
+            self.assertEqual(candidate_surface["score_v1"]["version"], "v1")
             self.assertEqual(candidate_surface["score_v1"]["version"], "v1")
             self.assertEqual(
                 {"minus_3_db", "minus_6_db", "minus_9_db"},
@@ -156,7 +160,8 @@ class InteractiveResultsTests(unittest.TestCase):
             self.assertIn("Normalized throat impedance magnitude", text)
             self.assertIn("Conical extension", text)
             self.assertIn("Surface diagnostics", text)
-            self.assertIn("Experimental throat-impedance diagnostic", text)
+            self.assertIn("Throat-impedance diagnostic", text)
+            self.assertIn("Composite surface + impedance score", text)
             self.assertIn("<strong>Evaluated band:</strong>", text)
             self.assertIn("<h3>A</h3>", text)
             self.assertIn("<h3>D</h3>", text)

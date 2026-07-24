@@ -1,10 +1,10 @@
 # Surface score v2.3 calibration
 
-Status: experimental, calibrated, not independently validated
+Status: diagnostic of record since 2026-07-24; calibrated, not independently validated
 
 V2.3 preserves v2.2 as the broad-quality baseline and adds a guarded
-local-ranking refinement. It is emitted side by side and does not replace the
-primary v1 search score.
+local-ranking refinement. It is the authoritative search-ranking score. V1 and
+v2.2 remain reproducible historical comparisons.
 
 ## Frozen formula
 

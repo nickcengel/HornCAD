@@ -1,0 +1,851 @@
+{
+  "candidate_count": 20,
+  "comparisons": [
+    {
+      "cell": "30deg-250mm",
+      "coordinate": "A0-E20",
+      "errors": {
+        "mean_containment": 0.029329659502934646,
+        "minus_six_db_rms_error": -0.010652223640903458,
+        "outward_rise_violation": -0.011293537274561321,
+        "profile_rms_error": 0.0011554084779199503,
+        "slice_energy_rms_departure": 0.0038873262264034203,
+        "surface_score": -0.027831792136595368,
+        "throat_impedance_score": -3.82536188682397
+      },
+      "id": "ext-angle-locked-validation-30deg-250mm-primary-A0-E20",
+      "observed": {
+        "mean_containment": 76.3161658609792,
+        "minus_six_db_rms_error": 16.558865975495404,
+        "outward_rise_violation": 0.019329247316488135,
+        "profile_rms_error": 1.8912974883495088,
+        "slice_energy_rms_departure": 1.1473083810545117,
+        "surface_score": 76.47258889005678,
+        "throat_impedance_score": 50.57850633344571
+      },
+      "predicted": {
+        "mean_containment": 76.28683620147626,
+        "minus_six_db_rms_error": 16.569518199136308,
+        "outward_rise_violation": 0.030622784591049456,
+        "profile_rms_error": 1.8901420798715889,
+        "slice_energy_rms_departure": 1.1434210548281083,
+        "surface_score": 76.50042068219338,
+        "throat_impedance_score": 54.40386822026968
+      },
+      "radiation_gate_failed": false,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": false
+      },
+      "response_sha256": "303c508cc34a39dc8b46c009a6980a8fa0c6dd74725da707d12601cbed5ae09c"
+    },
+    {
+      "cell": "30deg-250mm",
+      "coordinate": "A0-E60",
+      "errors": {
+        "mean_containment": -0.05419034684707924,
+        "minus_six_db_rms_error": 0.026676824497585017,
+        "outward_rise_violation": -0.013000191180030804,
+        "profile_rms_error": -0.004775613210396212,
+        "slice_energy_rms_departure": 0.0006802328865709306,
+        "surface_score": 0.013554675972642372,
+        "throat_impedance_score": -5.044687169129375
+      },
+      "id": "ext-angle-locked-validation-30deg-250mm-primary-A0-E60",
+      "observed": {
+        "mean_containment": 76.32329484356843,
+        "minus_six_db_rms_error": 16.486416919548994,
+        "outward_rise_violation": 0.030458469505386776,
+        "profile_rms_error": 1.892957673559338,
+        "slice_energy_rms_departure": 1.1519907582616375,
+        "surface_score": 76.44434679851099,
+        "throat_impedance_score": 51.881276598548425
+      },
+      "predicted": {
+        "mean_containment": 76.37748519041551,
+        "minus_six_db_rms_error": 16.45974009505141,
+        "outward_rise_violation": 0.04345866068541758,
+        "profile_rms_error": 1.8977332867697343,
+        "slice_energy_rms_departure": 1.1513105253750666,
+        "surface_score": 76.43079212253835,
+        "throat_impedance_score": 56.9259637676778
+      },
+      "radiation_gate_failed": false,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": false
+      },
+      "response_sha256": "df5e7a8d1a771fd0de4245f8b49f9c07094195c07317542e1b38e2cb81e441fa"
+    },
+    {
+      "cell": "30deg-250mm",
+      "coordinate": "A12-E20",
+      "errors": {
+        "mean_containment": -0.013513423600585384,
+        "minus_six_db_rms_error": -0.038971621706899384,
+        "outward_rise_violation": -0.04752805930068027,
+        "profile_rms_error": -0.024608555213452288,
+        "slice_energy_rms_departure": -0.030593851177572517,
+        "surface_score": 0.7881009793364342,
+        "throat_impedance_score": 15.311507591892834
+      },
+      "id": "ext-angle-locked-validation-30deg-250mm-primary-A12-E20",
+      "observed": {
+        "mean_containment": 79.04820075559923,
+        "minus_six_db_rms_error": 15.79796149922256,
+        "outward_rise_violation": 0.49802270436281215,
+        "profile_rms_error": 1.9247234361717265,
+        "slice_energy_rms_departure": 1.2585503408813952,
+        "surface_score": 75.2523916162223,
+        "throat_impedance_score": 75.04472069444328
+      },
+      "predicted": {
+        "mean_containment": 79.06171417919981,
+        "minus_six_db_rms_error": 15.836933120929459,
+        "outward_rise_violation": 0.5455507636634924,
+        "profile_rms_error": 1.9493319913851788,
+        "slice_energy_rms_departure": 1.2891441920589677,
+        "surface_score": 74.46429063688586,
+        "throat_impedance_score": 59.73321310255045
+      },
+      "radiation_gate_failed": false,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": false
+      },
+      "response_sha256": "13b6f03c830c3b46dc18ead2a0ba599c394afb20339c0b609e31b0686b310542"
+    },
+    {
+      "cell": "30deg-250mm",
+      "coordinate": "A12-E60",
+      "errors": {
+        "mean_containment": -0.011183334724577776,
+        "minus_six_db_rms_error": 0.19325330579813738,
+        "outward_rise_violation": 0.20457365747616613,
+        "profile_rms_error": 0.08320533279613329,
+        "slice_energy_rms_departure": 0.06619235048112038,
+        "surface_score": -1.9690552859191257,
+        "throat_impedance_score": -15.413109342781866
+      },
+      "id": "ext-angle-locked-validation-30deg-250mm-primary-A12-E60",
+      "observed": {
+        "mean_containment": 80.273974876649,
+        "minus_six_db_rms_error": 15.693923948145066,
+        "outward_rise_violation": 0.17372878083380444,
+        "profile_rms_error": 1.7346197349772612,
+        "slice_energy_rms_departure": 1.3501061249673898,
+        "surface_score": 76.78873574550823,
+        "throat_impedance_score": 67.05973389136179
+      },
+      "predicted": {
+        "mean_containment": 80.28515821137358,
+        "minus_six_db_rms_error": 15.500670642346929,
+        "outward_rise_violation": -0.030844876642361685,
+        "profile_rms_error": 1.651414402181128,
+        "slice_energy_rms_departure": 1.2839137744862694,
+        "surface_score": 78.75779103142736,
+        "throat_impedance_score": 82.47284323414365
+      },
+      "radiation_gate_failed": true,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": true
+      },
+      "response_sha256": "6b0a1a9af5c9287fa6bcd52f162a2bf65cbeda2d7e8561e6f14b177f363df8ae"
+    },
+    {
+      "cell": "30deg-450mm",
+      "coordinate": "A0-E20",
+      "errors": {
+        "mean_containment": 0.058634891685258594,
+        "minus_six_db_rms_error": 0.05073570152000961,
+        "outward_rise_violation": 0.06523100101080509,
+        "profile_rms_error": 0.048408453331525436,
+        "slice_energy_rms_departure": 0.028322535698787288,
+        "surface_score": -0.8385014415987513,
+        "throat_impedance_score": -3.531803269712597
+      },
+      "id": "ext-angle-locked-validation-30deg-450mm-primary-A0-E20",
+      "observed": {
+        "mean_containment": 86.39471356237145,
+        "minus_six_db_rms_error": 7.753541174848362,
+        "outward_rise_violation": 0.0016355981894191375,
+        "profile_rms_error": 1.6105773332801863,
+        "slice_energy_rms_departure": 1.1438427164214855,
+        "surface_score": 83.09850784335786,
+        "throat_impedance_score": 66.7079104217993
+      },
+      "predicted": {
+        "mean_containment": 86.33607867068619,
+        "minus_six_db_rms_error": 7.702805473328352,
+        "outward_rise_violation": -0.06359540282138595,
+        "profile_rms_error": 1.5621688799486608,
+        "slice_energy_rms_departure": 1.1155201807226982,
+        "surface_score": 83.93700928495662,
+        "throat_impedance_score": 70.2397136915119
+      },
+      "radiation_gate_failed": false,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": false
+      },
+      "response_sha256": "d85c205de5d86943e83f0f883168ce1e37e1dcf6aa1df5793a1620de7ae018e5"
+    },
+    {
+      "cell": "30deg-450mm",
+      "coordinate": "A0-E60",
+      "errors": {
+        "mean_containment": 0.2275388281260149,
+        "minus_six_db_rms_error": -0.24437872012437278,
+        "outward_rise_violation": -0.1684318815871505,
+        "profile_rms_error": -0.22709179618160968,
+        "slice_energy_rms_departure": -0.0175780558574119,
+        "surface_score": 2.281506820064905,
+        "throat_impedance_score": -11.323898348007155
+      },
+      "id": "ext-angle-locked-validation-30deg-450mm-primary-A0-E60",
+      "observed": {
+        "mean_containment": 86.3827133649459,
+        "minus_six_db_rms_error": 7.793982360850976,
+        "outward_rise_violation": 0.0,
+        "profile_rms_error": 1.6269877865604214,
+        "slice_energy_rms_departure": 1.161259984509367,
+        "surface_score": 82.83661453636306,
+        "throat_impedance_score": 43.89052074318274
+      },
+      "predicted": {
+        "mean_containment": 86.15517453681989,
+        "minus_six_db_rms_error": 8.03836108097535,
+        "outward_rise_violation": 0.1684318815871505,
+        "profile_rms_error": 1.854079582742031,
+        "slice_energy_rms_departure": 1.1788380403667789,
+        "surface_score": 80.55510771629815,
+        "throat_impedance_score": 55.214419091189896
+      },
+      "radiation_gate_failed": true,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": true
+      },
+      "response_sha256": "744b900c0a0b5545513f9cf0e7b2ee56d145071a866931704c0f929692351762"
+    },
+    {
+      "cell": "30deg-450mm",
+      "coordinate": "A12-E20",
+      "errors": {
+        "mean_containment": -0.02355783635572095,
+        "minus_six_db_rms_error": -0.34705428981861,
+        "outward_rise_violation": -0.3954964619957614,
+        "profile_rms_error": -0.15150658488153557,
+        "slice_energy_rms_departure": -0.1904933534334522,
+        "surface_score": 4.535569169234236,
+        "throat_impedance_score": 3.8255314926311
+      },
+      "id": "ext-angle-locked-validation-30deg-450mm-primary-A12-E20",
+      "observed": {
+        "mean_containment": 89.26497663652417,
+        "minus_six_db_rms_error": 6.219102308999526,
+        "outward_rise_violation": 0.8412571897213196,
+        "profile_rms_error": 1.5784706338833563,
+        "slice_energy_rms_departure": 0.9772903117211987,
+        "surface_score": 83.39308107962293,
+        "throat_impedance_score": 93.33736551605666
+      },
+      "predicted": {
+        "mean_containment": 89.28853447287989,
+        "minus_six_db_rms_error": 6.566156598818136,
+        "outward_rise_violation": 1.236753651717081,
+        "profile_rms_error": 1.7299772187648919,
+        "slice_energy_rms_departure": 1.167783665154651,
+        "surface_score": 78.8575119103887,
+        "throat_impedance_score": 89.51183402342556
+      },
+      "radiation_gate_failed": true,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": true
+      },
+      "response_sha256": "33bc8f32cfee0185059965fda7697113cd3d5fe7c90c3a2a5a4ad0062c1a0113"
+    },
+    {
+      "cell": "30deg-450mm",
+      "coordinate": "A12-E60",
+      "errors": {
+        "mean_containment": -0.0008463272060481586,
+        "minus_six_db_rms_error": 0.48992534009419586,
+        "outward_rise_violation": 0.9914644218039568,
+        "profile_rms_error": 0.2945706855980128,
+        "slice_energy_rms_departure": 0.3966486773131911,
+        "surface_score": -8.978389989734268,
+        "throat_impedance_score": -5.789104678651711
+      },
+      "id": "ext-angle-locked-validation-30deg-450mm-primary-A12-E60",
+      "observed": {
+        "mean_containment": 89.923676444262,
+        "minus_six_db_rms_error": 7.18727357513362,
+        "outward_rise_violation": 0.2515298096542477,
+        "profile_rms_error": 1.3919511897864836,
+        "slice_energy_rms_departure": 0.8595584084930957,
+        "surface_score": 87.39530274666336,
+        "throat_impedance_score": 93.56564164597418
+      },
+      "predicted": {
+        "mean_containment": 89.92452277146805,
+        "minus_six_db_rms_error": 6.697348235039424,
+        "outward_rise_violation": -0.739934612149709,
+        "profile_rms_error": 1.0973805041884708,
+        "slice_energy_rms_departure": 0.46290973117990464,
+        "surface_score": 96.37369273639763,
+        "throat_impedance_score": 99.35474632462589
+      },
+      "radiation_gate_failed": true,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": true,
+        "profile_rms_error": true,
+        "slice_energy_rms_departure": true,
+        "surface_score": true
+      },
+      "response_sha256": "348d82531831df2959fe1b882dc3ee1f8dfea3eddb40c885fec2a1c4fc6c7b54"
+    },
+    {
+      "cell": "40deg-350mm",
+      "coordinate": "A0-E20",
+      "errors": {
+        "mean_containment": 0.0020262597024043316,
+        "minus_six_db_rms_error": 0.05920296201706776,
+        "outward_rise_violation": -0.003657170128208903,
+        "profile_rms_error": 0.03550966876292572,
+        "slice_energy_rms_departure": 0.011547047402066024,
+        "surface_score": -0.426982934302373,
+        "throat_impedance_score": 2.4061310570058936
+      },
+      "id": "ext-angle-locked-validation-40deg-350mm-primary-A0-E20",
+      "observed": {
+        "mean_containment": 88.87280665053865,
+        "minus_six_db_rms_error": 8.541632462628137,
+        "outward_rise_violation": 0.12176785858610695,
+        "profile_rms_error": 1.4290449379744938,
+        "slice_energy_rms_departure": 0.9447974096242646,
+        "surface_score": 86.06711401944517,
+        "throat_impedance_score": 53.00107879728152
+      },
+      "predicted": {
+        "mean_containment": 88.87078039083625,
+        "minus_six_db_rms_error": 8.482429500611069,
+        "outward_rise_violation": 0.12542502871431585,
+        "profile_rms_error": 1.3935352692115681,
+        "slice_energy_rms_departure": 0.9332503622221986,
+        "surface_score": 86.49409695374754,
+        "throat_impedance_score": 50.59494774027563
+      },
+      "radiation_gate_failed": false,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": false
+      },
+      "response_sha256": "abf8819b058b0994d036d92de59e90aef2b0e56412c9b2ba895dec2280ecad1c"
+    },
+    {
+      "cell": "40deg-350mm",
+      "coordinate": "A0-E60",
+      "errors": {
+        "mean_containment": -0.04330962578502806,
+        "minus_six_db_rms_error": -0.07105109146213273,
+        "outward_rise_violation": 0.024200673386582938,
+        "profile_rms_error": -0.06310641778562287,
+        "slice_energy_rms_departure": -0.005234606918653517,
+        "surface_score": 0.772874889539878,
+        "throat_impedance_score": 6.08299323258489
+      },
+      "id": "ext-angle-locked-validation-40deg-350mm-primary-A0-E60",
+      "observed": {
+        "mean_containment": 88.85476778195986,
+        "minus_six_db_rms_error": 8.655361968674875,
+        "outward_rise_violation": 0.14514205673009328,
+        "profile_rms_error": 1.4345448148821798,
+        "slice_energy_rms_departure": 0.9480742837938929,
+        "surface_score": 85.94479020022033,
+        "throat_impedance_score": 49.44796673216563
+      },
+      "predicted": {
+        "mean_containment": 88.89807740774489,
+        "minus_six_db_rms_error": 8.726413060137007,
+        "outward_rise_violation": 0.12094138334351034,
+        "profile_rms_error": 1.4976512326678026,
+        "slice_energy_rms_departure": 0.9533088907125464,
+        "surface_score": 85.17191531068045,
+        "throat_impedance_score": 43.36497349958074
+      },
+      "radiation_gate_failed": false,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": false
+      },
+      "response_sha256": "bb5aed96a71e830204b5ae342cded97d519ed9103e540be8da28e8c99f9fc8ba"
+    },
+    {
+      "cell": "40deg-350mm",
+      "coordinate": "A12-E20",
+      "errors": {
+        "mean_containment": -0.020199659080461174,
+        "minus_six_db_rms_error": -0.2767339947412033,
+        "outward_rise_violation": -0.18094729177257834,
+        "profile_rms_error": -0.16837488842732218,
+        "slice_energy_rms_departure": -0.12243969394387932,
+        "surface_score": 2.762805457688742,
+        "throat_impedance_score": 7.359407859024898
+      },
+      "id": "ext-angle-locked-validation-40deg-350mm-primary-A12-E20",
+      "observed": {
+        "mean_containment": 90.65013022860163,
+        "minus_six_db_rms_error": 8.16929393353082,
+        "outward_rise_violation": 0.39255959549517366,
+        "profile_rms_error": 1.3151338661351497,
+        "slice_energy_rms_departure": 0.7528183603161852,
+        "surface_score": 88.20527276005643,
+        "throat_impedance_score": 85.13649345826964
+      },
+      "predicted": {
+        "mean_containment": 90.67032988768209,
+        "minus_six_db_rms_error": 8.446027928272024,
+        "outward_rise_violation": 0.573506887267752,
+        "profile_rms_error": 1.4835087545624719,
+        "slice_energy_rms_departure": 0.8752580542600645,
+        "surface_score": 85.44246730236769,
+        "throat_impedance_score": 77.77708559924474
+      },
+      "radiation_gate_failed": true,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": true
+      },
+      "response_sha256": "6838ce6ca54b84a8fd85c2fb55f4dd6904ec4f5ccf4f8f6811337a4a10606cc3"
+    },
+    {
+      "cell": "40deg-350mm",
+      "coordinate": "A12-E60",
+      "errors": {
+        "mean_containment": -0.04912172822368177,
+        "minus_six_db_rms_error": 0.39210070108630823,
+        "outward_rise_violation": 0.17139509390826188,
+        "profile_rms_error": 0.3131584569176873,
+        "slice_energy_rms_departure": 0.18629387989116908,
+        "surface_score": -4.17835103417481,
+        "throat_impedance_score": -17.529832788524388
+      },
+      "id": "ext-angle-locked-validation-40deg-350mm-primary-A12-E60",
+      "observed": {
+        "mean_containment": 91.2534561193168,
+        "minus_six_db_rms_error": 10.570617701044153,
+        "outward_rise_violation": 0.1566025848723964,
+        "profile_rms_error": 1.7607660610510716,
+        "slice_energy_rms_departure": 0.9785328865365286,
+        "surface_score": 83.46060430545802,
+        "throat_impedance_score": 94.88803992069832
+      },
+      "predicted": {
+        "mean_containment": 91.30257784754048,
+        "minus_six_db_rms_error": 10.178516999957845,
+        "outward_rise_violation": -0.014792509035865486,
+        "profile_rms_error": 1.4476076041333843,
+        "slice_energy_rms_departure": 0.7922390066453595,
+        "surface_score": 87.63895533963283,
+        "throat_impedance_score": 112.4178727092227
+      },
+      "radiation_gate_failed": true,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": true,
+        "slice_energy_rms_departure": false,
+        "surface_score": true
+      },
+      "response_sha256": "d8037b99ef59f8cdae65848f55d31f3516fc6694c3eae9111335bb92ff39b9ef"
+    },
+    {
+      "cell": "50deg-250mm",
+      "coordinate": "A0-E20",
+      "errors": {
+        "mean_containment": 0.02334892110569342,
+        "minus_six_db_rms_error": 0.08295330769666265,
+        "outward_rise_violation": 0.05079851032642696,
+        "profile_rms_error": 0.03018685547165667,
+        "slice_energy_rms_departure": 0.007564232209309241,
+        "surface_score": -0.3569550369425798,
+        "throat_impedance_score": -0.11017088514038775
+      },
+      "id": "ext-angle-locked-validation-50deg-250mm-primary-A0-E20",
+      "observed": {
+        "mean_containment": 90.25775064952576,
+        "minus_six_db_rms_error": 10.872160335747207,
+        "outward_rise_violation": 0.198044224853344,
+        "profile_rms_error": 1.360440530849805,
+        "slice_energy_rms_departure": 0.9228219358119678,
+        "surface_score": 86.1195840045735,
+        "throat_impedance_score": 31.584457962946278
+      },
+      "predicted": {
+        "mean_containment": 90.23440172842007,
+        "minus_six_db_rms_error": 10.789207028050544,
+        "outward_rise_violation": 0.14724571452691704,
+        "profile_rms_error": 1.3302536753781484,
+        "slice_energy_rms_departure": 0.9152577036026586,
+        "surface_score": 86.47653904151608,
+        "throat_impedance_score": 31.694628848086666
+      },
+      "radiation_gate_failed": false,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": false
+      },
+      "response_sha256": "e14484f564565cf86062a8c5539ddec84f0ba6bca2873fbd5954bb7f1f9d4040"
+    },
+    {
+      "cell": "50deg-250mm",
+      "coordinate": "A0-E60",
+      "errors": {
+        "mean_containment": -0.020393263122699068,
+        "minus_six_db_rms_error": -0.19953012197111875,
+        "outward_rise_violation": 0.02247551453582819,
+        "profile_rms_error": -0.068625383370855,
+        "slice_energy_rms_departure": -0.011390931901633095,
+        "surface_score": 0.5769025413207487,
+        "throat_impedance_score": -8.696699056264016
+      },
+      "id": "ext-angle-locked-validation-50deg-250mm-primary-A0-E60",
+      "observed": {
+        "mean_containment": 90.23481771595577,
+        "minus_six_db_rms_error": 10.603335889133003,
+        "outward_rise_violation": 0.25162047598046666,
+        "profile_rms_error": 1.3590576622642279,
+        "slice_energy_rms_departure": 0.9113791088581028,
+        "surface_score": 86.21207115009861,
+        "throat_impedance_score": 30.572037960290885
+      },
+      "predicted": {
+        "mean_containment": 90.25521097907847,
+        "minus_six_db_rms_error": 10.802866011104122,
+        "outward_rise_violation": 0.22914496144463847,
+        "profile_rms_error": 1.4276830456350829,
+        "slice_energy_rms_departure": 0.9227700407597359,
+        "surface_score": 85.63516860877786,
+        "throat_impedance_score": 39.2687370165549
+      },
+      "radiation_gate_failed": false,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": false
+      },
+      "response_sha256": "51ad19a0cffe901912a77323243be08edfabe7eba83c7c976f2a726b11a3b824"
+    },
+    {
+      "cell": "50deg-250mm",
+      "coordinate": "A12-E20",
+      "errors": {
+        "mean_containment": 0.0017884632283085011,
+        "minus_six_db_rms_error": -0.19709925066059064,
+        "outward_rise_violation": -0.08178430078358545,
+        "profile_rms_error": -0.1304781168982576,
+        "slice_energy_rms_departure": -0.07364655021130351,
+        "surface_score": 1.8805985960806595,
+        "throat_impedance_score": 6.970873989525018
+      },
+      "id": "ext-angle-locked-validation-50deg-250mm-primary-A12-E20",
+      "observed": {
+        "mean_containment": 91.15888199672672,
+        "minus_six_db_rms_error": 11.533223608131808,
+        "outward_rise_violation": 0.18237456505197924,
+        "profile_rms_error": 1.4092761290802758,
+        "slice_energy_rms_departure": 0.8389508291528736,
+        "surface_score": 86.44837617559375,
+        "throat_impedance_score": 55.140451320629055
+      },
+      "predicted": {
+        "mean_containment": 91.15709353349841,
+        "minus_six_db_rms_error": 11.730322858792398,
+        "outward_rise_violation": 0.2641588658355647,
+        "profile_rms_error": 1.5397542459785334,
+        "slice_energy_rms_departure": 0.9125973793641771,
+        "surface_score": 84.56777757951309,
+        "throat_impedance_score": 48.16957733110404
+      },
+      "radiation_gate_failed": true,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": true
+      },
+      "response_sha256": "e394007b99247499891d2ce7f53be9420bb017f9640d0dccde17b6643faa6c2d"
+    },
+    {
+      "cell": "50deg-250mm",
+      "coordinate": "A12-E60",
+      "errors": {
+        "mean_containment": -0.015123952542666075,
+        "minus_six_db_rms_error": 0.20136835047704693,
+        "outward_rise_violation": 0.17763418732712882,
+        "profile_rms_error": 0.23134374204480235,
+        "slice_energy_rms_departure": 0.09304847243377345,
+        "surface_score": -2.799820896678966,
+        "throat_impedance_score": -5.79309489655985
+      },
+      "id": "ext-angle-locked-validation-50deg-250mm-primary-A12-E60",
+      "observed": {
+        "mean_containment": 91.84882007297533,
+        "minus_six_db_rms_error": 14.18572043724851,
+        "outward_rise_violation": 0.007708093177857302,
+        "profile_rms_error": 1.968645725729993,
+        "slice_energy_rms_departure": 1.069857007753594,
+        "surface_score": 80.43035322446909,
+        "throat_impedance_score": 76.87670191983277
+      },
+      "predicted": {
+        "mean_containment": 91.863944025518,
+        "minus_six_db_rms_error": 13.984352086771462,
+        "outward_rise_violation": -0.1699260941492715,
+        "profile_rms_error": 1.7373019836851906,
+        "slice_energy_rms_departure": 0.9768085353198206,
+        "surface_score": 83.23017412114805,
+        "throat_impedance_score": 82.66979681639262
+      },
+      "radiation_gate_failed": true,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": true
+      },
+      "response_sha256": "510041b790063dc1932238dc42beb3466cb44db9a6902bed3af3ccab7a7fa4ac"
+    },
+    {
+      "cell": "50deg-450mm",
+      "coordinate": "A0-E20",
+      "errors": {
+        "mean_containment": -0.010731975727608756,
+        "minus_six_db_rms_error": 0.09328274097999056,
+        "outward_rise_violation": -0.02228526424388777,
+        "profile_rms_error": 0.059805585476182976,
+        "slice_energy_rms_departure": 0.025452088088921965,
+        "surface_score": -0.52724063304926,
+        "throat_impedance_score": -1.927069769663639
+      },
+      "id": "ext-angle-locked-validation-50deg-450mm-primary-A0-E20",
+      "observed": {
+        "mean_containment": 92.81819689910063,
+        "minus_six_db_rms_error": 8.378464993107823,
+        "outward_rise_violation": 0.9034217288630866,
+        "profile_rms_error": 1.3716766891599663,
+        "slice_energy_rms_departure": 0.793544285279326,
+        "surface_score": 85.94108665329482,
+        "throat_impedance_score": 37.91394701046756
+      },
+      "predicted": {
+        "mean_containment": 92.82892887482824,
+        "minus_six_db_rms_error": 8.285182252127832,
+        "outward_rise_violation": 0.9257069931069744,
+        "profile_rms_error": 1.3118711036837833,
+        "slice_energy_rms_departure": 0.768092197190404,
+        "surface_score": 86.46832728634408,
+        "throat_impedance_score": 39.8410167801312
+      },
+      "radiation_gate_failed": false,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": false
+      },
+      "response_sha256": "503579174daceb9cc345d7f65443fb5e525aa11f72b7a5f3b5883a4ad47750a7"
+    },
+    {
+      "cell": "50deg-450mm",
+      "coordinate": "A0-E60",
+      "errors": {
+        "mean_containment": -0.007100203051052745,
+        "minus_six_db_rms_error": -0.15140233813962567,
+        "outward_rise_violation": -0.11974408805330261,
+        "profile_rms_error": -0.1496934222462778,
+        "slice_energy_rms_departure": -0.06377491213744135,
+        "surface_score": 2.21618818291401,
+        "throat_impedance_score": -2.2607313718306656
+      },
+      "id": "ext-angle-locked-validation-50deg-450mm-primary-A0-E60",
+      "observed": {
+        "mean_containment": 92.82671879562227,
+        "minus_six_db_rms_error": 8.425245259603681,
+        "outward_rise_violation": 0.8557810508347018,
+        "profile_rms_error": 1.3719937816014174,
+        "slice_energy_rms_departure": 0.790041763329534,
+        "surface_score": 86.17314741368872,
+        "throat_impedance_score": 34.73056526012869
+      },
+      "predicted": {
+        "mean_containment": 92.83381899867332,
+        "minus_six_db_rms_error": 8.576647597743307,
+        "outward_rise_violation": 0.9755251388880044,
+        "profile_rms_error": 1.5216872038476952,
+        "slice_energy_rms_departure": 0.8538166754669754,
+        "surface_score": 83.95695923077471,
+        "throat_impedance_score": 36.99129663195936
+      },
+      "radiation_gate_failed": true,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": true
+      },
+      "response_sha256": "12ab40965d2e2e19adc32385b876238e5fe3842666db020a977f8d551c2f9d6c"
+    },
+    {
+      "cell": "50deg-450mm",
+      "coordinate": "A12-E20",
+      "errors": {
+        "mean_containment": -0.0038987965348411535,
+        "minus_six_db_rms_error": -0.27477719891517083,
+        "outward_rise_violation": -0.02712359647278695,
+        "profile_rms_error": -0.14619611482873385,
+        "slice_energy_rms_departure": -0.08024867927085877,
+        "surface_score": 1.7776303051446547,
+        "throat_impedance_score": 10.94621497665225
+      },
+      "id": "ext-angle-locked-validation-50deg-450mm-primary-A12-E20",
+      "observed": {
+        "mean_containment": 93.71329195718936,
+        "minus_six_db_rms_error": 8.970198967480364,
+        "outward_rise_violation": 0.9683467977733013,
+        "profile_rms_error": 1.3620181358682908,
+        "slice_energy_rms_departure": 0.6784194526265763,
+        "surface_score": 86.51272206061007,
+        "throat_impedance_score": 71.87421567724402
+      },
+      "predicted": {
+        "mean_containment": 93.7171907537242,
+        "minus_six_db_rms_error": 9.244976166395535,
+        "outward_rise_violation": 0.9954703942460883,
+        "profile_rms_error": 1.5082142506970246,
+        "slice_energy_rms_departure": 0.7586681318974351,
+        "surface_score": 84.73509175546542,
+        "throat_impedance_score": 60.928000700591774
+      },
+      "radiation_gate_failed": true,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": true
+      },
+      "response_sha256": "29cbcfed5c0f0330141cf96ea1443ac1e225f49e1cc3d955707217e4d744d338"
+    },
+    {
+      "cell": "50deg-450mm",
+      "coordinate": "A12-E60",
+      "errors": {
+        "mean_containment": -0.06537340834208294,
+        "minus_six_db_rms_error": 0.018221336332485905,
+        "outward_rise_violation": 0.16870452282410497,
+        "profile_rms_error": 0.1717548467087342,
+        "slice_energy_rms_departure": 0.12906114420059311,
+        "surface_score": -2.921127362662972,
+        "throat_impedance_score": -8.924124787854453
+      },
+      "id": "ext-angle-locked-validation-50deg-450mm-primary-A12-E60",
+      "observed": {
+        "mean_containment": 94.29642330336898,
+        "minus_six_db_rms_error": 13.1536949441509,
+        "outward_rise_violation": 0.44039001342891315,
+        "profile_rms_error": 2.0487075981706253,
+        "slice_energy_rms_departure": 0.8520350661269784,
+        "surface_score": 81.7647290187494,
+        "throat_impedance_score": 86.8277875182633
+      },
+      "predicted": {
+        "mean_containment": 94.36179671171107,
+        "minus_six_db_rms_error": 13.135473607818414,
+        "outward_rise_violation": 0.2716854906048082,
+        "profile_rms_error": 1.8769527514618911,
+        "slice_energy_rms_departure": 0.7229739219263853,
+        "surface_score": 84.68585638141238,
+        "throat_impedance_score": 95.75191230611776
+      },
+      "radiation_gate_failed": true,
+      "radiation_threshold_failures": {
+        "mean_containment": false,
+        "minus_six_db_rms_error": false,
+        "outward_rise_violation": false,
+        "profile_rms_error": false,
+        "slice_energy_rms_departure": false,
+        "surface_score": true
+      },
+      "response_sha256": "c046648dfc08ec2cbe0e43b7588eba95333b0c05c055f18f903b445986aa0a2d"
+    }
+  ],
+  "conditional_block_authorized": true,
+  "content_sha256": "944f0ff4ab213f53d7f7d1f348b8c318cc2ee4a253ff6dd5d390ae7e6d9198e7",
+  "frozen_heuristic_sha256": "b58979fb1355a56d3e0ed152ee5df6cbf06cb90cabf35ab8e1805e8fa53c4d72",
+  "radiation_gate_failed": true,
+  "schema_version": 1,
+  "throat_impedance_used_in_gate": false
+}

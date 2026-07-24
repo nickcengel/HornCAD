@@ -2,9 +2,10 @@
 
 This document specifies the implemented surface-diagnostic suite for HornCAD
 BEM angle-frequency reports. The raw measurements and calibrated weighted score
-are used by current BEM search. Surface score v1 remains primary for ranking and
-is the response predicted by the released round-control models. Surface scores
-v2.2 and v2.3 are retained as explicitly experimental side-by-side diagnostics.
+are used by current BEM search. Surface score v2.3 is the diagnostic of record
+and the authoritative candidate-ranking score. V1 and v2.2 remain reproducible
+historical fields. The released round-control models still predict their
+documented frozen v1 response; that model target is not silently relabeled.
 
 ## Scope and conventions
 
@@ -192,8 +193,8 @@ evidence. Agreement with those earlier 192 non-tie comparisons falls from
 73.4% for original v2 to 65.6% for v2.2; that tradeoff is retained explicitly
 because the cell-winner task is the intended optimization use.
 
-V2.2 remains calibrated rather than independently validated. V1 remains the
-normal search-ranking score.
+V2.2 remains calibrated rather than independently validated and is retained as
+the baseline inside v2.3.
 
 ### General-purpose guarded refinement in v2.3
 
@@ -220,8 +221,10 @@ Against the existing evidence, v2.3 changes broad mean Spearman from 0.902 to
 0.546 to 0.579. Pairwise agreement changes from 89.1% to 88.7%, 66.7% to 70.0%,
 and 70.8% to 72.5%, respectively. This satisfies the documented no-regression
 tolerance in every population, but the same evidence participated in
-calibration. V2.3 is experimental and does not replace v1 without new blinded
-validation. The complete design and limitations are in
+calibration. On July 24, 2026, v2.3 was explicitly selected as the diagnostic
+of record despite that validation limitation. It now replaces v1 for live
+ranking; the limitation remains published rather than being erased. The
+complete design and limitations are in
 [`surface_diagnostic_v2_3.md`](../plans/surface_diagnostic_v2_3.md).
 
 ## Validation

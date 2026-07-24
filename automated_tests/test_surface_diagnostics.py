@@ -85,9 +85,9 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
             surface_score(ideal, {"horizontal": 2, "vertical": 1})["axis_weights"],
             {"horizontal": 2 / 3, "vertical": 1 / 3})
 
-    def test_v1_is_preserved_and_v2_candidates_are_reported(self) -> None:
+    def test_v2_3_is_active_and_v1_is_preserved(self) -> None:
         result = surface_diagnostics(self.make_run(self.ideal_surface()))
-        self.assertEqual("v1", result["score"]["version"])
+        self.assertEqual("v2.3", result["score"]["version"])
         self.assertEqual(ACTIVE_SURFACE_SCORE_VERSION, result["score"]["version"])
         self.assertEqual("v1", surface_score_v1(result)["version"])
         experimental = surface_score_v2(

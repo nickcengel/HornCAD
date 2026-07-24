@@ -1,0 +1,38 @@
+{
+  "completed_at_unix": 1784873300.2200582,
+  "events": [
+    {
+      "attempts": [
+        {
+          "completed_at_unix": 1784873299.3936782,
+          "retry_max_iterations": 1000,
+          "returncode": 0,
+          "search_status": "complete",
+          "stderr_tail": "",
+          "stdout_tail": "Could not find Gmsh.Interactive plotting and shapes module not available.\nCould not find Gmsh.Interactive plotting and shapes module not available.\nNumCalc plan: 1 single-thread frequency processes; 4.558 GiB/process including headroom; 48.0 GiB limit; 1 pending\ncompleted 500.000000000 Hz in 160.29s\nsearch report: /Users/nickengel/Developer/HornCAD/examples/extension-throat-angle-heuristics/searches/primary-development/35deg/450mm/primary-A0-E40/search_report.html\nstatus: complete\n"
+        }
+      ],
+      "completed_at_unix": 1784873299.393697,
+      "retry_failed": true,
+      "returncode": 0,
+      "search_status": "complete",
+      "search_yaml": "/Users/nickengel/Developer/HornCAD/examples/extension-throat-angle-heuristics/searches/primary-development/35deg/450mm/primary-A0-E40/search.yaml",
+      "started_at_unix": 1784873130.663023,
+      "stderr_tail": "",
+      "stdout_tail": "Could not find Gmsh.Interactive plotting and shapes module not available.\nCould not find Gmsh.Interactive plotting and shapes module not available.\nNumCalc plan: 1 single-thread frequency processes; 4.558 GiB/process including headroom; 48.0 GiB limit; 1 pending\ncompleted 500.000000000 Hz in 160.29s\nsearch report: /Users/nickengel/Developer/HornCAD/examples/extension-throat-angle-heuristics/searches/primary-development/35deg/450mm/primary-A0-E40/search_report.html\nstatus: complete\n"
+    }
+  ],
+  "failure_count": 0,
+  "scheduler": {
+    "configured_workers": {
+      "/Users/nickengel/Developer/HornCAD/examples/extension-throat-angle-heuristics/searches/primary-development/35deg/450mm/primary-A0-E40/search.yaml": 10
+    },
+    "numcalc_process_capacity": 20,
+    "queue_workers": 1,
+    "search_count": 1
+  },
+  "schema_version": 1,
+  "slot_directory": "/var/folders/x3/xj6bcbnn235gz39j4pl1tmrm0000gn/T/horncad-numcalc-slots-501",
+  "started_at_unix": 1784873130.662242,
+  "status": "complete"
+}

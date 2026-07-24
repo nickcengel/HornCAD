@@ -1,0 +1,3223 @@
+{
+  "development_response_hashes": {
+    "ext-angle-primary-development-30deg-250mm-primary-A0-E0": "77e13264709aee4361d7ce3c3f3c3e733fb0c14c52dcd44168b5a6c8146a650a",
+    "ext-angle-primary-development-30deg-250mm-primary-A0-E40": "114a302d5c39f78a12045ac2cfb9c5af58d485b7d66612815cc920f0ad3514fb",
+    "ext-angle-primary-development-30deg-250mm-primary-A12-E0": "e0a6b8335a935cd8571042860847c8c5290a66beb51994240f11f471f4850f61",
+    "ext-angle-primary-development-30deg-250mm-primary-A12-E40": "2ee5973d0a7f16a5bfb76786b62b837ed11e54109d14a9b872e94f031a05be2f",
+    "ext-angle-primary-development-30deg-250mm-primary-A6-E20": "67375cce9dbd5c605f4d5128e1f6641936f7826d523fbf52993585d1d315f679",
+    "ext-angle-primary-development-30deg-250mm-primary-A6-E40": "f4e795825715e616dad93758c31b462da3681a1a43a97bb3f6c2af2bcee2d467",
+    "ext-angle-primary-development-30deg-250mm-primary-A6-E60": "1900f6d737cacf878d6ad1944797105a7e63b5cf64fea1a91083d14edb98033c",
+    "ext-angle-primary-development-30deg-300mm-primary-A0-E0": "42637cf21c1172aa0209ace25676661c8d6f83005f0a39075ed8d52a81fc2adb",
+    "ext-angle-primary-development-30deg-300mm-primary-A0-E40": "ecfad272a663729e4396864251ff7017ca487c29064b639f5556cfbb05664e85",
+    "ext-angle-primary-development-30deg-300mm-primary-A12-E0": "becb4ce92a799e4748d74fae69b81e1ae9245d3a7e4d2232f2b0692544ab88bd",
+    "ext-angle-primary-development-30deg-300mm-primary-A12-E40": "ccbddc1cacf9e4758cc2522e617a1f5d93c4934cabf63b25be7e846892fd15e4",
+    "ext-angle-primary-development-30deg-300mm-primary-A6-E20": "7e026f70bc99357627b4ce027deebdeb2c99afcd29cd66d6a5bae25d2b633c4c",
+    "ext-angle-primary-development-30deg-300mm-primary-A6-E40": "4edfd326caa324a843b31801fb46f5b7aa614a251f6a98cd50c09c59e64e842c",
+    "ext-angle-primary-development-30deg-300mm-primary-A6-E60": "26e16af37280484af743076708d855b800690a608066e192b54b4b1710b3c891",
+    "ext-angle-primary-development-30deg-350mm-primary-A0-E0": "fd8405f1480a7d2f8b63cf137fae6d673563636d93b363f478b7dd1c625dbd7e",
+    "ext-angle-primary-development-30deg-350mm-primary-A0-E40": "5e0ace348620bb609a8747f6dc1e032b9a8d8e6a543fcebef1d661dbbe9a2efb",
+    "ext-angle-primary-development-30deg-350mm-primary-A12-E0": "56555379c5bf360cc9acfe85cae4b7a9d59384dca3c0b5d888f8bb52af260781",
+    "ext-angle-primary-development-30deg-350mm-primary-A12-E40": "204b61a9517bd07cfeee2c8a23918698ebf204a411c3aa41ca8ecf6ffd5bd067",
+    "ext-angle-primary-development-30deg-350mm-primary-A6-E20": "170816ab7168f6c357237f66ac5be8a093d99b0d8bdbe5807e8b2905903a5d2e",
+    "ext-angle-primary-development-30deg-350mm-primary-A6-E40": "5c787cd29bae46a7458074f307d9dabdd4c44132c67219a72b027e6f000bd334",
+    "ext-angle-primary-development-30deg-350mm-primary-A6-E60": "9aa5bfb99561163ca451c5e946dced954fe2a4dd6f02fbd644d2e67ab85174a4",
+    "ext-angle-primary-development-30deg-400mm-primary-A0-E0": "125ec19d813b97adfb67e307388fd8878b897f820e30dc4971471f772db2b6b3",
+    "ext-angle-primary-development-30deg-400mm-primary-A0-E40": "4b3d310fb9cccaa017b495d01a7333b3df84e23b35ec4b2a700407274d10e3dc",
+    "ext-angle-primary-development-30deg-400mm-primary-A12-E0": "120cc7004dc2302658f3d4ac76ba0ff2006a7dad18be376f558b8e97b5745f7c",
+    "ext-angle-primary-development-30deg-400mm-primary-A12-E40": "f5f0c8fb7b3546d018ae07e86129f03da386b02600d419f6829d5fafe3402831",
+    "ext-angle-primary-development-30deg-400mm-primary-A6-E20": "6641294338d77480bee9ffef2ed4521e503c6a2dbaef371f3aae5000715dbb7d",
+    "ext-angle-primary-development-30deg-400mm-primary-A6-E40": "d73c65ca2013483307c296d718716ef5b8e9238de9ec257050dacb17d5e0ecc0",
+    "ext-angle-primary-development-30deg-400mm-primary-A6-E60": "070be817d247b4ec19c08d3adc25824e9a2b8f6027046a3124249a539a898cc2",
+    "ext-angle-primary-development-30deg-450mm-primary-A0-E0": "335dcb9c184133251f463482703bc4f8dc21207c8a023ecd06e024187dd1f353",
+    "ext-angle-primary-development-30deg-450mm-primary-A0-E40": "6f888ae347e80e505ccbe5506d2be630fd4d69c16b554806df071cdc63b4b8b2",
+    "ext-angle-primary-development-30deg-450mm-primary-A12-E0": "4b4e42df99806ecaedbb4ee4f0f10bf7751b20c9f343b6b085c0df4841815b5b",
+    "ext-angle-primary-development-30deg-450mm-primary-A12-E40": "53407eeb18d5e65255d26e09720077a1f61fdd00d1f1e56578b3c03f77880c3d",
+    "ext-angle-primary-development-30deg-450mm-primary-A6-E20": "92f328894eaef84951aa837ea6d562ecd237fc0843185f8fe68cdc164129ac25",
+    "ext-angle-primary-development-30deg-450mm-primary-A6-E40": "c2a725b2969320b6568ce52dbb4224f5da3ae8a7877ed39b1f196b250d538698",
+    "ext-angle-primary-development-30deg-450mm-primary-A6-E60": "6764b1fab5dd79a2a1ccb75a965ef89546da06595de6d49ba35774b406e92b85",
+    "ext-angle-primary-development-35deg-250mm-primary-A0-E0": "de43c5b9c366875683246355c01cad82b3535eecd882325265ffbad46164b7cb",
+    "ext-angle-primary-development-35deg-250mm-primary-A0-E40": "38efa194531b441000d01e13df28624de5c01f06384d6f21f7e29ddf761664f6",
+    "ext-angle-primary-development-35deg-250mm-primary-A12-E0": "9fa301f449c01abe772523650ab2465edaf309fecf94f4c9b956259902dddbeb",
+    "ext-angle-primary-development-35deg-250mm-primary-A12-E40": "282644c44749441ff98e639fa7dcece5a6c5fd5160b4617710d3cf8b67042e74",
+    "ext-angle-primary-development-35deg-250mm-primary-A6-E20": "348fa0a4e4016f16e8fd25a43de23ca56113feb45612aaee5969e23fbe547b08",
+    "ext-angle-primary-development-35deg-250mm-primary-A6-E40": "735cc025849cbe9a21ebf94fc9ecb3ad1257fe07aafc1e2980865253f71e5468",
+    "ext-angle-primary-development-35deg-250mm-primary-A6-E60": "dc8ca5be4d252192fedcfffbf2078a110d2ac94ed9639ad47b46f23ad9c3720b",
+    "ext-angle-primary-development-35deg-300mm-primary-A0-E0": "a8fccfe0c4fada9ff99629e6b8a7f590f6494534083e126c73e923d00206594e",
+    "ext-angle-primary-development-35deg-300mm-primary-A0-E40": "bcc51306b50324b87b922d927183f4512a1c2aca514f17763df5ec1efb0dca83",
+    "ext-angle-primary-development-35deg-300mm-primary-A12-E0": "631352787ce2e230e9e3f121a4c36889283a391feed3bad3b1d4d399cd2d6948",
+    "ext-angle-primary-development-35deg-300mm-primary-A12-E40": "d9bf56fc765d959235d61028df0619691388342cdc77c8446a87287268922f73",
+    "ext-angle-primary-development-35deg-300mm-primary-A6-E20": "2fef1133fa8a33eba59eba5fc220dcf6321fcc0b55f31fccb153919ef62d4b7e",
+    "ext-angle-primary-development-35deg-300mm-primary-A6-E40": "ffc8328e8e12da0a6dc975c04ff7ed8bdf507ab4981fabcd804b2eb4825de0fd",
+    "ext-angle-primary-development-35deg-300mm-primary-A6-E60": "f54c671c6cd166bd9082ff31669effca5ec515b302ca4eef5d5e9cddbed743bc",
+    "ext-angle-primary-development-35deg-350mm-primary-A0-E0": "954cb1ba5d9b2bf410427df88ca51b4bf5cc56d135048ada21211820978437b5",
+    "ext-angle-primary-development-35deg-350mm-primary-A0-E40": "ac177e846f1e060bc368ef5c40ad088c2276acec7a54bfbd3bee507b55ccf8bd",
+    "ext-angle-primary-development-35deg-350mm-primary-A12-E0": "a4957a5834fca3e1d1d4799c3b51b218d9e0dc98f18067bdfbd8910f68b06aeb",
+    "ext-angle-primary-development-35deg-350mm-primary-A12-E40": "4d9d8d3c59666c234c5b0a8194d44fdc3ca8281c20f7982bbcba96ec19d3ac86",
+    "ext-angle-primary-development-35deg-350mm-primary-A6-E20": "2229cf71d43dbb8d81bb0a45f747998b1de547fc0c16b0cdbaed4bb71dc538be",
+    "ext-angle-primary-development-35deg-350mm-primary-A6-E40": "d28237bb0ebc4e849f0e1322f5e224de96ef29b74e5840c2cc2ca72a5ecb0a63",
+    "ext-angle-primary-development-35deg-350mm-primary-A6-E60": "1f18eb5c66b3a9c49e5df2d4438acedc907a4df8637dcc52e6716c7914cb207e",
+    "ext-angle-primary-development-35deg-400mm-primary-A0-E0": "e779ce3ffdbb50a8b069bfbc920c8ce00175199d575c6a452760e60bfc9fd355",
+    "ext-angle-primary-development-35deg-400mm-primary-A0-E40": "4c2ab14f4dec2c2e6befb7ceddbfb8c803462bd6d0098de0cae19e1b8d6b0076",
+    "ext-angle-primary-development-35deg-400mm-primary-A12-E0": "d96a86804e674a34289e3ef2cdcd1d49797dafc79690b3baf4b901c089957eaf",
+    "ext-angle-primary-development-35deg-400mm-primary-A12-E40": "f903c1ed8cb2546c5fd350ea6de72a8ed91faec2251a51090d5132bdb79c2b53",
+    "ext-angle-primary-development-35deg-400mm-primary-A6-E20": "bde116bc9561a75fd44ef5663b59d4ae6275ab802ba5e2fb3c2229ce630009fc",
+    "ext-angle-primary-development-35deg-400mm-primary-A6-E40": "770cd41a7b1b6481d48e04f4231565c4b38f03af40c7be095d0e85146d43adb7",
+    "ext-angle-primary-development-35deg-400mm-primary-A6-E60": "918dff40d575fc3527fb016b71429d9eaecef1748d1164cb5ee98249ad431d22",
+    "ext-angle-primary-development-35deg-450mm-primary-A0-E0": "63b388c1392208849d08169287e77a17745b13c3d600b9e4ee1bb5cf12f208a4",
+    "ext-angle-primary-development-35deg-450mm-primary-A0-E40": "f6b4870669f3b374dfb030aa995996922e53f2cf57a993d30775ff4576cf2988",
+    "ext-angle-primary-development-35deg-450mm-primary-A12-E0": "ac1e37d97014f479cf073c451de41cc9cd56a3ca2937f614ee235d9d19baf49d",
+    "ext-angle-primary-development-35deg-450mm-primary-A12-E40": "82e9e88153125f7445a0b692b1681503bc0a030b98102530864103c583a5bd77",
+    "ext-angle-primary-development-35deg-450mm-primary-A6-E20": "2d5706e404014aeb7b6cfa3ad9acd3e478f6d63e8881c41feb10dd16820a40f5",
+    "ext-angle-primary-development-35deg-450mm-primary-A6-E40": "4a3e15925d483b4c5a41e4345f8c77eb08ea8eb991e4de160e4a8ee90965668a",
+    "ext-angle-primary-development-35deg-450mm-primary-A6-E60": "618bf322637703e99b787d96ff82a86c327d1944266cac808bd22be4dc53d956",
+    "ext-angle-primary-development-40deg-250mm-primary-A0-E0": "2b4476dcb5aca39225af6aaaf789a1efc063e5c0b78728fff319b4109c736d1d",
+    "ext-angle-primary-development-40deg-250mm-primary-A0-E40": "ced62b8d9494d11bac790ddb5c65ce7fe3a3ebb3062170e96e4e5062b0dfc01d",
+    "ext-angle-primary-development-40deg-250mm-primary-A12-E0": "03118dcc42ef23c5f3a513239386bcd76d710fe609fd6a88c29414b87db728f9",
+    "ext-angle-primary-development-40deg-250mm-primary-A12-E40": "538a8bae9ab9cf5adc584191f20b0e881e6fab25c0daf7543ae076730585e6c5",
+    "ext-angle-primary-development-40deg-250mm-primary-A6-E20": "f2cb822f1e7e415bf722262ccdb681e0634c7b694a363ca4f33e9d7affe8f900",
+    "ext-angle-primary-development-40deg-250mm-primary-A6-E40": "a31bd37f50ff507bfd307e1179835d7a3aac3fe63b326371b8227243e98a7aae",
+    "ext-angle-primary-development-40deg-250mm-primary-A6-E60": "9840160851feeac38ec2fa6923b2fc1c9d23d244bb32dc404cddd236e9b8bd12",
+    "ext-angle-primary-development-40deg-300mm-primary-A0-E0": "fec77f71e00a40e952360201d0ec751c90098d9e9ce9d083597bacd97f2ec3b8",
+    "ext-angle-primary-development-40deg-300mm-primary-A0-E40": "08d1562a1435f131881009a43ca73f9389d8edbe1e13cad5d3a93b7ae01e2d11",
+    "ext-angle-primary-development-40deg-300mm-primary-A12-E0": "636e52b87732c3bbc88a13cc928a1e39e66aab0f4952f5b5210e83b183b7ffe0",
+    "ext-angle-primary-development-40deg-300mm-primary-A12-E40": "5fc45a0598486554fc0eea978bb82868739cf7b1704ba1379d9f9926b380b110",
+    "ext-angle-primary-development-40deg-300mm-primary-A6-E20": "ffd823d079d51e5b68a026b9fb666936367ff42df0b002adc33d68ee07bbda8c",
+    "ext-angle-primary-development-40deg-300mm-primary-A6-E40": "124a82342738dacb4981877776fe7551594cb3201c0b1e52904706dee12a2bd9",
+    "ext-angle-primary-development-40deg-300mm-primary-A6-E60": "c9d238e4782482586ac99733b7717b7d1341301bb5f5574987507aa3b36e493b",
+    "ext-angle-primary-development-40deg-350mm-primary-A0-E0": "601a238157d07951d59aede9693d91408a72b13b29a585ca92bfabbe136937c8",
+    "ext-angle-primary-development-40deg-350mm-primary-A0-E40": "9f677ae9b22e023fa3df20970256eceab4676e0488e7ef9b502317baf8c6beee",
+    "ext-angle-primary-development-40deg-350mm-primary-A12-E0": "36fbc1f16a7340b80b370490e5dc72fb16ce4921c0a5c541e25d7793b2a0607e",
+    "ext-angle-primary-development-40deg-350mm-primary-A12-E40": "cd37e9d68df6860f15d93d3dc7336f112861ce0e7986a73bc5054431e9a0b7ea",
+    "ext-angle-primary-development-40deg-350mm-primary-A6-E20": "30d9ad49a93ad60a6bf87816108bdb6765b76c6680ebd0f6bb1a77d708a3b490",
+    "ext-angle-primary-development-40deg-350mm-primary-A6-E40": "58ef1182ee2214f604e90cbec49ff5ee107d7615c1f397daff509b2ced7c95ae",
+    "ext-angle-primary-development-40deg-350mm-primary-A6-E60": "d8a04f643494ca30455acd8c4fd780f9ac4a20e03409bac8f13a40acc92bff71",
+    "ext-angle-primary-development-40deg-400mm-primary-A0-E0": "29f8125f67153fb6e6da32fa3eb50a18e8097c22d6c3c2de9d8e03fafab2e454",
+    "ext-angle-primary-development-40deg-400mm-primary-A0-E40": "0d9b0dac1555448d49bde5e5bd87564f667e41ba5d63dcdd3c5717c5d97055af",
+    "ext-angle-primary-development-40deg-400mm-primary-A12-E0": "90924042353aadf006c2a4319d8ecde036b1853f2d142dea862b1da4cc34b46f",
+    "ext-angle-primary-development-40deg-400mm-primary-A12-E40": "a372891232e5ac9bf2db0322f84f0d54af86e55304487a956d46711a46c532c2",
+    "ext-angle-primary-development-40deg-400mm-primary-A6-E20": "0ced8a9cb2c3a5eae8f7069777e643916d0688d0a68677833dbd9a952f90123d",
+    "ext-angle-primary-development-40deg-400mm-primary-A6-E40": "475be3e47e4a30ef698e47bbc2a31d261406b7455bf2d12eae741ecaf4c23313",
+    "ext-angle-primary-development-40deg-400mm-primary-A6-E60": "f9bff111dd85cd2da0ffdf5b88a1bb84bbd70d7f6a1f7d4471ca3c8a8750f719",
+    "ext-angle-primary-development-40deg-450mm-primary-A0-E0": "9f0731787a761a8acf91bbc551682e72f5c894d734de8f0020a13f9a3206facd",
+    "ext-angle-primary-development-40deg-450mm-primary-A0-E40": "617c2ad75cd25243342168c46f27c8f7024e264abf6ec766da4e8da2793e00a6",
+    "ext-angle-primary-development-40deg-450mm-primary-A12-E0": "e9784a4981c067c8f0e203847c03f31468ab617c17e180a1837864b65d69d434",
+    "ext-angle-primary-development-40deg-450mm-primary-A12-E40": "f536e0b5808b638d198aea6418966e25cf81f1992ab1128f6f5f925db6b4b0ce",
+    "ext-angle-primary-development-40deg-450mm-primary-A6-E20": "2d31596b37971b4d58c9f34721152eb2886706f50bb98633e63c8a1ea0191b2d",
+    "ext-angle-primary-development-40deg-450mm-primary-A6-E40": "29c5bd7d9800b75011adc70b5a6db666e8f17aa7555cc41a4225f4382ee485ba",
+    "ext-angle-primary-development-40deg-450mm-primary-A6-E60": "103937ea4e3d295b7de1d0bf38c1c0d10a2d0176bd4f30b312bbf5c196f48782",
+    "ext-angle-primary-development-45deg-250mm-primary-A0-E0": "7998f7ac6c7b3897f708622bc0c2d7f0b0f7075679ca60eb6e6994297f00dce4",
+    "ext-angle-primary-development-45deg-250mm-primary-A0-E40": "65d6cb3253815b98c23093d428679efe2c6aad868fd3239b3eaabe85fe7726d5",
+    "ext-angle-primary-development-45deg-250mm-primary-A12-E0": "8ba9aab75a6c56bf8f01a6f30ebe782b7edcfa90e158663ded26ae1c466be07b",
+    "ext-angle-primary-development-45deg-250mm-primary-A12-E40": "5ffc37c4d42bb00d9c22dbedda23e8e02133241b8375aa7a8b75b979f55fafa8",
+    "ext-angle-primary-development-45deg-250mm-primary-A6-E20": "c1efe60d55acd003f81e925167d2d14a8ad5433a56144164e787b8afbf2b70b1",
+    "ext-angle-primary-development-45deg-250mm-primary-A6-E40": "b6ee9c8e1f85382f54fbfcd58d0ec6e89e1a26d85e382eb5fb89e9db12e15ee2",
+    "ext-angle-primary-development-45deg-250mm-primary-A6-E60": "d7b032d7e89240c2aac6ba89e16a6d9c89d41ef96947f19fefefb15f70688f0f",
+    "ext-angle-primary-development-45deg-300mm-primary-A0-E0": "3b11f471e2fbb531577ff1bb9154ffc05e794a3fff3d91f817d8ff5809722042",
+    "ext-angle-primary-development-45deg-300mm-primary-A0-E40": "7a37fa64eb1a2349d0b9919fe70bb8994091b7a0995d5726e4036748c5ed5a84",
+    "ext-angle-primary-development-45deg-300mm-primary-A12-E0": "5508902a0f9a5210253d843ca137fcc50f5d6cca0852ff8e1baaeb5a75383ad9",
+    "ext-angle-primary-development-45deg-300mm-primary-A12-E40": "f9a1209624a24bfdc6ec0567d9c81e8b5cc04799f0bbec90b8ebf6129b6b7aef",
+    "ext-angle-primary-development-45deg-300mm-primary-A6-E20": "e36fbf6d5cc7bcac2f7dd8c50885784f117659791c1cede6353a83892c86740d",
+    "ext-angle-primary-development-45deg-300mm-primary-A6-E40": "fd08655960d3d85021a7b211098da0487913843204303f90aae88477411295a3",
+    "ext-angle-primary-development-45deg-300mm-primary-A6-E60": "ec57c8ac06bc2a1c63ce3ad8d952cd24613ff65f96c94df44367794dd706b8d9",
+    "ext-angle-primary-development-45deg-350mm-primary-A0-E0": "1de479ec88a014cfc14eed0acd62bd93318c867902ffc199935dfe95cba743dd",
+    "ext-angle-primary-development-45deg-350mm-primary-A0-E40": "59b76d8d0edd6e149b73535e8c05ad8208066ea865d71ecf35c47c742f276192",
+    "ext-angle-primary-development-45deg-350mm-primary-A12-E0": "b31ebc690e4fa87fed83996d62f9c2223b6d147134dcfe51255b35301fc94bff",
+    "ext-angle-primary-development-45deg-350mm-primary-A12-E40": "39c72a714fb2d4676e2ba24784c832f96f3975f4ade85d4dd942a81bd751cdd6",
+    "ext-angle-primary-development-45deg-350mm-primary-A6-E20": "6077c39fd6b49e65f95563311ae7a43d0097efbe66cf9f3a3e87283c83f4c441",
+    "ext-angle-primary-development-45deg-350mm-primary-A6-E40": "44bffb4a7b53af249bf22f5d53ade8dcb7a8626eb8fa296b25819e73cf11ea20",
+    "ext-angle-primary-development-45deg-350mm-primary-A6-E60": "cf537ace97840e0816816eeb2d685e8c8c8657e7cd2135fbb91ab5ab04cbca03",
+    "ext-angle-primary-development-45deg-400mm-primary-A0-E0": "decbb0caa5c13eb2f04eb6660b44f53273f1e762ecde438798fd0eeb1902e477",
+    "ext-angle-primary-development-45deg-400mm-primary-A0-E40": "af9bf5226ab923c761f8a8bd055f1d98c7fa9d4474173786d89dccf5e6ec96c0",
+    "ext-angle-primary-development-45deg-400mm-primary-A12-E0": "c6734f0ebcf063407e2652aeabcb5b760ab1e35c18b67ad6ee30ff08a28b4d51",
+    "ext-angle-primary-development-45deg-400mm-primary-A12-E40": "185dfb70d82c046411a565a44916dce3840d0f95f3765162aba1dca6239514dd",
+    "ext-angle-primary-development-45deg-400mm-primary-A6-E20": "d9daa1e7e760b19aa0fdc7f409692ffef715806f2099572741e28d46c5127a9e",
+    "ext-angle-primary-development-45deg-400mm-primary-A6-E40": "8ab978cd3528e9cf7e2af497f5cdace8c52fd5e600499b5e0237b2631dbe167a",
+    "ext-angle-primary-development-45deg-400mm-primary-A6-E60": "a6c623ba40b09df124ce2788b7b43f6f0a8dcfed3fdec8097ea87bcc72179a14",
+    "ext-angle-primary-development-45deg-450mm-primary-A0-E0": "b4f5d81e4af8d34906c8dffa0730a9a4995d56337974ed3cc5d3ebd3044b30b5",
+    "ext-angle-primary-development-45deg-450mm-primary-A0-E40": "038a29cecd67251919532f8568c4db0c71f43206933caa8cd53b7441f7fb6e2b",
+    "ext-angle-primary-development-45deg-450mm-primary-A12-E0": "7d0c2b1a7f46d49a0cc618507d172065bbd373ca60a6fe2c09446da52e8925b4",
+    "ext-angle-primary-development-45deg-450mm-primary-A12-E40": "e322f0b5828d371ddecc2fc76d04dfac6129607514ea46e64ac204b6f54d6c28",
+    "ext-angle-primary-development-45deg-450mm-primary-A6-E20": "bfea7f2bbda139c739f17d74dc5eea1aa71976696b67067e841545998846b04f",
+    "ext-angle-primary-development-45deg-450mm-primary-A6-E40": "e6b13e26b77a74adbec2c61086d3c37780743cbdefa503701df102060f86293b",
+    "ext-angle-primary-development-45deg-450mm-primary-A6-E60": "52a496e712016a9516569515c965c9091ef74c493c441681381ebaca31328126",
+    "ext-angle-primary-development-50deg-250mm-primary-A0-E0": "c5b12ea524a447d955250feede60f95ad65062a2066460009540883fc6accfd7",
+    "ext-angle-primary-development-50deg-250mm-primary-A0-E40": "68a298e6a6b055d842a8111c7aba4bc9e0f144291207aaed3fb590be501034ab",
+    "ext-angle-primary-development-50deg-250mm-primary-A12-E0": "24874012bfa8600728a69f20a6c78c94d1d1f0ba6e026a32404da138e4863785",
+    "ext-angle-primary-development-50deg-250mm-primary-A12-E40": "220574218d21b9b0c987970f39d911ec2f7347d2b852796f88ca9aad7ba211ba",
+    "ext-angle-primary-development-50deg-250mm-primary-A6-E20": "184f36ef58d49f4b853d4415a514511c3816b4ec568df2969db5e3a02684aa24",
+    "ext-angle-primary-development-50deg-250mm-primary-A6-E40": "a235bfa70213728532fc2a0b8023fb3af958e62e4db625f0d8cba913c4aa3a8b",
+    "ext-angle-primary-development-50deg-250mm-primary-A6-E60": "231dc39a9eac83337b97f2bff2b23d82bbe7b621a9ce58f9ce51e9d6e67e4151",
+    "ext-angle-primary-development-50deg-300mm-primary-A0-E0": "c7d3ddf4ae47161307e4b98b0c5fd236bc952efc272f15b81b0426b75dd853e8",
+    "ext-angle-primary-development-50deg-300mm-primary-A0-E40": "10a1bd709f4a1c709897b7ac6adc513e844cff3afc1d46a410819ddf9d7092ae",
+    "ext-angle-primary-development-50deg-300mm-primary-A12-E0": "2088ab95a218fd8a67e4df629d1c875c756bb7f04960b686c1393787d1643b5a",
+    "ext-angle-primary-development-50deg-300mm-primary-A12-E40": "38b5c9dc467fd3d01c46bdf93f11f3f067bb54f046a402c487aa88501389a7c4",
+    "ext-angle-primary-development-50deg-300mm-primary-A6-E20": "8936430da3267b0a51dc308f26e24a613ba704b5014e35d4a1d6b9faf64ed0e6",
+    "ext-angle-primary-development-50deg-300mm-primary-A6-E40": "23e18800923c7af755737132d76d2fcb6b1cf5035344e67f8036b81ad3e385aa",
+    "ext-angle-primary-development-50deg-300mm-primary-A6-E60": "9209055eb032104b2671386d9d02f8581be4b56e1e65537361100b9ce540f091",
+    "ext-angle-primary-development-50deg-350mm-primary-A0-E0": "851e512a93b127bbc8559477c28101e3968639f450ce982cf458026022a23d14",
+    "ext-angle-primary-development-50deg-350mm-primary-A0-E40": "85067e9c2296db9c9a2d66aeb575834564fc793de1b765e8a4bbbaacac780697",
+    "ext-angle-primary-development-50deg-350mm-primary-A12-E0": "516abee81326320df0a0c6576d2c79c9d5d0a7c83d725ec13d12e359de5078a5",
+    "ext-angle-primary-development-50deg-350mm-primary-A12-E40": "9647b20c435ae93ac2aabafd77d899f50a0c2187b93a6cc06102069949ce7b97",
+    "ext-angle-primary-development-50deg-350mm-primary-A6-E20": "51252ae4ad2bcc1fadabdba9e411626c344a31a02e5d2eeb2a9733046e6fd441",
+    "ext-angle-primary-development-50deg-350mm-primary-A6-E40": "9ef44680eefb9c7e1a6a93f60623add56265350e73601301ac7be50daf25b880",
+    "ext-angle-primary-development-50deg-350mm-primary-A6-E60": "428fa9a68bd8d5b3a4472a142af69094065f118b6f82bcf304dd68555099814a",
+    "ext-angle-primary-development-50deg-400mm-primary-A0-E0": "015566194f20edf42e65c53a8d558a94672bc9c22b0796f1b33632c39d639d87",
+    "ext-angle-primary-development-50deg-400mm-primary-A0-E40": "490c617ee694caa0a2e66935e439882de55ecdf0c1fb6ec35549f2f3f6b8b223",
+    "ext-angle-primary-development-50deg-400mm-primary-A12-E0": "621567e6074a2bfc8d4b8e00af5c31cf6217f766879ea62dc75a485fbe4cb83d",
+    "ext-angle-primary-development-50deg-400mm-primary-A12-E40": "a1899e8845df870fac222434caf1becb507328f249ed2279ac7949c437c68f71",
+    "ext-angle-primary-development-50deg-400mm-primary-A6-E20": "ff05625e5d7e8f1785b70936efd8ce717130d37f5f6d6849b30bf010d0233063",
+    "ext-angle-primary-development-50deg-400mm-primary-A6-E40": "f1e7a5f90f3adc021e9e2a7a51e83b16b6e2a63e892d05985b277cb8714c533f",
+    "ext-angle-primary-development-50deg-400mm-primary-A6-E60": "0a650db916eb58fa0d9596d99eea52238e729f58c8916a9151ac99ea3f95114a",
+    "ext-angle-primary-development-50deg-450mm-primary-A0-E0": "5d043f18a309e417a78a5e963363fc7fb06129d782e9a13e85784dac71a00256",
+    "ext-angle-primary-development-50deg-450mm-primary-A0-E40": "d9ab756f62a3751a3ff289377e4cc766adc46faae6aa36f797b01b9020a4a198",
+    "ext-angle-primary-development-50deg-450mm-primary-A12-E0": "90a3df55a97cca9e4a27e37a67db25c6d0e2663b6b2f4c1476b8430c82ba16f8",
+    "ext-angle-primary-development-50deg-450mm-primary-A12-E40": "fbff5e7d28ea74c4b14898ddaac8af99dd1fa6ccee7debcd03d0cf0c0f33408e",
+    "ext-angle-primary-development-50deg-450mm-primary-A6-E20": "3a0004c30377234ff4d5d88544fe3d4cc884314d42a3bab6ae2d5e10da12afb5",
+    "ext-angle-primary-development-50deg-450mm-primary-A6-E40": "c3642d19e8c50a1de04386b39c4febd54a6d646c35ed5ca54db5f41b4f3314fb",
+    "ext-angle-primary-development-50deg-450mm-primary-A6-E60": "a32298cdcda3b7dfd9a5a09a7e40c4429c1613b49994bf7de9807f5da5d8e868",
+    "ext-angle-secondary-transfer-30deg-250mm-secondary-A0-E0": "a69d1f95a6b7ae57c0dbd85921c2a4303765ad393bc890629c922ebcd5abba68",
+    "ext-angle-secondary-transfer-30deg-250mm-secondary-A0-E40": "860c2bc0366cfa38713e0cadb7218b959c5f9afddc378ef569bf3083b3a706cf",
+    "ext-angle-secondary-transfer-30deg-250mm-secondary-A12-E0": "a0bc21de3782c34e5e9bf3e24e5bb09c3017a46ab965361c4edc506d23e4ee69",
+    "ext-angle-secondary-transfer-30deg-250mm-secondary-A12-E40": "c25cf67c7ed86137c6d1d809f4e29567d8007373762269859c2d2009639552c2",
+    "ext-angle-secondary-transfer-30deg-250mm-secondary-A6-E40": "da9e6a2ddefa5a10de9a666e2b7165599f7c19463d636d81aa39d45a0aa328d2",
+    "ext-angle-secondary-transfer-40deg-350mm-secondary-A0-E0": "fa06fa6d62f962d79f91a050a1db79f26b0fa9d1948f7bf31ae1163f45d3a789",
+    "ext-angle-secondary-transfer-40deg-350mm-secondary-A0-E40": "a143813fcf20baefd1184578dc47c16d59156979f80060c176984886b2fec01e",
+    "ext-angle-secondary-transfer-40deg-350mm-secondary-A12-E0": "69ca7ab52a4b68b9c4fe22f473f9ce0b521ae86a39c4f63e554a7be05ad0572a",
+    "ext-angle-secondary-transfer-40deg-350mm-secondary-A12-E40": "ff2bdcc063b35fd27b0b92d08c2614d6e25c7fd4fb0ca800ce3f2e0b2ed51e8f",
+    "ext-angle-secondary-transfer-40deg-350mm-secondary-A6-E40": "c58e787fb3d588131bd3e20e1dff12d51ebe16d192f7241b7fe7d9b154efc6ac",
+    "ext-angle-secondary-transfer-50deg-450mm-secondary-A0-E0": "fcbc67550fa7ceaf9fb67c661fdb48579a3cd7f2d38b2a8c8d075ce78b8d8db1",
+    "ext-angle-secondary-transfer-50deg-450mm-secondary-A0-E40": "bfb1b12fdd20577ea7d42f0fdb902efeffd8db6384e32edf00d87da55a410227",
+    "ext-angle-secondary-transfer-50deg-450mm-secondary-A12-E0": "d87998a434aa0cd500fc913b4d43e54e00f6e58352f3d871608a53684cc736f5",
+    "ext-angle-secondary-transfer-50deg-450mm-secondary-A12-E40": "78d1e29a261bfa3295d43f4af273d74ebbfd78cf5a9aee4261db35d57dacb584",
+    "ext-angle-secondary-transfer-50deg-450mm-secondary-A6-E40": "9495cac012144e150c567f3632497729c7c9af37ab36225298b035e20806b415"
+  },
+  "diagnostics": [
+    "surface_score",
+    "mean_containment",
+    "profile_rms_error",
+    "slice_energy_rms_departure",
+    "outward_rise_violation",
+    "minus_six_db_rms_error",
+    "throat_impedance_score"
+  ],
+  "formula": "y(a,e)=y(6,0)+[y(6,e)-y(6,0)]+[y(a,0)-y(6,0)]+(e/40)*{y(a,40)-y(6,40)-[y(a,0)-y(6,0)]}",
+  "freeze_sha256": "b58979fb1355a56d3e0ed152ee5df6cbf06cb90cabf35ab8e1805e8fa53c4d72",
+  "heuristic_id": "extension_throat_heuristics_v1-frozen",
+  "locked_and_conditional_predictions": {
+    "30deg-250mm": {
+      "A0-E20": {
+        "mean_containment": 76.28683620147626,
+        "minus_six_db_rms_error": 16.569518199136308,
+        "outward_rise_violation": 0.030622784591049456,
+        "profile_rms_error": 1.8901420798715889,
+        "slice_energy_rms_departure": 1.1434210548281083,
+        "surface_score": 76.50042068219338,
+        "throat_impedance_score": 54.40386822026968
+      },
+      "A0-E60": {
+        "mean_containment": 76.37748519041551,
+        "minus_six_db_rms_error": 16.45974009505141,
+        "outward_rise_violation": 0.04345866068541758,
+        "profile_rms_error": 1.8977332867697343,
+        "slice_energy_rms_departure": 1.1513105253750666,
+        "surface_score": 76.43079212253835,
+        "throat_impedance_score": 56.9259637676778
+      },
+      "A12-E20": {
+        "mean_containment": 79.06171417919981,
+        "minus_six_db_rms_error": 15.836933120929459,
+        "outward_rise_violation": 0.5455507636634924,
+        "profile_rms_error": 1.9493319913851788,
+        "slice_energy_rms_departure": 1.2891441920589677,
+        "surface_score": 74.46429063688586,
+        "throat_impedance_score": 59.73321310255045
+      },
+      "A12-E60": {
+        "mean_containment": 80.28515821137358,
+        "minus_six_db_rms_error": 15.500670642346929,
+        "outward_rise_violation": -0.030844876642361685,
+        "profile_rms_error": 1.651414402181128,
+        "slice_energy_rms_departure": 1.2839137744862694,
+        "surface_score": 78.75779103142736,
+        "throat_impedance_score": 82.47284323414365
+      }
+    },
+    "30deg-300mm": {
+      "A0-E20": {
+        "mean_containment": 78.49867345918524,
+        "minus_six_db_rms_error": 12.589955359653604,
+        "outward_rise_violation": 0.022291721765132187,
+        "profile_rms_error": 1.76151245469821,
+        "slice_energy_rms_departure": 1.0219616029315743,
+        "surface_score": 79.99616957912147,
+        "throat_impedance_score": 51.47407483235658
+      },
+      "A0-E60": {
+        "mean_containment": 78.5500673198105,
+        "minus_six_db_rms_error": 12.769913787190887,
+        "outward_rise_violation": 0.041664999617664324,
+        "profile_rms_error": 1.768969421632649,
+        "slice_energy_rms_departure": 1.0329043627517005,
+        "surface_score": 79.79644880672767,
+        "throat_impedance_score": 42.15871160806417
+      },
+      "A12-E20": {
+        "mean_containment": 80.89187226459663,
+        "minus_six_db_rms_error": 11.781746406774273,
+        "outward_rise_violation": 0.5712412604517294,
+        "profile_rms_error": 1.9062153249139033,
+        "slice_energy_rms_departure": 1.0893193338847822,
+        "surface_score": 77.91974097548217,
+        "throat_impedance_score": 65.26866876824955
+      },
+      "A12-E60": {
+        "mean_containment": 82.08839165873323,
+        "minus_six_db_rms_error": 11.433989054823817,
+        "outward_rise_violation": 0.07641223912953599,
+        "profile_rms_error": 1.5645507652612176,
+        "slice_energy_rms_departure": 1.0205416502837903,
+        "surface_score": 82.87645658665664,
+        "throat_impedance_score": 87.74769616676139
+      }
+    },
+    "30deg-350mm": {
+      "A0-E20": {
+        "mean_containment": 82.82105975280439,
+        "minus_six_db_rms_error": 10.487280822568543,
+        "outward_rise_violation": 0.02319639990960423,
+        "profile_rms_error": 1.602475259996941,
+        "slice_energy_rms_departure": 1.2486831528108993,
+        "surface_score": 80.72937014508226,
+        "throat_impedance_score": 64.28155723269276
+      },
+      "A0-E60": {
+        "mean_containment": 82.85148108530676,
+        "minus_six_db_rms_error": 10.474003562018044,
+        "outward_rise_violation": 0.11574740858207698,
+        "profile_rms_error": 1.6286087728359488,
+        "slice_energy_rms_departure": 1.2392277845966286,
+        "surface_score": 80.60783079586965,
+        "throat_impedance_score": 50.460166155266265
+      },
+      "A12-E20": {
+        "mean_containment": 85.55284691465671,
+        "minus_six_db_rms_error": 9.246843622022105,
+        "outward_rise_violation": 1.1105099086895978,
+        "profile_rms_error": 1.8564422873866981,
+        "slice_energy_rms_departure": 1.2893448257342437,
+        "surface_score": 75.97436057413007,
+        "throat_impedance_score": 85.91626616907479
+      },
+      "A12-E60": {
+        "mean_containment": 86.4535120747081,
+        "minus_six_db_rms_error": 8.910006657451635,
+        "outward_rise_violation": -0.5843121778641742,
+        "profile_rms_error": 1.090462244612506,
+        "slice_energy_rms_departure": 0.8301056290785318,
+        "surface_score": 92.06513067088387,
+        "throat_impedance_score": 106.79239761120677
+      }
+    },
+    "30deg-400mm": {
+      "A0-E20": {
+        "mean_containment": 84.93192832264192,
+        "minus_six_db_rms_error": 8.816594880076082,
+        "outward_rise_violation": -0.03731993438103795,
+        "profile_rms_error": 1.599212542233437,
+        "slice_energy_rms_departure": 1.195118042979383,
+        "surface_score": 82.22665071770089,
+        "throat_impedance_score": 67.11332072842686
+      },
+      "A0-E60": {
+        "mean_containment": 85.01073098011523,
+        "minus_six_db_rms_error": 8.762966792709722,
+        "outward_rise_violation": 0.061752711117938563,
+        "profile_rms_error": 1.7000288654195645,
+        "slice_energy_rms_departure": 1.2037593676710154,
+        "surface_score": 81.30648905846269,
+        "throat_impedance_score": 49.59343970862851
+      },
+      "A12-E20": {
+        "mean_containment": 87.97269531118677,
+        "minus_six_db_rms_error": 7.669614714072403,
+        "outward_rise_violation": 1.1428173018872867,
+        "profile_rms_error": 1.7887148620982747,
+        "slice_energy_rms_departure": 1.25261243277667,
+        "surface_score": 77.32695431558295,
+        "throat_impedance_score": 89.8746777723161
+      },
+      "A12-E60": {
+        "mean_containment": 88.76610189311646,
+        "minus_six_db_rms_error": 7.546422084399265,
+        "outward_rise_violation": -0.8988682566126172,
+        "profile_rms_error": 1.0306824705622586,
+        "slice_energy_rms_departure": 0.6371079289187978,
+        "surface_score": 95.3650710675723,
+        "throat_impedance_score": 104.22085712826069
+      }
+    },
+    "30deg-450mm": {
+      "A0-E20": {
+        "mean_containment": 86.33607867068619,
+        "minus_six_db_rms_error": 7.702805473328352,
+        "outward_rise_violation": -0.06359540282138595,
+        "profile_rms_error": 1.5621688799486608,
+        "slice_energy_rms_departure": 1.1155201807226982,
+        "surface_score": 83.93700928495662,
+        "throat_impedance_score": 70.2397136915119
+      },
+      "A0-E60": {
+        "mean_containment": 86.15517453681989,
+        "minus_six_db_rms_error": 8.03836108097535,
+        "outward_rise_violation": 0.1684318815871505,
+        "profile_rms_error": 1.854079582742031,
+        "slice_energy_rms_departure": 1.1788380403667789,
+        "surface_score": 80.55510771629815,
+        "throat_impedance_score": 55.214419091189896
+      },
+      "A12-E20": {
+        "mean_containment": 89.28853447287989,
+        "minus_six_db_rms_error": 6.566156598818136,
+        "outward_rise_violation": 1.236753651717081,
+        "profile_rms_error": 1.7299772187648919,
+        "slice_energy_rms_departure": 1.167783665154651,
+        "surface_score": 78.8575119103887,
+        "throat_impedance_score": 89.51183402342556
+      },
+      "A12-E60": {
+        "mean_containment": 89.92452277146805,
+        "minus_six_db_rms_error": 6.697348235039424,
+        "outward_rise_violation": -0.739934612149709,
+        "profile_rms_error": 1.0973805041884708,
+        "slice_energy_rms_departure": 0.46290973117990464,
+        "surface_score": 96.37369273639763,
+        "throat_impedance_score": 99.35474632462589
+      }
+    },
+    "35deg-250mm": {
+      "A0-E20": {
+        "mean_containment": 81.23371362880496,
+        "minus_six_db_rms_error": 14.628063748927206,
+        "outward_rise_violation": 0.003981285646688531,
+        "profile_rms_error": 1.6770221311839393,
+        "slice_energy_rms_departure": 1.2413152504370535,
+        "surface_score": 78.66642745790037,
+        "throat_impedance_score": 45.826532692032444
+      },
+      "A0-E60": {
+        "mean_containment": 81.32455847966597,
+        "minus_six_db_rms_error": 14.447546697592932,
+        "outward_rise_violation": 0.006276475440035309,
+        "profile_rms_error": 1.694742943644544,
+        "slice_energy_rms_departure": 1.242166410766321,
+        "surface_score": 78.6190251356592,
+        "throat_impedance_score": 52.298717055064046
+      },
+      "A12-E20": {
+        "mean_containment": 83.18928866490961,
+        "minus_six_db_rms_error": 13.809190648604918,
+        "outward_rise_violation": 0.3628109928809487,
+        "profile_rms_error": 1.7204958256721055,
+        "slice_energy_rms_departure": 1.1832418983083715,
+        "surface_score": 78.83099768788347,
+        "throat_impedance_score": 54.29932340144833
+      },
+      "A12-E60": {
+        "mean_containment": 84.26951280595372,
+        "minus_six_db_rms_error": 13.667798146189,
+        "outward_rise_violation": -0.15018114519427728,
+        "profile_rms_error": 1.435364083426136,
+        "slice_energy_rms_departure": 1.168292156681865,
+        "surface_score": 82.32384253966032,
+        "throat_impedance_score": 79.67492042354954
+      }
+    },
+    "35deg-300mm": {
+      "A0-E20": {
+        "mean_containment": 83.24712690750513,
+        "minus_six_db_rms_error": 10.82718120795991,
+        "outward_rise_violation": 0.02129297997753564,
+        "profile_rms_error": 1.5394579856875783,
+        "slice_energy_rms_departure": 1.101642790748147,
+        "surface_score": 82.34279927593056,
+        "throat_impedance_score": 43.38954749474541
+      },
+      "A0-E60": {
+        "mean_containment": 83.27993573066209,
+        "minus_six_db_rms_error": 11.035619840230094,
+        "outward_rise_violation": 0.023470793631897566,
+        "profile_rms_error": 1.5709389101754905,
+        "slice_energy_rms_departure": 1.1189986384038715,
+        "surface_score": 81.87903903114761,
+        "throat_impedance_score": 39.080029686211454
+      },
+      "A12-E20": {
+        "mean_containment": 84.79812201695755,
+        "minus_six_db_rms_error": 9.857762272444361,
+        "outward_rise_violation": 0.38717184860050524,
+        "profile_rms_error": 1.6754581948059408,
+        "slice_energy_rms_departure": 0.9748211050486686,
+        "surface_score": 82.31108374668072,
+        "throat_impedance_score": 54.58557661121573
+      },
+      "A12-E60": {
+        "mean_containment": 85.84355569809044,
+        "minus_six_db_rms_error": 9.714282706230545,
+        "outward_rise_violation": -0.10481420911521311,
+        "profile_rms_error": 1.2812432428353386,
+        "slice_energy_rms_departure": 0.875794221776808,
+        "surface_score": 87.25395947967174,
+        "throat_impedance_score": 77.67129926637747
+      }
+    },
+    "35deg-350mm": {
+      "A0-E20": {
+        "mean_containment": 85.45172702978981,
+        "minus_six_db_rms_error": 9.011857228260462,
+        "outward_rise_violation": 0.02382704128950955,
+        "profile_rms_error": 1.4839906400201284,
+        "slice_energy_rms_departure": 1.062226831030045,
+        "surface_score": 84.06850530234867,
+        "throat_impedance_score": 52.61562290293932
+      },
+      "A0-E60": {
+        "mean_containment": 85.49170607289193,
+        "minus_six_db_rms_error": 9.228929038894575,
+        "outward_rise_violation": -0.02423007285338602,
+        "profile_rms_error": 1.5519126139942998,
+        "slice_energy_rms_departure": 1.0724449335867268,
+        "surface_score": 83.30214914656497,
+        "throat_impedance_score": 45.21528242100797
+      },
+      "A12-E20": {
+        "mean_containment": 87.52305709104607,
+        "minus_six_db_rms_error": 7.740554100171645,
+        "outward_rise_violation": 0.49069231466637275,
+        "profile_rms_error": 1.4787624128648147,
+        "slice_energy_rms_departure": 0.9089581232302714,
+        "surface_score": 85.05100168702378,
+        "throat_impedance_score": 77.163150698437
+      },
+      "A12-E60": {
+        "mean_containment": 88.37572606477019,
+        "minus_six_db_rms_error": 8.201145052709947,
+        "outward_rise_violation": -0.025039912078979487,
+        "profile_rms_error": 1.0664064335373649,
+        "slice_energy_rms_departure": 0.7886474735247032,
+        "surface_score": 90.08858265833548,
+        "throat_impedance_score": 112.098885621059
+      }
+    },
+    "35deg-400mm": {
+      "A0-E20": {
+        "mean_containment": 87.47396470776127,
+        "minus_six_db_rms_error": 8.006792832348768,
+        "outward_rise_violation": 0.05444820669553671,
+        "profile_rms_error": 1.4547622184717832,
+        "slice_energy_rms_departure": 1.0123956395527343,
+        "surface_score": 85.3941597169646,
+        "throat_impedance_score": 62.64504997447466
+      },
+      "A0-E60": {
+        "mean_containment": 87.51298237812753,
+        "minus_six_db_rms_error": 8.080591064225766,
+        "outward_rise_violation": 0.12985120256162286,
+        "profile_rms_error": 1.5787961948739049,
+        "slice_energy_rms_departure": 1.0370681262590677,
+        "surface_score": 83.83039468795246,
+        "throat_impedance_score": 51.03554053827911
+      },
+      "A12-E20": {
+        "mean_containment": 89.72199806168837,
+        "minus_six_db_rms_error": 6.988067340977371,
+        "outward_rise_violation": 0.755273393928606,
+        "profile_rms_error": 1.4760840673813242,
+        "slice_energy_rms_departure": 0.8953765475265663,
+        "surface_score": 84.76479636163455,
+        "throat_impedance_score": 86.11467146545115
+      },
+      "A12-E60": {
+        "mean_containment": 90.47047338509708,
+        "minus_six_db_rms_error": 7.712239220152631,
+        "outward_rise_violation": -0.005367850556749154,
+        "profile_rms_error": 1.1070511408174504,
+        "slice_energy_rms_departure": 0.6139689990085164,
+        "surface_score": 92.13585167483498,
+        "throat_impedance_score": 107.681344720856
+      }
+    },
+    "35deg-450mm": {
+      "A0-E20": {
+        "mean_containment": 87.79075238116724,
+        "minus_six_db_rms_error": 7.987905402486777,
+        "outward_rise_violation": 0.003980136824520003,
+        "profile_rms_error": 1.6290774627986622,
+        "slice_energy_rms_departure": 1.080246408445241,
+        "surface_score": 83.88843075626072,
+        "throat_impedance_score": 67.38190696103484
+      },
+      "A0-E60": {
+        "mean_containment": 87.87460207306788,
+        "minus_six_db_rms_error": 7.823664876530651,
+        "outward_rise_violation": 0.1376916490826291,
+        "profile_rms_error": 1.7954739417675318,
+        "slice_energy_rms_departure": 1.0732907268292349,
+        "surface_score": 82.34402797545113,
+        "throat_impedance_score": 58.8715247622215
+      },
+      "A12-E20": {
+        "mean_containment": 90.214097496832,
+        "minus_six_db_rms_error": 5.937046415404733,
+        "outward_rise_violation": 0.438047868238242,
+        "profile_rms_error": 1.3166353946322482,
+        "slice_energy_rms_departure": 0.6997532471962782,
+        "surface_score": 88.98435286076744,
+        "throat_impedance_score": 89.3696296945993
+      },
+      "A12-E60": {
+        "mean_containment": 90.98439429035717,
+        "minus_six_db_rms_error": 7.296239109158044,
+        "outward_rise_violation": 0.26351727358140986,
+        "profile_rms_error": 1.1936253657363542,
+        "slice_energy_rms_departure": 0.6177770033876983,
+        "surface_score": 90.49921590893086,
+        "throat_impedance_score": 112.14422775051358
+      }
+    },
+    "40deg-250mm": {
+      "A0-E20": {
+        "mean_containment": 83.64375397859354,
+        "minus_six_db_rms_error": 12.515440711411223,
+        "outward_rise_violation": 0.058886918322932726,
+        "profile_rms_error": 1.5329214818047918,
+        "slice_energy_rms_departure": 1.0533410287110938,
+        "surface_score": 82.2618580260358,
+        "throat_impedance_score": 29.650936479470786
+      },
+      "A0-E60": {
+        "mean_containment": 83.79465678240689,
+        "minus_six_db_rms_error": 12.171891181521296,
+        "outward_rise_violation": 0.07097790745569765,
+        "profile_rms_error": 1.5315595937493596,
+        "slice_energy_rms_departure": 1.042340567560709,
+        "surface_score": 82.49849689131277,
+        "throat_impedance_score": 36.74259846429612
+      },
+      "A12-E20": {
+        "mean_containment": 84.57499194139189,
+        "minus_six_db_rms_error": 11.93758840460736,
+        "outward_rise_violation": 0.31588274926535903,
+        "profile_rms_error": 1.6273990266194094,
+        "slice_energy_rms_departure": 0.8958022541578339,
+        "surface_score": 82.8716064506478,
+        "throat_impedance_score": 36.02941232865123
+      },
+      "A12-E60": {
+        "mean_containment": 85.7363241928854,
+        "minus_six_db_rms_error": 11.59563519439872,
+        "outward_rise_violation": 0.16136278816000288,
+        "profile_rms_error": 1.4872072073377727,
+        "slice_energy_rms_departure": 0.9161692320702761,
+        "surface_score": 84.37889141296644,
+        "throat_impedance_score": 62.335587116520486
+      }
+    },
+    "40deg-300mm": {
+      "A0-E20": {
+        "mean_containment": 87.43467375051941,
+        "minus_six_db_rms_error": 9.24471067671023,
+        "outward_rise_violation": 0.10569209386488401,
+        "profile_rms_error": 1.3257591645588187,
+        "slice_energy_rms_departure": 0.969718705806115,
+        "surface_score": 86.05105489082622,
+        "throat_impedance_score": 46.4810178982452
+      },
+      "A0-E60": {
+        "mean_containment": 87.45126930843506,
+        "minus_six_db_rms_error": 9.467057555079077,
+        "outward_rise_violation": 0.14015248099899513,
+        "profile_rms_error": 1.4261564717458222,
+        "slice_energy_rms_departure": 0.9884615111969992,
+        "surface_score": 85.09949299832199,
+        "throat_impedance_score": 42.79514540227874
+      },
+      "A12-E20": {
+        "mean_containment": 88.96974001976955,
+        "minus_six_db_rms_error": 9.508965735972478,
+        "outward_rise_violation": 0.576819962894095,
+        "profile_rms_error": 1.5648604960970187,
+        "slice_energy_rms_departure": 1.0243341300341022,
+        "surface_score": 82.50167618557101,
+        "throat_impedance_score": 64.36367534517414
+      },
+      "A12-E60": {
+        "mean_containment": 89.7060042616549,
+        "minus_six_db_rms_error": 10.465032236515896,
+        "outward_rise_violation": -0.43048825928897316,
+        "profile_rms_error": 1.274474128340129,
+        "slice_energy_rms_departure": 0.8532483944143938,
+        "surface_score": 89.15774035458283,
+        "throat_impedance_score": 90.21923399924088
+      }
+    },
+    "40deg-350mm": {
+      "A0-E20": {
+        "mean_containment": 88.87078039083625,
+        "minus_six_db_rms_error": 8.482429500611069,
+        "outward_rise_violation": 0.12542502871431585,
+        "profile_rms_error": 1.3935352692115681,
+        "slice_energy_rms_departure": 0.9332503622221986,
+        "surface_score": 86.49409695374754,
+        "throat_impedance_score": 50.59494774027563
+      },
+      "A0-E60": {
+        "mean_containment": 88.89807740774489,
+        "minus_six_db_rms_error": 8.726413060137007,
+        "outward_rise_violation": 0.12094138334351034,
+        "profile_rms_error": 1.4976512326678026,
+        "slice_energy_rms_departure": 0.9533088907125464,
+        "surface_score": 85.17191531068045,
+        "throat_impedance_score": 43.36497349958074
+      },
+      "A12-E20": {
+        "mean_containment": 90.67032988768209,
+        "minus_six_db_rms_error": 8.446027928272024,
+        "outward_rise_violation": 0.573506887267752,
+        "profile_rms_error": 1.4835087545624719,
+        "slice_energy_rms_departure": 0.8752580542600645,
+        "surface_score": 85.44246730236769,
+        "throat_impedance_score": 77.77708559924474
+      },
+      "A12-E60": {
+        "mean_containment": 91.30257784754048,
+        "minus_six_db_rms_error": 10.178516999957845,
+        "outward_rise_violation": -0.014792509035865486,
+        "profile_rms_error": 1.4476076041333843,
+        "slice_energy_rms_departure": 0.7922390066453595,
+        "surface_score": 87.63895533963283,
+        "throat_impedance_score": 112.4178727092227
+      }
+    },
+    "40deg-400mm": {
+      "A0-E20": {
+        "mean_containment": 87.78995562437845,
+        "minus_six_db_rms_error": 6.640497696094419,
+        "outward_rise_violation": 0.2994799944705334,
+        "profile_rms_error": 1.3732957559200734,
+        "slice_energy_rms_departure": 0.8776772806342863,
+        "surface_score": 87.06195274335491,
+        "throat_impedance_score": 44.26161167188103
+      },
+      "A0-E60": {
+        "mean_containment": 87.86425567804093,
+        "minus_six_db_rms_error": 6.828879603388913,
+        "outward_rise_violation": 0.363773755696446,
+        "profile_rms_error": 1.4791240111992396,
+        "slice_energy_rms_departure": 0.9102362124713457,
+        "surface_score": 85.74027523922459,
+        "throat_impedance_score": 36.00980251437478
+      },
+      "A12-E20": {
+        "mean_containment": 89.3686995938842,
+        "minus_six_db_rms_error": 5.167062609086418,
+        "outward_rise_violation": 0.6157503233947661,
+        "profile_rms_error": 1.2900834476011434,
+        "slice_energy_rms_departure": 0.6660823071565165,
+        "surface_score": 88.66895978330308,
+        "throat_impedance_score": 65.53309896368613
+      },
+      "A12-E60": {
+        "mean_containment": 90.37612037305684,
+        "minus_six_db_rms_error": 6.955440198236511,
+        "outward_rise_violation": 0.1793206529979658,
+        "profile_rms_error": 1.1477641667788547,
+        "slice_energy_rms_departure": 0.7060295055340691,
+        "surface_score": 90.56080576092185,
+        "throat_impedance_score": 100.00825159368617
+      }
+    },
+    "40deg-450mm": {
+      "A0-E20": {
+        "mean_containment": 90.0279816387858,
+        "minus_six_db_rms_error": 7.572033134411189,
+        "outward_rise_violation": 0.23814920959707075,
+        "profile_rms_error": 1.3952109489037736,
+        "slice_energy_rms_departure": 0.8624352480522988,
+        "surface_score": 87.4222135752912,
+        "throat_impedance_score": 57.87754864233925
+      },
+      "A0-E60": {
+        "mean_containment": 90.11826601021014,
+        "minus_six_db_rms_error": 8.486062731946419,
+        "outward_rise_violation": 0.18475556218045264,
+        "profile_rms_error": 1.8877587260331368,
+        "slice_energy_rms_departure": 1.0010597052998853,
+        "surface_score": 82.4447517961556,
+        "throat_impedance_score": 47.399979408183185
+      },
+      "A12-E20": {
+        "mean_containment": 91.71746131736961,
+        "minus_six_db_rms_error": 6.746697465287111,
+        "outward_rise_violation": 0.5415937474346412,
+        "profile_rms_error": 1.3307410319888988,
+        "slice_energy_rms_departure": 0.6595332548364308,
+        "surface_score": 88.85992053252792,
+        "throat_impedance_score": 79.93511214793706
+      },
+      "A12-E60": {
+        "mean_containment": 92.46381759855359,
+        "minus_six_db_rms_error": 9.896010198618669,
+        "outward_rise_violation": 0.11280215403773086,
+        "profile_rms_error": 1.7772379898932598,
+        "slice_energy_rms_departure": 0.6832453044582505,
+        "surface_score": 85.976788157995,
+        "throat_impedance_score": 110.42792256903354
+      }
+    },
+    "45deg-250mm": {
+      "A0-E20": {
+        "mean_containment": 86.74899034931587,
+        "minus_six_db_rms_error": 10.603904180145635,
+        "outward_rise_violation": 0.18242772705944715,
+        "profile_rms_error": 1.399784361110886,
+        "slice_energy_rms_departure": 0.9460926864372975,
+        "surface_score": 85.10819761683027,
+        "throat_impedance_score": 30.788066790082993
+      },
+      "A0-E60": {
+        "mean_containment": 86.80906531970919,
+        "minus_six_db_rms_error": 10.549782733457628,
+        "outward_rise_violation": 0.2303915861987099,
+        "profile_rms_error": 1.435009815745793,
+        "slice_energy_rms_departure": 0.947268301479241,
+        "surface_score": 84.81913133960656,
+        "throat_impedance_score": 33.93253692711185
+      },
+      "A12-E20": {
+        "mean_containment": 87.83300326856678,
+        "minus_six_db_rms_error": 10.400842835668255,
+        "outward_rise_violation": 0.25788764445290735,
+        "profile_rms_error": 1.3920177773306375,
+        "slice_energy_rms_departure": 0.8424706431679818,
+        "surface_score": 86.01568994186496,
+        "throat_impedance_score": 42.70257599705688
+      },
+      "A12-E60": {
+        "mean_containment": 88.90815551595281,
+        "minus_six_db_rms_error": 10.924664977294517,
+        "outward_rise_violation": 0.012626581296593276,
+        "profile_rms_error": 1.2288323206400338,
+        "slice_energy_rms_departure": 0.8943742294770058,
+        "surface_score": 87.21274881939378,
+        "throat_impedance_score": 71.40765780802641
+      }
+    },
+    "45deg-300mm": {
+      "A0-E20": {
+        "mean_containment": 89.99348871275153,
+        "minus_six_db_rms_error": 9.486471390338615,
+        "outward_rise_violation": 0.1746109284675505,
+        "profile_rms_error": 1.418566503992318,
+        "slice_energy_rms_departure": 0.9034425460396475,
+        "surface_score": 86.3821703588181,
+        "throat_impedance_score": 46.076389212862736
+      },
+      "A0-E60": {
+        "mean_containment": 90.04863061140789,
+        "minus_six_db_rms_error": 9.95149650848041,
+        "outward_rise_violation": 0.11108462105243722,
+        "profile_rms_error": 1.6183941164349656,
+        "slice_energy_rms_departure": 0.9337858605372698,
+        "surface_score": 84.6156084205731,
+        "throat_impedance_score": 45.56157832167058
+      },
+      "A12-E20": {
+        "mean_containment": 91.37268802940231,
+        "minus_six_db_rms_error": 10.45168836681885,
+        "outward_rise_violation": 0.4168317793073658,
+        "profile_rms_error": 1.5959888091293006,
+        "slice_energy_rms_departure": 0.9238945688451993,
+        "surface_score": 84.18493097624588,
+        "throat_impedance_score": 66.99293071599385
+      },
+      "A12-E60": {
+        "mean_containment": 91.9164036308347,
+        "minus_six_db_rms_error": 12.694576480219943,
+        "outward_rise_violation": -0.22218227418019143,
+        "profile_rms_error": 1.8206532359794425,
+        "slice_energy_rms_departure": 0.9518632590699977,
+        "surface_score": 83.5849659189208,
+        "throat_impedance_score": 98.6437010260075
+      }
+    },
+    "45deg-350mm": {
+      "A0-E20": {
+        "mean_containment": 90.41995519405312,
+        "minus_six_db_rms_error": 8.306430215553151,
+        "outward_rise_violation": 0.29725192206263895,
+        "profile_rms_error": 1.3531439532419751,
+        "slice_energy_rms_departure": 0.858639765139877,
+        "surface_score": 87.45511202918846,
+        "throat_impedance_score": 41.98242510847098
+      },
+      "A0-E60": {
+        "mean_containment": 90.46361434368058,
+        "minus_six_db_rms_error": 8.457625344174227,
+        "outward_rise_violation": 0.4309883366346703,
+        "profile_rms_error": 1.4735887523402387,
+        "slice_energy_rms_departure": 0.8957520684981943,
+        "surface_score": 85.6376056757963,
+        "throat_impedance_score": 37.09863239769932
+      },
+      "A12-E20": {
+        "mean_containment": 91.79310800660845,
+        "minus_six_db_rms_error": 8.458945635730311,
+        "outward_rise_violation": 0.5695979966266052,
+        "profile_rms_error": 1.3971319334953878,
+        "slice_energy_rms_departure": 0.7292857354912328,
+        "surface_score": 87.40276722468019,
+        "throat_impedance_score": 67.30378586050162
+      },
+      "A12-E60": {
+        "mean_containment": 92.43170694386191,
+        "minus_six_db_rms_error": 11.26399073527231,
+        "outward_rise_violation": 0.2031201003272548,
+        "profile_rms_error": 1.6289818263836613,
+        "slice_energy_rms_departure": 0.8101644617003408,
+        "surface_score": 85.67380752456174,
+        "throat_impedance_score": 107.05478884763673
+      }
+    },
+    "45deg-400mm": {
+      "A0-E20": {
+        "mean_containment": 90.15104893464878,
+        "minus_six_db_rms_error": 7.2678740650299405,
+        "outward_rise_violation": 0.5140481805554322,
+        "profile_rms_error": 1.3529541549046051,
+        "slice_energy_rms_departure": 0.8625647737528722,
+        "surface_score": 87.00647405140066,
+        "throat_impedance_score": 39.39776055416105
+      },
+      "A0-E60": {
+        "mean_containment": 90.20278698948478,
+        "minus_six_db_rms_error": 7.405388522463526,
+        "outward_rise_violation": 0.578730820826086,
+        "profile_rms_error": 1.4902108327051597,
+        "slice_energy_rms_departure": 0.8989671548318683,
+        "surface_score": 85.35904308276636,
+        "throat_impedance_score": 34.24293063334562
+      },
+      "A12-E20": {
+        "mean_containment": 91.43887601433295,
+        "minus_six_db_rms_error": 6.665525335685797,
+        "outward_rise_violation": 0.6819247650745719,
+        "profile_rms_error": 1.3157285144560498,
+        "slice_energy_rms_departure": 0.7056697954354192,
+        "surface_score": 87.99150358833298,
+        "throat_impedance_score": 60.796015957071305
+      },
+      "A12-E60": {
+        "mean_containment": 92.27514611448586,
+        "minus_six_db_rms_error": 9.921726720594055,
+        "outward_rise_violation": 0.15547811330977762,
+        "profile_rms_error": 1.4909480137139814,
+        "slice_energy_rms_departure": 0.7764110501532033,
+        "surface_score": 87.60559065585768,
+        "throat_impedance_score": 96.49690140602632
+      }
+    },
+    "45deg-450mm": {
+      "A0-E20": {
+        "mean_containment": 91.71786584870335,
+        "minus_six_db_rms_error": 7.574364627469899,
+        "outward_rise_violation": 0.5558378849148586,
+        "profile_rms_error": 1.2703129694044843,
+        "slice_energy_rms_departure": 0.720094365313452,
+        "surface_score": 88.66114068922984,
+        "throat_impedance_score": 47.46633982121051
+      },
+      "A0-E60": {
+        "mean_containment": 91.75197680125028,
+        "minus_six_db_rms_error": 7.873441870245445,
+        "outward_rise_violation": 0.6449251055487077,
+        "profile_rms_error": 1.4753794773100681,
+        "slice_energy_rms_departure": 0.814990953182718,
+        "surface_score": 85.96969234266622,
+        "throat_impedance_score": 38.79127478415607
+      },
+      "A12-E20": {
+        "mean_containment": 92.90550637461004,
+        "minus_six_db_rms_error": 7.972665770878526,
+        "outward_rise_violation": 0.7219983049057762,
+        "profile_rms_error": 1.3971421262499477,
+        "slice_energy_rms_departure": 0.664040794524748,
+        "surface_score": 87.55862918390707,
+        "throat_impedance_score": 71.759111269345
+      },
+      "A12-E60": {
+        "mean_containment": 93.57139387798568,
+        "minus_six_db_rms_error": 11.035922005619305,
+        "outward_rise_violation": 0.3180778975937931,
+        "profile_rms_error": 1.6428936877153097,
+        "slice_energy_rms_departure": 0.5972177116616404,
+        "surface_score": 87.16058578523626,
+        "throat_impedance_score": 109.24243628838491
+      }
+    },
+    "50deg-250mm": {
+      "A0-E20": {
+        "mean_containment": 90.23440172842007,
+        "minus_six_db_rms_error": 10.789207028050544,
+        "outward_rise_violation": 0.14724571452691704,
+        "profile_rms_error": 1.3302536753781484,
+        "slice_energy_rms_departure": 0.9152577036026586,
+        "surface_score": 86.47653904151608,
+        "throat_impedance_score": 31.694628848086666
+      },
+      "A0-E60": {
+        "mean_containment": 90.25521097907847,
+        "minus_six_db_rms_error": 10.802866011104122,
+        "outward_rise_violation": 0.22914496144463847,
+        "profile_rms_error": 1.4276830456350829,
+        "slice_energy_rms_departure": 0.9227700407597359,
+        "surface_score": 85.63516860877786,
+        "throat_impedance_score": 39.2687370165549
+      },
+      "A12-E20": {
+        "mean_containment": 91.15709353349841,
+        "minus_six_db_rms_error": 11.730322858792398,
+        "outward_rise_violation": 0.2641588658355647,
+        "profile_rms_error": 1.5397542459785334,
+        "slice_energy_rms_departure": 0.9125973793641771,
+        "surface_score": 84.56777757951309,
+        "throat_impedance_score": 48.16957733110404
+      },
+      "A12-E60": {
+        "mean_containment": 91.863944025518,
+        "minus_six_db_rms_error": 13.984352086771462,
+        "outward_rise_violation": -0.1699260941492715,
+        "profile_rms_error": 1.7373019836851906,
+        "slice_energy_rms_departure": 0.9768085353198206,
+        "surface_score": 83.23017412114805,
+        "throat_impedance_score": 82.66979681639262
+      }
+    },
+    "50deg-300mm": {
+      "A0-E20": {
+        "mean_containment": 91.40507707037423,
+        "minus_six_db_rms_error": 9.21449786951285,
+        "outward_rise_violation": 0.4497955275664841,
+        "profile_rms_error": 1.3506861893615416,
+        "slice_energy_rms_departure": 0.8300852953463429,
+        "surface_score": 87.18809650546706,
+        "throat_impedance_score": 38.078638914396265
+      },
+      "A0-E60": {
+        "mean_containment": 91.39506612389272,
+        "minus_six_db_rms_error": 9.323054391117036,
+        "outward_rise_violation": 0.5555791627460596,
+        "profile_rms_error": 1.455966280126928,
+        "slice_energy_rms_departure": 0.8657396846032788,
+        "surface_score": 85.5777532316603,
+        "throat_impedance_score": 34.0918661826545
+      },
+      "A12-E20": {
+        "mean_containment": 92.48445630463257,
+        "minus_six_db_rms_error": 10.466833276458406,
+        "outward_rise_violation": 0.5511207136676288,
+        "profile_rms_error": 1.5265198078571522,
+        "slice_energy_rms_departure": 0.7957306079204849,
+        "surface_score": 85.59705114435539,
+        "throat_impedance_score": 58.996524450757974
+      },
+      "A12-E60": {
+        "mean_containment": 93.01469229752621,
+        "minus_six_db_rms_error": 13.757376697626544,
+        "outward_rise_violation": 0.11268307648500203,
+        "profile_rms_error": 1.9390424154955537,
+        "slice_energy_rms_departure": 0.9266278250947941,
+        "surface_score": 82.3444039057826,
+        "throat_impedance_score": 91.86982781248744
+      }
+    },
+    "50deg-350mm": {
+      "A0-E20": {
+        "mean_containment": 91.85926778653663,
+        "minus_six_db_rms_error": 8.608947940453355,
+        "outward_rise_violation": 0.5507876760626649,
+        "profile_rms_error": 1.3397967349305737,
+        "slice_energy_rms_departure": 0.8295680583361247,
+        "surface_score": 87.19163650824413,
+        "throat_impedance_score": 35.05057112440054
+      },
+      "A0-E60": {
+        "mean_containment": 91.8831825419474,
+        "minus_six_db_rms_error": 8.781103727144377,
+        "outward_rise_violation": 0.6441127231261233,
+        "profile_rms_error": 1.474286183282976,
+        "slice_energy_rms_departure": 0.8778729888690631,
+        "surface_score": 85.28623043963367,
+        "throat_impedance_score": 28.69294730815261
+      },
+      "A12-E20": {
+        "mean_containment": 92.86506699756386,
+        "minus_six_db_rms_error": 9.339252672467271,
+        "outward_rise_violation": 0.7066690302214453,
+        "profile_rms_error": 1.4533839289607084,
+        "slice_energy_rms_departure": 0.7498384187934961,
+        "surface_score": 86.24274501878699,
+        "throat_impedance_score": 56.86263427692441
+      },
+      "A12-E60": {
+        "mean_containment": 93.50032101174202,
+        "minus_six_db_rms_error": 12.886549113794642,
+        "outward_rise_violation": 0.22267751716148992,
+        "profile_rms_error": 1.8232413080190106,
+        "slice_energy_rms_departure": 0.8283860760762184,
+        "surface_score": 84.1008974495875,
+        "throat_impedance_score": 92.13118776696106
+      }
+    },
+    "50deg-400mm": {
+      "A0-E20": {
+        "mean_containment": 92.43707578858684,
+        "minus_six_db_rms_error": 7.820655312740087,
+        "outward_rise_violation": 0.8746662648455809,
+        "profile_rms_error": 1.2660217257778394,
+        "slice_energy_rms_departure": 0.7496415523270145,
+        "surface_score": 87.1861764567492,
+        "throat_impedance_score": 33.97510017592866
+      },
+      "A0-E60": {
+        "mean_containment": 92.45061668863485,
+        "minus_six_db_rms_error": 8.195023725157032,
+        "outward_rise_violation": 0.9359790301598218,
+        "profile_rms_error": 1.4720952648960457,
+        "slice_energy_rms_departure": 0.8379615241301971,
+        "surface_score": 84.64798939102121,
+        "throat_impedance_score": 29.197953551794154
+      },
+      "A12-E20": {
+        "mean_containment": 93.34056241549084,
+        "minus_six_db_rms_error": 8.976753052929249,
+        "outward_rise_violation": 0.9162089212712641,
+        "profile_rms_error": 1.4687272751816054,
+        "slice_energy_rms_departure": 0.7611789226675664,
+        "surface_score": 85.34060447560913,
+        "throat_impedance_score": 54.48796507290258
+      },
+      "A12-E60": {
+        "mean_containment": 93.99851082799397,
+        "minus_six_db_rms_error": 12.434082953768034,
+        "outward_rise_violation": 0.3111135023931946,
+        "profile_rms_error": 1.7387025888673306,
+        "slice_energy_rms_departure": 0.716437586181751,
+        "surface_score": 85.57563028758611,
+        "throat_impedance_score": 85.45227531676915
+      }
+    },
+    "50deg-450mm": {
+      "A0-E20": {
+        "mean_containment": 92.82892887482824,
+        "minus_six_db_rms_error": 8.285182252127832,
+        "outward_rise_violation": 0.9257069931069744,
+        "profile_rms_error": 1.3118711036837833,
+        "slice_energy_rms_departure": 0.768092197190404,
+        "surface_score": 86.46832728634408,
+        "throat_impedance_score": 39.8410167801312
+      },
+      "A0-E60": {
+        "mean_containment": 92.83381899867332,
+        "minus_six_db_rms_error": 8.576647597743307,
+        "outward_rise_violation": 0.9755251388880044,
+        "profile_rms_error": 1.5216872038476952,
+        "slice_energy_rms_departure": 0.8538166754669754,
+        "surface_score": 83.95695923077471,
+        "throat_impedance_score": 36.99129663195936
+      },
+      "A12-E20": {
+        "mean_containment": 93.7171907537242,
+        "minus_six_db_rms_error": 9.244976166395535,
+        "outward_rise_violation": 0.9954703942460883,
+        "profile_rms_error": 1.5082142506970246,
+        "slice_energy_rms_departure": 0.7586681318974351,
+        "surface_score": 84.73509175546542,
+        "throat_impedance_score": 60.928000700591774
+      },
+      "A12-E60": {
+        "mean_containment": 94.36179671171107,
+        "minus_six_db_rms_error": 13.135473607818414,
+        "outward_rise_violation": 0.2716854906048082,
+        "profile_rms_error": 1.8769527514618911,
+        "slice_energy_rms_departure": 0.7229739219263853,
+        "surface_score": 84.68585638141238,
+        "throat_impedance_score": 95.75191230611776
+      }
+    }
+  },
+  "manifest_freeze_sha256": "5e6fb860aef9c204ffc70d8c55980ca38b61ed2ac9c10475a7a46cc7c5a584df",
+  "primary_lookup": {
+    "30deg-250mm": {
+      "A0-E0": {
+        "mean_containment": 76.28068317457115,
+        "minus_six_db_rms_error": 16.695846547230563,
+        "outward_rise_violation": 0.0325224580825557,
+        "profile_rms_error": 1.88773935501722,
+        "slice_energy_rms_departure": 1.1492279398893839,
+        "surface_score": 76.43050044029442,
+        "throat_impedance_score": 78.27935489224166
+      },
+      "A0-E40": {
+        "mean_containment": 76.30496268924108,
+        "minus_six_db_rms_error": 16.52141926676144,
+        "outward_rise_violation": 0.045436901540716904,
+        "profile_rms_error": 1.8930791034559764,
+        "slice_energy_rms_departure": 1.14534580839367,
+        "surface_score": 76.4793628863207,
+        "throat_impedance_score": 49.17487186687639
+      },
+      "A12-E0": {
+        "mean_containment": 78.48916363067747,
+        "minus_six_db_rms_error": 16.076503656272525,
+        "outward_rise_violation": 0.8420661953551098,
+        "profile_rms_error": 2.0996836645819075,
+        "slice_energy_rms_departure": 1.3015110211800716,
+        "surface_score": 72.21280591788863,
+        "throat_impedance_score": 73.49993248242988
+      },
+      "A12-E40": {
+        "mean_containment": 79.64623818858189,
+        "minus_six_db_rms_error": 15.675592001305777,
+        "outward_rise_violation": 0.2657491224130487,
+        "profile_rms_error": 1.7995146169184681,
+        "slice_energy_rms_departure": 1.2845090015647012,
+        "surface_score": 76.62479731811143,
+        "throat_impedance_score": 64.6129840412497
+      },
+      "A6-E0": {
+        "mean_containment": 77.68851134206966,
+        "minus_six_db_rms_error": 16.14634195056529,
+        "outward_rise_violation": 0.04061806041690899,
+        "profile_rms_error": 1.8030427613846058,
+        "slice_energy_rms_departure": 1.137902990514114,
+        "surface_score": 77.51111619093584,
+        "throat_impedance_score": 77.98912096445788
+      },
+      "A6-E20": {
+        "mean_containment": 77.88206839995779,
+        "minus_six_db_rms_error": 16.007204284009127,
+        "outward_rise_violation": 0.021922498213999483,
+        "profile_rms_error": 1.7857488052167874,
+        "slice_energy_rms_departure": 1.1573377827107967,
+        "surface_score": 77.54992065608462,
+        "throat_impedance_score": 57.381690286481735
+      },
+      "A6-E40": {
+        "mean_containment": 78.08759891870564,
+        "minus_six_db_rms_error": 15.94629603317235,
+        "outward_rise_violation": 0.01994072645226367,
+        "profile_rms_error": 1.7689891477789876,
+        "slice_energy_rms_departure": 1.1845042135343165,
+        "surface_score": 77.49774708346176,
+        "throat_impedance_score": 55.42074992708427
+      },
+      "A6-E60": {
+        "mean_containment": 78.3475254508631,
+        "minus_six_db_rms_error": 15.871807543000408,
+        "outward_rise_violation": 0.0011665968855610904,
+        "profile_rms_error": 1.753946650070558,
+        "slice_energy_rms_departure": 1.215710607773671,
+        "surface_score": 77.41806054292924,
+        "throat_impedance_score": 66.43989782188152
+      }
+    },
+    "30deg-300mm": {
+      "A0-E0": {
+        "mean_containment": 78.51411106914303,
+        "minus_six_db_rms_error": 12.535888150822093,
+        "outward_rise_violation": 0.040934892152137387,
+        "profile_rms_error": 1.7587890466577738,
+        "slice_energy_rms_departure": 1.021849733031139,
+        "surface_score": 80.02713485810409,
+        "throat_impedance_score": 74.27179254148547
+      },
+      "A0-E40": {
+        "mean_containment": 78.51522814644579,
+        "minus_six_db_rms_error": 12.656494104550003,
+        "outward_rise_violation": 0.047423995291294735,
+        "profile_rms_error": 1.7632592421307935,
+        "slice_energy_rms_departure": 1.026557895700316,
+        "surface_score": 79.91941098124327,
+        "throat_impedance_score": 42.40764337189293
+      },
+      "A12-E0": {
+        "mean_containment": 80.33474710779873,
+        "minus_six_db_rms_error": 11.99153708768663,
+        "outward_rise_violation": 0.8469855804260973,
+        "profile_rms_error": 2.07805268016703,
+        "slice_energy_rms_departure": 1.1290676856949058,
+        "surface_score": 75.37248806268065,
+        "throat_impedance_score": 72.16919116597633
+      },
+      "A12-E40": {
+        "mean_containment": 81.48098971861285,
+        "minus_six_db_rms_error": 11.584427261926802,
+        "outward_rise_violation": 0.3392723843905292,
+        "profile_rms_error": 1.7334013490529245,
+        "slice_energy_rms_departure": 1.054055404942965,
+        "surface_score": 80.4212005693881,
+        "throat_impedance_score": 72.09943261918802
+      },
+      "A6-E0": {
+        "mean_containment": 79.7475370951197,
+        "minus_six_db_rms_error": 11.850718954635706,
+        "outward_rise_violation": 0.07277961193282131,
+        "profile_rms_error": 1.682784824286923,
+        "slice_energy_rms_departure": 0.9453085212589836,
+        "surface_score": 81.58579113962435,
+        "throat_impedance_score": 75.06602681344188
+      },
+      "A6-E20": {
+        "mean_containment": 79.910394690399,
+        "minus_six_db_rms_error": 11.870018595489384,
+        "outward_rise_violation": 0.034771626428847874,
+        "profile_rms_error": 1.6634802257839354,
+        "slice_energy_rms_departure": 0.9738083027339494,
+        "surface_score": 81.52681046022977,
+        "throat_impedance_score": 57.37835746190917
+      },
+      "A6-E40": {
+        "mean_containment": 80.10524458289665,
+        "minus_six_db_rms_error": 11.901789772407948,
+        "outward_rise_violation": 0.04053908483804218,
+        "profile_rms_error": 1.6431990066730955,
+        "slice_energy_rms_departure": 1.0067925070772212,
+        "surface_score": 81.42203646193961,
+        "throat_impedance_score": 53.4219743590417
+      },
+      "A6-E60": {
+        "mean_containment": 80.31837896149844,
+        "minus_six_db_rms_error": 11.980441887070999,
+        "outward_rise_violation": 0.015415274047443524,
+        "profile_rms_error": 1.6268811796315275,
+        "slice_energy_rms_departure": 1.041526885703136,
+        "surface_score": 81.27105888701205,
+        "throat_impedance_score": 58.28309095280912
+      }
+    },
+    "30deg-350mm": {
+      "A0-E0": {
+        "mean_containment": 82.8330217966037,
+        "minus_six_db_rms_error": 10.517890226765198,
+        "outward_rise_violation": 0.001052489628214143,
+        "profile_rms_error": 1.6474296677590436,
+        "slice_energy_rms_departure": 1.2574553718201171,
+        "surface_score": 80.36672931536938,
+        "throat_impedance_score": 74.67502629324285
+      },
+      "A0-E40": {
+        "mean_containment": 82.81786800587277,
+        "minus_six_db_rms_error": 10.618274076658437,
+        "outward_rise_violation": 0.0,
+        "profile_rms_error": 1.6456238124251654,
+        "slice_energy_rms_departure": 1.2604930670662413,
+        "surface_score": 80.31847398902084,
+        "throat_impedance_score": 56.745891989335504
+      },
+      "A12-E0": {
+        "mean_containment": 85.12968704468152,
+        "minus_six_db_rms_error": 9.439232878228744,
+        "outward_rise_violation": 1.9820525460213303,
+        "profile_rms_error": 2.2974534729554006,
+        "slice_energy_rms_departure": 1.5230089589641822,
+        "surface_score": 67.505565021434,
+        "throat_impedance_score": 78.96097396984564
+      },
+      "A12-E40": {
+        "mean_containment": 85.9847770814996,
+        "minus_six_db_rms_error": 9.216057024102014,
+        "outward_rise_violation": 0.19362696116687123,
+        "profile_rms_error": 1.5035340620083226,
+        "slice_energy_rms_departure": 1.0762628257688651,
+        "surface_score": 83.66961914105187,
+        "throat_impedance_score": 95.72936218549677
+      },
+      "A6-E0": {
+        "mean_containment": 84.52403269170196,
+        "minus_six_db_rms_error": 9.039819798107096,
+        "outward_rise_violation": 0.11228656981991625,
+        "profile_rms_error": 1.348042672375485,
+        "slice_energy_rms_departure": 0.9987488775417304,
+        "surface_score": 85.13149331622007,
+        "throat_impedance_score": 84.5110227025689
+      },
+      "A6-E20": {
+        "mean_containment": 84.53466030795435,
+        "minus_six_db_rms_error": 9.28174769345318,
+        "outward_rise_violation": 0.07881344000545529,
+        "profile_rms_error": 1.343570446181424,
+        "slice_energy_rms_departure": 1.0584642113070015,
+        "surface_score": 84.62949828515164,
+        "throat_impedance_score": 75.86911686539325
+      },
+      "A6-E40": {
+        "mean_containment": 84.55405822107444,
+        "minus_six_db_rms_error": 9.685278247085812,
+        "outward_rise_violation": 0.0,
+        "profile_rms_error": 1.4272011801776898,
+        "slice_energy_rms_departure": 1.1387616783368326,
+        "surface_score": 83.35396626830892,
+        "throat_impedance_score": 70.08501484541044
+      },
+      "A6-E60": {
+        "mean_containment": 84.61026096056014,
+        "minus_six_db_rms_error": 9.813545031988156,
+        "outward_rise_violation": 0.060130368486225924,
+        "profile_rms_error": 1.4506683221565146,
+        "slice_energy_rms_departure": 1.185983948641709,
+        "surface_score": 82.77868721437642,
+        "throat_impedance_score": 65.55085223471565
+      }
+    },
+    "30deg-400mm": {
+      "A0-E0": {
+        "mean_containment": 84.90754641226141,
+        "minus_six_db_rms_error": 8.886437085239322,
+        "outward_rise_violation": 0.001610079088671187,
+        "profile_rms_error": 1.6329762241240557,
+        "slice_energy_rms_departure": 1.200473756666511,
+        "surface_score": 81.85425178288102,
+        "throat_impedance_score": 78.40815875906735
+      },
+      "A0-E40": {
+        "mean_containment": 84.95864251736876,
+        "minus_six_db_rms_error": 8.803648947100282,
+        "outward_rise_violation": 0.0,
+        "profile_rms_error": 1.639888929808337,
+        "slice_energy_rms_departure": 1.2062005169971535,
+        "surface_score": 81.79886711262974,
+        "throat_impedance_score": 58.4419333212706
+      },
+      "A12-E0": {
+        "mean_containment": 87.59101143857806,
+        "minus_six_db_rms_error": 7.774239190389034,
+        "outward_rise_violation": 2.252126417356436,
+        "profile_rms_error": 2.2519029013499647,
+        "slice_energy_rms_departure": 1.57004106073855,
+        "surface_score": 67.4754161751493,
+        "throat_impedance_score": 85.23648561508513
+      },
+      "A12-E40": {
+        "mean_containment": 88.3567114681418,
+        "minus_six_db_rms_error": 7.621886509943215,
+        "outward_rise_violation": 0.10975813426888437,
+        "profile_rms_error": 1.3999668923121027,
+        "slice_energy_rms_departure": 0.951621992519688,
+        "surface_score": 86.37830991612557,
+        "throat_impedance_score": 97.13632055303131
+      },
+      "A6-E0": {
+        "mean_containment": 86.8686772502433,
+        "minus_six_db_rms_error": 7.10137589480452,
+        "outward_rise_violation": 0.31949116545269896,
+        "profile_rms_error": 1.2508892565102607,
+        "slice_energy_rms_departure": 0.8670810401920943,
+        "surface_score": 87.48214218136002,
+        "throat_impedance_score": 94.25772570316373
+      },
+      "A6-E20": {
+        "mean_containment": 86.84147321797187,
+        "minus_six_db_rms_error": 7.423637600475769,
+        "outward_rise_violation": 0.18514314805270793,
+        "profile_rms_error": 1.266004027101665,
+        "slice_energy_rms_departure": 0.9370110608102957,
+        "surface_score": 86.99508258758925,
+        "throat_impedance_score": 85.77171803576458
+      },
+      "A6-E40": {
+        "mean_containment": 86.81660147004676,
+        "minus_six_db_rms_error": 7.80279557833446,
+        "outward_rise_violation": 0.12704507850346397,
+        "profile_rms_error": 1.355558867158588,
+        "slice_energy_rms_departure": 1.0233792691333954,
+        "surface_score": 85.70784045392745,
+        "throat_impedance_score": 79.90916099184966
+      },
+      "A6-E60": {
+        "mean_containment": 86.81710399014129,
+        "minus_six_db_rms_error": 8.15421733477839,
+        "outward_rise_violation": 0.0933797856911206,
+        "profile_rms_error": 1.4645772552518388,
+        "slice_energy_rms_departure": 1.0962238541125866,
+        "surface_score": 84.35600387116975,
+        "throat_impedance_score": 73.86949774244891
+      }
+    },
+    "30deg-450mm": {
+      "A0-E0": {
+        "mean_containment": 86.36625865958227,
+        "minus_six_db_rms_error": 7.803487145094273,
+        "outward_rise_violation": 0.0,
+        "profile_rms_error": 1.6214083830439112,
+        "slice_energy_rms_departure": 1.1581679640842015,
+        "surface_score": 82.89176422124189,
+        "throat_impedance_score": 78.20241456148119
+      },
+      "A0-E40": {
+        "mean_containment": 86.26220536367263,
+        "minus_six_db_rms_error": 7.746853862137947,
+        "outward_rise_violation": 0.0,
+        "profile_rms_error": 1.6277759125552351,
+        "slice_energy_rms_departure": 1.134661919203353,
+        "surface_score": 83.03716673877335,
+        "throat_impedance_score": 62.79583644782682
+      },
+      "A12-E0": {
+        "mean_containment": 88.91026824554874,
+        "minus_six_db_rms_error": 6.76902025629691,
+        "outward_rise_violation": 2.40470682867613,
+        "profile_rms_error": 2.251470430545038,
+        "slice_energy_rms_departure": 1.5945273453255675,
+        "surface_score": 67.36322564934028,
+        "throat_impedance_score": 85.04043144263369
+      },
+      "A12-E40": {
+        "mean_containment": 89.62310738209356,
+        "minus_six_db_rms_error": 6.508023001914877,
+        "outward_rise_violation": 0.19599128040080363,
+        "profile_rms_error": 1.3333305426865705,
+        "slice_energy_rms_departure": 0.8028295068258922,
+        "surface_score": 88.40671056153913,
+        "throat_impedance_score": 94.50206023050166
+      },
+      "A6-E0": {
+        "mean_containment": 88.26238714582199,
+        "minus_six_db_rms_error": 5.5759122463928765,
+        "outward_rise_violation": 0.5878980306785866,
+        "profile_rms_error": 1.2060817203035974,
+        "slice_energy_rms_departure": 0.7250100649218818,
+        "surface_score": 88.66045197918316,
+        "throat_impedance_score": 95.23822618046374
+      },
+      "A6-E20": {
+        "mean_containment": 88.25320742836496,
+        "minus_six_db_rms_error": 6.006267172105538,
+        "outward_rise_violation": 0.2762843303529655,
+        "profile_rms_error": 1.184460762776435,
+        "slice_energy_rms_departure": 0.7709645416001393,
+        "surface_score": 89.26232914697553,
+        "throat_impedance_score": 88.4898602778484
+      },
+      "A6-E40": {
+        "mean_containment": 88.20033439279045,
+        "minus_six_db_rms_error": 6.581352158393715,
+        "outward_rise_violation": 0.09186143567011636,
+        "profile_rms_error": 1.2876863409510975,
+        "slice_energy_rms_departure": 0.8787085401205544,
+        "surface_score": 87.91911870486992,
+        "throat_impedance_score": 82.26031800151726
+      },
+      "A6-E60": {
+        "mean_containment": 88.11430383737675,
+        "minus_six_db_rms_error": 7.403895974709699,
+        "outward_rise_violation": 0.012275019753031712,
+        "profile_rms_error": 1.5516085567059814,
+        "slice_energy_rms_departure": 1.011486921323741,
+        "surface_score": 84.99369178647237,
+        "throat_impedance_score": 75.89323561223428
+      }
+    },
+    "35deg-250mm": {
+      "A0-E0": {
+        "mean_containment": 81.22020399165092,
+        "minus_six_db_rms_error": 14.806826368675809,
+        "outward_rise_violation": 2.650022517381264e-05,
+        "profile_rms_error": 1.6834370603010718,
+        "slice_energy_rms_departure": 1.249888866571459,
+        "surface_score": 78.49766838725029,
+        "throat_impedance_score": 72.02881457667088
+      },
+      "A0-E40": {
+        "mean_containment": 81.28857770829507,
+        "minus_six_db_rms_error": 14.487434632566693,
+        "outward_rise_violation": 0.003080559515552245,
+        "profile_rms_error": 1.6837141610167343,
+        "slice_energy_rms_departure": 1.2404226369905165,
+        "surface_score": 78.68512568143862,
+        "throat_impedance_score": 43.69710519081976
+      },
+      "A12-E0": {
+        "mean_containment": 82.68108938266401,
+        "minus_six_db_rms_error": 13.968390993894342,
+        "outward_rise_violation": 0.6164998713937204,
+        "profile_rms_error": 1.8783370321425248,
+        "slice_energy_rms_departure": 1.1997159654206642,
+        "surface_score": 76.89211503022437,
+        "throat_impedance_score": 71.04989895655198
+      },
+      "A12-E40": {
+        "mean_containment": 83.73884238949127,
+        "minus_six_db_rms_error": 13.688123806703583,
+        "outward_rise_violation": 0.10426660281552606,
+        "profile_rms_error": 1.5757615781516134,
+        "slice_energy_rms_departure": 1.1744488338839474,
+        "surface_score": 80.61981949843073,
+        "throat_impedance_score": 61.62160222977045
+      },
+      "A6-E0": {
+        "mean_containment": 82.24064423782438,
+        "minus_six_db_rms_error": 13.9429192498829,
+        "outward_rise_violation": 0.0,
+        "profile_rms_error": 1.4870014036026806,
+        "slice_energy_rms_departure": 1.1159013008518617,
+        "surface_score": 81.32558495311523,
+        "throat_impedance_score": 73.71287513090655
+      },
+      "A6-E20": {
+        "mean_containment": 82.393976263931,
+        "minus_six_db_rms_error": 13.872623695313465,
+        "outward_rise_violation": 0.0024277557763255023,
+        "profile_rms_error": 1.491097377148614,
+        "slice_energy_rms_departure": 1.1448064509488298,
+        "surface_score": 81.11767215687891,
+        "throat_impedance_score": 50.99069834750529
+      },
+      "A6-E40": {
+        "mean_containment": 82.58866273237368,
+        "minus_six_db_rms_error": 13.84046164413212,
+        "outward_rise_violation": 0.0,
+        "profile_rms_error": 1.5083003096444747,
+        "slice_energy_rms_departure": 1.1813926037336664,
+        "surface_score": 80.75969851353076,
+        "throat_impedance_score": 52.341375947529784
+      },
+      "A6-E60": {
+        "mean_containment": 82.76446589269716,
+        "minus_six_db_rms_error": 13.909040774337527,
+        "outward_rise_violation": 0.001668886279293848,
+        "profile_rms_error": 1.52983999493535,
+        "slice_energy_rms_departure": 1.2206151437408446,
+        "surface_score": 80.31692610086495,
+        "throat_impedance_score": 64.42309291301125
+      }
+    },
+    "35deg-300mm": {
+      "A0-E0": {
+        "mean_containment": 83.24981478909764,
+        "minus_six_db_rms_error": 10.877606583697933,
+        "outward_rise_violation": 0.05518631135622133,
+        "profile_rms_error": 1.5462239543744642,
+        "slice_energy_rms_departure": 1.1043930112041465,
+        "surface_score": 82.21732568073884,
+        "throat_impedance_score": 71.6131912938403
+      },
+      "A0-E40": {
+        "mean_containment": 83.2637882982435,
+        "minus_six_db_rms_error": 10.880722342695474,
+        "outward_rise_violation": 0.03340171332455702,
+        "profile_rms_error": 1.54937906652451,
+        "slice_energy_rms_departure": 1.108600472231394,
+        "surface_score": 82.17191589154277,
+        "throat_impedance_score": 38.831918565607374
+      },
+      "A12-E0": {
+        "mean_containment": 84.29449746956207,
+        "minus_six_db_rms_error": 10.084146747424384,
+        "outward_rise_violation": 0.6681471156642309,
+        "profile_rms_error": 1.895072101722084,
+        "slice_energy_rms_departure": 1.0357626909684607,
+        "surface_score": 79.48229216260202,
+        "throat_impedance_score": 69.11160017846278
+      },
+      "A12-E40": {
+        "mean_containment": 85.32109583668388,
+        "minus_six_db_rms_error": 9.735344307937925,
+        "outward_rise_violation": 0.15219864626248647,
+        "profile_rms_error": 1.4725313374136153,
+        "slice_energy_rms_departure": 0.9235874210681232,
+        "surface_score": 84.84351835117991,
+        "throat_impedance_score": 63.725567913925545
+      },
+      "A6-E0": {
+        "mean_containment": 84.06620527636773,
+        "minus_six_db_rms_error": 9.676778201566183,
+        "outward_rise_violation": 0.2567161986822152,
+        "profile_rms_error": 1.3695728220838612,
+        "slice_energy_rms_departure": 0.8898253766210261,
+        "surface_score": 85.36813001205712,
+        "throat_impedance_score": 71.15457551770375
+      },
+      "A6-E20": {
+        "mean_containment": 84.21041943435618,
+        "minus_six_db_rms_error": 9.705577489465618,
+        "outward_rise_violation": 0.18365969029767198,
+        "profile_rms_error": 1.3527065589948173,
+        "slice_energy_rms_departure": 0.9206050025693838,
+        "surface_score": 85.37084894228985,
+        "throat_impedance_score": 47.9361721032769
+      },
+      "A6-E40": {
+        "mean_containment": 84.3739828646755,
+        "minus_six_db_rms_error": 9.838343287838638,
+        "outward_rise_violation": 0.15660524663883585,
+        "profile_rms_error": 1.352527345429591,
+        "slice_energy_rms_departure": 0.9610925304569883,
+        "surface_score": 85.07721089294307,
+        "throat_impedance_score": 48.38378355880692
+      },
+      "A6-E60": {
+        "mean_containment": 84.53703233667504,
+        "minus_six_db_rms_error": 10.072465449010714,
+        "outward_rise_violation": 0.10751114994031888,
+        "profile_rms_error": 1.3639868946784135,
+        "slice_energy_rms_departure": 1.0050205430338228,
+        "surface_score": 84.66157936758893,
+        "throat_impedance_score": 53.63713506407905
+      }
+    },
+    "35deg-350mm": {
+      "A0-E0": {
+        "mean_containment": 85.4619640708381,
+        "minus_six_db_rms_error": 8.970853466431057,
+        "outward_rise_violation": 0.05414317406945496,
+        "profile_rms_error": 1.5048085759152734,
+        "slice_energy_rms_departure": 1.0637413942416465,
+        "surface_score": 83.86299966214094,
+        "throat_impedance_score": 71.71981651836978
+      },
+      "A0-E40": {
+        "mean_containment": 85.48069427359039,
+        "minus_six_db_rms_error": 9.092384962797855,
+        "outward_rise_violation": 0.013495750475684694,
+        "profile_rms_error": 1.5057605525564286,
+        "slice_energy_rms_departure": 1.067798114865146,
+        "surface_score": 83.80030664374905,
+        "throat_impedance_score": 48.45280002321691
+      },
+      "A12-E0": {
+        "mean_containment": 87.12694916678336,
+        "minus_six_db_rms_error": 7.577790767390146,
+        "outward_rise_violation": 0.7548460037475465,
+        "profile_rms_error": 1.7397193254107703,
+        "slice_energy_rms_departure": 0.9757370625729981,
+        "surface_score": 81.94352748326835,
+        "throat_impedance_score": 75.09930661159078
+      },
+      "A12-E40": {
+        "mean_containment": 87.95836930015764,
+        "minus_six_db_rms_error": 7.942841405661132,
+        "outward_rise_violation": 0.24652346755131954,
+        "profile_rms_error": 1.2603933487503043,
+        "slice_energy_rms_departure": 0.8492650309342475,
+        "surface_score": 87.68477159197187,
+        "throat_impedance_score": 94.16836552099126
+      },
+      "A6-E0": {
+        "mean_containment": 86.6206210234498,
+        "minus_six_db_rms_error": 7.226633215851768,
+        "outward_rise_violation": 0.52412025007921,
+        "profile_rms_error": 1.2442776543461456,
+        "slice_energy_rms_departure": 0.7959484265793468,
+        "surface_score": 87.38387679758262,
+        "throat_impedance_score": 76.98831910293823
+      },
+      "A6-E20": {
+        "mean_containment": 86.65953419908553,
+        "minus_six_db_rms_error": 7.634728018005806,
+        "outward_rise_violation": 0.39530458078386266,
+        "profile_rms_error": 1.250621270295766,
+        "slice_energy_rms_departure": 0.8589867619688014,
+        "surface_score": 87.16097272002193,
+        "throat_impedance_score": 62.54282168611799
+      },
+      "A6-E40": {
+        "mean_containment": 86.73765165957013,
+        "minus_six_db_rms_error": 8.082346792867831,
+        "outward_rise_violation": 0.2864737534546358,
+        "profile_rms_error": 1.2995527346768316,
+        "slice_energy_rms_departure": 0.9291109444049587,
+        "surface_score": 86.4643643436539,
+        "throat_impedance_score": 63.03869500500579
+      },
+      "A6-E60": {
+        "mean_containment": 86.7978136755557,
+        "minus_six_db_rms_error": 8.585981909289185,
+        "outward_rise_violation": 0.15024839361016318,
+        "profile_rms_error": 1.3728663479594683,
+        "slice_energy_rms_departure": 0.9983106617275954,
+        "surface_score": 85.5377971287014,
+        "throat_impedance_score": 64.45987360140707
+      }
+    },
+    "35deg-400mm": {
+      "A0-E0": {
+        "mean_containment": 87.49128891853941,
+        "minus_six_db_rms_error": 8.058459484653614,
+        "outward_rise_violation": 0.055986771569789526,
+        "profile_rms_error": 1.4994015286683273,
+        "slice_energy_rms_departure": 1.0289748771008183,
+        "surface_score": 84.86118955445387,
+        "throat_impedance_score": 74.10184369288132
+      },
+      "A0-E40": {
+        "mean_containment": 87.50217354776045,
+        "minus_six_db_rms_error": 8.037952668868272,
+        "outward_rise_violation": 0.039673463496597935,
+        "profile_rms_error": 1.4938144951988883,
+        "slice_energy_rms_departure": 1.0213849332351213,
+        "surface_score": 84.97207412908668,
+        "throat_impedance_score": 57.50022135977908
+      },
+      "A12-E0": {
+        "mean_containment": 89.3845934459453,
+        "minus_six_db_rms_error": 6.714547169633086,
+        "outward_rise_violation": 1.1748340789785794,
+        "profile_rms_error": 1.7672568290608663,
+        "slice_energy_rms_departure": 1.064995802686842,
+        "surface_score": 79.76441602801754,
+        "throat_impedance_score": 80.9833738380576
+      },
+      "A12-E40": {
+        "mean_containment": 90.10493572820877,
+        "minus_six_db_rms_error": 7.3444140011460055,
+        "outward_rise_violation": 0.32247653055394654,
+        "profile_rms_error": 1.2686028926254316,
+        "slice_energy_rms_departure": 0.7513258235967616,
+        "surface_score": 88.81012094486292,
+        "throat_impedance_score": 97.55793419655578
+      },
+      "A6-E0": {
+        "mean_containment": 88.82075297970806,
+        "minus_six_db_rms_error": 6.0929247162241085,
+        "outward_rise_violation": 0.5620648188052361,
+        "profile_rms_error": 1.1590625127633634,
+        "slice_energy_rms_departure": 0.6856863207106543,
+        "surface_score": 89.29097824729433,
+        "throat_impedance_score": 85.16941995413428
+      },
+      "A6-E20": {
+        "mean_containment": 88.80433151487355,
+        "minus_six_db_rms_error": 6.645117352412981,
+        "outward_rise_violation": 0.36798669967147724,
+        "profile_rms_error": 1.1791524010029701,
+        "slice_energy_rms_departure": 0.7537199148955236,
+        "surface_score": 89.15193255494529,
+        "throat_impedance_score": 75.89655358638274
+      },
+      "A6-E40": {
+        "mean_containment": 88.83344310081637,
+        "minus_six_db_rms_error": 7.280136477426204,
+        "outward_rise_violation": 0.1606724022130324,
+        "profile_rms_error": 1.2829338761662261,
+        "slice_energy_rms_departure": 0.8473220403108639,
+        "surface_score": 88.0578311122076,
+        "throat_impedance_score": 72.93565232234226
+      },
+      "A6-E60": {
+        "mean_containment": 88.84515467712708,
+        "minus_six_db_rms_error": 7.926634161277417,
+        "outward_rise_violation": 0.05831058701855128,
+        "profile_rms_error": 1.4326447742773936,
+        "slice_energy_rms_departure": 0.9476180650677637,
+        "surface_score": 86.2441358162136,
+        "throat_impedance_score": 68.65489885149739
+      }
+    },
+    "35deg-450mm": {
+      "A0-E0": {
+        "mean_containment": 87.7679611242827,
+        "minus_six_db_rms_error": 7.962348937251588,
+        "outward_rise_violation": 0.03693767594863266,
+        "profile_rms_error": 1.6175311221094324,
+        "slice_energy_rms_departure": 1.0816133794125455,
+        "surface_score": 83.76611445044544,
+        "throat_impedance_score": 76.48199894547277
+      },
+      "A0-E40": {
+        "mean_containment": 87.82356120738434,
+        "minus_six_db_rms_error": 7.936280455380909,
+        "outward_rise_violation": 0.04104756129261432,
+        "profile_rms_error": 1.6990871622949992,
+        "slice_energy_rms_departure": 1.0833791090305152,
+        "surface_score": 83.2405592906139,
+        "throat_impedance_score": 60.65037985933573
+      },
+      "A12-E0": {
+        "mean_containment": 89.84808268913518,
+        "minus_six_db_rms_error": 5.149773340314826,
+        "outward_rise_violation": 0.6251264608198253,
+        "profile_rms_error": 1.4497923078754003,
+        "slice_energy_rms_departure": 0.7386304992598697,
+        "surface_score": 87.33240364046567,
+        "throat_impedance_score": 82.82723155167339
+      },
+      "A12-E40": {
+        "mean_containment": 90.59012987386137,
+        "minus_six_db_rms_error": 6.647138078153583,
+        "outward_rise_violation": 0.3209942392488657,
+        "profile_rms_error": 1.2419418401962035,
+        "slice_energy_rms_departure": 0.6653756666852655,
+        "surface_score": 89.86611430960714,
+        "throat_impedance_score": 98.280592720264
+      },
+      "A6-E0": {
+        "mean_containment": 89.21280056456014,
+        "minus_six_db_rms_error": 5.200907700297547,
+        "outward_rise_violation": 0.3795208022387526,
+        "profile_rms_error": 1.095596070302848,
+        "slice_energy_rms_departure": 0.6154105595704068,
+        "surface_score": 90.99519371962188,
+        "throat_impedance_score": 88.26200932141174
+      },
+      "A6-E20": {
+        "mean_containment": 89.2028514528811,
+        "minus_six_db_rms_error": 6.131229518167474,
+        "outward_rise_violation": 0.18873327594668265,
+        "profile_rms_error": 1.204275214574805,
+        "slice_energy_rms_departure": 0.7347551050740427,
+        "surface_score": 89.71279208753415,
+        "throat_impedance_score": 80.27711615460083
+      },
+      "A6-E40": {
+        "mean_containment": 89.20291991053463,
+        "minus_six_db_rms_error": 6.9843699236963435,
+        "outward_rise_violation": 0.06797071324681969,
+        "profile_rms_error": 1.3714177176538693,
+        "slice_energy_rms_departure": 0.8585993221302575,
+        "surface_score": 87.66020268398434,
+        "throat_impedance_score": 74.66078787052874
+      },
+      "A6-E60": {
+        "mean_containment": 89.22122040765458,
+        "minus_six_db_rms_error": 7.776519697480824,
+        "outward_rise_violation": 0.006784813868877148,
+        "profile_rms_error": 1.5649373007091292,
+        "slice_energy_rms_departure": 0.9692224563999178,
+        "surface_score": 85.35895343091856,
+        "throat_impedance_score": 73.99713159104152
+      }
+    },
+    "40deg-250mm": {
+      "A0-E0": {
+        "mean_containment": 83.63234642696608,
+        "minus_six_db_rms_error": 12.554930253565962,
+        "outward_rise_violation": 0.08055722694219641,
+        "profile_rms_error": 1.5301577593338158,
+        "slice_energy_rms_departure": 1.0550141439651994,
+        "surface_score": 82.23983251159203,
+        "throat_impedance_score": 66.87155057346736
+      },
+      "A0-E40": {
+        "mean_containment": 83.72078794907418,
+        "minus_six_db_rms_error": 12.311305408987248,
+        "outward_rise_violation": 0.06500540569627924,
+        "profile_rms_error": 1.5268409196133716,
+        "slice_energy_rms_departure": 1.043710267050845,
+        "surface_score": 82.45724832947684,
+        "throat_impedance_score": 29.96126340391173
+      },
+      "A12-E0": {
+        "mean_containment": 84.05836966592435,
+        "minus_six_db_rms_error": 11.976279786921456,
+        "outward_rise_violation": 0.42085853300368326,
+        "profile_rms_error": 1.6940502697615356,
+        "slice_energy_rms_departure": 0.8817916498805258,
+        "surface_score": 82.2142578876832,
+        "throat_impedance_score": 63.64277002112584
+      },
+      "A12-E40": {
+        "mean_containment": 85.15724063571261,
+        "minus_six_db_rms_error": 11.73425126202403,
+        "outward_rise_violation": 0.23869576151964503,
+        "profile_rms_error": 1.551903498814887,
+        "slice_energy_rms_departure": 0.9018552120289987,
+        "surface_score": 83.70231980260968,
+        "throat_impedance_score": 45.946995654614135
+      },
+      "A6-E0": {
+        "mean_containment": 84.0065090074705,
+        "minus_six_db_rms_error": 11.75269103080658,
+        "outward_rise_violation": 0.06107028797922659,
+        "profile_rms_error": 1.4045973105708642,
+        "slice_energy_rms_departure": 0.8787045595416436,
+        "surface_score": 84.78166314035559,
+        "throat_impedance_score": 65.72590619401548
+      },
+      "A6-E20": {
+        "mean_containment": 84.20973031445685,
+        "minus_six_db_rms_error": 11.760124745056086,
+        "outward_rise_violation": 0.03686181635431218,
+        "profile_rms_error": 1.3941552692734551,
+        "slice_energy_rms_departure": 0.8922808171408151,
+        "surface_score": 84.78943471452186,
+        "throat_impedance_score": 32.673423354451714
+      },
+      "A6-E40": {
+        "mean_containment": 84.47857804029637,
+        "minus_six_db_rms_error": 11.602912699036356,
+        "outward_rise_violation": 0.04044214072200798,
+        "profile_rms_error": 1.3748689433136498,
+        "slice_energy_rms_departure": 0.8978994283338434,
+        "surface_score": 84.9705710776854,
+        "throat_impedance_score": 37.151881533325465
+      },
+      "A6-E60": {
+        "mean_containment": 84.74426062898797,
+        "minus_six_db_rms_error": 11.510421727974649,
+        "outward_rise_violation": 0.04387647947577568,
+        "profile_rms_error": 1.3663818536812526,
+        "slice_energy_rms_departure": 0.9117791016969844,
+        "surface_score": 84.99756569924384,
+        "throat_impedance_score": 48.101347848142666
+      }
+    },
+    "40deg-300mm": {
+      "A0-E0": {
+        "mean_containment": 87.43875207116724,
+        "minus_six_db_rms_error": 9.283082246720952,
+        "outward_rise_violation": 0.15582282832063987,
+        "profile_rms_error": 1.3543912133012332,
+        "slice_energy_rms_departure": 0.9755716751486121,
+        "surface_score": 85.74032571691549,
+        "throat_impedance_score": 68.47785936745242
+      },
+      "A0-E40": {
+        "mean_containment": 87.46174816208121,
+        "minus_six_db_rms_error": 9.287749072548793,
+        "outward_rise_violation": 0.10679827653184351,
+        "profile_rms_error": 1.3607983361295544,
+        "slice_energy_rms_departure": 0.9771215959409427,
+        "surface_score": 85.73902554344323,
+        "throat_impedance_score": 39.03897939171971
+      },
+      "A12-E0": {
+        "mean_containment": 88.61398399843252,
+        "minus_six_db_rms_error": 9.18047749489591,
+        "outward_rise_violation": 1.1478350020084402,
+        "profile_rms_error": 1.7888843823113798,
+        "slice_energy_rms_departure": 1.1251013698818957,
+        "surface_score": 78.38713398090226,
+        "throat_impedance_score": 71.58980123936477
+      },
+      "A12-E40": {
+        "mean_containment": 89.3566487733162,
+        "minus_six_db_rms_error": 9.918863942898327,
+        "outward_rise_violation": 0.05704184090246485,
+        "profile_rms_error": 1.4045078301958078,
+        "slice_energy_rms_departure": 0.9368227496636337,
+        "surface_score": 85.99345986894605,
+        "throat_impedance_score": 71.69235241366525
+      },
+      "A6-E0": {
+        "mean_containment": 88.20934920133423,
+        "minus_six_db_rms_error": 8.628614339456277,
+        "outward_rise_violation": 0.24922475600533622,
+        "profile_rms_error": 1.2429015543997455,
+        "slice_energy_rms_departure": 0.8121421979327872,
+        "surface_score": 87.90948129309098,
+        "throat_impedance_score": 74.06878735094483
+      },
+      "A6-E20": {
+        "mean_containment": 88.29536042404462,
+        "minus_six_db_rms_error": 8.955795900850774,
+        "outward_rise_violation": 0.15258811551564933,
+        "profile_rms_error": 1.2465835043057243,
+        "slice_energy_rms_departure": 0.8679996811127071,
+        "surface_score": 87.52226278369835,
+        "throat_impedance_score": 55.97727847127965
+      },
+      "A6-E40": {
+        "mean_containment": 88.41252437896462,
+        "minus_six_db_rms_error": 9.364387428094552,
+        "outward_rise_violation": 0.1071883921486778,
+        "profile_rms_error": 1.3139366745248533,
+        "slice_energy_rms_departure": 0.937113023769952,
+        "surface_score": 86.51228575301201,
+        "throat_impedance_score": 52.440572554296196
+      },
+      "A6-E60": {
+        "mean_containment": 88.49213506867667,
+        "minus_six_db_rms_error": 9.909249042030051,
+        "outward_rise_violation": 0.0940366905818984,
+        "profile_rms_error": 1.4116088087895144,
+        "slice_energy_rms_departure": 1.0101633915484256,
+        "surface_score": 85.17480552458741,
+        "throat_impedance_score": 60.10207115439727
+      }
+    },
+    "40deg-350mm": {
+      "A0-E0": {
+        "mean_containment": 88.86863667913163,
+        "minus_six_db_rms_error": 8.501064114947415,
+        "outward_rise_violation": 0.14301161938710705,
+        "profile_rms_error": 1.4263606695421558,
+        "slice_energy_rms_departure": 0.9436374724537082,
+        "surface_score": 86.08388951464782,
+        "throat_impedance_score": 69.14606713177601
+      },
+      "A0-E40": {
+        "mean_containment": 88.86157929296672,
+        "minus_six_db_rms_error": 8.597787486335763,
+        "outward_rise_violation": 0.10855152163232724,
+        "profile_rms_error": 1.4286077756261022,
+        "slice_energy_rms_departure": 0.9436380186818552,
+        "surface_score": 86.07094638998441,
+        "throat_impedance_score": 46.17491487419118
+      },
+      "A12-E0": {
+        "mean_containment": 90.36571070450259,
+        "minus_six_db_rms_error": 7.720409786528428,
+        "outward_rise_violation": 0.8830013534069492,
+        "profile_rms_error": 1.5863427118357207,
+        "slice_energy_rms_departure": 0.9371839525441008,
+        "surface_score": 83.27292502310183,
+        "throat_impedance_score": 75.39282431540867
+      },
+      "A12-E40": {
+        "mean_containment": 90.96360426128743,
+        "minus_six_db_rms_error": 9.30563867007666,
+        "outward_rise_violation": 0.2647255047193574,
+        "profile_rms_error": 1.448572704034345,
+        "slice_energy_rms_departure": 0.8341069226671947,
+        "surface_score": 86.77865157877068,
+        "throat_impedance_score": 94.29243340849672
+      },
+      "A6-E0": {
+        "mean_containment": 89.8482800728728,
+        "minus_six_db_rms_error": 7.2895368923631825,
+        "outward_rise_violation": 0.5540752629164788,
+        "profile_rms_error": 1.1823951278061706,
+        "slice_energy_rms_departure": 0.7069148601712495,
+        "surface_score": 88.91776149103157,
+        "throat_impedance_score": 77.21288439776355
+      },
+      "A6-E20": {
+        "mean_containment": 89.862143736674,
+        "minus_six_db_rms_error": 7.9145595674745115,
+        "outward_rise_violation": 0.38602777862680104,
+        "profile_rms_error": 1.2465116086518913,
+        "slice_energy_rms_departure": 0.7814721368657016,
+        "surface_score": 88.35158855946489,
+        "throat_impedance_score": 63.35221770556058
+      },
+      "A6-E40": {
+        "mean_containment": 89.86466259090105,
+        "minus_six_db_rms_error": 8.673574842646879,
+        "outward_rise_violation": 0.21869337792792587,
+        "profile_rms_error": 1.3785259962427339,
+        "slice_energy_rms_departure": 0.8768041802513198,
+        "surface_score": 86.95205762503534,
+        "throat_impedance_score": 63.62263753877353
+      },
+      "A6-E60": {
+        "mean_containment": 89.9128806577758,
+        "minus_six_db_rms_error": 9.445857705895797,
+        "outward_rise_violation": 0.08062234602222243,
+        "profile_rms_error": 1.5445113344607426,
+        "slice_energy_rms_departure": 0.9714194392079727,
+        "surface_score": 85.07664617506495,
+        "throat_impedance_score": 65.5031488634605
+      }
+    },
+    "40deg-400mm": {
+      "A0-E0": {
+        "mean_containment": 87.80234352693137,
+        "minus_six_db_rms_error": 6.7689719060061115,
+        "outward_rise_violation": 0.3198152207561544,
+        "profile_rms_error": 1.3994518962942837,
+        "slice_energy_rms_departure": 0.8902457351443556,
+        "surface_score": 86.6629846832322,
+        "throat_impedance_score": 72.5918392977123
+      },
+      "A0-E40": {
+        "mean_containment": 87.82426627016855,
+        "minus_six_db_rms_error": 6.692387621169376,
+        "outward_rise_violation": 0.3268085020521839,
+        "profile_rms_error": 1.3993920018787906,
+        "slice_energy_rms_departure": 0.8872742133363158,
+        "surface_score": 86.69545871112999,
+        "throat_impedance_score": 44.061738451626866
+      },
+      "A12-E0": {
+        "mean_containment": 88.91452713368206,
+        "minus_six_db_rms_error": 4.495538978070311,
+        "outward_rise_violation": 0.8864472654917436,
+        "profile_rms_error": 1.4403133560260812,
+        "slice_energy_rms_departure": 0.6749566283963391,
+        "surface_score": 86.66322998230582,
+        "throat_impedance_score": 72.49984569576425
+      },
+      "A12-E40": {
+        "mean_containment": 89.86957060242938,
+        "minus_six_db_rms_error": 6.018950375089174,
+        "outward_rise_violation": 0.39271711516506025,
+        "profile_rms_error": 1.1921059255091333,
+        "slice_energy_rms_departure": 0.6793733731287925,
+        "surface_score": 89.9092274919527,
+        "throat_impedance_score": 86.6967066371851
+      },
+      "A6-E0": {
+        "mean_containment": 88.55935177628002,
+        "minus_six_db_rms_error": 4.466034209697572,
+        "outward_rise_violation": 0.5681790250631475,
+        "profile_rms_error": 1.1985309211142336,
+        "slice_energy_rms_departure": 0.6233778946143901,
+        "surface_score": 89.7738119515527,
+        "throat_impedance_score": 73.44035426393474
+      },
+      "A6-E20": {
+        "mean_containment": 88.65756531067794,
+        "minus_six_db_rms_error": 5.120724075672925,
+        "outward_rise_violation": 0.4201918930505203,
+        "profile_rms_error": 1.1978401871250197,
+        "slice_energy_rms_departure": 0.6775738733039534,
+        "surface_score": 89.78310402312411,
+        "throat_impedance_score": 53.48611646147917
+      },
+      "A6-E40": {
+        "mean_containment": 88.80247739341888,
+        "minus_six_db_rms_error": 5.9557780766349255,
+        "outward_rise_violation": 0.31986849490516456,
+        "profile_rms_error": 1.2494018394687334,
+        "slice_energy_rms_departure": 0.7539352392056153,
+        "surface_score": 89.0269340023479,
+        "throat_impedance_score": 61.662233064600706
+      },
+      "A6-E60": {
+        "mean_containment": 88.95306823824211,
+        "minus_six_db_rms_error": 6.875434134741508,
+        "outward_rise_violation": 0.22918184282242032,
+        "profile_rms_error": 1.3545992551741788,
+        "slice_energy_rms_departure": 0.8436616715402778,
+        "surface_score": 87.68207454189121,
+        "throat_impedance_score": 61.98628695072433
+      }
+    },
+    "40deg-450mm": {
+      "A0-E0": {
+        "mean_containment": 90.01068186545582,
+        "minus_six_db_rms_error": 7.637708804676289,
+        "outward_rise_violation": 0.32251042468985863,
+        "profile_rms_error": 1.4394980337241257,
+        "slice_energy_rms_departure": 0.8801427143057821,
+        "surface_score": 86.678632751466,
+        "throat_impedance_score": 76.15713886705385
+      },
+      "A0-E40": {
+        "mean_containment": 90.04612155629937,
+        "minus_six_db_rms_error": 7.625546880912754,
+        "outward_rise_violation": 0.2390253963984764,
+        "profile_rms_error": 1.4412926146729022,
+        "slice_energy_rms_departure": 0.8782585310241819,
+        "surface_score": 86.86136641805258,
+        "throat_impedance_score": 54.6368295459212
+      },
+      "A12-E0": {
+        "mean_containment": 91.3721255891598,
+        "minus_six_db_rms_error": 5.694731567654047,
+        "outward_rise_violation": 0.8136539355175751,
+        "profile_rms_error": 1.398053526421752,
+        "slice_energy_rms_departure": 0.7346969249027975,
+        "surface_score": 87.0691750064014,
+        "throat_impedance_score": 77.72951254502539
+      },
+      "A12-E40": {
+        "mean_containment": 92.06363718976299,
+        "minus_six_db_rms_error": 7.917852779686839,
+        "outward_rise_violation": 0.3547709612459007,
+        "profile_rms_error": 1.3537972881455262,
+        "slice_energy_rms_departure": 0.6179003339954305,
+        "surface_score": 89.34623807759066,
+        "throat_impedance_score": 97.17958287914529
+      },
+      "A6-E0": {
+        "mean_containment": 90.93843208975036,
+        "minus_six_db_rms_error": 5.458914122464907,
+        "outward_rise_violation": 0.6031819547023309,
+        "profile_rms_error": 1.09214023013913,
+        "slice_energy_rms_departure": 0.5483767995789184,
+        "surface_score": 90.9850405929164,
+        "throat_impedance_score": 80.73460491463192
+      },
+      "A6-E20": {
+        "mean_containment": 90.97272540018476,
+        "minus_six_db_rms_error": 6.420707160157428,
+        "outward_rise_violation": 0.38883120625618384,
+        "profile_rms_error": 1.1713293917187277,
+        "slice_energy_rms_departure": 0.6213463709051499,
+        "surface_score": 90.5449002991201,
+        "throat_impedance_score": 67.8208156827854
+      },
+      "A6-E40": {
+        "mean_containment": 91.00785885480272,
+        "minus_six_db_rms_error": 7.5016896146166125,
+        "outward_rise_violation": 0.2597178597042302,
+        "profile_rms_error": 1.340887303887806,
+        "slice_energy_rms_departure": 0.7278466914567479,
+        "surface_score": 88.80033202425999,
+        "throat_impedance_score": 69.94589757923542
+      },
+      "A6-E60": {
+        "mean_containment": 91.0969968458179,
+        "minus_six_db_rms_error": 9.389674173607897,
+        "outward_rise_violation": 0.0754584921328473,
+        "profile_rms_error": 1.91082966164799,
+        "slice_energy_rms_departure": 0.941324903312166,
+        "surface_score": 83.1999962847415,
+        "throat_impedance_score": 68.07484843436548
+      }
+    },
+    "45deg-250mm": {
+      "A0-E0": {
+        "mean_containment": 86.7565736150528,
+        "minus_six_db_rms_error": 10.577768139371337,
+        "outward_rise_violation": 0.22339584329339496,
+        "profile_rms_error": 1.4008890164801118,
+        "slice_energy_rms_departure": 0.9458781871366597,
+        "surface_score": 85.0404168350585,
+        "throat_impedance_score": 65.8563900593046
+      },
+      "A0-E40": {
+        "mean_containment": 86.77958629844497,
+        "minus_six_db_rms_error": 10.557628995875579,
+        "outward_rise_violation": 0.19609828284952088,
+        "profile_rms_error": 1.4062939230780307,
+        "slice_energy_rms_departure": 0.9431213020632121,
+        "surface_score": 85.08125621906703,
+        "throat_impedance_score": 27.671486360814832
+      },
+      "A12-E0": {
+        "mean_containment": 87.33304789580733,
+        "minus_six_db_rms_error": 10.085735000736822,
+        "outward_rise_violation": 0.44546822183464363,
+        "profile_rms_error": 1.4923278883626185,
+        "slice_energy_rms_departure": 0.8168921582338038,
+        "surface_score": 85.20484658271693,
+        "throat_impedance_score": 64.99059342930815
+      },
+      "A12-E40": {
+        "mean_containment": 88.37113785619223,
+        "minus_six_db_rms_error": 10.643539445555334,
+        "outward_rise_violation": 0.12494573909519269,
+        "profile_rms_error": 1.2993218836350269,
+        "slice_energy_rms_departure": 0.8648632444274367,
+        "surface_score": 86.73181112147799,
+        "throat_impedance_score": 52.366301404759064
+      },
+      "A6-E0": {
+        "mean_containment": 87.14007056923225,
+        "minus_six_db_rms_error": 9.968971991182219,
+        "outward_rise_violation": 0.25967771900045544,
+        "profile_rms_error": 1.295964176261426,
+        "slice_energy_rms_departure": 0.8100615965784406,
+        "surface_score": 86.94802256740545,
+        "throat_impedance_score": 65.7249576481534
+      },
+      "A6-E20": {
+        "mean_containment": 87.33028073192727,
+        "minus_six_db_rms_error": 10.189097249079406,
+        "outward_rise_violation": 0.1770457704818638,
+        "profile_rms_error": 1.294697756833761,
+        "slice_energy_rms_departure": 0.8479396225613647,
+        "surface_score": 86.76952323795949,
+        "throat_impedance_score": 36.408369853940066
+      },
+      "A6-E40": {
+        "mean_containment": 87.5586701094883,
+        "minus_six_db_rms_error": 10.336811281932238,
+        "outward_rise_violation": 0.14905249398729367,
+        "profile_rms_error": 1.3010455547424664,
+        "slice_energy_rms_departure": 0.8826317648695656,
+        "surface_score": 86.49630172897852,
+        "throat_impedance_score": 39.04352489968017
+      },
+      "A6-E60": {
+        "mean_containment": 87.78594255918446,
+        "minus_six_db_rms_error": 10.522954236637176,
+        "outward_rise_violation": 0.14168196505183883,
+        "profile_rms_error": 1.3295996833517894,
+        "slice_energy_rms_departure": 0.9244422909678809,
+        "surface_score": 85.98789673830032,
+        "throat_impedance_score": 51.056310940985455
+      }
+    },
+    "45deg-300mm": {
+      "A0-E0": {
+        "mean_containment": 89.97439918855451,
+        "minus_six_db_rms_error": 9.439227167813064,
+        "outward_rise_violation": 0.25481976067504697,
+        "profile_rms_error": 1.3969530436042907,
+        "slice_energy_rms_departure": 0.907093481986297,
+        "surface_score": 86.32254217631649,
+        "throat_impedance_score": 67.94920720706786
+      },
+      "A0-E40": {
+        "mean_containment": 90.02324579703358,
+        "minus_six_db_rms_error": 9.713519446179099,
+        "outward_rise_violation": 0.1337240321258812,
+        "profile_rms_error": 1.510682270512353,
+        "slice_energy_rms_departure": 0.9199769647435551,
+        "surface_score": 85.59489457331304,
+        "throat_impedance_score": 40.529823021818736
+      },
+      "A12-E0": {
+        "mean_containment": 91.10931165381729,
+        "minus_six_db_rms_error": 9.515512646663648,
+        "outward_rise_violation": 0.7847844845510843,
+        "profile_rms_error": 1.561956941537526,
+        "slice_energy_rms_departure": 0.9287328169282609,
+        "surface_score": 83.5420043532843,
+        "throat_impedance_score": 72.78295810959607
+      },
+      "A12-E40": {
+        "mean_containment": 91.64673196507238,
+        "minus_six_db_rms_error": 11.567667920288983,
+        "outward_rise_violation": 0.08820100992947456,
+        "profile_rms_error": 1.7005229828530828,
+        "slice_energy_rms_departure": 0.939241675412695,
+        "surface_score": 83.98095363120078,
+        "throat_impedance_score": 77.52915512555276
+      },
+      "A6-E0": {
+        "mean_containment": 90.6813387254203,
+        "minus_six_db_rms_error": 9.065665782313996,
+        "outward_rise_violation": 0.3883065470227401,
+        "profile_rms_error": 1.2701976356891396,
+        "slice_energy_rms_departure": 0.7625857863120358,
+        "surface_score": 88.15319005195238,
+        "throat_impedance_score": 74.59200083640354
+      },
+      "A6-E20": {
+        "mean_containment": 90.729794506819,
+        "minus_six_db_rms_error": 9.6546001337347,
+        "outward_rise_violation": 0.26574450783719616,
+        "profile_rms_error": 1.3603022525744393,
+        "slice_energy_rms_departure": 0.8359824041321705,
+        "surface_score": 87.1613673890875,
+        "throat_impedance_score": 56.83444501132729
+      },
+      "A6-E40": {
+        "mean_containment": 90.78891784830275,
+        "minus_six_db_rms_error": 10.423338318470336,
+        "outward_rise_violation": 0.1825044045174794,
+        "profile_rms_error": 1.5209091755917465,
+        "slice_energy_rms_departure": 0.9295643766028624,
+        "surface_score": 85.32264075821595,
+        "throat_impedance_score": 55.40314098941215
+      },
+      "A6-E60": {
+        "mean_containment": 90.84366891987874,
+        "minus_six_db_rms_error": 11.203005509666799,
+        "outward_rise_violation": 0.11751178646598798,
+        "profile_rms_error": 1.6971121780116314,
+        "slice_energy_rms_departure": 1.0204208261633614,
+        "surface_score": 83.29190376010952,
+        "throat_impedance_score": 64.55015845839286
+      }
+    },
+    "45deg-350mm": {
+      "A0-E0": {
+        "mean_containment": 90.40854230750868,
+        "minus_six_db_rms_error": 8.407256564988163,
+        "outward_rise_violation": 0.30448628130687433,
+        "profile_rms_error": 1.3879976528633766,
+        "slice_energy_rms_departure": 0.8723695383788264,
+        "surface_score": 86.9545629893702,
+        "throat_impedance_score": 69.62267501661518
+      },
+      "A0-E40": {
+        "mean_containment": 90.42508244568224,
+        "minus_six_db_rms_error": 8.370631204216831,
+        "outward_rise_violation": 0.3294961950624329,
+        "profile_rms_error": 1.3913341423003844,
+        "slice_energy_rms_departure": 0.8701206476879577,
+        "surface_score": 86.90875047370994,
+        "throat_impedance_score": 39.61310317223296
+      },
+      "A12-E0": {
+        "mean_containment": 91.48422522625101,
+        "minus_six_db_rms_error": 7.2328469997048614,
+        "outward_rise_violation": 0.8269395113065314,
+        "profile_rms_error": 1.3762830862217843,
+        "slice_energy_rms_departure": 0.7211322973047867,
+        "surface_score": 86.85794485822507,
+        "throat_impedance_score": 72.62663791969244
+      },
+      "A12-E40": {
+        "mean_containment": 92.09570515205057,
+        "minus_six_db_rms_error": 9.850071609854453,
+        "outward_rise_violation": 0.35173511419070824,
+        "profile_rms_error": 1.491024669448802,
+        "slice_energy_rms_departure": 0.7626498294647088,
+        "surface_score": 86.90067899583852,
+        "throat_impedance_score": 87.25186177321699
+      },
+      "A6-E0": {
+        "mean_containment": 91.09625116642958,
+        "minus_six_db_rms_error": 7.08620061772712,
+        "outward_rise_violation": 0.6391456791196617,
+        "profile_rms_error": 1.1699678231309285,
+        "slice_energy_rms_departure": 0.6463554302839765,
+        "surface_score": 89.38936624215944,
+        "throat_impedance_score": 73.17828094117246
+      },
+      "A6-E20": {
+        "mean_containment": 91.14437753291537,
+        "minus_six_db_rms_error": 7.9327265809821155,
+        "outward_rise_violation": 0.43685037072429783,
+        "profile_rms_error": 1.2485059002802235,
+        "slice_energy_rms_departure": 0.7166716821849805,
+        "surface_score": 88.91280513841856,
+        "throat_impedance_score": 52.59230843762042
+      },
+      "A6-E40": {
+        "mean_containment": 91.18621826448584,
+        "minus_six_db_rms_error": 8.944279882335803,
+        "outward_rise_violation": 0.27403369457296334,
+        "profile_rms_error": 1.4000878661093292,
+        "slice_energy_rms_departure": 0.8121985898730144,
+        "surface_score": 87.3893334393809,
+        "throat_impedance_score": 57.277263905974564
+      },
+      "A6-E60": {
+        "mean_containment": 91.26146364242554,
+        "minus_six_db_rms_error": 9.978626334983204,
+        "outward_rise_violation": 0.18046488699407232,
+        "profile_rms_error": 1.59573425291988,
+        "slice_energy_rms_departure": 0.9218760358232043,
+        "surface_score": 85.14107849790813,
+        "throat_impedance_score": 61.817070536033086
+      }
+    },
+    "45deg-400mm": {
+      "A0-E0": {
+        "mean_containment": 90.15729035391134,
+        "minus_six_db_rms_error": 7.343484404173214,
+        "outward_rise_violation": 0.5560437445828498,
+        "profile_rms_error": 1.3895591850245124,
+        "slice_energy_rms_departure": 0.8767078979271455,
+        "surface_score": 86.43831572467954,
+        "throat_impedance_score": 70.13873349619169
+      },
+      "A0-E40": {
+        "mean_containment": 90.17132309750005,
+        "minus_six_db_rms_error": 7.310400035529218,
+        "outward_rise_violation": 0.539590600331331,
+        "profile_rms_error": 1.3900371827196856,
+        "slice_energy_rms_departure": 0.8732722665868053,
+        "surface_score": 86.53250075070909,
+        "throat_impedance_score": 39.29623587469058
+      },
+      "A12-E0": {
+        "mean_containment": 91.05285141093704,
+        "minus_six_db_rms_error": 5.181792211091734,
+        "outward_rise_violation": 1.0194849751197133,
+        "profile_rms_error": 1.3333521338472683,
+        "slice_energy_rms_departure": 0.7026434827902983,
+        "surface_score": 86.79258624353236,
+        "throat_impedance_score": 71.10913121421672
+      },
+      "A12-E40": {
+        "mean_containment": 91.85141619984267,
+        "minus_six_db_rms_error": 8.267394769922412,
+        "outward_rise_violation": 0.41190253883274663,
+        "profile_rms_error": 1.3717929529998187,
+        "slice_energy_rms_departure": 0.7335467250887464,
+        "surface_score": 88.14828930572091,
+        "throat_impedance_score": 81.12234896248606
+      },
+      "A6-E0": {
+        "mean_containment": 90.74781959195892,
+        "minus_six_db_rms_error": 5.439304262354613,
+        "outward_rise_violation": 0.7283597744308927,
+        "profile_rms_error": 1.184691037860311,
+        "slice_energy_rms_departure": 0.6588520076272693,
+        "surface_score": 89.20977556849073,
+        "throat_impedance_score": 71.67145434870818
+      },
+      "A6-E20": {
+        "mean_containment": 90.84238815367591,
+        "minus_six_db_rms_error": 6.435467894691117,
+        "outward_rise_violation": 0.5553410673219159,
+        "profile_rms_error": 1.2262441444422976,
+        "slice_energy_rms_departure": 0.7148298469855581,
+        "surface_score": 89.02992031503979,
+        "throat_impedance_score": 49.27677411402061
+      },
+      "A6-E40": {
+        "mean_containment": 90.96347229750673,
+        "minus_six_db_rms_error": 7.549767836670172,
+        "outward_rise_violation": 0.4498603440162553,
+        "profile_rms_error": 1.3414853089592715,
+        "slice_energy_rms_departure": 0.7956583033520533,
+        "surface_score": 87.80793343417616,
+        "throat_impedance_score": 57.521542141893214
+      },
+      "A6-E60": {
+        "mean_containment": 91.095746170471,
+        "minus_six_db_rms_error": 8.716530295084258,
+        "outward_rise_violation": 0.35797742142945094,
+        "profile_rms_error": 1.5198170956466392,
+        "slice_energy_rms_departure": 0.8914741551296783,
+        "surface_score": 85.88646218606138,
+        "throat_impedance_score": 60.81452960789133
+      }
+    },
+    "45deg-450mm": {
+      "A0-E0": {
+        "mean_containment": 91.70483175648727,
+        "minus_six_db_rms_error": 7.72838511255277,
+        "outward_rise_violation": 0.6294618773660976,
+        "profile_rms_error": 1.3385458036484454,
+        "slice_energy_rms_departure": 0.7636607032379101,
+        "surface_score": 87.52797903528052,
+        "throat_impedance_score": 72.20024056856911
+      },
+      "A0-E40": {
+        "mean_containment": 91.73572499939414,
+        "minus_six_db_rms_error": 7.713690501655382,
+        "outward_rise_violation": 0.5620910505245864,
+        "profile_rms_error": 1.337962101785318,
+        "slice_energy_rms_departure": 0.7564771120933664,
+        "surface_score": 87.84804442880056,
+        "throat_impedance_score": 43.42817371558659
+      },
+      "A12-E0": {
+        "mean_containment": 92.5765840069796,
+        "minus_six_db_rms_error": 6.74459675997878,
+        "outward_rise_violation": 1.0421261113299312,
+        "profile_rms_error": 1.4450324337140197,
+        "slice_energy_rms_departure": 0.7884669678153929,
+        "surface_score": 85.27876505601135,
+        "throat_impedance_score": 73.41381698865644
+      },
+      "A12-E40": {
+        "mean_containment": 93.23925380071519,
+        "minus_six_db_rms_error": 9.494081141046625,
+        "outward_rise_violation": 0.48174765654258783,
+        "profile_rms_error": 1.4851337854106705,
+        "slice_energy_rms_departure": 0.6195637059384757,
+        "surface_score": 87.8922353974242,
+        "throat_impedance_score": 90.80014019176825
+      },
+      "A6-E0": {
+        "mean_containment": 92.27990211414956,
+        "minus_six_db_rms_error": 6.352102829045551,
+        "outward_rise_violation": 0.9234686765103488,
+        "profile_rms_error": 1.1773138683468463,
+        "slice_energy_rms_departure": 0.5940775544650705,
+        "surface_score": 88.87309502910865,
+        "throat_impedance_score": 74.31800581195172
+      },
+      "A6-E20": {
+        "mean_containment": 92.35675499324016,
+        "minus_six_db_rms_error": 7.262742252660509,
+        "outward_rise_violation": 0.6714743898917247,
+        "profile_rms_error": 1.2085763857047853,
+        "slice_energy_rms_departure": 0.5968625322045014,
+        "surface_score": 89.55330517063258,
+        "throat_impedance_score": 57.32065613499754
+      },
+      "A6-E40": {
+        "mean_containment": 92.43843293080545,
+        "minus_six_db_rms_error": 8.46672803554382,
+        "outward_rise_violation": 0.4993572613340672,
+        "profile_rms_error": 1.3757208696875192,
+        "slice_energy_rms_departure": 0.6795965946483049,
+        "surface_score": 88.28725739777792,
+        "throat_impedance_score": 61.01904109977805
+      },
+      "A6-E60": {
+        "mean_containment": 92.5185035195361,
+        "minus_six_db_rms_error": 9.691139312831712,
+        "outward_rise_violation": 0.4038210221908034,
+        "profile_rms_error": 1.6126335968141694,
+        "slice_energy_rms_departure": 0.7844617514015455,
+        "surface_score": 85.9559537992182,
+        "throat_impedance_score": 64.11869323875196
+      }
+    },
+    "50deg-250mm": {
+      "A0-E0": {
+        "mean_containment": 90.22321108645512,
+        "minus_six_db_rms_error": 10.894431614038165,
+        "outward_rise_violation": 0.2329872553581932,
+        "profile_rms_error": 1.3510191464974972,
+        "slice_energy_rms_departure": 0.9225585303896071,
+        "surface_score": 86.11106117894734,
+        "throat_impedance_score": 63.61127312732227
+      },
+      "A0-E40": {
+        "mean_containment": 90.24781225108613,
+        "minus_six_db_rms_error": 10.714703378752297,
+        "outward_rise_violation": 0.1801124488916926,
+        "profile_rms_error": 1.3577914869492993,
+        "slice_energy_rms_departure": 0.9134851773600892,
+        "surface_score": 86.28316202439365,
+        "throat_impedance_score": 29.63898240341268
+      },
+      "A12-E0": {
+        "mean_containment": 90.80288227085288,
+        "minus_six_db_rms_error": 10.715362322317274,
+        "outward_rise_violation": 0.6078925101181196,
+        "profile_rms_error": 1.5104605333730206,
+        "slice_energy_rms_departure": 0.8915487967518427,
+        "surface_score": 84.45041622975778,
+        "throat_impedance_score": 66.62316595192948
+      },
+      "A12-E40": {
+        "mean_containment": 91.51352467684507,
+        "minus_six_db_rms_error": 12.776004331956894,
+        "outward_rise_violation": 0.0390334967490614,
+        "profile_rms_error": 1.6173512412745457,
+        "slice_energy_rms_departure": 0.9391742625208908,
+        "surface_score": 84.12628404957725,
+        "throat_impedance_score": 59.576986544840224
+      },
+      "A6-E0": {
+        "mean_containment": 90.58301163501862,
+        "minus_six_db_rms_error": 10.51720660477221,
+        "outward_rise_violation": 0.2638877776671005,
+        "profile_rms_error": 1.2692691173581196,
+        "slice_energy_rms_departure": 0.7947067590779765,
+        "surface_score": 87.72986204096125,
+        "throat_impedance_score": 66.51923893712325
+      },
+      "A6-E20": {
+        "mean_containment": 90.71469490202897,
+        "minus_six_db_rms_error": 11.045959156472104,
+        "outward_rise_violation": 0.12441503241590485,
+        "profile_rms_error": 1.3326922674112633,
+        "slice_energy_rms_departure": 0.8559771120888701,
+        "surface_score": 86.93287432103824,
+        "throat_impedance_score": 40.02332597615076
+      },
+      "A6-E40": {
+        "mean_containment": 90.84859804974043,
+        "minus_six_db_rms_error": 11.60543264486137,
+        "outward_rise_violation": 0.1035505623607609,
+        "profile_rms_error": 1.4444187001549067,
+        "slice_energy_rms_departure": 0.9227757656441429,
+        "surface_score": 85.57703172142408,
+        "throat_impedance_score": 43.38841084973989
+      },
+      "A6-E60": {
+        "mean_containment": 90.97648940277817,
+        "minus_six_db_rms_error": 12.327572414900708,
+        "outward_rise_violation": 0.09885187049378728,
+        "profile_rms_error": 1.5984988800131827,
+        "slice_energy_rms_departure": 1.0006318088416317,
+        "surface_score": 83.76657272331656,
+        "throat_impedance_score": 58.43889678114523
+      }
+    },
+    "50deg-300mm": {
+      "A0-E0": {
+        "mean_containment": 91.37370109354006,
+        "minus_six_db_rms_error": 9.371948557560465,
+        "outward_rise_violation": 0.49105022423329375,
+        "profile_rms_error": 1.3782368650141608,
+        "slice_energy_rms_departure": 0.8445761704866858,
+        "surface_score": 86.60963438495385,
+        "throat_impedance_score": 67.17792523016453
+      },
+      "A0-E40": {
+        "mean_containment": 91.40718100394952,
+        "minus_six_db_rms_error": 9.233678230987145,
+        "outward_rise_violation": 0.46287739232364783,
+        "profile_rms_error": 1.386559982290764,
+        "slice_energy_rms_departure": 0.8422360261539457,
+        "surface_score": 86.71561703355815,
+        "throat_impedance_score": 31.39322363333571
+      },
+      "A12-E0": {
+        "mean_containment": 92.18295685811083,
+        "minus_six_db_rms_error": 9.033290514724044,
+        "outward_rise_violation": 0.8644860465155395,
+        "profile_rms_error": 1.4004492250732639,
+        "slice_energy_rms_departure": 0.7626000691021411,
+        "surface_score": 85.83974100622518,
+        "throat_impedance_score": 69.66577271979062
+      },
+      "A12-E40": {
+        "mean_containment": 92.75668370789543,
+        "minus_six_db_rms_error": 12.077007087714676,
+        "outward_rise_violation": 0.2920919422436914,
+        "profile_rms_error": 1.716014859222882,
+        "slice_energy_rms_departure": 0.8555027526867744,
+        "surface_score": 84.30341969006346,
+        "throat_impedance_score": 70.74114721643303
+      },
+      "A6-E0": {
+        "mean_containment": 91.8525157761275,
+        "minus_six_db_rms_error": 8.844783449427588,
+        "outward_rise_violation": 0.7138074302988764,
+        "profile_rms_error": 1.2656028854595611,
+        "slice_energy_rms_departure": 0.7158089170840427,
+        "surface_score": 87.66857388175707,
+        "throat_impedance_score": 71.36539208454734
+      },
+      "A6-E20": {
+        "mean_containment": 91.96226910845846,
+        "minus_six_db_rms_error": 9.636305177554608,
+        "outward_rise_violation": 0.5017794409562304,
+        "profile_rms_error": 1.3591128088585307,
+        "slice_energy_rms_departure": 0.7704562892530573,
+        "surface_score": 87.28074728681219,
+        "throat_impedance_score": 48.790177732005496
+      },
+      "A6-E40": {
+        "mean_containment": 92.04275039753051,
+        "minus_six_db_rms_error": 10.604457955203538,
+        "outward_rise_violation": 0.34408801303755776,
+        "profile_rms_error": 1.516047200839342,
+        "slice_energy_rms_departure": 0.8517452673700177,
+        "surface_score": 85.84197909944518,
+        "throat_impedance_score": 48.62883441417137
+      },
+      "A6-E60": {
+        "mean_containment": 92.1090128729705,
+        "minus_six_db_rms_error": 11.642806531508064,
+        "outward_rise_violation": 0.26601649078413314,
+        "profile_rms_error": 1.706514097727095,
+        "slice_energy_rms_departure": 0.9443871731287081,
+        "surface_score": 83.73782658208924,
+        "throat_impedance_score": 57.85154892671659
+      }
+    },
+    "50deg-350mm": {
+      "A0-E0": {
+        "mean_containment": 91.86540251046316,
+        "minus_six_db_rms_error": 8.703690111700215,
+        "outward_rise_violation": 0.6110893966294522,
+        "profile_rms_error": 1.3730549472732543,
+        "slice_energy_rms_departure": 0.8448526066454364,
+        "surface_score": 86.51854420256672,
+        "throat_impedance_score": 68.36256747194308
+      },
+      "A0-E40": {
+        "mean_containment": 91.88092516358162,
+        "minus_six_db_rms_error": 8.663646413118673,
+        "outward_rise_violation": 0.5568315753731193,
+        "profile_rms_error": 1.3792211984312832,
+        "slice_energy_rms_departure": 0.8426484322397719,
+        "surface_score": 86.71380419257966,
+        "throat_impedance_score": 32.49509815021287
+      },
+      "A12-E0": {
+        "mean_containment": 92.56553209210668,
+        "minus_six_db_rms_error": 7.7464245163959555,
+        "outward_rise_violation": 1.0556290308499394,
+        "profile_rms_error": 1.3689581759504388,
+        "slice_energy_rms_departure": 0.7500016037279158,
+        "surface_score": 85.68787346340409,
+        "throat_impedance_score": 69.36154197132466
+      },
+      "A12-E40": {
+        "mean_containment": 93.19239400399253,
+        "minus_six_db_rms_error": 11.081521472450763,
+        "outward_rise_violation": 0.4240546494701928,
+        "profile_rms_error": 1.610492357814368,
+        "slice_energy_rms_departure": 0.7780401560720354,
+        "surface_score": 85.64669195282801,
+        "throat_impedance_score": 75.12024995587903
+      },
+      "A6-E0": {
+        "mean_containment": 92.30467576743281,
+        "minus_six_db_rms_error": 7.790200082899252,
+        "outward_rise_violation": 0.8602457164982702,
+        "profile_rms_error": 1.2407153427352893,
+        "slice_energy_rms_departure": 0.702585943828505,
+        "surface_score": 87.67373235470836,
+        "throat_impedance_score": 70.28121843806204
+      },
+      "A6-E20": {
+        "mean_containment": 92.38544753283664,
+        "minus_six_db_rms_error": 8.744398557839393,
+        "outward_rise_violation": 0.6305242688506497,
+        "profile_rms_error": 1.3173938637103326,
+        "slice_energy_rms_departure": 0.7481217372998314,
+        "surface_score": 87.59765262322773,
+        "throat_impedance_score": 44.59154085923577
+      },
+      "A6-E40": {
+        "mean_containment": 92.49401139921196,
+        "minus_six_db_rms_error": 9.84803767669171,
+        "outward_rise_violation": 0.46714844108027087,
+        "profile_rms_error": 1.466755060528766,
+        "slice_energy_rms_departure": 0.8220224529841168,
+        "surface_score": 86.37064827040521,
+        "throat_impedance_score": 49.65838665376437
+      },
+      "A6-E60": {
+        "mean_containment": 92.58317526690809,
+        "minus_six_db_rms_error": 11.014435636904414,
+        "outward_rise_violation": 0.3850098617524417,
+        "profile_rms_error": 1.6717567786981826,
+        "slice_energy_rms_departure": 0.9180673513940459,
+        "surface_score": 84.19390248030118,
+        "throat_impedance_score": 53.47855458042038
+      }
+    },
+    "50deg-400mm": {
+      "A0-E0": {
+        "mean_containment": 92.41516306359573,
+        "minus_six_db_rms_error": 7.959690110899475,
+        "outward_rise_violation": 0.8836921211172081,
+        "profile_rms_error": 1.312572153634259,
+        "slice_energy_rms_departure": 0.773382818378503,
+        "surface_score": 86.59349526860335,
+        "throat_impedance_score": 66.46249817698951
+      },
+      "A0-E40": {
+        "mean_containment": 92.43827649407082,
+        "minus_six_db_rms_error": 7.936544018905569,
+        "outward_rise_violation": 0.8703620889134392,
+        "profile_rms_error": 1.319948382535523,
+        "slice_energy_rms_departure": 0.772585270882048,
+        "surface_score": 86.62697313900938,
+        "throat_impedance_score": 33.70965434016776
+      },
+      "A12-E0": {
+        "mean_containment": 92.99644593427216,
+        "minus_six_db_rms_error": 7.574307106877718,
+        "outward_rise_violation": 1.2584388696390465,
+        "profile_rms_error": 1.4833268157542654,
+        "slice_energy_rms_departure": 0.8514508428635539,
+        "surface_score": 83.3613168486108,
+        "throat_impedance_score": 69.10463463996291
+      },
+      "A12-E40": {
+        "mean_containment": 93.66396687720237,
+        "minus_six_db_rms_error": 10.634122503305651,
+        "outward_rise_violation": 0.5787006532429673,
+        "profile_rms_error": 1.5546048192230484,
+        "slice_energy_rms_departure": 0.7175919870781009,
+        "surface_score": 86.1680075967218,
+        "throat_impedance_score": 72.09324767114222
+      },
+      "A6-E0": {
+        "mean_containment": 92.78737713795029,
+        "minus_six_db_rms_error": 7.22705844185343,
+        "outward_rise_violation": 1.1008645020444061,
+        "profile_rms_error": 1.2668672333350415,
+        "slice_energy_rms_departure": 0.701927786240207,
+        "surface_score": 86.63275451798337,
+        "throat_impedance_score": 69.20491759309748
+      },
+      "A6-E20": {
+        "mean_containment": 92.90241254409173,
+        "minus_six_db_rms_error": 8.08900822576089,
+        "outward_rise_violation": 0.8846950442480941,
+        "profile_rms_error": 1.276004134244033,
+        "slice_energy_rms_departure": 0.6963346318103951,
+        "surface_score": 87.4211744650496,
+        "throat_impedance_score": 43.987606849126095
+      },
+      "A6-E40": {
+        "mean_containment": 92.99673593072603,
+        "minus_six_db_rms_error": 9.205881513993223,
+        "outward_rise_violation": 0.6732472667912677,
+        "profile_rms_error": 1.3856181197671273,
+        "slice_energy_rms_departure": 0.7374264619871053,
+        "surface_score": 87.05770990623019,
+        "throat_impedance_score": 50.992248270454674
+      },
+      "A6-E60": {
+        "mean_containment": 93.1021988064404,
+        "minus_six_db_rms_error": 10.465345802311536,
+        "outward_rise_violation": 0.5317206065129654,
+        "profile_rms_error": 1.593452330893061,
+        "slice_energy_rms_departure": 0.820950826856931,
+        "surface_score": 85.27446491716242,
+        "throat_impedance_score": 53.75063473917054
+      }
+    },
+    "50deg-450mm": {
+      "A0-E0": {
+        "mean_containment": 92.80825186475982,
+        "minus_six_db_rms_error": 8.426309360590103,
+        "outward_rise_violation": 0.9372281393860733,
+        "profile_rms_error": 1.370831184547027,
+        "slice_energy_rms_departure": 0.7956842053585851,
+        "surface_score": 85.75510274761895,
+        "throat_impedance_score": 67.80219180623193
+      },
+      "A0-E40": {
+        "mean_containment": 92.82409500176753,
+        "minus_six_db_rms_error": 8.405694505244838,
+        "outward_rise_violation": 0.9393372360610999,
+        "profile_rms_error": 1.3802766682769128,
+        "slice_energy_rms_departure": 0.7991258334402258,
+        "surface_score": 85.66988500185143,
+        "throat_impedance_score": 34.975681240392895
+      },
+      "A12-E0": {
+        "mean_containment": 93.37665582658488,
+        "minus_six_db_rms_error": 7.586587226954106,
+        "outward_rise_violation": 1.3937930652363424,
+        "profile_rms_error": 1.4877131312597907,
+        "slice_energy_rms_departure": 0.8469694841894266,
+        "surface_score": 82.7908008759821,
+        "throat_impedance_score": 70.0523598498436
+      },
+      "A12-E40": {
+        "mean_containment": 94.03221479773438,
+        "minus_six_db_rms_error": 11.165004467416244,
+        "outward_rise_violation": 0.6222991124890588,
+        "profile_rms_error": 1.6560810155906311,
+        "slice_energy_rms_departure": 0.7289924240234462,
+        "surface_score": 85.16771581173093,
+        "throat_impedance_score": 74.89948103770239
+      },
+      "A6-E0": {
+        "mean_containment": 93.18436627162062,
+        "minus_six_db_rms_error": 7.471893855563128,
+        "outward_rise_violation": 1.1786857948790783,
+        "profile_rms_error": 1.2984062316493645,
+        "slice_energy_rms_departure": 0.7150580036255335,
+        "surface_score": 85.97881888255189,
+        "throat_impedance_score": 69.8428106044866
+      },
+      "A6-E20": {
+        "mean_containment": 93.29869812435732,
+        "minus_six_db_rms_error": 8.527153035017815,
+        "outward_rise_violation": 0.9581182804924236,
+        "profile_rms_error": 1.3437485182295574,
+        "slice_energy_rms_departure": 0.7209501668908438,
+        "surface_score": 86.43356954726653,
+        "throat_impedance_score": 48.96358149934902
+      },
+      "A6-E40": {
+        "mean_containment": 93.3875190939649,
+        "minus_six_db_rms_error": 9.84405157605178,
+        "outward_rise_violation": 0.7627021553389934,
+        "profile_rms_error": 1.516456450266123,
+        "slice_energy_rms_departure": 0.7854679745741568,
+        "surface_score": 85.37665338876337,
+        "throat_impedance_score": 51.18019188057387
+      },
+      "A6-E60": {
+        "mean_containment": 93.49089793353897,
+        "minus_six_db_rms_error": 11.21139095646721,
+        "outward_rise_violation": 0.5898436900583423,
+        "profile_rms_error": 1.762169353280342,
+        "slice_energy_rms_departure": 0.8736429880343978,
+        "surface_score": 83.40525374367616,
+        "throat_impedance_score": 60.277753193103486
+      }
+    }
+  },
+  "radiation_absolute_error_limits": {
+    "mean_containment": 1.0,
+    "minus_six_db_rms_error": 1.0,
+    "outward_rise_violation": 0.5,
+    "profile_rms_error": 0.25,
+    "slice_energy_rms_departure": 0.25,
+    "surface_score": 1.0
+  },
+  "schema_version": 1,
+  "secondary_transfer_measurements": {
+    "30deg-250mm": {
+      "measurements": {
+        "A0-E0": {
+          "mean_containment": 76.65363769398712,
+          "minus_six_db_rms_error": 16.491645784541753,
+          "outward_rise_violation": 0.023754330550982868,
+          "profile_rms_error": 1.9077518247901262,
+          "slice_energy_rms_departure": 1.2077299900704508,
+          "surface_score": 75.96247155733693,
+          "throat_impedance_score": 74.12188277137776
+        },
+        "A0-E40": {
+          "mean_containment": 76.63883861926466,
+          "minus_six_db_rms_error": 16.579541559094487,
+          "outward_rise_violation": 0.03324859250617608,
+          "profile_rms_error": 1.9089720195321633,
+          "slice_energy_rms_departure": 1.2201348840292967,
+          "surface_score": 75.82345387613894,
+          "throat_impedance_score": 50.80476997041865
+        },
+        "A12-E0": {
+          "mean_containment": 80.7007970850432,
+          "minus_six_db_rms_error": 15.710794063157175,
+          "outward_rise_violation": 0.2911960612953475,
+          "profile_rms_error": 1.7638129319692912,
+          "slice_energy_rms_departure": 1.4116757237833877,
+          "surface_score": 75.99311497255013,
+          "throat_impedance_score": 80.14924697731334
+        },
+        "A12-E40": {
+          "mean_containment": 81.46568806947289,
+          "minus_six_db_rms_error": 16.22088260853898,
+          "outward_rise_violation": 0.0,
+          "profile_rms_error": 1.7615357065634072,
+          "slice_energy_rms_departure": 1.5705515306152653,
+          "surface_score": 75.0977592430963,
+          "throat_impedance_score": 77.05050764440128
+        },
+        "A6-E40": {
+          "mean_containment": 79.21977020006685,
+          "minus_six_db_rms_error": 16.18249266411962,
+          "outward_rise_violation": 0.0,
+          "profile_rms_error": 1.745623906842154,
+          "slice_energy_rms_departure": 1.367568698460615,
+          "surface_score": 76.33431698884533,
+          "throat_impedance_score": 63.073696357564714
+        }
+      },
+      "parent": {
+        "extension_mm": 0,
+        "id": "30d-250mm-L+0-K+1-N-1",
+        "response_path": "examples/control-decoupling/searches/two-factor-face/30deg/250x250/candidates/candidate-004/bem/responses.npz",
+        "response_sha256": "a63a43be47c82cfbd1065454bc76350f40df38f3b5adccb76d294f6a0122827c",
+        "responses": {
+          "mean_containment": 79.05763782036827,
+          "minus_six_db_rms_error": 15.896329215040293,
+          "outward_rise_violation": 2.9840005047058954e-05,
+          "profile_rms_error": 1.7096928469844428,
+          "slice_energy_rms_departure": 1.2880107013770534,
+          "surface_score": 77.25624912807498,
+          "throat_impedance_score": 88.19839751579968
+        },
+        "throat_angle_deg": 6
+      }
+    },
+    "40deg-350mm": {
+      "measurements": {
+        "A0-E0": {
+          "mean_containment": 87.08845593660351,
+          "minus_six_db_rms_error": 8.36255237477329,
+          "outward_rise_violation": 0.17512003036884127,
+          "profile_rms_error": 1.4916613702843762,
+          "slice_energy_rms_departure": 0.9983898679796166,
+          "surface_score": 84.88164463993854,
+          "throat_impedance_score": 71.68245221802424
+        },
+        "A0-E40": {
+          "mean_containment": 87.13271898773341,
+          "minus_six_db_rms_error": 8.273318721577507,
+          "outward_rise_violation": 0.21050934735360555,
+          "profile_rms_error": 1.4904872494819648,
+          "slice_energy_rms_departure": 0.9947642749366787,
+          "surface_score": 84.90372953913591,
+          "throat_impedance_score": 42.87984280145981
+        },
+        "A12-E0": {
+          "mean_containment": 88.35795918461054,
+          "minus_six_db_rms_error": 5.756064140368263,
+          "outward_rise_violation": 0.8742438363134133,
+          "profile_rms_error": 1.4204315448522706,
+          "slice_energy_rms_departure": 0.6850393664003616,
+          "surface_score": 86.38146238720995,
+          "throat_impedance_score": 72.24370010559193
+        },
+        "A12-E40": {
+          "mean_containment": 89.25094747269094,
+          "minus_six_db_rms_error": 7.248047014060732,
+          "outward_rise_violation": 0.3842996040625287,
+          "profile_rms_error": 1.22004604159221,
+          "slice_energy_rms_departure": 0.760188091384853,
+          "surface_score": 88.7417838625451,
+          "throat_impedance_score": 85.62218005558947
+        },
+        "A6-E40": {
+          "mean_containment": 88.12986907042719,
+          "minus_six_db_rms_error": 7.464756980733135,
+          "outward_rise_violation": 0.20265377457156433,
+          "profile_rms_error": 1.319119667608328,
+          "slice_energy_rms_departure": 0.8585853552201058,
+          "surface_score": 87.49988186575196,
+          "throat_impedance_score": 57.643519838711654
+        }
+      },
+      "parent": {
+        "extension_mm": 0,
+        "id": "40d-350mm-L+0-K+0-N+0",
+        "response_path": "examples/control-decoupling/searches/core-axis/40deg/350x350/candidates/candidate-000/bem/responses.npz",
+        "response_sha256": "ecc28de8cd3a802d3e9637a0714373c08861ba52f32ed51393039f55d1761b0e",
+        "responses": {
+          "mean_containment": 87.94823196197056,
+          "minus_six_db_rms_error": 6.045173872737456,
+          "outward_rise_violation": 0.5054041379314167,
+          "profile_rms_error": 1.216705491534432,
+          "slice_energy_rms_departure": 0.7105597799832307,
+          "surface_score": 88.81264258660242,
+          "throat_impedance_score": 73.23178294818746
+        },
+        "throat_angle_deg": 6
+      }
+    },
+    "50deg-450mm": {
+      "measurements": {
+        "A0-E0": {
+          "mean_containment": 92.45808545316106,
+          "minus_six_db_rms_error": 7.669121114300497,
+          "outward_rise_violation": 1.0220685778259848,
+          "profile_rms_error": 1.3590118730597807,
+          "slice_energy_rms_departure": 0.8134368249824444,
+          "surface_score": 85.44693943252744,
+          "throat_impedance_score": 66.20876809039896
+        },
+        "A0-E40": {
+          "mean_containment": 92.49035023912886,
+          "minus_six_db_rms_error": 7.71855065224141,
+          "outward_rise_violation": 1.0083616554564123,
+          "profile_rms_error": 1.3678542494781274,
+          "slice_energy_rms_departure": 0.8180596426709944,
+          "surface_score": 85.41508358055259,
+          "throat_impedance_score": 33.0836314907885
+        },
+        "A12-E0": {
+          "mean_containment": 92.92831523909793,
+          "minus_six_db_rms_error": 6.866641816271617,
+          "outward_rise_violation": 1.4972508722547633,
+          "profile_rms_error": 1.5172186825120908,
+          "slice_energy_rms_departure": 0.8705160677856945,
+          "surface_score": 82.05167703990301,
+          "throat_impedance_score": 68.78795296329167
+        },
+        "A12-E40": {
+          "mean_containment": 93.67733106229679,
+          "minus_six_db_rms_error": 10.19023394354464,
+          "outward_rise_violation": 0.7254310434602449,
+          "profile_rms_error": 1.538958862255709,
+          "slice_energy_rms_departure": 0.7422824594842129,
+          "surface_score": 85.65380557948768,
+          "throat_impedance_score": 68.18652620317927
+        },
+        "A6-E40": {
+          "mean_containment": 93.04990163150964,
+          "minus_six_db_rms_error": 8.982523395329817,
+          "outward_rise_violation": 0.8342989790933624,
+          "profile_rms_error": 1.4511910549721145,
+          "slice_energy_rms_departure": 0.7987265858413749,
+          "surface_score": 85.58054177443049,
+          "throat_impedance_score": 47.99226585295659
+        }
+      },
+      "parent": {
+        "extension_mm": 0,
+        "id": "50d-450mm-L+1-K+1-N+0",
+        "response_path": "examples/control-decoupling/searches/two-factor-face/50deg/450x450/candidates/candidate-008/bem/responses.npz",
+        "response_sha256": "49cf642b4710b09bee59b7f9b00c6cbc767ceeb6131c607af4732168ec4fef94",
+        "responses": {
+          "mean_containment": 92.77946567654483,
+          "minus_six_db_rms_error": 6.685312994934656,
+          "outward_rise_violation": 1.2813864089242522,
+          "profile_rms_error": 1.321145770142067,
+          "slice_energy_rms_departure": 0.7501408825682556,
+          "surface_score": 85.2292392063453,
+          "throat_impedance_score": 68.54408892933833
+        },
+        "throat_angle_deg": 6
+      }
+    }
+  },
+  "status": "frozen-before-locked-outcomes",
+  "throat_impedance": {
+    "included_in_surface_score": false,
+    "included_in_validation_gate": false,
+    "predicted_and_reported": true
+  }
+}

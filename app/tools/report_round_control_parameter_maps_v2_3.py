@@ -159,7 +159,7 @@ def assemble(
         "status": "complete",
         "score_version": "v2.3",
         "score_status": (
-            "experimental_calibrated_not_independently_validated"
+            "diagnostic_of_record_not_independently_validated"
         ),
         "selection_rule": (
             "maximum measured surface score v2.3 per mouth/coverage cell; "
@@ -233,7 +233,8 @@ def render(artifact: dict[str, Any]) -> str:
         "<p class='muted'>V2.3 preserves v2.2 broad-quality discrimination "
         "and adds a guarded local-ranking refinement. Containment and "
         "outward-rise remain continuous v2.2 inputs and also gate the local "
-        "branch below their calibrated floors.</p>"
+        "branch below their calibrated floors. It is the diagnostic of record "
+        "and authoritative ranking score.</p>"
     )
     if stale not in document:
         raise ValueError("v2.1 report template description changed")

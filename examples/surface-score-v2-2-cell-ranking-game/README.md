@@ -38,8 +38,9 @@ analysis with:
 ## General-purpose v2.3 follow-up
 
 The fitted local-ranking core was combined with v2.2 and explicit containment
-and outward-rise guardrails to produce the experimental general-purpose v2.3
-candidate. Rebuild its calibration with:
+and outward-rise guardrails to produce general-purpose v2.3. It was selected as
+the diagnostic of record on July 24, 2026, while retaining the documented
+independent-validation limitation. Rebuild its calibration with:
 
 ```sh
 .venv/bin/python -m app.tools.calibrate_surface_score_v2_3

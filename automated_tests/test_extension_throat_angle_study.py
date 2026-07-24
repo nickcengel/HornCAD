@@ -215,7 +215,8 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         ):
             self.assertIn(heading, output)
         self.assertIn("Throat-impedance score", output)
-        self.assertIn("not included in the surface score", output)
+        self.assertIn("Composite score v1.0", output)
+        self.assertIn("does not alter ranking", output)
         self.assertIn(
             "../control-decoupling/searches/three-factor-corner/"
             "30deg/250x250/candidates/candidate-000/bem/"

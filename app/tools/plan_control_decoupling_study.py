@@ -140,8 +140,19 @@ def reusable_results(source_root: Path) -> list[ReusableResult]:
             if record.get("status") != "complete":
                 continue
             values = _record_values(record)
-            score = record.get("surface_diagnostics", {}).get(
-                "score", {}).get("overall_percent")
+            # This frozen study selected its reference anchors with surface v1.
+            # Keep the preregistered basis stable after v2.3 became the live
+            # diagnostic of record.
+            surface = record.get("surface_diagnostics", {})
+            score = (
+                surface.get("score_v1")
+                or (
+                    surface.get("score")
+                    if surface.get("score", {}).get("version") == "v1"
+                    else None
+                )
+                or {}
+            ).get("overall_percent")
             if values is None or not isinstance(score, (int, float)):
                 continue
             candidate_id = str(record.get("id", ""))

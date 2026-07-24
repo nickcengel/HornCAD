@@ -1,6 +1,6 @@
 # Round-control parameter maps ranked by surface score v2.3
 
-This standalone report selects the highest measured experimental surface score
+This standalone report selects the highest measured surface score
 v2.3 in each of the 25 round-control mouth/coverage cells. It uses all 1,532
 unique retained responses: the frozen 1,484-response comparison population plus
 all 48 ridge-closure responses.
@@ -25,5 +25,6 @@ The rebuild recalculates v2.3 using the fixed shadow evaluation band. Use
 `--workers 1` for a serial audit or leave the default bounded parallel read-only
 pass.
 
-V2.3 is calibrated but not independently validated. Surface score v1 remains
-the normal search-ranking score.
+V2.3 is calibrated but not independently validated. It became the diagnostic
+of record and normal search-ranking score on July 24, 2026; v1 remains a
+reproducible historical comparison.

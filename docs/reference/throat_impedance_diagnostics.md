@@ -1,8 +1,9 @@
-# Experimental throat-impedance diagnostic
+# Throat-impedance diagnostic
 
-This experimental diagnostic is reported by BEM candidate, search, and study
-reports, but remains isolated from the radiation surface score and candidate
-ranking.
+This diagnostic is reported by BEM candidate, search, and study reports. It
+remains isolated from the radiation surface score and candidate ranking. A
+secondary composite reports 75% surface v2.3 plus 25% throat impedance, but
+that composite is not authoritative for ranking.
 
 Version 2.3.0 uses the complete retained impedance sweep. A constant magnitude
 is ideal, but the diagnostic accepts a smooth high-pass-like rise. It does not
@@ -61,11 +62,13 @@ smoothly.
 The version 2.3 combined score weights crossover loading 60%, peak prominence
 20%, ripple 10%, excess variation 7%, and upper-shelf stability 3%. Crossover
 adequacy remains dominant, but no longer drowns out a conspicuous isolated
-resonance. These weights remain calibration hypotheses; the diagnostic is
-still excluded from optimization and total score.
+resonance. These weights remain calibration hypotheses. The diagnostic is
+excluded from optimization and from the authoritative surface ranking.
 
 The implementation lives in `app/tools/throat_impedance_diagnostics.py`. The
 round-control release pipeline now fits its overall percentage as an independent
 experimental response for future extension/throat-angle work. It remains absent
-from live search, candidate ranking, the radiation surface score, and
-primary/augmented model choice.
+from live-search ranking, the radiation surface score, and primary/augmented
+model choice. Its only combined use is the explicitly secondary composite
+described in
+[`composite_diagnostics.md`](composite_diagnostics.md).

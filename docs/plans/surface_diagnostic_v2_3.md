@@ -1,7 +1,7 @@
 # Surface diagnostic v2.3: general-purpose guarded refinement
 
-Status: implemented and calibrated on all existing ranking evidence; experimental
-and not independently validated; v1 remains the primary search score
+Status: implemented and calibrated on all existing ranking evidence; selected
+as the diagnostic of record on July 24, 2026; not independently validated
 
 ## Problem
 
@@ -23,7 +23,8 @@ results as complementary:
   outward-rise quality falls below an acceptable floor.
 
 Throat impedance remains a separate diagnostic and does not contribute to this
-surface score.
+surface score. A separately labeled 75/25 composite is reported for comparison
+but does not affect ranking.
 
 ## Frozen formula
 
@@ -117,10 +118,12 @@ validation result:
 - all ranking games forced total orders without ties or confidence;
 - the completed evidence does not contain a newly blinded mixed-quality set.
 
-V2.3 is therefore emitted and displayed side by side but does not replace the
-primary v1 score or silently rewrite retained reports. Promotion requires a new
-blinded ranking set containing both obvious failures and close high scorers,
-with ties/confidence allowed, followed by a frozen evaluation.
+The original release recommendation was to keep v2.3 side by side pending a
+new blinded mixed-quality set. On July 24, 2026, the project owner explicitly
+promoted v2.3 to diagnostic of record with the calibration-reuse limitation
+still visible. Current searches and regenerated reports rank by v2.3. V1 and
+v2.2 remain available as historical comparisons, and frozen historical model
+targets are not silently rewritten.
 
 Rebuild the calibration:
 

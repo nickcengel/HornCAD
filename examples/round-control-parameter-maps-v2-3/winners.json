@@ -1026,7 +1026,7 @@
       "winner_changed": true
     }
   },
-  "content_sha256": "ea8445606991899aa6cb5a58ca147960129b16612261a3e794f1fbb87764efa5",
+  "content_sha256": "10fb0e9db0a52c2977d45fec1ebb0e8a3eb49186cb56823d1fa0e99912b832e6",
   "grids": {
     "379066cd380d82a9": {
       "angles_deg": [
@@ -1185,7 +1185,7 @@
   },
   "population_count": 1532,
   "schema_version": 1,
-  "score_status": "experimental_calibrated_not_independently_validated",
+  "score_status": "diagnostic_of_record_not_independently_validated",
   "score_version": "v2.3",
   "selection_rule": "maximum measured surface score v2.3 per mouth/coverage cell; exact-response-deduplicated evidence; lexical id tie-break",
   "sources": [
@@ -1200,10 +1200,10 @@
       "sha256": "387b255e5da33e396764a818a37b856cecd2fce8e1c118ddfd73d9faf4b8c7fa"
     },
     {
-      "calibration_script_sha256": "adbf2f77d64ad86bcf43f238df33ecd1e81364da5dab6cbccaec4b515dd2269d",
-      "implementation_sha256": "e82fbdcf8a0283890dbde39500f59a99a3f6d0346e9fe9b564f82ea4e662fbb6",
+      "calibration_script_sha256": "0844772ea2811e4578d3f21b8f26c96e26496f42659844a8eb0867d2ef5435f9",
+      "implementation_sha256": "8e56669bec90fb5193168d2ca7ab56284f3c8bc3469deab252f76edb16077035",
       "path": "examples/surface-score-v2-2-cell-ranking-game/surface_score_v2_3_calibration.json",
-      "sha256": "4d16038a6c96d07df4d2c3e1829a3e58361f710c117e07599b63b6e287b5cd53"
+      "sha256": "66162cc24d29700fd1c3d348234842d6614ad51be644601ee2c7989aef156544"
     }
   ],
   "status": "complete",

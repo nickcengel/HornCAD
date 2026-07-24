@@ -1,8 +1,8 @@
 # Surface diagnostic v2: multiscale contour quality
 
-Status: v2 completed and validated; v2.1 and v2.2 preference corrections
-calibrated on subsequent evidence; superseded for general experimental review
-by the guarded v2.3 candidate; none activated as the primary score
+Status: historical. V2 completed and validated; v2.1 and v2.2 preference
+corrections were calibrated on subsequent evidence. Guarded v2.3 superseded
+them and became the diagnostic of record on July 24, 2026.
 
 Validation outcome: the contour-forward top-level weighting passed every promotion
 criterion and was selected in all 20 initial leave-one-round-out folds. The
@@ -13,8 +13,8 @@ round selection. The 3× scale was selected in 15 held-out folds and by the
 complete evidence; 1.5× was selected in four folds and 1× in one. The selected
 experimental 3× references produce a measured 22–74% range; final broad-round Spearman
 agreement is 0.879 and close-round agreement is 0.459. Formulas and component
-weights were not changed. This validation did not activate v2; v1 remains the
-primary score and ranking basis.
+weights were not changed. This validation did not activate v2 at the time; v1
+remained the primary score until the later v2.3 promotion.
 
 Subsequent pairwise review found a coverage-specific failure: original v2
 agreed with only 13 of 25 non-tie judgments at 25 degrees, versus 19 of 25 for

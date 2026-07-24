@@ -70,7 +70,7 @@
       }
     }
   },
-  "calibration_script_sha256": "adbf2f77d64ad86bcf43f238df33ecd1e81364da5dab6cbccaec4b515dd2269d",
+  "calibration_script_sha256": "0844772ea2811e4578d3f21b8f26c96e26496f42659844a8eb0867d2ef5435f9",
   "core_components": [
     "profile_rms",
     "slice_energy",
@@ -90,12 +90,12 @@
     "total_pairwise_preferences": 2025,
     "total_ranked_candidates": 450
   },
-  "implementation_sha256": "e82fbdcf8a0283890dbde39500f59a99a3f6d0346e9fe9b564f82ea4e662fbb6",
+  "implementation_sha256": "8e56669bec90fb5193168d2ca7ab56284f3c8bc3469deab252f76edb16077035",
   "limitations": [
     "The broad rankings previously influenced the v2 beamwidth component design and are not pristine independent validation.",
     "The per-cell rankings fit the core weights; whole-cell cross-validation estimates rather than eliminates selection bias.",
     "The ranking games forced total orders without confidence or ties.",
-    "The score remains experimental until a new blinded mixed-quality ranking set validates the frozen formula."
+    "The project owner selected this score as diagnostic of record on 2026-07-24 despite the absence of a new blinded mixed-quality set."
   ],
   "method": {
     "core": "Four-component nonnegative sum-to-one pairwise-logistic fit on per-cell rankings.",
@@ -196,6 +196,8 @@
       }
     }
   },
+  "promoted_on": "2026-07-24",
+  "ranking_authority": "surface_score_v2.3",
   "schema_version": 1,
   "selected_candidate": {
     "broad_in_sample": {
@@ -1085,7 +1087,7 @@
     "outward_rise_score_threshold_percent": 60.0,
     "v2_3_core_fraction": 0.2
   },
-  "status": "experimental_calibrated_not_independently_validated",
+  "status": "diagnostic_of_record_not_independently_validated",
   "study_id": "surface-score-v2-3-general-diagnostic-calibration",
   "top_grid_candidates": [
     {

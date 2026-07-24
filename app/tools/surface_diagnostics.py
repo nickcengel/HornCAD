@@ -66,7 +66,7 @@ SURFACE_SCORE_V2_CANDIDATE_WEIGHTS = {
         "beamwidth_quality": 0.40,
     },
 }
-ACTIVE_SURFACE_SCORE_VERSION = "v1"
+ACTIVE_SURFACE_SCORE_VERSION = "v2.3"
 ACTIVE_SURFACE_SCORE_V2_CANDIDATE = "contour_forward"
 SURFACE_SCORE_V2_REVISION = "v2.2"
 SURFACE_SCORE_V2_3_CORE_WEIGHTS = {
@@ -418,7 +418,7 @@ def surface_score_v2_3(
     ))
     return {
         "version": "v2.3",
-        "status": "experimental_calibrated_not_independently_validated",
+        "status": "diagnostic_of_record_user_selected",
         "overall_percent": overall,
         "horizontal": planes["horizontal"],
         "vertical": planes["vertical"],
@@ -447,8 +447,8 @@ def surface_score(
     result: dict[str, Any],
     mouth_dimensions_mm: dict[str, float] | None = None,
 ) -> dict[str, Any] | None:
-    """Return the active v1 score; v2 remains experimental side-by-side."""
-    return surface_score_v1(result, mouth_dimensions_mm)
+    """Return the active v2.3 score used for candidate ranking."""
+    return surface_score_v2_3(result, mouth_dimensions_mm)
 
 
 def _band_mean(x: np.ndarray, values: np.ndarray) -> float:

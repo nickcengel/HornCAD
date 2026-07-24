@@ -25,8 +25,9 @@ Rebuild without running BEM:
 .venv/bin/python -m app.tools.report_round_control_parameter_maps_v2_1
 ```
 
-Surface score v1 remains the normal search-ranking score. This report is a
-side-by-side evaluation of the experimental v2.1 diagnostic.
+At the time of this frozen comparison, surface score v1 was the normal
+search-ranking score. V2.3 became the diagnostic of record on July 24, 2026.
+This report remains a historical side-by-side evaluation of v2.1.
 
 The completed per-cell human choices are retained in
 `human_winner_selections.json` and are bound to the exact `winners.json`

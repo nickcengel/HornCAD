@@ -15,8 +15,9 @@ new BEM work.
   cross-process NumCalc capacity control that overlaps solver work with mesh,
   diagnostic, and report stages in future multi-candidate studies.
 - [Throat-impedance diagnostic](reference/throat_impedance_diagnostics.md):
-  experimental model output for the extension study; neither a ranking input
-  nor part of the surface score.
+  independent loading and smoothness output; not a ranking input.
+- [Composite surface and impedance score](reference/composite_diagnostics.md):
+  secondary 75/25 comparison; surface v2.3 remains authoritative for ranking.
 - [Frequency-energy bunching analysis](plans/frequency_energy_bunching_analysis.md):
   planned frequency-resolved learning and steering work.
 - [Design recommendation map](plans/design_recommendation_map.md): intended

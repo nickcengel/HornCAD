@@ -557,7 +557,9 @@ def calibrate(
     ]
     return {
         "schema_version": 1,
-        "status": "experimental_calibrated_not_independently_validated",
+        "status": "diagnostic_of_record_not_independently_validated",
+        "promoted_on": "2026-07-24",
+        "ranking_authority": "surface_score_v2.3",
         "study_id": "surface-score-v2-3-general-diagnostic-calibration",
         "implementation_sha256": hashlib.sha256(
             (ROOT / "app/tools/surface_diagnostics.py").read_bytes()
@@ -659,8 +661,8 @@ def calibrate(
             "The per-cell rankings fit the core weights; whole-cell "
             "cross-validation estimates rather than eliminates selection bias.",
             "The ranking games forced total orders without confidence or ties.",
-            "The score remains experimental until a new blinded mixed-quality "
-            "ranking set validates the frozen formula.",
+            "The project owner selected this score as diagnostic of record on "
+            "2026-07-24 despite the absence of a new blinded mixed-quality set.",
         ],
     }
 
@@ -709,11 +711,11 @@ def _markdown(result: dict[str, Any]) -> str:
     ]
     return f"""# Surface score v2.3 calibration
 
-Status: experimental, calibrated, not independently validated
+Status: diagnostic of record since 2026-07-24; calibrated, not independently validated
 
 V2.3 preserves v2.2 as the broad-quality baseline and adds a guarded
-local-ranking refinement. It is emitted side by side and does not replace the
-primary v1 search score.
+local-ranking refinement. It is the authoritative search-ranking score. V1 and
+v2.2 remain reproducible historical comparisons.
 
 ## Frozen formula
 

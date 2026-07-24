@@ -15,6 +15,10 @@ from plotly.subplots import make_subplots
 import yaml
 
 try:
+    from .composite_diagnostics import (
+        COMPOSITE_SCORE_VERSION,
+        composite_surface_impedance_score,
+    )
     from .surface_diagnostics import (
         ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
         surface_diagnostics,
@@ -25,6 +29,10 @@ try:
         throat_impedance_diagnostics,
     )
 except ImportError:
+    from composite_diagnostics import (
+        COMPOSITE_SCORE_VERSION,
+        composite_surface_impedance_score,
+    )
     from surface_diagnostics import (
         ACTIVE_SURFACE_SCORE_V2_CANDIDATE,
         surface_diagnostics,
@@ -874,24 +882,31 @@ def _surface_diagnostic_tables(runs: list[dict[str, Any]],
                 f"<div class='diagnostic-card'><h3>{html.escape(run['name'])}</h3>"
                 f"<p>{html.escape(result['reason'])}</p></div>")
             continue
-        score = result.get("score") or surface_score(
-            result, run.get("mouth_dimensions_mm"))
+        score = surface_score(
+            result, run.get("mouth_dimensions_mm")
+        ) or result.get("score")
+        legacy_score = result.get("score_v1")
         experimental_score = result.get(
             "score_v2_candidates", {}
         ).get(ACTIVE_SURFACE_SCORE_V2_CANDIDATE)
         general_score = result.get("score_v2_3")
         rows = [
             (
-                "Primary surface score v1",
+                "Surface score v2.3 · diagnostic of record",
                 value(score["overall_percent"], "%") if score else "—",
             ),
             (
-                "Experimental surface score v2.2",
+                "Surface score v1 · legacy",
+                value(legacy_score["overall_percent"], "%")
+                if legacy_score else "—",
+            ),
+            (
+                "Surface score v2.2 · historical",
                 value(experimental_score["overall_percent"], "%")
                 if experimental_score else "—",
             ),
             (
-                "Experimental general surface score v2.3",
+                "Surface score v2.3 · retained field",
                 value(general_score["overall_percent"], "%")
                 if general_score else "—",
             ),
@@ -953,6 +968,39 @@ def _surface_diagnostic_tables(runs: list[dict[str, Any]],
             f"<p><strong>Evaluated band:</strong> {result['band_lower_hz']:g}–"
             f"{result['band_upper_hz']:g} Hz</p><table>{table_rows}</table></div>")
     return f"<div class='surface-summary'>{''.join(sections)}</div>"
+
+
+def _composite_diagnostic_table(
+    runs: list[dict[str, Any]],
+    surface_results: dict[str, Any],
+    impedance_results: dict[str, Any],
+) -> str:
+    rows = []
+    for run in runs:
+        surface = surface_score(
+            surface_results[run["name"]],
+            run.get("mouth_dimensions_mm"),
+        )
+        impedance = impedance_results[run["name"]]
+        composite = composite_surface_impedance_score(surface, impedance)
+        if not composite:
+            rows.append(
+                f"<tr><th>{html.escape(run['name'])}</th>"
+                "<td>—</td><td>—</td><td>—</td></tr>"
+            )
+            continue
+        components = composite["components"]
+        rows.append(
+            f"<tr><th>{html.escape(run['name'])}</th>"
+            f"<td>{composite['overall_percent']:.1f}%</td>"
+            f"<td>{components['surface']:.1f}%</td>"
+            f"<td>{components['throat_impedance']:.1f}%</td></tr>"
+        )
+    return (
+        "<table><thead><tr><th>Run</th><th>Composite</th>"
+        "<th>Surface v2.3 · 75%</th><th>Throat impedance · 25%</th>"
+        f"</tr></thead><tbody>{''.join(rows)}</tbody></table>"
+    )
 
 
 def _surface_diagnostic_plot(runs: list[dict[str, Any]],
@@ -1241,15 +1289,19 @@ th{{background:var(--panel-2);position:sticky;top:0}} .hint{{color:var(--muted);
 <section class='plot'>{plot}</section><section class='parameters'><h2>Horn acoustic parameters</h2>
 {_parameter_table(runs)}</section><section class='parameters'><h2>Surface diagnostics</h2>
 {_surface_diagnostic_tables(runs, surface_results)}
-<p class='hint'>Surface score v1 remains the primary score and candidate-ranking basis. Experimental v2 is shown only for side-by-side study; it adds multiscale −3/−6/−9 dB beamwidth quality and does not alter selection.</p>
+<p class='hint'>Surface score v2.3 is the diagnostic of record and the sole candidate-ranking basis. V1 and v2.2 are retained as historical comparisons.</p>
 </section><section class='plot'>{surface_plot}</section>
-<section class='parameters'><h2>Experimental throat-impedance diagnostic v{DIAGNOSTIC_VERSION}</h2>
+<section class='parameters'><h2>Throat-impedance diagnostic v{DIAGNOSTIC_VERSION}</h2>
 {_impedance_diagnostic_table(runs, impedance_results)}
 <p class='hint'>Crossover adequacy contributes 60% of this score; peak
 prominence contributes 20%; ripple, excess variation, and upper-shelf
 stability contribute 10%, 7%, and 3%. This score
-is reported for research comparison only. It is not part of the surface score
-or candidate ranking.</p></section>
+is reported independently and does not affect candidate ranking.</p></section>
+<section class='parameters'><h2>Composite surface + impedance score v{COMPOSITE_SCORE_VERSION}</h2>
+{_composite_diagnostic_table(runs, surface_results, impedance_results)}
+<p class='hint'>The composite is 75% surface v2.3 and 25% throat impedance.
+It is a secondary comparison only; surface v2.3 remains authoritative for
+ranking.</p></section>
 </main><script>
 (() => {{
   let armed = null;

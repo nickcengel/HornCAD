@@ -192,16 +192,26 @@ case fails, authorize the complete 16-case conditional block and stop at 226.
 A failed gate remains useful: publish the measured table and restrict the API
 to measured combinations rather than inventing broader confidence.
 
-## Throat impedance
+## Surface, impedance, and composite scores
 
-Reports use throat-impedance diagnostic v2.1.0. Crossover adequacy is dominant
-(80% of the score); ripple, excess variation, and upper-shelf behavior are
-secondary checks. Each crossover-loading subscore reaches full credit at 75% of
-the retained sweep peak and receives no benefit above that point. This
-diagnostic remains separate from the radiation surface score and does not alter
-candidate ranking by surface score.
+Current and regenerated reports use surface score v2.3 as the diagnostic of
+record and authoritative ranking score. The frozen paired-effect formula and
+locked gate retain their recorded diagnostic versions; changing the diagnostic
+of record does not retroactively alter a frozen validation decision.
 
-Record the current experimental throat-impedance diagnostic and its component
+Reports use throat-impedance diagnostic v2.3.0. Crossover adequacy is dominant
+(60% of the score); peak prominence contributes 20%, and ripple, excess
+variation, and upper-shelf behavior contribute the remaining 20%. Each
+crossover-loading subscore reaches full credit at 75% of the retained sweep
+peak and receives no benefit above that point. This diagnostic remains separate
+from the radiation surface score and does not alter candidate ranking.
+
+Composite score v1.0 reports `75% * surface v2.3 + 25% * throat impedance
+v2.3.0`. It is a secondary comparison only. Surface v2.3 remains authoritative
+for ranking, and the composite does not alter parent selection, heuristic
+fitting, the expansion gate, or validation claims.
+
+Record the current throat-impedance diagnostic and its component
 measurements for every response. Report its paired changes and validation errors
 beside the radiation diagnostics. It remains excluded from surface score,
 candidate ranking, parent selection, the expansion gate, and every claim that a
@@ -225,7 +235,8 @@ The design API should return measured or paired-rule provenance and warnings.
 It must not silently represent an unvalidated throat/extension combination as a
 confident prediction.
 
-The executable study and live index are retained at
+The executable study and index are retained at
 `examples/extension-throat-angle-heuristics/`. The index follows the repository
-study-report convention and shows throat impedance beside surface score without
-using it in ranking, fitting, or validation gates.
+study-report convention and shows surface v2.3, throat impedance, and the
+secondary composite without using the latter two in ranking, fitting, or
+validation gates.
