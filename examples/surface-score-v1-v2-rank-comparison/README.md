@@ -1,0 +1,25 @@
+# Surface score v1/v2 rank comparison
+
+This standalone viewer ranks the same exact-response-deduplicated round-horn
+evidence independently with surface score v1 and v2.
+
+- The plot shows the v1 candidate at the selected rank by default.
+- Press and hold the plot to show the v2 candidate at that rank; release to
+  restore v1.
+- Higher/lower buttons, arrow keys, and rank buttons navigate the top 25.
+- Quantile buttons jump through the complete selected population.
+- Mouth and coverage selectors rank globally, by either coordinate, or within
+  an exact 5×5 cell.
+
+Every candidate card links to its original report. The viewer uses the same
+frequency, angle, and color viewport for both sides and overlays the −3, −6,
+and −9 dB contours.
+
+Rebuild from retained NPZ responses without running BEM:
+
+```shell
+.venv/bin/python -m app.tools.generate_surface_score_rank_comparison
+```
+
+The frozen implementation plan is
+[`docs/plans/surface_score_v1_v2_rank_viewer.md`](../../docs/plans/surface_score_v1_v2_rank_viewer.md).
