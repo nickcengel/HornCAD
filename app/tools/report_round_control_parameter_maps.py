@@ -89,7 +89,7 @@ def _heatmap(
 
 def _coupled_map(parents: dict[str, dict[str, Any]]) -> str:
     length_values = [
-        float(parent["length_factor"]) for parent in parents.values()]
+        float(parent["length_mm"]) for parent in parents.values()]
     k_values = [float(parent["k"]) for parent in parents.values()]
     s_values = [float(parent["s"]) for parent in parents.values()]
     l_min, l_max = min(length_values), max(length_values)
@@ -100,7 +100,7 @@ def _coupled_map(parents: dict[str, dict[str, Any]]) -> str:
         cells = []
         for coverage in COVERAGES:
             parent = parents[f"{coverage}deg-{mouth}mm"]
-            length = float(parent["length_factor"])
+            length = float(parent["length_mm"])
             k = float(parent["k"])
             n = float(parent["n"])
             s = float(parent["s"])
@@ -114,14 +114,14 @@ def _coupled_map(parents: dict[str, dict[str, Any]]) -> str:
                 f"<div class='glyph' style='width:{diameter:.1f}px;"
                 f"height:{diameter:.1f}px;border-width:{border:.1f}px'>"
                 f"<strong>N {n:g}</strong></div>"
-                f"<span>L {length:.2f}× · K {k:g}<br>S {s:.3f}</span>"
+                f"<span>L {length:.1f} mm · K {k:g}<br>S {s:.3f}</span>"
                 "</td>"
             )
         rows.append(f"<tr><th>{mouth} mm</th>{''.join(cells)}</tr>")
     return (
         "<section><h2>Coupled recipe map</h2>"
         "<p class='muted'>Background color encodes S (blue low, gold high); "
-        "circle diameter encodes normalized length; border thickness encodes "
+        "circle diameter encodes physical length; border thickness encodes "
         "K; the circle label is N. Exact L, K, and S values remain below each "
         "glyph.</p><table class='coupled'><thead><tr>"
         "<th>Mouth ↓<br>Coverage →</th>"
@@ -129,7 +129,7 @@ def _coupled_map(parents: dict[str, dict[str, Any]]) -> str:
         + "</tr></thead><tbody>"
         + "".join(rows)
         + "</tbody></table><div class='glyph-legend'>"
-        "<span>small circle = shorter normalized length</span>"
+        "<span>small circle = shorter physical length</span>"
         "<span>thicker ring = higher K</span>"
         "<span>blue → gold = lower → higher S</span>"
         "</div></section>"
@@ -144,26 +144,19 @@ def render(manifest: dict[str, Any]) -> str:
         parents[f"{coverage}deg-{mouth}mm"]
         for mouth in MOUTHS for coverage in COVERAGES
     ]
-    length = np.asarray(
-        [float(parent["length_factor"]) for parent in ordered])
-    k = np.asarray([float(parent["k"]) for parent in ordered])
     s = np.asarray([float(parent["s"]) for parent in ordered])
     coverage = np.asarray(
         [float(parent["coverage_deg"]) for parent in ordered])
-    length_k_correlation = float(np.corrcoef(length, k)[0, 1])
     coverage_s_correlation = float(np.corrcoef(coverage, s)[0, 1])
     n_eight = sum(float(parent["n"]) == 8.0 for parent in ordered)
 
     maps = (
         _heatmap(
             parents,
-            title="Normalized length",
-            description=(
-                "OSSE length relative to the canonical length for each "
-                "mouth/coverage cell; physical length is shown below."),
-            value_for=lambda parent: float(parent["length_factor"]),
-            label_for=lambda parent: f"{float(parent['length_factor']):.2f}×",
-            secondary_for=lambda parent: f"{float(parent['length_mm']):.1f} mm",
+            title="Length",
+            description="Physical horn length in millimetres.",
+            value_for=lambda parent: float(parent["length_mm"]),
+            label_for=lambda parent: f"{float(parent['length_mm']):.1f} mm",
         )
         + _heatmap(
             parents,
@@ -201,14 +194,14 @@ not surrogate predictions. Coverage increases left to right; mouth diameter
 increases top to bottom. Hover any cell for its evidence identifier and surface
 score.</p>
 <section><h2>Strongest visible structure</h2><div class='insights'>
-<div class='insight'><strong>r = {length_k_correlation:.3f}</strong>
-Normalized length and K move together very strongly across the selected
-parents.</div>
 <div class='insight'><strong>r = {coverage_s_correlation:.3f}</strong>
 S rises strongly with coverage across the grid.</div>
 <div class='insight'><strong>{n_eight} / 25</strong>
 Selected parents use N = 8; N is mostly stable, with a few localized
 exceptions.</div>
+<div class='insight'><strong>Length in mm</strong>
+Physical length generally rises with mouth size and falls as coverage widens.
+</div>
 </div></section>
 <section><h2>One map per parameter</h2>
 <p class='muted'>Each panel has its own blue-to-gold scale. Exact values are
