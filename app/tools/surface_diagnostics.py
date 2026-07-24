@@ -8,12 +8,58 @@ import numpy as np
 
 
 OCTAVE_WINDOWS = (1 / 12, 1 / 6, 1 / 3, 2 / 3)
+CONTOUR_OCTAVE_WINDOWS = (1 / 12, 1 / 6, 1 / 3, 2 / 3, 1.0, 2.0)
+CONTOUR_LEVELS_DB = (-3.0, -6.0, -9.0)
+CONTOUR_SCORE_WEIGHTS = {-3.0: 0.25, -6.0: 0.50, -9.0: 0.25}
+BEAMWIDTH_COMPONENT_WEIGHTS = {
+    "multiscale_ripple": 0.30,
+    "trend_complexity": 0.25,
+    "local_narrowing": 0.30,
+    "high_frequency_adequacy": 0.15,
+}
+BEAMWIDTH_ERROR_REFERENCES = {
+    "multiscale_ripple": 0.04,
+    "trend_complexity": 0.12,
+    "local_narrowing": 0.06,
+    "high_frequency_excess": 0.15,
+}
+HIGH_FREQUENCY_TARGET_DEADBAND = 0.10
 SURFACE_SCORE_WEIGHTS = {
     "profile_rms": 0.30,
     "slice_energy": 0.25,
     "mean_containment": 0.20,
     "outward_rise": 0.15,
     "minus_six_line": 0.10,
+}
+SURFACE_SCORE_V2_CANDIDATE_WEIGHTS = {
+    "conservative": {
+        "profile_rms": 0.30,
+        "slice_energy": 0.25,
+        "mean_containment": 0.15,
+        "outward_rise": 0.10,
+        "beamwidth_quality": 0.20,
+    },
+    "balanced": {
+        "profile_rms": 0.30,
+        "slice_energy": 0.25,
+        "mean_containment": 0.10,
+        "outward_rise": 0.10,
+        "beamwidth_quality": 0.25,
+    },
+    "smoothness": {
+        "profile_rms": 0.30,
+        "slice_energy": 0.20,
+        "mean_containment": 0.10,
+        "outward_rise": 0.10,
+        "beamwidth_quality": 0.30,
+    },
+    "contour_forward": {
+        "profile_rms": 0.30,
+        "slice_energy": 0.20,
+        "mean_containment": 0.05,
+        "outward_rise": 0.05,
+        "beamwidth_quality": 0.40,
+    },
 }
 SURFACE_SCORE_ERROR_REFERENCES = {
     "profile_rms": 3.0,
@@ -30,20 +76,27 @@ def _inverse_error_score(error: float | None, reference: float) -> float:
     return float(100.0 / (1.0 + (float(error) / reference) ** 2))
 
 
-def surface_score(result: dict[str, Any],
-                  mouth_dimensions_mm: dict[str, float] | None = None
-                  ) -> dict[str, Any] | None:
-    """Return the fixed, comparable score for an available surface result."""
-    if result.get("status") != "available":
-        return None
+def _axis_weights(
+    mouth_dimensions_mm: dict[str, float] | None,
+) -> np.ndarray:
     dimensions = mouth_dimensions_mm or {}
-    raw_axis_weights = np.asarray([
+    raw = np.asarray([
         float(dimensions.get("horizontal", 1.0)),
         float(dimensions.get("vertical", 1.0)),
     ])
-    if np.any(raw_axis_weights <= 0) or not np.all(np.isfinite(raw_axis_weights)):
-        raw_axis_weights = np.ones(2)
-    axis_weights = raw_axis_weights / np.sum(raw_axis_weights)
+    if np.any(raw <= 0) or not np.all(np.isfinite(raw)):
+        raw = np.ones(2)
+    return raw / np.sum(raw)
+
+
+def surface_score_v1(
+    result: dict[str, Any],
+    mouth_dimensions_mm: dict[str, float] | None = None,
+) -> dict[str, Any] | None:
+    """Return the legacy five-component surface score."""
+    if result.get("status") != "available":
+        return None
+    axis_weights = _axis_weights(mouth_dimensions_mm)
     planes: dict[str, Any] = {}
     for plane_name in ("horizontal", "vertical"):
         plane = result[plane_name]
@@ -76,6 +129,7 @@ def surface_score(result: dict[str, Any],
         axis_weights[index] * planes[plane_name]["overall_percent"]
         for index, plane_name in enumerate(("horizontal", "vertical"))))
     return {
+        "version": "v1",
         "overall_percent": overall,
         "horizontal": planes["horizontal"],
         "vertical": planes["vertical"],
@@ -86,6 +140,92 @@ def surface_score(result: dict[str, Any],
         "component_weights": SURFACE_SCORE_WEIGHTS,
         "error_reference_values": SURFACE_SCORE_ERROR_REFERENCES,
     }
+
+
+def surface_score_v2(
+    result: dict[str, Any],
+    mouth_dimensions_mm: dict[str, float] | None = None,
+    weights: dict[str, float] | None = None,
+    candidate_name: str = "balanced",
+) -> dict[str, Any] | None:
+    """Return a v2 score using multiscale three-contour beamwidth quality."""
+    if result.get("status") != "available":
+        return None
+    selected_weights = (
+        dict(weights)
+        if weights is not None
+        else dict(SURFACE_SCORE_V2_CANDIDATE_WEIGHTS[candidate_name])
+    )
+    if set(selected_weights) != {
+        "profile_rms",
+        "slice_energy",
+        "mean_containment",
+        "outward_rise",
+        "beamwidth_quality",
+    }:
+        raise ValueError("v2 surface-score weights have invalid components")
+    if not np.isclose(sum(selected_weights.values()), 1.0):
+        raise ValueError("v2 surface-score weights must sum to one")
+    axis_weights = _axis_weights(mouth_dimensions_mm)
+    planes: dict[str, Any] = {}
+    for plane_name in ("horizontal", "vertical"):
+        plane = result[plane_name]
+        beamwidth = plane.get("beamwidth_quality")
+        if not beamwidth:
+            return None
+        components = {
+            "profile_rms": _inverse_error_score(
+                plane["distribution"]["rms_profile_error_db"],
+                SURFACE_SCORE_ERROR_REFERENCES["profile_rms"],
+            ),
+            "slice_energy": _inverse_error_score(
+                plane["slice_energy_stability"]["rms_departure_db"],
+                SURFACE_SCORE_ERROR_REFERENCES["slice_energy"],
+            ),
+            "mean_containment": 100.0 * float(
+                plane["containment"]["mean_fraction"]
+            ),
+            "outward_rise": _inverse_error_score(
+                plane["distribution"]["rms_outward_rise_violation_db"],
+                SURFACE_SCORE_ERROR_REFERENCES["outward_rise"],
+            ),
+            "beamwidth_quality": float(beamwidth["overall_percent"]),
+        }
+        planes[plane_name] = {
+            "components": components,
+            "overall_percent": float(sum(
+                selected_weights[key] * components[key]
+                for key in selected_weights
+            )),
+        }
+    overall = float(sum(
+        axis_weights[index] * planes[plane_name]["overall_percent"]
+        for index, plane_name in enumerate(("horizontal", "vertical"))
+    ))
+    return {
+        "version": "v2",
+        "candidate_name": candidate_name,
+        "overall_percent": overall,
+        "horizontal": planes["horizontal"],
+        "vertical": planes["vertical"],
+        "axis_weights": {
+            "horizontal": float(axis_weights[0]),
+            "vertical": float(axis_weights[1]),
+        },
+        "component_weights": selected_weights,
+        "error_reference_values": {
+            **SURFACE_SCORE_ERROR_REFERENCES,
+            **BEAMWIDTH_ERROR_REFERENCES,
+        },
+    }
+
+
+def surface_score(
+    result: dict[str, Any],
+    mouth_dimensions_mm: dict[str, float] | None = None,
+) -> dict[str, Any] | None:
+    """Return the active score; v1 remains active until v2 validation passes."""
+    return surface_score_v1(result, mouth_dimensions_mm)
 
 
 def _band_mean(x: np.ndarray, values: np.ndarray) -> float:
@@ -201,13 +341,278 @@ def _angular_grid(angles: np.ndarray, upper: float) -> np.ndarray:
     return np.unique(np.concatenate(([0.0], interior, [upper])))
 
 
-def _first_minus_six_crossing(angles: np.ndarray, row: np.ndarray) -> float:
+def _first_level_crossing(
+    angles: np.ndarray, row: np.ndarray, level_db: float
+) -> float:
     for index in range(len(angles) - 1):
         left, right = row[index], row[index + 1]
-        if left >= -6.0 and right < -6.0:
-            return float(angles[index] + (-6.0 - left) /
+        if left >= level_db and right < level_db:
+            return float(angles[index] + (level_db - left) /
                          (right - left) * (angles[index + 1] - angles[index]))
     return float("nan")
+
+
+def _first_minus_six_crossing(angles: np.ndarray, row: np.ndarray) -> float:
+    """Compatibility wrapper for the legacy retained-line diagnostic."""
+    return _first_level_crossing(angles, row, -6.0)
+
+
+def _weighted_geometric_score(
+    components: dict[Any, float], weights: dict[Any, float]
+) -> float:
+    if any(float(components[key]) <= 0 for key in weights):
+        return 0.0
+    total_weight = float(sum(weights.values()))
+    return float(np.exp(sum(
+        (float(weights[key]) / total_weight) * np.log(float(components[key]))
+        for key in weights
+    )))
+
+
+def _longest_missing_span(x: np.ndarray, valid: np.ndarray) -> float:
+    if np.all(valid):
+        return 0.0
+    longest = 0.0
+    start: int | None = None
+    for index, is_valid in enumerate(np.append(valid, True)):
+        if not is_valid and start is None:
+            start = index
+        elif is_valid and start is not None:
+            stop = index - 1
+            left = x[start] if start == 0 else (x[start - 1] + x[start]) / 2
+            right = (
+                x[stop]
+                if stop == len(x) - 1
+                else (x[stop] + x[stop + 1]) / 2
+            )
+            longest = max(longest, float(max(0.0, right - left)))
+            start = None
+    return longest
+
+
+def _fill_isolated_missing(x: np.ndarray, values: np.ndarray) -> np.ndarray:
+    filled = np.asarray(values, dtype=float).copy()
+    for index in range(1, len(filled) - 1):
+        if (
+            not np.isfinite(filled[index])
+            and np.isfinite(filled[index - 1])
+            and np.isfinite(filled[index + 1])
+        ):
+            filled[index] = float(np.interp(
+                x[index],
+                x[[index - 1, index + 1]],
+                filled[[index - 1, index + 1]],
+            ))
+    return filled
+
+
+def _moving_residuals(
+    x: np.ndarray,
+    values: np.ndarray,
+    original_valid: np.ndarray,
+    width_octaves: float,
+) -> tuple[np.ndarray, np.ndarray]:
+    half = width_octaves / 2
+    if x[-1] - x[0] < width_octaves:
+        return np.asarray([], dtype=float), np.asarray([], dtype=float)
+    finite = np.isfinite(values)
+    finite_x = x[finite]
+    finite_values = values[finite]
+    centers = []
+    residuals = []
+    for index in np.flatnonzero(finite):
+        if x[index] < x[0] + half or x[index] > x[-1] - half:
+            continue
+        support = (x >= x[index] - half) & (x <= x[index] + half)
+        if np.mean(original_valid[support]) < 0.80:
+            continue
+        mean = _interval_mean(
+            finite_x,
+            finite_values,
+            float(x[index] - half),
+            float(x[index] + half),
+        )
+        centers.append(x[index])
+        residuals.append(float(values[index] - mean))
+    return np.asarray(centers), np.asarray(residuals)
+
+
+def _contour_diagnostics(
+    frequencies: np.ndarray,
+    angles: np.ndarray,
+    levels: np.ndarray,
+    coverage: float,
+    level_db: float,
+) -> dict[str, Any]:
+    log_frequency = np.log2(frequencies)
+    target_angle = coverage * abs(level_db) / 6.0
+    crossings = np.asarray([
+        _first_level_crossing(angles, row, level_db) for row in levels
+    ])
+    original_valid = np.isfinite(crossings)
+    normalized = crossings / target_angle
+    filled = _fill_isolated_missing(log_frequency, normalized)
+    residuals_by_scale: dict[str, float | None] = {}
+    narrowing_by_scale: dict[str, float | None] = {}
+    aggregate_ripple = []
+    for width in CONTOUR_OCTAVE_WINDOWS:
+        _, residuals = _moving_residuals(
+            log_frequency, filled, original_valid, width
+        )
+        key = _window_key(width)
+        if len(residuals):
+            rms = float(np.sqrt(np.mean(residuals ** 2)))
+            narrowing = float(np.quantile(np.maximum(0.0, -residuals), 0.95))
+            residuals_by_scale[key] = rms
+            narrowing_by_scale[key] = narrowing
+            aggregate_ripple.append(rms)
+        else:
+            residuals_by_scale[key] = None
+            narrowing_by_scale[key] = None
+    ripple = (
+        float(np.sqrt(np.mean(np.asarray(aggregate_ripple) ** 2)))
+        if aggregate_ripple
+        else float("inf")
+    )
+    narrowing_values = [
+        value for value in narrowing_by_scale.values() if value is not None
+    ]
+    local_narrowing = max(narrowing_values, default=float("inf"))
+
+    trend_x, trend_residual = _moving_residuals(
+        log_frequency, filled, original_valid, 1 / 3
+    )
+    trend_values = np.asarray([
+        filled[int(np.argmin(np.abs(log_frequency - center)))] - residual
+        for center, residual in zip(trend_x, trend_residual, strict=True)
+    ])
+    if len(trend_x) >= 3 and trend_x[-1] > trend_x[0]:
+        slope = np.gradient(trend_values, trend_x)
+        net_slope = float(
+            (trend_values[-1] - trend_values[0]) / (trend_x[-1] - trend_x[0])
+        )
+        complexity = float(np.mean(np.abs(slope - net_slope)))
+        threshold = 0.02
+        meaningful = np.sign(slope[np.abs(slope) >= threshold])
+        reversals = int(np.count_nonzero(np.diff(meaningful) != 0))
+    else:
+        net_slope = None
+        complexity = float("inf")
+        reversals = 0
+
+    upper_start = log_frequency[-1] - min(
+        1 / 3, log_frequency[-1] - log_frequency[0]
+    )
+    high = (log_frequency >= upper_start) & np.isfinite(filled)
+    if np.count_nonzero(high) >= 2:
+        high_width = _band_mean(log_frequency[high], filled[high])
+    elif np.count_nonzero(high) == 1:
+        high_width = float(filled[high][0])
+    else:
+        high_width = float("nan")
+    high_error = (
+        abs(high_width - 1.0) if np.isfinite(high_width) else float("inf")
+    )
+    high_excess = max(0.0, high_error - HIGH_FREQUENCY_TARGET_DEADBAND)
+    completeness = float(np.mean(original_valid))
+
+    component_scores = {
+        "multiscale_ripple": _inverse_error_score(
+            ripple, BEAMWIDTH_ERROR_REFERENCES["multiscale_ripple"]
+        ),
+        "trend_complexity": _inverse_error_score(
+            complexity, BEAMWIDTH_ERROR_REFERENCES["trend_complexity"]
+        ),
+        "local_narrowing": _inverse_error_score(
+            local_narrowing, BEAMWIDTH_ERROR_REFERENCES["local_narrowing"]
+        ),
+        "high_frequency_adequacy": _inverse_error_score(
+            high_excess, BEAMWIDTH_ERROR_REFERENCES["high_frequency_excess"]
+        ),
+    }
+    shape_score = _weighted_geometric_score(
+        component_scores, BEAMWIDTH_COMPONENT_WEIGHTS
+    )
+    overall = completeness * shape_score
+
+    raw_movement = np.full_like(crossings, np.nan)
+    for index in range(1, len(crossings)):
+        if original_valid[index - 1] and original_valid[index]:
+            step = log_frequency[index] - log_frequency[index - 1]
+            if step > 0:
+                raw_movement[index] = (
+                    crossings[index] - crossings[index - 1]
+                ) / step
+    valid_movement = raw_movement[np.isfinite(raw_movement)]
+    angle_error = crossings - target_angle
+    valid_error = angle_error[np.isfinite(angle_error)]
+    worst_index = (
+        int(np.nanargmax(np.abs(angle_error))) if len(valid_error) else None
+    )
+    return {
+        "level_db": level_db,
+        "target_half_angle_deg": target_angle,
+        "traces": {
+            "frequencies_hz": frequencies.tolist(),
+            "half_angle_deg": crossings.tolist(),
+            "normalized_width": normalized.tolist(),
+            "target_error_deg": angle_error.tolist(),
+        },
+        "missing_fraction": 1.0 - completeness,
+        "longest_missing_span_octaves": _longest_missing_span(
+            log_frequency, original_valid
+        ),
+        "multiscale_ripple_rms_fraction": residuals_by_scale,
+        "aggregate_ripple_rms_fraction": ripple,
+        "trend_complexity_fraction_per_octave": complexity,
+        "net_trend_fraction_per_octave": net_slope,
+        "slope_reversal_count": reversals,
+        "multiscale_local_narrowing_fraction": narrowing_by_scale,
+        "local_narrowing_fraction": local_narrowing,
+        "high_frequency_mean_normalized_width": high_width,
+        "high_frequency_target_error_fraction": high_error,
+        "high_frequency_excess_fraction": high_excess,
+        "rms_target_error_deg": (
+            float(np.sqrt(np.mean(valid_error ** 2))) if len(valid_error) else None
+        ),
+        "worst_target_error_deg": (
+            float(angle_error[worst_index]) if worst_index is not None else None
+        ),
+        "worst_target_error_frequency_hz": (
+            float(frequencies[worst_index]) if worst_index is not None else None
+        ),
+        "rms_raw_movement_deg_per_octave": (
+            float(np.sqrt(np.mean(valid_movement ** 2)))
+            if len(valid_movement)
+            else None
+        ),
+        "component_scores": component_scores,
+        "shape_score_before_completeness": shape_score,
+        "overall_percent": overall,
+    }
+
+
+def _beamwidth_quality(contours: dict[str, dict[str, Any]]) -> dict[str, Any]:
+    scores = {
+        float(contour["level_db"]): float(contour["overall_percent"])
+        for contour in contours.values()
+    }
+    return {
+        "overall_percent": _weighted_geometric_score(
+            scores, CONTOUR_SCORE_WEIGHTS
+        ),
+        "contour_scores": {
+            key: float(value["overall_percent"])
+            for key, value in contours.items()
+        },
+        "contour_weights": {
+            f"minus_{abs(int(level))}_db": weight
+            for level, weight in CONTOUR_SCORE_WEIGHTS.items()
+        },
+        "component_weights": BEAMWIDTH_COMPONENT_WEIGHTS,
+        "error_reference_values": BEAMWIDTH_ERROR_REFERENCES,
+        "high_frequency_target_deadband": HIGH_FREQUENCY_TARGET_DEADBAND,
+    }
 
 
 def _plane_diagnostics(frequencies: np.ndarray, angles: np.ndarray,
@@ -246,22 +651,15 @@ def _plane_diagnostics(frequencies: np.ndarray, angles: np.ndarray,
     energy_departure_db = (10.0 / np.log(10.0)) * (
         np.log(total_energy) - mean_log_energy)
 
-    crossings = np.asarray([
-        _first_minus_six_crossing(full_angles, row) for row in full_levels
-    ])
-    crossing_valid = np.isfinite(crossings)
-    coverage_error = np.where(crossing_valid, crossings - coverage, np.nan)
-    movement = np.full_like(crossings, np.nan)
-    for index in range(1, len(crossings)):
-        if crossing_valid[index - 1] and crossing_valid[index]:
-            octave_step = log_frequency[index] - log_frequency[index - 1]
-            if octave_step > 0:
-                movement[index] = ((crossings[index] - crossings[index - 1]) /
-                                   octave_step)
-    valid_error = coverage_error[np.isfinite(coverage_error)]
-    valid_movement = movement[np.isfinite(movement)]
-    worst_error_index = (int(np.nanargmax(np.abs(coverage_error)))
-                         if len(valid_error) else None)
+    contours = {
+        f"minus_{abs(int(level_db))}_db": _contour_diagnostics(
+            frequencies, full_angles, full_levels, coverage, level_db
+        )
+        for level_db in CONTOUR_LEVELS_DB
+    }
+    beamwidth_quality = _beamwidth_quality(contours)
+    minus_six = contours["minus_6_db"]
+    minus_six_trace = minus_six["traces"]
     high_index = int(np.argmax(energy_departure_db))
     low_index = int(np.argmin(energy_departure_db))
 
@@ -275,8 +673,8 @@ def _plane_diagnostics(frequencies: np.ndarray, angles: np.ndarray,
             "outward_rise_violation_db": outward_rise.tolist(),
             "slice_energy": total_energy.tolist(),
             "slice_energy_departure_db": energy_departure_db.tolist(),
-            "minus_six_half_angle_deg": crossings.tolist(),
-            "minus_six_error_deg": coverage_error.tolist(),
+            "minus_six_half_angle_deg": minus_six_trace["half_angle_deg"],
+            "minus_six_error_deg": minus_six_trace["target_error_deg"],
         },
         "containment": {
             "mean_fraction": _band_mean(log_frequency, containment),
@@ -306,18 +704,18 @@ def _plane_diagnostics(frequencies: np.ndarray, angles: np.ndarray,
                 log_frequency, energy_departure_db),
         },
         "minus_six_line": {
-            "missing_fraction": float(np.mean(~crossing_valid)),
-            "rms_coverage_error_deg": (float(np.sqrt(np.mean(valid_error ** 2)))
-                                       if len(valid_error) else None),
-            "worst_coverage_error_deg": (float(coverage_error[worst_error_index])
-                                         if worst_error_index is not None else None),
+            "missing_fraction": minus_six["missing_fraction"],
+            "rms_coverage_error_deg": minus_six["rms_target_error_deg"],
+            "worst_coverage_error_deg": minus_six["worst_target_error_deg"],
             "worst_coverage_error_frequency_hz": (
-                float(frequencies[worst_error_index])
-                if worst_error_index is not None else None),
+                minus_six["worst_target_error_frequency_hz"]
+            ),
             "rms_movement_deg_per_octave": (
-                float(np.sqrt(np.mean(valid_movement ** 2)))
-                if len(valid_movement) else None),
+                minus_six["rms_raw_movement_deg_per_octave"]
+            ),
         },
+        "contours": contours,
+        "beamwidth_quality": beamwidth_quality,
     }
 
 
@@ -354,6 +752,18 @@ def surface_diagnostics(
         "band_upper_hz": float(frequencies[-1]),
         "horizontal": planes["horizontal"],
         "vertical": planes["vertical"],
+    }
+    result["score_v1"] = surface_score_v1(
+        result, run.get("mouth_dimensions_mm")
+    )
+    result["score_v2_candidates"] = {
+        name: surface_score_v2(
+            result,
+            run.get("mouth_dimensions_mm"),
+            weights=weights,
+            candidate_name=name,
+        )
+        for name, weights in SURFACE_SCORE_V2_CANDIDATE_WEIGHTS.items()
     }
     result["score"] = surface_score(result, run.get("mouth_dimensions_mm"))
     return result

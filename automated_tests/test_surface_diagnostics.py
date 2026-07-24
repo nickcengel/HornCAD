@@ -8,6 +8,8 @@ from app.tools.surface_diagnostics import (
     SURFACE_SCORE_WEIGHTS,
     surface_diagnostics,
     surface_score,
+    surface_score_v1,
+    surface_score_v2,
 )
 
 
@@ -33,6 +35,16 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
         angles = np.linspace(0.0, 90.0, angle_count)
         row = -6.0 * angles / coverage
         return np.tile(row, (frequency_count, 1))
+
+    def width_trace_surface(
+        self, normalized_width: np.ndarray, coverage: float = 30.0,
+        angle_count: int = 181,
+    ) -> np.ndarray:
+        angles = np.linspace(0.0, 90.0, angle_count)
+        return np.asarray([
+            -6.0 * angles / (coverage * width)
+            for width in normalized_width
+        ])
 
     def test_ideal_surface_has_stable_energy_and_zero_profile_error(self) -> None:
         result = surface_diagnostics(self.make_run(self.ideal_surface()))
@@ -65,6 +77,16 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
         self.assertEqual(
             surface_score(ideal, {"horizontal": 2, "vertical": 1})["axis_weights"],
             {"horizontal": 2 / 3, "vertical": 1 / 3})
+
+    def test_v1_is_preserved_and_v2_candidates_are_reported(self) -> None:
+        result = surface_diagnostics(self.make_run(self.ideal_surface()))
+        self.assertEqual(result["score"], result["score_v1"])
+        self.assertEqual("v1", surface_score_v1(result)["version"])
+        self.assertEqual("v2", surface_score_v2(result)["version"])
+        self.assertEqual(
+            {"conservative", "balanced", "smoothness", "contour_forward"},
+            set(result["score_v2_candidates"]),
+        )
 
     def test_outside_lobe_reduces_containment(self) -> None:
         ideal = self.ideal_surface()
@@ -104,6 +126,79 @@ class SurfaceDiagnosticsTests(unittest.TestCase):
         surface[10] = np.maximum(surface[10], -5.0)
         result = surface_diagnostics(self.make_run(surface))["horizontal"]
         self.assertAlmostEqual(result["minus_six_line"]["missing_fraction"], 1 / 49)
+
+    def test_smooth_global_narrowing_beats_equal_scale_ripple(self) -> None:
+        x = np.linspace(0.0, 1.0, 49)
+        smooth = self.width_trace_surface(1.10 - 0.20 * x)
+        ripple = self.width_trace_surface(1.0 + 0.10 * np.sin(8 * np.pi * x))
+        smooth_result = surface_diagnostics(self.make_run(smooth))["horizontal"]
+        ripple_result = surface_diagnostics(self.make_run(ripple))["horizontal"]
+        self.assertGreater(
+            smooth_result["beamwidth_quality"]["overall_percent"],
+            ripple_result["beamwidth_quality"]["overall_percent"],
+        )
+        self.assertLess(
+            smooth_result["contours"]["minus_6_db"][
+                "trend_complexity_fraction_per_octave"
+            ],
+            ripple_result["contours"]["minus_6_db"][
+                "trend_complexity_fraction_per_octave"
+            ],
+        )
+
+    def test_local_narrowing_is_penalized_more_than_local_widening(self) -> None:
+        x = np.linspace(-1.0, 1.0, 49)
+        disturbance = 0.12 * np.exp(-0.5 * (x / 0.12) ** 2)
+        narrow = surface_diagnostics(self.make_run(
+            self.width_trace_surface(1.0 - disturbance)
+        ))["horizontal"]
+        wide = surface_diagnostics(self.make_run(
+            self.width_trace_surface(1.0 + disturbance)
+        ))["horizontal"]
+        narrow_line = narrow["contours"]["minus_6_db"]
+        wide_line = wide["contours"]["minus_6_db"]
+        self.assertGreater(
+            narrow_line["local_narrowing_fraction"],
+            wide_line["local_narrowing_fraction"],
+        )
+        self.assertLess(
+            narrow_line["overall_percent"],
+            wide_line["overall_percent"],
+        )
+
+    def test_fine_and_broad_ripples_are_detected(self) -> None:
+        x = np.linspace(0.0, 1.0, 49)
+        ideal_score = surface_diagnostics(
+            self.make_run(self.width_trace_surface(np.ones(49)))
+        )["horizontal"]["beamwidth_quality"]["overall_percent"]
+        fine_score = surface_diagnostics(self.make_run(
+            self.width_trace_surface(1.0 + 0.08 * np.sin(12 * np.pi * x))
+        ))["horizontal"]["beamwidth_quality"]["overall_percent"]
+        broad_score = surface_diagnostics(self.make_run(
+            self.width_trace_surface(1.0 + 0.08 * np.sin(2 * np.pi * x))
+        ))["horizontal"]["beamwidth_quality"]["overall_percent"]
+        self.assertLess(fine_score, ideal_score)
+        self.assertLess(broad_score, ideal_score)
+
+    def test_shoulder_contours_contribute_independently(self) -> None:
+        surface = self.ideal_surface()
+        angles = np.linspace(0.0, 90.0, surface.shape[1])
+        frequency_shape = np.exp(
+            -0.5 * ((np.arange(surface.shape[0]) - 24) / 2.0) ** 2
+        )
+        shoulder_shape = (
+            np.exp(-0.5 * ((angles - 15.0) / 3.0) ** 2)
+            - np.exp(-0.5 * ((angles - 45.0) / 4.0) ** 2)
+        )
+        damaged = surface + 2.0 * frequency_shape[:, None] * shoulder_shape[None, :]
+        result = surface_diagnostics(self.make_run(damaged))["horizontal"]
+        self.assertLess(
+            result["contours"]["minus_3_db"]["overall_percent"], 100.0
+        )
+        self.assertLess(
+            result["contours"]["minus_9_db"]["overall_percent"], 100.0
+        )
+        self.assertLess(result["beamwidth_quality"]["overall_percent"], 100.0)
 
     def test_frequency_decimation_preserves_broad_metrics(self) -> None:
         surface = self.ideal_surface()
