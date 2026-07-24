@@ -1576,7 +1576,8 @@ def requeue_failed_candidates(state: dict[str, Any]) -> int:
 
 
 def run_search(search_path: Path, output_dir: Path, binary: Path | None,
-               dry_run: bool = False, retry_failed: bool = False) -> dict[str, Any]:
+               dry_run: bool = False, retry_failed: bool = False,
+               retry_max_iterations: int | None = None) -> dict[str, Any]:
     search, seed_path, seed = load_search(search_path)
     config_hash = hashlib.sha256(search_path.read_bytes() + seed_path.read_bytes()).hexdigest()
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -1702,7 +1703,10 @@ def run_search(search_path: Path, output_dir: Path, binary: Path | None,
         # boundary geometries. Netgen still enforces the identical wavelength
         # edge limit on the final surface; only its faceted starting shell is
         # simplified for explicit recovery runs.
-        solver.setdefault("max_iterations", 500)
+        solver["max_iterations"] = max(
+            int(solver.get("max_iterations", 250)),
+            int(retry_max_iterations or 500),
+        )
         solver.setdefault("netgen_maxh_factor", 0.4)
         solver.setdefault("geometry_side_samples", 6)
         solver.setdefault("geometry_axial_stations", 8)
@@ -1905,6 +1909,11 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
                         help="materialize and geometry-check the initial design set")
     parser.add_argument("--retry-failed", action="store_true",
                         help="retry retained failed candidates without new proposals")
+    parser.add_argument(
+        "--retry-max-iterations",
+        type=int,
+        help="NumCalc iteration ceiling for an explicit retained-candidate retry",
+    )
     return parser.parse_args(argv)
 
 
@@ -1912,8 +1921,11 @@ def main() -> None:
     args = parse_args()
     if args.dry_run and args.retry_failed:
         raise ValueError("--dry-run and --retry-failed cannot be combined")
+    if args.retry_max_iterations is not None and not args.retry_failed:
+        raise ValueError("--retry-max-iterations requires --retry-failed")
     state = run_search(args.search_yaml, args.output_dir, args.binary,
-                       args.dry_run, args.retry_failed)
+                       args.dry_run, args.retry_failed,
+                       args.retry_max_iterations)
     print(f"search report: {args.output_dir / 'search_report.html'}")
     print(f"status: {state['status']}")
 

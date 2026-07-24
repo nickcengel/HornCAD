@@ -34,6 +34,16 @@ provenance, frozen input hashes, candidate cap, and stage-specific preflight
 marker before launching any BEM. Development and transfer results must be
 frozen before the locked stage can be read or run.
 
+The restart command is:
+
+```shell
+.venv/bin/python -m app.tools.run_extension_throat_angle_study resume --stage development
+```
+
+It discovers only incomplete retained searches, resumes their frequency work,
+applies bounded NumCalc iteration escalation, and refreshes the study index
+after each completed search. It is safe to repeat after interruption.
+
 Execution must use the repository's stage-aware BEM queue and global NumCalc
 semaphore. Because candidates within one search are sequential, materialize this
 fixed design as one independently schedulable search per candidate. Record the

@@ -34,12 +34,20 @@ captured output for failure diagnosis.
 
 Before launching a retained search, the queue inspects its search ledger. A
 failed retained candidate is automatically relaunched with the explicit
-`--retry-failed` recovery path, which raises the NumCalc iteration allowance
-without creating another proposal. A zero process exit is accepted only when
-the search ledger itself says `complete`; `stopped`, `failed`, or missing state
-is recorded as a queue failure. This prevents a fixed one-candidate search from
-being counted as successful merely because its report was written after solver
-non-convergence.
+`--retry-failed` path without creating another proposal. NumCalc
+non-convergence escalates automatically from the retained iteration count to
+500, 1000, and at most 2000 iterations within the same queue event. A zero
+process exit is accepted only when the search ledger itself says `complete`;
+`stopped`, `failed`, or missing state is recorded as a queue failure. Each
+attempt and iteration ceiling is retained in the runtime ledger. This prevents
+a fixed one-candidate search from being counted as successful merely because
+its report was written after solver non-convergence.
+
+Study-specific runners should expose a `resume` command that selects only
+non-complete search ledgers and calls the same queue. Repeating that command is
+idempotent: completed responses are not recomputed, interrupted candidate
+ledgers are requeued, and report/index refresh runs after every completed queue
+event.
 
 ## Required use in future studies
 

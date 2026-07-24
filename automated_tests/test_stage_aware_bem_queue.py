@@ -76,6 +76,10 @@ class StageAwareQueueValidationTests(unittest.TestCase):
 
             def complete(command, **_):
                 self.assertIn("--retry-failed", command)
+                self.assertEqual(
+                    command[command.index("--retry-max-iterations") + 1],
+                    "500",
+                )
                 state_path.write_text(
                     '{"status":"complete","candidates":[{"status":"complete"}]}',
                     encoding="utf-8",
@@ -90,6 +94,7 @@ class StageAwareQueueValidationTests(unittest.TestCase):
         self.assertEqual(result["returncode"], 0)
         self.assertTrue(result["retry_failed"])
         self.assertEqual(result["search_status"], "complete")
+        self.assertEqual(result["attempts"][0]["retry_max_iterations"], 500)
 
     def test_zero_exit_with_stopped_search_is_a_queue_failure(self):
         with tempfile.TemporaryDirectory() as temp:

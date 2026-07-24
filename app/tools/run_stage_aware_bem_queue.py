@@ -7,11 +7,12 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import sys
 import tempfile
 import time
-from typing import Any
+from typing import Any, Callable
 
 import yaml
 
@@ -80,37 +81,74 @@ def _search_state(search_path: Path) -> dict[str, Any] | None:
     return value if isinstance(value, dict) else None
 
 
+def _retry_iterations(state: dict[str, Any] | None) -> int | None:
+    if not state:
+        return None
+    failed = [
+        row for row in state.get("candidates", [])
+        if row.get("status") == "failed"
+        or "retrying previously failed" in row.get("reason", "")
+    ]
+    if not failed:
+        return None
+    previous = 250
+    for row in failed:
+        match = re.search(r"iterations=(\d+)", row.get("reason", ""))
+        if match:
+            previous = max(previous, int(match.group(1)))
+    return min(max(500, previous * 2), 2000)
+
+
 def _run_one(search_path: Path, environment: dict[str, str]) -> dict[str, Any]:
     started = time.time()
-    initial_state = _search_state(search_path)
-    retry_failed = bool(initial_state and any(
-        row.get("status") == "failed"
-        or "retrying previously failed" in row.get("reason", "")
-        for row in initial_state.get("candidates", [])
-    ))
-    command = [
-        sys.executable,
-        "-m",
-        "app.tools.run_bem_search",
-        str(search_path),
-        "--output-dir",
-        str(search_path.parent),
-        "--binary",
-        str(WRAPPER),
-    ]
-    if retry_failed:
-        command.append("--retry-failed")
-    result = subprocess.run(
-        command,
-        cwd=ROOT,
-        env=environment,
-        text=True,
-        capture_output=True,
-    )
-    final_state = _search_state(search_path)
-    state_status = final_state.get("status") if final_state else None
-    returncode = result.returncode
-    stderr = result.stderr
+    attempts = []
+    state = _search_state(search_path)
+    while True:
+        retry_iterations = _retry_iterations(state)
+        command = [
+            sys.executable,
+            "-m",
+            "app.tools.run_bem_search",
+            str(search_path),
+            "--output-dir",
+            str(search_path.parent),
+            "--binary",
+            str(WRAPPER),
+        ]
+        if retry_iterations is not None:
+            command.extend([
+                "--retry-failed",
+                "--retry-max-iterations",
+                str(retry_iterations),
+            ])
+        result = subprocess.run(
+            command,
+            cwd=ROOT,
+            env=environment,
+            text=True,
+            capture_output=True,
+        )
+        state = _search_state(search_path)
+        state_status = state.get("status") if state else None
+        attempts.append({
+            "returncode": result.returncode,
+            "search_status": state_status,
+            "retry_max_iterations": retry_iterations,
+            "completed_at_unix": time.time(),
+            "stdout_tail": result.stdout[-4000:],
+            "stderr_tail": result.stderr[-4000:],
+        })
+        if result.returncode != 0 or state_status == "complete":
+            break
+        next_iterations = _retry_iterations(state)
+        if next_iterations is None or (
+            retry_iterations is not None
+            and retry_iterations >= 2000
+            and next_iterations >= 2000
+        ):
+            break
+    returncode = attempts[-1]["returncode"]
+    stderr = attempts[-1]["stderr_tail"]
     if returncode == 0 and state_status != "complete":
         returncode = 2
         stderr += (
@@ -120,11 +158,14 @@ def _run_one(search_path: Path, environment: dict[str, str]) -> dict[str, Any]:
     return {
         "search_yaml": str(search_path),
         "returncode": returncode,
-        "retry_failed": retry_failed,
+        "retry_failed": any(
+            attempt["retry_max_iterations"] is not None for attempt in attempts
+        ),
         "search_status": state_status,
         "started_at_unix": started,
         "completed_at_unix": time.time(),
-        "stdout_tail": result.stdout[-4000:],
+        "attempts": attempts,
+        "stdout_tail": attempts[-1]["stdout_tail"],
         "stderr_tail": stderr[-4000:],
     }
 
@@ -137,6 +178,7 @@ def run_queue(
     numcalc_processes: int = 20,
     slot_directory: Path | None = None,
     binary: Path | None = None,
+    on_event: Callable[[dict[str, Any]], None] | None = None,
 ) -> dict[str, Any]:
     audit = validate_queue(search_paths, queue_workers, numcalc_processes)
     executable = find_numcalc(binary)
@@ -171,6 +213,8 @@ def run_queue(
             if result["returncode"]:
                 failures.append(result)
             _write_json(runtime_path, state)
+            if on_event is not None:
+                on_event(result)
     state.update(
         status="failed" if failures else "complete",
         completed_at_unix=time.time(),

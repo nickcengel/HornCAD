@@ -547,6 +547,43 @@ def run(stages: tuple[str, ...]) -> dict[str, Any]:
     return result
 
 
+def resume(stages: tuple[str, ...]) -> dict[str, Any]:
+    """Resume only incomplete retained searches and refresh the index live."""
+    manifest = _verify_manifest()
+    label = "-".join(stages)
+    preflight_path = STUDY_ROOT / f"preflight-{label}.json"
+    if not preflight_path.is_file():
+        raise ValueError(f"missing stage preflight: {preflight_path}")
+    incomplete = []
+    for path in _search_paths(manifest, stages):
+        state_path = path.parent / "search_state.json"
+        if not state_path.is_file():
+            incomplete.append(path)
+            continue
+        state = _read_json(state_path)
+        if state.get("status") != "complete":
+            incomplete.append(path)
+    runtime_path = STUDY_ROOT / f"runtime-{label}-resume.json"
+    if not incomplete:
+        result = {
+            "schema_version": 1,
+            "status": "complete",
+            "search_count": 0,
+            "failure_count": 0,
+            "message": "all retained searches already complete",
+        }
+        _write_json(runtime_path, result)
+        write_index()
+        return result
+    return run_queue(
+        incomplete,
+        runtime_path,
+        queue_workers=min(QUEUE_WORKERS, len(incomplete)),
+        numcalc_processes=NUMCALC_PROCESSES,
+        on_event=lambda _event: write_index(),
+    )
+
+
 def _measured_row(manifest: dict[str, Any],
                   row: dict[str, Any]) -> dict[str, Any]:
     search = ROOT / manifest["inputs"][row["id"]]["search"]
@@ -866,7 +903,7 @@ def _parse_stage(value: str) -> tuple[str, ...]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("command", choices=(
-        "prepare", "preflight", "run", "freeze", "validate-locked",
+        "prepare", "preflight", "run", "resume", "freeze", "validate-locked",
         "prepare-conditional", "analyze", "index",
     ))
     parser.add_argument(
@@ -881,6 +918,8 @@ def main() -> None:
         result = preflight(_parse_stage(args.stage))
     elif args.command == "run":
         result = run(_parse_stage(args.stage))
+    elif args.command == "resume":
+        result = resume(_parse_stage(args.stage))
     elif args.command == "freeze":
         result = freeze_heuristic()
     elif args.command == "validate-locked":
