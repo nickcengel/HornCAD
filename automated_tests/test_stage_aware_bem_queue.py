@@ -69,7 +69,8 @@ class StageAwareQueueValidationTests(unittest.TestCase):
             self.write_search(search, 10)
             state_path = root / "search_state.json"
             state_path.write_text(
-                '{"status":"stopped","candidates":[{"status":"failed"}]}',
+                '{"status":"stopped","candidates":[{"status":"running",'
+                '"reason":"retrying previously failed BEM evaluation"}]}',
                 encoding="utf-8",
             )
 

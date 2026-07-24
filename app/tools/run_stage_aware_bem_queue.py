@@ -85,6 +85,7 @@ def _run_one(search_path: Path, environment: dict[str, str]) -> dict[str, Any]:
     initial_state = _search_state(search_path)
     retry_failed = bool(initial_state and any(
         row.get("status") == "failed"
+        or "retrying previously failed" in row.get("reason", "")
         for row in initial_state.get("candidates", [])
     ))
     command = [
