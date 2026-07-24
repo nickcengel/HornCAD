@@ -11,6 +11,8 @@ The report contains:
 - delta maps for length, K, N, and S;
 - a 25-row table giving the exact per-cell parameter deltas between the v1 and
   v2.1 winners;
+- a cell-filtered coverage viewer that shows the v2.1 winner first and toggles
+  to the corresponding v1 winner when clicked;
 - links to retained candidate reports; and
 - a deterministic `winners.json` audit artifact.
 

@@ -44,6 +44,12 @@ class RoundControlParameterMapsV21Tests(unittest.TestCase):
                 "path": "source.json",
                 "sha256": "b" * 64,
             }],
+            "grids": {},
+            "heatmap_encoding": {
+                "floor_db": -30.0,
+                "step_db": 0.25,
+                "dtype": "uint8",
+            },
             "content_sha256": "c" * 64,
         })
         self.assertIn("surface score v2.1", document)
@@ -53,6 +59,10 @@ class RoundControlParameterMapsV21Tests(unittest.TestCase):
         self.assertIn("Δ N", document)
         self.assertIn("Δ S", document)
         self.assertIn("Cell-by-cell audit", document)
+        self.assertIn("V2.1 winner over v1 winner", document)
+        self.assertIn("cell-filter", document)
+        self.assertIn("click the plot", document)
+        self.assertIn("function toggle()", document)
 
 
 if __name__ == "__main__":
