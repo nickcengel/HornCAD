@@ -27,3 +27,16 @@ Rebuild without running BEM:
 ```bash
 .venv/bin/python -m app.tools.generate_surface_score_v2_2_cell_ranking_game
 ```
+
+After a completed export is placed in this directory, rebuild the unblinded
+analysis with:
+
+```bash
+.venv/bin/python -m app.tools.analyze_surface_score_v2_2_cell_rankings
+```
+
+Exploratory nonnegative component-weight fits and whole-cell cross-validation:
+
+```bash
+.venv/bin/python -m app.tools.fit_surface_score_weights_to_cell_rankings
+```

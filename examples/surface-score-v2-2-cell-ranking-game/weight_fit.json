@@ -1,0 +1,2735 @@
+{
+  "candidate_count": 250,
+  "cell_count": 25,
+  "families": {
+    "combined_components": {
+      "components": [
+        "profile_rms",
+        "slice_energy",
+        "mean_containment",
+        "outward_rise",
+        "minus_six_line",
+        "beamwidth_quality"
+      ],
+      "coverage_specific_full_fit": {
+        "30": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 1.6,
+            "mean_pairwise_agreement": 0.8177777777777777,
+            "mean_spearman": 0.8060606060606059,
+            "median_spearman": 0.7818181818181817,
+            "top_1_matches": 3
+          },
+          "weights": {
+            "beamwidth_quality": 0.1619039621758107,
+            "mean_containment": 2.7171844782149196e-17,
+            "minus_six_line": 4.261111531146752e-18,
+            "outward_rise": 0.0,
+            "profile_rms": 0.5107974687171787,
+            "slice_energy": 0.3272985691070106
+          }
+        },
+        "35": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 2.4,
+            "mean_pairwise_agreement": 0.8,
+            "mean_spearman": 0.7406060606060605,
+            "median_spearman": 0.7212121212121211,
+            "top_1_matches": 2
+          },
+          "weights": {
+            "beamwidth_quality": 0.18149286012537336,
+            "mean_containment": 0.0,
+            "minus_six_line": 0.2740013604736455,
+            "outward_rise": 3.3764809065427527e-17,
+            "profile_rms": 0.3714899330654841,
+            "slice_energy": 0.17301584633549696
+          }
+        },
+        "40": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 2.2,
+            "mean_pairwise_agreement": 0.7777777777777777,
+            "mean_spearman": 0.7066666666666667,
+            "median_spearman": 0.6969696969696969,
+            "top_1_matches": 2
+          },
+          "weights": {
+            "beamwidth_quality": 0.25886710088576,
+            "mean_containment": 2.4383298086789725e-17,
+            "minus_six_line": 0.4981062111192812,
+            "outward_rise": 0.07869916488000077,
+            "profile_rms": 0.0,
+            "slice_energy": 0.16432752311495802
+          }
+        },
+        "45": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 2.8,
+            "mean_pairwise_agreement": 0.7777777777777777,
+            "mean_spearman": 0.6896969696969696,
+            "median_spearman": 0.709090909090909,
+            "top_1_matches": 2
+          },
+          "weights": {
+            "beamwidth_quality": 0.19616148780224785,
+            "mean_containment": 0.13375664979989102,
+            "minus_six_line": 0.02556955033682112,
+            "outward_rise": 0.0,
+            "profile_rms": 0.6321411298195644,
+            "slice_energy": 0.012371182241475737
+          }
+        },
+        "50": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 4.8,
+            "mean_pairwise_agreement": 0.6933333333333334,
+            "mean_spearman": 0.5006060606060606,
+            "median_spearman": 0.6727272727272726,
+            "top_1_matches": 0
+          },
+          "weights": {
+            "beamwidth_quality": 0.14417907837916216,
+            "mean_containment": 0.15612811901094756,
+            "minus_six_line": 0.11334006365575665,
+            "outward_rise": 0.0,
+            "profile_rms": 0.14080170901065156,
+            "slice_energy": 0.44555102994348217
+          }
+        }
+      },
+      "coverage_specific_leave_one_cell_out": {
+        "held_out_cells": [
+          {
+            "cell_id": "30deg-250mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.6606060606060605,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19142788636753189,
+              "mean_containment": 9.892927204096319e-17,
+              "minus_six_line": 0.0,
+              "outward_rise": 2.220126662522094e-17,
+              "profile_rms": 0.47821604317856575,
+              "slice_energy": 0.3303560704539022
+            }
+          },
+          {
+            "cell_id": "35deg-250mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7333333333333332,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.16920736866442154,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.4625599547689272,
+              "outward_rise": 8.397102814808589e-17,
+              "profile_rms": 0.3510065659987993,
+              "slice_energy": 0.017226110567851862
+            }
+          },
+          {
+            "cell_id": "40deg-250mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7333333333333332,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.2283030555782174,
+              "mean_containment": 1.1038446682894477e-17,
+              "minus_six_line": 0.4720905410942516,
+              "outward_rise": 0.07557711904582397,
+              "profile_rms": 0.0,
+              "slice_energy": 0.22402928428170707
+            }
+          },
+          {
+            "cell_id": "45deg-250mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.6222222222222222,
+            "spearman": 0.33333333333333326,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.22519703072949201,
+              "mean_containment": 4.1870756800205425e-18,
+              "minus_six_line": 0.053023911752080516,
+              "outward_rise": 8.390487529838917e-18,
+              "profile_rms": 0.48672183973995364,
+              "slice_energy": 0.23505721777847385
+            }
+          },
+          {
+            "cell_id": "50deg-250mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 10,
+            "pairwise_agreement": 0.4222222222222222,
+            "spearman": -0.17575757575757575,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.130700664900817,
+              "mean_containment": 0.17310605010622349,
+              "minus_six_line": 0.121579125006856,
+              "outward_rise": 1.4392768634711364e-16,
+              "profile_rms": 0.02389139722793344,
+              "slice_energy": 0.55072276275817
+            }
+          },
+          {
+            "cell_id": "30deg-300mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7454545454545454,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.1394817508839129,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.007958114754689964,
+              "outward_rise": 5.244766985089759e-17,
+              "profile_rms": 0.5313411927578439,
+              "slice_energy": 0.32121894160355324
+            }
+          },
+          {
+            "cell_id": "35deg-300mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7555555555555555,
+            "spearman": 0.6727272727272726,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.12706533893652305,
+              "mean_containment": 7.030274176729194e-17,
+              "minus_six_line": 0.3249781760039947,
+              "outward_rise": 3.483845469159028e-17,
+              "profile_rms": 0.41228168886824346,
+              "slice_energy": 0.1356747961912386
+            }
+          },
+          {
+            "cell_id": "40deg-300mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6666666666666666,
+            "spearman": 0.4666666666666666,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.23967325219149402,
+              "mean_containment": 6.96141316462212e-18,
+              "minus_six_line": 0.4739456056579202,
+              "outward_rise": 0.03213037621592212,
+              "profile_rms": 0.12412636056373326,
+              "slice_energy": 0.13012440537093042
+            }
+          },
+          {
+            "cell_id": "45deg-300mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.5515151515151515,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18120559706893324,
+              "mean_containment": 0.22526174344457606,
+              "minus_six_line": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5644385086179475,
+              "slice_energy": 0.029094150868543174
+            }
+          },
+          {
+            "cell_id": "50deg-300mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 8,
+            "pairwise_agreement": 0.5555555555555556,
+            "spearman": -0.006060606060606061,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.17676221107899012,
+              "mean_containment": 6.541672411148344e-17,
+              "minus_six_line": 0.23377827670023654,
+              "outward_rise": 0.0,
+              "profile_rms": 0.17159127300206536,
+              "slice_energy": 0.41786823921870786
+            }
+          },
+          {
+            "cell_id": "30deg-350mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.9111111111111111,
+            "spearman": 0.9272727272727272,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.1841402539329041,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.14958219894044,
+              "outward_rise": 1.9793706040360044e-17,
+              "profile_rms": 0.3630103005819055,
+              "slice_energy": 0.3032672465447504
+            }
+          },
+          {
+            "cell_id": "35deg-350mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6888888888888889,
+            "spearman": 0.5030303030303029,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.20990059977289655,
+              "mean_containment": 4.7718936143908755e-17,
+              "minus_six_line": 0.284788025491775,
+              "outward_rise": 0.0,
+              "profile_rms": 0.3114825604694042,
+              "slice_energy": 0.19382881426592427
+            }
+          },
+          {
+            "cell_id": "40deg-350mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.8444444444444444,
+            "spearman": 0.8303030303030302,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.24448680793157365,
+              "mean_containment": 3.306303190263967e-17,
+              "minus_six_line": 0.4701522750121354,
+              "outward_rise": 0.09511635869346638,
+              "profile_rms": 0.0,
+              "slice_energy": 0.1902445583628246
+            }
+          },
+          {
+            "cell_id": "45deg-350mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.9111111111111111,
+            "spearman": 0.9151515151515152,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.16179100142567204,
+              "mean_containment": 0.2024174014736336,
+              "minus_six_line": 0.05050566957917522,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5852859275215191,
+              "slice_energy": 0.0
+            }
+          },
+          {
+            "cell_id": "50deg-350mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.8222222222222222,
+            "spearman": 0.7575757575757575,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.12199704252798643,
+              "mean_containment": 0.2996952876950623,
+              "minus_six_line": 0.0971921686454693,
+              "outward_rise": 0.0,
+              "profile_rms": 0.20506856545507535,
+              "slice_energy": 0.27604693567640665
+            }
+          },
+          {
+            "cell_id": "30deg-400mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8222222222222222,
+            "spearman": 0.8303030303030302,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.16067685677459081,
+              "mean_containment": 5.0781758874230666e-17,
+              "minus_six_line": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5052717239722667,
+              "slice_energy": 0.3340514192531425
+            }
+          },
+          {
+            "cell_id": "35deg-400mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 8,
+            "pairwise_agreement": 0.6,
+            "spearman": 0.35757575757575755,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.08028731862321414,
+              "mean_containment": 8.758552690098307e-17,
+              "minus_six_line": 0.15044844934152798,
+              "outward_rise": 1.0691760689079001e-16,
+              "profile_rms": 0.6664493844697754,
+              "slice_energy": 0.10281484756548223
+            }
+          },
+          {
+            "cell_id": "40deg-400mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.6444444444444445,
+            "spearman": 0.4787878787878787,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.23481226876725877,
+              "mean_containment": 4.896744806018399e-17,
+              "minus_six_line": 0.3634299439955199,
+              "outward_rise": 0.041824432693911985,
+              "profile_rms": 0.1509536452378036,
+              "slice_energy": 0.20897970930550572
+            }
+          },
+          {
+            "cell_id": "45deg-400mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7939393939393938,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.1157505433874517,
+              "mean_containment": 0.2550206560961245,
+              "minus_six_line": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.6292288005164238,
+              "slice_energy": 0.0
+            }
+          },
+          {
+            "cell_id": "50deg-400mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.709090909090909,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.07721719051555978,
+              "mean_containment": 0.3110488678284314,
+              "minus_six_line": 0.08432059482546903,
+              "outward_rise": 0.0,
+              "profile_rms": 0.21097735557993613,
+              "slice_energy": 0.31643599125060357
+            }
+          },
+          {
+            "cell_id": "30deg-450mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.7818181818181817,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.15644053423428933,
+              "mean_containment": 8.225765151360852e-17,
+              "minus_six_line": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.52917710219473,
+              "slice_energy": 0.31438236357098054
+            }
+          },
+          {
+            "cell_id": "35deg-450mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.6242424242424242,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.35642984398949107,
+              "mean_containment": 1.0161043414060765e-16,
+              "minus_six_line": 0.004954172608559202,
+              "outward_rise": 0.0,
+              "profile_rms": 0.17126578097855924,
+              "slice_energy": 0.4673502024233905
+            }
+          },
+          {
+            "cell_id": "40deg-450mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.6969696969696969,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.26492818038593624,
+              "mean_containment": 2.029412110798343e-17,
+              "minus_six_line": 0.5552519018125767,
+              "outward_rise": 0.08644862810838051,
+              "profile_rms": 0.0,
+              "slice_energy": 0.09337128969310665
+            }
+          },
+          {
+            "cell_id": "45deg-450mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.5878787878787878,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.3728349007400297,
+              "mean_containment": 0.01671382948174912,
+              "minus_six_line": 0.2374434140434816,
+              "outward_rise": 0.0,
+              "profile_rms": 0.37300785573473944,
+              "slice_energy": 2.7327121322030325e-16
+            }
+          },
+          {
+            "cell_id": "50deg-450mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.6606060606060605,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.2574131743525577,
+              "mean_containment": 0.10488176619113293,
+              "minus_six_line": 0.01011401320384679,
+              "outward_rise": 1.950878230127191e-17,
+              "profile_rms": 0.3194293776026228,
+              "slice_energy": 0.3081616686498398
+            }
+          }
+        ],
+        "mode": "leave-one-cell-out within coverage",
+        "summary": {
+          "cell_count": 25,
+          "mean_human_winner_score_rank": 3.16,
+          "mean_pairwise_agreement": 0.735111111111111,
+          "mean_spearman": 0.6067878787878788,
+          "median_spearman": 0.6727272727272726,
+          "top_1_matches": 10
+        }
+      },
+      "global_in_sample": {
+        "cell_count": 25,
+        "mean_human_winner_score_rank": 2.56,
+        "mean_pairwise_agreement": 0.7662222222222222,
+        "mean_spearman": 0.6678787878787878,
+        "median_spearman": 0.7454545454545454,
+        "top_1_matches": 10
+      },
+      "global_leave_one_cell_out": {
+        "held_out_cells": [
+          {
+            "cell_id": "30deg-250mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7555555555555555,
+            "spearman": 0.6363636363636362,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19408416983432605,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.11353845591902695,
+              "outward_rise": 0.0,
+              "profile_rms": 0.41315098280200374,
+              "slice_energy": 0.2792263914446433
+            }
+          },
+          {
+            "cell_id": "35deg-250mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.9333333333333333,
+            "spearman": 0.9636363636363635,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.18937594591271095,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.11315130874345006,
+              "outward_rise": 2.3204785231600127e-17,
+              "profile_rms": 0.4026464485296622,
+              "slice_energy": 0.2948262968141769
+            }
+          },
+          {
+            "cell_id": "40deg-250mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8222222222222222,
+            "spearman": 0.7939393939393938,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.18741498895018344,
+              "mean_containment": 1.1360700708730382e-17,
+              "minus_six_line": 0.11139603376139673,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4079229383277945,
+              "slice_energy": 0.29326603896062536
+            }
+          },
+          {
+            "cell_id": "45deg-250mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.5555555555555556,
+            "spearman": 0.09090909090909088,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19576544506421406,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.13615744459935245,
+              "outward_rise": 8.370575497484086e-18,
+              "profile_rms": 0.36922379498556795,
+              "slice_energy": 0.2988533153508655
+            }
+          },
+          {
+            "cell_id": "50deg-250mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.5777777777777777,
+            "spearman": 0.2606060606060606,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19027699986086283,
+              "mean_containment": 3.824886812866393e-17,
+              "minus_six_line": 0.10348178416613955,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4100851340410364,
+              "slice_energy": 0.29615608193196125
+            }
+          },
+          {
+            "cell_id": "30deg-300mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8222222222222222,
+            "spearman": 0.7575757575757575,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.18802450350018687,
+              "mean_containment": 6.293262183120014e-19,
+              "minus_six_line": 0.109528273594667,
+              "outward_rise": 6.5822803574885615e-19,
+              "profile_rms": 0.4115487652227956,
+              "slice_energy": 0.2908984576823505
+            }
+          },
+          {
+            "cell_id": "35deg-300mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8666666666666667,
+            "spearman": 0.8424242424242423,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.18575761919223982,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.11259456082407267,
+              "outward_rise": 6.098338873351554e-18,
+              "profile_rms": 0.40446109329148244,
+              "slice_energy": 0.2971867266922052
+            }
+          },
+          {
+            "cell_id": "40deg-300mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6888888888888889,
+            "spearman": 0.49090909090909085,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.19112613721649738,
+              "mean_containment": 3.523695996042746e-18,
+              "minus_six_line": 0.10743909289119653,
+              "outward_rise": 1.830558068499893e-17,
+              "profile_rms": 0.40994677051350537,
+              "slice_energy": 0.29148799937880077
+            }
+          },
+          {
+            "cell_id": "45deg-300mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.709090909090909,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18676492210859447,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.10575210450362707,
+              "outward_rise": 1.2360803890483697e-17,
+              "profile_rms": 0.4153517466717854,
+              "slice_energy": 0.2921312267159931
+            }
+          },
+          {
+            "cell_id": "50deg-300mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 7,
+            "pairwise_agreement": 0.5777777777777777,
+            "spearman": 0.09090909090909088,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19394019543310537,
+              "mean_containment": 1.3297377754475831e-17,
+              "minus_six_line": 0.16208198503181429,
+              "outward_rise": 0.0,
+              "profile_rms": 0.37314055739147073,
+              "slice_energy": 0.2708372621436096
+            }
+          },
+          {
+            "cell_id": "30deg-350mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8888888888888888,
+            "spearman": 0.9151515151515152,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.19191135527594635,
+              "mean_containment": 2.8024714811872647e-18,
+              "minus_six_line": 0.1138507101158129,
+              "outward_rise": 0.0,
+              "profile_rms": 0.3970613651411804,
+              "slice_energy": 0.29717656946706045
+            }
+          },
+          {
+            "cell_id": "35deg-350mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6666666666666666,
+            "spearman": 0.43030303030303024,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.1913088777033398,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.10852789282613344,
+              "outward_rise": 5.647821739849038e-18,
+              "profile_rms": 0.4053604315031519,
+              "slice_energy": 0.2948027979673749
+            }
+          },
+          {
+            "cell_id": "40deg-350mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.8444444444444444,
+            "spearman": 0.8303030303030302,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19265473843667988,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.09208061937563962,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4137659014273262,
+              "slice_energy": 0.3014987407603544
+            }
+          },
+          {
+            "cell_id": "45deg-350mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8888888888888888,
+            "spearman": 0.8909090909090909,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.1836552935232353,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.11944523516797304,
+              "outward_rise": 1.801165617652365e-17,
+              "profile_rms": 0.41180289931903385,
+              "slice_energy": 0.2850965719897577
+            }
+          },
+          {
+            "cell_id": "50deg-350mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.8222222222222222,
+            "spearman": 0.7575757575757575,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19006235238715793,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.11040958214385334,
+              "outward_rise": 3.2163186129486614e-17,
+              "profile_rms": 0.40779928038776286,
+              "slice_energy": 0.2917287850812259
+            }
+          },
+          {
+            "cell_id": "30deg-400mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7939393939393938,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.1908837019893641,
+              "mean_containment": 6.83473902786279e-18,
+              "minus_six_line": 0.10601305868363,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4040725100599029,
+              "slice_energy": 0.29903072926710306
+            }
+          },
+          {
+            "cell_id": "35deg-400mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.5757575757575757,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18580397397543347,
+              "mean_containment": 4.361146677916983e-18,
+              "minus_six_line": 0.09363531232936627,
+              "outward_rise": 6.3292277308623486e-18,
+              "profile_rms": 0.4290721869215975,
+              "slice_energy": 0.2914885267736028
+            }
+          },
+          {
+            "cell_id": "40deg-400mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.6,
+            "spearman": 0.34545454545454546,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19252654113090917,
+              "mean_containment": 2.7260335469211884e-17,
+              "minus_six_line": 0.08079050358102179,
+              "outward_rise": 0.0,
+              "profile_rms": 0.42417902914387423,
+              "slice_energy": 0.30250392614419486
+            }
+          },
+          {
+            "cell_id": "45deg-400mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7939393939393938,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18022690355674129,
+              "mean_containment": 3.9761302087016165e-18,
+              "minus_six_line": 0.08968105099020286,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4363029335999511,
+              "slice_energy": 0.29378911185310486
+            }
+          },
+          {
+            "cell_id": "50deg-400mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.7333333333333332,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.17607081878514716,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.09436068150515686,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4393555447608046,
+              "slice_energy": 0.29021295494889143
+            }
+          },
+          {
+            "cell_id": "30deg-450mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.7818181818181817,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18947250114170877,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.10360530475852453,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4188368044183233,
+              "slice_energy": 0.2880853896814432
+            }
+          },
+          {
+            "cell_id": "35deg-450mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.7212121212121211,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19602017982530667,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.09346442228657496,
+              "outward_rise": 2.5336111401836736e-17,
+              "profile_rms": 0.41023685090767864,
+              "slice_energy": 0.3002785469804398
+            }
+          },
+          {
+            "cell_id": "40deg-450mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7575757575757575,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19240378190258312,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.09404283739164375,
+              "outward_rise": 3.550890385969071e-17,
+              "profile_rms": 0.4160637238479189,
+              "slice_energy": 0.29748965685785433
+            }
+          },
+          {
+            "cell_id": "45deg-450mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.6969696969696969,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.20309159951274852,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.13104988457885497,
+              "outward_rise": 3.8956042501960744e-17,
+              "profile_rms": 0.3712843265535273,
+              "slice_energy": 0.29457418935486923
+            }
+          },
+          {
+            "cell_id": "50deg-450mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.6606060606060605,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19870333526870385,
+              "mean_containment": 0.0,
+              "minus_six_line": 0.08196581424763037,
+              "outward_rise": 1.1838767369184606e-17,
+              "profile_rms": 0.4108789647723138,
+              "slice_energy": 0.30845188571135196
+            }
+          }
+        ],
+        "mode": "leave-one-cell-out global",
+        "summary": {
+          "cell_count": 25,
+          "mean_human_winner_score_rank": 2.6,
+          "mean_pairwise_agreement": 0.7608888888888888,
+          "mean_spearman": 0.6528484848484848,
+          "median_spearman": 0.7333333333333332,
+          "top_1_matches": 10
+        }
+      },
+      "global_weights": {
+        "beamwidth_quality": 0.19025698490124426,
+        "mean_containment": 0.0,
+        "minus_six_line": 0.10722704558313807,
+        "outward_rise": 1.2119777309062007e-17,
+        "profile_rms": 0.4086083098643496,
+        "slice_energy": 0.29390765965126797
+      }
+    },
+    "v1_components": {
+      "components": [
+        "profile_rms",
+        "slice_energy",
+        "mean_containment",
+        "outward_rise",
+        "minus_six_line"
+      ],
+      "coverage_specific_full_fit": {
+        "30": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 2.0,
+            "mean_pairwise_agreement": 0.7733333333333333,
+            "mean_spearman": 0.7042424242424241,
+            "median_spearman": 0.6848484848484848,
+            "top_1_matches": 2
+          },
+          "weights": {
+            "mean_containment": 9.778114919198027e-17,
+            "minus_six_line": 0.0,
+            "outward_rise": 0.0,
+            "profile_rms": 0.7447500992832501,
+            "slice_energy": 0.25524990071674997
+          }
+        },
+        "35": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 2.6,
+            "mean_pairwise_agreement": 0.7244444444444444,
+            "mean_spearman": 0.566060606060606,
+            "median_spearman": 0.5757575757575757,
+            "top_1_matches": 3
+          },
+          "weights": {
+            "mean_containment": 0.0,
+            "minus_six_line": 0.28203799638435756,
+            "outward_rise": 1.1471368074572003e-17,
+            "profile_rms": 0.7122564377465186,
+            "slice_energy": 0.0057055658691239665
+          }
+        },
+        "40": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 2.6,
+            "mean_pairwise_agreement": 0.6888888888888889,
+            "mean_spearman": 0.5272727272727271,
+            "median_spearman": 0.6606060606060605,
+            "top_1_matches": 1
+          },
+          "weights": {
+            "mean_containment": 0.056894769468684485,
+            "minus_six_line": 0.15873696411763025,
+            "outward_rise": 0.0,
+            "profile_rms": 0.6609487007152821,
+            "slice_energy": 0.12341956569840326
+          }
+        },
+        "45": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 3.2,
+            "mean_pairwise_agreement": 0.7555555555555555,
+            "mean_spearman": 0.6,
+            "median_spearman": 0.5878787878787878,
+            "top_1_matches": 2
+          },
+          "weights": {
+            "mean_containment": 0.575655096965803,
+            "minus_six_line": 0.0,
+            "outward_rise": 5.021838692153578e-19,
+            "profile_rms": 0.32330141012518565,
+            "slice_energy": 0.10104349290901125
+          }
+        },
+        "50": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 4.2,
+            "mean_pairwise_agreement": 0.6666666666666667,
+            "mean_spearman": 0.4375757575757576,
+            "median_spearman": 0.5636363636363636,
+            "top_1_matches": 1
+          },
+          "weights": {
+            "mean_containment": 0.6174058362201644,
+            "minus_six_line": 0.08031523007690798,
+            "outward_rise": 0.0,
+            "profile_rms": 0.0,
+            "slice_energy": 0.30227893370292763
+          }
+        }
+      },
+      "coverage_specific_leave_one_cell_out": {
+        "held_out_cells": [
+          {
+            "cell_id": "30deg-250mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.8444444444444444,
+            "spearman": 0.8545454545454544,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 4.1368496753101405e-17,
+              "minus_six_line": 0.0,
+              "outward_rise": 6.708777358644368e-17,
+              "profile_rms": 0.7552124299674037,
+              "slice_energy": 0.24478757003259632
+            }
+          },
+          {
+            "cell_id": "35deg-250mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8444444444444444,
+            "spearman": 0.8060606060606059,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.0,
+              "minus_six_line": 0.3232625016725423,
+              "outward_rise": 0.0,
+              "profile_rms": 0.6767374983274577,
+              "slice_energy": 4.78234387963969e-17
+            }
+          },
+          {
+            "cell_id": "40deg-250mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.4787878787878787,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.11393258015013344,
+              "minus_six_line": 0.16471644866282156,
+              "outward_rise": 0.0,
+              "profile_rms": 0.47589191534469905,
+              "slice_energy": 0.24545905584234598
+            }
+          },
+          {
+            "cell_id": "45deg-250mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.4666666666666667,
+            "spearman": -0.16363636363636364,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.5499169191009118,
+              "minus_six_line": 0.0030635605062060193,
+              "outward_rise": 0.0,
+              "profile_rms": 0.05046861223759416,
+              "slice_energy": 0.39655090815528804
+            }
+          },
+          {
+            "cell_id": "50deg-250mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 10,
+            "pairwise_agreement": 0.3333333333333333,
+            "spearman": -0.3939393939393939,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.6129022577912658,
+              "minus_six_line": 0.07004884409659438,
+              "outward_rise": 0.0,
+              "profile_rms": 1.0160581153425149e-16,
+              "slice_energy": 0.3170488981121398
+            }
+          },
+          {
+            "cell_id": "30deg-300mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.5636363636363636,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 5.3812465470983086e-17,
+              "minus_six_line": 3.3977646319261234e-17,
+              "outward_rise": 0.0,
+              "profile_rms": 0.739936772440392,
+              "slice_energy": 0.26006322755960803
+            }
+          },
+          {
+            "cell_id": "35deg-300mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6222222222222222,
+            "spearman": 0.3939393939393939,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 4.493965595147729e-18,
+              "minus_six_line": 0.32754402149404294,
+              "outward_rise": 0.0,
+              "profile_rms": 0.64640175180223,
+              "slice_energy": 0.026054226703727156
+            }
+          },
+          {
+            "cell_id": "40deg-300mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.6222222222222222,
+            "spearman": 0.4424242424242424,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.0,
+              "minus_six_line": 0.19172571760891743,
+              "outward_rise": 0.0,
+              "profile_rms": 0.7163107676974904,
+              "slice_energy": 0.09196351469359236
+            }
+          },
+          {
+            "cell_id": "45deg-300mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.406060606060606,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.6541429986418655,
+              "minus_six_line": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.23194066687625994,
+              "slice_energy": 0.11391633448187449
+            }
+          },
+          {
+            "cell_id": "50deg-300mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 6,
+            "pairwise_agreement": 0.5777777777777777,
+            "spearman": 0.35757575757575755,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.5806485646862695,
+              "minus_six_line": 0.09796325010591901,
+              "outward_rise": 0.0,
+              "profile_rms": 0.0,
+              "slice_energy": 0.32138818520781154
+            }
+          },
+          {
+            "cell_id": "30deg-350mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7818181818181817,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.0,
+              "minus_six_line": 0.0,
+              "outward_rise": 1.1334525165029262e-17,
+              "profile_rms": 0.743275697332883,
+              "slice_energy": 0.25672430266711704
+            }
+          },
+          {
+            "cell_id": "35deg-350mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6666666666666666,
+            "spearman": 0.41818181818181815,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.0,
+              "minus_six_line": 0.2857129474242305,
+              "outward_rise": 0.0,
+              "profile_rms": 0.6858643639641708,
+              "slice_energy": 0.028422688611598555
+            }
+          },
+          {
+            "cell_id": "40deg-350mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.7575757575757575,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.16019835417021744,
+              "minus_six_line": 0.1800539748685866,
+              "outward_rise": 2.9595903155759653e-18,
+              "profile_rms": 0.5261283850379911,
+              "slice_energy": 0.13361928592320493
+            }
+          },
+          {
+            "cell_id": "45deg-350mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.9111111111111111,
+            "spearman": 0.9272727272727272,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.5622050245129835,
+              "minus_six_line": 0.028818763269255383,
+              "outward_rise": 9.331351595563085e-17,
+              "profile_rms": 0.3719841901627161,
+              "slice_energy": 0.036992022055044815
+            }
+          },
+          {
+            "cell_id": "50deg-350mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.8444444444444444,
+            "spearman": 0.8181818181818182,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.681225655919718,
+              "minus_six_line": 0.08430401733759864,
+              "outward_rise": 7.364251935378022e-17,
+              "profile_rms": 0.03698877121440868,
+              "slice_energy": 0.19748155552827457
+            }
+          },
+          {
+            "cell_id": "30deg-400mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.5878787878787878,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 5.330390798942202e-17,
+              "minus_six_line": 0.0,
+              "outward_rise": 4.922968683063395e-16,
+              "profile_rms": 0.7312763625787541,
+              "slice_energy": 0.26872363742124544
+            }
+          },
+          {
+            "cell_id": "35deg-400mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 9,
+            "pairwise_agreement": 0.5333333333333333,
+            "spearman": 0.12727272727272726,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.0,
+              "minus_six_line": 0.11492618129362371,
+              "outward_rise": 7.445506359712244e-17,
+              "profile_rms": 0.8492390360230803,
+              "slice_energy": 0.03583478268329581
+            }
+          },
+          {
+            "cell_id": "40deg-400mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.4888888888888889,
+            "spearman": 0.006060606060606061,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.061468187360337136,
+              "minus_six_line": 0.06425299457926878,
+              "outward_rise": 0.0,
+              "profile_rms": 0.7270217843707062,
+              "slice_energy": 0.14725703368968798
+            }
+          },
+          {
+            "cell_id": "45deg-400mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 10,
+            "pairwise_agreement": 0.4666666666666667,
+            "spearman": -0.12727272727272726,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.5136440202453354,
+              "minus_six_line": 5.62880873986172e-16,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4752591111815365,
+              "slice_energy": 0.011096868573127333
+            }
+          },
+          {
+            "cell_id": "50deg-400mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.5636363636363636,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.5558446705247798,
+              "minus_six_line": 0.06980703399947918,
+              "outward_rise": 0.0,
+              "profile_rms": 0.13558734878910575,
+              "slice_energy": 0.23876094668663514
+            }
+          },
+          {
+            "cell_id": "30deg-450mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7555555555555555,
+            "spearman": 0.6848484848484848,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.0,
+              "minus_six_line": 0.0,
+              "outward_rise": 2.557259196788981e-17,
+              "profile_rms": 0.7558816446989118,
+              "slice_energy": 0.2441183553010881
+            }
+          },
+          {
+            "cell_id": "35deg-450mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7555555555555555,
+            "spearman": 0.6969696969696969,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 1.0721427351501674e-16,
+              "minus_six_line": 0.16525482892357568,
+              "outward_rise": 0.0,
+              "profile_rms": 0.7845840730061009,
+              "slice_energy": 0.050161098070323366
+            }
+          },
+          {
+            "cell_id": "40deg-450mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.6444444444444445,
+            "spearman": 0.5030303030303029,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.0,
+              "minus_six_line": 0.1585867506331375,
+              "outward_rise": 0.04101694169034287,
+              "profile_rms": 0.6982433134120632,
+              "slice_energy": 0.10215299426445641
+            }
+          },
+          {
+            "cell_id": "45deg-450mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.7454545454545454,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.6223746580789064,
+              "minus_six_line": 0.03308573075060815,
+              "outward_rise": 1.2349228906361936e-16,
+              "profile_rms": 0.23317314252013377,
+              "slice_energy": 0.11136646865035166
+            }
+          },
+          {
+            "cell_id": "50deg-450mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.6666666666666666,
+            "spearman": 0.5636363636363636,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.7126958603645617,
+              "minus_six_line": 0.04203703768171697,
+              "outward_rise": 1.6031385258411487e-16,
+              "profile_rms": 0.0,
+              "slice_energy": 0.24526710195372117
+            }
+          }
+        ],
+        "mode": "leave-one-cell-out within coverage",
+        "summary": {
+          "cell_count": 25,
+          "mean_human_winner_score_rank": 3.32,
+          "mean_pairwise_agreement": 0.6800000000000002,
+          "mean_spearman": 0.472,
+          "median_spearman": 0.5636363636363636,
+          "top_1_matches": 8
+        }
+      },
+      "global_in_sample": {
+        "cell_count": 25,
+        "mean_human_winner_score_rank": 3.08,
+        "mean_pairwise_agreement": 0.6826666666666668,
+        "mean_spearman": 0.4865454545454545,
+        "median_spearman": 0.5393939393939393,
+        "top_1_matches": 8
+      },
+      "global_leave_one_cell_out": {
+        "held_out_cells": [
+          {
+            "cell_id": "30deg-250mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7555555555555555,
+            "spearman": 0.6969696969696969,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.20684539904858626,
+              "minus_six_line": 0.000537721271156602,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5811684829226884,
+              "slice_energy": 0.21144839675756877
+            }
+          },
+          {
+            "cell_id": "35deg-250mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.709090909090909,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.22596879974715997,
+              "minus_six_line": 0.0027848298693255572,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5409564804262851,
+              "slice_energy": 0.23028988995722938
+            }
+          },
+          {
+            "cell_id": "40deg-250mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.6484848484848483,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.21319195242534833,
+              "minus_six_line": 0.003222627491335046,
+              "outward_rise": 6.410379075337124e-17,
+              "profile_rms": 0.5559436239077725,
+              "slice_energy": 0.227641796175544
+            }
+          },
+          {
+            "cell_id": "45deg-250mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.5777777777777777,
+            "spearman": 0.2121212121212121,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.17788443013892402,
+              "minus_six_line": 0.008375794376420794,
+              "outward_rise": 1.1370640519180754e-16,
+              "profile_rms": 0.5818531100555014,
+              "slice_energy": 0.2318866654291536
+            }
+          },
+          {
+            "cell_id": "50deg-250mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.5111111111111111,
+            "spearman": 0.05454545454545454,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.1990308064494469,
+              "minus_six_line": 3.544417474203028e-17,
+              "outward_rise": 8.42713940155659e-17,
+              "profile_rms": 0.5759142519194228,
+              "slice_energy": 0.2250549416311301
+            }
+          },
+          {
+            "cell_id": "30deg-300mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 6,
+            "pairwise_agreement": 0.6666666666666666,
+            "spearman": 0.34545454545454546,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.22182243239735466,
+              "minus_six_line": 0.0039096952978143725,
+              "outward_rise": 3.6289234650630486e-17,
+              "profile_rms": 0.556416761252175,
+              "slice_energy": 0.21785111105265606
+            }
+          },
+          {
+            "cell_id": "35deg-300mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.5777777777777777,
+            "spearman": 0.309090909090909,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.21579134287311602,
+              "minus_six_line": 0.004672023570566266,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5469967032375015,
+              "slice_energy": 0.2325399303188163
+            }
+          },
+          {
+            "cell_id": "40deg-300mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6888888888888889,
+            "spearman": 0.49090909090909085,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.17921138324349203,
+              "minus_six_line": 0.0,
+              "outward_rise": 3.151216530104835e-17,
+              "profile_rms": 0.5965087816732381,
+              "slice_energy": 0.22427983508326998
+            }
+          },
+          {
+            "cell_id": "45deg-300mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.6888888888888889,
+            "spearman": 0.49090909090909085,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.1681657739232809,
+              "minus_six_line": 8.605312629920217e-17,
+              "outward_rise": 0.0,
+              "profile_rms": 0.6066985315095449,
+              "slice_energy": 0.22513569456717408
+            }
+          },
+          {
+            "cell_id": "50deg-300mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.6888888888888889,
+            "spearman": 0.5393939393939393,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.17846578232612306,
+              "minus_six_line": 0.02106320148194274,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5844932087087762,
+              "slice_energy": 0.21597780748315792
+            }
+          },
+          {
+            "cell_id": "30deg-350mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7555555555555555,
+            "spearman": 0.7454545454545454,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.22601259635867102,
+              "minus_six_line": 0.005047665521397698,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5490932956341037,
+              "slice_energy": 0.2198464424858277
+            }
+          },
+          {
+            "cell_id": "35deg-350mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6,
+            "spearman": 0.33333333333333326,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.20294824422030322,
+              "minus_six_line": 1.5393087874339557e-16,
+              "outward_rise": 3.78966119071383e-17,
+              "profile_rms": 0.5678013144086331,
+              "slice_energy": 0.22925044137106343
+            }
+          },
+          {
+            "cell_id": "40deg-350mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7939393939393938,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.22566185551011578,
+              "minus_six_line": 0.0,
+              "outward_rise": 1.6395023700363148e-16,
+              "profile_rms": 0.5500090884908415,
+              "slice_energy": 0.22432905599904263
+            }
+          },
+          {
+            "cell_id": "45deg-350mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.5272727272727272,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.17585529795303176,
+              "minus_six_line": 0.010097297063179104,
+              "outward_rise": 2.0467140552393295e-17,
+              "profile_rms": 0.5931536240723867,
+              "slice_energy": 0.22089378091140247
+            }
+          },
+          {
+            "cell_id": "50deg-350mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.8222222222222222,
+            "spearman": 0.7939393939393938,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.19560752071206852,
+              "minus_six_line": 8.493583542806035e-17,
+              "outward_rise": 2.5098979000427555e-18,
+              "profile_rms": 0.5816467370017434,
+              "slice_energy": 0.22274574228618807
+            }
+          },
+          {
+            "cell_id": "30deg-400mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7555555555555555,
+            "spearman": 0.6,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.20594484384658834,
+              "minus_six_line": 0.0,
+              "outward_rise": 9.434907828082568e-17,
+              "profile_rms": 0.5634549684200405,
+              "slice_energy": 0.23060018773337113
+            }
+          },
+          {
+            "cell_id": "35deg-400mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 7,
+            "pairwise_agreement": 0.5333333333333333,
+            "spearman": 0.0303030303030303,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.23295935242210616,
+              "minus_six_line": 7.094345207731279e-17,
+              "outward_rise": 4.205735445640691e-17,
+              "profile_rms": 0.5537499073868176,
+              "slice_energy": 0.21329074019107627
+            }
+          },
+          {
+            "cell_id": "40deg-400mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.4888888888888889,
+            "spearman": 0.006060606060606061,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.20163742675526877,
+              "minus_six_line": 2.739747029524806e-17,
+              "outward_rise": 1.5038038142797673e-16,
+              "profile_rms": 0.5780624995215227,
+              "slice_energy": 0.2203000737232083
+            }
+          },
+          {
+            "cell_id": "45deg-400mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 10,
+            "pairwise_agreement": 0.4888888888888889,
+            "spearman": -0.07878787878787878,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.16774712190307323,
+              "minus_six_line": 3.7040215293458153e-17,
+              "outward_rise": 2.3434739392691213e-17,
+              "profile_rms": 0.6097305239530748,
+              "slice_energy": 0.2225223541438521
+            }
+          },
+          {
+            "cell_id": "50deg-400mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6,
+            "spearman": 0.38181818181818183,
+            "top_1_match": true,
+            "weights": {
+              "mean_containment": 0.13928841884900273,
+              "minus_six_line": 0.0,
+              "outward_rise": 9.120551316983321e-17,
+              "profile_rms": 0.635174841507119,
+              "slice_energy": 0.22553673964387827
+            }
+          },
+          {
+            "cell_id": "30deg-450mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.5636363636363636,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.22059795697924586,
+              "minus_six_line": 8.92568528592304e-17,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5643645489530853,
+              "slice_energy": 0.21503749406766887
+            }
+          },
+          {
+            "cell_id": "35deg-450mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7555555555555555,
+            "spearman": 0.6969696969696969,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.20089179374151336,
+              "minus_six_line": 0.0,
+              "outward_rise": 1.8358074948670762e-16,
+              "profile_rms": 0.5778062783781422,
+              "slice_energy": 0.22130192788034425
+            }
+          },
+          {
+            "cell_id": "40deg-450mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.6848484848484848,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.19075591043578718,
+              "minus_six_line": 2.83217518434636e-17,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5874120691773744,
+              "slice_energy": 0.2218320203868383
+            }
+          },
+          {
+            "cell_id": "45deg-450mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.7555555555555555,
+            "spearman": 0.6727272727272726,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.16768330584650448,
+              "minus_six_line": 0.0,
+              "outward_rise": 7.985156135168626e-17,
+              "profile_rms": 0.6047474181989325,
+              "slice_energy": 0.22756927595456306
+            }
+          },
+          {
+            "cell_id": "50deg-450mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.5878787878787878,
+            "top_1_match": false,
+            "weights": {
+              "mean_containment": 0.13074617140928113,
+              "minus_six_line": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.641779724841573,
+              "slice_energy": 0.2274741037491459
+            }
+          }
+        ],
+        "mode": "leave-one-cell-out global",
+        "summary": {
+          "cell_count": 25,
+          "mean_human_winner_score_rank": 3.08,
+          "mean_pairwise_agreement": 0.6782222222222224,
+          "mean_spearman": 0.47345454545454535,
+          "median_spearman": 0.5393939393939393,
+          "top_1_matches": 8
+        }
+      },
+      "global_weights": {
+        "mean_containment": 0.19479054139943497,
+        "minus_six_line": 2.1571064196218362e-17,
+        "outward_rise": 0.0,
+        "profile_rms": 0.5807912054964889,
+        "slice_energy": 0.22441825310407618
+      }
+    },
+    "v2_components": {
+      "components": [
+        "profile_rms",
+        "slice_energy",
+        "mean_containment",
+        "outward_rise",
+        "beamwidth_quality"
+      ],
+      "coverage_specific_full_fit": {
+        "30": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 1.6,
+            "mean_pairwise_agreement": 0.8177777777777777,
+            "mean_spearman": 0.8060606060606059,
+            "median_spearman": 0.7818181818181817,
+            "top_1_matches": 3
+          },
+          "weights": {
+            "beamwidth_quality": 0.16190348643048652,
+            "mean_containment": 0.0,
+            "outward_rise": 7.542085772510143e-17,
+            "profile_rms": 0.5107981569086388,
+            "slice_energy": 0.3272983566608745
+          }
+        },
+        "35": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 2.2,
+            "mean_pairwise_agreement": 0.7911111111111111,
+            "mean_spearman": 0.7163636363636364,
+            "median_spearman": 0.6727272727272726,
+            "top_1_matches": 3
+          },
+          "weights": {
+            "beamwidth_quality": 0.2004107068559991,
+            "mean_containment": 1.21929320799256e-17,
+            "outward_rise": 1.0930828376175219e-16,
+            "profile_rms": 0.4641780704401626,
+            "slice_energy": 0.3354112227038382
+          }
+        },
+        "40": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 2.2,
+            "mean_pairwise_agreement": 0.7511111111111111,
+            "mean_spearman": 0.6363636363636364,
+            "median_spearman": 0.6848484848484848,
+            "top_1_matches": 2
+          },
+          "weights": {
+            "beamwidth_quality": 0.1001768904642985,
+            "mean_containment": 0.0,
+            "outward_rise": 1.9913341165935998e-17,
+            "profile_rms": 0.5641031360064322,
+            "slice_energy": 0.3357199735292694
+          }
+        },
+        "45": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 2.8,
+            "mean_pairwise_agreement": 0.7777777777777777,
+            "mean_spearman": 0.6896969696969696,
+            "median_spearman": 0.709090909090909,
+            "top_1_matches": 2
+          },
+          "weights": {
+            "beamwidth_quality": 0.1950039226816584,
+            "mean_containment": 0.11832791034189183,
+            "outward_rise": 1.6492078875726635e-16,
+            "profile_rms": 0.6548285151190381,
+            "slice_energy": 0.031839651857411534
+          }
+        },
+        "50": {
+          "in_sample": {
+            "cell_count": 5,
+            "mean_human_winner_score_rank": 3.6,
+            "mean_pairwise_agreement": 0.6844444444444445,
+            "mean_spearman": 0.5296969696969697,
+            "median_spearman": 0.6606060606060605,
+            "top_1_matches": 0
+          },
+          "weights": {
+            "beamwidth_quality": 0.14612247649971422,
+            "mean_containment": 0.2417877760174364,
+            "outward_rise": 2.512796001459713e-18,
+            "profile_rms": 0.3688990469690855,
+            "slice_energy": 0.24319070051376396
+          }
+        }
+      },
+      "coverage_specific_leave_one_cell_out": {
+        "held_out_cells": [
+          {
+            "cell_id": "30deg-250mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.6606060606060605,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.19142790413379054,
+              "mean_containment": 4.2343583461589196e-17,
+              "outward_rise": 2.3049019956083482e-17,
+              "profile_rms": 0.47821600797352104,
+              "slice_energy": 0.33035608789268844
+            }
+          },
+          {
+            "cell_id": "35deg-250mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.9333333333333333,
+            "spearman": 0.9636363636363635,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.19214681877230527,
+              "mean_containment": 0.0,
+              "outward_rise": 5.215690148345214e-17,
+              "profile_rms": 0.45216202915446063,
+              "slice_energy": 0.3556911520732342
+            }
+          },
+          {
+            "cell_id": "40deg-250mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6,
+            "spearman": 0.28484848484848485,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.07036190433406897,
+              "mean_containment": 1.029678093460438e-17,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4149566663161406,
+              "slice_energy": 0.5146814293497906
+            }
+          },
+          {
+            "cell_id": "45deg-250mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.6444444444444445,
+            "spearman": 0.38181818181818183,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.21421753217024997,
+              "mean_containment": 0.0,
+              "outward_rise": 1.4359448879141154e-17,
+              "profile_rms": 0.5193091732575795,
+              "slice_energy": 0.2664732945721705
+            }
+          },
+          {
+            "cell_id": "50deg-250mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 7,
+            "pairwise_agreement": 0.4666666666666667,
+            "spearman": -0.06666666666666665,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.13520797810230017,
+              "mean_containment": 0.2601363308491332,
+              "outward_rise": 6.003849683595869e-17,
+              "profile_rms": 0.2826979591689479,
+              "slice_energy": 0.32195773187961874
+            }
+          },
+          {
+            "cell_id": "30deg-300mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7454545454545454,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.13869855290151484,
+              "mean_containment": 1.1176674933861442e-16,
+              "outward_rise": 9.194355822859518e-17,
+              "profile_rms": 0.5380397785483332,
+              "slice_energy": 0.3232616685501517
+            }
+          },
+          {
+            "cell_id": "35deg-300mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8444444444444444,
+            "spearman": 0.8303030303030302,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.14813749566447762,
+              "mean_containment": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5243333663333694,
+              "slice_energy": 0.327529138002153
+            }
+          },
+          {
+            "cell_id": "40deg-300mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6666666666666666,
+            "spearman": 0.4424242424242424,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.08790789868383116,
+              "mean_containment": 0.0,
+              "outward_rise": 4.1607584624657957e-17,
+              "profile_rms": 0.6156367950802663,
+              "slice_energy": 0.2964553062359026
+            }
+          },
+          {
+            "cell_id": "45deg-300mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.5515151515151515,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.1812055675071038,
+              "mean_containment": 0.22526279577582428,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5644379914094606,
+              "slice_energy": 0.029093645307611323
+            }
+          },
+          {
+            "cell_id": "50deg-300mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.6666666666666666,
+            "spearman": 0.41818181818181815,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.1875030933956134,
+              "mean_containment": 0.0947198812249082,
+              "outward_rise": 0.0,
+              "profile_rms": 0.45328487665571865,
+              "slice_energy": 0.26449214872375965
+            }
+          },
+          {
+            "cell_id": "30deg-350mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.9111111111111111,
+            "spearman": 0.9515151515151514,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.16097170189734,
+              "mean_containment": 1.8941546245127128e-16,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5059605740694872,
+              "slice_energy": 0.3330677240331725
+            }
+          },
+          {
+            "cell_id": "35deg-350mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6666666666666666,
+            "spearman": 0.4545454545454545,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.23417982243123647,
+              "mean_containment": 0.0,
+              "outward_rise": 4.861193776501824e-17,
+              "profile_rms": 0.40584890790042055,
+              "slice_energy": 0.35997126966834314
+            }
+          },
+          {
+            "cell_id": "40deg-350mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.8222222222222222,
+            "spearman": 0.8181818181818182,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.12751599746214276,
+              "mean_containment": 1.0710638380490125e-18,
+              "outward_rise": 0.0021492496962949217,
+              "profile_rms": 0.48990547440058035,
+              "slice_energy": 0.380429278440982
+            }
+          },
+          {
+            "cell_id": "45deg-350mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8888888888888888,
+            "spearman": 0.8666666666666665,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.16411700409902905,
+              "mean_containment": 0.16973445657710334,
+              "outward_rise": 0.0,
+              "profile_rms": 0.6661485393238677,
+              "slice_energy": 0.0
+            }
+          },
+          {
+            "cell_id": "50deg-350mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7454545454545454,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.12466339161016608,
+              "mean_containment": 0.3768969479409533,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4009001059291928,
+              "slice_energy": 0.09753955451968793
+            }
+          },
+          {
+            "cell_id": "30deg-400mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8222222222222222,
+            "spearman": 0.8303030303030302,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.16067686594212904,
+              "mean_containment": 6.07018709643703e-17,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5052715712133214,
+              "slice_energy": 0.33405156284454934
+            }
+          },
+          {
+            "cell_id": "35deg-400mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 8,
+            "pairwise_agreement": 0.5777777777777777,
+            "spearman": 0.34545454545454546,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.06681368800169345,
+              "mean_containment": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.7775833242456436,
+              "slice_energy": 0.15560298775266304
+            }
+          },
+          {
+            "cell_id": "40deg-400mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.6666666666666666,
+            "spearman": 0.43030303030303024,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.11655158042618684,
+              "mean_containment": 0.0,
+              "outward_rise": 1.076807326329067e-17,
+              "profile_rms": 0.5671672309355095,
+              "slice_energy": 0.31628118863830373
+            }
+          },
+          {
+            "cell_id": "45deg-400mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7939393939393938,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.11575020948691674,
+              "mean_containment": 0.25502238924458936,
+              "outward_rise": 0.0,
+              "profile_rms": 0.629227401268494,
+              "slice_energy": 0.0
+            }
+          },
+          {
+            "cell_id": "50deg-400mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.5636363636363636,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.07131867110219871,
+              "mean_containment": 0.3782298719282441,
+              "outward_rise": 0.0,
+              "profile_rms": 0.3839595945093504,
+              "slice_energy": 0.16649186246020675
+            }
+          },
+          {
+            "cell_id": "30deg-450mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.7818181818181817,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.15644068068315517,
+              "mean_containment": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5291768205952645,
+              "slice_energy": 0.31438249872158036
+            }
+          },
+          {
+            "cell_id": "35deg-450mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.6242424242424242,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.3573752540530812,
+              "mean_containment": 0.0,
+              "outward_rise": 3.338121021408752e-17,
+              "profile_rms": 0.17189055586300747,
+              "slice_energy": 0.47073419008391143
+            }
+          },
+          {
+            "cell_id": "40deg-450mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.6666666666666666,
+            "spearman": 0.6,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.11688965795411264,
+              "mean_containment": 0.0,
+              "outward_rise": 0.07303837981557651,
+              "profile_rms": 0.47706600184332354,
+              "slice_energy": 0.33300596038698727
+            }
+          },
+          {
+            "cell_id": "45deg-450mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.6727272727272726,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.29205444422548527,
+              "mean_containment": 0.0,
+              "outward_rise": 2.4092001594936608e-17,
+              "profile_rms": 0.6277927794378414,
+              "slice_energy": 0.08015277633667342
+            }
+          },
+          {
+            "cell_id": "50deg-450mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.6606060606060605,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.258866490994147,
+              "mean_containment": 0.10241000351717407,
+              "outward_rise": 0.0,
+              "profile_rms": 0.3435806588410979,
+              "slice_energy": 0.29514284664758106
+            }
+          }
+        ],
+        "mode": "leave-one-cell-out within coverage",
+        "summary": {
+          "cell_count": 25,
+          "mean_human_winner_score_rank": 2.76,
+          "mean_pairwise_agreement": 0.7368888888888888,
+          "mean_spearman": 0.614060606060606,
+          "median_spearman": 0.6606060606060605,
+          "top_1_matches": 11
+        }
+      },
+      "global_in_sample": {
+        "cell_count": 25,
+        "mean_human_winner_score_rank": 2.52,
+        "mean_pairwise_agreement": 0.7564444444444445,
+        "mean_spearman": 0.6543030303030303,
+        "median_spearman": 0.6969696969696969,
+        "top_1_matches": 9
+      },
+      "global_leave_one_cell_out": {
+        "held_out_cells": [
+          {
+            "cell_id": "30deg-250mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.6606060606060605,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.1836042364290822,
+              "mean_containment": 5.360463541187475e-17,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4947428474553594,
+              "slice_energy": 0.32165291611555835
+            }
+          },
+          {
+            "cell_id": "35deg-250mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.9333333333333333,
+            "spearman": 0.9636363636363635,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.17793995406444052,
+              "mean_containment": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.49046872388895446,
+              "slice_energy": 0.331591322046605
+            }
+          },
+          {
+            "cell_id": "40deg-250mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8444444444444444,
+            "spearman": 0.8060606060606059,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.17663137406659568,
+              "mean_containment": 7.814181536791108e-18,
+              "outward_rise": 5.327822683949942e-17,
+              "profile_rms": 0.4954552634659401,
+              "slice_energy": 0.32791336246746433
+            }
+          },
+          {
+            "cell_id": "45deg-250mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.5555555555555556,
+            "spearman": 0.09090909090909088,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.1823545947500192,
+              "mean_containment": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4776717082182573,
+              "slice_energy": 0.33997369703172337
+            }
+          },
+          {
+            "cell_id": "50deg-250mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.5555555555555556,
+            "spearman": 0.2121212121212121,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18031067825072294,
+              "mean_containment": 0.0,
+              "outward_rise": 5.500288680042734e-17,
+              "profile_rms": 0.49069181306909937,
+              "slice_energy": 0.3289975086801777
+            }
+          },
+          {
+            "cell_id": "30deg-300mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8222222222222222,
+            "spearman": 0.7575757575757575,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.17758207279445296,
+              "mean_containment": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.49427827051669326,
+              "slice_energy": 0.3281396566888538
+            }
+          },
+          {
+            "cell_id": "35deg-300mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8888888888888888,
+            "spearman": 0.8909090909090909,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.17478065105662033,
+              "mean_containment": 2.19465314647807e-17,
+              "outward_rise": 7.061213725943107e-17,
+              "profile_rms": 0.4931972553135804,
+              "slice_energy": 0.33202209362979923
+            }
+          },
+          {
+            "cell_id": "40deg-300mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.5030303030303029,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.18118866250897495,
+              "mean_containment": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.49360489375581873,
+              "slice_energy": 0.3252064437352064
+            }
+          },
+          {
+            "cell_id": "45deg-300mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.5636363636363636,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.1792298297892791,
+              "mean_containment": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4933158495637585,
+              "slice_energy": 0.3274543206469625
+            }
+          },
+          {
+            "cell_id": "50deg-300mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 4,
+            "pairwise_agreement": 0.6444444444444445,
+            "spearman": 0.3939393939393939,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18096860109139776,
+              "mean_containment": 1.7066051607096863e-17,
+              "outward_rise": 4.332900705352857e-17,
+              "profile_rms": 0.4914904352188199,
+              "slice_energy": 0.32754096368978225
+            }
+          },
+          {
+            "cell_id": "30deg-350mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8888888888888888,
+            "spearman": 0.9151515151515152,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.1804270038986349,
+              "mean_containment": 2.607531344140427e-17,
+              "outward_rise": 0.0,
+              "profile_rms": 0.48782607616280543,
+              "slice_energy": 0.33174691993855976
+            }
+          },
+          {
+            "cell_id": "35deg-350mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.6666666666666666,
+            "spearman": 0.43030303030303024,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.18077919341056614,
+              "mean_containment": 3.605562716087962e-17,
+              "outward_rise": 3.3423070403250236e-17,
+              "profile_rms": 0.49056341972073736,
+              "slice_energy": 0.3286573868686965
+            }
+          },
+          {
+            "cell_id": "40deg-350mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7454545454545454,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18506850298971173,
+              "mean_containment": 3.1855482240820065e-17,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4839354281520398,
+              "slice_energy": 0.33099606885824845
+            }
+          },
+          {
+            "cell_id": "45deg-350mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.8888888888888888,
+            "spearman": 0.9151515151515152,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.17306568441547204,
+              "mean_containment": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5035888132760137,
+              "slice_energy": 0.32334550230851433
+            }
+          },
+          {
+            "cell_id": "50deg-350mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.8222222222222222,
+            "spearman": 0.7575757575757575,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18004570034307738,
+              "mean_containment": 1.3469709801135676e-18,
+              "outward_rise": 2.1771420574146227e-17,
+              "profile_rms": 0.49266976074283386,
+              "slice_energy": 0.3272845389140887
+            }
+          },
+          {
+            "cell_id": "30deg-400mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 1,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.709090909090909,
+            "top_1_match": true,
+            "weights": {
+              "beamwidth_quality": 0.18058781006002736,
+              "mean_containment": 7.903403351090987e-18,
+              "outward_rise": 0.0,
+              "profile_rms": 0.4871528352421461,
+              "slice_energy": 0.3322593546978266
+            }
+          },
+          {
+            "cell_id": "35deg-400mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.7111111111111111,
+            "spearman": 0.5393939393939393,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.17611077401026018,
+              "mean_containment": 0.0,
+              "outward_rise": 7.335913432506973e-17,
+              "profile_rms": 0.5048354453115381,
+              "slice_energy": 0.3190537806782016
+            }
+          },
+          {
+            "cell_id": "40deg-400mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.6,
+            "spearman": 0.34545454545454546,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.1848391522474618,
+              "mean_containment": 0.0,
+              "outward_rise": 8.261108025314051e-17,
+              "profile_rms": 0.4872859325085076,
+              "slice_energy": 0.32787491524403056
+            }
+          },
+          {
+            "cell_id": "45deg-400mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 5,
+            "pairwise_agreement": 0.8,
+            "spearman": 0.7939393939393938,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.17060421238120424,
+              "mean_containment": 0.0,
+              "outward_rise": 5.1516288284214095e-17,
+              "profile_rms": 0.5078136924488088,
+              "slice_energy": 0.3215820951699869
+            }
+          },
+          {
+            "cell_id": "50deg-400mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.6444444444444445,
+            "spearman": 0.49090909090909085,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.1641539069691639,
+              "mean_containment": 0.0,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5172141547390631,
+              "slice_energy": 0.31863193829177305
+            }
+          },
+          {
+            "cell_id": "30deg-450mm",
+            "coverage_deg": 30,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7777777777777778,
+            "spearman": 0.7818181818181817,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.17931939849529058,
+              "mean_containment": 1.439264714458562e-17,
+              "outward_rise": 0.0,
+              "profile_rms": 0.5004513285939909,
+              "slice_energy": 0.3202292729107186
+            }
+          },
+          {
+            "cell_id": "35deg-450mm",
+            "coverage_deg": 35,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7333333333333333,
+            "spearman": 0.6727272727272726,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18726227826706385,
+              "mean_containment": 0.0,
+              "outward_rise": 5.166392776453207e-19,
+              "profile_rms": 0.48324618717728307,
+              "slice_energy": 0.3294915345556531
+            }
+          },
+          {
+            "cell_id": "40deg-450mm",
+            "coverage_deg": 40,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.7555555555555555,
+            "spearman": 0.6848484848484848,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.1834551421036931,
+              "mean_containment": 3.702291406230956e-17,
+              "outward_rise": 0.0,
+              "profile_rms": 0.48963836122508914,
+              "slice_energy": 0.32690649667121774
+            }
+          },
+          {
+            "cell_id": "45deg-450mm",
+            "coverage_deg": 45,
+            "human_winner_score_rank": 2,
+            "pairwise_agreement": 0.7555555555555555,
+            "spearman": 0.6969696969696969,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18937616102151797,
+              "mean_containment": 0.0,
+              "outward_rise": 2.176098954730512e-16,
+              "profile_rms": 0.4752537503369531,
+              "slice_energy": 0.33537008864152873
+            }
+          },
+          {
+            "cell_id": "50deg-450mm",
+            "coverage_deg": 50,
+            "human_winner_score_rank": 3,
+            "pairwise_agreement": 0.6888888888888889,
+            "spearman": 0.5878787878787878,
+            "top_1_match": false,
+            "weights": {
+              "beamwidth_quality": 0.18636591422662385,
+              "mean_containment": 1.4474381035440744e-16,
+              "outward_rise": 0.0,
+              "profile_rms": 0.48191862472082125,
+              "slice_energy": 0.33171546105255484
+            }
+          }
+        ],
+        "mode": "leave-one-cell-out global",
+        "summary": {
+          "cell_count": 25,
+          "mean_human_winner_score_rank": 2.6,
+          "mean_pairwise_agreement": 0.7493333333333334,
+          "mean_spearman": 0.6363636363636364,
+          "median_spearman": 0.6848484848484848,
+          "top_1_matches": 9
+        }
+      },
+      "global_weights": {
+        "beamwidth_quality": 0.17981552775624943,
+        "mean_containment": 0.0,
+        "outward_rise": 0.0,
+        "profile_rms": 0.4923421125323603,
+        "slice_energy": 0.32784235971139025
+      }
+    }
+  },
+  "fit_method": "nonnegative weights summing to one; pairwise logistic loss; whole-cell cross-validation",
+  "limitations": [
+    "The same rankings select and evaluate the candidate weight families; cross-validation limits but does not remove this bias.",
+    "The forced total order contains no ties or confidence values.",
+    "Coverage-specific fits have only four training cells per held-out fold and should be treated as high variance.",
+    "The candidate pool was enriched by v1 and v2.2 rather than sampled randomly."
+  ],
+  "pair_count": 1125,
+  "schema_version": 1,
+  "status": "exploratory_fit_not_released",
+  "study_id": "surface-score-v2-2-cell-ranking-weight-fit"
+}
