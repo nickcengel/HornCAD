@@ -108,11 +108,13 @@ frozen rule.
 
 ### S-matched exploratory follow-up — 6 new evaluations
 
-Add six shorter versions of the worst completed development comparisons whose
+Add six S-matched versions of the worst completed development comparisons whose
 derived S fell below the measured parent S and whose surface score fell below
-the parent. Preserve mouth, coverage, K, N, throat angle, extension, and
-authored throat radius. Reduce only OSSE length until the generated geometry
-recovers the parent S within 1e-6.
+the parent. Preserve coverage, K, N, throat angle, extension, and authored
+throat radius. For angle-only cases, preserve parent length and increase mouth
+diameter until the geometry recovers parent S. For cases with nonzero
+extension, preserve parent mouth diameter and reduce OSSE length. In both
+branches, recover the measured parent S within 1e-6.
 
 Select the four worst eligible losses overall plus the two worst eligible cases
 with nonzero extension. These are exploratory development evidence, not locked

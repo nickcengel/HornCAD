@@ -320,7 +320,10 @@ def _geometry_metadata(
             length, length, effective_radius, coverage, k, angle)
         + parent_s*termination_unit(length, length, 0.995, n)
     )
-    mouth = float(row["round_mouth_diameter_mm"])
+    mouth = float(row.get(
+        "actual_mouth_diameter_mm",
+        row["round_mouth_diameter_mm"],
+    ))
     return {
         "derived_s": float(config["horizontal_basis"]["solved_s"]),
         "authored_throat_radius_mm": float(global_config["throat_radius"]),
@@ -343,6 +346,10 @@ def _materialize(rows: list[dict[str, Any]],
         source = yaml.safe_load(source_path.read_text(encoding="utf-8"))
         source["horncad_config"]["global"]["throat_angle_deg"] = float(
             row["throat_angle_deg"])
+        if "actual_mouth_diameter_mm" in row:
+            diameter = float(row["actual_mouth_diameter_mm"])
+            source["horncad_config"]["global"]["mouth_width"] = diameter
+            source["horncad_config"]["global"]["mouth_height"] = diameter
         document, values = _search_document(row, parent)
         project, _ = materialize_candidate(
             copy.deepcopy(source), values, document["bem_candidate_search"])

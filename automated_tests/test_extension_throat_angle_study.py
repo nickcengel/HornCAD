@@ -23,6 +23,7 @@ from app.tools.throat_impedance_diagnostics import (
 from app.tools.run_extension_s_matched_followup import (
     select_followups,
     solve_parent_s_length,
+    solve_parent_s_mouth,
 )
 
 
@@ -91,6 +92,19 @@ class ExtensionThroatAngleStudyTests(unittest.TestCase):
         )
         self.assertLess(length, 333.689)
         self.assertAlmostEqual(length, 293.50631695, places=6)
+
+    def test_angle_only_s_match_increases_mouth_at_parent_length(self):
+        mouth = solve_parent_s_mouth(
+            length_mm=333.689,
+            effective_throat_radius_mm=12.7,
+            coverage_deg=30.0,
+            k=7.0,
+            n=8.0,
+            throat_angle_deg=12.0,
+            target_s=0.483500820567733,
+        )
+        self.assertGreater(mouth, 450.0)
+        self.assertAlmostEqual(mouth, 521.71131869, places=6)
 
     def test_impedance_v2_1_preserves_reviewed_parent_order(self):
         names = (

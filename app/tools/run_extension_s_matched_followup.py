@@ -6,12 +6,17 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import shutil
 import time
 from typing import Any
 
 import yaml
 
-from .export_horncad import solved_s
+from .export_horncad import (
+    osse_base_radius,
+    solved_s,
+    termination_unit,
+)
 from .report_extension_throat_angle_study import refresh_index
 from .run_bem_search import run_search
 from .run_extension_throat_angle_study import (
@@ -158,6 +163,34 @@ def solve_parent_s_length(
     return length
 
 
+def solve_parent_s_mouth(
+    *,
+    length_mm: float,
+    effective_throat_radius_mm: float,
+    coverage_deg: float,
+    k: float,
+    n: float,
+    throat_angle_deg: float,
+    target_s: float,
+) -> float:
+    """Return the larger mouth diameter that restores parent S at fixed length."""
+    radius = (
+        osse_base_radius(
+            length_mm,
+            length_mm,
+            effective_throat_radius_mm,
+            coverage_deg,
+            k,
+            throat_angle_deg,
+        )
+        + target_s * termination_unit(
+            length_mm, length_mm, 0.995, n)
+    )
+    if radius <= 0:
+        raise ValueError("invalid S-matched mouth radius")
+    return 2.0 * radius
+
+
 def prepare_followup() -> dict[str, Any]:
     manifest = _verify_manifest()
     existing = manifest.get("s_matched_followup")
@@ -171,17 +204,36 @@ def prepare_followup() -> dict[str, Any]:
         source_project = yaml.safe_load(
             (ROOT / source["source_project"]).read_text(encoding="utf-8"))
         global_config = source_project["horncad_config"]["global"]
-        length = solve_parent_s_length(
-            original_length_mm=float(parent["length_mm"]),
-            effective_throat_radius_mm=float(
-                global_config["effective_throat_radius"]),
-            coverage_deg=float(source["coverage_deg"]),
-            k=float(parent["k"]),
-            n=float(parent["n"]),
-            mouth_radius_mm=0.5 * float(source["round_mouth_diameter_mm"]),
-            throat_angle_deg=float(source["throat_angle_deg"]),
-            target_s=float(parent["s"]),
-        )
+        extension = float(source["extension_mm"])
+        original_length = float(parent["length_mm"])
+        original_mouth = float(source["round_mouth_diameter_mm"])
+        if extension == 0:
+            length = original_length
+            actual_mouth = solve_parent_s_mouth(
+                length_mm=length,
+                effective_throat_radius_mm=float(
+                    global_config["effective_throat_radius"]),
+                coverage_deg=float(source["coverage_deg"]),
+                k=float(parent["k"]),
+                n=float(parent["n"]),
+                throat_angle_deg=float(source["throat_angle_deg"]),
+                target_s=float(parent["s"]),
+            )
+            compensation = "increase-mouth"
+        else:
+            length = solve_parent_s_length(
+                original_length_mm=original_length,
+                effective_throat_radius_mm=float(
+                    global_config["effective_throat_radius"]),
+                coverage_deg=float(source["coverage_deg"]),
+                k=float(parent["k"]),
+                n=float(parent["n"]),
+                mouth_radius_mm=0.5 * original_mouth,
+                throat_angle_deg=float(source["throat_angle_deg"]),
+                target_s=float(parent["s"]),
+            )
+            actual_mouth = original_mouth
+            compensation = "decrease-length"
         rows.append({
             "id": f"{source['id']}-Sparent",
             "stage": STAGE,
@@ -191,17 +243,24 @@ def prepare_followup() -> dict[str, Any]:
             "throat_angle_deg": source["throat_angle_deg"],
             "extension_mm": source["extension_mm"],
             "length_mm": length,
+            "actual_mouth_diameter_mm": actual_mouth,
+            "s_compensation": compensation,
             "outcome_access": "exploratory-development",
             "source_coordinate_id": source["source_coordinate_id"],
             "source_surface_score": source["source_surface_score"],
             "source_surface_delta_points": source["surface_delta_points"],
             "source_derived_s": source["source_derived_s"],
             "target_parent_s": source["parent_s"],
-            "original_parent_length_mm": float(parent["length_mm"]),
-            "length_reduction_mm": float(parent["length_mm"]) - length,
+            "original_parent_length_mm": original_length,
+            "length_reduction_mm": original_length - length,
             "length_reduction_percent": (
-                (float(parent["length_mm"]) - length)
-                / float(parent["length_mm"]) * 100.0),
+                (original_length - length)
+                / original_length * 100.0),
+            "original_parent_mouth_diameter_mm": original_mouth,
+            "mouth_increase_mm": actual_mouth - original_mouth,
+            "mouth_increase_percent": (
+                (actual_mouth - original_mouth)
+                / original_mouth * 100.0),
         })
 
     materialized = _materialize(rows, manifest["parents"])
@@ -217,12 +276,16 @@ def prepare_followup() -> dict[str, Any]:
     manifest.setdefault("counts", {})[STAGE] = len(rows)
     manifest["s_matched_followup"] = {
         "schema_version": 1,
+        "strategy_version": 2,
         "status": "preflight",
         "candidate_count": len(rows),
         "minimum_nonzero_extension_cases": MINIMUM_EXTENDED_COUNT,
         "selection_rule": (
             "six worst completed surface losses with derived S below the "
             "measured parent S; reserve two cases for nonzero extension"),
+        "compensation_rule": (
+            "angle-only cases increase mouth at fixed parent length; "
+            "nonzero-extension cases decrease length at fixed parent mouth"),
         "previous_freeze_sha256": previous_freeze,
         "source_coordinate_ids": [
             row["source_coordinate_id"] for row in rows],
@@ -270,6 +333,69 @@ def prepare_followup() -> dict[str, Any]:
     return manifest["s_matched_followup"]
 
 
+def revise_followup() -> dict[str, Any]:
+    """Replace the prepared compensation geometries before they run."""
+    manifest = _verify_manifest()
+    rows = [
+        row for row in manifest["coordinates"]
+        if row["stage"] == STAGE
+    ]
+    if not rows:
+        return prepare_followup()
+    runtime = _read_json(RUNTIME) if RUNTIME.is_file() else {}
+    if runtime.get("status") == "running":
+        raise RuntimeError("cannot revise a running S-matched follow-up")
+    previous = manifest.get("s_matched_followup", {})
+    for row in rows:
+        search = ROOT / manifest["inputs"][row["id"]]["search"]
+        directory = search.parent.resolve()
+        expected_root = (STUDY_ROOT / "searches" / STAGE).resolve()
+        if expected_root not in directory.parents:
+            raise ValueError(f"refusing to replace unexpected path: {directory}")
+        shutil.rmtree(directory)
+        manifest["inputs"].pop(row["id"], None)
+    manifest["coordinates"] = [
+        row for row in manifest["coordinates"]
+        if row["stage"] != STAGE
+    ]
+    manifest["candidate_count"] = len(manifest["coordinates"])
+    manifest["hard_candidate_cap"] = (
+        int(manifest["hard_candidate_cap"]) - len(rows))
+    manifest.get("counts", {}).pop(STAGE, None)
+    manifest.pop("s_matched_followup", None)
+    manifest.setdefault("authorized_revisions", []).append({
+        "stage": STAGE,
+        "reason": (
+            "angle-only cases restore S by increasing mouth; "
+            "extension cases restore S by decreasing length"),
+        "replaced_candidate_count": len(rows),
+        "previous_freeze_sha256": previous.get(
+            "previous_freeze_sha256"),
+    })
+    coordinate_payload = [
+        {
+            key: row[key]
+            for key in (
+                "id", "stage", "coverage_deg",
+                "round_mouth_diameter_mm", "parent_id", "parent_role",
+                "throat_angle_deg", "extension_mm",
+            )
+        }
+        for row in manifest["coordinates"]
+    ] + manifest["conditional_coordinates"]
+    manifest["coordinate_sha256"] = hashlib.sha256(
+        json.dumps(
+            coordinate_payload, sort_keys=True, separators=(",", ":"),
+        ).encode("utf-8")
+    ).hexdigest()
+    manifest["freeze_sha256"] = _content_hash({
+        key: value for key, value in manifest.items()
+        if key != "freeze_sha256"
+    })
+    _write_json(MANIFEST, manifest)
+    return prepare_followup()
+
+
 def _development_finished() -> bool:
     runtime = _read_json(
         STUDY_ROOT / "runtime-primary-development-secondary-transfer.json")
@@ -315,11 +441,13 @@ def run_followup(*, wait_for_development: bool = False) -> dict[str, Any]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "action", choices=("prepare", "run", "prepare-and-run"))
+        "action", choices=("prepare", "revise", "run", "prepare-and-run"))
     parser.add_argument("--wait-for-development", action="store_true")
     args = parser.parse_args()
     if args.action == "prepare":
         result = prepare_followup()
+    elif args.action == "revise":
+        result = revise_followup()
     elif args.action == "run":
         result = run_followup(
             wait_for_development=args.wait_for_development)

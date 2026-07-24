@@ -229,6 +229,10 @@ def render_index(root: Path, manifest: dict[str, Any],
         parent_s = float(
             manifest["parents"][row["parent_role"]][cell_id]["s"])
         s_change = _percent_change(row.get("derived_s"), parent_s)
+        actual_mouth = float(row.get(
+            "actual_mouth_diameter_mm",
+            row["round_mouth_diameter_mm"],
+        ))
         label = html.escape(row["id"])
         if row["candidate_report"]:
             label = f"<a href='{html.escape(row['candidate_report'])}'>{label}</a>"
@@ -255,7 +259,9 @@ def render_index(root: Path, manifest: dict[str, Any],
             f"<td data-sort='{row['completed_at']}'>{_date(row['completed_at'])}</td>"
             f"<td>{html.escape(row['stage'])}</td>"
             f"<td data-sort='{row['coverage_deg']}'>{row['coverage_deg']}°</td>"
-            f"<td data-sort='{row['round_mouth_diameter_mm']}'>{row['round_mouth_diameter_mm']} mm</td>"
+            f"<td data-sort='{actual_mouth}' "
+            f"title='Parent grid mouth: {row['round_mouth_diameter_mm']} mm'>"
+            f"{_number(actual_mouth,1)} mm</td>"
             f"<td>{html.escape(row['parent_role'])}</td>"
             f"<td data-column='parent'>{html.escape(row['parent_id'])}</td>"
             f"<td data-sort='{row['throat_angle_deg']}'>{row['throat_angle_deg']}°</td>"
@@ -443,7 +449,7 @@ def render_index(root: Path, manifest: dict[str, Any],
     subsearch_rows = "".join(
         f"<tr data-subsearch-coverage-angle='{row['coverage_deg']}'>"
         f"<td>{html.escape(row['stage'])}</td><td>{row['coverage_deg']}°</td>"
-        f"<td>{row['round_mouth_diameter_mm']} mm</td>"
+        f"<td>{_number(row.get('actual_mouth_diameter_mm', row['round_mouth_diameter_mm']),1)} mm</td>"
         f"<td>{row['throat_angle_deg']}°</td><td>{row['extension_mm']} mm</td>"
         f"<td><span class='badge {'complete' if row['status']=='complete' else 'running' if row['status']=='running' else 'pending'}'>{html.escape(row['status'])}</span></td>"
         f"<td>{_number(row['surface_score'])}</td>"

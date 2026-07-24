@@ -19,8 +19,8 @@ bem_candidate_search:
   fixed_design: true
   bounds:
     length_mm:
-    - 293.5063159501577
-    - 293.5063179501577
+    - 333.688999
+    - 333.689001
     extension_mm:
     - -1.0e-06
     - 1.0e-06
@@ -45,7 +45,7 @@ bem_candidate_search:
   initial_pool:
   - label: ext-angle-primary-development-30deg-450mm-primary-A12-E0-Sparent-schema-seed-duplicate
     values:
-      length_mm: 293.5063169501577
+      length_mm: 333.689
       extension_mm: 0.0
       osse_coverage_h_deg: 30.0
       osse_coverage_v_deg: 30.0

@@ -1,4 +1,12 @@
 {
+  "authorized_revisions": [
+    {
+      "previous_freeze_sha256": "d202abea7d2257aca897d71aebbbb53ae9d2edf6ea07189b1d532ee9ce06fe8b",
+      "reason": "angle-only cases restore S by increasing mouth; extension cases restore S by decreasing length",
+      "replaced_candidate_count": 6,
+      "stage": "s-matched-followup"
+    }
+  ],
   "bem_jobs_scheduled": 0,
   "candidate_count": 216,
   "conditional_coordinates": [
@@ -4786,19 +4794,23 @@
       "throat_angle_deg": 12
     },
     {
+      "actual_mouth_diameter_mm": 521.7113186910794,
       "authored_throat_radius_mm": 12.7,
       "coverage_deg": 30,
-      "derived_s": 0.4835008205677322,
+      "derived_s": 0.48350082056773264,
       "effective_profile_throat_radius_mm": 12.7,
-      "equivalent_mouth_diameter_mm": 450.0000000000001,
-      "equivalent_mouth_shift_mm": 1.1368683772161603e-13,
+      "equivalent_mouth_diameter_mm": 521.7113186910794,
+      "equivalent_mouth_shift_mm": 0.0,
       "extension_mm": 0,
       "id": "ext-angle-primary-development-30deg-450mm-primary-A12-E0-Sparent",
-      "length_mm": 293.5063169501577,
-      "length_reduction_mm": 40.182683049842296,
-      "length_reduction_percent": 12.041956147743047,
+      "length_mm": 333.689,
+      "length_reduction_mm": 0.0,
+      "length_reduction_percent": 0.0,
+      "mouth_increase_mm": 71.71131869107944,
+      "mouth_increase_percent": 15.935848598017655,
       "original_parent_length_mm": 333.689,
-      "osse_length_mm": 293.5063169501577,
+      "original_parent_mouth_diameter_mm": 450.0,
+      "osse_length_mm": 333.689,
       "outcome_access": "exploratory-development",
       "parent_id": "ridge-30deg-450mm-K7-N8-Lx1p0",
       "parent_response_path": "examples/round-control-ridge-closure/searches/30deg/450x450/candidates/candidate-001/bem/responses.npz",
@@ -4806,8 +4818,9 @@
       "parent_role": "primary",
       "parent_surface_score": 88.66045197918316,
       "parent_throat_impedance_score": 88.15044355218467,
-      "profile_plus_extension_length_mm": 293.5063169501577,
+      "profile_plus_extension_length_mm": 333.689,
       "round_mouth_diameter_mm": 450,
+      "s_compensation": "increase-mouth",
       "source_coordinate_id": "ext-angle-primary-development-30deg-450mm-primary-A12-E0",
       "source_derived_s": 0.16216352287359642,
       "source_surface_delta_points": -21.297226329842886,
@@ -4817,19 +4830,23 @@
       "throat_angle_deg": 12
     },
     {
+      "actual_mouth_diameter_mm": 462.5877565607392,
       "authored_throat_radius_mm": 12.7,
       "coverage_deg": 30,
-      "derived_s": 0.4958070113007976,
+      "derived_s": 0.4958070113007977,
       "effective_profile_throat_radius_mm": 12.7,
-      "equivalent_mouth_diameter_mm": 400.0,
+      "equivalent_mouth_diameter_mm": 462.5877565607392,
       "equivalent_mouth_shift_mm": 0.0,
       "extension_mm": 0,
       "id": "ext-angle-primary-development-30deg-400mm-primary-A12-E0-Sparent",
-      "length_mm": 256.3972361407423,
-      "length_reduction_mm": 34.837763859257734,
-      "length_reduction_percent": 11.962080058803966,
+      "length_mm": 291.235,
+      "length_reduction_mm": 0.0,
+      "length_reduction_percent": 0.0,
+      "mouth_increase_mm": 62.587756560739194,
+      "mouth_increase_percent": 15.646939140184799,
       "original_parent_length_mm": 291.235,
-      "osse_length_mm": 256.3972361407423,
+      "original_parent_mouth_diameter_mm": 400.0,
+      "osse_length_mm": 291.235,
       "outcome_access": "exploratory-development",
       "parent_id": "30d-400mm-L+1-K+1-N+0",
       "parent_response_path": "examples/control-decoupling/searches/two-factor-face/30deg/400x400/candidates/candidate-008/bem/responses.npz",
@@ -4837,8 +4854,9 @@
       "parent_role": "primary",
       "parent_surface_score": 87.48214218136002,
       "parent_throat_impedance_score": 87.6557633351709,
-      "profile_plus_extension_length_mm": 256.3972361407423,
+      "profile_plus_extension_length_mm": 291.235,
       "round_mouth_diameter_mm": 400,
+      "s_compensation": "increase-mouth",
       "source_coordinate_id": "ext-angle-primary-development-30deg-400mm-primary-A12-E0",
       "source_derived_s": 0.17446971360666358,
       "source_surface_delta_points": -20.006726006210712,
@@ -4848,19 +4866,23 @@
       "throat_angle_deg": 12
     },
     {
+      "actual_mouth_diameter_mm": 400.6199313504759,
       "authored_throat_radius_mm": 12.7,
       "coverage_deg": 30,
-      "derived_s": 0.5481168596199134,
+      "derived_s": 0.5481168596199129,
       "effective_profile_throat_radius_mm": 12.7,
-      "equivalent_mouth_diameter_mm": 349.99999999999994,
-      "equivalent_mouth_shift_mm": -5.684341886080802e-14,
+      "equivalent_mouth_diameter_mm": 400.6199313504759,
+      "equivalent_mouth_shift_mm": 0.0,
       "extension_mm": 0,
       "id": "ext-angle-primary-development-30deg-350mm-primary-A12-E0-Sparent",
-      "length_mm": 208.40236980842093,
-      "length_reduction_mm": 27.143630191579064,
-      "length_reduction_percent": 11.523706703395117,
+      "length_mm": 235.546,
+      "length_reduction_mm": 0.0,
+      "length_reduction_percent": 0.0,
+      "mouth_increase_mm": 50.619931350475895,
+      "mouth_increase_percent": 14.462837528707398,
       "original_parent_length_mm": 235.546,
-      "osse_length_mm": 208.40236980842093,
+      "original_parent_mouth_diameter_mm": 350.0,
+      "osse_length_mm": 235.546,
       "outcome_access": "exploratory-development",
       "parent_id": "30d-350mm-L+0-K+0-N+0",
       "parent_response_path": "examples/control-decoupling/searches/core-axis/30deg/350x350/candidates/candidate-000/bem/responses.npz",
@@ -4868,8 +4890,9 @@
       "parent_role": "primary",
       "parent_surface_score": 85.13149331622007,
       "parent_throat_impedance_score": 88.19023962451546,
-      "profile_plus_extension_length_mm": 208.40236980842093,
+      "profile_plus_extension_length_mm": 235.546,
       "round_mouth_diameter_mm": 350,
+      "s_compensation": "increase-mouth",
       "source_coordinate_id": "ext-angle-primary-development-30deg-350mm-primary-A12-E0",
       "source_derived_s": 0.22677956192577753,
       "source_surface_delta_points": -17.62592829478608,
@@ -4879,19 +4902,23 @@
       "throat_angle_deg": 12
     },
     {
+      "actual_mouth_diameter_mm": 451.5844234322814,
       "authored_throat_radius_mm": 12.7,
       "coverage_deg": 35,
-      "derived_s": 0.6694175455538514,
+      "derived_s": 0.6694175455538521,
       "effective_profile_throat_radius_mm": 12.7,
-      "equivalent_mouth_diameter_mm": 400.0000000000001,
-      "equivalent_mouth_shift_mm": 1.1368683772161603e-13,
+      "equivalent_mouth_diameter_mm": 451.5844234322814,
+      "equivalent_mouth_shift_mm": 0.0,
       "extension_mm": 0,
       "id": "ext-angle-primary-development-35deg-400mm-primary-A12-E0-Sparent",
-      "length_mm": 215.88774993964716,
-      "length_reduction_mm": 24.146250060352827,
-      "length_reduction_percent": 10.059512427553107,
+      "length_mm": 240.034,
+      "length_reduction_mm": 0.0,
+      "length_reduction_percent": 0.0,
+      "mouth_increase_mm": 51.584423432281426,
+      "mouth_increase_percent": 12.896105858070356,
       "original_parent_length_mm": 240.034,
-      "osse_length_mm": 215.88774993964716,
+      "original_parent_mouth_diameter_mm": 400.0,
+      "osse_length_mm": 240.034,
       "outcome_access": "exploratory-development",
       "parent_id": "35d-400mm-L+1-K+1-N+0",
       "parent_response_path": "examples/control-decoupling/searches/two-factor-face/35deg/400x400/candidates/candidate-008/bem/responses.npz",
@@ -4899,8 +4926,9 @@
       "parent_role": "primary",
       "parent_surface_score": 89.29097824729433,
       "parent_throat_impedance_score": 87.20417628844017,
-      "profile_plus_extension_length_mm": 215.88774993964716,
+      "profile_plus_extension_length_mm": 240.034,
       "round_mouth_diameter_mm": 400,
+      "s_compensation": "increase-mouth",
       "source_coordinate_id": "ext-angle-primary-development-35deg-400mm-primary-A12-E0",
       "source_derived_s": 0.34808024785971603,
       "source_surface_delta_points": -9.526562219276798,
@@ -4910,6 +4938,7 @@
       "throat_angle_deg": 12
     },
     {
+      "actual_mouth_diameter_mm": 350.0,
       "authored_throat_radius_mm": 12.7,
       "coverage_deg": 30,
       "derived_s": 0.5481168596199126,
@@ -4921,7 +4950,10 @@
       "length_mm": 218.6217991898542,
       "length_reduction_mm": 16.924200810145805,
       "length_reduction_percent": 7.185093701504506,
+      "mouth_increase_mm": 0.0,
+      "mouth_increase_percent": 0.0,
       "original_parent_length_mm": 235.546,
+      "original_parent_mouth_diameter_mm": 350.0,
       "osse_length_mm": 218.6217991898542,
       "outcome_access": "exploratory-development",
       "parent_id": "30d-350mm-L+0-K+0-N+0",
@@ -4932,6 +4964,7 @@
       "parent_throat_impedance_score": 88.19023962451546,
       "profile_plus_extension_length_mm": 258.6217991898542,
       "round_mouth_diameter_mm": 350,
+      "s_compensation": "decrease-length",
       "source_coordinate_id": "ext-angle-primary-development-30deg-350mm-primary-A12-E40",
       "source_derived_s": 0.35891439597417885,
       "source_surface_delta_points": -1.4618741751682052,
@@ -4941,6 +4974,7 @@
       "throat_angle_deg": 12
     },
     {
+      "actual_mouth_diameter_mm": 300.0,
       "authored_throat_radius_mm": 12.7,
       "coverage_deg": 30,
       "derived_s": 0.45903395704967725,
@@ -4952,7 +4986,10 @@
       "length_mm": 149.67209280488476,
       "length_reduction_mm": 14.505907195115242,
       "length_reduction_percent": 8.835475639315403,
+      "mouth_increase_mm": 0.0,
+      "mouth_increase_percent": 0.0,
       "original_parent_length_mm": 164.178,
+      "original_parent_mouth_diameter_mm": 300.0,
       "osse_length_mm": 149.67209280488476,
       "outcome_access": "exploratory-development",
       "parent_id": "30d-300mm-L-1-K-1-N-1",
@@ -4963,6 +5000,7 @@
       "parent_throat_impedance_score": 84.1388896070645,
       "profile_plus_extension_length_mm": 189.67209280488476,
       "round_mouth_diameter_mm": 300,
+      "s_compensation": "decrease-length",
       "source_coordinate_id": "ext-angle-primary-development-30deg-300mm-primary-A12-E40",
       "source_derived_s": 0.314977532521877,
       "source_surface_delta_points": -1.1645905702362427,
@@ -4978,7 +5016,7 @@
     "s-matched-followup": 6,
     "secondary-transfer": 15
   },
-  "freeze_sha256": "8d3b2011c83f0f2418d0c9e7ee614c77ce358153500d8cea495a1ee28a131085",
+  "freeze_sha256": "e2ef05b6ba7223900419c5b67721e8b89461b07d6211d0fdebe6024f3b797d21",
   "hard_candidate_cap": 232,
   "implementation_sha256": "f1614ea6b7995b8aacb0ae20827f7a927cfd75f52cb41d35e272e3293738e729",
   "initial_candidate_count": 210,
@@ -5213,9 +5251,9 @@
     },
     "ext-angle-primary-development-30deg-350mm-primary-A12-E0-Sparent": {
       "project": "examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/350mm/primary-A12-E0-Sparent/project.yaml",
-      "project_sha256": "f23b6293c2402bfb12213afd0d8ab0c02af6bb4e68f81c46df0b97e7d355352f",
+      "project_sha256": "6967635c2c8cdb8178a4f470136861750a756b734dbd77a75b9fcf9e1dc53a88",
       "search": "examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/350mm/primary-A12-E0-Sparent/search.yaml",
-      "search_sha256": "3e70bfbbf2ba9784fa11626c9f0bb10ae5f30831e3b8d148624430cf0853df18"
+      "search_sha256": "d117c7b7a97db32a04039c32c019194bfcad8c6d6e91dddaf459851b0fabba97"
     },
     "ext-angle-primary-development-30deg-350mm-primary-A12-E40": {
       "project": "examples/extension-throat-angle-heuristics/searches/primary-development/30deg/350mm/primary-A12-E40/project.yaml",
@@ -5267,9 +5305,9 @@
     },
     "ext-angle-primary-development-30deg-400mm-primary-A12-E0-Sparent": {
       "project": "examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/400mm/primary-A12-E0-Sparent/project.yaml",
-      "project_sha256": "ebf0a646c70c056d0282e8f217adb0138dfdea50be3e6cd1af3b3c34ce99ec77",
+      "project_sha256": "f8fa28bcc2c0931e7fa7eb9a9abf301ef384dbf40992e716c532f9e922f3a303",
       "search": "examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/400mm/primary-A12-E0-Sparent/search.yaml",
-      "search_sha256": "48278a23bcf50089ac40976e105cef4c89993f50a039fe6eb3941132a4724be8"
+      "search_sha256": "749c4a0d5f83057315d3170c7145def73c3b26f6f83c57cf4f8c5aac5e7e8f06"
     },
     "ext-angle-primary-development-30deg-400mm-primary-A12-E40": {
       "project": "examples/extension-throat-angle-heuristics/searches/primary-development/30deg/400mm/primary-A12-E40/project.yaml",
@@ -5315,9 +5353,9 @@
     },
     "ext-angle-primary-development-30deg-450mm-primary-A12-E0-Sparent": {
       "project": "examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/450mm/primary-A12-E0-Sparent/project.yaml",
-      "project_sha256": "9796b1dd729c8a71ce21071ed7e0402d765ce814697f51bea610ed360104c48e",
+      "project_sha256": "5896ac5f8bed6840c16a1ad40b267706db1b850c2c00af3be68ecbb65d470d01",
       "search": "examples/extension-throat-angle-heuristics/searches/s-matched-followup/30deg/450mm/primary-A12-E0-Sparent/search.yaml",
-      "search_sha256": "62530b22cdbaef609b0ef29419b25239516d164ae31f97fd0b95692a76fe2b85"
+      "search_sha256": "6605040f2f4bcba15d1e428fd9d691b98edafcdec2ca9bef414c600e0613a013"
     },
     "ext-angle-primary-development-30deg-450mm-primary-A12-E40": {
       "project": "examples/extension-throat-angle-heuristics/searches/primary-development/30deg/450mm/primary-A12-E40/project.yaml",
@@ -5489,9 +5527,9 @@
     },
     "ext-angle-primary-development-35deg-400mm-primary-A12-E0-Sparent": {
       "project": "examples/extension-throat-angle-heuristics/searches/s-matched-followup/35deg/400mm/primary-A12-E0-Sparent/project.yaml",
-      "project_sha256": "531977ee198447e5236a4dc450c81d018c8635ff785042597fa21d3697d9a905",
+      "project_sha256": "12714e6b99bb422e5560bf17001c6d2a5ba3eb57625a1b741db2f6eba23ba945",
       "search": "examples/extension-throat-angle-heuristics/searches/s-matched-followup/35deg/400mm/primary-A12-E0-Sparent/search.yaml",
-      "search_sha256": "59d0d40627b8191dba0f7b79446c49413721e7104521ab5e85ce305d9b7a378e"
+      "search_sha256": "778f66e2e1ee51fed773260119212c2789795486915ea6cdafdfd9f144c3ad20"
     },
     "ext-angle-primary-development-35deg-400mm-primary-A12-E40": {
       "project": "examples/extension-throat-angle-heuristics/searches/primary-development/35deg/400mm/primary-A12-E40/project.yaml",
@@ -7221,8 +7259,9 @@
   },
   "s_matched_followup": {
     "candidate_count": 6,
+    "compensation_rule": "angle-only cases increase mouth at fixed parent length; nonzero-extension cases decrease length at fixed parent mouth",
     "minimum_nonzero_extension_cases": 2,
-    "previous_freeze_sha256": "d202abea7d2257aca897d71aebbbb53ae9d2edf6ea07189b1d532ee9ce06fe8b",
+    "previous_freeze_sha256": "2b387a0fb43f70af856d387e98c3bc2528eae15ce292b7312d8d7b365b35ee39",
     "schema_version": 1,
     "selection_rule": "six worst completed surface losses with derived S below the measured parent S; reserve two cases for nonzero extension",
     "source_coordinate_ids": [
@@ -7233,7 +7272,8 @@
       "ext-angle-primary-development-30deg-350mm-primary-A12-E40",
       "ext-angle-primary-development-30deg-300mm-primary-A12-E40"
     ],
-    "status": "preflight"
+    "status": "preflight",
+    "strategy_version": 2
   },
   "scheduler": {
     "numcalc_process_capacity": 20,
