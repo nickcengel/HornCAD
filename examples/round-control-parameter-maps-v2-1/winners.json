@@ -1,0 +1,948 @@
+{
+  "cells": {
+    "30deg-250mm": {
+      "coverage_deg": 30,
+      "evidence_count": 42,
+      "mouth_mm": 250,
+      "v1_winner": {
+        "id": "30d-250mm-L-1-K-1-N-1",
+        "k": 2.0,
+        "length_mm": 139.546,
+        "n": 4.0,
+        "report_link": "../control-decoupling/searches/three-factor-corner/30deg/250x250/candidates/candidate-000/bem/250x250x139.546_30_K2_N4_Report.html",
+        "response_sha256": "7a04cb681d5e0d5752b50d18d89036794670a44fa55e7598e5b6cabab3efa4da",
+        "s": 0.44012682741979886,
+        "score_v1": 77.51111619093584,
+        "score_v2_1": 67.92387461141934,
+        "source_path": "examples/control-decoupling/searches/three-factor-corner/30deg/250x250/candidates/candidate-000/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 2.0,
+        "length_mm": 34.885999999999996,
+        "n": 12.0,
+        "s": 0.791944676833491,
+        "score": 2.4846491339377934
+      },
+      "v2_1_winner": {
+        "id": "30d-250mm-L+0-K+0-N+1",
+        "k": 4.0,
+        "length_mm": 174.432,
+        "n": 16.0,
+        "report_link": "../control-decoupling/searches/core-axis/30deg/250x250/candidates/candidate-004/bem/250x250x174.432_30_K4_N16_Report.html",
+        "response_sha256": "2304f983f28370880551941a4ee016191c3f5c5bff859bb8b7c12ba0105e50af",
+        "s": 1.23207150425329,
+        "score_v1": 74.7476426008094,
+        "score_v2_1": 70.40852374535713,
+        "source_path": "examples/control-decoupling/searches/core-axis/30deg/250x250/candidates/candidate-004/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "30deg-300mm": {
+      "coverage_deg": 30,
+      "evidence_count": 42,
+      "mouth_mm": 300,
+      "v1_winner": {
+        "id": "30d-300mm-L-1-K-1-N-1",
+        "k": 2.0,
+        "length_mm": 164.178,
+        "n": 4.0,
+        "report_link": "../control-decoupling/searches/three-factor-corner/30deg/300x300/candidates/candidate-000/bem/300x300x164.178_30_K2_N4_Report.html",
+        "response_sha256": "8c4f53d3afba2bc7c1dce3d17d9e9217489f5ebc1c1904fe69bc1079fb21a0d7",
+        "s": 0.45903395704967725,
+        "score_v1": 81.58579113962435,
+        "score_v2_1": 71.15458405519492,
+        "source_path": "examples/control-decoupling/searches/three-factor-corner/30deg/300x300/candidates/candidate-000/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 2.0,
+        "length_mm": 41.04400000000001,
+        "n": 12.0,
+        "s": 0.7730351655485799,
+        "score": 3.3592257497825955
+      },
+      "v2_1_winner": {
+        "id": "30d-300mm-L+0-K+0-N+1",
+        "k": 4.0,
+        "length_mm": 205.222,
+        "n": 16.0,
+        "report_link": "../control-decoupling/searches/core-axis/30deg/300x300/candidates/candidate-004/bem/300x300x205.222_30_K4_N16_Report.html",
+        "response_sha256": "5b1e347a85ae15260e587d390a40fb7497d011210a24df985f2c924010890dca",
+        "s": 1.2320691225982572,
+        "score_v1": 79.45626461270547,
+        "score_v2_1": 74.51380980497751,
+        "source_path": "examples/control-decoupling/searches/core-axis/30deg/300x300/candidates/candidate-004/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "30deg-350mm": {
+      "coverage_deg": 30,
+      "evidence_count": 32,
+      "mouth_mm": 350,
+      "v1_winner": {
+        "id": "30d-350mm-L+0-K+0-N+0",
+        "k": 4.0,
+        "length_mm": 235.546,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/core-axis/30deg/350x350/candidates/candidate-000/bem/350x350x235.546_30_K4_N8_Report.html",
+        "response_sha256": "6b7c101cafc5deabb26bf71591310310c9ce643cbd0a6289c8375ba1578f8e03",
+        "s": 0.5481168596199129,
+        "score_v1": 85.13149331622007,
+        "score_v2_1": 76.28089457905857,
+        "source_path": "examples/control-decoupling/searches/core-axis/30deg/350x350/candidates/candidate-000/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": -20.451999999999998,
+        "n": 2.0,
+        "s": 0.451882270588543,
+        "score": 0.7270531436494281
+      },
+      "v2_1_winner": {
+        "id": "historical:30deg/350x350-s-grid:candidate-001",
+        "k": 4.0,
+        "length_mm": 215.094,
+        "n": 10.0,
+        "report_link": "../mouth-size-coverage-grid/30deg/350x350-s-grid/candidates/candidate-001/bem/350x350x215.094_30_K4_N10_Report.html",
+        "response_sha256": "39b27bd399c3065a86d6615c05a793a21a01c8380dff01db8984844f5b1db8aa",
+        "s": 0.9999991302084559,
+        "score_v1": 82.99116893421119,
+        "score_v2_1": 77.007947722708,
+        "source_path": "examples/mouth-size-coverage-grid/30deg/350x350-s-grid/candidates/candidate-001/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "30deg-400mm": {
+      "coverage_deg": 30,
+      "evidence_count": 38,
+      "mouth_mm": 400,
+      "v1_winner": {
+        "id": "30d-400mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 291.235,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/30deg/400x400/candidates/candidate-008/bem/400x400x291.235_30_K6_N8_Report.html",
+        "response_sha256": "b5f721c11d58c68e1ebbf516b3f4ba342f7f1c942bda7398c747434cddf50244",
+        "s": 0.4958070113007977,
+        "score_v1": 87.48214218136002,
+        "score_v2_1": 79.73015891670917,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/30deg/400x400/candidates/candidate-008/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 1.0,
+        "length_mm": 10.657999999999959,
+        "n": 0.0,
+        "s": -0.012308471590548431,
+        "score": 0.41098755811303533
+      },
+      "v2_1_winner": {
+        "id": "ridge-30deg-400mm-K7-N8-Lx1p0",
+        "k": 7.0,
+        "length_mm": 301.893,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/30deg/400x400/candidates/candidate-001/bem/400x400x301.893_30_K7_N8_Report.html",
+        "response_sha256": "5b041a40161fca1f3a822c61acdbe458b050c69e30015d52e76d242405db4320",
+        "s": 0.48349853971024925,
+        "score_v1": 87.19672360214537,
+        "score_v2_1": 80.14114647482221,
+        "source_path": "examples/round-control-ridge-closure/searches/30deg/400x400/candidates/candidate-001/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "30deg-450mm": {
+      "coverage_deg": 30,
+      "evidence_count": 39,
+      "mouth_mm": 450,
+      "v1_winner": {
+        "id": "ridge-30deg-450mm-K7-N8-Lx1p0",
+        "k": 7.0,
+        "length_mm": 333.689,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/30deg/450x450/candidates/candidate-001/bem/450x450x333.689_30_K7_N8_Report.html",
+        "response_sha256": "b3eb5119cd572cf5b622ffa4167e630b8295f78807889143e468a57791e25fd4",
+        "s": 0.48350082056773264,
+        "score_v1": 88.66045197918316,
+        "score_v2_1": 81.28080854318404,
+        "source_path": "examples/round-control-ridge-closure/searches/30deg/450x450/candidates/candidate-001/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": -33.36900000000003,
+        "n": 0.0,
+        "s": 0.26117175704774515,
+        "score": 0.6994158651247915
+      },
+      "v2_1_winner": {
+        "id": "ridge-30deg-450mm-K7-N8-Lx0p9",
+        "k": 7.0,
+        "length_mm": 300.32,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/30deg/450x450/candidates/candidate-000/bem/450x450x300.32_30_K7_N8_Report.html",
+        "response_sha256": "4da9f786dcf39a4a3120f996d833022c999870d575c63f2d4389b030a96cff31",
+        "s": 0.7446725776154778,
+        "score_v1": 87.95096015833597,
+        "score_v2_1": 81.98022440830883,
+        "source_path": "examples/round-control-ridge-closure/searches/30deg/450x450/candidates/candidate-000/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "35deg-250mm": {
+      "coverage_deg": 35,
+      "evidence_count": 37,
+      "mouth_mm": 250,
+      "v1_winner": {
+        "id": "35d-250mm-L-1-K-1-N+0",
+        "k": 2.0,
+        "length_mm": 122.757,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/35deg/250x250/candidates/candidate-000/bem/250x250x122.757_35_K2_N8_Report.html",
+        "response_sha256": "af2f6aacf79632dceb550d7d14098b103f93fd42bf86069e86c7712c7ff331a6",
+        "s": 0.8567353864087573,
+        "score_v1": 81.32558495311523,
+        "score_v2_1": 73.43653196227173,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/35deg/250x250/candidates/candidate-000/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": 0.0,
+        "n": 8.0,
+        "s": 1.0690468431558542,
+        "score": 0.46844654458760715
+      },
+      "v2_1_winner": {
+        "id": "35d-250mm-L-1-K-1-N+1",
+        "k": 2.0,
+        "length_mm": 122.757,
+        "n": 16.0,
+        "report_link": "../control-decoupling/searches/three-factor-corner/35deg/250x250/candidates/candidate-001/bem/250x250x122.757_35_K2_N16_Report.html",
+        "response_sha256": "4509b7d22485f7959bd7c51414d3cc47018a47e46f482ead9f95e20e243aeba1",
+        "s": 1.9257822295646114,
+        "score_v1": 80.10363460992859,
+        "score_v2_1": 73.90497850685934,
+        "source_path": "examples/control-decoupling/searches/three-factor-corner/35deg/250x250/candidates/candidate-001/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "35deg-300mm": {
+      "coverage_deg": 35,
+      "evidence_count": 50,
+      "mouth_mm": 300,
+      "v1_winner": {
+        "id": "35d-300mm-L-1-K-1-N+0",
+        "k": 2.0,
+        "length_mm": 144.256,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/35deg/300x300/candidates/candidate-000/bem/300x300x144.256_35_K2_N8_Report.html",
+        "response_sha256": "4ab93fa27397993d49253fd82f7b32a065f7cecc645cb8042319c31eecae9ed7",
+        "s": 0.8993821014043046,
+        "score_v1": 85.36813001205712,
+        "score_v2_1": 75.95092521366318,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/35deg/300x300/candidates/candidate-000/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 2.0,
+        "length_mm": 22.078000000000003,
+        "n": 2.0,
+        "s": 0.10062311367011323,
+        "score": 1.9183522898817529
+      },
+      "v2_1_winner": {
+        "id": "historical:35deg/300x300-s-grid:candidate-001",
+        "k": 4.0,
+        "length_mm": 166.334,
+        "n": 10.0,
+        "report_link": "../mouth-size-coverage-grid/35deg/300x300-s-grid/candidates/candidate-001/bem/300x300x166.334_35_K4_N10_Report.html",
+        "response_sha256": "521430cc8247a51c94247f6d402f3447a0282b69250bce065f3b3a6026427978",
+        "s": 1.0000052150744179,
+        "score_v1": 84.52052574424948,
+        "score_v2_1": 77.86927750354494,
+        "source_path": "examples/mouth-size-coverage-grid/35deg/300x300-s-grid/candidates/candidate-001/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "35deg-350mm": {
+      "coverage_deg": 35,
+      "evidence_count": 40,
+      "mouth_mm": 350,
+      "v1_winner": {
+        "id": "35d-350mm-L+0-K+0-N+0",
+        "k": 4.0,
+        "length_mm": 190.953,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/core-axis/35deg/350x350/candidates/candidate-000/bem/350x350x190.953_35_K4_N8_Report.html",
+        "response_sha256": "7c769867db5e4a85a4ab42a25c55b282bc10e1b4a67c21d08ffa0deb4c296b08",
+        "s": 0.7830192504883154,
+        "score_v1": 87.38387679758262,
+        "score_v2_1": 79.91057084306507,
+        "source_path": "examples/control-decoupling/searches/core-axis/35deg/350x350/candidates/candidate-000/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": 0.0,
+        "n": 0.0,
+        "s": 0.0,
+        "score": 0.0
+      },
+      "v2_1_winner": {
+        "id": "35d-350mm-L+0-K+0-N+0",
+        "k": 4.0,
+        "length_mm": 190.953,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/core-axis/35deg/350x350/candidates/candidate-000/bem/350x350x190.953_35_K4_N8_Report.html",
+        "response_sha256": "7c769867db5e4a85a4ab42a25c55b282bc10e1b4a67c21d08ffa0deb4c296b08",
+        "s": 0.7830192504883154,
+        "score_v1": 87.38387679758262,
+        "score_v2_1": 79.91057084306507,
+        "source_path": "examples/control-decoupling/searches/core-axis/35deg/350x350/candidates/candidate-000/bem/responses.npz"
+      },
+      "winner_changed": false
+    },
+    "35deg-400mm": {
+      "coverage_deg": 35,
+      "evidence_count": 56,
+      "mouth_mm": 400,
+      "v1_winner": {
+        "id": "35d-400mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 240.034,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/35deg/400x400/candidates/candidate-008/bem/400x400x240.034_35_K6_N8_Report.html",
+        "response_sha256": "cc0a0178eb5506ee626d9c1f88522166a0d4e04cae8f34dabc3d15ff782ac807",
+        "s": 0.6694175455538521,
+        "score_v1": 89.29097824729433,
+        "score_v2_1": 81.44682146374265,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/35deg/400x400/candidates/candidate-008/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 1.0,
+        "length_mm": -2.0439999999999827,
+        "n": 0.0,
+        "s": 0.1135955950679789,
+        "score": 0.24340797247731416
+      },
+      "v2_1_winner": {
+        "id": "ridge-35deg-400mm-K7-N8-Lx1p0",
+        "k": 7.0,
+        "length_mm": 237.99,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/35deg/400x400/candidates/candidate-001/bem/400x400x237.99_35_K7_N8_Report.html",
+        "response_sha256": "0bd85a7cb28924ae1ff8dbad603e3990f2529818d9840618668787a18dcc8b5a",
+        "s": 0.783013140621831,
+        "score_v1": 89.12122336529313,
+        "score_v2_1": 81.69022943621997,
+        "source_path": "examples/round-control-ridge-closure/searches/35deg/400x400/candidates/candidate-001/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "35deg-450mm": {
+      "coverage_deg": 35,
+      "evidence_count": 42,
+      "mouth_mm": 450,
+      "v1_winner": {
+        "id": "ridge-35deg-450mm-K7-N8-Lx1p0",
+        "k": 7.0,
+        "length_mm": 263.206,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/35deg/450x450/candidates/candidate-001/bem/450x450x263.206_35_K7_N8_Report.html",
+        "response_sha256": "481c2ff9c910919487d8e2ff1518f734b3ac860485c2497be49baa01dcae3435",
+        "s": 0.7830155224957924,
+        "score_v1": 90.99519371962188,
+        "score_v2_1": 83.99616183659516,
+        "source_path": "examples/round-control-ridge-closure/searches/35deg/450x450/candidates/candidate-001/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": 0.0,
+        "n": 0.0,
+        "s": 0.0,
+        "score": 0.0
+      },
+      "v2_1_winner": {
+        "id": "ridge-35deg-450mm-K7-N8-Lx1p0",
+        "k": 7.0,
+        "length_mm": 263.206,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/35deg/450x450/candidates/candidate-001/bem/450x450x263.206_35_K7_N8_Report.html",
+        "response_sha256": "481c2ff9c910919487d8e2ff1518f734b3ac860485c2497be49baa01dcae3435",
+        "s": 0.7830155224957924,
+        "score_v1": 90.99519371962188,
+        "score_v2_1": 83.99616183659516,
+        "source_path": "examples/round-control-ridge-closure/searches/35deg/450x450/candidates/candidate-001/bem/responses.npz"
+      },
+      "winner_changed": false
+    },
+    "40deg-250mm": {
+      "coverage_deg": 40,
+      "evidence_count": 42,
+      "mouth_mm": 250,
+      "v1_winner": {
+        "id": "ridge-40deg-250mm-K1-N8-Lx0p9",
+        "k": 1.0,
+        "length_mm": 89.085,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/40deg/250x250/candidates/candidate-000/bem/250x250x89.085_40_K1_N8_Report.html",
+        "response_sha256": "d82a4efe785128bc8a95f8b03c4b9f05e2741feb2b3a3e7cf2a85ae6bc69f846",
+        "s": 1.336537682157515,
+        "score_v1": 84.78166314035559,
+        "score_v2_1": 74.80545172627097,
+        "source_path": "examples/round-control-ridge-closure/searches/40deg/250x250/candidates/candidate-000/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 3.0,
+        "length_mm": 36.53,
+        "n": 8.0,
+        "s": 0.42356573381498563,
+        "score": 1.4222509409394632
+      },
+      "v2_1_winner": {
+        "id": "40d-250mm-L+0-K+0-N+1",
+        "k": 4.0,
+        "length_mm": 125.615,
+        "n": 16.0,
+        "report_link": "../control-decoupling/searches/core-axis/40deg/250x250/candidates/candidate-004/bem/250x250x125.615_40_K4_N16_Report.html",
+        "response_sha256": "57baf40a0f1192a1117d05fc1af6865092b9abc4ec981a830822c24155bc63c4",
+        "s": 1.7601034159725006,
+        "score_v1": 82.62461701984523,
+        "score_v2_1": 76.22770266721044,
+        "source_path": "examples/control-decoupling/searches/core-axis/40deg/250x250/candidates/candidate-004/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "40deg-300mm": {
+      "coverage_deg": 40,
+      "evidence_count": 39,
+      "mouth_mm": 300,
+      "v1_winner": {
+        "id": "40d-300mm-L+0-K+0-N+0",
+        "k": 4.0,
+        "length_mm": 147.665,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/core-axis/40deg/300x300/candidates/candidate-000/bem/300x300x147.665_40_K4_N8_Report.html",
+        "response_sha256": "4e34093dff1a3db8b4cde25b5309dce7c1913dd366573ff3d09bac3986e06ecc",
+        "s": 0.7830371993405559,
+        "score_v1": 87.90948129309098,
+        "score_v2_1": 78.7712509318255,
+        "source_path": "examples/control-decoupling/searches/core-axis/40deg/300x300/candidates/candidate-000/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": 0.0,
+        "n": 2.0,
+        "s": 0.2169770567430066,
+        "score": 0.21622717912055123
+      },
+      "v2_1_winner": {
+        "id": "40d-300mm-reference-K4-N10",
+        "k": 4.0,
+        "length_mm": 147.665,
+        "n": 10.0,
+        "report_link": "../mouth-size-coverage-grid/40deg/300x300-s-grid/candidates/candidate-002/bem/300x300x147.665_40_K4_N10_Report.html",
+        "response_sha256": "8c3f39be4dd7fac3dda4eb3bc5d459fca3347876062b4e7c53326c98ffc947df",
+        "s": 1.0000142560835625,
+        "score_v1": 87.43417117789323,
+        "score_v2_1": 78.98747811094606,
+        "source_path": "examples/mouth-size-coverage-grid/40deg/300x300-s-grid/candidates/candidate-002/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "40deg-350mm": {
+      "coverage_deg": 40,
+      "evidence_count": 39,
+      "mouth_mm": 350,
+      "v1_winner": {
+        "id": "40d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 182.53,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/40deg/350x350/candidates/candidate-008/bem/350x350x182.53_40_K6_N8_Report.html",
+        "response_sha256": "7c8feed892a50aefdb969b81b9899eae17f17ac494a4168fa202eaed64e50f9f",
+        "s": 0.790447543433925,
+        "score_v1": 88.91776149103157,
+        "score_v2_1": 81.55749247637205,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/40deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": 0.0,
+        "n": 0.0,
+        "s": 0.0,
+        "score": 0.0
+      },
+      "v2_1_winner": {
+        "id": "40d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 182.53,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/40deg/350x350/candidates/candidate-008/bem/350x350x182.53_40_K6_N8_Report.html",
+        "response_sha256": "7c8feed892a50aefdb969b81b9899eae17f17ac494a4168fa202eaed64e50f9f",
+        "s": 0.790447543433925,
+        "score_v1": 88.91776149103157,
+        "score_v2_1": 81.55749247637205,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/40deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "winner_changed": false
+    },
+    "40deg-400mm": {
+      "coverage_deg": 40,
+      "evidence_count": 63,
+      "mouth_mm": 400,
+      "v1_winner": {
+        "id": "historical:40deg/400x400-coupled-r01-kn:candidate-020",
+        "k": 4.25,
+        "length_mm": 171.584,
+        "n": 6.5,
+        "report_link": "../mouth-size-coverage-grid/40deg/400x400-coupled-r01-kn/candidates/candidate-020/bem/400x400x171.584_40_K4.25_N6.5_Report.html",
+        "response_sha256": "d641120bd289d7dbd895cb543a1dfb5bb41053509969422b364aa2c2dae68a19",
+        "s": 0.9803933536734423,
+        "score_v1": 89.7738119515527,
+        "score_v2_1": 78.78752788487972,
+        "source_path": "examples/mouth-size-coverage-grid/40deg/400x400-coupled-r01-kn/candidates/candidate-020/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 1.75,
+        "length_mm": 34.31700000000001,
+        "n": 1.5,
+        "s": -0.21018642696748469,
+        "score": 3.75949679087239
+      },
+      "v2_1_winner": {
+        "id": "40d-400mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 205.901,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/40deg/400x400/candidates/candidate-008/bem/400x400x205.901_40_K6_N8_Report.html",
+        "response_sha256": "2f9f46c2c152ef26ee5af7c092fa4a91da36fc2ba6d223839438ccaf2678a654",
+        "s": 0.7702069267059576,
+        "score_v1": 89.75386422838616,
+        "score_v2_1": 82.54702467575211,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/40deg/400x400/candidates/candidate-008/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "40deg-450mm": {
+      "coverage_deg": 40,
+      "evidence_count": 40,
+      "mouth_mm": 450,
+      "v1_winner": {
+        "id": "ridge-40deg-450mm-K7-N8-Lx1p0",
+        "k": 7.0,
+        "length_mm": 224.465,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/40deg/450x450/candidates/candidate-001/bem/450x450x224.465_40_K7_N8_Report.html",
+        "response_sha256": "03b557b777c515a59e9d1c7a10003659a20396bd9a6a279e5d04c7ba12306bfd",
+        "s": 0.9237127035628547,
+        "score_v1": 90.9850405929164,
+        "score_v2_1": 82.21033004988232,
+        "source_path": "examples/round-control-ridge-closure/searches/40deg/450x450/candidates/candidate-001/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": -1.0,
+        "length_mm": -6.38900000000001,
+        "n": 0.0,
+        "s": 6.386738877428577e-06,
+        "score": 0.3417270868538651
+      },
+      "v2_1_winner": {
+        "id": "40d-450mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 218.076,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/40deg/450x450/candidates/candidate-009/bem/450x450x218.076_40_K6_N8_Report.html",
+        "response_sha256": "38c34dfa0e695dc7347b2bb1fbc4def2788aee71f114ef31bc4e0940404e12df",
+        "s": 0.9237190903017322,
+        "score_v1": 90.5308858887776,
+        "score_v2_1": 82.55205713673618,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/40deg/450x450/candidates/candidate-009/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "45deg-250mm": {
+      "coverage_deg": 45,
+      "evidence_count": 38,
+      "mouth_mm": 250,
+      "v1_winner": {
+        "id": "45d-250mm-L-1-K-1-N+0",
+        "k": 2.0,
+        "length_mm": 84.633,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/45deg/250x250/candidates/candidate-000/bem/250x250x84.633_45_K2_N8_Report.html",
+        "response_sha256": "2431c60973c24ba972d4c865a36c830f551350453a4c7d31384f31acf403ab3b",
+        "s": 1.4290325372492843,
+        "score_v1": 86.94802256740545,
+        "score_v2_1": 76.09987192594616,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/250x250/candidates/candidate-000/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": 0.0,
+        "n": 8.0,
+        "s": 1.7831675298450496,
+        "score": 1.5191419359418745
+      },
+      "v2_1_winner": {
+        "id": "45d-250mm-L-1-K-1-N+1",
+        "k": 2.0,
+        "length_mm": 84.633,
+        "n": 16.0,
+        "report_link": "../control-decoupling/searches/three-factor-corner/45deg/250x250/candidates/candidate-001/bem/250x250x84.633_45_K2_N16_Report.html",
+        "response_sha256": "f28182e36b2961890ac92e8b8ac0e88cc3df4facd81029500e29901d16ae025a",
+        "s": 3.212200067094334,
+        "score_v1": 86.37798322674118,
+        "score_v2_1": 77.61901386188804,
+        "source_path": "examples/control-decoupling/searches/three-factor-corner/45deg/250x250/candidates/candidate-001/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "45deg-300mm": {
+      "coverage_deg": 45,
+      "evidence_count": 46,
+      "mouth_mm": 300,
+      "v1_winner": {
+        "id": "45d-300mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 138.0,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/45deg/300x300/candidates/candidate-008/bem/300x300x138_45_K6_N8_Report.html",
+        "response_sha256": "02610be21ba78409941df430a206233f0cebcfcdd15c502c55888b8bd23fe1dd",
+        "s": 0.8961864481863893,
+        "score_v1": 88.15319005195238,
+        "score_v2_1": 78.8028118391392,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/300x300/candidates/candidate-008/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": 0.0,
+        "n": 0.0,
+        "s": 0.0,
+        "score": 0.0
+      },
+      "v2_1_winner": {
+        "id": "45d-300mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 138.0,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/45deg/300x300/candidates/candidate-008/bem/300x300x138_45_K6_N8_Report.html",
+        "response_sha256": "02610be21ba78409941df430a206233f0cebcfcdd15c502c55888b8bd23fe1dd",
+        "s": 0.8961864481863893,
+        "score_v1": 88.15319005195238,
+        "score_v2_1": 78.8028118391392,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/300x300/candidates/candidate-008/bem/responses.npz"
+      },
+      "winner_changed": false
+    },
+    "45deg-350mm": {
+      "coverage_deg": 45,
+      "evidence_count": 113,
+      "mouth_mm": 350,
+      "v1_winner": {
+        "id": "45d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 150.0,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/bem/350x350x150_45_K6_N8_Report.html",
+        "response_sha256": "ae1f2846b7975898757a4fbdf8ac03a01aee29728635ab87b07c7fce164fb678",
+        "s": 1.0863365190714132,
+        "score_v1": 89.38936624215944,
+        "score_v2_1": 79.19152214743823,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": 0.0,
+        "n": 0.0,
+        "s": 0.0,
+        "score": 0.0
+      },
+      "v2_1_winner": {
+        "id": "45d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 150.0,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/bem/350x350x150_45_K6_N8_Report.html",
+        "response_sha256": "ae1f2846b7975898757a4fbdf8ac03a01aee29728635ab87b07c7fce164fb678",
+        "s": 1.0863365190714132,
+        "score_v1": 89.38936624215944,
+        "score_v2_1": 79.19152214743823,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "winner_changed": false
+    },
+    "45deg-400mm": {
+      "coverage_deg": 45,
+      "evidence_count": 142,
+      "mouth_mm": 400,
+      "v1_winner": {
+        "id": "historical:45deg/400x400-coupled-r03-kn:candidate-002",
+        "k": 5.25,
+        "length_mm": 153.628,
+        "n": 7.5,
+        "report_link": "../mouth-size-coverage-grid/45deg/400x400-coupled-r03-kn/candidates/candidate-002/bem/400x400x153.628_45_K5.25_N7.5_Report.html",
+        "response_sha256": "be667f8f85474df6bae551d34d2815f36ee2413fa96550e5903638357925d6a1",
+        "s": 1.2802092720777547,
+        "score_v1": 89.20977556849073,
+        "score_v2_1": 77.27017869335445,
+        "source_path": "examples/mouth-size-coverage-grid/45deg/400x400-coupled-r03-kn/candidates/candidate-002/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.75,
+        "length_mm": 18.106000000000023,
+        "n": 0.5,
+        "s": -0.2777119447502048,
+        "score": 5.368856640920569
+      },
+      "v2_1_winner": {
+        "id": "45d-400mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 171.734,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/45deg/400x400/candidates/candidate-007/bem/400x400x171.734_45_K6_N8_Report.html",
+        "response_sha256": "bd127bf9dd55da832c7a9914d610a481158d70b172391a66e5677a7f91a6e652",
+        "s": 1.00249732732755,
+        "score_v1": 89.00338661597047,
+        "score_v2_1": 82.63903533427502,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/400x400/candidates/candidate-007/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "45deg-450mm": {
+      "coverage_deg": 45,
+      "evidence_count": 59,
+      "mouth_mm": 450,
+      "v1_winner": {
+        "id": "ridge-45deg-450mm-K7-N8-Lx1p0",
+        "k": 7.0,
+        "length_mm": 191.776,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/45deg/450x450/candidates/candidate-001/bem/450x450x191.776_45_K7_N8_Report.html",
+        "response_sha256": "8c6c8c936b439b0c96d380cd7e95b748657c29cfb20c9f41fe0db36dbfdb2a4f",
+        "s": 1.0863265008152294,
+        "score_v1": 88.87309502910865,
+        "score_v2_1": 80.50649544316192,
+        "source_path": "examples/round-control-ridge-closure/searches/45deg/450x450/candidates/candidate-001/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": -1.0,
+        "length_mm": -3.856000000000023,
+        "n": 0.0,
+        "s": -0.036540884311170974,
+        "score": 0.7074108096940677
+      },
+      "v2_1_winner": {
+        "id": "45d-450mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 187.92,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/45deg/450x450/candidates/candidate-008/bem/450x450x187.92_45_K6_N8_Report.html",
+        "response_sha256": "13bff4b5e8c65609164464ef3cb7c50cb05176e3007c2f4d2c0c9b0f8e9970f4",
+        "s": 1.0497856165040584,
+        "score_v1": 87.88277388410881,
+        "score_v2_1": 81.21390625285599,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/45deg/450x450/candidates/candidate-008/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "50deg-250mm": {
+      "coverage_deg": 50,
+      "evidence_count": 62,
+      "mouth_mm": 250,
+      "v1_winner": {
+        "id": "historical:50deg/250x250-coupled-r01-kn:candidate-018",
+        "k": 4.0,
+        "length_mm": 89.754,
+        "n": 11.25,
+        "report_link": "../mouth-size-coverage-grid/50deg/250x250-coupled-r01-kn/candidates/candidate-018/bem/250x250x89.754_50_K4_N11.25_Report.html",
+        "response_sha256": "3167a9d76573b2c50b21f2f0eeecda639c6aa48d4febf88d8f998359e6e3fed4",
+        "s": 1.7179747556793592,
+        "score_v1": 87.72986204096125,
+        "score_v2_1": 77.88848020844691,
+        "source_path": "examples/mouth-size-coverage-grid/50deg/250x250-coupled-r01-kn/candidates/candidate-018/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": 0.0,
+        "n": 3.75,
+        "s": 0.7161276467526532,
+        "score": 0.9276347282813333
+      },
+      "v2_1_winner": {
+        "id": "historical:50deg/250x250-coupled-r01-kn:candidate-004",
+        "k": 4.0,
+        "length_mm": 89.754,
+        "n": 15.0,
+        "report_link": "../mouth-size-coverage-grid/50deg/250x250-coupled-r01-kn/candidates/candidate-004/bem/250x250x89.754_50_K4_N15_Report.html",
+        "response_sha256": "d52f858a7ad2e9d493bd08714bc21dc5c550a916164f2c1e1bcc1ff0d5c80d4e",
+        "s": 2.4341024024320124,
+        "score_v1": 87.62041875132888,
+        "score_v2_1": 78.81611493672824,
+        "source_path": "examples/mouth-size-coverage-grid/50deg/250x250-coupled-r01-kn/candidates/candidate-004/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "50deg-300mm": {
+      "coverage_deg": 50,
+      "evidence_count": 41,
+      "mouth_mm": 300,
+      "v1_winner": {
+        "id": "50d-300mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 112.69,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/50deg/300x300/candidates/candidate-008/bem/300x300x112.69_50_K6_N8_Report.html",
+        "response_sha256": "25a692c5cfb565224aaeaef97608f9d92b6f13460737d3d9f22e024e3c3bd84e",
+        "s": 1.2537736197316889,
+        "score_v1": 87.66857388175707,
+        "score_v2_1": 76.73170006474089,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/50deg/300x300/candidates/candidate-008/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 1.0,
+        "length_mm": 11.844999999999999,
+        "n": 0.0,
+        "s": -0.29066087580314637,
+        "score": 0.49930226016027746
+      },
+      "v2_1_winner": {
+        "id": "ridge-50deg-300mm-K7-N8-Lx1p1",
+        "k": 7.0,
+        "length_mm": 124.535,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/50deg/300x300/candidates/candidate-002/bem/300x300x124.535_50_K7_N8_Report.html",
+        "response_sha256": "0509e270c805af612186b882ffd3d95b6e9a53d6e7f32459bb42a2f628a43ad9",
+        "s": 0.9631127439285425,
+        "score_v1": 86.90351046669758,
+        "score_v2_1": 77.23100232490117,
+        "source_path": "examples/round-control-ridge-closure/searches/50deg/300x300/candidates/candidate-002/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "50deg-350mm": {
+      "coverage_deg": 50,
+      "evidence_count": 38,
+      "mouth_mm": 350,
+      "v1_winner": {
+        "id": "50d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 124.892,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/bem/350x350x124.892_50_K6_N8_Report.html",
+        "response_sha256": "ed9d3057dea7c3ffb5615deb80079a57a6b67f72508a0c43334215e4e1c144c1",
+        "s": 1.3926539371674904,
+        "score_v1": 87.67373235470836,
+        "score_v2_1": 76.19791934459096,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": 0.0,
+        "n": 0.0,
+        "s": 0.0,
+        "score": 0.0
+      },
+      "v2_1_winner": {
+        "id": "50d-350mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 124.892,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/bem/350x350x124.892_50_K6_N8_Report.html",
+        "response_sha256": "ed9d3057dea7c3ffb5615deb80079a57a6b67f72508a0c43334215e4e1c144c1",
+        "s": 1.3926539371674904,
+        "score_v1": 87.67373235470836,
+        "score_v2_1": 76.19791934459096,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/50deg/350x350/candidates/candidate-008/bem/responses.npz"
+      },
+      "winner_changed": false
+    },
+    "50deg-400mm": {
+      "coverage_deg": 50,
+      "evidence_count": 130,
+      "mouth_mm": 400,
+      "v1_winner": {
+        "id": "50d-400mm-L+1-K+1-N+0",
+        "k": 6.0,
+        "length_mm": 140.92,
+        "n": 8.0,
+        "report_link": "../control-decoupling/searches/two-factor-face/50deg/400x400/candidates/candidate-008/bem/400x400x140.92_50_K6_N8_Report.html",
+        "response_sha256": "1a66effcd0cfdda47ba210425eb7f473ccbe46ba93b50130d19f4e258c91b8fe",
+        "s": 1.363856803030943,
+        "score_v1": 86.63275451798337,
+        "score_v2_1": 77.89877893488142,
+        "source_path": "examples/control-decoupling/searches/two-factor-face/50deg/400x400/candidates/candidate-008/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": -0.5,
+        "length_mm": -0.30699999999998795,
+        "n": 0.75,
+        "s": 0.060213385647735596,
+        "score": 0.9816483182153632
+      },
+      "v2_1_winner": {
+        "id": "historical:50deg/400x400-coupled-length-closure-r01:candidate-000",
+        "k": 5.5,
+        "length_mm": 140.613,
+        "n": 8.75,
+        "report_link": "../mouth-size-coverage-grid/50deg/400x400-coupled-length-closure-r01/candidates/candidate-000/bem/400x400x140.613_50_K5.5_N8.75_Report.html",
+        "response_sha256": "2a953bc623a08c5639200d15027f9b487e559dd286d37ec5a47ff8aee1a0a457",
+        "s": 1.4240701886786786,
+        "score_v1": 85.66659473944173,
+        "score_v2_1": 78.88042725309678,
+        "source_path": "examples/mouth-size-coverage-grid/50deg/400x400-coupled-length-closure-r01/candidates/candidate-000/bem/responses.npz"
+      },
+      "winner_changed": true
+    },
+    "50deg-450mm": {
+      "coverage_deg": 50,
+      "evidence_count": 42,
+      "mouth_mm": 450,
+      "v1_winner": {
+        "id": "ridge-50deg-450mm-K7-N8-Lx1p0",
+        "k": 7.0,
+        "length_mm": 159.689,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/50deg/450x450/candidates/candidate-001/bem/450x450x159.689_50_K7_N8_Report.html",
+        "response_sha256": "520b3b8b81ba6571bb2d4e5c5705b92d096188655483c6c71da527c660cd7c7b",
+        "s": 1.3926554170183927,
+        "score_v1": 85.97881888255189,
+        "score_v2_1": 75.49402203848993,
+        "source_path": "examples/round-control-ridge-closure/searches/50deg/450x450/candidates/candidate-001/bem/responses.npz"
+      },
+      "v2_1_minus_v1_winner": {
+        "k": 0.0,
+        "length_mm": 15.968999999999994,
+        "n": 0.0,
+        "s": -0.45115751287388484,
+        "score": 1.9228002638501778
+      },
+      "v2_1_winner": {
+        "id": "ridge-50deg-450mm-K7-N8-Lx1p1",
+        "k": 7.0,
+        "length_mm": 175.658,
+        "n": 8.0,
+        "report_link": "../round-control-ridge-closure/searches/50deg/450x450/candidates/candidate-002/bem/450x450x175.658_50_K7_N8_Report.html",
+        "response_sha256": "daf6e9bc176da3ab033477112b61e03bd40bb5d9ab633f62765941fe21ff4b0e",
+        "s": 0.9414979041445078,
+        "score_v1": 83.23541520755894,
+        "score_v2_1": 77.41682230234011,
+        "source_path": "examples/round-control-ridge-closure/searches/50deg/450x450/candidates/candidate-002/bem/responses.npz"
+      },
+      "winner_changed": true
+    }
+  },
+  "content_sha256": "179ebdba29d3801aa384acfea497b571476180c6260a348a54a1f9016ddc0af1",
+  "population_count": 1532,
+  "schema_version": 1,
+  "score_version": "v2.1",
+  "selection_rule": "maximum measured surface score v2.1 per mouth/coverage cell; exact-response-deduplicated evidence; lexical id tie-break",
+  "sources": [
+    {
+      "content_sha256": "3bbe94eb0e127de2ae201745fa2d12f89f1dc82c738743aa963fda9bf8376e96",
+      "path": "examples/surface-score-v1-v2-rank-comparison/comparison.json",
+      "sha256": "d04d957b45d70b9ed9fd91dba30eb8e76493f7bb96e95f6a3831e8b3f2da5a10"
+    },
+    {
+      "content_sha256": "e2856503a95b268ab77d79fa527e97676b24b6fa8482d68b8d0ae027525993bf",
+      "path": "examples/round-control-ridge-closure/results.json",
+      "sha256": "387b255e5da33e396764a818a37b856cecd2fce8e1c118ddfd73d9faf4b8c7fa"
+    }
+  ],
+  "status": "complete",
+  "study_id": "round-control-parameter-maps-v2-1"
+}
