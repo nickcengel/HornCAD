@@ -77,6 +77,44 @@ Zero fitted weight does not prove containment or outward rise are generally
 useless. It means they add no ordering information in this deliberately
 high-scoring candidate pool after the other four terms are present.
 
+### Broad-range follow-up
+
+The zero-weight result was tested out of sample against the earlier blinded
+rankings. Rounds 1–10 each span the full v1 score distribution, with one
+candidate drawn from every decile. The zero-containment/zero-rise weight
+candidate is materially weaker there than the existing v2.2 score:
+
+| Score | Broad mean rho | Broad pair agreement | Exact winner |
+| --- | ---: | ---: | ---: |
+| V1 | 0.818 | 84.2% | 5 / 10 |
+| V2.2 | **0.902** | **89.1%** | 6 / 10 |
+| High-score-pool fitted candidate | 0.835 | 85.6% | 5 / 10 |
+
+Refitting all six components to the broad rounds assigns 13.4% to mean
+containment and 17.0% to outward-rise control. Both remain nonzero in every
+leave-one-round-out fold: containment ranges from 6.6% to 16.6%, and
+outward-rise control from 13.5% to 19.7%. This confirms that the 0% values are
+specific to the high-scoring per-cell pool and must not be promoted as general
+weights.
+
+A controlled ablation gives a more nuanced result. Starting with the fixed v2
+formula, removing containment alone changes broad mean rho from 0.884 to 0.888;
+removing outward-rise control lowers it to 0.873; removing both lowers it to
+0.881. The effects are small because these diagnostics are correlated with
+profile, contour, and energy-quality terms. A freely refitted four-component
+model also matches the held-out broad ordering about as well as the
+six-component fit, but matches fewer exact winners.
+
+The practical conclusion is to retain containment and outward-rise control as
+guardrails. The current v2.2 implementation already does: after its v1/v2
+coverage blend, their effective weights are approximately 10–17% and 9–13%,
+respectively, across the 30–50 degree study grid. The proposed 0% exploratory
+fit is not a replacement score.
+
+The complete recomputed evidence, per-round metrics, fitted weights, and
+ablations are in
+[`broad_range_weight_test.json`](../surface-diagnostic-ranking-experiment/broad_range_weight_test.json).
+
 Coverage-specific fitting did not help. Its held-out Spearman was 0.607 versus
 0.653 for one global weight set, despite having far more freedom. The available
 evidence therefore supports one global candidate formula rather than five

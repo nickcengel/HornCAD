@@ -55,3 +55,19 @@ The complete machine-readable evidence is in
 [`surface_diagnostic_v2_calibration.json`](surface_diagnostic_v2_calibration.json);
 [`surface_diagnostic_v2_calibration.html`](surface_diagnostic_v2_calibration.html)
 is the readable release report.
+
+## Broad-range weight follow-up
+
+The later per-cell weight fit was tested against this experiment because its
+high-scoring candidate pool assigned zero fitted weight to containment and
+outward-rise control. The broad rounds restore nonzero fitted weights, and the
+existing v2.2 score outperforms that zero-weight candidate. The proposed
+zero-weight formula was therefore not promoted. See
+[`broad_range_weight_test.json`](broad_range_weight_test.json) and the
+[interpretation in the cell-ranking analysis](../surface-score-v2-2-cell-ranking-game/ANALYSIS.md#broad-range-follow-up).
+
+Rebuild the follow-up from the archived NPZ responses:
+
+```sh
+.venv/bin/python -m app.tools.analyze_surface_score_weights_broad_rankings
+```
