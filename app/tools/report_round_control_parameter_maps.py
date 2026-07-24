@@ -87,55 +87,6 @@ def _heatmap(
     )
 
 
-def _coupled_map(parents: dict[str, dict[str, Any]]) -> str:
-    length_values = [
-        float(parent["length_mm"]) for parent in parents.values()]
-    k_values = [float(parent["k"]) for parent in parents.values()]
-    s_values = [float(parent["s"]) for parent in parents.values()]
-    l_min, l_max = min(length_values), max(length_values)
-    k_min, k_max = min(k_values), max(k_values)
-    s_min, s_max = min(s_values), max(s_values)
-    rows = []
-    for mouth in MOUTHS:
-        cells = []
-        for coverage in COVERAGES:
-            parent = parents[f"{coverage}deg-{mouth}mm"]
-            length = float(parent["length_mm"])
-            k = float(parent["k"])
-            n = float(parent["n"])
-            s = float(parent["s"])
-            diameter = 48.0 + 30.0 * (
-                (length - l_min) / (l_max - l_min))
-            border = 2.0 + 5.0 * ((k - k_min) / (k_max - k_min))
-            cells.append(
-                f"<td class='glyph-cell' "
-                f"style='background:{_color(s, s_min, s_max)}' "
-                f"title='{html.escape(parent['id'])}'>"
-                f"<div class='glyph' style='width:{diameter:.1f}px;"
-                f"height:{diameter:.1f}px;border-width:{border:.1f}px'>"
-                f"<strong>N {n:g}</strong></div>"
-                f"<span>L {length:.1f} mm · K {k:g}<br>S {s:.3f}</span>"
-                "</td>"
-            )
-        rows.append(f"<tr><th>{mouth} mm</th>{''.join(cells)}</tr>")
-    return (
-        "<section><h2>Coupled recipe map</h2>"
-        "<p class='muted'>Background color encodes S (blue low, gold high); "
-        "circle diameter encodes physical length; border thickness encodes "
-        "K; the circle label is N. Exact L, K, and S values remain below each "
-        "glyph.</p><table class='coupled'><thead><tr>"
-        "<th>Mouth ↓<br>Coverage →</th>"
-        + "".join(f"<th>{coverage}°</th>" for coverage in COVERAGES)
-        + "</tr></thead><tbody>"
-        + "".join(rows)
-        + "</tbody></table><div class='glyph-legend'>"
-        "<span>small circle = shorter physical length</span>"
-        "<span>thicker ring = higher K</span>"
-        "<span>blue → gold = lower → higher S</span>"
-        "</div></section>"
-    )
-
-
 def render(manifest: dict[str, Any]) -> str:
     parents = manifest["parents"]["primary"]
     if len(parents) != 25:
@@ -186,13 +137,17 @@ def render(manifest: dict[str, Any]) -> str:
 <title>Round-control parameter maps</title>
 <style>
 :root{{--bg:#0b1015;--panel:#121a22;--panel2:#17212b;--ink:#edf3f6;--muted:#9eacb6;--line:#2b3945;--accent:#72d9ca}}
-*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}}main{{max-width:1500px;margin:auto;padding:24px}}h1,h2{{margin:0 0 8px}}p{{line-height:1.45}}.muted,.map-card p{{color:var(--muted)}}section,.map-card{{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0;overflow-x:auto}}.insights{{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}}.insight{{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:14px}}.insight strong{{display:block;font-size:1.5rem;color:var(--accent)}}.map-grid{{display:grid;grid-template-columns:repeat(2,minmax(500px,1fr));gap:16px}}.map-card{{margin:0}}table{{border-collapse:collapse;width:100%;table-layout:fixed}}th,td{{border:1px solid rgba(255,255,255,.12);text-align:center;padding:10px 6px}}th{{background:var(--panel2)}}th:first-child{{width:105px}}.map-cell{{height:74px}}.map-cell strong{{display:block;font-size:1.2rem;text-shadow:0 1px 3px #000}}.map-cell span{{display:block;font-size:.78rem;margin-top:3px;text-shadow:0 1px 3px #000}}.scale{{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;margin-top:9px;color:var(--muted);font-size:.82rem}}.scale i{{height:9px;border-radius:99px;background:linear-gradient(90deg,hsl(220 62% 24%),hsl(131 62% 30.5%),hsl(42 62% 37%))}}.glyph-cell{{height:136px;vertical-align:middle}}.glyph{{display:flex;align-items:center;justify-content:center;margin:0 auto 6px;border-style:solid;border-color:rgba(255,255,255,.88);border-radius:50%;background:rgba(8,12,16,.28);text-shadow:0 1px 3px #000}}.glyph-cell>span{{font-size:.77rem;text-shadow:0 1px 3px #000}}.glyph-legend{{display:flex;flex-wrap:wrap;gap:18px;margin-top:10px;color:var(--muted)}}code{{overflow-wrap:anywhere}}@media(max-width:1100px){{.map-grid{{grid-template-columns:1fr}}.insights{{grid-template-columns:1fr}}}}
+*{{box-sizing:border-box}}body{{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,sans-serif}}main{{max-width:1500px;margin:auto;padding:24px}}h1,h2{{margin:0 0 8px}}p{{line-height:1.45}}.muted,.map-card p{{color:var(--muted)}}section,.map-card{{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0;overflow-x:auto}}.insights{{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}}.insight{{background:var(--panel2);border:1px solid var(--line);border-radius:9px;padding:14px}}.insight strong{{display:block;font-size:1.5rem;color:var(--accent)}}.map-grid{{display:grid;grid-template-columns:repeat(2,minmax(500px,1fr));gap:16px}}.map-card{{margin:0}}table{{border-collapse:collapse;width:100%;table-layout:fixed}}th,td{{border:1px solid rgba(255,255,255,.12);text-align:center;padding:10px 6px}}th{{background:var(--panel2)}}th:first-child{{width:105px}}.map-cell{{height:74px}}.map-cell strong{{display:block;font-size:1.2rem;text-shadow:0 1px 3px #000}}.map-cell span{{display:block;font-size:.78rem;margin-top:3px;text-shadow:0 1px 3px #000}}.scale{{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;margin-top:9px;color:var(--muted);font-size:.82rem}}.scale i{{height:9px;border-radius:99px;background:linear-gradient(90deg,hsl(220 62% 24%),hsl(131 62% 30.5%),hsl(42 62% 37%))}}code{{overflow-wrap:anywhere}}@media(max-width:1100px){{.map-grid{{grid-template-columns:1fr}}.insights{{grid-template-columns:1fr}}}}
 </style></head><body><main>
 <h1>Measured high-scoring round-control parameter maps</h1>
 <p class='muted'>The 25 cells are the final measured high-scoring round parents,
 not surrogate predictions. Coverage increases left to right; mouth diameter
 increases top to bottom. Hover any cell for its evidence identifier and surface
 score.</p>
+<p class='muted'>These are the best observed selections from cells with unequal
+sampling depth, not proven optima. A local irregularity may be physical, may
+reflect a near-tie between different parameter regions, or may indicate that
+one cell received less effective optimization.</p>
 <section><h2>Strongest visible structure</h2><div class='insights'>
 <div class='insight'><strong>r = {coverage_s_correlation:.3f}</strong>
 S rises strongly with coverage across the grid.</div>
@@ -207,7 +162,6 @@ Physical length generally rises with mouth size and falls as coverage widens.
 <p class='muted'>Each panel has its own blue-to-gold scale. Exact values are
 printed, so color shows pattern without hiding discontinuities.</p>
 <div class='map-grid'>{maps}</div></section>
-{_coupled_map(parents)}
 <section><h2>Why this is not a 3D surface</h2>
 <p class='muted'>A continuous surface would imply dependable interpolation
 between cells. The round-control work did not establish that. These discrete
