@@ -35,7 +35,7 @@
     }
   },
   "experiment_id": "79d8d75417b4a45b",
-  "implementation_sha256": "7152aa8675ce0b9686a51d2b62ca9a785086008fe08665aa0aeaff51a7a09a58",
+  "implementation_sha256": "27d25edaf6831d3a484070eac3a31cbd52ebcf2ed79e1516a4068434b14aa0a9",
   "leave_one_round_out": {
     "folds": [
       {
@@ -15487,13 +15487,15 @@
     }
   },
   "release_decision": {
+    "activation_status": "not-activated; v1 remains primary",
     "criteria": {
       "broad_drop_no_more_than_0_05": true,
       "close_better_than_v1": true,
       "close_mean_spearman_at_least_0_25": true,
       "close_pairwise_above_0_60": true
     },
-    "promote_v2": true,
+    "passes_promotion_criteria": true,
+    "promote_v2": false,
     "selected_candidate": "contour_forward"
   },
   "schema_version": 1,

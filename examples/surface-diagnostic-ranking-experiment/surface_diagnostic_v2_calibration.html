@@ -12,9 +12,11 @@ font-weight:700}.fail{color:var(--bad);font-weight:700}code{font-size:.92em}
 </style></head><body><main><h1>Surface diagnostic v2 calibration</h1>
 <p>Completed 20-round blinded ranking experiment; ten broad-range and ten
 close-score rounds. Confidence intervals resample complete rounds.</p>
-<section><h2>Release decision</h2><p>Selected preregistered candidate:
-<strong>contour_forward</strong>. Decision:
-<strong>PROMOTE V2</strong>.</p>
+<section><h2>Validation outcome</h2><p>Selected preregistered candidate:
+<strong>contour_forward</strong>. The candidate
+<strong>passes</strong>
+the registered comparison criteria. Activation status:
+<strong>NOT ACTIVATED — V1 REMAINS PRIMARY</strong>.</p>
 <table><tr><th>close mean spearman at least 0 25</th><td class='pass'>PASS</td></tr><tr><th>close better than v1</th><td class='pass'>PASS</td></tr><tr><th>close pairwise above 0 60</th><td class='pass'>PASS</td></tr><tr><th>broad drop no more than 0 05</th><td class='pass'>PASS</td></tr></table></section>
 <section><h2>Agreement summary</h2><table><thead><tr><th>Metric</th>
 <th>Broad ρ</th><th>Broad pairs</th><th>Close ρ</th><th>Close pairs</th>
@@ -27,9 +29,9 @@ close-score rounds. Confidence intervals resample complete rounds.</p>
 Each held-out round was evaluated with the candidate selected using the other
 19 rounds.</p><p>Reference-scale selections:
 <code>{&quot;contour_forward_scale_1&quot;: 1, &quot;contour_forward_scale_1.5&quot;: 4, &quot;contour_forward_scale_3&quot;: 15}</code>.
-The released scale is <strong>3×</strong>.</p></section>
+The selected experimental scale is <strong>3×</strong>.</p></section>
 <section><h2>Written qualitative checks</h2><table><thead><tr><th>Plot</th>
 <th>Candidate</th><th>Note</th></tr></thead><tbody><tr><th>R01-P07</th><td>35d-300mm-L+0-K+1-N+0</td><td>narrowing bad</td></tr><tr><th>R01-P02</th><td>historical:45deg/350x350-canonical-s:candidate-001</td><td> narrowing around 4.5k and ~1.8k and energy build up at 6.5k isnt good.
 but overall fit is decent</td></tr><tr><th>R01-P03</th><td>45d-400mm-L+1-K+1-N-1</td><td>energy at 3k and narrowing between 1-2k and narrowing at high f isnt good.</td></tr><tr><th>R01-P10</th><td>30d-450mm-L+1-K+1-N+0</td><td>narrows at 2k but smooth</td></tr><tr><th>R19-P07</th><td>30d-400mm-L+1-K+1-N+0</td><td>basically perfect. a tiny bit too narrow. happy to give up angle accuraccy for smoothness</td></tr></tbody></table></section>
-<p>Implementation SHA-256: <code>7152aa8675ce0b9686a51d2b62ca9a785086008fe08665aa0aeaff51a7a09a58</code></p>
+<p>Implementation SHA-256: <code>27d25edaf6831d3a484070eac3a31cbd52ebcf2ed79e1516a4068434b14aa0a9</code></p>
 </main></body></html>
