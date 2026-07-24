@@ -24,7 +24,7 @@
 <div id="viewer" class="viewer" tabindex="0" aria-label="Press and hold to compare v2">
 <canvas id="plot"></canvas><div id="hold-label" class="hold-label v1">v1</div>
 </div>
-<div class="legend"><span><i class="swatch" style="background:#7fe7ff"></i>−3 dB</span><span><i class="swatch" style="background:#fff"></i>−6 dB</span><span><i class="swatch" style="background:#ffad5c"></i>−9 dB</span></div>
+<div class="legend"><span><i class="swatch" style="background:#69d6c8"></i>Intended coverage</span><span><i class="swatch" style="background:#7fe7ff"></i>−3 dB</span><span><i class="swatch" style="background:#fff"></i>−6 dB</span><span><i class="swatch" style="background:#ffad5c"></i>−9 dB</span></div>
 <section class="preference"><h2>Which plot is better?</h2>
 <div class="preference-buttons">
 <button type="button" data-choice="plot_1">1 · Default plot better</button>
@@ -113,11 +113,14 @@ function draw(candidate,version){
  ctx.fillStyle="#0d151d";ctx.fillRect(0,0,W,H);const grid=grids[candidate.grid_id],values=decode(candidate);
  const image=document.createElement("canvas");image.width=grid.rows;image.height=grid.columns;const ix=image.getContext("2d"),pixels=ix.createImageData(grid.rows,grid.columns);
  for(let r=0;r<grid.rows;r++)for(let c=0;c<grid.columns;c++){const code=values[r*grid.columns+c],rgb=color(code/120),m=rgb.match(/\d+/g),p=((grid.columns-1-c)*grid.rows+r)*4;pixels.data[p]=+m[0];pixels.data[p+1]=+m[1];pixels.data[p+2]=+m[2];pixels.data[p+3]=255}ix.putImageData(pixels,0,0);ctx.imageSmoothingEnabled=true;ctx.drawImage(image,x0,y0,w,h);
+ const maxAngle=grid.angles_deg.at(-1),targetY=y0+(1-candidate.coverage_deg/maxAngle)*h;
+ ctx.save();ctx.strokeStyle="#69d6c8";ctx.lineWidth=2;ctx.setLineDash([8,6]);ctx.beginPath();ctx.moveTo(x0,targetY);ctx.lineTo(x0+w,targetY);ctx.stroke();ctx.restore();
+ ctx.fillStyle="#b7fff3";ctx.font="600 12px system-ui";ctx.textAlign="right";ctx.fillText(`Intended ${candidate.coverage_deg}°`,x0+w-6,targetY-6);
  ctx.lineWidth=2.2;for(const [level,stroke] of [[-3,"#7fe7ff"],[-6,"#ffffff"],[-9,"#ffad5c"]]){ctx.strokeStyle=stroke;contour(values,grid,level,x0,y0,w,h)}
  ctx.strokeStyle="#67808f";ctx.lineWidth=1;ctx.strokeRect(x0,y0,w,h);ctx.fillStyle="#aab8c1";ctx.font="13px system-ui";ctx.textAlign="center";
  const freqs=grid.frequencies_hz;for(const f of [500,1000,2000,4000,8000])if(f>=freqs[0]&&f<=freqs.at(-1)){const x=x0+(Math.log(f)-Math.log(freqs[0]))/(Math.log(freqs.at(-1))-Math.log(freqs[0]))*w;ctx.fillText(f>=1000?`${f/1000}k`:f,x,y0+h+22)}
  ctx.fillText("Frequency (Hz)",x0+w/2,H-9);ctx.save();ctx.translate(17,y0+h/2);ctx.rotate(-Math.PI/2);ctx.fillText("Half-angle (degrees)",0,0);ctx.restore();ctx.textAlign="right";
- const maxAngle=grid.angles_deg.at(-1);for(const a of [0,15,30,45,60,75,90])if(a<=maxAngle)ctx.fillText(a+"°",x0-8,y0+(1-a/maxAngle)*h+4);
+ for(const a of [0,15,30,45,60,75,90])if(a<=maxAngle)ctx.fillText(a+"°",x0-8,y0+(1-a/maxAngle)*h+4);
  ctx.textAlign="left";ctx.fillStyle=version==="v1"?"#79c5ff":"#ffb45e";ctx.font="600 16px system-ui";ctx.fillText(`${version.toUpperCase()} rank ${rank} · ${candidate.id}`,x0,y0-15);
 }
 function card(candidate,version){

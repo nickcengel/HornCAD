@@ -92,6 +92,8 @@ class SurfaceScoreRankComparisonTests(unittest.TestCase):
         self.assertIn("−3 dB", document)
         self.assertIn("−6 dB", document)
         self.assertIn("−9 dB", document)
+        self.assertIn("Intended coverage", document)
+        self.assertIn("candidate.coverage_deg", document)
         self.assertIn("Which plot is better?", document)
         self.assertIn('data-choice="plot_1"', document)
         self.assertIn('data-choice="plot_2"', document)

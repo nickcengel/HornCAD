@@ -17,7 +17,8 @@ evidence independently with surface score v1 and v2.
 
 Every candidate card links to its original report. The viewer uses the same
 frequency, angle, and color viewport for both sides and overlays the −3, −6,
-and −9 dB contours.
+and −9 dB contours plus a dashed line at the displayed candidate's intended
+coverage angle.
 
 Rebuild from retained NPZ responses without running BEM:
 
