@@ -542,6 +542,7 @@ def run(stages: tuple[str, ...]) -> dict[str, Any]:
         STUDY_ROOT / f"runtime-{label}.json",
         queue_workers=QUEUE_WORKERS,
         numcalc_processes=NUMCALC_PROCESSES,
+        on_event=lambda _event: write_index(),
     )
     write_index()
     return result

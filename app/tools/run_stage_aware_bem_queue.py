@@ -201,6 +201,8 @@ def run_queue(
         "events": [],
     }
     _write_json(runtime_path, state)
+    if on_event is not None:
+        on_event({"event": "queue-started"})
     failures = []
     with ThreadPoolExecutor(max_workers=queue_workers) as executor:
         futures = {
