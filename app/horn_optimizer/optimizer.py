@@ -208,15 +208,24 @@ def _transfer_length_rule() -> str:
 
 
 def _transfer_guidance(config: HornOptimizerConfig) -> dict[str, Any]:
+    non_reference_throat = not math.isclose(
+        config.throat_angle_deg, 6.0, abs_tol=1e-9)
+    throat_warning = (
+        "round and non-round initialization evidence uses a 6-degree throat; "
+        "the configured throat angle has no released global correction"
+    )
     if not TRANSFER_RESULTS.is_file():
+        warnings = [
+            "non-round transfer result is not available; using the "
+            "preregistered weighted fallback",
+        ]
+        if non_reference_throat:
+            warnings.append(throat_warning)
         return {
             "status": "pending",
             "common_length_rule": "width-height-weighted",
-            "wider_first_round": False,
-            "support_warnings": [
-                "non-round transfer result is not available; using the "
-                "preregistered weighted fallback",
-            ],
+            "wider_first_round": non_reference_throat,
+            "support_warnings": warnings,
         }
     result = _read_json(TRANSFER_RESULTS)
     selected = set(result.get("promotion", {}).get(
@@ -257,6 +266,8 @@ def _transfer_guidance(config: HornOptimizerConfig) -> dict[str, Any]:
         warnings.append(
             "intent lies near a locked transfer failure; first-round H/V and "
             "length exploration is widened")
+    if non_reference_throat:
+        warnings.append(throat_warning)
     return {
         "status": "measured",
         "results_sha256": _hash({
@@ -265,7 +276,7 @@ def _transfer_guidance(config: HornOptimizerConfig) -> dict[str, Any]:
         }),
         "reported_content_sha256": result.get("content_sha256"),
         "common_length_rule": _transfer_length_rule(),
-        "wider_first_round": wider,
+        "wider_first_round": wider or non_reference_throat,
         "wider_regions": regions,
         "support_warnings": warnings,
     }

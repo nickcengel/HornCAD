@@ -186,6 +186,19 @@ class HornOptimizerTests(unittest.TestCase):
             self.assertNotAlmostEqual(
                 base["length_mm"], h_low["values"]["length_mm"], places=6)
 
+    def test_non_reference_throat_widens_round_one_and_warns(self):
+        with tempfile.TemporaryDirectory() as temp:
+            config = self.config(Path(temp), throat_angle=8.0)
+            with patch(
+                "app.horn_optimizer.optimizer.TRANSFER_RESULTS",
+                Path(temp) / "missing-transfer-result.json",
+            ):
+                guidance = _transfer_guidance(config)
+            self.assertTrue(guidance["wider_first_round"])
+            self.assertTrue(any(
+                "6-degree throat" in warning
+                for warning in guidance["support_warnings"]))
+
     def test_optimizer_uses_preregistered_s_balanced_construction(self):
         with tempfile.TemporaryDirectory() as temp:
             optimizer = HornOptimizer(self.config(Path(temp)))
