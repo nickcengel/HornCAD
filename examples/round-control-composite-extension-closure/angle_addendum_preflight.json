@@ -1,0 +1,22 @@
+{
+  "candidate_count": 4,
+  "scheduler": {
+    "configured_workers": {
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-composite-extension-closure/searches/composite-ext-45deg-250mm-E40-angle8-bridge/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-composite-extension-closure/searches/composite-ext-45deg-450mm-E40-angle8-bridge/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-composite-extension-closure/searches/composite-ext-50deg-250mm-E40-angle8-bridge/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/round-control-composite-extension-closure/searches/composite-ext-50deg-450mm-E40-angle8-bridge/search.yaml": 10
+    },
+    "numcalc_process_capacity": 20,
+    "queue_workers": 4,
+    "search_count": 4
+  },
+  "schema_version": 1,
+  "searches": [
+    "examples/round-control-composite-extension-closure/searches/composite-ext-45deg-250mm-E40-angle8-bridge/search.yaml",
+    "examples/round-control-composite-extension-closure/searches/composite-ext-45deg-450mm-E40-angle8-bridge/search.yaml",
+    "examples/round-control-composite-extension-closure/searches/composite-ext-50deg-250mm-E40-angle8-bridge/search.yaml",
+    "examples/round-control-composite-extension-closure/searches/composite-ext-50deg-450mm-E40-angle8-bridge/search.yaml"
+  ],
+  "status": "passed"
+}

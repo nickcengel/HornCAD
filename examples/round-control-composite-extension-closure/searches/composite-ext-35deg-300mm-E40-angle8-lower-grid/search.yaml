@@ -1,0 +1,67 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 35.0
+  intended_coverage_v_deg: 35.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 1
+  initial_candidates: 1
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.049
+  - 4.001
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 180.319999
+    - 180.320001
+    extension_mm:
+    - 39.999999
+    - 40.000001
+    osse_coverage_h_deg:
+    - 34.999999
+    - 35.000001
+    osse_coverage_v_deg:
+    - 34.999999
+    - 35.000001
+    k_h:
+    - 5.999999
+    - 6.000001
+    k_v:
+    - 5.999999
+    - 6.000001
+    n_h:
+    - 3.999999
+    - 4.000001
+    n_v:
+    - 3.999999
+    - 4.000001
+  initial_pool:
+  - label: composite-ext-35deg-300mm-E40-angle8-lower-grid-schema-seed-duplicate
+    values:
+      length_mm: 180.32
+      extension_mm: 40.0
+      osse_coverage_h_deg: 35.0
+      osse_coverage_v_deg: 35.0
+      k_h: 6.0
+      k_v: 6.0
+      n_h: 4.0
+      n_v: 4.0
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
+  extension_throat_angle_study:
+    study_id: round-control-composite-extension-closure-v1
+    coordinate_id: composite-ext-35deg-300mm-E40-angle8-lower-grid
+    parent_id: 35d-300mm-L+0-K+1-N-1
+    throat_angle_deg: 8
+    extension_mm: 40
+    ranking: composite_score_v1.0

@@ -1,0 +1,146 @@
+{
+  "authorized_total_candidate_count": 27,
+  "candidate_count": 4,
+  "coordinate_sha256": "b166c6c30f0795044800a2296c6f291c061d1e779649a0cc9f18510780815a44",
+  "coordinates": [
+    {
+      "cell": "45deg-250mm",
+      "coverage_deg": 45,
+      "derived_s": 1.3852083058346185,
+      "extension_mm": 40,
+      "id": "composite-ext-45deg-250mm-E40-angle8-bridge",
+      "k": 2.0,
+      "length_mm": 84.633,
+      "mode": "angle8-bridge",
+      "mouth_mm": 250,
+      "n": 8.0,
+      "parent_composite_score_v1_0": 69.79487270379346,
+      "parent_id": "legacy-primary-45deg-250mm-A6-E40",
+      "parent_length_mm": 84.633,
+      "parent_report_path": "examples/extension-throat-angle-heuristics/searches/primary-development/45deg/250mm/primary-A6-E40/candidates/candidate-000/bem/250x250x84.633_E40_45_K2_N8_Report.html",
+      "parent_response_sha256": "b6ee9c8e1f85382f54fbfcd58d0ec6e89e1a26d85e382eb5fb89e9db12e15ee2",
+      "parent_source_path": "examples/extension-throat-angle-heuristics/searches/primary-development/45deg/250mm/primary-A6-E40/candidates/candidate-000/bem/responses.npz",
+      "parent_surface_score_v2_3": 80.04532197183121,
+      "parent_throat_impedance_score_v2_3_0": 39.04352489968017,
+      "profile_plus_extension_length_mm": 124.633,
+      "target_parent_s": 1.4795842264911647,
+      "throat_angle_deg": 8
+    },
+    {
+      "cell": "45deg-450mm",
+      "coverage_deg": 45,
+      "derived_s": 1.2049121420224862,
+      "extension_mm": 40,
+      "id": "composite-ext-45deg-450mm-E40-angle8-bridge",
+      "k": 7.0,
+      "length_mm": 191.776,
+      "mode": "angle8-bridge",
+      "mouth_mm": 450,
+      "n": 8.0,
+      "parent_composite_score_v1_0": 77.50399956411279,
+      "parent_id": "legacy-primary-45deg-450mm-A6-E40",
+      "parent_length_mm": 191.776,
+      "parent_report_path": "examples/extension-throat-angle-heuristics/searches/primary-development/45deg/450mm/primary-A6-E40/candidates/candidate-000/bem/450x450x191.776_E40_45_K7_N8_Report.html",
+      "parent_response_sha256": "e6b13e26b77a74adbec2c61086d3c37780743cbdefa503701df102060f86293b",
+      "parent_source_path": "examples/extension-throat-angle-heuristics/searches/primary-development/45deg/450mm/primary-A6-E40/candidates/candidate-000/bem/responses.npz",
+      "parent_surface_score_v2_3": 82.99898571889103,
+      "parent_throat_impedance_score_v2_3_0": 61.01904109977805,
+      "profile_plus_extension_length_mm": 231.776,
+      "target_parent_s": 1.2619216187365578,
+      "throat_angle_deg": 8
+    },
+    {
+      "cell": "50deg-250mm",
+      "coverage_deg": 50,
+      "derived_s": 1.8367272426121564,
+      "extension_mm": 40,
+      "id": "composite-ext-50deg-250mm-E40-angle8-bridge",
+      "k": 4.0,
+      "length_mm": 89.754,
+      "mode": "angle8-bridge",
+      "mouth_mm": 250,
+      "n": 11.25,
+      "parent_composite_score_v1_0": 69.72764667990141,
+      "parent_id": "legacy-primary-50deg-250mm-A6-E40",
+      "parent_length_mm": 89.754,
+      "parent_report_path": "examples/extension-throat-angle-heuristics/searches/primary-development/50deg/250mm/primary-A6-E40/candidates/candidate-000/bem/250x250x89.754_E40_50_K4_N11.25_Report.html",
+      "parent_response_sha256": "a235bfa70213728532fc2a0b8023fb3af958e62e4db625f0d8cba913c4aa3a8b",
+      "parent_source_path": "examples/extension-throat-angle-heuristics/searches/primary-development/50deg/250mm/primary-A6-E40/candidates/candidate-000/bem/responses.npz",
+      "parent_surface_score_v2_3": 78.50739195662192,
+      "parent_throat_impedance_score_v2_3_0": 43.38841084973989,
+      "profile_plus_extension_length_mm": 129.75400000000002,
+      "target_parent_s": 1.936456480560469,
+      "throat_angle_deg": 8
+    },
+    {
+      "cell": "50deg-450mm",
+      "coverage_deg": 50,
+      "derived_s": 1.5542656321713766,
+      "extension_mm": 40,
+      "id": "composite-ext-50deg-450mm-E40-angle8-bridge",
+      "k": 7.0,
+      "length_mm": 159.689,
+      "mode": "angle8-bridge",
+      "mouth_mm": 450,
+      "n": 8.0,
+      "parent_composite_score_v1_0": 71.25784016098302,
+      "parent_id": "legacy-primary-50deg-450mm-A6-E40",
+      "parent_length_mm": 159.689,
+      "parent_report_path": "examples/extension-throat-angle-heuristics/searches/primary-development/50deg/450mm/primary-A6-E40/candidates/candidate-000/bem/450x450x159.689_E40_50_K7_N8_Report.html",
+      "parent_response_sha256": "c3642d19e8c50a1de04386b39c4febd54a6d646c35ed5ca54db5f41b4f3314fb",
+      "parent_source_path": "examples/extension-throat-angle-heuristics/searches/primary-development/50deg/450mm/primary-A6-E40/candidates/candidate-000/bem/responses.npz",
+      "parent_surface_score_v2_3": 77.95038958778606,
+      "parent_throat_impedance_score_v2_3_0": 51.18019188057387,
+      "profile_plus_extension_length_mm": 199.689,
+      "target_parent_s": 1.6019822171808793,
+      "throat_angle_deg": 8
+    }
+  ],
+  "freeze_sha256": "e5a5f66c22e8ef6929520d80ad218bb4591d4f2fb68cc0789d4e75603374262b",
+  "inputs": {
+    "composite-ext-45deg-250mm-E40-angle8-bridge": {
+      "project": "examples/round-control-composite-extension-closure/searches/composite-ext-45deg-250mm-E40-angle8-bridge/project.yaml",
+      "project_sha256": "a35a2cd30a10923e3d6863c9e09d4cd162ec4e2d66740faae791db8d3e0119ac",
+      "search": "examples/round-control-composite-extension-closure/searches/composite-ext-45deg-250mm-E40-angle8-bridge/search.yaml",
+      "search_sha256": "5f2581036f44e02e207eced18d42d814f9bc1ec6f90713612788504f2919850a"
+    },
+    "composite-ext-45deg-450mm-E40-angle8-bridge": {
+      "project": "examples/round-control-composite-extension-closure/searches/composite-ext-45deg-450mm-E40-angle8-bridge/project.yaml",
+      "project_sha256": "b63caa49befca510d8c01a2e5ebeabe73c9e45ca8f62bda02104611115816946",
+      "search": "examples/round-control-composite-extension-closure/searches/composite-ext-45deg-450mm-E40-angle8-bridge/search.yaml",
+      "search_sha256": "42b08a3da9ff2223ee89c648b0a399f4cbeeb7e63aaf3db40304e3d17e37d729"
+    },
+    "composite-ext-50deg-250mm-E40-angle8-bridge": {
+      "project": "examples/round-control-composite-extension-closure/searches/composite-ext-50deg-250mm-E40-angle8-bridge/project.yaml",
+      "project_sha256": "c4728b2d94a01402306e3cb089fcd7413373ef8e69c2ce82686db3f1a6b81f7b",
+      "search": "examples/round-control-composite-extension-closure/searches/composite-ext-50deg-250mm-E40-angle8-bridge/search.yaml",
+      "search_sha256": "4906b4022fd5dfa75b824ab6583ebf56af45eaee4b90bb921d77078b8d2a10a6"
+    },
+    "composite-ext-50deg-450mm-E40-angle8-bridge": {
+      "project": "examples/round-control-composite-extension-closure/searches/composite-ext-50deg-450mm-E40-angle8-bridge/project.yaml",
+      "project_sha256": "1e600d020fa243a46b6459f4f3685e05c36133e57139f5ff7d3c75fcdf8061b9",
+      "search": "examples/round-control-composite-extension-closure/searches/composite-ext-50deg-450mm-E40-angle8-bridge/search.yaml",
+      "search_sha256": "3a252db039825d2b4c21e4e4dfedfe24b9bf0988788175a0c7e1b69b19428047"
+    }
+  },
+  "ranking": "composite_score_v1.0",
+  "schema_version": 1,
+  "selection": {
+    "cells": [
+      "45deg-250mm",
+      "45deg-450mm",
+      "50deg-250mm",
+      "50deg-450mm"
+    ],
+    "extension_mm": 40,
+    "held_fixed": [
+      "length_mm",
+      "k",
+      "n",
+      "extension_mm"
+    ],
+    "purpose": "bridge exact matched A6/A12 impedance comparisons"
+  },
+  "status": "prepared-not-run",
+  "study_id": "round-control-composite-extension-angle8-addendum-v1"
+}
