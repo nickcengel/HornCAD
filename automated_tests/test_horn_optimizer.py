@@ -259,6 +259,8 @@ class HornOptimizerTests(unittest.TestCase):
                 first["candidates"][0]["surface_score_v2_3"], 80)
             self.assertEqual(
                 optimizer.ranking(second)[0]["surface_score_v2_3"], 86)
+            self.assertGreaterEqual(
+                len(optimizer.ranking(second)[0]["lineage"]), 2)
             round_one = [
                 row for row in second["candidates"] if row["round"] == 1]
             self.assertLessEqual(len(round_one), 4)
@@ -292,6 +294,25 @@ class HornOptimizerTests(unittest.TestCase):
             self.assertEqual(state["accounting"]["solver_evaluations"], 1)
             self.assertEqual(state["accounting"]["interrupted_retries"], 1)
             self.assertEqual(state["candidates"][0]["status"], "complete")
+
+    def test_solver_recovery_attempt_is_accounted_without_extra_simulation(self):
+        with tempfile.TemporaryDirectory() as temp:
+            class RetryQueue(FakeQueue):
+                def __call__(self, paths, runtime, **kwargs):
+                    super().__call__(paths, runtime, **kwargs)
+                    return {
+                        "status": "complete",
+                        "events": [{"attempts": [{}, {}]}],
+                    }
+
+            optimizer = HornOptimizer(
+                self.config(Path(temp)), response_library=[],
+                queue_runner=RetryQueue())
+            with self.preflight():
+                state = optimizer.step()
+            self.assertEqual(state["accounting"]["solver_evaluations"], 1)
+            self.assertEqual(
+                state["accounting"]["solver_recovery_retries"], 1)
 
     def test_geometry_rejection_does_not_consume_budget(self):
         with tempfile.TemporaryDirectory() as temp:

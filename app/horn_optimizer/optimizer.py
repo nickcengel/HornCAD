@@ -365,6 +365,7 @@ class HornOptimizer:
                 "exact_library_reuses": 0,
                 "geometry_rejections": 0,
                 "interrupted_retries": 0,
+                "solver_recovery_retries": 0,
                 "failed_evaluations": 0,
                 "confirmation_evaluations": 0,
             },
@@ -617,7 +618,23 @@ class HornOptimizer:
                 ({**base, "sag_mm": self.config.sag_mm.minimum}, "sag-low"),
                 ({**base, "sag_mm": self.config.sag_mm.maximum}, "sag-high"),
             ])
-        return self._deduplicate_pool(state, candidates, 1)
+        baseline = next((
+            row for row in state["candidates"]
+            if row["branch"] in {"seed-baseline", "heuristic-baseline"}
+        ), None)
+        parent_hash = baseline["proposal_hash"] if baseline else None
+        pool = [
+            self._candidate(
+                values, 1, branch, parent_hash=parent_hash)
+            for values, branch in candidates
+        ]
+        if baseline:
+            for candidate in pool:
+                candidate["lineage"] = (
+                    list(baseline.get("lineage", []))
+                    + [candidate["proposal_hash"]]
+                )
+        return self._deduplicate_candidates(state, pool)
 
     def _local_pool(self, state: dict[str, Any],
                     round_number: int) -> list[dict[str, Any]]:
@@ -658,16 +675,17 @@ class HornOptimizer:
                 values, round_number, branch, parent_hash=parent)
             for values, branch, parent in pool
         ]
+        by_hash = {
+            row["proposal_hash"]: row for row in state["candidates"]
+        }
+        for candidate in candidates:
+            parent = by_hash.get(candidate.get("parent_hash"))
+            if parent:
+                candidate["lineage"] = (
+                    list(parent.get("lineage", []))
+                    + [candidate["proposal_hash"]]
+                )
         return self._deduplicate_candidates(state, candidates)
-
-    def _deduplicate_pool(
-        self, state: dict[str, Any],
-        pool: Iterable[tuple[dict[str, float], str]], round_number: int,
-    ) -> list[dict[str, Any]]:
-        return self._deduplicate_candidates(state, [
-            self._candidate(values, round_number, branch)
-            for values, branch in pool
-        ])
 
     @staticmethod
     def _deduplicate_candidates(
@@ -773,14 +791,18 @@ class HornOptimizer:
                 self._baseline_values(), 0, "seed-baseline"
                 if self.config.seed_yaml else "heuristic-baseline")]
         elif state["branch_backlog"]:
-            pool = [
-                self._candidate(
+            pool = []
+            for row in state["branch_backlog"]:
+                candidate = self._candidate(
                     row["values"], round_number, row["branch"],
                     parent_hash=row.get("parent_hash"),
                     force_new=row.get("force_new_evaluation", False),
                 )
-                for row in state["branch_backlog"]
-            ]
+                candidate["lineage"] = (
+                    list(row.get("lineage", []))[:-1]
+                    + [candidate["proposal_hash"]]
+                )
+                pool.append(candidate)
             state["branch_backlog"] = []
         elif round_number == 1:
             pool = self._round_one_pool(state)
@@ -1137,13 +1159,20 @@ class HornOptimizer:
             )
             refresher.start()
             try:
-                self.queue_runner(
+                runtime_result = self.queue_runner(
                     searches,
                     runtime,
                     queue_workers=min(4, len(searches)),
                     numcalc_processes=20,
                     on_event=lambda _event: self._refresh_from_disk(),
                 )
+                retries = sum(
+                    max(0, len(event.get("attempts", []))-1)
+                    for event in runtime_result.get("events", [])
+                )
+                state["accounting"]["solver_recovery_retries"] += retries
+                state["rounds"][-1]["runtime_path"] = str(runtime)
+                state["rounds"][-1]["solver_recovery_retries"] = retries
             except Exception:
                 for candidate in charged:
                     if not self._harvest(state, candidate):
@@ -1242,6 +1271,10 @@ class HornOptimizer:
                     parent_hash=winner["proposal_hash"],
                     force_new=True,
                 )
+                confirmation["lineage"] = (
+                    list(winner.get("lineage", []))
+                    + [confirmation["proposal_hash"]]
+                )
                 state["candidates"].append(confirmation)
                 state["rounds"].append({
                     "round": state["next_round"],
@@ -1335,7 +1368,10 @@ class HornOptimizer:
                 for key in COORDINATE_FIELDS
             } if baseline else None),
             "parameter_lineage": winner.get("lineage", []),
-            "nearest_evidence": winner.get("nearest_evidence"),
+            "nearest_evidence": (
+                winner.get("nearest_evidence")
+                or winner.get("nearest_evidence_hashes", [])
+            ),
             "support_warnings": (
                 state.get("support_warnings", [])
                 + winner.get("support_warnings", [])
