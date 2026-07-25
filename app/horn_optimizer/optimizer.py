@@ -9,6 +9,7 @@ import math
 import os
 from pathlib import Path
 import shutil
+import threading
 import time
 from typing import Any, Callable, Iterable
 
@@ -219,6 +220,7 @@ class HornOptimizer:
         self.output = config.output_dir
         self.state_path = self.output / STATE_NAME
         self.queue_runner = queue_runner
+        self._report_lock = threading.Lock()
         self._provided_library = (
             list(response_library) if response_library is not None else None)
         self.rules = RoundControlHeuristics.load(HEURISTICS)
@@ -980,6 +982,7 @@ class HornOptimizer:
                 and candidate["coordinate_hash"] in library
             ):
                 evidence = library[candidate["coordinate_hash"]]
+                project_path, search_path, _project = self.materialize(candidate)
                 candidate.update({
                     "status": "reused",
                     "surface_score_v2_3":
@@ -989,6 +992,8 @@ class HornOptimizer:
                     "response_path": evidence.get("response_path"),
                     "nearest_evidence": evidence.get(
                         "project_path", evidence.get("response_path")),
+                    "project_path": str(project_path),
+                    "search_path": str(search_path),
                 })
                 state["accounting"]["exact_library_reuses"] += 1
                 continue
@@ -1032,6 +1037,18 @@ class HornOptimizer:
         if searches:
             runtime = self.output / (
                 f"round-{charged[0]['round']:02d}-runtime.json")
+            stop_refresh = threading.Event()
+
+            def refresh_while_running() -> None:
+                while not stop_refresh.wait(3):
+                    self._refresh_from_disk()
+
+            refresher = threading.Thread(
+                target=refresh_while_running,
+                name="horn-optimizer-report-refresher",
+                daemon=True,
+            )
+            refresher.start()
             try:
                 self.queue_runner(
                     searches,
@@ -1047,6 +1064,9 @@ class HornOptimizer:
                 self.save_state(state)
                 self.render_report(state)
                 raise
+            finally:
+                stop_refresh.set()
+                refresher.join()
             for candidate in charged:
                 if not self._harvest(state, candidate):
                     candidate["status"] = "interrupted"
@@ -1058,7 +1078,14 @@ class HornOptimizer:
 
     def _refresh_from_disk(self) -> None:
         if self.state_path.is_file():
-            self.render_report(_read_json(self.state_path))
+            state = _read_json(self.state_path)
+            changed = False
+            for candidate in state["candidates"]:
+                if candidate["status"] == "running":
+                    changed = self._harvest(state, candidate) or changed
+            if changed:
+                self.save_state(state)
+            self.render_report(state)
 
     def ranking(self, state: dict[str, Any]) -> list[dict[str, Any]]:
         rule = self.config.ranking
@@ -1317,7 +1344,9 @@ document.querySelectorAll("table.sortable th[data-sort]").forEach((header, colum
 """
         self.output.mkdir(parents=True, exist_ok=True)
         path = self.output / REPORT_NAME
-        temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
-        temporary.write_text(document, encoding="utf-8")
-        temporary.replace(path)
+        with self._report_lock:
+            temporary = path.with_name(
+                f".{path.name}.{os.getpid()}.{threading.get_ident()}.tmp")
+            temporary.write_text(document, encoding="utf-8")
+            temporary.replace(path)
         return path

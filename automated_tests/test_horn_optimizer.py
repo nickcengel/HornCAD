@@ -151,6 +151,8 @@ class HornOptimizerTests(unittest.TestCase):
             self.assertEqual(state["accounting"]["solver_evaluations"], 0)
             self.assertEqual(state["accounting"]["exact_library_reuses"], 1)
             self.assertFalse(queue.calls)
+            self.assertTrue(
+                (config.output_dir / "winning_project.yaml").is_file())
 
     def test_fixed_intent_shape_and_sag_are_materialized(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -280,6 +282,25 @@ class HornOptimizerTests(unittest.TestCase):
             self.assertIn("http-equiv='refresh' content='5'", document)
             self.assertIn('table class="sortable"', document)
             self.assertIn('header.onclick', document)
+
+    def test_live_refresh_harvests_completed_batch_member(self):
+        with tempfile.TemporaryDirectory() as temp:
+            optimizer = HornOptimizer(
+                self.config(Path(temp)), response_library=[])
+            candidate = optimizer.propose()[0]
+            _project, search, _document = optimizer.materialize(candidate)
+            state = optimizer.load_state()
+            state["candidates"][0]["status"] = "running"
+            optimizer.save_state(state)
+            FakeQueue()([search], Path(temp) / "runtime.json")
+
+            optimizer._refresh_from_disk()
+
+            refreshed = optimizer.load_state()
+            self.assertEqual(
+                refreshed["candidates"][0]["status"], "complete")
+            report = (optimizer.output / "index.html").read_text()
+            self.assertIn(">complete</td>", report)
 
     def test_early_stop_requires_all_three_conditions_then_confirms(self):
         with tempfile.TemporaryDirectory() as temp:
