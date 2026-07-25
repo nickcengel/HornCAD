@@ -1,0 +1,49 @@
+horn_optimizer:
+  version: 1
+  output_dir: example-run
+
+  intent:
+    horizontal_coverage_deg: 50
+    vertical_coverage_deg: 35
+
+  throat_angle_deg: 6
+  mouth_shape: square
+
+  # Use width_mm + height_mm, or width_mm + aspect_ratio. Each value may be a
+  # scalar or an inclusive [minimum, maximum] search range.
+  mouth:
+    width_mm: [380, 420]
+    aspect_ratio: [1.3, 1.5]
+
+  sag_axes: none
+  sag_mm: 0
+
+  # If supplied, this complete compatible project is measured/reused first and
+  # remains the result unless a later measured candidate beats it.
+  # seed_yaml: ../osse-400x280-reference/project.yaml
+
+  max_simulations: 24
+  approval_mode: autonomous
+
+  practical_limits:
+    length_mm: [100, 220]
+    extension_mm: [0, 60]
+    k_horizontal: [1, 7]
+    k_vertical: [1, 7]
+    n_horizontal: [2, 20]
+    n_vertical: [2, 20]
+
+  ranking:
+    enabled: true
+    surface_shortlist_points: 0.5
+    tie_break: throat_impedance
+
+  solver:
+    lower_frequency_hz: 500
+    crossover_hz: 750
+    upper_frequency_hz: 8000
+    points_per_octave: 12
+    confirmation_points_per_octave: 16
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10

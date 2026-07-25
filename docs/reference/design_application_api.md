@@ -16,6 +16,12 @@ foundation. Prediction is implemented with an explicit measured-parent warning;
 diagnosis, improvement, automated design, and experiment selection remain
 deliberately deferred.
 
+This portable interface is not the measured horn optimizer. Practical automated
+design is implemented separately by `app.horn_optimizer`: it proposes one fixed
+intent, runs/reuses BEM responses, ranks measured surface v2.3 and throat-
+impedance v2.3.0 results, and emits a BEM-confirmed project/STL. It does not
+claim that the v1 portable model predicts its winner.
+
 All v1 predictions now report `LIMITED` support, even at nominally in-domain
 coordinates. Out-of-range geometry continues to report `EXTRAPOLATED` or fail
 validation as appropriate.
@@ -78,10 +84,9 @@ unified-v2 challenge did not justify replacing it.
 
 The round-control models were trained against the originally registered surface
 score v1, so `prediction.surface_score` remains a v1 prediction. Current BEM
-reports and measured-candidate ranking also remain v1-primary. Experimental v2
-is a separately labeled comparison output only. The API does not silently
-reinterpret a v1 model output as v2; a future model release must add an
-explicitly named v2 response after rebuilding its training evidence.
+reports and optimizer ranking use measured surface v2.3. The API does not
+silently reinterpret a v1 model output as v2.3; a future portable model release
+must add an explicitly named response after rebuilding its training evidence.
 
 ## Deferred operations
 
@@ -110,10 +115,12 @@ options = app.improve(
 )
 ```
 
-Future predicted recommendations will remain unconfirmed until BEM evaluates
+Future model-only recommendations will remain unconfirmed until BEM evaluates
 them. Support status, uncertainty, and nearest evidence must stay visible.
-The experimental throat-impedance score remains independent and is not included
-in the radiation surface score or normal-model selection.
+These deferred methods are not alternate implementations of
+`horn_optimizer`. The measured optimizer can be used now without implementing
+them. Throat impedance remains independent of radiation surface score; the
+optimizer uses it only as its configurable measured shortlist tiebreak.
 
 ## General H/V and future geometry
 
@@ -152,7 +159,11 @@ backend changes from the round model to a layered model bundle.
   rescored datasets by declared role.
 - `DesignApplication.predict()` evaluates a specified design.
 - `diagnose()`, `improve()`, `design()`, and `select_experiments()` are reserved
-  but deferred in v1.
+  model-only operations deferred in v1; they do not execute or replace the
+  measured optimizer.
+- `app.horn_optimizer` owns restartable candidate construction, BEM execution,
+  exact-response reuse, measured ranking, simulation accounting, and winner
+  artifacts.
 - The backend owns model evaluation, uncertainty, geometry gating, and layered
   correction models. Python and browser backends must produce equivalent
   outputs.

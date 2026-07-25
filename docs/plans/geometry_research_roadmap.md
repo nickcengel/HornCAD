@@ -80,65 +80,51 @@ issue; the mechanism question moves forward into intended non-round and baffle
 geometry.
 The earlier central-grid handoff under
 `examples/control-decoupling/model_source/extension_handoff.json` is superseded
-by the full-grid [extension and throat-angle heuristic study](extension_throat_angle_heuristic_study.md).
-That plan schedules no BEM. Its evidence prerequisites are now satisfied, but
-parent freezing, manifest review, and an explicit future launch remain pending.
+by the completed extension evidence and composite closure. The maintained
+measured result is summarized in the
+[round-control heuristic reference](../reference/round_control_heuristics.md).
 
 ## Stage 2: conical extension and throat angle
 
-Stage 2 covers the complete 5×5 round baseline: 30–50 degrees in 5-degree
-steps and 250–450 mm in 50-mm steps. It measures extensions 0, 20, 40, and
-60 mm and throat angles 0, 6, and 12 degrees using a staged 210-case design,
-with a 16-case conditional validation block and an absolute cap of 226 new BEM
-evaluations.
+Stage 2 is complete. The 6-degree composite map contains 1,542 exact-deduplicated
+zero-extension responses and 101 extension responses. Zero extension wins the
+registered 75/25 surface/impedance composite in all 25 cells, including every
+S-recovery closure. Extension remains an early measured surface-priority branch
+in the four documented cells. Matched A6/A8 evidence improves throat impedance
+in 14 of 15 lower-angle cases, but the attempted general throat-angle predictor
+failed and was not released.
 
-The authoritative candidate allocation, fixed paired-effect formula, locked
-validation cells, error thresholds, geometry convention, and launch gates are
-defined in the
-[extension and throat-angle heuristic study](extension_throat_angle_heuristic_study.md).
-The study uses the final measured winner in every cell plus three secondary
-parents to test parent transfer. It reuses all compatible 6-degree,
-zero-extension responses.
+## Stage 3: square and independent-H/V transfer
 
-This is a deterministic design-heuristic study, not a surrogate-model expansion.
-Throat impedance is retained as a separate experimental diagnostic. It is not
-part of surface score, ranking, parent selection, or the conditional-expansion
-decision.
+The targeted
+[non-round transfer study](non_round_transfer_study.md) replaces the earlier
+separate generic square and ellipse stages. It first measures eight equal-H/V
+square transformations to isolate corner effects. It then applies independent
+round-axis K/N seeds to seven unequal-H/V intents, comparing elliptical and
+square boundaries under width/height-weighted and S-balanced common lengths.
+Six locked intents test the preregistered preferred length rule, with at most
+four failed intents receiving bounded closure brackets.
 
-## Stage 3: fixed round-to-square mouth transformation
+Every candidate fixes zero extension, zero sag, a 6-degree throat, and intended
+OS-SE coverage. The 48-case initial allocation and 64-case absolute maximum are
+hard. The study promotes only measured initialization rules: independent H/V
+K/N transfer, common-length choice, square-corner starting behavior, and regions
+that need wider first-round exploration. It does not fit a portable correction
+or a global score surrogate.
 
-Retain the full 5×5 round-baseline domain as the eventual scope. Apply one
-precisely defined round-to-square mouth transformation; do not search multiple
-squareness controls in this stage. Allocate dense contrasts economically and
-use locked full-domain transfer tests rather than redefining the supported
-domain around a central sub-grid. Hold throat geometry, OSSE controls, OSSE
-length, extension, and sag fixed in each paired contrast.
+## Stage 4: measured optimizer handoff
 
-Reuse representative parents from Stage 2 where practical, including parents
-with different diagnostic failure modes. Fit and validate a round-to-square
-correction without conflating it with H/V aspect ratio. If that correction is
-intended for the full round-baseline domain, apply the same four outer-corner
-locked-sentinel policy: one matched round/square parent per corner first, followed
-by added transforms or parents only in cells where transfer fails.
+After Stage 3 publishes its result, the measured
+[BEM horn optimizer](design_recommendation_map.md) becomes the practical design
+handoff. It uses the promoted heuristics to construct candidates, exact
+compatible responses as zero-cost evidence, and new BEM measurements to improve
+one fixed user intent. Independent H/V K/N remain authored controls, common
+length and extension remain searched, and derived H/V S guides coupled moves.
 
-## Stage 4: separate horizontal and vertical behavior
-
-First use a small elliptical-mouth bridge study. Ellipses vary horizontal and
-vertical scale/coverage while retaining a smooth boundary, allowing H/V
-anisotropy to be measured without simultaneously introducing rectangular
-corners. This stage is a control experiment, not a search for an elliptical
-product horn.
-
-Test, in order:
-
-1. independent H and V predictions derived from corresponding round cases;
-2. those predictions plus a compact aspect-ratio correction;
-3. an explicit H×V interaction only if held-out validation requires it.
-
-If a sparse ellipse set validates the decomposition, stop expanding ellipses and
-move to rectangular mouths. Then simulate matched rectangular cases to identify
-the additional corner/round-to-square correction. If ellipse predictions fail,
-expand only enough to characterize the missing H/V interaction before proceeding.
+The optimizer preserves multiple measured basins, operates in stage-aware
+batches of at most four, enforces one hard simulation cap, and requires a
+budget-counted final confirmation after evidence-based early stopping. Its
+finite run-local response approximation is not a global or portable model.
 
 ## Stage 5: sag and complementary H/V design
 
@@ -161,12 +147,13 @@ The portable model is versioned rather than replaced by disconnected studies:
 round-control baseline
     + extension correction
     + throat-angle correction and supported interaction
-    + round-to-square correction
-    + H/V aspect and coupling correction
+    + measured square/HV transfer initialization
+    + BEM-confirmed run-specific optimization
     + sag and complementary-profile correction
 ```
 
-Every correction must publish its training provenance, support domain,
-diagnostic-specific validation error, uncertainty, and demonstrated interactions.
-Unsupported interactions are omitted rather than filled by a broad brute-force
-grid.
+Portable corrections still require training provenance, support domain,
+diagnostic-specific validation error, uncertainty, and demonstrated
+interactions. The optimizer is distinct: it publishes measured lineage,
+nearest evidence, support warnings, and simulation accounting for one run.
+Unsupported interactions are not filled by a broad brute-force grid.

@@ -14,17 +14,18 @@ new BEM work.
 - [Stage-aware BEM scheduler](reference/bem_stage_aware_scheduler.md):
   cross-process NumCalc capacity control that overlaps solver work with mesh,
   diagnostic, and report stages in future multi-candidate studies.
+- [Low-level BEM candidate search](reference/bem_candidate_search.md):
+  fixed-evaluation mechanics used by the measured optimizer; its generic
+  Pareto/surrogate proposer is a manual research facility, not the optimizer.
 - [Throat-impedance diagnostic](reference/throat_impedance_diagnostics.md):
   independent loading and smoothness output; not a ranking input.
 - [Composite surface and impedance score](reference/composite_diagnostics.md):
   secondary 75/25 comparison; surface v2.3 remains authoritative for ranking.
-- [Frequency-energy bunching analysis](plans/frequency_energy_bunching_analysis.md):
-  planned frequency-resolved learning and steering work.
-- [Design recommendation map](plans/design_recommendation_map.md): intended
-  model-backed workflow beyond the released prediction-only API.
-- [Extension and throat-angle heuristic study](plans/extension_throat_angle_heuristic_study.md):
-  launch-gated full-grid paired study with 210 initial and 226 maximum new
-  evaluations.
+- [Measured BEM horn optimizer](plans/design_recommendation_map.md): the single
+  authority for practical automated design, restartable measurement rounds,
+  ranking, budgets, and winner artifacts.
+- [Non-round transfer study](plans/non_round_transfer_study.md): the bounded
+  square/independent-HV evidence gate for optimizer initialization.
 - [Horn design application API](reference/design_application_api.md): Python
   prediction inputs/outputs plus explicitly deferred diagnosis, recommendation,
   and experiment-selection operations.
@@ -39,8 +40,8 @@ into this directory:
 - [launch review](../examples/control-decoupling/launch_review.md).
 
 The cross-study [geometry research roadmap](plans/geometry_research_roadmap.md)
-is global because it governs the extension, mouth-shape, H/V, and sag studies
-that follow the round baseline.
+records the completed extension evidence, targeted square/HV transfer, measured
+optimizer handoff, and later sag work.
 
 `examples/control-decoupling/manifest.json` is authoritative for the completed
 registered simulations. Generated reports and `runtime_state.json` record their
@@ -57,7 +58,10 @@ also failed and closes further global round-surrogate work. Future studies use
 measured-parent comparisons.
 The [measured heuristic reference](reference/round_control_heuristics.md) is
 the maintained actionable output for length, K/N/S branch seeds, alternate
-high-score zones, and initial H/V length/sag reconciliation.
+high-score zones, extension initialization, and measured square/HV transfer.
+
+Superseded recommendation-map and frequency-energy surrogate plans are retained
+in the [pre-optimizer archive](archive/pre-horn-optimizer-2026-07/README.md).
 
 ## Current terminology
 

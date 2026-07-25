@@ -300,7 +300,7 @@ def load_optimizer_config(path: str | Path) -> HornOptimizerConfig:
     if not output.is_absolute():
         output = source.parent / output
     sag_axes = str(root.get("sag_axes", "none"))
-    sag_default: Any = 0 if sag_axes == "none" else root.get("sag_mm", 0)
+    sag_default: Any = root.get("sag_mm", 0)
     if sag_axes != "none" and "sag_mm" not in root:
         raise ValueError("sag_mm is required when sag_axes is enabled")
     return HornOptimizerConfig(

@@ -197,5 +197,20 @@ Measured, non-predictive starting rules remain available in
 `models/round_control_heuristics_v1/` and are documented in
 `docs/reference/round_control_heuristics.md`.
 
+Practical automated design uses the measured, restartable BEM optimizer rather
+than the limited portable predictor:
+
+```text
+python -m app.tools.run_horn_optimizer examples/horn-optimizer/example.yaml dry-run
+python -m app.tools.run_horn_optimizer examples/horn-optimizer/example.yaml run
+```
+
+Its `horn_optimizer` YAML v1 contract fixes coverage, throat angle, mouth shape,
+and sag axes; searches common OS-SE length, independent H/V K/N, extension, and
+permitted mouth/sag ranges; and enforces one hard simulation cap. The live
+sortable report and restart state are written to the configured output
+directory. See
+`docs/plans/design_recommendation_map.md`.
+
 `pyproject.toml` and `Makefile` remain at the root because Python packaging and
 standard build tools expect project metadata there.

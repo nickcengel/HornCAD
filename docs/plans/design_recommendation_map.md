@@ -1,144 +1,158 @@
-# BEM design recommendation map
+# Measured BEM horn optimizer
 
-## Status
+## Authority and status
 
-The released v1 API implements prediction, support labeling, intervals, derived
-geometry, and nearest evidence. Automated diagnosis, improvement, design search,
-rule extraction, and experiment selection remain future work governed by this
-plan.
+This document is the single active authority for practical automated HornCAD
+design. The implementation is `app.horn_optimizer`, the CLI is
+`python -m app.tools.run_horn_optimizer`, and the input contract is
+`horn_optimizer` YAML version 1.
 
-## Intended workflow
+The optimizer constructs candidates from measured heuristics, retained response
+evidence, and new BEM measurements. It does not release or depend on a global
+score surrogate. The older recommendation-map and frequency-energy surrogate
+plans are retained only under `docs/archive/pre-horn-optimizer-2026-07/`.
 
-The user selects mouth width, mouth height, and intended horizontal/vertical
-coverage. The system returns the best-supported OSSE length, K, N, derived S,
-predicted surface score, uncertainty, closure status, and nearby alternatives.
+The non-round transfer study must publish its result before the implementation
+freezes its preferred common-length initialization. Until that artifact exists,
+the implementation reports that it is using the width/height-weighted fallback.
 
-S is not an additional independent control once mouth, coverage, OSSE length,
-K, and N are fixed. The canonical round model uses OSSE length, K, and N as its
-independent profile controls and reports the resulting S. A later internal model
-may use S as an additional derived feature, but it must not redefine length or
-invert S into a replacement authored length.
+## Fixed design intent
 
-## Stored evidence
+One run fixes:
 
-The design map must not be only a table of winners. Preserve every evaluated
-candidate, including low scores that establish boundaries, with:
+- horizontal and vertical coverage half-angles, used unchanged in both OS-SE
+  bases and the diagnostic target;
+- throat angle;
+- mouth-shape family, `round` or `square` (`round` means zero squareness and
+  therefore has an elliptical boundary when width differs from height);
+- sag axes: `none`, `horizontal`, `vertical`, or `both`;
+- the allowed scalar or range for sag.
 
-- Physical and OS-SE parameters.
-- Derived S and dimensionless length ratios.
-- Surface score and component diagnostics.
-- Frequency-resolved diagnostic curves when available.
-- Solver, mesh, search, and model provenance.
-- Completion, failure, pruning, and closure status.
-- Links to retained reports and geometry artifacts.
+Mouth input is either:
 
-Candidates may have bulky artifacts thinned under a separate retention policy,
-but their compact study records must remain available to the model.
+- `width_mm` plus `height_mm`; or
+- `width_mm` plus `aspect_ratio`, with height derived as width divided by aspect
+  ratio.
 
-## Recommendation model
+Every mouth quantity can be a scalar or inclusive two-value range. Height and
+aspect ratio are mutually exclusive. Practical bounds constrain the search but
+never redefine the fixed coverage, throat, shape, or sag-axis intent.
 
-For the released axisymmetric round-mouth study, model every component diagnostic
-and score as a function of mouth size, coverage half-angle, OSSE length, K, and
-N, with derived S and normalized geometry available as secondary features and
-support checks. Rectangular and asymmetric designs require separate horizontal
-and vertical inputs and should not be inferred from the axisymmetric round model
-without validation.
+The optimizer always searches one common OS-SE profile length, independent H/V
+K, independent H/V N, and conical extension. S is derived separately on both
+axes and guides coupled length/K moves.
 
-The recommendation process should:
+See [`examples/horn-optimizer/example.yaml`](../../examples/horn-optimizer/example.yaml)
+for the complete schema.
 
-1. Reject geometrically invalid combinations.
-2. Search the measured/interpolated domain for the predicted optimum.
-3. Report prediction uncertainty and distance to measured evidence.
-4. Return alternatives within a configurable score tolerance.
-5. Prefer closed optima over slightly higher unresolved boundary predictions.
-6. Require a confirmation BEM solve for extrapolation or a production design.
+## Baseline and retained evidence
 
-Interpolation is allowed only inside a sufficiently sampled domain.
-Extrapolation must be clearly labeled and must not silently become a final
-recommendation.
+An optional full seed project must be compatible with the fixed run intent and
+mouth ranges. It is always the first baseline. If an exact compatible retained
+response with surface v2.3 and throat-impedance v2.3.0 exists, that response is
+rescored/reused without spending simulation budget. Otherwise the seed receives
+the first new BEM evaluation. With no supplied seed, the measured heuristic
+construction is the baseline.
 
-## Diagnostic learning and steering rules
+Nearby retained responses can initialize branches and supply support warnings.
+They are never substituted for a new coordinate. Exact compatibility includes
+coverage, throat angle, mouth squareness, sag axes, and every authored search
+coordinate.
 
-The final surface score decides whether a proposal is better overall, but it is
-not the only learning target. Fit and compare changes in containment, profile
-RMS error, outward-rise violation, slice-energy departure, the secondary -6 dB
-line, and their retained frequency traces. This separates three outputs:
+## Proposal rounds
 
-1. **Prediction:** which unmeasured candidate is likely to score higher.
-2. **Diagnosis:** which acoustic behavior currently limits the result.
-3. **Steering:** which OS-SE control direction is likely to correct that
-   behavior in the current geometry regime.
+Round zero measures or reuses the baseline. The first exploration includes:
 
-Every learned steering rule must state its diagnostic condition, geometry
-regime, parameter action, expected component and final-score changes, support
-count, exceptions, and confidence. Confidence is `hypothesis` for uncontrolled
-correlation, `supported` for repeated matched perturbations, and `validated`
-only after the rule predicts held-out or prospective results. For example,
-"decrease K when containment is already high but the coverage trace narrows too
-quickly" is learnable from matched K perturbations and the frequency-resolved
--6 dB traces; candidates that change K, N, and S together may suggest that rule
-but cannot establish it.
+- both validated common-length constructions;
+- independent horizontal and vertical K/N moves without averaging axes;
+- mouth width, height, or aspect sentinels when ranges permit them;
+- extension;
+- permitted sag sentinels.
 
-The learner should therefore retain multi-output diagnostic models and paired
-local effects even when a scalar-score model ranks proposals more accurately.
-Feature importance alone is not a steering rule, and a component improvement
-is not accepted when its weighted final-score tradeoff is negative.
+Later rounds use batches of at most four candidates. Candidate moves are grouped
+as horizontal-axis, vertical-axis, length/extension, mouth-size/aspect, and sag.
+Length and K changes are coupled using derived H/V S guidance. Up to three
+measured leaders remain anchors so a single local basin does not erase other
+competitive regions.
 
-## Output schema
+An inverse-distance response approximation may order only the finite proposal
+pool for the current run. It is discarded as the pool is consumed, is labeled
+non-portable in state, and must not be exported as a general predictor.
 
-A versioned machine-readable record should include at least:
+The stage-aware queue shares a hard 20-process NumCalc capacity and starts no
+more than four fixed searches per optimizer batch.
 
-```json
-{
-  "mouth_width_mm": 400,
-  "mouth_height_mm": 400,
-  "coverage_h_deg": 45,
-  "coverage_v_deg": 45,
-  "recommended": {
-    "length_mm": 143.1,
-    "k_h": 4.0,
-    "k_v": 4.0,
-    "n_h": 5.0,
-    "n_v": 5.0,
-    "s_h": 1.9,
-    "s_v": 1.9,
-    "predicted_surface_score": 89.1,
-    "closure_status": "closed",
-    "prediction_uncertainty_points": 0.5
-  }
-}
+## Ranking
+
+The default measured ranking is:
+
+1. find the highest surface-v2.3 score;
+2. retain every candidate within 0.5 surface point of that score;
+3. choose the highest throat-impedance-v2.3.0 score in that shortlist.
+
+The YAML may disable the impedance tiebreak or change the shortlist width. A
+supplied seed remains the winner unless another measured/reused result beats it
+under the selected rule.
+
+## Budget, recovery, and stopping
+
+Every newly launched solver evaluation counts against `max_simulations`,
+including final confirmation and an evaluation that ends in solver failure.
+Exact library reuse, deterministic geometry rejection, and retries of the same
+interrupted evaluation do not consume another slot.
+
+State is written atomically before a solver batch launches. Restart harvests a
+completed search or resumes the same charged evaluation; coordinate and proposal
+hashes prevent duplicates. Solver failures retain their attempt history.
+
+Early stopping requires all three conditions:
+
+1. local step sizes have contracted to the registered thresholds;
+2. two completed rounds have not improved the ranked winner;
+3. no unmeasured feasible heuristic branch remains.
+
+If budget remains, early stopping schedules one higher-density final
+confirmation, which consumes a simulation. The hard cap always wins.
+
+## Outputs and live review
+
+Each run retains:
+
+- `optimizer_state.json`, including proposal lineage and full accounting;
+- a live `index.html` that reloads every five seconds while active and provides
+  sortable columns;
+- every candidate project, STL/preflight artifact, fixed-search YAML, compact
+  response, and report;
+- `winning_project.yaml` and `winning_horn.stl`;
+- `top_alternatives.json` and `result.json`, including seed-relative changes,
+  parameter lineage, nearest evidence, support warnings, early-stop evidence,
+  and simulation accounting.
+
+Approval-gated runs materialize proposals and stop until `approve` is invoked.
+Autonomous runs continue until the hard cap or the contracted stopping rule.
+
+## CLI
+
+```text
+python -m app.tools.run_horn_optimizer CONFIG init
+python -m app.tools.run_horn_optimizer CONFIG dry-run
+python -m app.tools.run_horn_optimizer CONFIG step
+python -m app.tools.run_horn_optimizer CONFIG run
+python -m app.tools.run_horn_optimizer CONFIG approve
+python -m app.tools.run_horn_optimizer CONFIG status
+python -m app.tools.run_horn_optimizer CONFIG report
 ```
 
-The actual values above are illustrative and must not be treated as a final
-recommendation without closed-study evidence.
+`dry-run` validates and materializes the next batch without spending simulation
+budget. `step` performs at most one batch. `run` is restartable.
 
-## Index interface
+## Boundary with other systems
 
-The index should eventually provide a design-recommendation panel with:
+`bem_candidate_search` remains the low-level/manual engine used for fixed
+candidate geometry, BEM, diagnostics, and artifact retention. Its generic
+Pareto/surrogate proposer is not this optimizer.
 
-- Mouth and coverage inputs.
-- Recommended length, K, N, and S.
-- Predicted surface score and uncertainty.
-- Closure and interpolation/extrapolation status.
-- Nearest measured candidates and report links.
-- Near-equivalent alternatives, including shorter options.
-- A way to materialize a HornCAD project/STL and request confirmation.
-
-Frequency-energy modeling described in
-`frequency_energy_bunching_analysis.md` should later add choices for maximum
-surface score, smoothest spectral energy distribution, and compromises between
-the two.
-
-## Delivery stages
-
-1. Exact lookup for measured closed mouth/coverage combinations.
-2. Validated interpolation between sampled mouth sizes and coverage angles.
-3. Continuous OSSE-length/K/N optimization with derived-S support checks and
-   uncertainty.
-4. Confirmation simulations that update the measured dataset.
-5. Frequency-resolved heatmap and energy-curve prediction.
-
-The fitting, validation, and portable export contract is defined in
-[`examples/control-decoupling/model_pipeline.md`](../../examples/control-decoupling/model_pipeline.md).
-Later geometry corrections follow
-[`geometry_research_roadmap.md`](geometry_research_roadmap.md).
+`app.design_api` remains a portable-model interface. Its current prediction is
+limited-support and its model-only `improve()`, `design()`, and
+`select_experiments()` methods remain deferred. They are not alternative
+optimizer implementations and cannot emit BEM-confirmed results.

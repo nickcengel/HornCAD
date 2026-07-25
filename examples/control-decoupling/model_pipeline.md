@@ -64,9 +64,12 @@ primary model is canonical evidence only. The augmented model adds compatible,
 density-weighted historical evidence after primary validation and retains the
 primary prediction alongside it.
 
-`rules.json` is a release placeholder with no actionable rules because
-`diagnose()`, `improve()`, automated design, and experiment selection are
-deferred. The other files document evidence, limitations, and interpretation.
+`rules.json` is a release placeholder with no actionable portable-model rules
+because `diagnose()`, `improve()`, model-only `design()`, and
+`select_experiments()` are deferred. The measured BEM optimizer is a separate
+implemented workflow; it does not turn this placeholder into a surrogate or
+redefine these methods. The other files document evidence, limitations, and
+interpretation.
 
 The retained candidate `responses.npz` files remain the authoritative source for
 future diagnostics, but routine prediction and study design must not require
@@ -328,13 +331,21 @@ Only `predict` is implemented in v1. The other operations deliberately raise
 change callers. When implemented, `improve` must use the complete diagnostic
 Jacobian and Hessian rather than optimize surface score alone.
 
+Those future methods would return portable model predictions. They are not
+alternate optimizer implementations. Practical automated design uses
+[`horn_optimizer`](../../docs/plans/design_recommendation_map.md), which
+constructs candidates from measured heuristics and confirms rankings with
+retained or new BEM evidence. Its finite run-local pool ordering is not exported
+as a model.
+
 ## Use by later geometry studies
 
 The experimental order and paired-study requirements for these augmentations are
 specified in
 [geometry_research_roadmap.md](../../docs/plans/geometry_research_roadmap.md).
 
-Later studies learn corrections relative to this frozen baseline:
+Any later portable-model study may learn corrections relative to this frozen
+baseline:
 
 ```text
 round-control prediction
@@ -342,6 +353,10 @@ round-control prediction
     + round-to-square delta
     + H/V-coupling residual
 ```
+
+The current measured optimizer does not require these unvalidated correction
+layers. It uses the non-round transfer study only for initialization and relies
+on BEM measurements for the run result.
 
 Each correction is accepted only where paired validation supports an additive or
 conditional correction. The round model supplies baseline predictions, parent
