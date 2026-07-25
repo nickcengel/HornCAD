@@ -11,6 +11,7 @@ from app.tools.run_non_round_transfer_study import (
     SHAPES,
     _candidate,
     common_lengths,
+    refresh_index,
 )
 
 
@@ -73,6 +74,14 @@ class NonRoundTransferStudyTests(unittest.TestCase):
         bounds = search["bem_candidate_search"]["bounds"]
         self.assertAlmostEqual(
             sum(bounds["length_mm"])/2, lengths["weighted"])
+
+    def test_live_index_is_sortable_and_self_refreshing(self):
+        document = refresh_index().read_text(encoding="utf-8")
+        self.assertIn("http-equiv='refresh' content='5'", document)
+        self.assertIn('table class="sortable"', document)
+        self.assertIn('data-sort="number">Length', document)
+        self.assertIn('header.addEventListener("click"', document)
+        self.assertIn('id="updated-at"', document)
 
 
 if __name__ == "__main__":

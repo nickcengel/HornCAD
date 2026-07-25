@@ -11,6 +11,7 @@ import math
 import os
 from pathlib import Path
 from statistics import median
+import threading
 import time
 from typing import Any
 
@@ -499,6 +500,18 @@ def run_phase(path: Path, expected_count: int | None = None) -> dict[str, Any]:
             STUDY_ROOT / f"{manifest['phase']}_runtime.json", result)
         refresh_index()
         return result
+    stop_refresh = threading.Event()
+
+    def refresh_while_running() -> None:
+        while not stop_refresh.wait(3):
+            refresh_index()
+
+    refresher = threading.Thread(
+        target=refresh_while_running,
+        name=f"{manifest['phase']}-index-refresher",
+        daemon=True,
+    )
+    refresher.start()
     try:
         return run_queue(
             pending,
@@ -508,6 +521,8 @@ def run_phase(path: Path, expected_count: int | None = None) -> dict[str, Any]:
             on_event=lambda _event: refresh_index(),
         )
     finally:
+        stop_refresh.set()
+        refresher.join()
         refresh_index()
 
 
@@ -853,23 +868,29 @@ def refresh_index() -> Path:
             )
             rows.append(
                 "<tr>"
-                f"<td>{label}</td><td>{html.escape(row['phase'])}</td>"
+                f"<td data-sort-value='{html.escape(row['id'])}'>{label}</td>"
+                f"<td>{html.escape(row['phase'])}</td>"
                 f"<td>{html.escape(status)}</td>"
-                f"<td>{row['mouth_width_mm']:g}×{row['mouth_height_mm']:g}</td>"
-                f"<td>{row['horizontal_coverage_deg']:g}×"
+                f"<td data-sort-value='{row['mouth_width_mm'] * 1_000_000 + row['mouth_height_mm']:.6f}'>"
+                f"{row['mouth_width_mm']:g}×{row['mouth_height_mm']:g}</td>"
+                f"<td data-sort-value='{row['horizontal_coverage_deg'] * 1_000_000 + row['vertical_coverage_deg']:.6f}'>"
+                f"{row['horizontal_coverage_deg']:g}×"
                 f"{row['vertical_coverage_deg']:g}</td>"
                 f"<td>{html.escape(row['shape'])}</td>"
                 f"<td>{html.escape(row['length_rule'])}</td>"
                 f"<td>{row['length_mm']:.3f}</td>"
-                f"<td>{row['k_h']:g}/{row['k_v']:g}</td>"
-                f"<td>{row['n_h']:g}/{row['n_v']:g}</td>"
+                f"<td data-sort-value='{row['k_h'] * 1_000_000 + row['k_v']:.6f}'>"
+                f"{row['k_h']:g}/{row['k_v']:g}</td>"
+                f"<td data-sort-value='{row['n_h'] * 1_000_000 + row['n_v']:.6f}'>"
+                f"{row['n_h']:g}/{row['n_v']:g}</td>"
                 "</tr>"
             )
     preference = (
         _read_json(PREFERENCE).get("preferred_length_rule")
         if PREFERENCE.is_file() else "not selected")
     final = _read_json(RESULTS) if RESULTS.is_file() else None
-    refresh = "" if final else "<meta http-equiv='refresh' content='10'>"
+    refresh = "" if final else "<meta http-equiv='refresh' content='5'>"
+    updated = time.strftime("%Y-%m-%d %H:%M:%S %Z")
     document = f"""<!doctype html>
 <meta charset="utf-8">{refresh}<title>Non-round transfer study</title>
 <style>
@@ -877,23 +898,73 @@ body{{font:15px system-ui,sans-serif;margin:20px;background:#10161d;color:#e8edf
 section{{background:#17212a;border:1px solid #34414c;border-radius:9px;padding:14px;margin:14px 0;overflow:auto}}
 table{{border-collapse:collapse;width:100%;min-width:max-content}}
 th,td{{padding:7px 9px;border-bottom:1px solid #34414c;text-align:right}}
-th{{background:#202c36}}th:first-child,td:first-child{{text-align:left}}
+th{{background:#202c36;cursor:pointer;user-select:none}}
+th::after{{content:" ↕";color:#83909b;font-size:.8em}}
+th[aria-sort="ascending"]::after{{content:" ↑";color:#7bd7cb}}
+th[aria-sort="descending"]::after{{content:" ↓";color:#7bd7cb}}
+th:first-child,td:first-child{{text-align:left}}
 a{{color:#7bd7cb}}code{{color:#f6c177}}
 </style>
 <h1>Non-round H/V and square-mouth transfer study</h1>
 <section><strong>Progress:</strong> {completed}/{total} prepared coordinates
 complete · <strong>preferred common length:</strong>
 <code>{html.escape(str(preference))}</code> · <strong>hard cap:</strong> 64
+· <strong>updated:</strong> <span id="updated-at">{html.escape(updated)}</span>
 </section>
-<section><table><thead><tr><th>Candidate</th><th>Phase</th><th>Status</th>
-<th>Mouth W×H</th><th>Coverage H×V</th><th>Shape</th><th>Length rule</th>
-<th>Length</th><th>K H/V</th><th>N H/V</th></tr></thead>
+<section><table class="sortable"><thead><tr>
+<th data-sort="text">Candidate</th><th data-sort="text">Phase</th>
+<th data-sort="text">Status</th><th data-sort="number">Mouth W×H</th>
+<th data-sort="number">Coverage H×V</th><th data-sort="text">Shape</th>
+<th data-sort="text">Length rule</th><th data-sort="number">Length</th>
+<th data-sort="number">K H/V</th><th data-sort="number">N H/V</th>
+</tr></thead>
 <tbody>{''.join(rows)}</tbody></table></section>
+<script>
+document.querySelectorAll("table.sortable th[data-sort]").forEach((header, column) => {{
+  header.addEventListener("click", () => {{
+    const table = header.closest("table");
+    const body = table.tBodies[0];
+    const direction = header.getAttribute("aria-sort") === "ascending" ? -1 : 1;
+    table.querySelectorAll("th").forEach(item => item.removeAttribute("aria-sort"));
+    header.setAttribute("aria-sort", direction === 1 ? "ascending" : "descending");
+    const kind = header.dataset.sort;
+    const rows = Array.from(body.rows);
+    rows.sort((left, right) => {{
+      const aCell = left.cells[column];
+      const bCell = right.cells[column];
+      const aRaw = aCell.dataset.sortValue ?? aCell.textContent.trim();
+      const bRaw = bCell.dataset.sortValue ?? bCell.textContent.trim();
+      const comparison = kind === "number"
+        ? (Number(aRaw) - Number(bRaw))
+        : aRaw.localeCompare(bRaw, undefined, {{numeric: true, sensitivity: "base"}});
+      return direction * comparison;
+    }});
+    rows.forEach(row => body.appendChild(row));
+  }});
+}});
+</script>
 """
     STUDY_ROOT.mkdir(parents=True, exist_ok=True)
     path = STUDY_ROOT / "index.html"
-    path.write_text(document, encoding="utf-8")
+    temporary = path.with_name(f".{path.name}.{os.getpid()}.tmp")
+    temporary.write_text(document, encoding="utf-8")
+    temporary.replace(path)
     return path
+
+
+def watch_index() -> Path:
+    """Refresh the index while any prepared study phase is running."""
+    runtime_paths = tuple(STUDY_ROOT.glob("*_runtime.json"))
+    while True:
+        path = refresh_index()
+        running = any(
+            _read_json(runtime).get("status") == "running"
+            for runtime in runtime_paths
+            if runtime.is_file()
+        )
+        if not running:
+            return path
+        time.sleep(3)
 
 
 def main() -> None:
@@ -903,6 +974,7 @@ def main() -> None:
         "analyze-development", "prepare-locked", "preflight-locked",
         "run-locked", "analyze-locked", "prepare-closure",
         "preflight-closure", "run-closure", "analyze", "index",
+        "watch-index",
     ))
     args = parser.parse_args()
     if args.command == "prepare-development":
@@ -929,6 +1001,8 @@ def main() -> None:
         result = run_phase(CLOSURE_MANIFEST)
     elif args.command == "analyze":
         result = analyze_final()
+    elif args.command == "watch-index":
+        result = {"index": str(watch_index().relative_to(ROOT))}
     else:
         result = {"index": str(refresh_index().relative_to(ROOT))}
     print(json.dumps(result, indent=2, sort_keys=True))
