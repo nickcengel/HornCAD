@@ -1078,55 +1078,65 @@ class HornOptimizer:
         _write_yaml(search_path, search)
         return project_path, search_path, project
 
-    def _library(self) -> list[dict[str, Any]]:
+    def _library(
+        self, target_hashes: set[str] | None = None,
+    ) -> list[dict[str, Any]]:
         if self._provided_library is not None:
             return self._provided_library
         rows = []
-        for state_path in sorted(ROOT.glob("examples/**/search_state.json")):
-            try:
-                state = _read_json(state_path)
-            except (ValueError, OSError, json.JSONDecodeError):
+        projects = sorted(
+            ROOT.glob("examples/**/candidates/candidate-*/project.yaml"))
+        for project_path in projects:
+            candidate_dir = project_path.parent
+            response_path = candidate_dir / "bem" / "responses.npz"
+            search_path = project_path.parents[2] / "search.yaml"
+            surface_path = candidate_dir / "bem" / "surface_diagnostics.json"
+            impedance_path = (
+                candidate_dir / "bem" / "throat_impedance_diagnostics.json")
+            if not all(path.is_file() for path in (
+                    response_path, search_path, surface_path, impedance_path)):
                 continue
-            for record in state.get("candidates", []):
-                if record.get("status") != "complete":
+            try:
+                project = _load_yaml(project_path)
+                if not self._compatible_project(project):
                     continue
-                project_path = (
-                    state_path.parent / "candidates" / str(record.get("id"))
-                    / "project.yaml")
-                search_path = state_path.parent / "search.yaml"
-                if not project_path.is_file():
+                search_document = yaml.safe_load(
+                    search_path.read_text(encoding="utf-8"))
+                if not self._compatible_search(search_document):
                     continue
-                try:
-                    project = _load_yaml(project_path)
-                    values = _project_values(project)
-                    compatible = self._compatible_project(project)
-                    search_document = yaml.safe_load(
-                        search_path.read_text(encoding="utf-8"))
-                    surface = record["surface_diagnostics"]["score"]
-                    impedance = record["throat_impedance_diagnostics"]
-                    if (
-                        not compatible
-                        or not self._compatible_search(search_document)
-                        or surface.get("version") != "v2.3"
-                        or impedance.get("diagnostic_version") != "2.3.0"
-                    ):
-                        continue
-                    rows.append({
-                        "coordinate_hash": coordinate_hash(
-                            self.config, values),
-                        "surface_score_v2_3":
-                            float(surface["overall_percent"]),
-                        "throat_impedance_score_v2_3_0":
-                            float(impedance["overall_percent"]),
-                        "response_path": str(
-                            project_path.parent / "bem" / "responses.npz"),
-                        "project_path": str(project_path),
-                    })
-                except (
-                    KeyError, TypeError, ValueError, OSError,
-                    json.JSONDecodeError,
-                ):
+                values = _project_values(project)
+                coordinate = coordinate_hash(self.config, values)
+                if target_hashes is not None and coordinate not in target_hashes:
                     continue
+                surface_document = _read_json(surface_path)
+                impedance_document = _read_json(impedance_path)
+                surface = next(
+                    value["score"]
+                    for value in surface_document.values()
+                    if isinstance(value, dict)
+                    and isinstance(value.get("score"), dict)
+                    and value["score"].get("version") == "v2.3"
+                )
+                impedance = next(
+                    value
+                    for value in impedance_document.values()
+                    if isinstance(value, dict)
+                    and value.get("diagnostic_version") == "2.3.0"
+                )
+                rows.append({
+                    "coordinate_hash": coordinate,
+                    "surface_score_v2_3":
+                        float(surface["overall_percent"]),
+                    "throat_impedance_score_v2_3_0":
+                        float(impedance["overall_percent"]),
+                    "response_path": str(response_path),
+                    "project_path": str(project_path),
+                })
+            except (
+                KeyError, StopIteration, TypeError, ValueError, OSError,
+                json.JSONDecodeError, IndexError,
+            ):
+                continue
         return rows
 
     def _compatible_search(self, document: Any) -> bool:
@@ -1226,7 +1236,10 @@ class HornOptimizer:
             self.render_report(state)
             return state
         library = {
-            row["coordinate_hash"]: row for row in self._library()
+            row["coordinate_hash"]: row for row in self._library({
+                candidate["coordinate_hash"] for candidate in pending
+                if not candidate.get("force_new_evaluation")
+            })
             if row.get("coordinate_hash")
         }
         searches: list[Path] = []

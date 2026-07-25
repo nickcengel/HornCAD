@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+import shutil
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -247,6 +248,50 @@ class HornOptimizerTests(unittest.TestCase):
             incompatible["bem_candidate_search"]["solver"][
                 "points_per_octave"] = 8
             self.assertFalse(optimizer._compatible_search(incompatible))
+
+    def test_library_discovers_tracked_compact_response_without_search_state(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            config = self.config(root)
+            optimizer = HornOptimizer(config)
+            candidate_dir = (
+                root / "examples/study/search/candidates/candidate-000")
+            bem = candidate_dir / "bem"
+            bem.mkdir(parents=True)
+            shutil.copy2(SEED, candidate_dir / "project.yaml")
+            (bem / "responses.npz").write_bytes(b"retained")
+            (bem / "surface_diagnostics.json").write_text(json.dumps({
+                "candidate": {"score": {
+                    "version": "v2.3", "overall_percent": 88.0,
+                }},
+            }), encoding="utf-8")
+            (bem / "throat_impedance_diagnostics.json").write_text(
+                json.dumps({"candidate": {
+                    "diagnostic_version": "2.3.0",
+                    "overall_percent": 77.0,
+                }}),
+                encoding="utf-8",
+            )
+            search = {
+                "bem_candidate_search": {
+                    "lower_frequency_hz": 500,
+                    "crossover_hz": 750,
+                    "upper_frequency_hz": 8000,
+                    "solver": {
+                        "points_per_octave": 12,
+                        "elements_per_wavelength": 6,
+                        "angles": 91,
+                    },
+                },
+            }
+            (candidate_dir.parents[1] / "search.yaml").write_text(
+                yaml.safe_dump(search), encoding="utf-8")
+            coordinate = coordinate_hash(
+                config, optimizer._baseline_values())
+            with patch("app.horn_optimizer.optimizer.ROOT", root):
+                library = optimizer._library({coordinate})
+            self.assertEqual(len(library), 1)
+            self.assertEqual(library[0]["surface_score_v2_3"], 88)
 
     def test_fixed_intent_shape_and_sag_are_materialized(self):
         with tempfile.TemporaryDirectory() as temp:
