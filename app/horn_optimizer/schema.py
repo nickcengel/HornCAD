@@ -26,6 +26,23 @@ def _number(name: str, value: Any, *, positive: bool = False,
     return result
 
 
+def _integer(name: str, value: Any, *, minimum: int = 0,
+             maximum: int | None = None) -> int:
+    if isinstance(value, bool):
+        raise ValueError(f"{name} must be an integer")
+    numeric = _number(name, value)
+    if not numeric.is_integer():
+        raise ValueError(f"{name} must be an integer")
+    result = int(numeric)
+    if result < minimum or (maximum is not None and result > maximum):
+        suffix = (
+            f"between {minimum} and {maximum}"
+            if maximum is not None else f"at least {minimum}"
+        )
+        raise ValueError(f"{name} must be {suffix}")
+    return result
+
+
 @dataclass(frozen=True, slots=True)
 class NumericRange:
     minimum: float
@@ -200,7 +217,7 @@ def load_optimizer_config(path: str | Path) -> HornOptimizerConfig:
     document = yaml.safe_load(source.read_text(encoding="utf-8"))
     root = _mapping("YAML document", document).get("horn_optimizer")
     root = _mapping("horn_optimizer", root)
-    if int(root.get("version", 0)) != 1:
+    if _integer("horn_optimizer.version", root.get("version", 0)) != 1:
         raise ValueError("expected horn_optimizer version 1")
     intent = _mapping("intent", root.get("intent"))
     mouth_doc = _mapping("mouth", root.get("mouth"))
@@ -284,8 +301,11 @@ def load_optimizer_config(path: str | Path) -> HornOptimizerConfig:
         elements_per_wavelength=_number(
             "solver.elements_per_wavelength",
             solver_doc.get("elements_per_wavelength", 6), positive=True),
-        angles=int(solver_doc.get("angles", 91)),
-        workers=int(solver_doc.get("workers", 10)),
+        angles=_integer(
+            "solver.angles", solver_doc.get("angles", 91), minimum=1),
+        workers=_integer(
+            "solver.workers", solver_doc.get("workers", 10),
+            minimum=1, maximum=20),
     )
     seed = root.get("seed_yaml")
     seed_path = None
@@ -319,7 +339,8 @@ def load_optimizer_config(path: str | Path) -> HornOptimizerConfig:
         sag_axes=sag_axes,
         sag_mm=NumericRange.parse(
             "sag_mm", sag_default, nonnegative=True),
-        max_simulations=int(root.get("max_simulations", 0)),
+        max_simulations=_integer(
+            "max_simulations", root.get("max_simulations", 0), minimum=1),
         approval_mode=str(root.get("approval_mode", "autonomous")),
         seed_yaml=seed_path,
         practical_limits=practical,
