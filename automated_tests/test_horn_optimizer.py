@@ -58,7 +58,8 @@ class FakeQueue:
 
 class HornOptimizerTests(unittest.TestCase):
     def config(self, root: Path, *, max_simulations=8,
-               approval_mode="autonomous", seed=False, shape="round"):
+               approval_mode="autonomous", seed=False, shape="round",
+               aspect=False):
         document = {"horn_optimizer": {
             "version": 1,
             "output_dir": "run",
@@ -68,7 +69,11 @@ class HornOptimizerTests(unittest.TestCase):
             },
             "throat_angle_deg": 6,
             "mouth_shape": shape,
-            "mouth": {"width_mm": 400, "height_mm": 280},
+            "mouth": (
+                {"width_mm": [380, 420], "aspect_ratio": [1.3, 1.5]}
+                if aspect else
+                {"width_mm": 400, "height_mm": 280}
+            ),
             "sag_axes": "none",
             "sag_mm": 0,
             "max_simulations": max_simulations,
@@ -171,6 +176,18 @@ class HornOptimizerTests(unittest.TestCase):
             actual = optimizer._heuristic_values(
                 length_rule="s-balanced")["length_mm"]
             self.assertAlmostEqual(actual, expected, places=9)
+
+    def test_later_pool_contains_permitted_aspect_moves(self):
+        with tempfile.TemporaryDirectory() as temp:
+            optimizer = HornOptimizer(
+                self.config(Path(temp), aspect=True),
+                response_library=[], queue_runner=FakeQueue())
+            with self.preflight():
+                state = optimizer.step()
+            pool = optimizer._local_pool(state, 2)
+            self.assertTrue(any(
+                row["branch"].startswith("mouth-aspect-")
+                for row in pool))
 
     def test_seed_is_mandatory_first_measured_baseline(self):
         with tempfile.TemporaryDirectory() as temp:

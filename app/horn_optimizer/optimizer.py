@@ -357,6 +357,7 @@ class HornOptimizer:
                 "k": 0.75,
                 "n": 4.0,
                 "mouth_mm": 20.0,
+                "aspect_ratio": 0.1,
                 "sag_mm": 10.0,
             },
             "accounting": {
@@ -670,6 +671,35 @@ class HornOptimizer:
                         1+sign*steps["length_fraction"])},
                     f"length-{suffix}-b{anchor_index}", parent,
                 ))
+            mouth = self.config.mouth
+            if mouth.height_mm and not mouth.height_mm.scalar:
+                for sign, suffix in ((-1, "low"), (1, "high")):
+                    pool.append((
+                        {
+                            **values,
+                            "mouth_height_mm":
+                                values["mouth_height_mm"]
+                                + sign*steps["mouth_mm"],
+                        },
+                        f"mouth-height-{suffix}-b{anchor_index}",
+                        parent,
+                    ))
+            if mouth.aspect_ratio and not mouth.aspect_ratio.scalar:
+                aspect = (
+                    values["mouth_width_mm"]
+                    / values["mouth_height_mm"])
+                for sign, suffix in ((-1, "low"), (1, "high")):
+                    moved_aspect = mouth.aspect_ratio.clamp(
+                        aspect+sign*steps["aspect_ratio"])
+                    pool.append((
+                        {
+                            **values,
+                            "mouth_height_mm":
+                                values["mouth_width_mm"]/moved_aspect,
+                        },
+                        f"mouth-aspect-{suffix}-b{anchor_index}",
+                        parent,
+                    ))
         candidates = [
             self._candidate(
                 values, round_number, branch, parent_hash=parent)
@@ -1252,6 +1282,11 @@ class HornOptimizer:
             and steps["k"] <= 0.25
             and steps["n"] <= 1
             and steps["mouth_mm"] <= 5
+            and (
+                self.config.mouth.aspect_ratio is None
+                or self.config.mouth.aspect_ratio.scalar
+                or steps.get("aspect_ratio", 0) <= 0.025
+            )
             and steps["sag_mm"] <= 2.5
         )
         early = state["early_stopping"]
