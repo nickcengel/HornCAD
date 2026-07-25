@@ -227,6 +227,27 @@ class HornOptimizerTests(unittest.TestCase):
             self.assertTrue(
                 (config.output_dir / "winning_project.yaml").is_file())
 
+    def test_exact_reuse_requires_compatible_solver_grid(self):
+        with tempfile.TemporaryDirectory() as temp:
+            optimizer = HornOptimizer(self.config(Path(temp)))
+            compatible = {
+                "bem_candidate_search": {
+                    "lower_frequency_hz": 500,
+                    "crossover_hz": 750,
+                    "upper_frequency_hz": 8000,
+                    "solver": {
+                        "points_per_octave": 12,
+                        "elements_per_wavelength": 6,
+                        "angles": 91,
+                    },
+                },
+            }
+            self.assertTrue(optimizer._compatible_search(compatible))
+            incompatible = json.loads(json.dumps(compatible))
+            incompatible["bem_candidate_search"]["solver"][
+                "points_per_octave"] = 8
+            self.assertFalse(optimizer._compatible_search(incompatible))
+
     def test_fixed_intent_shape_and_sag_are_materialized(self):
         with tempfile.TemporaryDirectory() as temp:
             optimizer = HornOptimizer(

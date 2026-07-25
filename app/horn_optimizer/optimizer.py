@@ -1082,7 +1082,7 @@ class HornOptimizer:
         if self._provided_library is not None:
             return self._provided_library
         rows = []
-        for state_path in ROOT.glob("examples/**/search_state.json"):
+        for state_path in sorted(ROOT.glob("examples/**/search_state.json")):
             try:
                 state = _read_json(state_path)
             except (ValueError, OSError, json.JSONDecodeError):
@@ -1093,16 +1093,20 @@ class HornOptimizer:
                 project_path = (
                     state_path.parent / "candidates" / str(record.get("id"))
                     / "project.yaml")
+                search_path = state_path.parent / "search.yaml"
                 if not project_path.is_file():
                     continue
                 try:
                     project = _load_yaml(project_path)
                     values = _project_values(project)
                     compatible = self._compatible_project(project)
+                    search_document = yaml.safe_load(
+                        search_path.read_text(encoding="utf-8"))
                     surface = record["surface_diagnostics"]["score"]
                     impedance = record["throat_impedance_diagnostics"]
                     if (
                         not compatible
+                        or not self._compatible_search(search_document)
                         or surface.get("version") != "v2.3"
                         or impedance.get("diagnostic_version") != "2.3.0"
                     ):
@@ -1124,6 +1128,30 @@ class HornOptimizer:
                 ):
                     continue
         return rows
+
+    def _compatible_search(self, document: Any) -> bool:
+        if not isinstance(document, dict):
+            return False
+        search = document.get("bem_candidate_search")
+        if not isinstance(search, dict):
+            return False
+        solver = search.get("solver", {})
+        required = self.config.solver
+        comparisons = (
+            (search.get("lower_frequency_hz"), required.lower_frequency_hz),
+            (search.get("crossover_hz"), required.crossover_hz),
+            (search.get("upper_frequency_hz"), required.upper_frequency_hz),
+            (solver.get("points_per_octave"), required.points_per_octave),
+            (solver.get("elements_per_wavelength"),
+             required.elements_per_wavelength),
+            (solver.get("angles"), required.angles),
+        )
+        try:
+            return all(math.isclose(
+                float(actual), float(expected), abs_tol=1e-9)
+                for actual, expected in comparisons)
+        except (TypeError, ValueError):
+            return False
 
     def _compatible_project(self, project: dict[str, Any]) -> bool:
         config = project["horncad_config"]
