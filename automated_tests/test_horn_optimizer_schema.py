@@ -71,6 +71,9 @@ class HornOptimizerSchemaTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "integer"):
                 load_optimizer_config(self.write(
                     Path(temp), {"max_simulations": 3.5}))
+            with self.assertRaisesRegex(ValueError, "true or false"):
+                load_optimizer_config(self.write(
+                    Path(temp), {"ranking": {"enabled": "false"}}))
 
 
 if __name__ == "__main__":

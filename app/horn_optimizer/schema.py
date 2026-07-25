@@ -43,6 +43,12 @@ def _integer(name: str, value: Any, *, minimum: int = 0,
     return result
 
 
+def _boolean(name: str, value: Any) -> bool:
+    if not isinstance(value, bool):
+        raise ValueError(f"{name} must be true or false")
+    return value
+
+
 @dataclass(frozen=True, slots=True)
 class NumericRange:
     minimum: float
@@ -272,7 +278,8 @@ def load_optimizer_config(path: str | Path) -> HornOptimizerConfig:
     )
     ranking_doc = _mapping("ranking", root.get("ranking", {}))
     ranking = RankingRule(
-        enabled=bool(ranking_doc.get("enabled", True)),
+        enabled=_boolean(
+            "ranking.enabled", ranking_doc.get("enabled", True)),
         surface_shortlist_points=_number(
             "ranking.surface_shortlist_points",
             ranking_doc.get("surface_shortlist_points", 0.5),
