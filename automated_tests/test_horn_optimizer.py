@@ -8,11 +8,13 @@ from unittest.mock import patch
 
 import yaml
 
+from app.design_api import DesignIntent
 from app.horn_optimizer import (
     HornOptimizer, load_optimizer_config, rank_measurements,
 )
 from app.horn_optimizer.optimizer import coordinate_hash, proposal_hash
 from app.horn_optimizer.optimizer import _transfer_guidance
+from app.tools.run_non_round_transfer_study import common_lengths
 
 
 ROOT = Path(__file__).parents[1]
@@ -158,6 +160,17 @@ class HornOptimizerTests(unittest.TestCase):
                 row for row in pool if row["branch"] == "h-axis-k-low")
             self.assertAlmostEqual(
                 base["k_h"]-h_low["values"]["k_h"], 1.25)
+
+    def test_optimizer_uses_preregistered_s_balanced_construction(self):
+        with tempfile.TemporaryDirectory() as temp:
+            optimizer = HornOptimizer(self.config(Path(temp)))
+            expected = common_lengths(
+                optimizer.rules,
+                DesignIntent(400, 280, 50, 35),
+            )["s-balanced"]
+            actual = optimizer._heuristic_values(
+                length_rule="s-balanced")["length_mm"]
+            self.assertAlmostEqual(actual, expected, places=9)
 
     def test_seed_is_mandatory_first_measured_baseline(self):
         with tempfile.TemporaryDirectory() as temp:

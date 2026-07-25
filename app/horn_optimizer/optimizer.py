@@ -450,13 +450,25 @@ class HornOptimizer:
         seed = self.rules.recommend(intent)
         rule = length_rule or _transfer_length_rule()
         if rule == "s-balanced":
-            # Equalize the log S departure of the two axes by bisection.
+            # Use the preregistered transfer-study S-balanced construction:
+            # the mouth-weighted sum of log S departures is zero.
             low = min(
                 seed.horizontal.profile_length_mm,
                 seed.vertical.profile_length_mm)
             high = max(
                 seed.horizontal.profile_length_mm,
                 seed.vertical.profile_length_mm)
+            h_target = self.rules._s_at_length(
+                width, self.config.horizontal_coverage_deg,
+                seed.horizontal.profile_length_mm,
+                seed.k_horizontal, seed.n_horizontal)
+            v_target = self.rules._s_at_length(
+                height, self.config.vertical_coverage_deg,
+                seed.vertical.profile_length_mm,
+                seed.k_vertical, seed.n_vertical)
+            if min(h_target, v_target) <= 0:
+                raise ValueError(
+                    "independent H/V heuristic seed has nonpositive S")
 
             def balance(length: float) -> float:
                 s_h = self.rules._s_at_length(
@@ -465,21 +477,25 @@ class HornOptimizer:
                 s_v = self.rules._s_at_length(
                     height, self.config.vertical_coverage_deg, length,
                     seed.k_vertical, seed.n_vertical)
-                if s_h <= 0:
+                if min(s_h, s_v) <= 0:
                     return -math.inf
-                if s_v <= 0:
-                    return math.inf
-                return math.log(s_h/seed.horizontal.target_s) - math.log(
-                    s_v/seed.vertical.target_s)
+                return (
+                    width*math.log(s_h/h_target)
+                    + height*math.log(s_v/v_target)
+                )
 
             low_value = balance(low)
+            high_value = balance(high)
+            if low_value*high_value > 0:
+                raise ValueError(
+                    "independent H/V lengths do not bracket S balance")
             for _ in range(80):
                 middle = (low+high)/2
                 value = balance(middle)
-                if (value >= 0) == (low_value >= 0):
-                    low, low_value = middle, value
+                if low_value*value <= 0:
+                    high, high_value = middle, value
                 else:
-                    high = middle
+                    low, low_value = middle, value
             length = (low+high)/2
         else:
             length = seed.flat_profile_length_mm
