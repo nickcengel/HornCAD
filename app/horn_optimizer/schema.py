@@ -187,6 +187,8 @@ class HornOptimizerConfig:
             value = getattr(self, name)
             if not 0 < value <= 90:
                 raise ValueError(f"{name} must be in (0, 90]")
+        if not 0 <= self.throat_angle_deg < 90:
+            raise ValueError("throat_angle_deg must be in [0, 90)")
         if self.mouth_shape not in {"round", "square"}:
             raise ValueError("mouth_shape must be round or square")
         if self.sag_axes not in {"none", "horizontal", "vertical", "both"}:
@@ -340,7 +342,8 @@ def load_optimizer_config(path: str | Path) -> HornOptimizerConfig:
             "intent.vertical_coverage_deg",
             intent.get("vertical_coverage_deg"), positive=True),
         throat_angle_deg=_number(
-            "throat_angle_deg", root.get("throat_angle_deg"), positive=True),
+            "throat_angle_deg", root.get("throat_angle_deg"),
+            nonnegative=True),
         mouth_shape=str(root.get("mouth_shape", "")),
         mouth=mouth,
         sag_axes=sag_axes,

@@ -23,6 +23,7 @@ from app.tools.run_bem_search import (
     run_search,
 )
 from app.tools.run_stage_aware_bem_queue import run_queue
+from app.tools.export_horncad import solved_s
 
 from .schema import HornOptimizerConfig, NumericRange
 
@@ -285,6 +286,7 @@ class HornOptimizer:
         self.state_path = self.output / STATE_NAME
         self.queue_runner = queue_runner
         self._report_lock = threading.Lock()
+        self._seed_document_cache: dict[str, Any] | None = None
         self._provided_library = (
             list(response_library) if response_library is not None else None)
         self.rules = RoundControlHeuristics.load(HEURISTICS)
@@ -427,10 +429,12 @@ class HornOptimizer:
         _write_json(self.state_path, state)
 
     def _seed_document(self) -> dict[str, Any]:
-        document = _load_yaml(self.config.seed_yaml or BASE_PROJECT)
-        if self.config.seed_yaml:
-            self._validate_seed(document)
-        return document
+        if self._seed_document_cache is None:
+            document = _load_yaml(self.config.seed_yaml or BASE_PROJECT)
+            if self.config.seed_yaml:
+                self._validate_seed(document)
+            self._seed_document_cache = document
+        return copy.deepcopy(self._seed_document_cache)
 
     def _validate_seed(self, document: dict[str, Any]) -> None:
         config = document["horncad_config"]
@@ -561,24 +565,26 @@ class HornOptimizer:
             width, self.config.horizontal_coverage_deg)
         v_seed = self.rules.axis_length(
             height, self.config.vertical_coverage_deg)
-        h_axis = self.rules.length_for_target_s(
+        h_length = self._length_for_target_s(
             width, self.config.horizontal_coverage_deg,
-            moved["k_h"], moved["n_h"], h_seed.target_s)
-        v_axis = self.rules.length_for_target_s(
+            moved["k_h"], moved["n_h"], h_seed.target_s,
+            moved["extension_mm"], h_seed.reference_length_mm)
+        v_length = self._length_for_target_s(
             height, self.config.vertical_coverage_deg,
-            moved["k_v"], moved["n_v"], v_seed.target_s)
+            moved["k_v"], moved["n_v"], v_seed.target_s,
+            moved["extension_mm"], v_seed.reference_length_mm)
         rule = _transfer_length_rule()
         if rule == "s-balanced":
-            low = min(h_axis.profile_length_mm, v_axis.profile_length_mm)
-            high = max(h_axis.profile_length_mm, v_axis.profile_length_mm)
+            low = min(h_length, v_length)
+            high = max(h_length, v_length)
 
             def residual(length: float) -> float:
-                h_s = self.rules._s_at_length(
+                h_s = self._s_at_length(
                     width, self.config.horizontal_coverage_deg, length,
-                    moved["k_h"], moved["n_h"])
-                v_s = self.rules._s_at_length(
+                    moved["k_h"], moved["n_h"], moved["extension_mm"])
+                v_s = self._s_at_length(
                     height, self.config.vertical_coverage_deg, length,
-                    moved["k_v"], moved["n_v"])
+                    moved["k_v"], moved["n_v"], moved["extension_mm"])
                 if min(h_s, v_s) <= 0:
                     return -math.inf
                 return (
@@ -600,13 +606,54 @@ class HornOptimizer:
             common = (low+high)/2
         else:
             common = (
-                width*h_axis.profile_length_mm
-                + height*v_axis.profile_length_mm
+                width*h_length + height*v_length
             ) / (width+height)
         if self.config.practical_limits.length_mm:
             common = self.config.practical_limits.length_mm.clamp(common)
         moved["length_mm"] = common
         return moved
+
+    def _s_at_length(
+        self, mouth_mm: float, coverage_deg: float, length_mm: float,
+        k: float, n: float, extension_mm: float,
+    ) -> float:
+        if self._seed_document_cache is None:
+            self._seed_document()
+        assert self._seed_document_cache is not None
+        global_config = self._seed_document_cache[
+            "horncad_config"]["global"]
+        throat_radius = float(global_config["throat_radius"])
+        effective_radius = (
+            throat_radius
+            + extension_mm*math.tan(math.radians(
+                self.config.throat_angle_deg))
+        )
+        return float(solved_s(
+            length_mm, effective_radius, coverage_deg, k, n, mouth_mm/2,
+            self.config.throat_angle_deg))
+
+    def _length_for_target_s(
+        self, mouth_mm: float, coverage_deg: float, k: float, n: float,
+        target_s: float, extension_mm: float, reference_length_mm: float,
+    ) -> float:
+        low = reference_length_mm*0.2
+        high = reference_length_mm*2
+        low_s = self._s_at_length(
+            mouth_mm, coverage_deg, low, k, n, extension_mm)
+        high_s = self._s_at_length(
+            mouth_mm, coverage_deg, high, k, n, extension_mm)
+        if not high_s <= target_s <= low_s:
+            raise ValueError(
+                "target S is not bracketed at the fixed throat/extension")
+        for _ in range(80):
+            middle = (low+high)/2
+            value = self._s_at_length(
+                mouth_mm, coverage_deg, middle, k, n, extension_mm)
+            if value > target_s:
+                low = middle
+            else:
+                high = middle
+        return (low+high)/2
 
     def _candidate(
         self, values: dict[str, float], round_number: int, branch: str,

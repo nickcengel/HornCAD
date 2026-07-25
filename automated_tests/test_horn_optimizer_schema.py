@@ -60,6 +60,12 @@ class HornOptimizerSchemaTests(unittest.TestCase):
             self.assertEqual(config.sag_axes, "vertical")
             self.assertEqual(config.sag_mm.as_list(), [0, 20])
 
+    def test_zero_degree_throat_is_a_valid_fixed_intent(self):
+        with tempfile.TemporaryDirectory() as temp:
+            config = load_optimizer_config(self.write(
+                Path(temp), {"throat_angle_deg": 0}))
+            self.assertEqual(config.throat_angle_deg, 0)
+
     def test_fixed_contract_enums_and_hard_cap_are_validated(self):
         with tempfile.TemporaryDirectory() as temp:
             with self.assertRaisesRegex(ValueError, "mouth_shape"):

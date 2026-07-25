@@ -60,7 +60,7 @@ class FakeQueue:
 class HornOptimizerTests(unittest.TestCase):
     def config(self, root: Path, *, max_simulations=8,
                approval_mode="autonomous", seed=False, shape="round",
-               aspect=False, practical_length=None):
+               aspect=False, practical_length=None, throat_angle=6):
         document = {"horn_optimizer": {
             "version": 1,
             "output_dir": "run",
@@ -68,7 +68,7 @@ class HornOptimizerTests(unittest.TestCase):
                 "horizontal_coverage_deg": 50,
                 "vertical_coverage_deg": 35,
             },
-            "throat_angle_deg": 6,
+            "throat_angle_deg": throat_angle,
             "mouth_shape": shape,
             "mouth": (
                 {"width_mm": [380, 420], "aspect_ratio": [1.3, 1.5]}
@@ -341,6 +341,22 @@ class HornOptimizerTests(unittest.TestCase):
                 config["section_modifier"]["mouth_squareness"], 0)
             self.assertFalse(config["global"]["mouth_sag_h_enabled"])
             self.assertFalse(config["global"]["mouth_sag_v_enabled"])
+
+    def test_s_guidance_uses_fixed_zero_degree_throat(self):
+        with tempfile.TemporaryDirectory() as temp:
+            optimizer = HornOptimizer(
+                self.config(Path(temp), throat_angle=0))
+            actual = optimizer._s_at_length(
+                400, 50, 140, 5.5, 8.75, 20)
+            expected = optimizer.rules._s_at_length(
+                400, 50, 140, 5.5, 8.75)
+            self.assertNotAlmostEqual(actual, expected, places=4)
+            candidate = optimizer.propose()[0]
+            project, _search, _document = optimizer.materialize(candidate)
+            materialized = yaml.safe_load(project.read_text())[
+                "horncad_config"]
+            self.assertEqual(
+                materialized["global"]["throat_angle_deg"], 0)
 
     def test_hard_cap_and_stage_aware_batch_settings(self):
         with tempfile.TemporaryDirectory() as temp:
