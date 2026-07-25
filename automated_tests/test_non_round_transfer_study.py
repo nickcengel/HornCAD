@@ -80,6 +80,8 @@ class NonRoundTransferStudyTests(unittest.TestCase):
         self.assertIn("http-equiv='refresh' content='5'", document)
         self.assertIn('table class="sortable"', document)
         self.assertIn('data-sort="number">Length', document)
+        self.assertIn('data-sort="number">Surface v2.3', document)
+        self.assertIn('data-sort="number">Impedance v2.3.0', document)
         self.assertIn('header.addEventListener("click"', document)
         self.assertIn('id="updated-at"', document)
 

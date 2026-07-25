@@ -836,14 +836,27 @@ def analyze_final() -> dict[str, Any]:
     return result
 
 
-def _state_for(manifest: dict[str, Any], row: dict[str, Any]) -> str:
+def _state_for(
+    manifest: dict[str, Any], row: dict[str, Any],
+) -> dict[str, Any]:
     search = ROOT / manifest["inputs"][row["id"]]["search"]
     state_path = search.parent / "search_state.json"
     if not state_path.is_file():
-        return "planned"
+        return {"status": "planned", "surface": None, "impedance": None}
     state = _read_json(state_path)
     candidate = (state.get("candidates") or [{}])[0]
-    return str(candidate.get("status", state.get("status", "planned")))
+    surface = candidate.get("surface_diagnostics", {}).get("score", {})
+    impedance = candidate.get("throat_impedance_diagnostics", {})
+    return {
+        "status": str(candidate.get(
+            "status", state.get("status", "planned"))),
+        "surface": (
+            float(surface["overall_percent"])
+            if surface.get("version") == "v2.3" else None),
+        "impedance": (
+            float(impedance["overall_percent"])
+            if impedance.get("diagnostic_version") == "2.3.0" else None),
+    }
 
 
 def refresh_index() -> Path:
@@ -856,7 +869,8 @@ def refresh_index() -> Path:
     total = 0
     for manifest in phases:
         for row in manifest["coordinates"]:
-            status = _state_for(manifest, row)
+            measured = _state_for(manifest, row)
+            status = measured["status"]
             completed += status == "complete"
             total += 1
             report = (
@@ -866,11 +880,19 @@ def refresh_index() -> Path:
                 f"{html.escape(row['id'])}</a>"
                 if report.is_file() else html.escape(row["id"])
             )
+            surface_display = (
+                "" if measured["surface"] is None
+                else f"{measured['surface']:.4f}")
+            impedance_display = (
+                "" if measured["impedance"] is None
+                else f"{measured['impedance']:.4f}")
             rows.append(
                 "<tr>"
                 f"<td data-sort-value='{html.escape(row['id'])}'>{label}</td>"
                 f"<td>{html.escape(row['phase'])}</td>"
                 f"<td>{html.escape(status)}</td>"
+                f"<td>{surface_display}</td>"
+                f"<td>{impedance_display}</td>"
                 f"<td data-sort-value='{row['mouth_width_mm'] * 1_000_000 + row['mouth_height_mm']:.6f}'>"
                 f"{row['mouth_width_mm']:g}×{row['mouth_height_mm']:g}</td>"
                 f"<td data-sort-value='{row['horizontal_coverage_deg'] * 1_000_000 + row['vertical_coverage_deg']:.6f}'>"
@@ -913,7 +935,9 @@ complete · <strong>preferred common length:</strong>
 </section>
 <section><table class="sortable"><thead><tr>
 <th data-sort="text">Candidate</th><th data-sort="text">Phase</th>
-<th data-sort="text">Status</th><th data-sort="number">Mouth W×H</th>
+<th data-sort="text">Status</th><th data-sort="number">Surface v2.3</th>
+<th data-sort="number">Impedance v2.3.0</th>
+<th data-sort="number">Mouth W×H</th>
 <th data-sort="number">Coverage H×V</th><th data-sort="text">Shape</th>
 <th data-sort="text">Length rule</th><th data-sort="number">Length</th>
 <th data-sort="number">K H/V</th><th data-sort="number">N H/V</th>
