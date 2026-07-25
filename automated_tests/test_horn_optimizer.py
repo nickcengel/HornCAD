@@ -136,6 +136,14 @@ class HornOptimizerTests(unittest.TestCase):
                 proposal_hash(first, 1, "h-axis", "parent"),
                 proposal_hash(first, 1, "v-axis", "parent"))
 
+    def test_restart_rejects_changed_practical_or_solver_contract(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            HornOptimizer(self.config(root)).initialize()
+            changed = self.config(root, practical_length=(100, 160))
+            with self.assertRaisesRegex(ValueError, "YAML changed"):
+                HornOptimizer(changed).load_state()
+
     def test_measured_transfer_result_widens_near_failed_square_region(self):
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

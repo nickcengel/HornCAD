@@ -315,11 +315,36 @@ class HornOptimizer:
             "max_simulations": cfg.max_simulations,
             "approval_mode": cfg.approval_mode,
             "seed_yaml": str(cfg.seed_yaml) if cfg.seed_yaml else None,
+            "practical_limits": {
+                "length_mm": (
+                    cfg.practical_limits.length_mm.as_list()
+                    if cfg.practical_limits.length_mm else None),
+                "extension_mm":
+                    cfg.practical_limits.extension_mm.as_list(),
+                "k_horizontal":
+                    cfg.practical_limits.k_horizontal.as_list(),
+                "k_vertical": cfg.practical_limits.k_vertical.as_list(),
+                "n_horizontal":
+                    cfg.practical_limits.n_horizontal.as_list(),
+                "n_vertical": cfg.practical_limits.n_vertical.as_list(),
+            },
             "ranking": {
                 "enabled": cfg.ranking.enabled,
                 "surface_shortlist_points":
                     cfg.ranking.surface_shortlist_points,
                 "tie_break": cfg.ranking.tie_break,
+            },
+            "solver": {
+                "lower_frequency_hz": cfg.solver.lower_frequency_hz,
+                "crossover_hz": cfg.solver.crossover_hz,
+                "upper_frequency_hz": cfg.solver.upper_frequency_hz,
+                "points_per_octave": cfg.solver.points_per_octave,
+                "confirmation_points_per_octave":
+                    cfg.solver.confirmation_points_per_octave,
+                "elements_per_wavelength":
+                    cfg.solver.elements_per_wavelength,
+                "angles": cfg.solver.angles,
+                "workers": cfg.solver.workers,
             },
         }
 
