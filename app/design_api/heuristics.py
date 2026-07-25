@@ -40,6 +40,9 @@ class RoundControlSeed:
     horizontal: AxisLengthSeed
     vertical: AxisLengthSeed
     flat_profile_length_mm: float
+    weighted_profile_length_mm: float
+    s_balanced_profile_length_mm: float
+    common_length_rule: str
     k_horizontal: float
     n_horizontal: float
     k_vertical: float
@@ -197,12 +200,17 @@ class RoundControlHeuristics:
             intent.mouth_width_mm, intent.horizontal_coverage_deg)
         vertical = self.axis_length(
             intent.mouth_height_mm, intent.vertical_coverage_deg)
+        common = self.common_profile_lengths(
+            intent, horizontal=horizontal, vertical=vertical)
+        rule = str(self.artifact.get(
+            "non_round_transfer_guidance", {}).get(
+                "preferred_common_length_rule", "weighted"))
+        if rule not in {"weighted", "s-balanced"}:
+            raise ValueError(
+                f"unsupported measured common-length rule: {rule}")
+        flat = common[rule]
         width = intent.mouth_width_mm
         height = intent.mouth_height_mm
-        flat = (
-            width*horizontal.profile_length_mm
-            + height*vertical.profile_length_mm
-        ) / (width+height)
         difference = (
             vertical.profile_length_mm-horizontal.profile_length_mm)
         if difference > 0.0:
@@ -243,6 +251,9 @@ class RoundControlHeuristics:
             horizontal=horizontal,
             vertical=vertical,
             flat_profile_length_mm=float(flat),
+            weighted_profile_length_mm=float(common["weighted"]),
+            s_balanced_profile_length_mm=float(common["s-balanced"]),
+            common_length_rule=rule,
             k_horizontal=horizontal.k,
             n_horizontal=horizontal.n,
             k_vertical=vertical.k,
@@ -252,7 +263,8 @@ class RoundControlHeuristics:
                     "initial_extension_mm", 0.0)),
             cylindrical_sag_compensation=compensation,
             warnings=(
-                "length rules come from round zero-extension evidence",
+                "common-length selection comes from the measured non-round "
+                "transfer study when its result is present",
                 "axis controls come from the nearest measured cell winner",
                 "H/V combination and sag are starting constructions, not "
                 "validated performance predictions",
@@ -262,3 +274,75 @@ class RoundControlHeuristics:
                 "throat changes",
             ),
         )
+
+    def common_profile_lengths(
+        self,
+        intent: DesignIntent,
+        *,
+        horizontal: AxisLengthSeed | None = None,
+        vertical: AxisLengthSeed | None = None,
+    ) -> dict[str, float]:
+        """Return the registered weighted and S-balanced H/V constructions."""
+        horizontal = horizontal or self.axis_length(
+            intent.mouth_width_mm, intent.horizontal_coverage_deg)
+        vertical = vertical or self.axis_length(
+            intent.mouth_height_mm, intent.vertical_coverage_deg)
+        width = intent.mouth_width_mm
+        height = intent.mouth_height_mm
+        weighted = (
+            width*horizontal.profile_length_mm
+            + height*vertical.profile_length_mm
+        ) / (width+height)
+        if math.isclose(
+                horizontal.profile_length_mm,
+                vertical.profile_length_mm,
+                abs_tol=1e-12):
+            balanced = horizontal.profile_length_mm
+        else:
+            h_target = self._s_at_length(
+                horizontal.mouth_mm, horizontal.coverage_deg,
+                horizontal.profile_length_mm, horizontal.k, horizontal.n)
+            v_target = self._s_at_length(
+                vertical.mouth_mm, vertical.coverage_deg,
+                vertical.profile_length_mm, vertical.k, vertical.n)
+            if min(h_target, v_target) <= 0:
+                raise ValueError(
+                    "independent axis seed has nonpositive derived S")
+
+            def residual(length: float) -> float:
+                h_s = self._s_at_length(
+                    horizontal.mouth_mm, horizontal.coverage_deg, length,
+                    horizontal.k, horizontal.n)
+                v_s = self._s_at_length(
+                    vertical.mouth_mm, vertical.coverage_deg, length,
+                    vertical.k, vertical.n)
+                if min(h_s, v_s) <= 0:
+                    return -math.inf
+                return (
+                    width*math.log(h_s/h_target)
+                    + height*math.log(v_s/v_target)
+                )
+
+            low = min(
+                horizontal.profile_length_mm,
+                vertical.profile_length_mm)
+            high = max(
+                horizontal.profile_length_mm,
+                vertical.profile_length_mm)
+            low_value = residual(low)
+            high_value = residual(high)
+            if low_value*high_value > 0:
+                raise ValueError(
+                    "independent axis lengths do not bracket S balance")
+            for _ in range(80):
+                middle = (low+high)/2
+                value = residual(middle)
+                if low_value*value <= 0:
+                    high, high_value = middle, value
+                else:
+                    low, low_value = middle, value
+            balanced = (low+high)/2
+        return {
+            "weighted": float(weighted),
+            "s-balanced": float(balanced),
+        }

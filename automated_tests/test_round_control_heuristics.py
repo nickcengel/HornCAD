@@ -56,6 +56,15 @@ class RoundControlHeuristicTests(unittest.TestCase):
             result.cylindrical_sag_compensation.profile_length_mm,
             result.vertical.profile_length_mm)
         self.assertEqual(result.extension_mm, 0.0)
+        self.assertEqual(result.common_length_rule, "weighted")
+        self.assertAlmostEqual(
+            result.flat_profile_length_mm,
+            result.weighted_profile_length_mm,
+        )
+        self.assertNotAlmostEqual(
+            result.weighted_profile_length_mm,
+            result.s_balanced_profile_length_mm,
+        )
 
     def test_outside_support_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "outside heuristic support"):
