@@ -206,6 +206,70 @@ def _transfer_length_rule() -> str:
     )
 
 
+def _transfer_guidance(config: HornOptimizerConfig) -> dict[str, Any]:
+    if not TRANSFER_RESULTS.is_file():
+        return {
+            "status": "pending",
+            "common_length_rule": "width-height-weighted",
+            "wider_first_round": False,
+            "support_warnings": [
+                "non-round transfer result is not available; using the "
+                "preregistered weighted fallback",
+            ],
+        }
+    result = _read_json(TRANSFER_RESULTS)
+    selected = set(result.get("promotion", {}).get(
+        "wider_first_round_intents", []))
+    width, height = config.mouth.dimensions()
+    regions = []
+    for row in result.get("locked_evidence", []):
+        if row.get("source_intent_id") not in selected:
+            continue
+        region = {
+            "intent_id": row["source_intent_id"],
+            "mouth_width_mm": float(row["mouth_width_mm"]),
+            "mouth_height_mm": float(row["mouth_height_mm"]),
+            "horizontal_coverage_deg": float(
+                row["horizontal_coverage_deg"]),
+            "vertical_coverage_deg": float(row["vertical_coverage_deg"]),
+        }
+        if region not in regions:
+            regions.append(region)
+    wider = any(
+        abs(width-row["mouth_width_mm"]) <= 50
+        and abs(height-row["mouth_height_mm"]) <= 50
+        and abs(config.horizontal_coverage_deg
+                - row["horizontal_coverage_deg"]) <= 5
+        and abs(config.vertical_coverage_deg
+                - row["vertical_coverage_deg"]) <= 5
+        for row in regions
+    )
+    warnings = []
+    if config.mouth_shape == "square":
+        corner = result.get("equal_hv_square_summary", {})
+        warnings.append(
+            "square-corner transfer is measured support evidence, not a "
+            f"global correction (median equal-H/V delta "
+            f"{float(corner.get('median_surface_delta_from_round_points', 0)):.3f} "
+            "surface points)")
+    if wider:
+        warnings.append(
+            "intent lies near a locked transfer failure; first-round H/V and "
+            "length exploration is widened")
+    return {
+        "status": "measured",
+        "results_sha256": _hash({
+            key: value for key, value in result.items()
+            if key != "content_sha256"
+        }),
+        "reported_content_sha256": result.get("content_sha256"),
+        "common_length_rule": _transfer_length_rule(),
+        "wider_first_round": wider,
+        "wider_regions": regions,
+        "support_warnings": warnings,
+    }
+
+
 class HornOptimizer:
     """Own one optimizer run directory and its restartable state."""
 
@@ -264,6 +328,7 @@ class HornOptimizer:
             return self.load_state()
         self.output.mkdir(parents=True, exist_ok=True)
         snapshot = self._config_snapshot()
+        transfer = _transfer_guidance(self.config)
         state = {
             "schema_version": 1,
             "optimizer": "horn_optimizer",
@@ -273,7 +338,9 @@ class HornOptimizer:
             "updated_at_unix": time.time(),
             "config": snapshot,
             "config_hash": _hash(snapshot),
-            "transfer_length_rule": _transfer_length_rule(),
+            "transfer_length_rule": transfer["common_length_rule"],
+            "transfer_guidance": transfer,
+            "support_warnings": transfer["support_warnings"],
             "rounds": [],
             "candidates": [],
             "branch_backlog": [],
@@ -491,19 +558,23 @@ class HornOptimizer:
 
     def _round_one_pool(self, state: dict[str, Any]) -> list[dict[str, Any]]:
         base = self._baseline_values()
+        wider = state["transfer_guidance"].get(
+            "wider_first_round", False)
+        k_step = 1.25 if wider else 0.75
+        n_step = 6 if wider else 4
         candidates = []
         for rule in ("width-height-weighted", "s-balanced"):
             candidates.append(
                 (self._heuristic_values(length_rule=rule), f"length-{rule}"))
         candidates.extend([
-            ({**base, "k_h": base["k_h"]-0.75}, "h-axis-k-low"),
-            ({**base, "k_h": base["k_h"]+0.75}, "h-axis-k-high"),
-            ({**base, "n_h": base["n_h"]-4}, "h-axis-n-low"),
-            ({**base, "n_h": base["n_h"]+4}, "h-axis-n-high"),
-            ({**base, "k_v": base["k_v"]-0.75}, "v-axis-k-low"),
-            ({**base, "k_v": base["k_v"]+0.75}, "v-axis-k-high"),
-            ({**base, "n_v": base["n_v"]-4}, "v-axis-n-low"),
-            ({**base, "n_v": base["n_v"]+4}, "v-axis-n-high"),
+            ({**base, "k_h": base["k_h"]-k_step}, "h-axis-k-low"),
+            ({**base, "k_h": base["k_h"]+k_step}, "h-axis-k-high"),
+            ({**base, "n_h": base["n_h"]-n_step}, "h-axis-n-low"),
+            ({**base, "n_h": base["n_h"]+n_step}, "h-axis-n-high"),
+            ({**base, "k_v": base["k_v"]-k_step}, "v-axis-k-low"),
+            ({**base, "k_v": base["k_v"]+k_step}, "v-axis-k-high"),
+            ({**base, "n_v": base["n_v"]-n_step}, "v-axis-n-low"),
+            ({**base, "n_v": base["n_v"]+n_step}, "v-axis-n-high"),
             ({**base, "extension_mm":
               self.config.practical_limits.extension_mm.maximum},
              "extension-high"),
@@ -1249,7 +1320,10 @@ class HornOptimizer:
             } if baseline else None),
             "parameter_lineage": winner.get("lineage", []),
             "nearest_evidence": winner.get("nearest_evidence"),
-            "support_warnings": winner.get("support_warnings", []),
+            "support_warnings": (
+                state.get("support_warnings", [])
+                + winner.get("support_warnings", [])
+            ),
             "simulation_accounting": state["accounting"],
             "early_stopping": state["early_stopping"],
         })
@@ -1291,6 +1365,10 @@ class HornOptimizer:
                 "</tr>"
             )
         accounting = state["accounting"]
+        warning_html = "".join(
+            f"<li>{html.escape(warning)}</li>"
+            for warning in state.get("support_warnings", [])
+        )
         final = state["status"] in {"complete", "budget-exhausted"}
         refresh = "" if final else "<meta http-equiv='refresh' content='5'>"
         document = f"""<!doctype html>
@@ -1313,6 +1391,7 @@ th:first-child,td:first-child{{text-align:left}}a{{color:#7bd7cb}}
 {accounting['exact_library_reuses']} · <strong>geometry rejections:</strong>
 {accounting['geometry_rejections']} · <strong>updated:</strong>
 {time.strftime("%Y-%m-%d %H:%M:%S %Z")}</section>
+{f'<section><strong>Support warnings</strong><ul>{warning_html}</ul></section>' if warning_html else ''}
 <section><table class="sortable"><thead><tr>
 <th data-sort="text">Candidate</th><th data-sort="number">Round</th>
 <th data-sort="text">Branch</th><th data-sort="text">Status</th>

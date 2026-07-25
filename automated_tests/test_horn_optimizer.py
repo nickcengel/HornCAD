@@ -12,6 +12,7 @@ from app.horn_optimizer import (
     HornOptimizer, load_optimizer_config, rank_measurements,
 )
 from app.horn_optimizer.optimizer import coordinate_hash, proposal_hash
+from app.horn_optimizer.optimizer import _transfer_guidance
 
 
 ROOT = Path(__file__).parents[1]
@@ -55,7 +56,7 @@ class FakeQueue:
 
 class HornOptimizerTests(unittest.TestCase):
     def config(self, root: Path, *, max_simulations=8,
-               approval_mode="autonomous", seed=False):
+               approval_mode="autonomous", seed=False, shape="round"):
         document = {"horn_optimizer": {
             "version": 1,
             "output_dir": "run",
@@ -64,7 +65,7 @@ class HornOptimizerTests(unittest.TestCase):
                 "vertical_coverage_deg": 35,
             },
             "throat_angle_deg": 6,
-            "mouth_shape": "round",
+            "mouth_shape": shape,
             "mouth": {"width_mm": 400, "height_mm": 280},
             "sag_axes": "none",
             "sag_mm": 0,
@@ -117,6 +118,46 @@ class HornOptimizerTests(unittest.TestCase):
             self.assertNotEqual(
                 proposal_hash(first, 1, "h-axis", "parent"),
                 proposal_hash(first, 1, "v-axis", "parent"))
+
+    def test_measured_transfer_result_widens_near_failed_square_region(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            result = root / "transfer.json"
+            result.write_text(json.dumps({
+                "promotion": {
+                    "common_length_rule": "s-balanced",
+                    "wider_first_round_intents": ["L1"],
+                },
+                "equal_hv_square_summary": {
+                    "median_surface_delta_from_round_points": -1.25,
+                },
+                "locked_evidence": [{
+                    "source_intent_id": "L1",
+                    "mouth_width_mm": 400,
+                    "mouth_height_mm": 280,
+                    "horizontal_coverage_deg": 50,
+                    "vertical_coverage_deg": 35,
+                }],
+                "content_sha256": "measured",
+            }), encoding="utf-8")
+            config = self.config(root, shape="square")
+            with patch(
+                "app.horn_optimizer.optimizer.TRANSFER_RESULTS", result,
+            ):
+                guidance = _transfer_guidance(config)
+                optimizer = HornOptimizer(config, response_library=[])
+                state = optimizer.initialize()
+                pool = optimizer._round_one_pool(state)
+            self.assertEqual(guidance["common_length_rule"], "s-balanced")
+            self.assertTrue(guidance["wider_first_round"])
+            self.assertTrue(any(
+                "square-corner" in warning
+                for warning in guidance["support_warnings"]))
+            base = optimizer._baseline_values()
+            h_low = next(
+                row for row in pool if row["branch"] == "h-axis-k-low")
+            self.assertAlmostEqual(
+                base["k_h"]-h_low["values"]["k_h"], 1.25)
 
     def test_seed_is_mandatory_first_measured_baseline(self):
         with tempfile.TemporaryDirectory() as temp:
