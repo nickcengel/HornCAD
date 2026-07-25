@@ -165,6 +165,8 @@ class HornOptimizerTests(unittest.TestCase):
                 row for row in pool if row["branch"] == "h-axis-k-low")
             self.assertAlmostEqual(
                 base["k_h"]-h_low["values"]["k_h"], 1.25)
+            self.assertNotAlmostEqual(
+                base["length_mm"], h_low["values"]["length_mm"], places=6)
 
     def test_optimizer_uses_preregistered_s_balanced_construction(self):
         with tempfile.TemporaryDirectory() as temp:

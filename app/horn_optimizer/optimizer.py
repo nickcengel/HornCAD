@@ -549,6 +549,74 @@ class HornOptimizer:
         result["sag_mm"] = self.config.sag_mm.clamp(result["sag_mm"])
         return {key: _normalized_number(result[key]) for key in COORDINATE_FIELDS}
 
+    def _s_guided_control_move(
+        self, values: dict[str, float], key: str, target: float,
+    ) -> dict[str, float]:
+        """Change one K/N control and rebuild common length from H/V S seeds."""
+        bounds = getattr(
+            self.config.practical_limits,
+            {
+                "k_h": "k_horizontal",
+                "n_h": "n_horizontal",
+                "k_v": "k_vertical",
+                "n_v": "n_vertical",
+            }[key],
+        )
+        target = bounds.clamp(target)
+        moved = {**values, key: target}
+        width = moved["mouth_width_mm"]
+        height = moved["mouth_height_mm"]
+        h_seed = self.rules.axis_length(
+            width, self.config.horizontal_coverage_deg)
+        v_seed = self.rules.axis_length(
+            height, self.config.vertical_coverage_deg)
+        h_axis = self.rules.length_for_target_s(
+            width, self.config.horizontal_coverage_deg,
+            moved["k_h"], moved["n_h"], h_seed.target_s)
+        v_axis = self.rules.length_for_target_s(
+            height, self.config.vertical_coverage_deg,
+            moved["k_v"], moved["n_v"], v_seed.target_s)
+        rule = _transfer_length_rule()
+        if rule == "s-balanced":
+            low = min(h_axis.profile_length_mm, v_axis.profile_length_mm)
+            high = max(h_axis.profile_length_mm, v_axis.profile_length_mm)
+
+            def residual(length: float) -> float:
+                h_s = self.rules._s_at_length(
+                    width, self.config.horizontal_coverage_deg, length,
+                    moved["k_h"], moved["n_h"])
+                v_s = self.rules._s_at_length(
+                    height, self.config.vertical_coverage_deg, length,
+                    moved["k_v"], moved["n_v"])
+                if min(h_s, v_s) <= 0:
+                    return -math.inf
+                return (
+                    width*math.log(h_s/h_seed.target_s)
+                    + height*math.log(v_s/v_seed.target_s)
+                )
+
+            low_value = residual(low)
+            high_value = residual(high)
+            if low_value*high_value > 0:
+                raise ValueError("S-guided axis lengths do not bracket balance")
+            for _ in range(80):
+                middle = (low+high)/2
+                value = residual(middle)
+                if low_value*value <= 0:
+                    high, high_value = middle, value
+                else:
+                    low, low_value = middle, value
+            common = (low+high)/2
+        else:
+            common = (
+                width*h_axis.profile_length_mm
+                + height*v_axis.profile_length_mm
+            ) / (width+height)
+        if self.config.practical_limits.length_mm:
+            common = self.config.practical_limits.length_mm.clamp(common)
+        moved["length_mm"] = common
+        return moved
+
     def _candidate(
         self, values: dict[str, float], round_number: int, branch: str,
         *, parent_hash: str | None = None, force_new: bool = False,
@@ -584,19 +652,35 @@ class HornOptimizer:
         for rule in ("width-height-weighted", "s-balanced"):
             candidates.append(
                 (self._heuristic_values(length_rule=rule), f"length-{rule}"))
-        candidates.extend([
-            ({**base, "k_h": base["k_h"]-k_step}, "h-axis-k-low"),
-            ({**base, "k_h": base["k_h"]+k_step}, "h-axis-k-high"),
-            ({**base, "n_h": base["n_h"]-n_step}, "h-axis-n-low"),
-            ({**base, "n_h": base["n_h"]+n_step}, "h-axis-n-high"),
-            ({**base, "k_v": base["k_v"]-k_step}, "v-axis-k-low"),
-            ({**base, "k_v": base["k_v"]+k_step}, "v-axis-k-high"),
-            ({**base, "n_v": base["n_v"]-n_step}, "v-axis-n-low"),
-            ({**base, "n_v": base["n_v"]+n_step}, "v-axis-n-high"),
-            ({**base, "extension_mm":
-              self.config.practical_limits.extension_mm.maximum},
-             "extension-high"),
-        ])
+        for key, delta, branch in (
+            ("k_h", k_step, "h-axis-k"),
+            ("n_h", n_step, "h-axis-n"),
+            ("k_v", k_step, "v-axis-k"),
+            ("n_v", n_step, "v-axis-n"),
+        ):
+            for sign, suffix in ((-1, "low"), (1, "high")):
+                target = getattr(
+                    self.config.practical_limits,
+                    {
+                        "k_h": "k_horizontal",
+                        "n_h": "n_horizontal",
+                        "k_v": "k_vertical",
+                        "n_v": "n_vertical",
+                    }[key],
+                ).clamp(base[key]+sign*delta)
+                try:
+                    moved = self._s_guided_control_move(base, key, target)
+                except ValueError:
+                    continue
+                candidates.append((moved, f"{branch}-{suffix}"))
+        candidates.append((
+            {
+                **base,
+                "extension_mm":
+                    self.config.practical_limits.extension_mm.maximum,
+            },
+            "extension-high",
+        ))
         mouth = self.config.mouth
         if not mouth.width_mm.scalar:
             for value, label in (
@@ -661,8 +745,11 @@ class HornOptimizer:
                 for sign, suffix in ((-1, "low"), (1, "high")):
                     moved = {**values, key: values[key]+sign*delta}
                     if key in {"k_h", "n_h", "k_v", "n_v"}:
-                        moved["length_mm"] = values["length_mm"] * (
-                            1-sign*0.025)
+                        try:
+                            moved = self._s_guided_control_move(
+                                values, key, moved[key])
+                        except ValueError:
+                            continue
                     pool.append(
                         (moved, f"{label}-{suffix}-b{anchor_index}", parent))
             for sign, suffix in ((-1, "short"), (1, "long")):
