@@ -317,6 +317,8 @@ class HornOptimizer:
             "max_simulations": cfg.max_simulations,
             "approval_mode": cfg.approval_mode,
             "seed_yaml": str(cfg.seed_yaml) if cfg.seed_yaml else None,
+            "seed_or_base_project_sha256": hashlib.sha256(
+                (cfg.seed_yaml or BASE_PROJECT).read_bytes()).hexdigest(),
             "practical_limits": {
                 "length_mm": (
                     cfg.practical_limits.length_mm.as_list()
