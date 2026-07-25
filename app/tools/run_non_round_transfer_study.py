@@ -639,20 +639,41 @@ def prepare_locked() -> dict[str, Any]:
         raise FileExistsError(LOCKED_MANIFEST)
     preference = _read_json(PREFERENCE)
     preferred = preference["preferred_length_rule"]
+    alternate = preference["alternate_length_rule"]
     rules = _heuristics()
     rows = []
     inputs = {}
+    feasibility_fallback_intents = []
     for item in LOCKED_INTENTS:
         intent_id, width, height, coverage_h, coverage_v, purpose = item
         intent = DesignIntent(width, height, coverage_h, coverage_v)
         lengths = common_lengths(rules, intent)
         for shape in SHAPES:
-            candidate_id = f"{intent_id.lower()}-{shape}-{preferred}"
+            selected_rule = preferred
+            candidate_id = f"{intent_id.lower()}-{shape}-{selected_rule}"
             project, search, row = _candidate(
-                candidate_id, intent, shape, preferred, lengths[preferred],
-                phase="locked", purpose=purpose,
+                candidate_id, intent, shape, selected_rule,
+                lengths[selected_rule], phase="locked", purpose=purpose,
                 source_intent_id=intent_id)
+            if min(row["s_h"], row["s_v"]) <= 0.0:
+                selected_rule = alternate
+                candidate_id = (
+                    f"{intent_id.lower()}-{shape}-{selected_rule}")
+                project, search, row = _candidate(
+                    candidate_id, intent, shape, selected_rule,
+                    lengths[selected_rule], phase="locked", purpose=purpose,
+                    source_intent_id=intent_id)
+                if min(row["s_h"], row["s_v"]) <= 0.0:
+                    raise ValueError(
+                        f"{intent_id}: neither registered common-length "
+                        "construction has positive H/V S")
+                feasibility_fallback_intents.append(intent_id)
+                row["preferred_rule_rejection"] = {
+                    "rule": preferred,
+                    "reason": "nonpositive-derived-axis-s",
+                }
             row["common_lengths_mm"] = lengths
+            row["preferred_length_rule"] = preferred
             rows.append(row)
             inputs[candidate_id] = _write_coordinate(row, project, search)
     if len(rows) != 12:
@@ -660,6 +681,11 @@ def prepare_locked() -> dict[str, Any]:
     manifest = _manifest(
         "non-round-transfer-locked-v1", "locked", rows, inputs, 12,
         preferred_length_rule=preferred,
+        feasibility_rule=(
+            "use the registered alternate construction only when the "
+            "preferred construction has nonpositive derived H or V S"),
+        feasibility_fallback_intents=sorted(
+            set(feasibility_fallback_intents)),
         preference_sha256=_file_hash(PREFERENCE),
         failure_rule={
             "maximum_deficit_points": -3.0,

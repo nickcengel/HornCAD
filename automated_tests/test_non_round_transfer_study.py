@@ -75,6 +75,20 @@ class NonRoundTransferStudyTests(unittest.TestCase):
         self.assertAlmostEqual(
             sum(bounds["length_mm"])/2, lengths["weighted"])
 
+    def test_locked_equal_coverage_anisotropy_needs_feasibility_guard(self):
+        intent = DesignIntent(450, 300, 40, 40)
+        lengths = common_lengths(self.rules, intent)
+        _project, _search, weighted = _candidate(
+            "test-l4-weighted", intent, "elliptical", "weighted",
+            lengths["weighted"], phase="test", purpose="test",
+            source_intent_id="L4")
+        _project, _search, balanced = _candidate(
+            "test-l4-balanced", intent, "elliptical", "s-balanced",
+            lengths["s-balanced"], phase="test", purpose="test",
+            source_intent_id="L4")
+        self.assertLessEqual(weighted["s_v"], 0.0)
+        self.assertGreater(min(balanced["s_h"], balanced["s_v"]), 0.0)
+
     def test_live_index_is_sortable_and_self_refreshing(self):
         document = refresh_index().read_text(encoding="utf-8")
         self.assertIn("http-equiv='refresh' content='5'", document)

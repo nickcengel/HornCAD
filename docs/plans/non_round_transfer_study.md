@@ -1,6 +1,6 @@
 # Non-round H/V and square-mouth transfer study
 
-Status: preregistered implementation; BEM not yet launched
+Status: development complete (36/36); locked coordinates frozen and preflighted
 
 ## Purpose
 
@@ -66,6 +66,16 @@ square transform is new BEM work.
 For each axis, use the independent measured round seed for that axis's mouth
 dimension and coverage. Never average H/V K or N.
 
+The axis seeds are established surface-v2.3 grid winners (with the same
+bilinear mouth/coverage interpolation already published by the round heuristic
+when an intent lies between grid coordinates). D1–D3 hold mouth and coverage
+ratios near 1.43 while changing scale. D4/D5 vary mouth aspect at similar
+unequal coverage, D6 isolates unequal mouth aspect at equal coverage, and D7
+reverses the coverage anisotropy. The locked L4–L6 cases repeat equal-coverage,
+reversed-coverage, and portrait mismatches. These are bounded transfer tests;
+they do not claim that mouth-aspect/coverage-ratio interaction is already
+understood.
+
 The weighted common length is:
 
 ```text
@@ -86,6 +96,15 @@ The preferred rule is frozen after development using all 14 matched
 shape/intention pairs. If the median surface-v2.3 difference between
 S-balanced and weighted is within ±0.5 point, weighted wins the tie. Otherwise
 the rule with the higher median paired surface score is selected.
+
+Development selected weighted by the registered tie rule: the median
+S-balanced-minus-weighted difference was +0.0097 point. A post-development,
+pre-BEM locked feasibility amendment requires positive derived S on both axes.
+If the preferred construction violates that geometry condition, the locked
+coordinate uses the already registered alternate construction and records the
+rejection. This affected L4 only: its weighted length produced negative
+vertical S, while its registered S-balanced length was valid. No locked BEM
+evaluation had started when this amendment was made.
 
 ## Locked intents
 

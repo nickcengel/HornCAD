@@ -1,0 +1,38 @@
+{
+  "candidate_count": 12,
+  "scheduler": {
+    "configured_workers": {
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l1-elliptical-weighted/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l1-square-weighted/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l2-elliptical-weighted/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l2-square-weighted/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l3-elliptical-weighted/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l3-square-weighted/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l4-elliptical-s-balanced/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l4-square-s-balanced/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l5-elliptical-weighted/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l5-square-weighted/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l6-elliptical-weighted/search.yaml": 10,
+      "/Users/nickengel/Developer/HornCAD/examples/non-round-transfer-study/searches/l6-square-weighted/search.yaml": 10
+    },
+    "numcalc_process_capacity": 20,
+    "queue_workers": 8,
+    "search_count": 12
+  },
+  "schema_version": 1,
+  "searches": [
+    "examples/non-round-transfer-study/searches/l1-elliptical-weighted/search.yaml",
+    "examples/non-round-transfer-study/searches/l1-square-weighted/search.yaml",
+    "examples/non-round-transfer-study/searches/l2-elliptical-weighted/search.yaml",
+    "examples/non-round-transfer-study/searches/l2-square-weighted/search.yaml",
+    "examples/non-round-transfer-study/searches/l3-elliptical-weighted/search.yaml",
+    "examples/non-round-transfer-study/searches/l3-square-weighted/search.yaml",
+    "examples/non-round-transfer-study/searches/l4-elliptical-s-balanced/search.yaml",
+    "examples/non-round-transfer-study/searches/l4-square-s-balanced/search.yaml",
+    "examples/non-round-transfer-study/searches/l5-elliptical-weighted/search.yaml",
+    "examples/non-round-transfer-study/searches/l5-square-weighted/search.yaml",
+    "examples/non-round-transfer-study/searches/l6-elliptical-weighted/search.yaml",
+    "examples/non-round-transfer-study/searches/l6-square-weighted/search.yaml"
+  ],
+  "status": "passed"
+}

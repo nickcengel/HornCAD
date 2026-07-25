@@ -1,0 +1,15 @@
+{
+  "alternate_length_rule": "s-balanced",
+  "content_sha256": "5fc9c9431bc17beb0cd2169904c8490ec42ef2266b8b20080573983e20aba8b9",
+  "development_coordinate_sha256": "5a3a91516996e166e1cfe2bc88624ae7e7e0ad82fa4158d16244aca0525bd313",
+  "paired_comparison_count": 14,
+  "preferred_length_rule": "weighted",
+  "s_balanced_minus_weighted_median_surface_points": 0.00970746857916538,
+  "s_balanced_win_count": 11,
+  "schema_version": 1,
+  "selection_rule": "weighted wins when the paired median lies within \u00b10.5 point; otherwise the sign of the paired median selects the rule",
+  "status": "frozen-from-development",
+  "tie_count": 0,
+  "tie_window_points": 0.5,
+  "weighted_win_count": 3
+}
