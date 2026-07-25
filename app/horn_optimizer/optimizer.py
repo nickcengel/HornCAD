@@ -778,11 +778,13 @@ class HornOptimizer:
             return []
         if any(row["status"] in {
                 "proposed", "awaiting_approval", "running", "interrupted",
+                "dry-run",
             } for row in state["candidates"]):
             return [
                 row for row in state["candidates"]
                 if row["status"] in {
                     "proposed", "awaiting_approval", "running", "interrupted",
+                    "dry-run",
                 }
             ]
         round_number = int(state["next_round"])
@@ -826,6 +828,7 @@ class HornOptimizer:
         state["next_round"] = round_number+1
         if not selected:
             state["early_stopping"]["no_feasible_heuristic_branch"] = True
+            self._close_round(state)
         self.save_state(state)
         self.render_report(state)
         return selected
@@ -1070,7 +1073,9 @@ class HornOptimizer:
         state = self.initialize()
         pending = [
             row for row in state["candidates"]
-            if row["status"] in {"proposed", "running", "interrupted"}
+            if row["status"] in {
+                "proposed", "running", "interrupted", "dry-run",
+            }
         ][:4]
         if not pending:
             self.render_report(state)
@@ -1186,7 +1191,8 @@ class HornOptimizer:
             for candidate in charged:
                 if not self._harvest(state, candidate):
                     candidate["status"] = "interrupted"
-        self._close_round(state)
+        if not dry_run:
+            self._close_round(state)
         self.save_state(state)
         self.render_report(state)
         self._write_outputs(state)
@@ -1302,6 +1308,7 @@ class HornOptimizer:
             row for row in state["candidates"]
             if row["status"] in {
                 "proposed", "awaiting_approval", "running", "interrupted",
+                "dry-run",
             }
         ]
         if not pending:
@@ -1319,7 +1326,7 @@ class HornOptimizer:
         while True:
             state = self.step(approve=approve, dry_run=dry_run)
             if dry_run or state["status"] in {
-                "complete", "budget-exhausted", "confirmation-pending",
+                "complete", "budget-exhausted",
             }:
                 return state
             if any(

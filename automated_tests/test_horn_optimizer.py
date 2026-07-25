@@ -348,6 +348,12 @@ class HornOptimizerTests(unittest.TestCase):
             self.assertEqual(state["accounting"]["solver_evaluations"], 0)
             self.assertTrue(Path(
                 state["candidates"][0]["project_path"]).is_file())
+            with self.preflight():
+                measured = optimizer.execute_pending()
+            self.assertEqual(
+                measured["candidates"][0]["status"], "complete")
+            self.assertEqual(
+                measured["accounting"]["solver_evaluations"], 1)
 
     def test_live_report_is_sortable(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -411,6 +417,14 @@ class HornOptimizerTests(unittest.TestCase):
             self.assertEqual(state["status"], "confirmation-pending")
             self.assertEqual(
                 state["candidates"][-1]["branch"], "final-confirmation")
+            optimizer.save_state(state)
+            with self.preflight():
+                completed = optimizer.run()
+            self.assertEqual(completed["status"], "complete")
+            self.assertEqual(
+                completed["accounting"]["confirmation_evaluations"], 1)
+            self.assertEqual(
+                completed["accounting"]["solver_evaluations"], 2)
 
 
 if __name__ == "__main__":
