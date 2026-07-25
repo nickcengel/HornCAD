@@ -1,0 +1,56 @@
+bem_candidate_search:
+  version: 1
+  seed_yaml: project.yaml
+  intended_coverage_h_deg: 50.0
+  intended_coverage_v_deg: 50.0
+  lower_frequency_hz: 500.0
+  crossover_hz: 750.0
+  upper_frequency_hz: 8000.0
+  max_evaluations: 1
+  initial_candidates: 0
+  minimum_candidate_distance: 0.001
+  derived_s_bounds:
+  - 0.0
+  - 4.0
+  sampling_stability_points: 2.0
+  confirmation_points_per_octave: 16.0
+  adaptive_pruning:
+    enabled: false
+  fixed_design: true
+  bounds:
+    length_mm:
+    - 89.75399900000001
+    - 89.754001
+    extension_mm:
+    - -1.0e-06
+    - 1.0e-06
+    osse_coverage_h_deg:
+    - 49.999999
+    - 50.000001
+    osse_coverage_v_deg:
+    - 49.999999
+    - 50.000001
+    k_h:
+    - 3.999999
+    - 4.000001
+    k_v:
+    - 3.999999
+    - 4.000001
+    n_h:
+    - 14.999999
+    - 15.000001
+    n_v:
+    - 14.999999
+    - 15.000001
+  solver:
+    points_per_octave: 12
+    elements_per_wavelength: 6
+    angles: 91
+    workers: 10
+  non_round_transfer_study:
+    study_id: non-round-transfer-study-v1
+    coordinate_id: q2-equal-square
+    phase: development
+    shape: square
+    length_rule: independent-equal
+    source_intent_id: Q2
