@@ -1084,6 +1084,51 @@ class HornOptimizer:
         if self._provided_library is not None:
             return self._provided_library
         rows = []
+        # Local runtime states are the fast path. They are intentionally
+        # untracked, so the compact-artifact scan below remains the fresh-clone
+        # fallback.
+        for state_path in sorted(ROOT.glob("examples/**/search_state.json")):
+            try:
+                state = _read_json(state_path)
+                search_document = yaml.safe_load(
+                    (state_path.parent / "search.yaml").read_text(
+                        encoding="utf-8"))
+                if not self._compatible_search(search_document):
+                    continue
+                for record in state.get("candidates", []):
+                    if record.get("status") != "complete":
+                        continue
+                    project_path = (
+                        state_path.parent / "candidates"
+                        / str(record["id"]) / "project.yaml")
+                    project = _load_yaml(project_path)
+                    if not self._compatible_project(project):
+                        continue
+                    coordinate = coordinate_hash(
+                        self.config, _project_values(project))
+                    if (
+                        target_hashes is not None
+                        and coordinate not in target_hashes
+                    ):
+                        continue
+                    measurement = self._measurement_from_record(record)
+                    rows.append({
+                        "coordinate_hash": coordinate,
+                        **measurement,
+                        "response_path": str(
+                            project_path.parent / "bem" / "responses.npz"),
+                        "project_path": str(project_path),
+                    })
+            except (
+                KeyError, TypeError, ValueError, OSError,
+                json.JSONDecodeError, IndexError,
+            ):
+                continue
+        found = {row["coordinate_hash"] for row in rows}
+        missing = (
+            target_hashes-found if target_hashes is not None else None)
+        if target_hashes is not None and not missing:
+            return rows
         projects = sorted(
             ROOT.glob("examples/**/candidates/candidate-*/project.yaml"))
         for project_path in projects:
@@ -1106,7 +1151,7 @@ class HornOptimizer:
                     continue
                 values = _project_values(project)
                 coordinate = coordinate_hash(self.config, values)
-                if target_hashes is not None and coordinate not in target_hashes:
+                if missing is not None and coordinate not in missing:
                     continue
                 surface_document = _read_json(surface_path)
                 impedance_document = _read_json(impedance_path)
