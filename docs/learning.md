@@ -27,7 +27,9 @@ The full mouth/coverage grid remains in scope. Evidence-sparse joint control
 combinations are limited-support even when each individual control lies inside
 its nominal one-dimensional range. Future geometry studies require measured
 round parents for paired comparisons. V1 implements provisional prediction
-only; steering rules and recommendation operations remain deferred.
+only; its model-only steering and recommendation methods remain deferred.
+Practical automated design is instead implemented by the measured,
+restartable BEM optimizer.
 
 The completed study does provide measured seed rules independent of the failed
 global surrogate. The
@@ -48,6 +50,27 @@ frequency—but causality has not been isolated. No further round simulations
 are planned for this issue. The measured map and this mechanism hypothesis
 carry into intended non-round H/V, corner, sag, and baffle geometry.
 
+## Non-round transfer evidence
+
+The completed
+[non-round transfer study](../examples/non-round-transfer-study/study_plan.md)
+used 51 new BEM simulations and recorded one zero-budget geometry rejection.
+Independent measured H/V K and N seeds are retained without averaging. The
+width/height-weighted common length remains the default because the median
+S-balanced-minus-weighted development difference was only +0.0097 point,
+inside the registered ±0.5-point tie window.
+
+That default is conditional on geometry feasibility. Equal-coverage L4 made
+the weighted vertical S nonpositive, while its S-balanced construction passed
+the locked transfer gate. Reversed-coverage L5 failed the weighted locked gate
+by 3.878 points; S-balanced closure reduced the deficit to 2.533 points. The
+optimizer therefore falls back to S-balanced for nonpositive axis S and widens
+its first round near L5-like reversed-coverage intents.
+
+All eight equal-H/V square transforms improved on their exact round parents,
+with a median +3.372 surface-v2.3 points. This is strong corner-transfer
+evidence but not a global additive square-mouth score correction.
+
 ## Prior evidence carried forward
 
 Earlier searches supplied hypotheses and experiment-design constraints:
@@ -67,11 +90,9 @@ locked validation before releasing the exported model.
 
 ## Later geometry learning
 
-Conical extension and throat angle, one fixed round-to-square transformation,
-separate H/V behavior, rectangular validation, and sag are staged in the
+Conical extension/throat initialization and square/independent-HV transfer are
+complete. Sag and complementary H/V profile work remain staged in the
 [geometry research roadmap](plans/geometry_research_roadmap.md).
-Each stage adds one physical effect through paired contrasts and held-out
-prediction tests.
 
 Historical observations and superseded plans are available in
 [the archive](archive/pre-control-decoupling-2026-07/README.md), but they do not

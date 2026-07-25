@@ -71,6 +71,21 @@ SHAPES = ("elliptical", "square")
 LENGTH_RULES = ("weighted", "s-balanced")
 
 
+def _assert_no_rotationally_duplicate_intents() -> None:
+    seen: dict[tuple[float, float, float, float], str] = {}
+    for item in (*DEVELOPMENT_INTENTS, *LOCKED_INTENTS):
+        intent_id, width, height, coverage_h, coverage_v, *_rest = item
+        coordinate = (
+            float(width), float(height), float(coverage_h), float(coverage_v))
+        rotated = (
+            float(height), float(width), float(coverage_v), float(coverage_h))
+        canonical = min(coordinate, rotated)
+        if canonical in seen:
+            raise ValueError(
+                f"{intent_id} is a rotational duplicate of {seen[canonical]}")
+        seen[canonical] = intent_id
+
+
 def _read_json(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
@@ -137,51 +152,10 @@ def common_lengths(
     rules: RoundControlHeuristics,
     intent: DesignIntent,
 ) -> dict[str, float]:
-    seed = rules.recommend(intent)
-    weighted = float(seed.flat_profile_length_mm)
-    h = seed.horizontal
-    v = seed.vertical
-    if math.isclose(
-            h.profile_length_mm, v.profile_length_mm, abs_tol=1e-12):
-        balanced = h.profile_length_mm
-    else:
-        h_target = rules._s_at_length(
-            h.mouth_mm, h.coverage_deg, h.profile_length_mm, h.k, h.n)
-        v_target = rules._s_at_length(
-            v.mouth_mm, v.coverage_deg, v.profile_length_mm, v.k, v.n)
-
-        def residual(length: float) -> float:
-            h_s = rules._s_at_length(
-                h.mouth_mm, h.coverage_deg, length, h.k, h.n)
-            v_s = rules._s_at_length(
-                v.mouth_mm, v.coverage_deg, length, v.k, v.n)
-            if min(h_target, v_target) <= 0.0:
-                raise ValueError(
-                    "independent axis seed has nonpositive derived S")
-            if min(h_s, v_s) <= 0.0:
-                # S decreases monotonically with common length. The log-space
-                # residual tends to -infinity at the positive-S boundary, so
-                # this remains a valid upper bracket without evaluating log(0).
-                return -math.inf
-            return (
-                intent.mouth_width_mm*math.log(h_s/h_target)
-                + intent.mouth_height_mm*math.log(v_s/v_target)
-            )
-
-        low = min(h.profile_length_mm, v.profile_length_mm)
-        high = max(h.profile_length_mm, v.profile_length_mm)
-        low_value, high_value = residual(low), residual(high)
-        if low_value*high_value > 0.0:
-            raise ValueError("independent axis lengths do not bracket S balance")
-        for _ in range(80):
-            middle = (low+high)/2.0
-            value = residual(middle)
-            if low_value*value <= 0.0:
-                high, high_value = middle, value
-            else:
-                low, low_value = middle, value
-        balanced = (low+high)/2.0
-    return {"weighted": weighted, "s-balanced": float(balanced)}
+    return {
+        name: float(value)
+        for name, value in rules.common_profile_lengths(intent).items()
+    }
 
 
 def _fixed_search(
@@ -370,6 +344,7 @@ def _manifest(
 
 
 def prepare_development() -> dict[str, Any]:
+    _assert_no_rotationally_duplicate_intents()
     if DEVELOPMENT_MANIFEST.exists():
         raise FileExistsError(DEVELOPMENT_MANIFEST)
     rules = _heuristics()
@@ -677,6 +652,7 @@ def analyze_development() -> dict[str, Any]:
 
 
 def prepare_locked() -> dict[str, Any]:
+    _assert_no_rotationally_duplicate_intents()
     if LOCKED_MANIFEST.exists():
         raise FileExistsError(LOCKED_MANIFEST)
     preference = _read_json(PREFERENCE)
@@ -895,6 +871,12 @@ def analyze_final() -> dict[str, Any]:
             "independent_hv_k_n": (
                 "retain independent measured H/V K and N; never average axes"),
             "common_length_rule": preference["preferred_length_rule"],
+            "common_length_feasibility_guard": (
+                "use the registered S-balanced construction when the weighted "
+                "construction has nonpositive derived H or V S"),
+            "feasibility_fallback_intents":
+                _read_json(LOCKED_MANIFEST).get(
+                    "feasibility_fallback_intents", []),
             "square_corner_policy": (
                 "use measured equal-H/V corner deltas and locked square "
                 "responses as support warnings, not a global score correction"),
@@ -913,6 +895,19 @@ def analyze_final() -> dict[str, Any]:
 def _state_for(
     manifest: dict[str, Any], row: dict[str, Any],
 ) -> dict[str, Any]:
+    preflight_path = STUDY_ROOT / f"{manifest['phase']}_preflight.json"
+    if preflight_path.is_file():
+        rejected = {
+            item["coordinate_id"]
+            for item in _read_json(preflight_path).get(
+                "geometry_rejections", [])
+        }
+        if row["id"] in rejected:
+            return {
+                "status": "geometry-rejected",
+                "surface": None,
+                "impedance": None,
+            }
     search = ROOT / manifest["inputs"][row["id"]]["search"]
     state_path = search.parent / "search_state.json"
     if not state_path.is_file():
@@ -945,7 +940,7 @@ def refresh_index() -> Path:
         for row in manifest["coordinates"]:
             measured = _state_for(manifest, row)
             status = measured["status"]
-            completed += status == "complete"
+            completed += status in {"complete", "geometry-rejected"}
             total += 1
             report = (
                 STUDY_ROOT / "searches" / row["id"] / "search_report.html")

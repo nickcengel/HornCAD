@@ -1,5 +1,6 @@
 from pathlib import Path
 import hashlib
+import json
 import unittest
 
 from app.design_api import DesignIntent, RoundControlHeuristics
@@ -65,6 +66,18 @@ class RoundControlHeuristicTests(unittest.TestCase):
             result.weighted_profile_length_mm,
             result.s_balanced_profile_length_mm,
         )
+
+    def test_nonpositive_weighted_s_uses_balanced_feasibility_fallback(self):
+        result = self.heuristics.recommend(
+            DesignIntent(450, 300, 40, 40))
+        self.assertEqual(result.common_length_rule, "s-balanced")
+        self.assertAlmostEqual(
+            result.flat_profile_length_mm,
+            result.s_balanced_profile_length_mm,
+        )
+        self.assertTrue(any(
+            "feasibility fallback" in warning
+            for warning in result.warnings))
 
     def test_outside_support_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "outside heuristic support"):
@@ -138,6 +151,30 @@ class RoundControlHeuristicTests(unittest.TestCase):
         self.assertEqual(
             guidance["surface_priority_branch_cells"],
             ["30deg-450mm", "35deg-350mm", "40deg-250mm", "50deg-350mm"],
+        )
+
+    def test_non_round_transfer_is_included(self):
+        result_path = (
+            ROOT / "examples/non-round-transfer-study/results.json")
+        result = json.loads(result_path.read_text(encoding="utf-8"))
+        provenance = self.heuristics.artifact["provenance"]
+        self.assertEqual(
+            provenance["non_round_transfer_results_sha256"],
+            hashlib.sha256(result_path.read_bytes()).hexdigest(),
+        )
+        guidance = self.heuristics.artifact["non_round_transfer_guidance"]
+        self.assertEqual(
+            guidance["preferred_common_length_rule"],
+            result["preferred_length_rule"],
+        )
+        self.assertEqual(
+            guidance["candidate_accounting"]["total"],
+            result["total_new_simulation_count"],
+        )
+        self.assertEqual(
+            self.heuristics.recommend(
+                DesignIntent(400, 300, 50, 35)).common_length_rule,
+            result["preferred_length_rule"],
         )
 
 

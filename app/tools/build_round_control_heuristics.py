@@ -26,6 +26,8 @@ EXTENSION_MAP = (
     ROOT / "examples/round-control-composite-extension-map/map.json")
 EXTENSION_CLOSURE = (
     ROOT / "examples/round-control-composite-extension-closure/results.json")
+NON_ROUND_TRANSFER = (
+    ROOT / "examples/non-round-transfer-study/results.json")
 OUTPUT = ROOT / "models/round_control_heuristics_v1"
 ANGLES = (30, 35, 40, 45, 50)
 MOUTHS = (250, 300, 350, 400, 450)
@@ -591,6 +593,69 @@ def _extension_audit(
     }
 
 
+def _non_round_transfer_guidance(result: dict[str, Any]) -> dict[str, Any]:
+    if result.get("status") != "complete":
+        raise ValueError("non-round transfer evidence is not complete")
+    promotion = result["promotion"]
+    preferred = promotion["common_length_rule"]
+    if preferred not in {"weighted", "s-balanced"}:
+        raise ValueError(f"unsupported common length rule: {preferred}")
+    wider = list(promotion["wider_first_round_intents"])
+    equal_square = result["equal_hv_square_summary"]
+    locked = [
+        {
+            "source_intent_id": row["source_intent_id"],
+            "mouth_width_mm": float(row["mouth_width_mm"]),
+            "mouth_height_mm": float(row["mouth_height_mm"]),
+            "horizontal_coverage_deg":
+                float(row["horizontal_coverage_deg"]),
+            "vertical_coverage_deg": float(row["vertical_coverage_deg"]),
+            "mouth_shape": row["shape"],
+            "surface_score_v2_3": float(row["surface_score_v2_3"]),
+        }
+        for row in result["locked_evidence"]
+        if row["source_intent_id"] in wider
+    ]
+    return {
+        "status": "measured",
+        "independent_hv_k_n": promotion["independent_hv_k_n"],
+        "preferred_common_length_rule": preferred,
+        "common_length_feasibility_guard":
+            promotion["common_length_feasibility_guard"],
+        "feasibility_fallback_intents":
+            list(promotion["feasibility_fallback_intents"]),
+        "square_corner_policy": promotion["square_corner_policy"],
+        "equal_hv_square": {
+            "candidate_count": int(equal_square["candidate_count"]),
+            "median_surface_delta_from_round_points": float(
+                equal_square["median_surface_delta_from_round_points"]),
+            "square_better_count": int(equal_square["square_better_count"]),
+            "cell_surface_deltas": {
+                cell_id: float(cell["surface_delta_from_round_points"])
+                for cell_id, cell in equal_square["cells"].items()
+            },
+        },
+        "locked_failed_intent_count":
+            int(result["locked_summary"]["failed_intent_count"]),
+        "wider_first_round_intents": wider,
+        "wider_first_round_evidence": locked,
+        "candidate_accounting": {
+            "initial": int(result["initial_candidate_count"]),
+            "conditional": int(result["conditional_candidate_count"]),
+            "geometry_rejections": int(
+                result["conditional_geometry_rejection_count"]),
+            "total": int(result["total_new_simulation_count"]),
+            "absolute_cap": int(result["absolute_simulation_cap"]),
+        },
+        "interpretation": (
+            "apply measured round K/N seeds independently by axis, use the "
+            "selected common-length construction, and widen first-round "
+            "exploration near registered locked failures; square deltas are "
+            "support warnings rather than a global score correction"
+        ),
+    }
+
+
 def build() -> dict[str, Any]:
     index = _read(INDEX)
     ridge_result = _read(RIDGE)
@@ -599,6 +664,7 @@ def build() -> dict[str, Any]:
     wide_closure = _read(WIDE_CLOSURE)
     extension_map = _read(EXTENSION_MAP)
     extension_closure = _read(EXTENSION_CLOSURE)
+    non_round_result = _read(NON_ROUND_TRANSFER)
     rows = _canonical_rows(index)
     length = _length_audit(rows)
     k_audit = _axis_audit(
@@ -610,6 +676,7 @@ def build() -> dict[str, Any]:
     zones = _zone_audit(measured_rows)
     ridge = _ridge_closure_audit(measured_rows, ridge_result)
     extension = _extension_audit(extension_map, extension_closure)
+    non_round = _non_round_transfer_guidance(non_round_result)
     active_seeds, active_s_guidance = _active_winner_seeds(
         active_winners, length["reference_length_mm"])
     artifact = {
@@ -630,6 +697,7 @@ def build() -> dict[str, Any]:
         "active_measured_cell_seeds": active_seeds,
         "s_guidance_by_coverage": active_s_guidance,
         "extension_guidance": extension,
+        "non_round_transfer_guidance": non_round,
         "rules": [
             {
                 "id": "reference-length-seed",
@@ -751,9 +819,18 @@ def build() -> dict[str, Any]:
             {
                 "id": "hv-flat-compromise",
                 "action": (
-                    "for unequal H/V targets, combine independent axis seed "
-                    "lengths using mouth-width/height score weights"),
-                "status": "geometric seed; asymmetric acoustics unvalidated",
+                    "retain independent H/V K and N, then combine the axis "
+                    f"lengths with the measured {non_round['preferred_common_length_rule']} "
+                    "common-length construction"),
+                "status": "measured non-round initialization rule",
+                "evidence": {
+                    "preferred_common_length_rule":
+                        non_round["preferred_common_length_rule"],
+                    "locked_failed_intent_count":
+                        non_round["locked_failed_intent_count"],
+                    "wider_first_round_intents":
+                        non_round["wider_first_round_intents"],
+                },
             },
             {
                 "id": "hv-sag-compensation",
@@ -784,6 +861,7 @@ def build() -> dict[str, Any]:
             },
             "wide_coverage_closure": wide_closure,
             "extension": extension,
+            "non_round_transfer": non_round,
             "observed_high_score_zones": zones,
         },
         "provenance": {
@@ -811,6 +889,10 @@ def build() -> dict[str, Any]:
                 EXTENSION_CLOSURE.relative_to(ROOT)),
             "extension_closure_results_sha256":
                 _file_hash(EXTENSION_CLOSURE),
+            "non_round_transfer_results": str(
+                NON_ROUND_TRANSFER.relative_to(ROOT)),
+            "non_round_transfer_results_sha256":
+                _file_hash(NON_ROUND_TRANSFER),
             "builder_sha256": _file_hash(Path(__file__)),
         },
     }
@@ -857,10 +939,21 @@ global score model.
   {extension['angle_summary']['lower_a8_better_cell_count']['throat_impedance_score_v2_3_0']}
   of {extension['angle_summary']['lower_coverage_cell_count']} cells. These are
   measured matched responses, not a promoted global throat-angle predictor.
+- The completed non-round transfer study selected the
+  {non_round['preferred_common_length_rule']} common-length construction and
+  retained independent H/V K/N seeds. It used
+  {non_round['candidate_accounting']['total']} new simulations, including
+  {non_round['candidate_accounting']['conditional']} conditional closures, and
+  recorded {non_round['candidate_accounting']['geometry_rejections']}
+  zero-budget geometry rejection.
+- Equal-H/V square transformations changed surface-v2.3 score by a median
+  {non_round['equal_hv_square']['median_surface_delta_from_round_points']:.3f}
+  points relative to their round parents. Square-corner effects remain measured
+  support warnings, not a global correction.
 
-The H/V flat-length and sag outputs are starting constructions. No asymmetric or
-sagged BEM evidence is claimed. Sag is excluded from total score and these
-heuristics do not predict score.
+The flat H/V rule is now a measured initialization construction. No sagged BEM
+evidence is claimed. Sag is excluded from total score and these heuristics do
+not predict score.
 """
     (OUTPUT / "model_card.md").write_text(card, encoding="utf-8")
     return artifact

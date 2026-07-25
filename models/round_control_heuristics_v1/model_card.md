@@ -40,7 +40,18 @@ global score model.
   14
   of 15 cells. These are
   measured matched responses, not a promoted global throat-angle predictor.
+- The completed non-round transfer study selected the
+  weighted common-length construction and
+  retained independent H/V K/N seeds. It used
+  51 new simulations, including
+  3 conditional closures, and
+  recorded 1
+  zero-budget geometry rejection.
+- Equal-H/V square transformations changed surface-v2.3 score by a median
+  3.372
+  points relative to their round parents. Square-corner effects remain measured
+  support warnings, not a global correction.
 
-The H/V flat-length and sag outputs are starting constructions. No asymmetric or
-sagged BEM evidence is claimed. Sag is excluded from total score and these
-heuristics do not predict score.
+The flat H/V rule is now a measured initialization construction. No sagged BEM
+evidence is claimed. Sag is excluded from total score and these heuristics do
+not predict score.

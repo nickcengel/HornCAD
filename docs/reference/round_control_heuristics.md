@@ -135,14 +135,24 @@ and vertical mouth/coverage pair:
 1. Bilinearly interpolate the registered reference-length table.
 2. Take L/K/N/S from the nearest surface-v2.3 measured cell winner, including
    ridge and wide-coverage closure evidence where it won, as the axis seed.
-3. For a flat mouth, combine the two axis lengths using mouth width and height
-   as weights, matching the surface-score plane weighting.
-4. As an alternative, set the common length to the longer axis seed and apply
+3. For a flat mouth, use the width/height-weighted common length by default.
+   If it gives nonpositive derived S on either axis, use the S-balanced
+   construction instead.
+4. As a geometric alternative, set the common length to the longer axis seed and apply
    cylindrical sag only to the shorter-length axis. In HornCAD geometry, sag
    equal to the length difference exactly reconciles the two principal mouth
    edges.
 
-Step 4 is a geometric construction rule, not evidence that sag improves
+The flat rule is measured: the 14 development comparisons selected weighted
+under the registered ±0.5-point median tie window, while locked L4 established
+the positive-S fallback. Reversed-coverage L5 remains a wider-first-round
+region; S-balanced closure improved its deficit from 3.878 to 2.533 points.
+
+All eight equal-H/V square transforms beat their exact round parents, with a
+median +3.372 surface-v2.3 points. Use this as support evidence for square
+starting branches, not as a global additive score correction.
+
+Step 4 remains a geometric construction rule, not evidence that sag improves
 acoustics. It produces a precise candidate worth comparing with the flat seed;
 it is not labeled an optimized sag value.
 

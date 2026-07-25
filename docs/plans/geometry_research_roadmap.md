@@ -97,26 +97,24 @@ failed and was not released.
 ## Stage 3: square and independent-H/V transfer
 
 The targeted
-[non-round transfer study](non_round_transfer_study.md) replaces the earlier
-separate generic square and ellipse stages. It first measures eight equal-H/V
-square transformations to isolate corner effects. It then applies independent
-round-axis K/N seeds to seven unequal-H/V intents, comparing elliptical and
-square boundaries under width/height-weighted and S-balanced common lengths.
-Six locked intents test the preregistered preferred length rule, with at most
-four failed intents receiving bounded closure brackets.
+[non-round transfer study](../../examples/non-round-transfer-study/study_plan.md)
+is complete and replaces the earlier separate generic square and ellipse
+stages. It measured 51 valid BEM coordinates with one geometry rejection. All
+eight equal-H/V square transforms improved on their round parent, with a median
++3.372 surface-v2.3 points. The 14 development pairs selected weighted common
+length by the registered ±0.5-point median tie rule.
 
 Every candidate fixes zero extension, zero sag, a 6-degree throat, and intended
-OS-SE coverage. The 48-case initial allocation and 64-case absolute maximum are
-hard. The study promotes only measured initialization rules: independent H/V
-K/N transfer, common-length choice, square-corner starting behavior, and regions
-that need wider first-round exploration. It does not fit a portable correction
-or a global score surrogate.
+OS-SE coverage. The study retains independent H/V K/N, uses S-balanced length
+when weighted length has nonpositive derived axis S, and widens first-round
+exploration near the reversed-coverage L5 region. It does not fit a portable
+correction or a global score surrogate.
 
 ## Stage 4: measured optimizer handoff
 
-After Stage 3 publishes its result, the measured
-[BEM horn optimizer](design_recommendation_map.md) becomes the practical design
-handoff. It uses the promoted heuristics to construct candidates, exact
+The measured [BEM horn optimizer](design_recommendation_map.md) is implemented
+as the practical design handoff. It uses the promoted heuristics to construct
+candidates, exact
 compatible responses as zero-cost evidence, and new BEM measurements to improve
 one fixed user intent. Independent H/V K/N remain authored controls, common
 length and extension remain searched, and derived H/V S guides coupled moves.

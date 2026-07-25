@@ -24,8 +24,8 @@ new BEM work.
 - [Measured BEM horn optimizer](plans/design_recommendation_map.md): the single
   authority for practical automated design, restartable measurement rounds,
   ranking, budgets, and winner artifacts.
-- [Non-round transfer study](plans/non_round_transfer_study.md): the bounded
-  square/independent-HV evidence gate for optimizer initialization.
+- [Completed non-round transfer study](../examples/non-round-transfer-study/study_plan.md):
+  the measured square/independent-HV evidence behind optimizer initialization.
 - [Horn design application API](reference/design_application_api.md): Python
   prediction inputs/outputs plus explicitly deferred diagnosis, recommendation,
   and experiment-selection operations.
@@ -68,7 +68,8 @@ in the [pre-optimizer archive](archive/pre-horn-optimizer-2026-07/README.md).
 - **Axisymmetric round mouth** means equal horizontal and vertical mouth
   diameters with `mouth_squareness = 0`. Equal H/V dimensions alone must not be
   described as a square mouth.
-- **Square mouth** is reserved for a future nonzero-squareness geometry study.
+- **Square mouth** means `mouth_squareness = 1`; unequal H/V dimensions form a
+  rectangular aperture with fully squared corners.
 - **Length** means only the axial OSSE-profile length.
 - **Extension** means the separately authored conical throat extension.
 - **Profile-plus-extension length** means OSSE length + extension.

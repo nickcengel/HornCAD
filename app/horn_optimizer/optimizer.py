@@ -503,11 +503,10 @@ class HornOptimizer:
         seed = self.rules.recommend(intent)
         rule = length_rule or _transfer_length_rule()
         common = self.rules.common_profile_lengths(intent)
-        length = common[
-            "s-balanced" if rule == "s-balanced" else "weighted"]
-        if self.config.practical_limits.length_mm:
-            length = self.config.practical_limits.length_mm.clamp(length)
-        return {
+        selected_rule = (
+            "s-balanced" if rule == "s-balanced" else "weighted")
+        length = common[selected_rule]
+        values = {
             "mouth_width_mm": width,
             "mouth_height_mm": height,
             "length_mm": length,
@@ -523,6 +522,20 @@ class HornOptimizer:
                 seed.n_vertical),
             "sag_mm": self.config.sag_mm.midpoint,
         }
+        if selected_rule == "weighted":
+            h_s = self._s_at_length(
+                width, self.config.horizontal_coverage_deg, length,
+                values["k_h"], values["n_h"], values["extension_mm"])
+            v_s = self._s_at_length(
+                height, self.config.vertical_coverage_deg, length,
+                values["k_v"], values["n_v"], values["extension_mm"])
+            if min(h_s, v_s) <= 0.0:
+                values["length_mm"] = common["s-balanced"]
+        if self.config.practical_limits.length_mm:
+            values["length_mm"] = (
+                self.config.practical_limits.length_mm.clamp(
+                    values["length_mm"]))
+        return values
 
     def _baseline_values(self) -> dict[str, float]:
         if self.config.seed_yaml:

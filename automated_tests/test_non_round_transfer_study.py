@@ -8,7 +8,9 @@ from app.tools.run_non_round_transfer_study import (
     HEURISTICS,
     LENGTH_RULES,
     LOCKED_INTENTS,
+    RESULTS,
     SHAPES,
+    _assert_no_rotationally_duplicate_intents,
     _candidate,
     common_lengths,
     refresh_index,
@@ -27,6 +29,9 @@ class NonRoundTransferStudyTests(unittest.TestCase):
         self.assertEqual(development, 36)
         self.assertEqual(locked, 12)
         self.assertEqual(development+locked, 48)
+
+    def test_registered_intents_have_no_rotational_duplicates(self):
+        _assert_no_rotationally_duplicate_intents()
 
     def test_s_balanced_length_is_deterministic_and_bracketed(self):
         intent = DesignIntent(400, 280, 50, 35)
@@ -91,13 +96,17 @@ class NonRoundTransferStudyTests(unittest.TestCase):
 
     def test_live_index_is_sortable_and_self_refreshing(self):
         document = refresh_index().read_text(encoding="utf-8")
-        self.assertIn("http-equiv='refresh' content='5'", document)
+        if not RESULTS.is_file():
+            self.assertIn("http-equiv='refresh' content='5'", document)
         self.assertIn('table class="sortable"', document)
         self.assertIn('data-sort="number">Length', document)
         self.assertIn('data-sort="number">Surface v2.3', document)
         self.assertIn('data-sort="number">Impedance v2.3.0', document)
         self.assertIn('header.addEventListener("click"', document)
         self.assertIn('id="updated-at"', document)
+        if RESULTS.is_file():
+            self.assertIn("52/52 prepared coordinates", document)
+            self.assertIn("geometry-rejected", document)
 
 
 if __name__ == "__main__":

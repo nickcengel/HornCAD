@@ -210,6 +210,32 @@ class HornOptimizerTests(unittest.TestCase):
                 length_rule="s-balanced")["length_mm"]
             self.assertAlmostEqual(actual, expected, places=9)
 
+    def test_weighted_baseline_uses_s_balanced_feasibility_fallback(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            source = root / "optimizer.yaml"
+            source.write_text(yaml.safe_dump({"horn_optimizer": {
+                "version": 1,
+                "output_dir": "run",
+                "intent": {
+                    "horizontal_coverage_deg": 40,
+                    "vertical_coverage_deg": 40,
+                },
+                "throat_angle_deg": 6,
+                "mouth_shape": "round",
+                "mouth": {"width_mm": 450, "height_mm": 300},
+                "sag_axes": "none",
+                "sag_mm": 0,
+                "max_simulations": 8,
+                "approval_mode": "autonomous",
+            }}, sort_keys=False), encoding="utf-8")
+            optimizer = HornOptimizer(load_optimizer_config(source))
+            values = optimizer._baseline_values()
+            lengths = optimizer.rules.common_profile_lengths(
+                DesignIntent(450, 300, 40, 40))
+            self.assertAlmostEqual(
+                values["length_mm"], lengths["s-balanced"])
+
     def test_later_pool_contains_permitted_aspect_moves(self):
         with tempfile.TemporaryDirectory() as temp:
             optimizer = HornOptimizer(

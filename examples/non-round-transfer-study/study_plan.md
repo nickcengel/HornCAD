@@ -1,6 +1,6 @@
 # Non-round H/V and square-mouth transfer study
 
-Status: development complete (36/36); locked coordinates frozen and preflighted
+Status: complete (51 BEM simulations; one geometry rejection)
 
 ## Purpose
 
@@ -76,6 +76,11 @@ reversed-coverage, and portrait mismatches. These are bounded transfer tests;
 they do not claim that mouth-aspect/coverage-ratio interaction is already
 understood.
 
+Simultaneously swapping mouth width/height and H/V coverage is a rotation under
+the fixed no-sag geometry, not a new experiment. Registered development and
+locked intents are canonicalized under that rotation and checked for
+duplicates before materialization.
+
 The weighted common length is:
 
 ```text
@@ -129,6 +134,16 @@ Each selected closure receives exactly:
 2. square mouth at the alternate construction;
 3. square mouth at 0.9× the preferred common length;
 4. square mouth at 1.1× the preferred common length.
+
+L5 was the only locked failure, at -3.878 points relative to its independent
+axis reference. Its registered +10% square bracket produced nonpositive
+vertical S and was rejected at geometry preflight. Per the registered policy
+it is not replaced and does not consume simulation budget; the other three
+closure coordinates completed. The S-balanced ellipse was best at -2.533
+points relative to the independent-axis reference, bringing the measured
+closure inside the registered -3.0-point transfer threshold. L5 remains a
+wider-first-round optimizer region because its preferred weighted construction
+failed the locked gate.
 
 ## Execution and promotion
 

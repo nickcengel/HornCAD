@@ -211,6 +211,18 @@ class RoundControlHeuristics:
         flat = common[rule]
         width = intent.mouth_width_mm
         height = intent.mouth_height_mm
+        feasibility_fallback = False
+        if rule == "weighted":
+            h_s = self._s_at_length(
+                width, intent.horizontal_coverage_deg, flat,
+                horizontal.k, horizontal.n)
+            v_s = self._s_at_length(
+                height, intent.vertical_coverage_deg, flat,
+                vertical.k, vertical.n)
+            if min(h_s, v_s) <= 0.0:
+                rule = "s-balanced"
+                flat = common[rule]
+                feasibility_fallback = True
         difference = (
             vertical.profile_length_mm-horizontal.profile_length_mm)
         if difference > 0.0:
@@ -265,9 +277,15 @@ class RoundControlHeuristics:
             warnings=(
                 "common-length selection comes from the measured non-round "
                 "transfer study when its result is present",
+                (
+                    "weighted common length had nonpositive derived axis S; "
+                    "the registered S-balanced feasibility fallback is used"
+                    if feasibility_fallback else
+                    "weighted common length has positive derived H/V S"
+                ),
                 "axis controls come from the nearest measured cell winner",
-                "H/V combination and sag are starting constructions, not "
-                "validated performance predictions",
+                "sag is a starting construction, not a validated performance "
+                "prediction",
                 "zero extension is the measured composite initialization; "
                 "extension remains a measured search branch",
                 "recheck length after material K/N, extension, squareness, or "

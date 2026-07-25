@@ -12,9 +12,10 @@ evidence, and new BEM measurements. It does not release or depend on a global
 score surrogate. The older recommendation-map and frequency-energy surrogate
 plans are retained only under `docs/archive/pre-horn-optimizer-2026-07/`.
 
-The non-round transfer study must publish its result before the implementation
-freezes its preferred common-length initialization. Until that artifact exists,
-the implementation reports that it is using the width/height-weighted fallback.
+The completed non-round transfer study is part of the frozen implementation
+evidence. It selected the weighted construction by the registered median tie
+rule, added an S-balanced positive-S feasibility guard, and identified
+reversed-coverage L5 as a wider-first-round region.
 
 ## Fixed design intent
 
@@ -40,7 +41,9 @@ never redefine the fixed coverage, throat, shape, or sag-axis intent.
 
 The optimizer always searches one common OS-SE profile length, independent H/V
 K, independent H/V N, and conical extension. S is derived separately on both
-axes and guides coupled length/K moves.
+axes and guides coupled length/K moves. The measured default is the
+width/height-weighted length, with an S-balanced feasibility fallback whenever
+the weighted construction has nonpositive derived S on either axis.
 
 See [`examples/horn-optimizer/example.yaml`](../../examples/horn-optimizer/example.yaml)
 for the complete schema.

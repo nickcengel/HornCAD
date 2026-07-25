@@ -39,6 +39,13 @@ class OptimizerDocumentationTests(unittest.TestCase):
             "[Measured BEM horn optimizer](plans/design_recommendation_map.md)",
             index,
         )
+        self.assertIn(
+            "../examples/non-round-transfer-study/study_plan.md",
+            index,
+        )
+        self.assertFalse((
+            ROOT / "docs/plans/non_round_transfer_study.md"
+        ).exists())
         self.assertIn("run_horn_optimizer", readme)
         self.assertTrue(example.is_file())
 

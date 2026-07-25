@@ -1362,6 +1362,63 @@
         "8": 21
       }
     },
+    "non_round_transfer": {
+      "candidate_accounting": {
+        "absolute_cap": 64,
+        "conditional": 3,
+        "geometry_rejections": 1,
+        "initial": 48,
+        "total": 51
+      },
+      "common_length_feasibility_guard": "use the registered S-balanced construction when the weighted construction has nonpositive derived H or V S",
+      "equal_hv_square": {
+        "candidate_count": 8,
+        "cell_surface_deltas": {
+          "Q1": 5.932976598538033,
+          "Q2": 3.2298711411218903,
+          "Q3": 1.9991302778067706,
+          "Q4": 5.654113818033238,
+          "Q5": 0.8045182659245711,
+          "Q6": 4.399536338185925,
+          "Q7": 3.513512034701776,
+          "Q8": 2.503524610864673
+        },
+        "median_surface_delta_from_round_points": 3.371691587911833,
+        "square_better_count": 8
+      },
+      "feasibility_fallback_intents": [
+        "L4"
+      ],
+      "independent_hv_k_n": "retain independent measured H/V K and N; never average axes",
+      "interpretation": "apply measured round K/N seeds independently by axis, use the selected common-length construction, and widen first-round exploration near registered locked failures; square deltas are support warnings rather than a global score correction",
+      "locked_failed_intent_count": 1,
+      "preferred_common_length_rule": "weighted",
+      "square_corner_policy": "use measured equal-H/V corner deltas and locked square responses as support warnings, not a global score correction",
+      "status": "measured",
+      "wider_first_round_evidence": [
+        {
+          "horizontal_coverage_deg": 35.0,
+          "mouth_height_mm": 350.0,
+          "mouth_shape": "elliptical",
+          "mouth_width_mm": 400.0,
+          "source_intent_id": "L5",
+          "surface_score_v2_3": 81.74265995410917,
+          "vertical_coverage_deg": 45.0
+        },
+        {
+          "horizontal_coverage_deg": 35.0,
+          "mouth_height_mm": 350.0,
+          "mouth_shape": "square",
+          "mouth_width_mm": 400.0,
+          "source_intent_id": "L5",
+          "surface_score_v2_3": 80.86089856610431,
+          "vertical_coverage_deg": 45.0
+        }
+      ],
+      "wider_first_round_intents": [
+        "L5"
+      ]
+    },
     "observed_high_score_zones": {
       "cells": {
         "30deg-250mm": {
@@ -3797,16 +3854,75 @@
     ]
   },
   "heuristic_id": "round_control_heuristics_v1",
+  "non_round_transfer_guidance": {
+    "candidate_accounting": {
+      "absolute_cap": 64,
+      "conditional": 3,
+      "geometry_rejections": 1,
+      "initial": 48,
+      "total": 51
+    },
+    "common_length_feasibility_guard": "use the registered S-balanced construction when the weighted construction has nonpositive derived H or V S",
+    "equal_hv_square": {
+      "candidate_count": 8,
+      "cell_surface_deltas": {
+        "Q1": 5.932976598538033,
+        "Q2": 3.2298711411218903,
+        "Q3": 1.9991302778067706,
+        "Q4": 5.654113818033238,
+        "Q5": 0.8045182659245711,
+        "Q6": 4.399536338185925,
+        "Q7": 3.513512034701776,
+        "Q8": 2.503524610864673
+      },
+      "median_surface_delta_from_round_points": 3.371691587911833,
+      "square_better_count": 8
+    },
+    "feasibility_fallback_intents": [
+      "L4"
+    ],
+    "independent_hv_k_n": "retain independent measured H/V K and N; never average axes",
+    "interpretation": "apply measured round K/N seeds independently by axis, use the selected common-length construction, and widen first-round exploration near registered locked failures; square deltas are support warnings rather than a global score correction",
+    "locked_failed_intent_count": 1,
+    "preferred_common_length_rule": "weighted",
+    "square_corner_policy": "use measured equal-H/V corner deltas and locked square responses as support warnings, not a global score correction",
+    "status": "measured",
+    "wider_first_round_evidence": [
+      {
+        "horizontal_coverage_deg": 35.0,
+        "mouth_height_mm": 350.0,
+        "mouth_shape": "elliptical",
+        "mouth_width_mm": 400.0,
+        "source_intent_id": "L5",
+        "surface_score_v2_3": 81.74265995410917,
+        "vertical_coverage_deg": 45.0
+      },
+      {
+        "horizontal_coverage_deg": 35.0,
+        "mouth_height_mm": 350.0,
+        "mouth_shape": "square",
+        "mouth_width_mm": 400.0,
+        "source_intent_id": "L5",
+        "surface_score_v2_3": 80.86089856610431,
+        "vertical_coverage_deg": 45.0
+      }
+    ],
+    "wider_first_round_intents": [
+      "L5"
+    ]
+  },
   "provenance": {
     "active_surface_v2_3_winners": "examples/round-control-parameter-maps-v2-3/winners.json",
     "active_surface_v2_3_winners_sha256": "39829efdde01ce484b7df4826175bec5619aa26c603e543ce64d3ee92d27157d",
-    "builder_sha256": "16696a81b022666451ffa45e12b5df164ef4f68a126c7cea4954bd38b25ce8df",
+    "builder_sha256": "8b74e6ad734887c3b7ed374900d9207cdc9f8151ab6e8551377d603e0ec16bd3",
     "challenge_results": "examples/round-control-v2-validation/validation_results.json",
     "challenge_results_sha256": "ac4b773c584dba1a70feaa8abbd8608c9ccdcffa35ea59c00c3638cb44d70dc4",
     "extension_closure_results": "examples/round-control-composite-extension-closure/results.json",
     "extension_closure_results_sha256": "ced86c5b3bc9b710e1fdaa76d7b54f9d53f155888b0a40a9940cc7b9b470c97b",
     "extension_map": "examples/round-control-composite-extension-map/map.json",
     "extension_map_sha256": "050d3a28060d6e812c59fc0ac97aca04d083366e51200ef8ac45f7529b808670",
+    "non_round_transfer_results": "examples/non-round-transfer-study/results.json",
+    "non_round_transfer_results_sha256": "07f921096d6a16cb9bf313bbc03aae426e2c192b7a5e2baaf51250df6cd19c85",
     "ridge_results": "examples/round-control-ridge-closure/results.json",
     "ridge_results_sha256": "387b255e5da33e396764a818a37b856cecd2fce8e1c118ddfd73d9faf4b8c7fa",
     "short_length_closure_results": "examples/round-control-short-length-closure/results.json",
@@ -4086,9 +4202,16 @@
       "id": "extension-initialization"
     },
     {
-      "action": "for unequal H/V targets, combine independent axis seed lengths using mouth-width/height score weights",
+      "action": "retain independent H/V K and N, then combine the axis lengths with the measured weighted common-length construction",
+      "evidence": {
+        "locked_failed_intent_count": 1,
+        "preferred_common_length_rule": "weighted",
+        "wider_first_round_intents": [
+          "L5"
+        ]
+      },
       "id": "hv-flat-compromise",
-      "status": "geometric seed; asymmetric acoustics unvalidated"
+      "status": "measured non-round initialization rule"
     },
     {
       "action": "optionally shorten only the axis with the shorter seed length by using cylindrical sag equal to the axis-length difference",
