@@ -430,7 +430,12 @@ def _search_paths(manifest: dict[str, Any]) -> list[Path]:
             for row in manifest["coordinates"]]
 
 
-def preflight(path: Path, expected_count: int | None = None) -> dict[str, Any]:
+def preflight(
+    path: Path,
+    expected_count: int | None = None,
+    *,
+    allow_geometry_rejections: bool = False,
+) -> dict[str, Any]:
     manifest = _verify_manifest(path, expected_count)
     paths = _search_paths(manifest)
     scheduler = (
@@ -443,6 +448,11 @@ def preflight(path: Path, expected_count: int | None = None) -> dict[str, Any]:
         }
     )
     statuses = []
+    geometry_rejections = []
+    coordinate_by_search = {
+        str((ROOT / item["search"]).resolve()): coordinate_id
+        for coordinate_id, item in manifest["inputs"].items()
+    }
     for search_path in paths:
         state = run_search(
             search_path, search_path.parent, binary=None, dry_run=True)
@@ -453,12 +463,25 @@ def preflight(path: Path, expected_count: int | None = None) -> dict[str, Any]:
             and candidates[0].get("status") == "preflight"
         )
         if not status:
-            raise ValueError(f"geometry preflight failed: {search_path}")
+            if not allow_geometry_rejections:
+                raise ValueError(f"geometry preflight failed: {search_path}")
+            geometry_rejections.append({
+                "coordinate_id": coordinate_by_search[
+                    str(search_path.resolve())],
+                "search": str(search_path.relative_to(ROOT)),
+                "reason": "geometry-preflight-rejection",
+            })
+            continue
         statuses.append(str(search_path.relative_to(ROOT)))
     result = {
         "schema_version": 1,
-        "status": "passed",
+        "status": (
+            "passed-with-geometry-rejections"
+            if geometry_rejections else "passed"),
         "candidate_count": len(paths),
+        "feasible_candidate_count": len(statuses),
+        "geometry_rejection_count": len(geometry_rejections),
+        "geometry_rejections": geometry_rejections,
         "scheduler": scheduler,
         "searches": statuses,
     }
@@ -472,14 +495,24 @@ def run_phase(path: Path, expected_count: int | None = None) -> dict[str, Any]:
     preflight_path = STUDY_ROOT / f"{manifest['phase']}_preflight.json"
     if not preflight_path.is_file():
         raise ValueError(f"phase has not passed preflight: {manifest['phase']}")
+    preflight_result = _read_json(preflight_path)
+    rejected = {
+        row["coordinate_id"]
+        for row in preflight_result.get("geometry_rejections", [])
+    }
+    paths = [
+        ROOT / manifest["inputs"][row["id"]]["search"]
+        for row in manifest["coordinates"]
+        if row["id"] not in rejected
+    ]
     pending = []
-    for search_path in _search_paths(manifest):
+    for search_path in paths:
         state_path = search_path.parent / "search_state.json"
         state = _read_json(state_path) if state_path.is_file() else {}
         if state.get("status") != "complete":
             pending.append(search_path)
     if not pending:
-        all_paths = _search_paths(manifest)
+        all_paths = paths
         result = {
             "schema_version": 1,
             "status": "complete",
@@ -527,8 +560,17 @@ def run_phase(path: Path, expected_count: int | None = None) -> dict[str, Any]:
 
 
 def _measured(manifest: dict[str, Any]) -> list[dict[str, Any]]:
+    preflight_path = STUDY_ROOT / f"{manifest['phase']}_preflight.json"
+    preflight_result = (
+        _read_json(preflight_path) if preflight_path.is_file() else {})
+    rejected = {
+        row["coordinate_id"]
+        for row in preflight_result.get("geometry_rejections", [])
+    }
     rows = []
     for coordinate in manifest["coordinates"]:
+        if coordinate["id"] in rejected:
+            continue
         search = ROOT / manifest["inputs"][coordinate["id"]]["search"]
         state = _read_json(search.parent / "search_state.json")
         if state.get("status") != "complete":
@@ -795,6 +837,8 @@ def analyze_final() -> dict[str, Any]:
     closure_manifest = _verify_manifest(CLOSURE_MANIFEST)
     closure_evidence = (
         _measured(closure_manifest) if closure_manifest["coordinates"] else [])
+    closure_preflight = _read_json(
+        STUDY_ROOT / "closure_preflight.json")
     preference = _read_json(PREFERENCE)
     total_new = (
         development["candidate_count"]+locked["candidate_count"]
@@ -816,6 +860,10 @@ def analyze_final() -> dict[str, Any]:
         "status": "complete",
         "initial_candidate_count": 48,
         "conditional_candidate_count": len(closure_evidence),
+        "conditional_geometry_rejection_count": int(
+            closure_preflight.get("geometry_rejection_count", 0)),
+        "conditional_geometry_rejections":
+            closure_preflight.get("geometry_rejections", []),
         "total_new_simulation_count": total_new,
         "absolute_simulation_cap": 64,
         "preferred_length_rule": preference["preferred_length_rule"],
@@ -1046,7 +1094,8 @@ def main() -> None:
     elif args.command == "prepare-closure":
         result = prepare_closure()
     elif args.command == "preflight-closure":
-        result = preflight(CLOSURE_MANIFEST)
+        result = preflight(
+            CLOSURE_MANIFEST, allow_geometry_rejections=True)
     elif args.command == "run-closure":
         result = run_phase(CLOSURE_MANIFEST)
     elif args.command == "analyze":
