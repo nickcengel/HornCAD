@@ -409,6 +409,12 @@ class HornOptimizer:
 
     def load_state(self) -> dict[str, Any]:
         state = _read_json(self.state_path)
+        if (
+            state.get("optimizer") != "horn_optimizer"
+            or state.get("optimizer_version") != 1
+            or state.get("schema_version") != 1
+        ):
+            raise ValueError("unsupported horn optimizer restart state")
         snapshot = self._config_snapshot()
         if state.get("config_hash") != _hash(snapshot):
             raise ValueError(
