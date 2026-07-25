@@ -60,7 +60,7 @@ class FakeQueue:
 class HornOptimizerTests(unittest.TestCase):
     def config(self, root: Path, *, max_simulations=8,
                approval_mode="autonomous", seed=False, shape="round",
-               aspect=False):
+               aspect=False, practical_length=None):
         document = {"horn_optimizer": {
             "version": 1,
             "output_dir": "run",
@@ -82,6 +82,10 @@ class HornOptimizerTests(unittest.TestCase):
         }}
         if seed:
             document["horn_optimizer"]["seed_yaml"] = str(SEED)
+        if practical_length:
+            document["horn_optimizer"]["practical_limits"] = {
+                "length_mm": list(practical_length),
+            }
         path = root / "optimizer.yaml"
         path.write_text(
             yaml.safe_dump(document, sort_keys=False), encoding="utf-8")
@@ -111,6 +115,11 @@ class HornOptimizerTests(unittest.TestCase):
         ranked = rank_measurements(rows)
         self.assertEqual([row["coordinate_hash"] for row in ranked], [
             "b", "a", "c"])
+        surface_only = rank_measurements(rows, enabled=False)
+        self.assertEqual(
+            [row["coordinate_hash"] for row in surface_only],
+            ["a", "b", "c"],
+        )
 
     def test_hashes_are_deterministic_and_lineage_sensitive(self):
         with tempfile.TemporaryDirectory() as temp:
@@ -205,6 +214,20 @@ class HornOptimizerTests(unittest.TestCase):
             self.assertEqual(baseline["status"], "complete")
             self.assertEqual(state["accounting"]["solver_evaluations"], 1)
             self.assertEqual(len(queue.calls), 1)
+
+    def test_seed_baseline_is_not_silently_clamped_by_practical_limits(self):
+        with tempfile.TemporaryDirectory() as temp:
+            config = self.config(
+                Path(temp), seed=True, practical_length=(100, 120))
+            optimizer = HornOptimizer(config, response_library=[])
+            candidate = optimizer.propose()[0]
+            source = yaml.safe_load(SEED.read_text())["horncad_config"]
+            self.assertAlmostEqual(
+                candidate["values"]["length_mm"],
+                source["global"]["length"],
+                places=8,
+            )
+            self.assertGreater(candidate["values"]["length_mm"], 120)
 
     def test_exact_library_reuse_consumes_no_budget(self):
         with tempfile.TemporaryDirectory() as temp:

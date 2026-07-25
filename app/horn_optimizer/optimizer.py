@@ -440,6 +440,9 @@ class HornOptimizer:
             raise ValueError("seed horizontal sag axis is incompatible")
         if bool(global_config.get("mouth_sag_v_enabled", False)) != v_sag:
             raise ValueError("seed vertical sag axis is incompatible")
+        sag = float(global_config.get("mouth_sag", 0))
+        if not _range_contains(self.config.sag_mm, sag):
+            raise ValueError("seed sag amount is outside the configured range")
 
     def _heuristic_values(
         self, width: float | None = None, secondary: float | None = None,
@@ -522,7 +525,11 @@ class HornOptimizer:
 
     def _baseline_values(self) -> dict[str, float]:
         if self.config.seed_yaml:
-            return self._clamp_values(_project_values(self._seed_document()))
+            return {
+                key: _normalized_number(value)
+                for key, value in _project_values(
+                    self._seed_document()).items()
+            }
         return self._heuristic_values()
 
     def _clamp_values(self, values: dict[str, float]) -> dict[str, float]:
@@ -620,8 +627,15 @@ class HornOptimizer:
     def _candidate(
         self, values: dict[str, float], round_number: int, branch: str,
         *, parent_hash: str | None = None, force_new: bool = False,
+        preserve_values: bool = False,
     ) -> dict[str, Any]:
-        values = self._clamp_values(values)
+        values = (
+            {
+                key: _normalized_number(values[key])
+                for key in COORDINATE_FIELDS
+            }
+            if preserve_values else self._clamp_values(values)
+        )
         coordinate = coordinate_hash(self.config, values)
         proposal = proposal_hash(
             coordinate, round_number, branch, parent_hash)
@@ -908,7 +922,8 @@ class HornOptimizer:
         if round_number == 0:
             pool = [self._candidate(
                 self._baseline_values(), 0, "seed-baseline"
-                if self.config.seed_yaml else "heuristic-baseline")]
+                if self.config.seed_yaml else "heuristic-baseline",
+                preserve_values=bool(self.config.seed_yaml))]
         elif state["branch_backlog"]:
             pool = []
             for row in state["branch_backlog"]:
@@ -1484,6 +1499,7 @@ class HornOptimizer:
                     "final-confirmation",
                     parent_hash=winner["proposal_hash"],
                     force_new=True,
+                    preserve_values=True,
                 )
                 confirmation["lineage"] = (
                     list(winner.get("lineage", []))
