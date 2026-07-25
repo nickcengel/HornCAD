@@ -23,6 +23,13 @@ class OptimizerDocumentationTests(unittest.TestCase):
             ROOT / "docs/archive/pre-horn-optimizer-2026-07/plans"
             / "frequency_energy_bunching_analysis.md"
         ).is_file())
+        self.assertFalse((
+            ROOT / "docs/plans/extension_throat_angle_heuristic_study.md"
+        ).exists())
+        self.assertTrue((
+            ROOT / "docs/archive/pre-horn-optimizer-2026-07/plans"
+            / "extension_throat_angle_heuristic_study.md"
+        ).is_file())
 
     def test_active_index_and_examples_link_to_optimizer(self):
         index = (ROOT / "docs/README.md").read_text(encoding="utf-8")
