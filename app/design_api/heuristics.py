@@ -44,6 +44,7 @@ class RoundControlSeed:
     n_horizontal: float
     k_vertical: float
     n_vertical: float
+    extension_mm: float
     cylindrical_sag_compensation: SagCompensationSeed
     warnings: tuple[str, ...]
 
@@ -246,12 +247,17 @@ class RoundControlHeuristics:
             n_horizontal=horizontal.n,
             k_vertical=vertical.k,
             n_vertical=vertical.n,
+            extension_mm=float(
+                self.artifact.get("extension_guidance", {}).get(
+                    "initial_extension_mm", 0.0)),
             cylindrical_sag_compensation=compensation,
             warnings=(
                 "length rules come from round zero-extension evidence",
                 "axis controls come from the nearest measured cell winner",
                 "H/V combination and sag are starting constructions, not "
                 "validated performance predictions",
+                "zero extension is the measured composite initialization; "
+                "extension remains a measured search branch",
                 "recheck length after material K/N, extension, squareness, or "
                 "throat changes",
             ),

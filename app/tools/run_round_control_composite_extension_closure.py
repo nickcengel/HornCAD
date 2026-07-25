@@ -10,6 +10,7 @@ import json
 import math
 import os
 from pathlib import Path
+from statistics import median
 import time
 from typing import Any
 
@@ -116,12 +117,12 @@ def _candidate_directory(row: dict[str, Any]) -> Path:
     return STUDY_ROOT / "searches" / row["id"]
 
 
-def _legacy_angle_parent(coverage: int, mouth: int) -> tuple[
+def _legacy_angle_parent(coverage: int, mouth: int, angle: int = 6) -> tuple[
         Path, dict[str, Any], dict[str, Any]]:
     search = (
         ROOT / "examples/extension-throat-angle-heuristics/searches"
         / "primary-development" / f"{coverage}deg" / f"{mouth}mm"
-        / "primary-A6-E40"
+        / f"primary-A{angle}-E40"
     )
     state = _read(search / "search_state.json")
     if state.get("status") != "complete":
@@ -861,6 +862,74 @@ def _measured(manifest: dict[str, Any]) -> list[dict[str, Any]]:
     return rows
 
 
+def _legacy_angle_record(
+    coverage: int,
+    mouth: int,
+    angle: int,
+) -> dict[str, Any]:
+    search, _source, record = _legacy_angle_parent(coverage, mouth, angle)
+    response = search / record["response_archive"]
+    surface = record["surface_diagnostics"]["score"]
+    impedance = record["throat_impedance_diagnostics"]
+    composite = record["composite_diagnostics"]
+    if (surface.get("version") != "v2.3"
+            or impedance.get("diagnostic_version") != "2.3.0"
+            or composite.get("version") != "1.0"):
+        raise ValueError(f"{search}: stale diagnostics")
+    return {
+        "id": f"legacy-primary-{coverage}deg-{mouth}mm-A{angle}-E40",
+        "cell": f"{coverage}deg-{mouth}mm",
+        "coverage_deg": coverage,
+        "mouth_mm": mouth,
+        "throat_angle_deg": angle,
+        "extension_mm": 40,
+        "surface_score_v2_3": float(surface["overall_percent"]),
+        "throat_impedance_score_v2_3_0":
+            float(impedance["overall_percent"]),
+        "composite_score_v1_0": float(composite["overall_percent"]),
+        "response_path": str(response.relative_to(ROOT)),
+        "response_sha256": _file_hash(response),
+        "report_path": str((search / record["report_file"]).relative_to(ROOT)),
+        "evidence_role": "exact-legacy-angle-pair",
+    }
+
+
+def _reused_lower_a6(manifest: dict[str, Any]) -> list[dict[str, Any]]:
+    map_result = _read(MAP)
+    by_hash = {
+        row["response_sha256"]: row for row in map_result["evidence"]
+    }
+    rows = []
+    for reuse in manifest["reused_exact_a6"]:
+        source = by_hash.get(reuse["response_sha256"])
+        if source is None:
+            raise ValueError(
+                f"{reuse['cell']}: reused A6 response is absent from source map")
+        rows.append({
+            **source,
+            "cell": reuse["cell"],
+            "mode": "angle6-lower-grid-reuse",
+            "derived_s": float(source["s"]),
+            "response_path": source["source_path"],
+            "evidence_role": "exact-reused-A6",
+        })
+    return rows
+
+
+def _score_delta(
+    later: dict[str, Any],
+    earlier: dict[str, Any],
+) -> dict[str, float]:
+    return {
+        key: float(later[key])-float(earlier[key])
+        for key in (
+            "surface_score_v2_3",
+            "throat_impedance_score_v2_3_0",
+            "composite_score_v1_0",
+        )
+    }
+
+
 def analyze() -> dict[str, Any]:
     manifest = _verify_manifest()
     evidence = _measured(manifest)
@@ -889,14 +958,94 @@ def analyze() -> dict[str, Any]:
                 row["composite_score_v1_0"] for row in rows
             ) > rows[0]["parent_composite_score_v1_0"],
         }
+    angle_manifest = _verify_angle_addendum()
+    angle_evidence = _measured(angle_manifest)
+    wide_angle_cells = {}
+    for a8 in angle_evidence:
+        coverage = int(a8["coverage_deg"])
+        mouth = int(a8["mouth_mm"])
+        a6 = _legacy_angle_record(coverage, mouth, 6)
+        a12 = _legacy_angle_record(coverage, mouth, 12)
+        wide_angle_cells[a8["cell"]] = {
+            "a6": a6,
+            "a8": a8,
+            "a12": a12,
+            "a8_minus_a6": _score_delta(a8, a6),
+            "a12_minus_a8": _score_delta(a12, a8),
+            "a12_minus_a6": _score_delta(a12, a6),
+        }
+
+    lower_manifest = _verify_lower_angle_manifest()
+    lower_new = _measured(lower_manifest)
+    lower_evidence = [*lower_new, *_reused_lower_a6(lower_manifest)]
+    lower_angle_cells = {}
+    for coverage, mouth in LOWER_ANGLE_CELLS:
+        cell_id = f"{coverage}deg-{mouth}mm"
+        rows = [row for row in lower_evidence if row["cell"] == cell_id]
+        a6 = next(row for row in rows if int(row["throat_angle_deg"]) == 6)
+        a8 = next(row for row in rows if int(row["throat_angle_deg"]) == 8)
+        lower_angle_cells[cell_id] = {
+            "a6": a6,
+            "a8": a8,
+            "a8_minus_a6": _score_delta(a8, a6),
+        }
+    lower_deltas = [
+        row["a8_minus_a6"] for row in lower_angle_cells.values()
+    ]
+    wide_deltas = [
+        row["a8_minus_a6"] for row in wide_angle_cells.values()
+    ]
+    angle_summary = {
+        "lower_coverage_cell_count": len(lower_angle_cells),
+        "wide_bridge_cell_count": len(wide_angle_cells),
+        "lower_a8_minus_a6_median": {
+            key: float(median(row[key] for row in lower_deltas))
+            for key in lower_deltas[0]
+        },
+        "lower_a8_better_cell_count": {
+            key: sum(row[key] > 0.0 for row in lower_deltas)
+            for key in lower_deltas[0]
+        },
+        "wide_a8_minus_a6_median": {
+            key: float(median(row[key] for row in wide_deltas))
+            for key in wide_deltas[0]
+        },
+        "wide_a8_better_cell_count": {
+            key: sum(row[key] > 0.0 for row in wide_deltas)
+            for key in wide_deltas[0]
+        },
+        "promotion": (
+            "retain measured matched angle responses as initialization "
+            "evidence; do not promote a general throat-angle predictor"
+        ),
+    }
+
     result = {
         "schema_version": 1,
         "study_id": manifest["study_id"],
         "status": "complete",
         "candidate_count": len(evidence),
+        "total_new_candidate_count": (
+            len(evidence)+len(angle_evidence)+len(lower_new)
+        ),
         "ranking": manifest["ranking"],
         "cells": cells,
         "evidence": evidence,
+        "wide_angle_cells": wide_angle_cells,
+        "wide_angle_evidence": angle_evidence,
+        "lower_angle_cells": lower_angle_cells,
+        "lower_angle_evidence": lower_evidence,
+        "angle_summary": angle_summary,
+        "extension_summary": {
+            "tested_cell_count": len(cells),
+            "extension_beats_parent_count": sum(
+                cell["extension_beats_parent"] for cell in cells.values()),
+            "preferred_initial_extension_mm": 0,
+            "promotion": (
+                "zero extension remains the measured initialization; retain "
+                "extension as an optimizer branch rather than a default"
+            ),
+        },
     }
     result["content_sha256"] = _content_hash(result)
     _write_json(STUDY_ROOT / "results.json", result)

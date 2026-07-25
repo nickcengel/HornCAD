@@ -1011,6 +1011,270 @@
         "short_low_k": 5
       }
     },
+    "extension": {
+      "angle_summary": {
+        "lower_a8_better_cell_count": {
+          "composite_score_v1_0": 14,
+          "surface_score_v2_3": 11,
+          "throat_impedance_score_v2_3_0": 14
+        },
+        "lower_a8_minus_a6_median": {
+          "composite_score_v1_0": 1.8786893476439275,
+          "surface_score_v2_3": 0.3453049946544695,
+          "throat_impedance_score_v2_3_0": 6.902432983787662
+        },
+        "lower_coverage_cell_count": 15,
+        "promotion": "retain measured matched angle responses as initialization evidence; do not promote a general throat-angle predictor",
+        "wide_a8_better_cell_count": {
+          "composite_score_v1_0": 4,
+          "surface_score_v2_3": 3,
+          "throat_impedance_score_v2_3_0": 4
+        },
+        "wide_a8_minus_a6_median": {
+          "composite_score_v1_0": 1.464472375629299,
+          "surface_score_v2_3": 0.1839466045353788,
+          "throat_impedance_score_v2_3_0": 5.356882703104532
+        },
+        "wide_bridge_cell_count": 4
+      },
+      "cell_count": 25,
+      "cells": {
+        "30deg-250mm": {
+          "best_extension_composite_delta_points": -5.494114077174032,
+          "best_extension_response_sha256": "1900f6d737cacf878d6ad1944797105a7e63b5cf64fea1a91083d14edb98033c",
+          "best_measured_extension_mm": 60,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "a63a43be47c82cfbd1065454bc76350f40df38f3b5adccb76d294f6a0122827c"
+        },
+        "30deg-300mm": {
+          "best_extension_composite_delta_points": -7.776698812397825,
+          "best_extension_response_sha256": "26e16af37280484af743076708d855b800690a608066e192b54b4b1710b3c891",
+          "best_measured_extension_mm": 60,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "13ba51337d7805fad9488a7268af4f8f494b42ce13395d83999cf17b1c37f3f0"
+        },
+        "30deg-350mm": {
+          "best_extension_composite_delta_points": -3.5348120897769064,
+          "best_extension_response_sha256": "170816ab7168f6c357237f66ac5be8a093d99b0d8bdbe5807e8b2905903a5d2e",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.41103084839377857,
+          "surface_leader_extension_mm": 20,
+          "zero_extension_response_sha256": "6942fcc2083456c7b061f966c88e248df25ce2b046ee9bdc7ed42a29e977fcc6"
+        },
+        "30deg-400mm": {
+          "best_extension_composite_delta_points": -2.5749202072433235,
+          "best_extension_response_sha256": "6641294338d77480bee9ffef2ed4521e503c6a2dbaef371f3aae5000715dbb7d",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "5b041a40161fca1f3a822c61acdbe458b050c69e30015d52e76d242405db4320"
+        },
+        "30deg-450mm": {
+          "best_extension_composite_delta_points": -1.121919046969353,
+          "best_extension_response_sha256": "92f328894eaef84951aa837ea6d562ecd237fc0843185f8fe68cdc164129ac25",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.753563238245988,
+          "surface_leader_extension_mm": 20,
+          "zero_extension_response_sha256": "b3eb5119cd572cf5b622ffa4167e630b8295f78807889143e468a57791e25fd4"
+        },
+        "35deg-250mm": {
+          "best_extension_composite_delta_points": -5.861008036883263,
+          "best_extension_response_sha256": "dc8ca5be4d252192fedcfffbf2078a110d2ac94ed9639ad47b46f23ad9c3720b",
+          "best_measured_extension_mm": 60,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "bcec992207b66756cf1d8ab0ed684edf6fb4466661ea03b3fd98ada91bb5bc7b"
+        },
+        "35deg-300mm": {
+          "best_extension_composite_delta_points": -7.003763020368552,
+          "best_extension_response_sha256": "f54c671c6cd166bd9082ff31669effca5ec515b302ca4eef5d5e9cddbed743bc",
+          "best_measured_extension_mm": 60,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.24087801060217373,
+          "surface_leader_extension_mm": 60,
+          "zero_extension_response_sha256": "0a85859b5b3aea1f0b029d973d3e78d4bfcc99f1dcfb988625bd3f29c0dc0d5d"
+        },
+        "35deg-350mm": {
+          "best_extension_composite_delta_points": -4.797178898287797,
+          "best_extension_response_sha256": "2229cf71d43dbb8d81bb0a45f747998b1de547fc0c16b0cdbaed4bb71dc538be",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.6390093308575615,
+          "surface_leader_extension_mm": 20,
+          "zero_extension_response_sha256": "402bf8677d08df71bbc36cc04e78d72e232f52b119ebaa04f7239092d1449b31"
+        },
+        "35deg-400mm": {
+          "best_extension_composite_delta_points": -2.915895990622232,
+          "best_extension_response_sha256": "bde116bc9561a75fd44ef5663b59d4ae6275ab802ba5e2fb3c2229ce630009fc",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0009222141890745661,
+          "surface_leader_extension_mm": 20,
+          "zero_extension_response_sha256": "0bd85a7cb28924ae1ff8dbad603e3990f2529818d9840618668787a18dcc8b5a"
+        },
+        "35deg-450mm": {
+          "best_extension_composite_delta_points": -3.1141054099585546,
+          "best_extension_response_sha256": "2d5706e404014aeb7b6cfa3ad9acd3e478f6d63e8881c41feb10dd16820a40f5",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "481c2ff9c910919487d8e2ff1518f734b3ac860485c2497be49baa01dcae3435"
+        },
+        "40deg-250mm": {
+          "best_extension_composite_delta_points": -6.97696379729183,
+          "best_extension_response_sha256": "9840160851feeac38ec2fa6923b2fc1c9d23d244bb32dc404cddd236e9b8bd12",
+          "best_measured_extension_mm": 60,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 1.7902269894263583,
+          "surface_leader_extension_mm": 60,
+          "zero_extension_response_sha256": "336aaebe9d321756c2686c8ba82b8c737b0a399872564d2551150630cb575300"
+        },
+        "40deg-300mm": {
+          "best_extension_composite_delta_points": -4.6482815141880565,
+          "best_extension_response_sha256": "ffd823d079d51e5b68a026b9fb666936367ff42df0b002adc33d68ee07bbda8c",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "4e34093dff1a3db8b4cde25b5309dce7c1913dd366573ff3d09bac3986e06ecc"
+        },
+        "40deg-350mm": {
+          "best_extension_composite_delta_points": -4.5774314496155455,
+          "best_extension_response_sha256": "30d9ad49a93ad60a6bf87816108bdb6765b76c6680ebd0f6bb1a77d708a3b490",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "e196c454230c2a66be575c8bb93c2d00520b1b9e2b5c6d7a10e98cb23ab37131"
+        },
+        "40deg-400mm": {
+          "best_extension_composite_delta_points": -5.622923531386888,
+          "best_extension_response_sha256": "475be3e47e4a30ef698e47bbc2a31d261406b7455bf2d12eae741ecaf4c23313",
+          "best_measured_extension_mm": 40,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "2f9f46c2c152ef26ee5af7c092fa4a91da36fc2ba6d223839438ccaf2678a654"
+        },
+        "40deg-450mm": {
+          "best_extension_composite_delta_points": -3.8419105688870445,
+          "best_extension_response_sha256": "2d31596b37971b4d58c9f34721152eb2886706f50bb98633e63c8a1ea0191b2d",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "03b557b777c515a59e9d1c7a10003659a20396bd9a6a279e5d04c7ba12306bfd"
+        },
+        "45deg-250mm": {
+          "best_extension_composite_delta_points": -3.5425021494388034,
+          "best_extension_response_sha256": "e7fd284cb241246887f3a3ef586fd569aeb01d9fced5c9703dab97ddca1b0d7f",
+          "best_measured_extension_mm": 60,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "2261a32ffe31f93be1f49fab4c881558d110f2efa05bb537a1b135b49b80739d"
+        },
+        "45deg-300mm": {
+          "best_extension_composite_delta_points": -5.121977878354755,
+          "best_extension_response_sha256": "e36fbf6d5cc7bcac2f7dd8c50885784f117659791c1cede6353a83892c86740d",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "02610be21ba78409941df430a206233f0cebcfcdd15c502c55888b8bd23fe1dd"
+        },
+        "45deg-350mm": {
+          "best_extension_composite_delta_points": -4.582529492728497,
+          "best_extension_response_sha256": "e3bc39f28fe15c04eb3ef9fb1e9b0e435600a25f0c32c208d887bb28c8598199",
+          "best_measured_extension_mm": 40,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "faa609989d107001d330182561a5a5fedfd8ae2d9f59f3f812a2db524a69672d"
+        },
+        "45deg-400mm": {
+          "best_extension_composite_delta_points": -3.6264975696775537,
+          "best_extension_response_sha256": "f7a6292e07fd4099b8fd3103f7b26489e933a2b08988cef64c6e12de63ac14e9",
+          "best_measured_extension_mm": 40,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "bd127bf9dd55da832c7a9914d610a481158d70b172391a66e5677a7f91a6e652"
+        },
+        "45deg-450mm": {
+          "best_extension_composite_delta_points": -4.528991286994128,
+          "best_extension_response_sha256": "bfea7f2bbda139c739f17d74dc5eea1aa71976696b67067e841545998846b04f",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "8c6c8c936b439b0c96d380cd7e95b748657c29cfb20c9f41fe0db36dbfdb2a4f"
+        },
+        "50deg-250mm": {
+          "best_extension_composite_delta_points": -4.350580952218365,
+          "best_extension_response_sha256": "eaf9d040d4d2b6b687422245e9a8ed5a2d124842147deadca89ddbf39dc10a1a",
+          "best_measured_extension_mm": 60,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "d52f858a7ad2e9d493bd08714bc21dc5c550a916164f2c1e1bcc1ff0d5c80d4e"
+        },
+        "50deg-300mm": {
+          "best_extension_composite_delta_points": -5.200333594795438,
+          "best_extension_response_sha256": "44dfa84622b5ab54c1bf2bdcc49cd00468e91aa4948c1f16e3fb8af3fb766d60",
+          "best_measured_extension_mm": 20,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "0509e270c805af612186b882ffd3d95b6e9a53d6e7f32459bb42a2f628a43ad9"
+        },
+        "50deg-350mm": {
+          "best_extension_composite_delta_points": -4.159512025552672,
+          "best_extension_response_sha256": "5888e4e6e13cc692a5d7e7fc1a5b1bf486fe513ef9e05eb7767e008826b7d64b",
+          "best_measured_extension_mm": 40,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 1.9298490807379665,
+          "surface_leader_extension_mm": 40,
+          "zero_extension_response_sha256": "bb7646eca679d17ebdc23bee839a272b2cdf2db4b4eabc90a34928e96826232a"
+        },
+        "50deg-400mm": {
+          "best_extension_composite_delta_points": -4.979545660214541,
+          "best_extension_response_sha256": "a61847199ec22981709937364d271e35a30e77804e930ebfd2e1515c49ac8949",
+          "best_measured_extension_mm": 40,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.27357770220442035,
+          "surface_leader_extension_mm": 40,
+          "zero_extension_response_sha256": "2a953bc623a08c5639200d15027f9b487e559dd286d37ec5a47ff8aee1a0a457"
+        },
+        "50deg-450mm": {
+          "best_extension_composite_delta_points": -3.38578275660241,
+          "best_extension_response_sha256": "50ce1bf81173832d86c07df8a68fbe292817cf41dd55dfa4b6b8b7891fc8c0e7",
+          "best_measured_extension_mm": 60,
+          "initial_extension_mm": 0,
+          "surface_leader_delta_points": 0.0,
+          "surface_leader_extension_mm": 0,
+          "zero_extension_response_sha256": "520b3b8b81ba6571bb2d4e5c5705b92d096188655483c6c71da527c660cd7c7b"
+        }
+      },
+      "composite_extension_win_count": 0,
+      "initial_extension_mm": 0,
+      "interpretation": "zero extension is the measured initialization under the registered extension composite; extension remains an early branch where surface-first ranking or throat loading warrants it",
+      "surface_priority_branch_cells": [
+        "30deg-450mm",
+        "35deg-350mm",
+        "40deg-250mm",
+        "50deg-350mm"
+      ]
+    },
     "k": {
       "cells": 25,
       "fixed_coordinates": {
@@ -3268,13 +3532,281 @@
       450
     ]
   },
+  "extension_guidance": {
+    "angle_summary": {
+      "lower_a8_better_cell_count": {
+        "composite_score_v1_0": 14,
+        "surface_score_v2_3": 11,
+        "throat_impedance_score_v2_3_0": 14
+      },
+      "lower_a8_minus_a6_median": {
+        "composite_score_v1_0": 1.8786893476439275,
+        "surface_score_v2_3": 0.3453049946544695,
+        "throat_impedance_score_v2_3_0": 6.902432983787662
+      },
+      "lower_coverage_cell_count": 15,
+      "promotion": "retain measured matched angle responses as initialization evidence; do not promote a general throat-angle predictor",
+      "wide_a8_better_cell_count": {
+        "composite_score_v1_0": 4,
+        "surface_score_v2_3": 3,
+        "throat_impedance_score_v2_3_0": 4
+      },
+      "wide_a8_minus_a6_median": {
+        "composite_score_v1_0": 1.464472375629299,
+        "surface_score_v2_3": 0.1839466045353788,
+        "throat_impedance_score_v2_3_0": 5.356882703104532
+      },
+      "wide_bridge_cell_count": 4
+    },
+    "cell_count": 25,
+    "cells": {
+      "30deg-250mm": {
+        "best_extension_composite_delta_points": -5.494114077174032,
+        "best_extension_response_sha256": "1900f6d737cacf878d6ad1944797105a7e63b5cf64fea1a91083d14edb98033c",
+        "best_measured_extension_mm": 60,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "a63a43be47c82cfbd1065454bc76350f40df38f3b5adccb76d294f6a0122827c"
+      },
+      "30deg-300mm": {
+        "best_extension_composite_delta_points": -7.776698812397825,
+        "best_extension_response_sha256": "26e16af37280484af743076708d855b800690a608066e192b54b4b1710b3c891",
+        "best_measured_extension_mm": 60,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "13ba51337d7805fad9488a7268af4f8f494b42ce13395d83999cf17b1c37f3f0"
+      },
+      "30deg-350mm": {
+        "best_extension_composite_delta_points": -3.5348120897769064,
+        "best_extension_response_sha256": "170816ab7168f6c357237f66ac5be8a093d99b0d8bdbe5807e8b2905903a5d2e",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.41103084839377857,
+        "surface_leader_extension_mm": 20,
+        "zero_extension_response_sha256": "6942fcc2083456c7b061f966c88e248df25ce2b046ee9bdc7ed42a29e977fcc6"
+      },
+      "30deg-400mm": {
+        "best_extension_composite_delta_points": -2.5749202072433235,
+        "best_extension_response_sha256": "6641294338d77480bee9ffef2ed4521e503c6a2dbaef371f3aae5000715dbb7d",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "5b041a40161fca1f3a822c61acdbe458b050c69e30015d52e76d242405db4320"
+      },
+      "30deg-450mm": {
+        "best_extension_composite_delta_points": -1.121919046969353,
+        "best_extension_response_sha256": "92f328894eaef84951aa837ea6d562ecd237fc0843185f8fe68cdc164129ac25",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.753563238245988,
+        "surface_leader_extension_mm": 20,
+        "zero_extension_response_sha256": "b3eb5119cd572cf5b622ffa4167e630b8295f78807889143e468a57791e25fd4"
+      },
+      "35deg-250mm": {
+        "best_extension_composite_delta_points": -5.861008036883263,
+        "best_extension_response_sha256": "dc8ca5be4d252192fedcfffbf2078a110d2ac94ed9639ad47b46f23ad9c3720b",
+        "best_measured_extension_mm": 60,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "bcec992207b66756cf1d8ab0ed684edf6fb4466661ea03b3fd98ada91bb5bc7b"
+      },
+      "35deg-300mm": {
+        "best_extension_composite_delta_points": -7.003763020368552,
+        "best_extension_response_sha256": "f54c671c6cd166bd9082ff31669effca5ec515b302ca4eef5d5e9cddbed743bc",
+        "best_measured_extension_mm": 60,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.24087801060217373,
+        "surface_leader_extension_mm": 60,
+        "zero_extension_response_sha256": "0a85859b5b3aea1f0b029d973d3e78d4bfcc99f1dcfb988625bd3f29c0dc0d5d"
+      },
+      "35deg-350mm": {
+        "best_extension_composite_delta_points": -4.797178898287797,
+        "best_extension_response_sha256": "2229cf71d43dbb8d81bb0a45f747998b1de547fc0c16b0cdbaed4bb71dc538be",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.6390093308575615,
+        "surface_leader_extension_mm": 20,
+        "zero_extension_response_sha256": "402bf8677d08df71bbc36cc04e78d72e232f52b119ebaa04f7239092d1449b31"
+      },
+      "35deg-400mm": {
+        "best_extension_composite_delta_points": -2.915895990622232,
+        "best_extension_response_sha256": "bde116bc9561a75fd44ef5663b59d4ae6275ab802ba5e2fb3c2229ce630009fc",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0009222141890745661,
+        "surface_leader_extension_mm": 20,
+        "zero_extension_response_sha256": "0bd85a7cb28924ae1ff8dbad603e3990f2529818d9840618668787a18dcc8b5a"
+      },
+      "35deg-450mm": {
+        "best_extension_composite_delta_points": -3.1141054099585546,
+        "best_extension_response_sha256": "2d5706e404014aeb7b6cfa3ad9acd3e478f6d63e8881c41feb10dd16820a40f5",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "481c2ff9c910919487d8e2ff1518f734b3ac860485c2497be49baa01dcae3435"
+      },
+      "40deg-250mm": {
+        "best_extension_composite_delta_points": -6.97696379729183,
+        "best_extension_response_sha256": "9840160851feeac38ec2fa6923b2fc1c9d23d244bb32dc404cddd236e9b8bd12",
+        "best_measured_extension_mm": 60,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 1.7902269894263583,
+        "surface_leader_extension_mm": 60,
+        "zero_extension_response_sha256": "336aaebe9d321756c2686c8ba82b8c737b0a399872564d2551150630cb575300"
+      },
+      "40deg-300mm": {
+        "best_extension_composite_delta_points": -4.6482815141880565,
+        "best_extension_response_sha256": "ffd823d079d51e5b68a026b9fb666936367ff42df0b002adc33d68ee07bbda8c",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "4e34093dff1a3db8b4cde25b5309dce7c1913dd366573ff3d09bac3986e06ecc"
+      },
+      "40deg-350mm": {
+        "best_extension_composite_delta_points": -4.5774314496155455,
+        "best_extension_response_sha256": "30d9ad49a93ad60a6bf87816108bdb6765b76c6680ebd0f6bb1a77d708a3b490",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "e196c454230c2a66be575c8bb93c2d00520b1b9e2b5c6d7a10e98cb23ab37131"
+      },
+      "40deg-400mm": {
+        "best_extension_composite_delta_points": -5.622923531386888,
+        "best_extension_response_sha256": "475be3e47e4a30ef698e47bbc2a31d261406b7455bf2d12eae741ecaf4c23313",
+        "best_measured_extension_mm": 40,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "2f9f46c2c152ef26ee5af7c092fa4a91da36fc2ba6d223839438ccaf2678a654"
+      },
+      "40deg-450mm": {
+        "best_extension_composite_delta_points": -3.8419105688870445,
+        "best_extension_response_sha256": "2d31596b37971b4d58c9f34721152eb2886706f50bb98633e63c8a1ea0191b2d",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "03b557b777c515a59e9d1c7a10003659a20396bd9a6a279e5d04c7ba12306bfd"
+      },
+      "45deg-250mm": {
+        "best_extension_composite_delta_points": -3.5425021494388034,
+        "best_extension_response_sha256": "e7fd284cb241246887f3a3ef586fd569aeb01d9fced5c9703dab97ddca1b0d7f",
+        "best_measured_extension_mm": 60,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "2261a32ffe31f93be1f49fab4c881558d110f2efa05bb537a1b135b49b80739d"
+      },
+      "45deg-300mm": {
+        "best_extension_composite_delta_points": -5.121977878354755,
+        "best_extension_response_sha256": "e36fbf6d5cc7bcac2f7dd8c50885784f117659791c1cede6353a83892c86740d",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "02610be21ba78409941df430a206233f0cebcfcdd15c502c55888b8bd23fe1dd"
+      },
+      "45deg-350mm": {
+        "best_extension_composite_delta_points": -4.582529492728497,
+        "best_extension_response_sha256": "e3bc39f28fe15c04eb3ef9fb1e9b0e435600a25f0c32c208d887bb28c8598199",
+        "best_measured_extension_mm": 40,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "faa609989d107001d330182561a5a5fedfd8ae2d9f59f3f812a2db524a69672d"
+      },
+      "45deg-400mm": {
+        "best_extension_composite_delta_points": -3.6264975696775537,
+        "best_extension_response_sha256": "f7a6292e07fd4099b8fd3103f7b26489e933a2b08988cef64c6e12de63ac14e9",
+        "best_measured_extension_mm": 40,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "bd127bf9dd55da832c7a9914d610a481158d70b172391a66e5677a7f91a6e652"
+      },
+      "45deg-450mm": {
+        "best_extension_composite_delta_points": -4.528991286994128,
+        "best_extension_response_sha256": "bfea7f2bbda139c739f17d74dc5eea1aa71976696b67067e841545998846b04f",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "8c6c8c936b439b0c96d380cd7e95b748657c29cfb20c9f41fe0db36dbfdb2a4f"
+      },
+      "50deg-250mm": {
+        "best_extension_composite_delta_points": -4.350580952218365,
+        "best_extension_response_sha256": "eaf9d040d4d2b6b687422245e9a8ed5a2d124842147deadca89ddbf39dc10a1a",
+        "best_measured_extension_mm": 60,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "d52f858a7ad2e9d493bd08714bc21dc5c550a916164f2c1e1bcc1ff0d5c80d4e"
+      },
+      "50deg-300mm": {
+        "best_extension_composite_delta_points": -5.200333594795438,
+        "best_extension_response_sha256": "44dfa84622b5ab54c1bf2bdcc49cd00468e91aa4948c1f16e3fb8af3fb766d60",
+        "best_measured_extension_mm": 20,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "0509e270c805af612186b882ffd3d95b6e9a53d6e7f32459bb42a2f628a43ad9"
+      },
+      "50deg-350mm": {
+        "best_extension_composite_delta_points": -4.159512025552672,
+        "best_extension_response_sha256": "5888e4e6e13cc692a5d7e7fc1a5b1bf486fe513ef9e05eb7767e008826b7d64b",
+        "best_measured_extension_mm": 40,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 1.9298490807379665,
+        "surface_leader_extension_mm": 40,
+        "zero_extension_response_sha256": "bb7646eca679d17ebdc23bee839a272b2cdf2db4b4eabc90a34928e96826232a"
+      },
+      "50deg-400mm": {
+        "best_extension_composite_delta_points": -4.979545660214541,
+        "best_extension_response_sha256": "a61847199ec22981709937364d271e35a30e77804e930ebfd2e1515c49ac8949",
+        "best_measured_extension_mm": 40,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.27357770220442035,
+        "surface_leader_extension_mm": 40,
+        "zero_extension_response_sha256": "2a953bc623a08c5639200d15027f9b487e559dd286d37ec5a47ff8aee1a0a457"
+      },
+      "50deg-450mm": {
+        "best_extension_composite_delta_points": -3.38578275660241,
+        "best_extension_response_sha256": "50ce1bf81173832d86c07df8a68fbe292817cf41dd55dfa4b6b8b7891fc8c0e7",
+        "best_measured_extension_mm": 60,
+        "initial_extension_mm": 0,
+        "surface_leader_delta_points": 0.0,
+        "surface_leader_extension_mm": 0,
+        "zero_extension_response_sha256": "520b3b8b81ba6571bb2d4e5c5705b92d096188655483c6c71da527c660cd7c7b"
+      }
+    },
+    "composite_extension_win_count": 0,
+    "initial_extension_mm": 0,
+    "interpretation": "zero extension is the measured initialization under the registered extension composite; extension remains an early branch where surface-first ranking or throat loading warrants it",
+    "surface_priority_branch_cells": [
+      "30deg-450mm",
+      "35deg-350mm",
+      "40deg-250mm",
+      "50deg-350mm"
+    ]
+  },
   "heuristic_id": "round_control_heuristics_v1",
   "provenance": {
     "active_surface_v2_3_winners": "examples/round-control-parameter-maps-v2-3/winners.json",
     "active_surface_v2_3_winners_sha256": "39829efdde01ce484b7df4826175bec5619aa26c603e543ce64d3ee92d27157d",
-    "builder_sha256": "cc0dee3ddfe93eccd868821cfa329537a8ca7dd0fd4beaaa0a6d58a9322d06c8",
+    "builder_sha256": "16696a81b022666451ffa45e12b5df164ef4f68a126c7cea4954bd38b25ce8df",
     "challenge_results": "examples/round-control-v2-validation/validation_results.json",
     "challenge_results_sha256": "ac4b773c584dba1a70feaa8abbd8608c9ccdcffa35ea59c00c3638cb44d70dc4",
+    "extension_closure_results": "examples/round-control-composite-extension-closure/results.json",
+    "extension_closure_results_sha256": "ced86c5b3bc9b710e1fdaa76d7b54f9d53f155888b0a40a9940cc7b9b470c97b",
+    "extension_map": "examples/round-control-composite-extension-map/map.json",
+    "extension_map_sha256": "050d3a28060d6e812c59fc0ac97aca04d083366e51200ef8ac45f7529b808670",
     "ridge_results": "examples/round-control-ridge-closure/results.json",
     "ridge_results_sha256": "387b255e5da33e396764a818a37b856cecd2fce8e1c118ddfd73d9faf4b8c7fa",
     "short_length_closure_results": "examples/round-control-short-length-closure/results.json",
@@ -3514,6 +4046,44 @@
       },
       "id": "wide-coverage-mouth-edge-hypothesis",
       "status": "working physical hypothesis; infinite-baffle controls were deliberately not run"
+    },
+    {
+      "action": "initialize at zero extension; retain measured extension branches when surface-first ranking or weak throat loading makes the tradeoff relevant",
+      "evidence": {
+        "angle_summary": {
+          "lower_a8_better_cell_count": {
+            "composite_score_v1_0": 14,
+            "surface_score_v2_3": 11,
+            "throat_impedance_score_v2_3_0": 14
+          },
+          "lower_a8_minus_a6_median": {
+            "composite_score_v1_0": 1.8786893476439275,
+            "surface_score_v2_3": 0.3453049946544695,
+            "throat_impedance_score_v2_3_0": 6.902432983787662
+          },
+          "lower_coverage_cell_count": 15,
+          "promotion": "retain measured matched angle responses as initialization evidence; do not promote a general throat-angle predictor",
+          "wide_a8_better_cell_count": {
+            "composite_score_v1_0": 4,
+            "surface_score_v2_3": 3,
+            "throat_impedance_score_v2_3_0": 4
+          },
+          "wide_a8_minus_a6_median": {
+            "composite_score_v1_0": 1.464472375629299,
+            "surface_score_v2_3": 0.1839466045353788,
+            "throat_impedance_score_v2_3_0": 5.356882703104532
+          },
+          "wide_bridge_cell_count": 4
+        },
+        "composite_extension_win_count": 0,
+        "surface_priority_branch_cells": [
+          "30deg-450mm",
+          "35deg-350mm",
+          "40deg-250mm",
+          "50deg-350mm"
+        ]
+      },
+      "id": "extension-initialization"
     },
     {
       "action": "for unequal H/V targets, combine independent axis seed lengths using mouth-width/height score weights",

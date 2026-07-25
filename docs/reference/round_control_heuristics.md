@@ -108,6 +108,25 @@ separation. No
 additional round-horn simulations are currently planned; the question carries
 forward into intended non-round and baffle geometry.
 
+## Extension and throat-angle initialization
+
+The completed 6° composite extension map now contains 1,542 exact-response-
+deduplicated zero-extension responses and 101 extension responses. Its
+registered 75/25 surface/impedance composite retains zero extension in all 25
+cells, including the 23-case S-recovery closure. Start at zero extension.
+
+Extension remains a measured search branch, not a prohibited control. Four
+cells have a measured extension whose surface-v2.3 gain exceeds 0.5 point even
+though the impedance loss makes its composite worse: 30°/450 mm, 35°/350 mm,
+40°/250 mm, and 50°/350 mm. A surface-first optimizer should therefore retain
+extension proposals where local evidence or weak throat loading warrants them.
+
+The matched A6/A8 extension grid improved throat impedance in 14 of 15
+30°–40° cells, with a median 6.90-point gain. The four wide-coverage bridge
+points also improved from A6 to A8. Treat these as matched initialization
+evidence at their exact coordinates. The failed general throat-angle predictor
+remains unreleased.
+
 ## H/V starting construction
 
 For a non-round target, apply the round evidence independently to the horizontal
@@ -138,6 +157,9 @@ from app.design_api import (
 rules = RoundControlHeuristics.load("models/round_control_heuristics_v1")
 seed = rules.recommend(DesignIntent(400, 300, 50, 35))
 ```
+
+`seed.extension_mm` is zero. The artifact also records exact cells where an
+extension should be retained as an early surface-priority branch.
 
 For this example, the measured-axis seeds are approximately:
 

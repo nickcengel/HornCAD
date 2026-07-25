@@ -32,6 +32,14 @@ global score model.
   0.268-point
   improvement. Further round cases and the conditional infinite-baffle controls
   were deliberately not run.
+- The completed extension map retained zero extension in all
+  25 cells under its registered composite ranking.
+  4 cells retain an extension
+  as an early surface-priority branch rather than an initialization default.
+- Across the matched 30°–40° A6/A8 grid, A8 improved impedance in
+  14
+  of 15 cells. These are
+  measured matched responses, not a promoted global throat-angle predictor.
 
 The H/V flat-length and sag outputs are starting constructions. No asymmetric or
 sagged BEM evidence is claimed. Sag is excluded from total score and these

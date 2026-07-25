@@ -55,6 +55,7 @@ class RoundControlHeuristicTests(unittest.TestCase):
         self.assertAlmostEqual(
             result.cylindrical_sag_compensation.profile_length_mm,
             result.vertical.profile_length_mm)
+        self.assertEqual(result.extension_mm, 0.0)
 
     def test_outside_support_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "outside heuristic support"):
@@ -106,6 +107,28 @@ class RoundControlHeuristicTests(unittest.TestCase):
             self.heuristics.artifact["audit"]["wide_coverage_closure"][
                 "conditional_status"],
             "declined-by-user-not-run",
+        )
+
+    def test_extension_closure_is_included(self):
+        map_path = (
+            ROOT / "examples/round-control-composite-extension-map/map.json")
+        results_path = (
+            ROOT / "examples/round-control-composite-extension-closure/results.json")
+        provenance = self.heuristics.artifact["provenance"]
+        self.assertEqual(
+            provenance["extension_map_sha256"],
+            hashlib.sha256(map_path.read_bytes()).hexdigest(),
+        )
+        self.assertEqual(
+            provenance["extension_closure_results_sha256"],
+            hashlib.sha256(results_path.read_bytes()).hexdigest(),
+        )
+        guidance = self.heuristics.artifact["extension_guidance"]
+        self.assertEqual(guidance["initial_extension_mm"], 0)
+        self.assertEqual(guidance["composite_extension_win_count"], 0)
+        self.assertEqual(
+            guidance["surface_priority_branch_cells"],
+            ["30deg-450mm", "35deg-350mm", "40deg-250mm", "50deg-350mm"],
         )
 
 

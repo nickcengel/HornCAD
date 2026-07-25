@@ -1,7 +1,7 @@
 # Round-control 6° composite extension map
 
-Status: existing-evidence map, eight-case closure, and A8 bridge addendum
-authorized
+Status: complete; 23-case S-recovery closure, four-case wide A8 bridge, and
+25-case lower-coverage A6/A8 completion measured and analyzed
 
 ## Purpose
 
@@ -121,3 +121,25 @@ After completion:
 - publish ordinary, S-matched, and zero-extension length-allocation contrasts;
 - add a measured 6-degree extension layer to the round heuristic artifact;
 - do not promote the failed general 0°/6°/12° paired predictor.
+
+## Completed findings
+
+All 52 authorized new simulations completed. None of the 23 S-recovery
+extension candidates beat its zero-extension parent under the registered
+75% surface-v2.3 / 25% throat-impedance-v2.3.0 composite. After merging the
+closure, zero extension remains the composite winner in all 25 round cells.
+The best measured extension trails the zero-extension winner by a median 4.58
+composite points.
+
+This does not remove extension from later surface-first optimization. Four
+cells retain a measured extension branch whose surface gain exceeds 0.5 point:
+30°/450 mm, 35°/350 mm, 40°/250 mm, and 50°/350 mm. Zero extension is the
+initialization rule; extension remains an early branch when the user's ranking
+or weak throat loading makes the tradeoff relevant.
+
+In the complete 15-cell matched 30°–40° A6/A8 grid, A8 improved throat
+impedance in 14 cells, with a median gain of 6.90 points; it improved the
+registered composite in 14 cells, with a median gain of 1.88 points. All four
+wide-coverage bridge points also improved impedance and composite from A6 to
+A8. These are measured matched responses for initialization and support
+warnings. They do not promote a general throat-angle response predictor.

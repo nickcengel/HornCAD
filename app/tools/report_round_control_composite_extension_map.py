@@ -17,6 +17,8 @@ SOURCE = ROOT / "examples/surface-score-v1-v2-rank-comparison/comparison.json"
 RIDGE = ROOT / "examples/round-control-ridge-closure/results.json"
 WIDE = ROOT / "examples/round-control-wide-coverage-closure/initial_results.json"
 EXTENSION = ROOT / "examples/extension-throat-angle-heuristics/manifest.json"
+CLOSURE = (
+    ROOT / "examples/round-control-composite-extension-closure/results.json")
 OUTPUT = ROOT / "examples/round-control-composite-extension-map"
 COVERAGES = (30, 35, 40, 45, 50)
 MOUTHS = (250, 300, 350, 400, 450)
@@ -177,10 +179,41 @@ def _extension_rows() -> list[dict[str, Any]]:
     return rows
 
 
+def _closure_rows() -> list[dict[str, Any]]:
+    result = _read(CLOSURE)
+    if result.get("status") != "complete":
+        raise ValueError("composite extension closure is incomplete")
+    rows = []
+    for row in result["evidence"]:
+        rows.append({
+            "id": row["id"],
+            "coverage_deg": int(row["coverage_deg"]),
+            "mouth_mm": int(row["mouth_mm"]),
+            "length_mm": float(row["length_mm"]),
+            "profile_plus_extension_length_mm": float(
+                row["profile_plus_extension_length_mm"]),
+            "k": float(row["k"]),
+            "n": float(row["n"]),
+            "s": float(row["derived_s"]),
+            "throat_angle_deg": int(row["throat_angle_deg"]),
+            "extension_mm": int(row["extension_mm"]),
+            "evidence_role": f"s-recovery-{row['mode']}",
+            "parent_id": row["parent_id"],
+            "source_path": row["response_path"],
+            "response_sha256": row["response_sha256"],
+            "report_path": row["report_path"],
+            "surface_score_v2_3": float(row["surface_score_v2_3"]),
+            "throat_impedance_score_v2_3_0": float(
+                row["throat_impedance_score_v2_3_0"]),
+            "composite_score_v1_0": float(row["composite_score_v1_0"]),
+        })
+    return rows
+
+
 def assemble() -> dict[str, Any]:
     by_hash = {
         row["response_sha256"]: row
-        for row in [*_base_rows(), *_extension_rows()]
+        for row in [*_base_rows(), *_extension_rows(), *_closure_rows()]
     }
     evidence = sorted(by_hash.values(), key=lambda row: row["id"])
     cells = {}
@@ -231,7 +264,7 @@ def assemble() -> dict[str, Any]:
     result = {
         "schema_version": 1,
         "study_id": "round-control-composite-extension-map-v1",
-        "status": "existing-evidence",
+        "status": "closure-complete",
         "selection_scope": (
             "axisymmetric round horns at 6 degree throat angle"),
         "ranking": {
@@ -249,7 +282,7 @@ def assemble() -> dict[str, Any]:
             row["extension_mm"] > 0 for row in evidence),
         "sources": {
             str(path.relative_to(ROOT)): _hash_file(path)
-            for path in (SOURCE, RIDGE, WIDE, EXTENSION)
+            for path in (SOURCE, RIDGE, WIDE, EXTENSION, CLOSURE)
         },
         "cells": cells,
         "evidence": evidence,
@@ -342,7 +375,7 @@ th{{background:#202c36;cursor:pointer}}th:first-child,td:first-child{{text-align
 This composite is authoritative only for this extension-selection map.</p>
 <p class="muted">{result['zero_extension_evidence_count']} zero-extension and
 {result['extension_evidence_count']} extension responses; exact-response
-deduplicated. Existing-evidence status.</p>
+deduplicated. {html.escape(result['status'])} status.</p>
 <section><h2>Cell winners</h2><table class="sortable"><thead><tr>
 <th>Cell</th><th>Composite</th><th>Surface</th><th>Impedance</th>
 <th>Extension mm</th><th>OSSE length</th><th>K</th><th>N</th><th>S</th>

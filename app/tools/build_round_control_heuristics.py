@@ -22,6 +22,10 @@ ACTIVE_WINNERS = (
     ROOT / "examples/round-control-parameter-maps-v2-3/winners.json")
 WIDE_CLOSURE = (
     ROOT / "examples/round-control-wide-coverage-closure/results.json")
+EXTENSION_MAP = (
+    ROOT / "examples/round-control-composite-extension-map/map.json")
+EXTENSION_CLOSURE = (
+    ROOT / "examples/round-control-composite-extension-closure/results.json")
 OUTPUT = ROOT / "models/round_control_heuristics_v1"
 ANGLES = (30, 35, 40, 45, 50)
 MOUTHS = (250, 300, 350, 400, 450)
@@ -536,12 +540,65 @@ def _ridge_closure_audit(
     }
 
 
+def _extension_audit(
+    extension_map: dict[str, Any],
+    extension_closure: dict[str, Any],
+) -> dict[str, Any]:
+    if (extension_map.get("status") != "closure-complete"
+            or extension_closure.get("status") != "complete"):
+        raise ValueError("extension evidence is not complete")
+    cells = {}
+    surface_priority_cells = []
+    for cell_id, cell in sorted(extension_map["cells"].items()):
+        zero = cell["zero_extension_winner"]
+        extended = cell["best_measured_extension"]
+        surface_leader = max(
+            (zero, extended),
+            key=lambda row: (row["surface_score_v2_3"],
+                             row["throat_impedance_score_v2_3_0"]),
+        )
+        surface_delta = (
+            float(surface_leader["surface_score_v2_3"])
+            - float(zero["surface_score_v2_3"])
+        )
+        if surface_leader["extension_mm"] > 0 and surface_delta > 0.5:
+            surface_priority_cells.append(cell_id)
+        cells[cell_id] = {
+            "initial_extension_mm": 0,
+            "best_measured_extension_mm": int(extended["extension_mm"]),
+            "best_extension_composite_delta_points": float(
+                cell["best_extension_minus_zero_composite"]),
+            "surface_leader_extension_mm": int(
+                surface_leader["extension_mm"]),
+            "surface_leader_delta_points": surface_delta,
+            "zero_extension_response_sha256": zero["response_sha256"],
+            "best_extension_response_sha256": extended["response_sha256"],
+        }
+    return {
+        "initial_extension_mm": 0,
+        "cell_count": len(cells),
+        "composite_extension_win_count": sum(
+            cell["overall_winner"]["extension_mm"] > 0
+            for cell in extension_map["cells"].values()),
+        "surface_priority_branch_cells": surface_priority_cells,
+        "cells": cells,
+        "angle_summary": extension_closure["angle_summary"],
+        "interpretation": (
+            "zero extension is the measured initialization under the registered "
+            "extension composite; extension remains an early branch where "
+            "surface-first ranking or throat loading warrants it"
+        ),
+    }
+
+
 def build() -> dict[str, Any]:
     index = _read(INDEX)
     ridge_result = _read(RIDGE)
     short_closure = _read(SHORT_CLOSURE)
     active_winners = _read(ACTIVE_WINNERS)
     wide_closure = _read(WIDE_CLOSURE)
+    extension_map = _read(EXTENSION_MAP)
+    extension_closure = _read(EXTENSION_CLOSURE)
     rows = _canonical_rows(index)
     length = _length_audit(rows)
     k_audit = _axis_audit(
@@ -552,6 +609,7 @@ def build() -> dict[str, Any]:
     measured_rows = _all_measured_rows(index)
     zones = _zone_audit(measured_rows)
     ridge = _ridge_closure_audit(measured_rows, ridge_result)
+    extension = _extension_audit(extension_map, extension_closure)
     active_seeds, active_s_guidance = _active_winner_seeds(
         active_winners, length["reference_length_mm"])
     artifact = {
@@ -571,6 +629,7 @@ def build() -> dict[str, Any]:
         "active_surface_score_version": "v2.3",
         "active_measured_cell_seeds": active_seeds,
         "s_guidance_by_coverage": active_s_guidance,
+        "extension_guidance": extension,
         "rules": [
             {
                 "id": "reference-length-seed",
@@ -676,6 +735,20 @@ def build() -> dict[str, Any]:
                 },
             },
             {
+                "id": "extension-initialization",
+                "action": (
+                    "initialize at zero extension; retain measured extension "
+                    "branches when surface-first ranking or weak throat loading "
+                    "makes the tradeoff relevant"),
+                "evidence": {
+                    "composite_extension_win_count":
+                        extension["composite_extension_win_count"],
+                    "surface_priority_branch_cells":
+                        extension["surface_priority_branch_cells"],
+                    "angle_summary": extension["angle_summary"],
+                },
+            },
+            {
                 "id": "hv-flat-compromise",
                 "action": (
                     "for unequal H/V targets, combine independent axis seed "
@@ -710,6 +783,7 @@ def build() -> dict[str, Any]:
                 "cells": active_seeds,
             },
             "wide_coverage_closure": wide_closure,
+            "extension": extension,
             "observed_high_score_zones": zones,
         },
         "provenance": {
@@ -731,6 +805,12 @@ def build() -> dict[str, Any]:
                 WIDE_CLOSURE.relative_to(ROOT)),
             "wide_coverage_closure_results_sha256":
                 _file_hash(WIDE_CLOSURE),
+            "extension_map": str(EXTENSION_MAP.relative_to(ROOT)),
+            "extension_map_sha256": _file_hash(EXTENSION_MAP),
+            "extension_closure_results": str(
+                EXTENSION_CLOSURE.relative_to(ROOT)),
+            "extension_closure_results_sha256":
+                _file_hash(EXTENSION_CLOSURE),
             "builder_sha256": _file_hash(Path(__file__)),
         },
     }
@@ -769,6 +849,14 @@ global score model.
   {wide_closure['best_initial_candidate']['surface_delta_points']:.3f}-point
   improvement. Further round cases and the conditional infinite-baffle controls
   were deliberately not run.
+- The completed extension map retained zero extension in all
+  {extension['cell_count']} cells under its registered composite ranking.
+  {len(extension['surface_priority_branch_cells'])} cells retain an extension
+  as an early surface-priority branch rather than an initialization default.
+- Across the matched 30°–40° A6/A8 grid, A8 improved impedance in
+  {extension['angle_summary']['lower_a8_better_cell_count']['throat_impedance_score_v2_3_0']}
+  of {extension['angle_summary']['lower_coverage_cell_count']} cells. These are
+  measured matched responses, not a promoted global throat-angle predictor.
 
 The H/V flat-length and sag outputs are starting constructions. No asymmetric or
 sagged BEM evidence is claimed. Sag is excluded from total score and these
